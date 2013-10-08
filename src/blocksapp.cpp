@@ -20,6 +20,12 @@ void BlocksApplication::loop()
     {
         if(event.type == fea::Event::CLOSED)
             quit();
+
+        if(event.type == fea::Event::KEYPRESSED)
+        {
+            if(event.key.code == fea::Keyboard::ESCAPE)
+                quit();
+        }
     }
 }
 
