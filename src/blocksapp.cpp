@@ -16,6 +16,7 @@ void BlocksApplication::loop()
     fea::Event event;
 
     inputHandler.processEvents();
+
     while(inputHandler.pollEvent(event))
     {
         if(event.type == fea::Event::CLOSED)
