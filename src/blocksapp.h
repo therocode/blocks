@@ -14,5 +14,6 @@ class BlocksApplication : public fea::Application
     private:
         sf::Window sfWindow;
         fea::Window window;
+        fea::InputHandler inputHandler;
         World world;
 };
