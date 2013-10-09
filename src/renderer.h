@@ -13,6 +13,7 @@ class Renderer
     public:
         Renderer(fea::MessageBus& messageBus);
         ~Renderer();
+        void makeTexture(std::string path, uint32_t width, uint32_t height, GLuint& textureId);
         void setup();
         virtual void handleMessage(const ChunkCreatedMessage& received);
         virtual void handleMessage(const WindowResizeMessage& received);
@@ -21,5 +22,5 @@ class Renderer
     private:
         fea::MessageBus& bus;
         std::vector<ChunkVBO> chunks;
-        float hehe = 0.0f;
+        GLuint blockTexture;
 };
