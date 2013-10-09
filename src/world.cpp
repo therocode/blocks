@@ -33,7 +33,3 @@ void World::initialise()
 void World::update()
 {
 }
-
-void World::hehehe()
-{
-}

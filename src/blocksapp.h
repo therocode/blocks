@@ -22,7 +22,7 @@ class BlocksApplication : public fea::Application
         World world;
         Renderer renderer;
 		Camera cam;
-		float moveSpeed = .00001f;
+		float moveSpeed = 0.001f;
 		float lastY, lastX;
 		bool movingLeft, movingRight, movingUp, movingDown, elevate, delevate;
 		bool mouseDown = false;

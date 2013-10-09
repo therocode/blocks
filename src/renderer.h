@@ -17,7 +17,6 @@ class Renderer
         virtual void handleMessage(const ChunkCreatedMessage& received);
         virtual void handleMessage(const WindowResizeMessage& received);
         void render();
-        void hehehe();
 		void setCameraMatrix(glm::mat4 m);
     private:
         fea::MessageBus& bus;
