@@ -32,7 +32,7 @@ class Chunk
 namespace std
 {
     template<>
-        struct std::hash<ChunkCoordinate>
+        struct hash<ChunkCoordinate>
         {
             public:
                 std::size_t operator()(ChunkCoordinate const& coord) const 
