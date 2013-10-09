@@ -14,3 +14,8 @@ void World::update()
 {
     renderer.render();
 }
+
+void World::hehehe()
+{
+    renderer.hehehe();
+}

@@ -28,10 +28,15 @@ void BlocksApplication::loop()
         {
             if(event.key.code == fea::Keyboard::ESCAPE)
                 quit();
+            if(event.key.code == fea::Keyboard::A)
+            {
+                world.hehehe();
+            }
         }
     }
 
     world.update();
+    window.swapBuffers();
 }
 
 void BlocksApplication::destroy()

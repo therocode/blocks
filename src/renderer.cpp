@@ -7,6 +7,12 @@ void Renderer::setup()
 {
     glewInit();
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluPerspective(45,1,0.1,100);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
 }
 
 void Renderer::addChunk(const Chunk& chunk)
@@ -19,7 +25,7 @@ void Renderer::render()
 {
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
     glLoadIdentity();
-    glTranslatef(0.0f, 0.0f, -30.0f);
+    glTranslatef(-5.0f - hehe, -8.0f, -30.0f);
 
     for(auto& chunk : chunks)
     {
@@ -31,4 +37,9 @@ void Renderer::render()
         glDisableClientState(GL_VERTEX_ARRAY);
         std::cout << "hej and id is " << chunk.getVerticesId() << " and amount is " << chunk.getTriangleAmount() << " and error is: " <<  glGetError() << "!\n";
     }
+}
+
+void Renderer::hehehe()
+{
+    hehe += 0.3f;
 }

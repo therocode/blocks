@@ -9,6 +9,7 @@ class World
     public:
         void initialise();
         void update();
+        void hehehe();
     private:
         std::unordered_map<ChunkCoordinate, uint32_t> chunkIndices;
         std::vector<Chunk> chunks;

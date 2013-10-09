@@ -9,6 +9,8 @@ class Renderer
         void setup();
         void addChunk(const Chunk& chunk);
         void render();
+        void hehehe();
     private:
         std::vector<ChunkVBO> chunks;
+        float hehe = 0.0f;
 };
