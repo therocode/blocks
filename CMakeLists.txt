@@ -20,6 +20,7 @@ set(source_files
 	src/vbocreator.cpp
 	src/world.cpp
 	src/main.cpp
+	src/camera.cpp
 )
 set(header_files
 	src/blocksapp.h
@@ -30,6 +31,7 @@ set(header_files
 	src/renderer.h
 	src/vbocreator.h
 	src/world.h
+	src/camera.h
 )
 
 add_executable(${project_name} ${header_files} ${source_files})

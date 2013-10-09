@@ -14,6 +14,7 @@ class Renderer : fea::MessageReceiver<ChunkCreatedMessage>
         virtual void handleMessage(const ChunkCreatedMessage& received);
         void render();
         void hehehe();
+		void setCameraMatrix(glm::mat4 m);
     private:
         fea::MessageBus& bus;
         std::vector<ChunkVBO> chunks;

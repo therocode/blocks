@@ -13,10 +13,10 @@ ChunkVBO VBOCreator::generateChunkVBO(const Chunk& chunk) const
 		for(int y = 0; y < 10; y++){
 			//haha nothing
 			Rectangle r;
-			r.setPosition(0, i,     i + 1 + y , 0);
-			r.setPosition(1, i,     i + y     , 0);
-			r.setPosition(2, i + 1, i + y      , 0);
-			r.setPosition(3, i + 1, i + 1 + y  , 0);
+			r.setPosition(0, i,     i + 1 + y , 2);
+			r.setPosition(1, i,     i + y     , 2);
+			r.setPosition(2, i + 1, i + y      ,2);
+			r.setPosition(3, i + 1, i + 1 + y  ,2);
 			r.setColor((float)(rand()%255) /255.f, (float)(rand()%255) /255.f, (float)(rand()%255) /255.f);
 			r.calculateNormal();
 			vbo.PushRectangle(r);
