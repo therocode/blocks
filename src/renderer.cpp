@@ -21,6 +21,8 @@ void Renderer::setup()
 	// glEnable(GL_LIGHTING);
 	// glEnable(GL_LIGHT0);
 
+    glEnable(GL_DEPTH_TEST);
+
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	projectionMatrix = glm::perspective(80.f, 1.f, 0.1f, 100.f);

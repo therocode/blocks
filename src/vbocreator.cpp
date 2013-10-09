@@ -6,76 +6,21 @@ ChunkVBO VBOCreator::generateChunkVBO(const Chunk& chunk) const
 {
 	ChunkVBO vbo;
 
+    const ChunkCoordinate location = chunk.getLocation();
+
+    glm::vec3 chunkOffset(location.x * chunkWidth, location.y * chunkWidth, location.z * chunkWidth);
 
 	const VoxelTypeArray& voxelTypes = chunk.getVoxelTypes();
 
-	for(int i = 0; i < 1; i ++){
-		for(int y = 0; y < 2; y++){
-			float red = (float)(rand()%255) /255.f,
-				  g = (float)(rand()%255) /255.f,
-				  b = (float)(rand()%255) /255.f;
-
-			float s = 0.5f;
-			//Front
-
+	for(int i = 0; i < 10; i ++){
+		for(int y = 0; y < 10; y++){
+			//haha nothing
 			Rectangle r;
-			r.setColor(red,g,b);
-			//front
-			//	r.setColor(1,1,1);
-			r.setPosition(0,i + s,i + y +  s, s); r.setUV(0, 1.0f, 1.0f);
-			r.setPosition(1,i + -s,i + y +  s, s); r.setUV(1, 0.0f, 1.0f);
-			r.setPosition(2,i + -s,i + y + -s, s); r.setUV(2, 0.0f, 0.0f);
-			r.setPosition(3,i +  s,i + y + -s, s); r.setUV(3, 1.0f, 0.0f);
-			r.calculateNormal();
-			vbo.PushRectangle(r);
-
-			//top
-			r.setPosition(0, s, s, -s); r.setUV(0, 1.0f, 0.0f);
-			r.setPosition(1,-s, s, -s); r.setUV(1, 0.0f, 0.0f);
-			r.setPosition(2,-s, s, s); r.setUV(2, 0.0f, 1.0f);
-			r.setPosition(3, s, s, s); r.setUV(3, 1.0f, 1.0f);
-			r.calculateNormal();
-
-//			r.setPosition(2, i +  s, i + y +  s, -s); r.setUV(0, 1.0f, 0.0f);
-//			r.setPosition(2, i + -s, i + y +  s, -s); r.setUV(1, 0.0f, 0.0f);
-//			r.setPosition(2, i + -s, i + y +  s, s); r.setUV(2, 0.0f, 1.0f);
-//			r.setPosition(3, i +  s, i + y +  s, s); r.setUV(3, 1.0f, 1.0f);
-//			r.calculateNormal();
-			vbo.PushRectangle(r);
-
-			//bottom
-			//r.setColor(1,0,1);
-			r.setPosition(0,i +  s,i + y  -s, s); r.setUV(0, 1.0f, 1.0f);
-			r.setPosition(1,i + -s,i + y  -s, s); r.setUV(1, 0.0f, 1.0f);
-			r.setPosition(2,i + -s,i + y  -s, -s); r.setUV(2, 0.0f, 0.0f);
-			r.setPosition(3,i +  s,i + y  -s, -s); r.setUV(3, 1.0f, 0.0f);
-			r.calculateNormal();
-			vbo.PushRectangle(r);
-
-			//back
-			//r.setColor(0,0,1);
-			r.setPosition(0,i +  s,i + y +  s, -s); r.setUV(0, 1.0f, 1.0f);
-			r.setPosition(1,i +  s,i + y +  -s, -s); r.setUV(1, 1.0f, 0.0f);
-			r.setPosition(2,i + -s,i + y +  -s, -s); r.setUV(2, 0.0f, 0.0f);
-			r.setPosition(3,i +  -s,i + y +  s, -s); r.setUV(3, 0.0f, 1.0f);
-			r.calculateNormal();
-			vbo.PushRectangle(r);
-
-			//right
-			//r.setColor(0,1,1);
-			r.setPosition(0,i + s,i + y +   s, -s); r.setUV(0, 1.0f, 0.0f);
-			r.setPosition(1,i + s,i + y +   s,  s); r.setUV(1, 1.0f, 1.0f);
-			r.setPosition(2,i + s,i + y +  -s,  s); r.setUV(2, 0.0f, 1.0f);
-			r.setPosition(3,i + s,i + y +  -s, -s); r.setUV(3, 0.0f, 0.0f);
-			r.calculateNormal();
-			vbo.PushRectangle(r);
-
-			//left
-			//r.setColor(1,1,0);
-			r.setPosition(0,i + -s,i + y +   s, -s); r.setUV(0, 1.0f, 0.0f);
-			r.setPosition(1,i + -s,i + y +  -s, -s); r.setUV(1, 0.0f, 0.0f);
-			r.setPosition(2,i + -s,i + y +  -s,  s); r.setUV(2, 0.0f, 1.0f);
-			r.setPosition(3,i + -s,i + y +   s, s); r.setUV(3, 1.0f, 1.0f);
+			r.setPosition(0, i + chunkOffset.x,     i + 1 + y + chunkOffset.y , 2 + chunkOffset.z);
+			r.setPosition(1, i + chunkOffset.x,     i + y      + chunkOffset.y, 2 + chunkOffset.z);
+			r.setPosition(2, i + 1 + chunkOffset.x, i + y       + chunkOffset.y,2 + chunkOffset.z);
+			r.setPosition(3, i + 1 + chunkOffset.x, i + 1 + y   + chunkOffset.y,2 + chunkOffset.z);
+			r.setColor((float)(rand()%255) /255.f, (float)(rand()%255) /255.f, (float)(rand()%255) /255.f);
 			r.calculateNormal();
 			vbo.PushRectangle(r);
 		}
