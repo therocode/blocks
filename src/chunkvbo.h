@@ -7,10 +7,14 @@ class ChunkVBO
         ChunkVBO();
         ~ChunkVBO();
         void setVertexData(uint32_t dataSize, float* vertexData);
-        void setTexCoordsData(uint32_t dataSize, float* texCoordsData);
+        void setTexCoordData(uint32_t dataSize, float* texCoordsData);
+        void setNormalData(uint32_t dataSize, float* normalData);
         GLuint getVerticesId() const;
+        GLuint getTexCoordsId() const;
+        GLuint getNormalsId() const;
         uint32_t getTriangleAmount() const;
     private:
         GLuint verticesId;
         GLuint texCoordsId;
+        GLuint normalsId;
 };

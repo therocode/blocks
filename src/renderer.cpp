@@ -8,6 +8,9 @@ void Renderer::setup()
     glewInit();
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
+    glEnable(GL_LIGHTING);
+    glEnable(GL_LIGHT0);
+
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     gluPerspective(45,1,0.1,100);
@@ -33,8 +36,13 @@ void Renderer::render()
         glEnableClientState(GL_VERTEX_ARRAY);
         glVertexPointer(3, GL_FLOAT, 0, 0);
 
+        glBindBuffer(GL_ARRAY_BUFFER, chunk.getNormalsId());
+        glEnableClientState(GL_NORMAL_ARRAY);
+        glVertexPointer(3, GL_FLOAT, 0, 0);
+
         glDrawArrays(GL_TRIANGLES, 0, chunk.getTriangleAmount());
         glDisableClientState(GL_VERTEX_ARRAY);
+        glDisableClientState(GL_NORMAL_ARRAY);
         std::cout << "hej and id is " << chunk.getVerticesId() << " and amount is " << chunk.getTriangleAmount() << " and error is: " <<  glGetError() << "!\n";
     }
 }
