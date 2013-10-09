@@ -7,11 +7,12 @@
 class World
 {
     public:
+        World(fea::MessageBus& messageBus);
         void initialise();
         void update();
         void hehehe();
     private:
         std::unordered_map<ChunkCoordinate, uint32_t> chunkIndices;
         std::vector<Chunk> chunks;
-        Renderer renderer;  //this shouldn't be here in the future
+        fea::MessageBus& bus;
 };

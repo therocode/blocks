@@ -1,21 +1,26 @@
 #include "world.h"
+        
+World::World(fea::MessageBus& messageBus) : bus(messageBus)
+{
+}
 
 void World::initialise()
 {
-    renderer.setup();
-    Chunk newChunk;
+    ChunkCoordinate coords;
+    coords.x = 0;
+    coords.y = 0;
+    coords.z = 0;
 
+    Chunk newChunk;
     chunks.push_back(newChunk);
 
-    renderer.addChunk(newChunk);
+    bus.sendMessage<ChunkCreatedMessage>(ChunkCreatedMessage(&coords,&newChunk));
 }
 
 void World::update()
 {
-    renderer.render();
 }
 
 void World::hehehe()
 {
-    renderer.hehehe();
 }

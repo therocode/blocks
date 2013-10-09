@@ -2,13 +2,15 @@
 #include <featherkit/util/window/sfml/sfmlwindowbackend.h>
 #include <featherkit/util/input/sfml/sfmlinputbackend.h>
 
-BlocksApplication::BlocksApplication() : window(new fea::util::SFMLWindowBackend(sfWindow)), inputHandler(new fea::util::SFMLInputBackend(sfWindow))
+BlocksApplication::BlocksApplication() : window(new fea::util::SFMLWindowBackend(sfWindow)), inputHandler(new fea::util::SFMLInputBackend(sfWindow)), world(bus), renderer(bus)
 {
 }
 
 void BlocksApplication::setup()
 {
     window.create(fea::VideoMode(800, 600, 32), "Blocky");
+
+    renderer.setup();
 
     world.initialise();
 }
@@ -30,12 +32,13 @@ void BlocksApplication::loop()
                 quit();
             if(event.key.code == fea::Keyboard::A)
             {
-                world.hehehe();
+                renderer.hehehe();
             }
         }
     }
 
     world.update();
+    renderer.render();
     window.swapBuffers();
 }
 

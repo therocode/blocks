@@ -3,6 +3,16 @@
 #include <featherkit/rendering/opengl.h>
 #include <iostream>
 
+Renderer::Renderer(fea::MessageBus& messageBus) : bus(messageBus)
+{
+    bus.addMessageSubscriber<ChunkCreatedMessage>(*this);
+}
+
+Renderer::~Renderer()
+{
+    bus.removeMessageSubscriber<ChunkCreatedMessage>(*this);
+}
+
 void Renderer::setup()
 {
     glewInit();
@@ -18,10 +28,14 @@ void Renderer::setup()
     glLoadIdentity();
 }
 
-void Renderer::addChunk(const Chunk& chunk)
+void Renderer::handleMessage(const ChunkCreatedMessage& received)
 {
+    const ChunkCoordinate* coordinate;
+    const Chunk* chunk;
+
+    std::tie(coordinate, chunk) = received.data;
     VBOCreator vboCreator;
-    chunks.push_back(vboCreator.generateChunkVBO(chunk));
+    chunks.push_back(vboCreator.generateChunkVBO(*chunk));
 }
 
 void Renderer::render()
