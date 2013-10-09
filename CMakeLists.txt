@@ -11,38 +11,79 @@ project(${project_name})
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
-file(GLOB_RECURSE source_files "src/*.cpp")
-file(GLOB_RECURSE header_files "src/*.h")
+#Set source files.
+set(source_files
+	src/blocksapp.cpp
+	src/chunk.cpp
+	src/chunkvbo.cpp
+	src/renderer.cpp
+	src/vbocreator.cpp
+	src/world.cpp
+	src/main.cpp
+)
+set(header_files
+	src/blocksapp.h
+	src/blockstd.h
+	src/chunk.h
+	src/chunkvbo.h
+	src/messages.h
+	src/renderer.h
+	src/vbocreator.h
+	src/world.h
+)
 
 add_executable(${project_name} ${header_files} ${source_files})
 
 find_package(Featherkit REQUIRED COMPONENTS entity structure ui messaging)
 if(FEATHERKIT_FOUND)
-    include_directories(${FEATHERKIT_INCLUDE_DIRS})
-    target_link_libraries(${project_name} ${FEATHERKIT_LIBRARIES})
+	include_directories(${FEATHERKIT_INCLUDE_DIRS})
+	target_link_libraries(${project_name} ${FEATHERKIT_LIBRARIES})
 endif(FEATHERKIT_FOUND)
 
 find_package(GLM)
 if(GLM_FOUND)
-    include_directories(${GLM_INCLUDE_DIRS})
+	include_directories(${GLM_INCLUDE_DIRS})
 endif(GLM_FOUND)
 
 find_package(SFML COMPONENTS window system graphics REQUIRED)
 if(SFML_FOUND)
-    include_directories(${SFML_INCLUDE_DIR})
-    target_link_libraries(${project_name} ${SFML_LIBRARIES})
+	include_directories(${SFML_INCLUDE_DIR})
+	target_link_libraries(${project_name} ${SFML_LIBRARIES})
 endif(SFML_FOUND)
 
 find_package(GLEW REQUIRED)
 if(GLEW_FOUND)
-    include_directories(${GLEW_INCLUDE_DIR})
-    target_link_libraries(${project_name} ${GLEW_LIBRARIES})
+	include_directories(${GLEW_INCLUDE_DIR})
+	target_link_libraries(${project_name} ${GLEW_LIBRARIES})
 endif(GLEW_FOUND)
 
 target_link_libraries(${project_name} GLEW GL GLU)
 
 find_package(OpenGL REQUIRED)
 if(OPENGL_FOUND)
-    include_directories(${OPENGL_INCLUDE_DIRS})
-    target_link_libraries(${project_name} ${OPENGL_LIBRARIES})
+	include_directories(${OPENGL_INCLUDE_DIRS})
+	target_link_libraries(${project_name} ${OPENGL_LIBRARIES})
 endif(OPENGL_FOUND)
+
+#set(USE_CLANG "of course I should use clang.")
+if(USE_CLANG)
+	SET (CMAKE_C_COMPILER             "/usr/bin/clang")
+	SET (CMAKE_C_FLAGS                "-Wall -std=c99")
+	SET (CMAKE_C_FLAGS_DEBUG          "-g")
+	SET (CMAKE_C_FLAGS_MINSIZEREL     "-Os -DNDEBUG")
+	SET (CMAKE_C_FLAGS_RELEASE        "-O4 -DNDEBUG")
+	SET (CMAKE_C_FLAGS_RELWITHDEBINFO "-O2 -g")
+
+	SET (CMAKE_CXX_COMPILER             "/usr/bin/clang++")
+	SET (CMAKE_CXX_FLAGS                "-Wall -ggdb -std=c++11")
+	SET (CMAKE_CXX_FLAGS_DEBUG          "-g")
+	SET (CMAKE_CXX_FLAGS_MINSIZEREL     "-Os -DNDEBUG")
+	SET (CMAKE_CXX_FLAGS_RELEASE        "-O4 -DNDEBUG")
+	SET (CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g")
+
+	SET (CMAKE_AR      "/usr/bin/llvm-ar")
+	SET (CMAKE_LINKER  "/usr/bin/llvm-ld")
+	SET (CMAKE_NM      "/usr/bin/llvm-nm")
+	SET (CMAKE_OBJDUMP "/usr/bin/llvm-objdump")
+	SET (CMAKE_RANLIB  "/usr/bin/llvm-ranlib")
+endif(USE_CLANG)
