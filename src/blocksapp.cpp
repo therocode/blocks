@@ -1,4 +1,5 @@
 #include "blocksapp.h"
+#include "messages.h"
 #include <featherkit/util/window/sfml/sfmlwindowbackend.h>
 #include <featherkit/util/input/sfml/sfmlinputbackend.h>
 
@@ -27,7 +28,7 @@ void BlocksApplication::loop()
         if(event.type == fea::Event::CLOSED)
             quit();
 
-		if(event.type == fea::Event::MOUSEMOVED)
+		else if(event.type == fea::Event::MOUSEMOVED)
 		{
 			float newX = (float)event.mouseMove.x;
 			float newY = (float)event.mouseMove.y;
@@ -38,17 +39,17 @@ void BlocksApplication::loop()
 			lastY = event.mouseMove.y;
 		}
 
-		if(event.type == fea::Event::MOUSEBUTTONPRESSED){
+		else if(event.type == fea::Event::MOUSEBUTTONPRESSED){
 			if(event.mouseButton.button == fea::Mouse::Button::LEFT){
 				mouseDown = true;
 			}
 		}
-		if(event.type == fea::Event::MOUSEBUTTONRELEASED){
+		else if(event.type == fea::Event::MOUSEBUTTONRELEASED){
 			if(event.mouseButton.button == fea::Mouse::Button::LEFT){
 				mouseDown = false;
 			}
 		}
-        if(event.type == fea::Event::KEYPRESSED)
+        else if(event.type == fea::Event::KEYPRESSED)
         {
             if(event.key.code == fea::Keyboard::ESCAPE)
                 quit();
@@ -97,6 +98,9 @@ void BlocksApplication::loop()
 				break;
             }
 		}
+        else if (event.type == fea::Event::RESIZED){
+            bus.sendMessage<WindowResizeMessage>(WindowResizeMessage(event.size.width, event.size.height));
+        }
     }
 	glm::vec3 m;
 	if(movingRight){
