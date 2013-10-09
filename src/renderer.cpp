@@ -49,9 +49,11 @@ void Renderer::handleMessage(const ChunkCreatedMessage& received)
 
 void Renderer::handleMessage(const WindowResizeMessage& received)
 {
-    uint32_t height;
     uint32_t width;
-	std::tie(height, width) = received.data;
+    uint32_t height;
+	std::tie(width, height) = received.data;
+    std::cout << "hej\n";
+    std::cout << "width and height are: " << width << " and " << height << "\n";
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
