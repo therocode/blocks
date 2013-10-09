@@ -23,7 +23,7 @@ void Renderer::setup()
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluPerspective(45,1,0.1,100);
+    gluPerspective(80.f,1,0.1,100);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 }
@@ -46,19 +46,21 @@ void Renderer::render()
 
     for(auto& chunk : chunks)
     {
-        glBindBuffer(GL_ARRAY_BUFFER, chunk.getVerticesId());
+		chunk.DrawVBO();
+        /*glBindBuffer(GL_ARRAY_BUFFER, chunk.getVerticesId());
         glEnableClientState(GL_VERTEX_ARRAY);
         glVertexPointer(3, GL_FLOAT, 0, 0);
 
         glBindBuffer(GL_ARRAY_BUFFER, chunk.getNormalsId());
         glEnableClientState(GL_NORMAL_ARRAY);
-        glVertexPointer(3, GL_FLOAT, 0, 0);
+        glNormalPointer(GL_FLOAT, 0, 0);
 
         glDrawArrays(GL_TRIANGLES, 0, chunk.getTriangleAmount());
         glDisableClientState(GL_VERTEX_ARRAY);
         glDisableClientState(GL_NORMAL_ARRAY);
         std::cout << "hej and id is " << chunk.getVerticesId() << " and amount is " << chunk.getTriangleAmount() << " and error is: " <<  glGetError() << "!\n";
-    }
+    	*/
+	}
 }
 
 void Renderer::hehehe()

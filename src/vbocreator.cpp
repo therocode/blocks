@@ -5,55 +5,24 @@
 ChunkVBO VBOCreator::generateChunkVBO(const Chunk& chunk) const
 {
     ChunkVBO vbo;
+
+
     const VoxelTypeArray& voxelTypes = chunk.getVoxelTypes();
 
-    std::vector<float> vertices;
-    std::vector<float> normals;
+	for(int i = 0; i < 10; i ++){
+		//haha nothing.
+		Rectangle r;
+		r.setPosition(0, i, i+1, 0);
+		r.setPosition(1, i, i, 0);
+		r.setPosition(2, i+1, i, 0);
+		r.setPosition(3, i+ 1, i+1, 0);
+		r.calculateNormal();
+		vbo.PushRectangle(r);
 
-    uint32_t chunkWidth = chunk.getWidth();
-    for(uint32_t z = 0; z < chunkWidth; z++)
-    {
-        for(uint32_t y = 0; y < chunkWidth; y++)
-        {
-            for(uint32_t x = 0; x < chunkWidth; x++)
-            {
-                std::vector<float> toAdd = {x - 1.0f,
-                                            y + 1.0f,
-                                            z + 1.0f,
-                                            
-                                            x - 1.0f,
-                                            y - 1.0f,
-                                            z + 1.0f,
-                                            
-                                            x + 1.0f,
-                                            y - 1.0f,
-                                            z + 1.0f};
+	}
 
-                vertices.insert(vertices.end(), toAdd.begin(), toAdd.end());
-
-                toAdd.clear();
-                toAdd = {-1.0f,
-                          1.0f,
-                          1.0f,
-                                            
-                         -1.0f,
-                         -1.0f,
-                          1.0f,
-                                            
-                          1.0f,
-                         -1.0f,
-                          1.0f};
-
-                normals.insert(normals.end(), toAdd.begin(), toAdd.end());
-
-                std::cout << "created triange\n";
-            }
-        }
-    }
-
-    vbo.setVertexData(vertices.size() * sizeof(float), &vertices[0]);
-    vbo.setNormalData(normals.size() * sizeof(float), &normals[0]);
-    std::cout << "vertices size is " << vertices.size() << "\n";
+	//After stuff has been added, you have to update the gpu vbo data.
+	vbo.UpdateVBO();
 
     return vbo;
 }

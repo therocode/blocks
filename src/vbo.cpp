@@ -1,28 +1,28 @@
-#include "chunkvbo.h"
+#include "vbo.h"
 
 #define BUFFER_OFFSET(i) ((char*)NULL + (i))
-ChunkVBO::ChunkVBO():mCurrentChunkVBOByteSize(0),mChunkVBOCreated(false){
+VBO::VBO():mCurrentVBOByteSize(0),mVBOCreated(false){
 	mDrawType = GL_TRIANGLES;
 
 }
-ChunkVBO::~ChunkVBO(){
+VBO::~VBO(){
 
 }
-void ChunkVBO::PushTriangle(Triangle t){
+void VBO::PushTriangle(Triangle t){
 	for(Vertex i : t.vs){
 		PushVertex(i);
 	}
 }
-void ChunkVBO::PushVertex(Vertex v){
+void VBO::PushVertex(Vertex v){
 	mvVertices.push_back(v);	
 	mvIndices.push_back(mvVertices.size() - 1);
 }
-void ChunkVBO::Clear(){
+void VBO::Clear(){
 	mvVertices.clear();
 	mvIndices.clear();
 }
 
-void ChunkVBO::PushRectangle(Rectangle r){
+void VBO::PushRectangle(Rectangle r){
 	int si = mvVertices.size() ;
 	for(Vertex v : r.vs){
 		mvVertices.push_back(v);
@@ -36,23 +36,23 @@ void ChunkVBO::PushRectangle(Rectangle r){
 	mvIndices.push_back(si );
 }
 
-void ChunkVBO::UpdateVBO(){
-	if(!mChunkVBOCreated){
+void VBO::UpdateVBO(){
+	if(!mVBOCreated){
 		glGenBuffers(2, mID);
-		mChunkVBOCreated = true;
+		mVBOCreated = true;
 	}
-	mCurrentChunkVBOByteSize = sizeof(Vertex) * mvVertices.size();
+	mCurrentVBOByteSize = sizeof(Vertex) * mvVertices.size();
 	int idSize = sizeof(int) * mvIndices.size();
 
 	BindBuffer();
 
-	glBufferData(GL_ARRAY_BUFFER, mCurrentChunkVBOByteSize, mvVertices.data(), GL_DYNAMIC_DRAW); 
+	glBufferData(GL_ARRAY_BUFFER, mCurrentVBOByteSize, mvVertices.data(), GL_DYNAMIC_DRAW); 
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER,idSize, mvIndices.data(), GL_DYNAMIC_DRAW);
 
 	UnbindBuffer();
 }
 
-void ChunkVBO::DrawVBO(){
+void VBO::DrawVBO(){
 	BindBuffer();
 
 	int stride = sizeof(Vertex);
@@ -72,25 +72,25 @@ void ChunkVBO::DrawVBO(){
 	UnbindBuffer();
 }
 
-void ChunkVBO::BindBuffer(){
-	if(mChunkVBOCreated){
+void VBO::BindBuffer(){
+	if(mVBOCreated){
 		glBindBuffer(GL_ARRAY_BUFFER, mID[VERTICES]);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mID[INDICES]);
 	}
 }
-void ChunkVBO::UnbindBuffer(){
+void VBO::UnbindBuffer(){
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
-void ChunkVBO::DeleteBuffer(){
-	if(mChunkVBOCreated){
+void VBO::DeleteBuffer(){
+	if(mVBOCreated){
 		glDeleteBuffers(2, mID);
-		mChunkVBOCreated = false;
+		mVBOCreated = false;
 	}
 }
-void ChunkVBO::SetDrawType(GLint type){
+void VBO::SetDrawType(GLint type){
 	mDrawType = type;
 }
-GLint ChunkVBO::GetDrawType(){
+GLint VBO::GetDrawType(){
 	return mDrawType;
 }
