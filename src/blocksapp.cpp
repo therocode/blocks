@@ -9,6 +9,8 @@ BlocksApplication::BlocksApplication() : window(new fea::util::SFMLWindowBackend
 void BlocksApplication::setup()
 {
     window.create(fea::VideoMode(800, 600, 32), "Blocky");
+
+    world.initialise();
 }
 
 void BlocksApplication::loop()
@@ -28,6 +30,8 @@ void BlocksApplication::loop()
                 quit();
         }
     }
+
+    world.update();
 }
 
 void BlocksApplication::destroy()

@@ -6,6 +6,12 @@ ChunkVBO::ChunkVBO()
     glGenBuffers(1, &texCoordsId);
 }
 
+ChunkVBO::~ChunkVBO()
+{
+    glDeleteBuffers(1, &verticesId);
+    glDeleteBuffers(1, &texCoordsId);
+}
+
 void ChunkVBO::setVertexData(uint32_t dataSize, float* vertexData)
 {
     glBindBuffer(GL_ARRAY_BUFFER, verticesId);
@@ -18,8 +24,12 @@ void ChunkVBO::setTexCoordsData(uint32_t dataSize, float* texCoordsData)
     glBufferData(GL_ARRAY_BUFFER, dataSize, texCoordsData, GL_STATIC_DRAW);
 }
 
-ChunkVBO::~ChunkVBO()
+GLuint ChunkVBO::getVerticesId() const
 {
-    glDeleteBuffers(1, &verticesId);
-    glDeleteBuffers(1, &texCoordsId);
+    return verticesId;
+}
+
+uint32_t ChunkVBO::getTriangleAmount() const
+{
+    return 16 * 16 * 16;
 }
