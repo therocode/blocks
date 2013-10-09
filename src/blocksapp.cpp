@@ -13,6 +13,7 @@ void BlocksApplication::setup()
     window.create(fea::VideoMode(800, 600, 32), "Blocky");
 
     renderer.setup();
+    bus.sendMessage<WindowResizeMessage>(WindowResizeMessage(800, 600));
 
     world.initialise();
 }
