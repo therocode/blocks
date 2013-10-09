@@ -33,7 +33,7 @@ void BlocksApplication::loop()
 			float newY = (float)event.mouseMove.y;
 			float mspeed = 0.01f;
 			if(mouseDown)
-			cam.AddDirection((newX - lastX)  * mspeed,(newY - lastY) * mspeed);
+				cam.AddDirection((newX - lastX)  * mspeed,(newY - lastY) * mspeed);
 			lastX = event.mouseMove.x;
 			lastY = event.mouseMove.y;
 		}
@@ -66,6 +66,13 @@ void BlocksApplication::loop()
 				case fea::Keyboard::S:
 					movingDown = true;
 				break;
+				case fea::Keyboard::SPACE:
+					elevate = true;
+				break;
+				case fea::Keyboard::LSHIFT:
+					delevate = true;
+				break;
+
             }
         }else if(event.type == fea::Event::KEYRELEASED){
             switch(event.key.code)
@@ -81,6 +88,12 @@ void BlocksApplication::loop()
 				break;
 				case fea::Keyboard::S:
 					movingDown = false;
+				break;
+				case fea::Keyboard::SPACE:
+					elevate = false;
+				break;
+				case fea::Keyboard::LSHIFT:
+					delevate = false;
 				break;
             }
 		}
@@ -98,10 +111,19 @@ void BlocksApplication::loop()
 	if(movingDown){
 		m.z -= moveSpeed;	
 	}
+	if(elevate){
+		m.y += moveSpeed;
+	}
+	if(delevate){
+		m.y -= moveSpeed;
+	}
 	camSpeed += m;
 
 	cam.MoveForward(camSpeed.z);
-	cam.Strafe(camSpeed.x);	
+	cam.Strafe(camSpeed.x);
+	
+	cam.AddPosition(glm::vec3(0, camSpeed.y, 0));	
+
 	cam.Update();
 	camSpeed *= 0.995f;
 

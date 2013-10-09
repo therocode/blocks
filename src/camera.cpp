@@ -27,9 +27,11 @@ void Camera::MoveForward(float speed)
 {
 	glm::vec3 p = position;
 	glm::vec3 dd = direction;
+#if 1 
 	dd.y = 0.f;
 	if(glm::length2(dd) != 0)
 	dd = glm::normalize(dd);
+#endif
 	position = p + dd*speed;
 // 	Update();
 }
