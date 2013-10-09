@@ -52,8 +52,6 @@ void Renderer::handleMessage(const WindowResizeMessage& received)
     uint32_t width;
     uint32_t height;
 	std::tie(width, height) = received.data;
-    std::cout << "hej\n";
-    std::cout << "width and height are: " << width << " and " << height << "\n";
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
