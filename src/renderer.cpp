@@ -6,7 +6,7 @@
 void Renderer::setup()
 {
     glewInit();
-    glTranslatef(0.0f, 0.0f, 30.0f);
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 }
 
 void Renderer::addChunk(const Chunk& chunk)
@@ -18,14 +18,17 @@ void Renderer::addChunk(const Chunk& chunk)
 void Renderer::render()
 {
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+    glLoadIdentity();
+    glTranslatef(0.0f, 0.0f, -30.0f);
 
     for(auto& chunk : chunks)
     {
-        std::cout << "hej!\n";
         glBindBuffer(GL_ARRAY_BUFFER, chunk.getVerticesId());
         glEnableClientState(GL_VERTEX_ARRAY);
         glVertexPointer(3, GL_FLOAT, 0, 0);
 
         glDrawArrays(GL_TRIANGLES, 0, chunk.getTriangleAmount());
+        glDisableClientState(GL_VERTEX_ARRAY);
+        std::cout << "hej and id is " << chunk.getVerticesId() << " and amount is " << chunk.getTriangleAmount() << " and error is: " <<  glGetError() << "!\n";
     }
 }

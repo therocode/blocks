@@ -8,8 +8,8 @@ ChunkVBO::ChunkVBO()
 
 ChunkVBO::~ChunkVBO()
 {
-    glDeleteBuffers(1, &verticesId);
-    glDeleteBuffers(1, &texCoordsId);
+    //glDeleteBuffers(1, &verticesId);
+    //glDeleteBuffers(1, &texCoordsId);
 }
 
 void ChunkVBO::setVertexData(uint32_t dataSize, float* vertexData)

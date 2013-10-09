@@ -1,5 +1,6 @@
 #include "vbocreator.h"
 #include <vector>
+#include <iostream>
 
 ChunkVBO VBOCreator::generateChunkVBO(const Chunk& chunk) const
 {
@@ -16,23 +17,26 @@ ChunkVBO VBOCreator::generateChunkVBO(const Chunk& chunk) const
             for(uint32_t x = 0; x < chunkWidth; x++)
             {
                 std::vector<float> toAdd = {x - 1.0f,
-                                            y - 1.0f,
+                                            y + 1.0f,
                                             z + 1.0f,
                                             
                                             x - 1.0f,
-                                            y + 1.0f,
+                                            y - 1.0f,
                                             z + 1.0f,
                                             
                                             x + 1.0f,
-                                            y + 1.0f,
+                                            y - 1.0f,
                                             z + 1.0f};
 
                 vertices.insert(vertices.end(), toAdd.begin(), toAdd.end());
+
+                std::cout << "created triange\n";
             }
         }
     }
 
     vbo.setVertexData(vertices.size() * sizeof(float), &vertices[0]);
+    std::cout << "vertices size is " << vertices.size() << "\n";
 
     return vbo;
 }
