@@ -5,7 +5,10 @@
 #include <vector>
 #include <featherkit/messaging.h>
 
-class Renderer : fea::MessageReceiver<ChunkCreatedMessage>
+class Renderer
+    :   public fea::MessageReceiver<ChunkCreatedMessage>,
+        public fea::MessageReceiver<WindowResizeMessage>
+                
 {
     public:
         Renderer(fea::MessageBus& messageBus);

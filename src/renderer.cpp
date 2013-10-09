@@ -57,7 +57,7 @@ void Renderer::handleMessage(const WindowResizeMessage& received)
 	glLoadIdentity();
 	gluPerspective(80.f, width/height, 0.1, 100);
 	glMatrixMode(GL_MODELVIEW);
-    glViewport(0, 0, width, heigh);
+    glViewport(0, 0, width, height);
 }
 
 void Renderer::render()
