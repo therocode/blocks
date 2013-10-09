@@ -6,11 +6,13 @@
 Renderer::Renderer(fea::MessageBus& messageBus) : bus(messageBus)
 {
 	bus.addMessageSubscriber<ChunkCreatedMessage>(*this);
+	bus.addMessageSubscriber<WindowResizeMessage>(*this);
 }
 
 Renderer::~Renderer()
 {
 	bus.removeMessageSubscriber<ChunkCreatedMessage>(*this);
+	bus.removeMessageSubscriber<WindowResizeMessage>(*this);
 }
 
 void Renderer::setup()
@@ -25,7 +27,7 @@ void Renderer::setup()
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluPerspective(80.f,1,0.1,100);
+	gluPerspective(80.f, 1, 0.1, 100);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 }
@@ -43,6 +45,19 @@ void Renderer::handleMessage(const ChunkCreatedMessage& received)
 	std::tie(coordinate, chunk) = received.data;
 	VBOCreator vboCreator;
 	chunks.push_back(vboCreator.generateChunkVBO(*chunk));
+}
+
+void Renderer::handleMessage(const WindowResizeMessage& received)
+{
+    uint32_t height;
+    uint32_t width;
+	std::tie(height, width) = received.data;
+
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluPerspective(80.f, width/height, 0.1, 100);
+	glMatrixMode(GL_MODELVIEW);
+    glViewport(0, 0, width, heigh);
 }
 
 void Renderer::render()
