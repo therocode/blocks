@@ -14,6 +14,8 @@ void World::initialise()
     Chunk newChunk;
     chunks.push_back(newChunk);
 
+    chunkIndices.emplace(coords, chunks.size() - 1);
+
     bus.sendMessage<ChunkCreatedMessage>(ChunkCreatedMessage(&coords,&newChunk));
 }
 
