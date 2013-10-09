@@ -32,9 +32,21 @@ void BlocksApplication::loop()
 			float newX = (float)event.mouseMove.x;
 			float newY = (float)event.mouseMove.y;
 			float mspeed = 0.01f;
+			if(mouseDown)
 			cam.AddDirection((newX - lastX)  * mspeed,(newY - lastY) * mspeed);
 			lastX = event.mouseMove.x;
 			lastY = event.mouseMove.y;
+		}
+
+		if(event.type == fea::Event::MOUSEBUTTONPRESSED){
+			if(event.mouseButton.button == fea::Mouse::Button::LEFT){
+				mouseDown = true;
+			}
+		}
+		if(event.type == fea::Event::MOUSEBUTTONRELEASED){
+			if(event.mouseButton.button == fea::Mouse::Button::LEFT){
+				mouseDown = false;
+			}
 		}
         if(event.type == fea::Event::KEYPRESSED)
         {

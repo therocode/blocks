@@ -25,5 +25,6 @@ class BlocksApplication : public fea::Application
 		float moveSpeed = .00001f;
 		float lastY, lastX;
 		bool movingLeft, movingRight, movingUp, movingDown;
+		bool mouseDown = false;
 		glm::vec3 camSpeed;
 };
