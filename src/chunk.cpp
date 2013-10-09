@@ -19,3 +19,8 @@ const VoxelTypeArray& Chunk::getVoxelTypes() const
 {
     return voxelTypes;
 }
+
+uint32_t Chunk::getWidth() const
+{
+    return chunkWidth;
+}

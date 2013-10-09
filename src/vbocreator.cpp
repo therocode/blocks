@@ -1,0 +1,38 @@
+#include "vbocreator.h"
+#include <vector>
+
+ChunkVBO VBOCreator::generateChunkVBO(const Chunk& chunk) const
+{
+    ChunkVBO vbo;
+    const VoxelTypeArray& voxelTypes = chunk.getVoxelTypes();
+
+    std::vector<float> vertices;
+
+    uint32_t chunkWidth = chunk.getWidth();
+    for(uint32_t z = 0; z < chunkWidth; z++)
+    {
+        for(uint32_t y = 0; y < chunkWidth; y++)
+        {
+            for(uint32_t x = 0; x < chunkWidth; x++)
+            {
+                std::vector<float> toAdd = {x - 1.0f,
+                                            y - 1.0f,
+                                            z + 1.0f,
+                                            
+                                            x - 1.0f,
+                                            y + 1.0f,
+                                            z + 1.0f,
+                                            
+                                            x + 1.0f,
+                                            y + 1.0f,
+                                            z + 1.0f};
+
+                vertices.insert(vertices.end(), toAdd.begin(), toAdd.end());
+            }
+        }
+    }
+
+    vbo.setVertexData(vertices.size() * sizeof(float), &vertices[0]);
+
+    return vbo;
+}

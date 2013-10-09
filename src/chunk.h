@@ -20,9 +20,11 @@ using VoxelTypeArray = std::array<uint16_t, voxelAmount>;
 
 class Chunk
 {
-    void setVoxelType(uint32_t x, uint32_t y, uint32_t z, uint16_t type);
-    uint16_t getVoxelType(uint32_t x, uint32_t y, uint32_t z) const;
-    const VoxelTypeArray& getVoxelTypes() const;
+    public:
+        void setVoxelType(uint32_t x, uint32_t y, uint32_t z, uint16_t type);
+        uint16_t getVoxelType(uint32_t x, uint32_t y, uint32_t z) const;
+        const VoxelTypeArray& getVoxelTypes() const;
+        uint32_t getWidth() const;
     private:
         VoxelTypeArray voxelTypes;
 };
