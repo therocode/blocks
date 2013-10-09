@@ -54,8 +54,26 @@ void ChunkVBO::UpdateVBO(){
 
 void ChunkVBO::DrawVBO(){
 	BindBuffer();
-
 	int stride = sizeof(Vertex);
+#if 1
+	//Use vertexpointer and stuff
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glVertexPointer(3, GL_FLOAT, stride, 0);
+	glEnableClientState(GL_COLOR_ARRAY);
+	glColorPointer(3, GL_FLOAT, stride, BUFFER_OFFSET(3 * sizeof(float)));
+ 
+	glEnableClientState(GL_NORMAL_ARRAY);
+	glNormalPointer(GL_FLOAT, stride, BUFFER_OFFSET(6 * sizeof(float)));
+
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	glTexCoordPointer(2, GL_FLOAT, stride, BUFFER_OFFSET(9 * sizeof(float)));
+
+	glDrawElements(mDrawType, mvIndices.size(), GL_UNSIGNED_INT, 0);
+	glDisableClientState(GL_VERTEX_ARRAY);
+	glDisableClientState(GL_COLOR_ARRAY);
+	glDisableClientState(GL_NORMAL_ARRAY);
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+#else
 	for(int i = 0; i< 4; i++){
 		glEnableVertexAttribArray(i);
 	}
@@ -64,11 +82,10 @@ void ChunkVBO::DrawVBO(){
 	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, stride , BUFFER_OFFSET(6 * sizeof(float)));
 	glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, stride , BUFFER_OFFSET(9 * sizeof(float)));
 	glDrawElements(mDrawType, mvIndices.size(), GL_UNSIGNED_INT, 0);
-
 	for(int i = 0; i< 4; i++){
 		glDisableVertexAttribArray(i);
 	}
-
+#endif
 	UnbindBuffer();
 }
 

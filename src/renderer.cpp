@@ -18,8 +18,8 @@ void Renderer::setup()
     glewInit();
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
-    glEnable(GL_LIGHTING);
-    glEnable(GL_LIGHT0);
+   // glEnable(GL_LIGHTING);
+   // glEnable(GL_LIGHT0);
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
