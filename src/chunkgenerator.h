@@ -3,5 +3,6 @@
 
 class ChunkGenerator
 {
-    void generateChunkContent(Chunk& chunk) const;
+    public:
+        void generateChunkContent(Chunk& chunk) const;
 };
