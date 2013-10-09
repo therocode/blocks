@@ -21,6 +21,8 @@ void Renderer::setup()
 	// glEnable(GL_LIGHTING);
 	// glEnable(GL_LIGHT0);
 
+    glEnable(GL_DEPTH_TEST);
+
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	gluPerspective(80.f,1,0.1,100);
