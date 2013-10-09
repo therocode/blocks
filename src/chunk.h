@@ -5,10 +5,12 @@
 class ChunkCoordinate
 {
     public:
+        ChunkCoordinate(int32_t xCoord, int32_t yCoord, int32_t zCoord);
+        ChunkCoordinate(const ChunkCoordinate& other);
         bool operator==(const ChunkCoordinate& other) const;
-        uint32_t x;
-        uint32_t y;
-        uint32_t z;
+        int32_t x;
+        int32_t y;
+        int32_t z;
 };
 
 const uint32_t chunkWidth = 16;
@@ -21,12 +23,15 @@ using VoxelTypeArray = std::array<uint16_t, voxelAmount>;
 class Chunk
 {
     public:
+        Chunk(const ChunkCoordinate& loc);
         void setVoxelType(uint32_t x, uint32_t y, uint32_t z, uint16_t type);
         uint16_t getVoxelType(uint32_t x, uint32_t y, uint32_t z) const;
         const VoxelTypeArray& getVoxelTypes() const;
         uint32_t getWidth() const;
+        const ChunkCoordinate& getLocation() const;
     private:
         VoxelTypeArray voxelTypes;
+        ChunkCoordinate location;
 };
 
 namespace std
