@@ -13,7 +13,10 @@ Chunk LocalChunkDeliverer::fetchChunk(const ChunkCoordinate& location) const
         {
             for(int x = 0; x < chunkWidth; x++)
             {
-                float noise = raw_noise_3d((float)x / 14.0f, (float)y / 14.0f, (float)z / 14.0f);
+                float noiseXPos = ((float)(x + location.x * chunkWidth)) / 14.0f;
+                float noiseYPos = ((float)(y + location.y * chunkWidth)) / 14.0f;
+                float noiseZPos = ((float)(z + location.z * chunkWidth)) / 14.0f;
+                float noise = raw_noise_3d(noiseXPos, noiseYPos, noiseZPos);
                 if(noise < -0.5f)
                 {
                     types[x + y * chunkWidth + z * chunkWidthx2] = 1;
