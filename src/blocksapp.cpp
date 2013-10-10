@@ -10,7 +10,7 @@ BlocksApplication::BlocksApplication() : window(new fea::util::SFMLWindowBackend
 
 void BlocksApplication::setup()
 {
-    window.create(fea::VideoMode(800, 600, 32), "Blocky");
+    window.create(fea::VideoMode(800, 600, 32), "Blocky", fea::Style::Default, fea::ContextSettings(32));
 
     renderer.setup();
     bus.sendMessage<WindowResizeMessage>(WindowResizeMessage(800, 600));
