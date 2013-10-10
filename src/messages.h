@@ -1,5 +1,6 @@
 #pragma once
 #include "input/inputactions.h"
+#include "chunk.h"
 #include <featherkit/messaging.h>
 
 struct ChunkCreated_tag{};//                               coordinate              chunk
