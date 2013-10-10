@@ -1,7 +1,6 @@
 #pragma once
 #include "chunk.h"
-#include <unordered_map>
-#include <vector>
+#include "landscape.h"
 #include <featherkit/messaging.h>
 
 class Dimension
@@ -11,6 +10,5 @@ class Dimension
         void initialise(); 
     private:
         fea::MessageBus& bus;
-        std::unordered_map<ChunkCoordinate, uint32_t> chunkIndices;
-        std::vector<Chunk> chunks;
+        Landscape landscape;
 };

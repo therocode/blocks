@@ -25,7 +25,9 @@ set(source_files
     src/lodepng.cpp
     src/dimension.cpp
     src/landscape.cpp
+    src/localchunkdeliverer.cpp
     src/input/inputadaptor.cpp
+    src/simplexnoise.cpp
 )
 set(header_files
 	src/blocksapp.h
@@ -42,7 +44,9 @@ set(header_files
     src/dimension.h
     src/landscape.h
     src/chunkdeliverer.h
+    src/localchunkdeliverer.h
     src/input/inputadaptor.h
+    src/simplexnoise.h
 )
 
 add_executable(${project_name} ${header_files} ${source_files})
