@@ -10,9 +10,14 @@ void ChunkGenerator::generateChunkContent(Chunk& chunk) const
         {
             for(int x = 0; x < chunkWidth; x++)
             {
-                if(rand() % 5 == 0)
+                uint32_t random = rand() % 10;
+                if(random == 0)
                 {
                     types[x + y * chunkWidth + z * chunkWidthx2] = 1;
+                }
+                else if(random == 1)
+                {
+                    types[x + y * chunkWidth + z * chunkWidthx2] = 2;
                 }
                 else
                 {
