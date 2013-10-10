@@ -1,5 +1,6 @@
 #include "blocksapp.h"
 #include "messages.h"
+#include "input/inputactions.h"
 #include <featherkit/util/window/sfml/sfmlwindowbackend.h>
 #include <featherkit/util/input/sfml/sfmlinputbackend.h>
 
@@ -9,7 +10,7 @@ BlocksApplication::BlocksApplication()
         world(bus),
         renderer(bus)
 {
-	movingUp = movingLeft = movingRight = movingDown = false;
+	bus.addMessageSubscriber<InputActionMessage>(*this);
 }
 
 void BlocksApplication::setup()
@@ -34,7 +35,7 @@ void BlocksApplication::loop()
     {
         if(event.type == fea::Event::CLOSED)
             quit();
-
+/////
 		else if(event.type == fea::Event::MOUSEMOVED)
 		{
 			float newX = (float)event.mouseMove.x;
@@ -109,38 +110,9 @@ void BlocksApplication::loop()
             bus.sendMessage<WindowResizeMessage>(WindowResizeMessage(event.size.width, event.size.height));
         }
     }
-	glm::vec3 m;
-	if(movingRight){
-		m.x += moveSpeed;	
-	}
-	if(movingLeft){
-		m.x -= moveSpeed;	
-	}
-	if(movingUp){
-		m.z += moveSpeed;	
-	}
-	if(movingDown){
-		m.z -= moveSpeed;	
-	}
-	if(elevate){
-		m.y += moveSpeed;
-	}
-	if(delevate){
-		m.y -= moveSpeed;
-	}
-	camSpeed += m;
     */
 
-	cam.MoveForward(camSpeed.z);
-	cam.Strafe(camSpeed.x);
-	
-	cam.AddPosition(glm::vec3(0, camSpeed.y, 0));	
-
-	cam.Update();
-	camSpeed *= 0.995f;
-
-	renderer.setCameraMatrix(cam.GetMatrix());
-
+    renderer.cameraUpdate();
     world.update();
     renderer.render();
     window.swapBuffers();
@@ -149,4 +121,15 @@ void BlocksApplication::loop()
 void BlocksApplication::destroy()
 {
     window.close();
+}
+
+void BlocksApplication::handleMessage(const InputActionMessage& received)
+{
+    int action;
+	std::tie(action) = received.data;
+
+    if(action == InputAction::QUIT)
+    {
+        quit();
+    }
 }

@@ -10,7 +10,7 @@ class InputAdaptor
 
     private:
         sf::Window& sfWindow;
+        fea::MessageBus& bus;
         fea::InputHandler inputHandler;
         fea::ActionHandler<std::string> actionHandler;
-        fea::MessageBus bus;
 };

@@ -6,14 +6,17 @@
 
 Renderer::Renderer(fea::MessageBus& messageBus) : bus(messageBus)
 {
+	movingUp = movingLeft = movingRight = movingDown = false;
 	bus.addMessageSubscriber<ChunkCreatedMessage>(*this);
 	bus.addMessageSubscriber<WindowResizeMessage>(*this);
+	bus.addMessageSubscriber<InputActionMessage>(*this);
 }
 
 Renderer::~Renderer()
 {
 	bus.removeMessageSubscriber<ChunkCreatedMessage>(*this);
 	bus.removeMessageSubscriber<WindowResizeMessage>(*this);
+	bus.removeMessageSubscriber<InputActionMessage>(*this);
 }
 
 void Renderer::makeTexture(std::string path, uint32_t width, uint32_t height, GLuint& textureId)
@@ -99,4 +102,86 @@ void Renderer::render()
 		chunk.DrawVBO();
 	}
     glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+void Renderer::cameraUpdate()
+{
+	glm::vec3 m;
+	if(movingRight){
+		m.x += moveSpeed;	
+	}
+	if(movingLeft){
+		m.x -= moveSpeed;	
+	}
+	if(movingUp){
+		m.z += moveSpeed;	
+	}
+	if(movingDown){
+		m.z -= moveSpeed;	
+	}
+	if(elevate){
+		m.y += moveSpeed;
+	}
+	if(delevate){
+		m.y -= moveSpeed;
+	}
+	camSpeed += m;
+
+	cam.MoveForward(camSpeed.z);
+	cam.Strafe(camSpeed.x);
+	
+	cam.AddPosition(glm::vec3(0, camSpeed.y, 0));	
+
+	cam.Update();
+	camSpeed *= 0.995f;
+
+	setCameraMatrix(cam.GetMatrix());
+
+}
+
+void Renderer::handleMessage(const InputActionMessage& received)
+{
+    int action;
+	std::tie(action) = received.data;
+
+    switch(action)
+    {
+        case InputAction::FORWARDS:
+            movingUp = true;
+        break;
+        case InputAction::BACKWARDS:
+            movingDown = true;
+        break;
+        case InputAction::LEFT:
+            movingLeft = true;
+        break;
+        case InputAction::RIGHT:
+            movingRight = true;
+        break;
+        case InputAction::JUMP:
+            elevate = true;
+        break;
+        case InputAction::CROUCH:
+            delevate = true;
+        break;
+
+        case InputAction::STOPFORWARDS:
+            movingUp = false;
+        break;
+        case InputAction::STOPBACKWARDS:
+            movingDown = false;
+        break;
+        case InputAction::STOPLEFT:
+            movingLeft = false;
+        break;
+        case InputAction::STOPRIGHT:
+            movingRight = false;
+        break;
+        case InputAction::STOPJUMP:
+            elevate = false;
+        break;
+        case InputAction::STOPCROUCH:
+            delevate = false;
+        break;
+    }
 }
