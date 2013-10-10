@@ -21,7 +21,6 @@ set(source_files
 	src/world.cpp
 	src/main.cpp
 	src/camera.cpp
-    src/chunkgenerator.cpp
     src/lodepng.cpp
     src/dimension.cpp
     src/landscape.cpp
@@ -39,7 +38,6 @@ set(header_files
 	src/vbocreator.h
 	src/world.h
 	src/camera.h
-    src/chunkgenerator.h
     src/lodepng.h
     src/dimension.h
     src/landscape.h
