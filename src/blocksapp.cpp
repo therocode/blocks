@@ -3,7 +3,11 @@
 #include <featherkit/util/window/sfml/sfmlwindowbackend.h>
 #include <featherkit/util/input/sfml/sfmlinputbackend.h>
 
-BlocksApplication::BlocksApplication() : window(new fea::util::SFMLWindowBackend(sfWindow)), inputHandler(new fea::util::SFMLInputBackend(sfWindow)), world(bus), renderer(bus)
+BlocksApplication::BlocksApplication()
+    :   window(new fea::util::SFMLWindowBackend(sfWindow)),
+        inputAdaptor(sfWindow),
+        world(bus),
+        renderer(bus)
 {
 	movingUp = movingLeft = movingRight = movingDown = false;
 }
@@ -20,6 +24,7 @@ void BlocksApplication::setup()
 
 void BlocksApplication::loop()
 {
+    /*
     fea::Event event;
 
     inputHandler.processEvents();
@@ -123,6 +128,7 @@ void BlocksApplication::loop()
 		m.y -= moveSpeed;
 	}
 	camSpeed += m;
+    */
 
 	cam.MoveForward(camSpeed.z);
 	cam.Strafe(camSpeed.x);

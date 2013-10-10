@@ -1,12 +1,12 @@
 #pragma once
 #include "blockstd.h"
 #include <featherkit/structure.h>
-#include <featherkit/userinterface.h>
 #include <featherkit/messaging.h>
 #include <SFML/Window.hpp>
 #include "world.h"
 #include "camera.h"
 #include "renderer.h"
+#include "input/inputadaptor.h"
 
 class BlocksApplication : public fea::Application
 {
@@ -19,8 +19,8 @@ class BlocksApplication : public fea::Application
 
         sf::Window sfWindow;
         fea::Window window;
-        fea::InputHandler inputHandler;
         fea::MessageBus bus;
+        InputAdaptor inputAdaptor;
         World world;
         Renderer renderer;
 		Camera cam;
