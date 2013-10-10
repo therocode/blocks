@@ -73,5 +73,8 @@ void InputAdaptor::update()
 				break;
             }
         }
+        else if (event.type == fea::Event::RESIZED){
+            bus.sendMessage<WindowResizeMessage>(WindowResizeMessage(event.size.width, event.size.height));
+        }
     }
 }
