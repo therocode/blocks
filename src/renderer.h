@@ -9,7 +9,8 @@
 class Renderer
     :   public fea::MessageReceiver<ChunkCreatedMessage>,
         public fea::MessageReceiver<WindowResizeMessage>,
-        public fea::MessageReceiver<InputActionMessage>
+        public fea::MessageReceiver<InputActionMessage>,
+        public fea::MessageReceiver<MouseMovedMessage>
                 
 {
     public:
@@ -21,6 +22,7 @@ class Renderer
         virtual void handleMessage(const ChunkCreatedMessage& received);
         virtual void handleMessage(const WindowResizeMessage& received);
         virtual void handleMessage(const InputActionMessage& received);
+        virtual void handleMessage(const MouseMovedMessage& received);
         void render();
         void cameraUpdate();    // camera function
 		void setCameraMatrix(glm::mat4 m);

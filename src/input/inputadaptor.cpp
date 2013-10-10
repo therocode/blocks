@@ -22,6 +22,19 @@ void InputAdaptor::update()
         {
             bus.sendMessage<InputActionMessage>(InputActionMessage(InputAction::QUIT));
         }
+		else if(event.type == fea::Event::MOUSEMOVED){
+            bus.sendMessage<MouseMovedMessage>(MouseMovedMessage((float)event.mouseMove.x, (float)event.mouseMove.y));
+		}
+		else if(event.type == fea::Event::MOUSEBUTTONPRESSED){
+			if(event.mouseButton.button == fea::Mouse::Button::LEFT){
+                bus.sendMessage<InputActionMessage>(InputActionMessage(InputAction::MOUSELEFT));
+			}
+		}
+		else if(event.type == fea::Event::MOUSEBUTTONRELEASED){
+			if(event.mouseButton.button == fea::Mouse::Button::LEFT){
+                bus.sendMessage<InputActionMessage>(InputActionMessage(InputAction::STOPMOUSELEFT));
+			}
+		}
         else if(event.type == fea::Event::KEYPRESSED)
         {
             if(event.key.code == fea::Keyboard::ESCAPE)

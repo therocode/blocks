@@ -11,3 +11,6 @@ using WindowResizeMessage = fea::Message<WindowResize_tag, const uint32_t, const
 
 struct InputAction_tag{};//                              inputaction enum string thing 
 using InputActionMessage = fea::Message<InputAction_tag, const InputAction>;
+
+struct MouseMoved_tag{};//                                moveX         moveY
+using MouseMovedMessage = fea::Message<MouseMoved_tag, const float, const float>;

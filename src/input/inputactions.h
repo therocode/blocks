@@ -13,5 +13,7 @@ enum InputAction
     JUMP,
     STOPJUMP,
     CROUCH,
-    STOPCROUCH
+    STOPCROUCH,
+    MOUSELEFT,
+    STOPMOUSELEFT
 };

@@ -10,6 +10,7 @@ Renderer::Renderer(fea::MessageBus& messageBus) : bus(messageBus)
 	bus.addMessageSubscriber<ChunkCreatedMessage>(*this);
 	bus.addMessageSubscriber<WindowResizeMessage>(*this);
 	bus.addMessageSubscriber<InputActionMessage>(*this);
+	bus.addMessageSubscriber<MouseMovedMessage>(*this);
 }
 
 Renderer::~Renderer()
@@ -17,6 +18,7 @@ Renderer::~Renderer()
 	bus.removeMessageSubscriber<ChunkCreatedMessage>(*this);
 	bus.removeMessageSubscriber<WindowResizeMessage>(*this);
 	bus.removeMessageSubscriber<InputActionMessage>(*this);
+	bus.removeMessageSubscriber<MouseMovedMessage>(*this);
 }
 
 void Renderer::makeTexture(std::string path, uint32_t width, uint32_t height, GLuint& textureId)
@@ -183,5 +185,22 @@ void Renderer::handleMessage(const InputActionMessage& received)
         case InputAction::STOPCROUCH:
             delevate = false;
         break;
+        case InputAction::MOUSELEFT:
+            mouseDown = true;
+        break;
+        case InputAction::STOPMOUSELEFT:
+            mouseDown = false;
+        break;
     }
+}
+
+void Renderer::handleMessage(const MouseMovedMessage& received)
+{
+    float newX, newY;
+    float mspeed = 0.01f;
+	std::tie(newX, newY) = received.data;
+    if(mouseDown)
+        cam.AddDirection((newX - lastX)  * mspeed,(newY - lastY) * mspeed);
+    lastX = newX;
+    lastY = newY;
 }
