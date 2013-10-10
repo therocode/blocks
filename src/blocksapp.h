@@ -6,6 +6,8 @@
 #include <SFML/Window.hpp>
 #include "world.h"
 #include "camera.h"
+#include "renderer.h"
+
 class BlocksApplication : public fea::Application
 {
     public:
