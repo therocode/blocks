@@ -27,6 +27,7 @@ set(source_files
     src/localchunkdeliverer.cpp
     src/input/inputadaptor.cpp
     src/simplexnoise.cpp
+    src/focuspoint.cpp
 )
 set(header_files
 	src/blocksapp.h
@@ -45,6 +46,7 @@ set(header_files
     src/localchunkdeliverer.h
     src/input/inputadaptor.h
     src/simplexnoise.h
+    src/focuspoint.h
     src/input/inputactions.h
 )
 
