@@ -1,0 +1,66 @@
+{
+   "primary" : 
+    [
+      , {
+           "type" : "keypress"
+          ,"key" : "22"
+          ,"action" : "forwards"
+        }
+      , {
+           "type" : "keyrelease"
+          ,"key" : "22"
+          ,"action" : "stopforwards"
+        }
+      , {
+           "type" : "keypress"
+          ,"key" : "18"
+          ,"action" : "backwards"
+        }
+      , {
+           "type" : "keyrelease"
+          ,"key" : "18"
+          ,"action" : "stopbackwards"
+        }
+      , {
+           "type" : "keypress"
+          ,"key" : "0"
+          ,"action" : "left"
+        }
+      , {
+           "type" : "keyrelease"
+          ,"key" : "0"
+          ,"action" : "stopleft"
+        }
+      , {
+           "type" : "keypress"
+          ,"key" : "3"
+          ,"action" : "right"
+        }
+      , {
+           "type" : "keyrelease"
+          ,"key" : "3"
+          ,"action" : "stopright"
+        }
+      , {
+           "type" : "keypress"
+          ,"key" : "57"
+          ,"action" : "jump"
+        }
+      , {
+           "type" : "keyrelease"
+          ,"key" : "57"
+          ,"action" : "stopjump"
+        }
+      , {
+           "type" : "keypress"
+          ,"key" : "38"
+          ,"action" : "crouch"
+        }
+      , {
+           "type" : "keyrelease"
+          ,"key" : "38"
+          ,"action" : "stopcrouch"
+        }
+    ]
+}
+
