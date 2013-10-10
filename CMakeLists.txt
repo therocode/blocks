@@ -23,6 +23,8 @@ set(source_files
 	src/camera.cpp
     src/chunkgenerator.cpp
     src/lodepng.cpp
+    src/dimension.cpp
+    src/input/inputadaptor.cpp
 )
 set(header_files
 	src/blocksapp.h
@@ -36,6 +38,8 @@ set(header_files
 	src/camera.h
     src/chunkgenerator.h
     src/lodepng.h
+    src/dimension.h
+    src/input/inputadaptor.h
 )
 
 add_executable(${project_name} ${header_files} ${source_files})
