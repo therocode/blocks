@@ -47,6 +47,7 @@ set(header_files
     src/localchunkdeliverer.h
     src/input/inputadaptor.h
     src/simplexnoise.h
+    src/input/inputactions.h
 )
 
 add_executable(${project_name} ${header_files} ${source_files})

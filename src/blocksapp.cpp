@@ -5,7 +5,7 @@
 
 BlocksApplication::BlocksApplication()
     :   window(new fea::util::SFMLWindowBackend(sfWindow)),
-        inputAdaptor(sfWindow),
+        inputAdaptor(sfWindow, bus),
         world(bus),
         renderer(bus)
 {
@@ -24,6 +24,7 @@ void BlocksApplication::setup()
 
 void BlocksApplication::loop()
 {
+    inputAdaptor.update();
     /*
     fea::Event event;
 
