@@ -24,6 +24,7 @@ set(source_files
     src/chunkgenerator.cpp
     src/lodepng.cpp
     src/dimension.cpp
+    src/landscape.cpp
     src/input/inputadaptor.cpp
 )
 set(header_files
@@ -39,6 +40,8 @@ set(header_files
     src/chunkgenerator.h
     src/lodepng.h
     src/dimension.h
+    src/landscape.h
+    src/chunkdeliverer.h
     src/input/inputadaptor.h
 )
 
