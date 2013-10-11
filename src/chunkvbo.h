@@ -40,7 +40,7 @@ struct Rectangle{
 		glm::vec3 v2(tPos[0], tPos[1], tPos[2]);
 
 		v2 = v2 - v0;
-		v1 = glm::cross(v2, v1 - v0);
+		v1 = glm::cross(v2, v0 - v1);
 
 		for(int i = 0; i < 4; i++){
 			vs[i].normal[0] = v1.x;

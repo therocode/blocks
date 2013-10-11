@@ -79,7 +79,6 @@ ChunkVBO VBOCreator::generateChunkVBO(const Chunk& chunk) const
 					float worldY = y + chunkOffset.y;
 					float worldZ = z + chunkOffset.z;
 
-
 					Rectangle r;
 					if(!frontObscured)
 					{
