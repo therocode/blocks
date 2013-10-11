@@ -27,7 +27,8 @@ ChunkVBO VBOCreator::generateChunkVBO(const Chunk& chunk) const
         {
             for(int x = 0; x < chunkWidth; x++)
             {
-                uint16_t type = voxelTypes[x + y * chunkWidth + z * chunkWidthx2];
+                currentIndex = x + y * chunkWidth + z * chunkWidthx2;
+                uint16_t type = voxelTypes[currentIndex];
                 if(type != 0)
                 {
                     if(type == 1)
@@ -41,8 +42,6 @@ ChunkVBO VBOCreator::generateChunkVBO(const Chunk& chunk) const
                     bool rightObscured = false;
                     bool topObscured = false;
                     bool bottomObscured = false;
-
-                    currentIndex = x + y * chunkWidth + z * chunkWidthx2;
 
                     if(x > 0)
                     {
@@ -67,12 +66,12 @@ ChunkVBO VBOCreator::generateChunkVBO(const Chunk& chunk) const
                     if(z > 0)
                     {
                         if(voxelTypes[currentIndex - zStep] != 0)
-                            backObscured = true;
+                            frontObscured = true;
                     }
                     if(z < chunkWidth - 1)
                     {
                         if(voxelTypes[currentIndex + zStep] != 0)
-                            frontObscured = true;
+                            backObscured = true;
                     }
 
                     if(!frontObscured)
