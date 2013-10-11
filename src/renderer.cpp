@@ -52,11 +52,11 @@ void Renderer::setup()
 	glewInit();
 	glClearColor(0.3f, 0.4f, 0.5f, 0.0f);
 
-	glEnable(GL_LIGHTING);
-	glEnable(GL_LIGHT0);
-	GLfloat lightpos[] = {100.f, 100.f, 100.f};
-	glLightfv(GL_LIGHT0, GL_POSITION, lightpos);
-    glEnable(GL_TEXTURE_2D);
+	//glEnable(GL_LIGHTING);
+	//glEnable(GL_LIGHT0);
+	//GLfloat lightpos[] = {100.f, 100.f, 100.f};
+	//glLightfv(GL_LIGHT0, GL_POSITION, lightpos);
+    //glEnable(GL_TEXTURE_2D);
 
     glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
