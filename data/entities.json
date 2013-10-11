@@ -1,0 +1,14 @@
+{
+    "player":
+    {
+        "position":"900.0f,100.0f", "velocity":"0.0f,0.0f", "acceleration":"0.0f,0.0f", "maxvelocity":"5.5f", "maxacceleration":"1.0f", "hitbox":"24.0f,24.0f", "collisiontype":"solid", "collisiongroup":"player"
+    },
+    "bullet":
+    {
+        "position":"0.0f,0.0f", "velocity":"0.0f,0.0f", "acceleration":"0.0f,0.0f", "accvalue":"6.0f", "maxvelocity":"6.5f", "hitbox":"4.0f,4.0f", "collisiontype":"destroy", "collisiongroup":"bullet"
+    },
+    "spinblade":
+    {
+        "position":"0.0f,0.0f", "velocity":"0.0f,0.0f", "acceleration":"0.0f,0.0f", "maxvelocity":"2.5f", "hitbox":"60.0f,60.0f", "collisiontype":"solid", "bladetype":"spin", "collisiongroup":"bullet"
+    }
+}

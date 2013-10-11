@@ -30,6 +30,7 @@ set(source_files
     src/focuspoint.cpp
 	src/timer.cpp
     src/entitysystem.cpp
+    src/defaultsetters.cpp
     src/controllers/entitycontroller.cpp
     src/controllers/physicscontroller.cpp
     src/worldinterface.cpp
@@ -55,6 +56,7 @@ set(header_files
     src/input/inputactions.h
 	src/timer.h
     src/entitysystem.h
+    src/defaultsetters.h
     src/controllers/entitycontroller.h
     src/controllers/physicscontroller.h
     src/worldinterface.h
