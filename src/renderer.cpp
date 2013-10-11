@@ -58,7 +58,9 @@ void Renderer::setup()
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluPerspective(60.0f, 1.0f, 0.1f, 100.0f);
+	//I create a projection matrix, instead of gluproejction.
+	projectionMatrix = glm::perspective(80.f, 1.f, 0.1f, 100.f);
+	glMultMatrixf(glm::value_ptr(projectionMatrix));
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 

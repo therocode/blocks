@@ -1,4 +1,5 @@
 #pragma once
+#include "blockstd.h"
 #include "chunk.h"
 #include "chunkvbo.h"
 #include "messages.h"
@@ -27,6 +28,7 @@ class Renderer
         void cameraUpdate();    // camera function
 		void setCameraMatrix(glm::mat4 m);
     private:
+		glm::mat4 projectionMatrix;
         fea::MessageBus& bus;
         std::vector<ChunkVBO> chunks;
         GLuint blockTexture;
