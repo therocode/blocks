@@ -30,6 +30,7 @@ set(source_files
     src/focuspoint.cpp
 	src/timer.cpp
     src/controllers/entitycontroller.cpp
+    src/controllers/physicscontroller.cpp
 )
 set(header_files
 	src/blocksapp.h
@@ -52,6 +53,7 @@ set(header_files
     src/input/inputactions.h
 	src/timer.h
     src/controllers/entitycontroller.h
+    src/controllers/physicscontroller.h
 )
 
 add_executable(${project_name} ${header_files} ${source_files})
