@@ -4,8 +4,8 @@ Camera::Camera()
 	position[0]=position[1]=position[2]=0;
 	direction[0]=direction[1]=0;
 	direction[2]=-1.f;
-	phi=M_PI*0.5f;
-	theta=M_PI*0.5f;
+	phi=glm::pi<float>()*0.5f;
+	theta=glm::pi<float>()*0.5f;
 	upDirection[0]=0;
 	upDirection[1]=1.f;
 	upDirection[2]=0.0f;
@@ -154,7 +154,7 @@ void Camera::AddDirection(float x, float y)
 {
 	phi+=x;
 	theta+=y;
-	if(theta>=M_PI)theta=M_PI-0.001f;
+	if(theta>=glm::pi<float>())theta=glm::pi<float>()-0.001f;
 	if(theta<0)theta=0.001f;
 	float fSinTheta = sin(theta);
 	float fCosTheta = cos(theta);

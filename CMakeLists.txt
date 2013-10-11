@@ -93,7 +93,7 @@ if(GLEW_FOUND)
 	target_link_libraries(${project_name} ${GLEW_LIBRARIES})
 endif(GLEW_FOUND)
 
-target_link_libraries(${project_name} GLEW GL GLU)
+#target_link_libraries(${project_name} GLEW GL GLU)
 
 find_package(OpenGL REQUIRED)
 if(OPENGL_FOUND)
