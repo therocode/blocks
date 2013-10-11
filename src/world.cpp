@@ -1,6 +1,9 @@
 #include "world.h"
         
-World::World(fea::MessageBus& messageBus) : bus(messageBus), standardDimension(messageBus)
+World::World(fea::MessageBus& messageBus) 
+    :   bus(messageBus),
+        standardDimension(messageBus),
+        worldInterface(standardDimension)
 {
 }
 

@@ -32,3 +32,8 @@ void Dimension::addFocusPoint(const FocusPoint& focusPoint)
         }
     }
 }
+
+const Landscape& Dimension::getLandscape()
+{
+    return landscape;
+}

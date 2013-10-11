@@ -1,4 +1,7 @@
 #include "worldinterface.h"
 
-WorldInterface::WorldInterface()
-{}
+WorldInterface::WorldInterface(Dimension& dim)
+    :   dimension(dim)
+{
+    
+}

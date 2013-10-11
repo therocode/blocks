@@ -10,6 +10,7 @@ class Dimension
         Dimension(fea::MessageBus& messageBus);
         void initialise(); 
         void addFocusPoint(const FocusPoint& focusPoint);
+        const Landscape& getLandscape();
     private:
         fea::MessageBus& bus;
         Landscape landscape;
