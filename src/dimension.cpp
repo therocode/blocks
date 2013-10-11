@@ -31,4 +31,6 @@ void Dimension::addFocusPoint(const FocusPoint& focusPoint)
             }
         }
     }
+    ChunkCoordinate coordinate(-1, -1, -1);
+    bus.sendMessage<ChunkCreatedMessage>(ChunkCreatedMessage(&coordinate,&landscape.loadChunk(coordinate)));
 }

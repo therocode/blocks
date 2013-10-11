@@ -26,28 +26,6 @@ void BlocksApplication::setup()
 void BlocksApplication::loop()
 {
     inputAdaptor.update();
-    /*
-    fea::Event event;
-
-    inputHandler.processEvents();
-
-    while(inputHandler.pollEvent(event))
-    {
-        if(event.type == fea::Event::CLOSED)
-            quit();
-/////
-		else if(event.type == fea::Event::MOUSEBUTTONPRESSED){
-			if(event.mouseButton.button == fea::Mouse::Button::LEFT){
-				mouseDown = true;
-			}
-		}
-		else if(event.type == fea::Event::MOUSEBUTTONRELEASED){
-			if(event.mouseButton.button == fea::Mouse::Button::LEFT){
-				mouseDown = false;
-			}
-		}
-    }
-    */
 
     renderer.cameraUpdate();
     world.update();

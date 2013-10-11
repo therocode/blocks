@@ -8,7 +8,7 @@ void World::initialise()
 {
     standardDimension.initialise();
 
-    standardDimension.addFocusPoint(FocusPoint(glm::vec3(0.0f, 0.0f, 0.0f), 2.0f));
+    standardDimension.addFocusPoint(FocusPoint(glm::vec3(0.0f, 0.0f, 0.0f), 4.0f));
 }
 
 void World::update()

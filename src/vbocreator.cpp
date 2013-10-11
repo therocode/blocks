@@ -28,7 +28,6 @@ ChunkVBO VBOCreator::generateChunkVBO(const Chunk& chunk) const
                     if(type == 2)
                         textureLocation = glm::uvec2(1, 0);
 
-                    //haha nothing
                     Rectangle front;
                     front.setPosition(0, x + chunkOffset.x,        y + 1.0f + chunkOffset.y, z + chunkOffset.z);
                     front.setPosition(1, x + chunkOffset.x,        y + chunkOffset.y,        z + chunkOffset.z);
