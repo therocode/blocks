@@ -11,3 +11,5 @@
 #include <glm/gtx/transform.hpp>
 #include <glm/gtx/norm.hpp>
 #include "glm/gtc/random.hpp"
+
+#define M_PI 3.14159265358979323846264338327950288
