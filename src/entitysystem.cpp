@@ -8,8 +8,20 @@ void EntitySystem::initialise()
 
 void EntitySystem::update()
 {
-   for(auto& controller : controllers)
-   {
-       controller->update();
-   }
+    for(auto& controller : controllers)
+    {
+        controller->update();
+    }
+}
+
+fea::WeakEntityPtr EntitySystem::spawnEntity(const std::string& type)
+{
+    fea::WeakEntityPtr spawned = manager.createEntity(type);
+
+    for(auto& controller : controllers)
+    {
+        controller->inspectEntity(spawned);
+    }
+
+    return spawned;
 }
