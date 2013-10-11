@@ -2,6 +2,7 @@
 #include <vector>
 #include <featherkit/rendering/opengl.h>
 #include "blockstd.h"
+#include "shaderprogram.h"
 
 struct Vertex{
 	float position[3] = {1,1,1};
@@ -71,6 +72,7 @@ class ChunkVBO {
 		void Clear();
 		void UpdateVBO();
 		void DrawVBO();
+		void DrawVBO(ShaderProgram program);
 		void SetDrawType(GLint type = GL_TRIANGLES);
 		GLint GetDrawType();
 	private:

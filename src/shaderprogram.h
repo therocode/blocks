@@ -1,3 +1,4 @@
+#pragma once
 #include "blockstd.h"
 #include "shader.h"
 #include <fstream>
@@ -26,6 +27,8 @@ class ShaderProgram
 		void setUniform(std::string name, glm::vec3 v);
 		void setUniform(std::string name, glm::mat4 m);
 		void setUniform(std::string name, glm::mat3 m);
+
+		GLint getAttribLocation(std::string name);
 	private:
 		void compile();
 		GLint getUniformLocation(std::string name);

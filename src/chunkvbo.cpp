@@ -88,6 +88,32 @@ void ChunkVBO::DrawVBO(){
 #endif
 	UnbindBuffer();
 }
+void ChunkVBO::DrawVBO(ShaderProgram program)
+{
+	BindBuffer();
+	int stride = sizeof(Vertex);
+	
+	GLint i = program.getAttribLocation("vert");
+	glEnableVertexAttribArray(i);
+	glVertexAttribPointer(i, 3, GL_FLOAT, GL_FALSE, stride , 0);
+	
+	i = program.getAttribLocation("color");
+	glEnableVertexAttribArray(i);
+	glVertexAttribPointer(i, 3, GL_FLOAT, GL_FALSE, stride , BUFFER_OFFSET(3 * sizeof(float)));
+	
+	i = program.getAttribLocation("normal");
+	glEnableVertexAttribArray(i);
+	glVertexAttribPointer(i, 3, GL_FLOAT, GL_FALSE, stride , BUFFER_OFFSET(6 * sizeof(float)));
+
+	i = program.getAttribLocation("uv");
+	glEnableVertexAttribArray(i);
+	glVertexAttribPointer(i, 2, GL_FLOAT, GL_FALSE, stride , BUFFER_OFFSET(9 * sizeof(float)));
+
+
+	glDrawElements(mDrawType, mvIndices.size(), GL_UNSIGNED_INT, 0);
+
+	UnbindBuffer();
+}
 
 void ChunkVBO::BindBuffer(){
 	if(mChunkVBOCreated){

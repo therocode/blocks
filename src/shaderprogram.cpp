@@ -46,6 +46,10 @@ void ShaderProgram::unbind()
 	glUseProgram(0);
 }
 
+GLint ShaderProgram::getAttribLocation(std::string name)
+{
+	return glGetAttribLocation(mProgramID, name.c_str());
+}	
 void ShaderProgram::setTexture(std::string name, GLint texture)
 {
 	setUniform(name, (int)0);

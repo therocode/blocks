@@ -117,7 +117,7 @@ void Renderer::render()
 
 	for(auto& chunk : chunks)
 	{
-		chunk.DrawVBO();
+		chunk.DrawVBO(mShaderProgram);
 	}
     glBindTexture(GL_TEXTURE_2D, 0);
 }
