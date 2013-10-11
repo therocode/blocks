@@ -42,6 +42,8 @@ ChunkVBO VBOCreator::generateChunkVBO(const Chunk& chunk) const
                     bool topObscured = false;
                     bool bottomObscured = false;
 
+                    currentIndex = x + y * chunkWidth + z * chunkWidthx2;
+
                     if(x > 0)
                     {
                         if(voxelTypes[currentIndex - xStep] != 0)
@@ -163,12 +165,8 @@ ChunkVBO VBOCreator::generateChunkVBO(const Chunk& chunk) const
                         vbo.PushRectangle(bottom);
                     }
                 }
-
-                currentIndex += xStep;
             }
-            currentIndex += yStep;
         }
-        currentIndex += zStep;
 	}
 
 	//After stuff has been added, you have to update the gpu vbo data.
