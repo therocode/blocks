@@ -1,5 +1,4 @@
 #include "collisioncontroller.h"
-#include <iostream>
 
 CollisionController::CollisionController(fea::MessageBus& b) : EntityController(b)
 {
@@ -40,6 +39,4 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
     entities.at(id).lock()->setAttribute<glm::vec3>("position", approvedPosition);
     
     bus.sendMessage<EntityMovedMessage>(EntityMovedMessage(id, requestedPosition, approvedPosition));
-
-    std::cout << "entity moved to " << approvedPosition.x << " " << approvedPosition.y << " " << approvedPosition.z << "\n";
 }
