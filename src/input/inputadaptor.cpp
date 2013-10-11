@@ -2,19 +2,26 @@
 #include "inputadaptor.h"
 #include "inputactions.h"
 #include <featherkit/util/input/sfml/sfmlinputbackend.h>
+#include <featherkit/userinterfaceutil.h>
 
 InputAdaptor::InputAdaptor(sf::Window& sfw, fea::MessageBus& b)
     :   inputHandler(new fea::util::SFMLInputBackend(sfw)),
         sfWindow(sfw),
         bus(b)
 {
+      fea::util::JsonActionIOHandler<std::string> jsonHandler;
+      jsonHandler.loadBindingsFile("data/bindings.json");
+      actionHandler.setPrimaryBindings(jsonHandler.getPrimaryBindings());
+      actionHandler.setSecondaryBindings(jsonHandler.getSecondaryBindings());
 }
 
 void InputAdaptor::update()
 {
     fea::Event event;
+    std::string action;
 
     inputHandler.processEvents();
+    actionHandler.processActions(inputHandler);
 
     while(inputHandler.pollEvent(event))
     {
@@ -35,59 +42,39 @@ void InputAdaptor::update()
                 bus.sendMessage<InputActionMessage>(InputActionMessage(InputAction::STOPMOUSELEFT));
 			}
 		}
-        else if(event.type == fea::Event::KEYPRESSED)
-        {
-            if(event.key.code == fea::Keyboard::ESCAPE)
-            {
-                bus.sendMessage<InputActionMessage>(InputActionMessage(InputAction::QUIT));
-            }
-            switch(event.key.code)
-            {
-				case fea::Keyboard::W:
-                    bus.sendMessage<InputActionMessage>(InputActionMessage(InputAction::FORWARDS));
-				break;
-				case fea::Keyboard::S:
-                    bus.sendMessage<InputActionMessage>(InputActionMessage(InputAction::BACKWARDS));
-				break;
-				case fea::Keyboard::A:
-                    bus.sendMessage<InputActionMessage>(InputActionMessage(InputAction::LEFT));
-				break;
-				case fea::Keyboard::D:
-                    bus.sendMessage<InputActionMessage>(InputActionMessage(InputAction::RIGHT));
-				break;
-				case fea::Keyboard::SPACE:
-                    bus.sendMessage<InputActionMessage>(InputActionMessage(InputAction::JUMP));
-				break;
-				case fea::Keyboard::LSHIFT:
-                    bus.sendMessage<InputActionMessage>(InputActionMessage(InputAction::CROUCH));
-				break;
-
-            }
-        }else if(event.type == fea::Event::KEYRELEASED){
-            switch(event.key.code)
-            {
-				case fea::Keyboard::W:
-                    bus.sendMessage<InputActionMessage>(InputActionMessage(InputAction::STOPFORWARDS));
-				break;
-				case fea::Keyboard::S:
-                    bus.sendMessage<InputActionMessage>(InputActionMessage(InputAction::STOPBACKWARDS));
-				break;
-				case fea::Keyboard::A:
-                    bus.sendMessage<InputActionMessage>(InputActionMessage(InputAction::STOPLEFT));
-				break;
-				case fea::Keyboard::D:
-                    bus.sendMessage<InputActionMessage>(InputActionMessage(InputAction::STOPRIGHT));
-				break;
-				case fea::Keyboard::SPACE:
-                    bus.sendMessage<InputActionMessage>(InputActionMessage(InputAction::STOPJUMP));
-				break;
-				case fea::Keyboard::LSHIFT:
-                    bus.sendMessage<InputActionMessage>(InputActionMessage(InputAction::STOPCROUCH));
-				break;
-            }
-        }
         else if (event.type == fea::Event::RESIZED){
             bus.sendMessage<WindowResizeMessage>(WindowResizeMessage(event.size.width, event.size.height));
         }
+    }
+    
+    while(actionHandler.pollAction(action))
+    {
+        if(action == "quit")
+            bus.sendMessage<InputActionMessage>(InputActionMessage(InputAction::QUIT));
+        else if(action == "forwards")
+            bus.sendMessage<InputActionMessage>(InputActionMessage(InputAction::FORWARDS));
+        else if(action == "backwards")
+            bus.sendMessage<InputActionMessage>(InputActionMessage(InputAction::BACKWARDS));
+        else if(action == "left")
+            bus.sendMessage<InputActionMessage>(InputActionMessage(InputAction::LEFT));
+        else if(action == "right")
+            bus.sendMessage<InputActionMessage>(InputActionMessage(InputAction::RIGHT));
+        else if(action == "jump")
+            bus.sendMessage<InputActionMessage>(InputActionMessage(InputAction::JUMP));
+        else if(action == "crouch")
+            bus.sendMessage<InputActionMessage>(InputActionMessage(InputAction::CROUCH));
+
+        else if(action == "stopforwards")
+            bus.sendMessage<InputActionMessage>(InputActionMessage(InputAction::STOPFORWARDS));
+        else if(action == "stopbackwards")
+            bus.sendMessage<InputActionMessage>(InputActionMessage(InputAction::STOPBACKWARDS));
+        else if(action == "stopleft")
+            bus.sendMessage<InputActionMessage>(InputActionMessage(InputAction::STOPLEFT));
+        else if(action == "stopright")
+            bus.sendMessage<InputActionMessage>(InputActionMessage(InputAction::STOPRIGHT));
+        else if(action == "stopjump")
+            bus.sendMessage<InputActionMessage>(InputActionMessage(InputAction::STOPJUMP));
+        else if(action == "stopcrouch")
+            bus.sendMessage<InputActionMessage>(InputActionMessage(InputAction::STOPCROUCH));
     }
 }

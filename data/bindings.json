@@ -1,6 +1,11 @@
 {
    "primary" : 
     [
+        {
+           "type" : "keypress"
+          ,"key" : "36"
+          ,"action" : "quit"
+        }
       , {
            "type" : "keypress"
           ,"key" : "22"
