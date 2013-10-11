@@ -19,6 +19,12 @@ struct Rectangle{
 		vs[i].position[1] = y;
 		vs[i].position[2] = z;
 	}
+	void setAxisPosition(int axis, float x)
+	{
+		vs[0].position[axis] = x;
+		vs[1].position[axis] = x;
+		vs[2].position[axis] = x;
+	}
 	void setUV(int i, float u, float v){
 		vs[i].uv[0] = u;
 		vs[i].uv[1] = v;

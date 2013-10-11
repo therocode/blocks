@@ -2,7 +2,7 @@
 
 Timer::Timer()
 {
-
+	mDeltaThreshold = 0;
 }
 
 Timer::~Timer()
@@ -39,9 +39,17 @@ long Timer::getDeltaTime()
 	}
 	system_clock::time_point newTime = mClock.now();
 	long deltaTime = duration_cast<milliseconds>(newTime - mLastTime).count();
-	if(deltaTime > 0)
+	if(deltaTime > mDeltaThreshold)
 	{
 		mLastTime = newTime;
+	}else
+	{
+		deltaTime = 0;
 	}
 	return deltaTime;
+}
+
+void Timer::setDeltaThreshold(int milliseconds)
+{
+	mDeltaThreshold = milliseconds;	
 }

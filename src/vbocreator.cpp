@@ -6,170 +6,187 @@ ChunkVBO VBOCreator::generateChunkVBO(const Chunk& chunk) const
 {
 	ChunkVBO vbo;
 
-    const ChunkCoordinate location = chunk.getLocation();
+	const ChunkCoordinate location = chunk.getLocation();
 
-    glm::vec3 chunkOffset(location.x * (float)chunkWidth, location.y * (float)chunkWidth, location.z * (float)chunkWidth);
+	glm::vec3 chunkOffset(location.x * (float)chunkWidth, location.y * (float)chunkWidth, location.z * (float)chunkWidth);
 
 	const VoxelTypeArray& voxelTypes = chunk.getVoxelTypes();
 
-    glm::uvec2 textureLocation;
+	glm::uvec2 textureLocation;
 
-    std::cout << "generating a vbo for a chunk with location: " << chunkOffset.x << " " << chunkOffset.y << " " << chunkOffset.z << "\n";
+	std::cout << "generating a vbo for a chunk with location: " << chunkOffset.x << " " << chunkOffset.y << " " << chunkOffset.z << "\n";
 
-    uint32_t xStep = 1;
-    uint32_t yStep = chunkWidth;
-    uint32_t zStep = chunkWidthx2;
-    uint32_t currentIndex = 0;
+	uint32_t xStep = 1;
+	uint32_t yStep = chunkWidth;
+	uint32_t zStep = chunkWidthx2;
+	uint32_t currentIndex = 0;
 
-    for(int z = 0; z < chunkWidth; z++)
-    {
-        for(int y = 0; y < chunkWidth; y++)
-        {
-            for(int x = 0; x < chunkWidth; x++)
-            {
-                currentIndex = x + y * chunkWidth + z * chunkWidthx2;
-                uint16_t type = voxelTypes[currentIndex];
-                if(type != 0)
-                {
-                    if(type == 1)
-                        textureLocation = glm::uvec2(0, 0);
-                    if(type == 2)
-                        textureLocation = glm::uvec2(1, 0);
+	for(int z = 0; z < chunkWidth; z++)
+	{
+		for(int y = 0; y < chunkWidth; y++)
+		{
+			for(int x = 0; x < chunkWidth; x++)
+			{
+				currentIndex = x + y * chunkWidth + z * chunkWidthx2;
+				uint16_t type = voxelTypes[currentIndex];
+				if(type != 0)
+				{
 
-                    bool frontObscured = false;
-                    bool backObscured = false;
-                    bool leftObscured = false;
-                    bool rightObscured = false;
-                    bool topObscured = false;
-                    bool bottomObscured = false;
+					if(type == 1)
+						textureLocation = glm::uvec2(0, 0);
+					if(type == 2)
+						textureLocation = glm::uvec2(1, 0);
 
-                    if(x > 0)
-                    {
-                        if(voxelTypes[currentIndex - xStep] != 0)
-                            leftObscured = true;
-                    }
-                    if(x < chunkWidth - 1)
-                    {
-                        if(voxelTypes[currentIndex + xStep] != 0)
-                            rightObscured = true;
-                    }
-                    if(y > 0)
-                    {
-                        if(voxelTypes[currentIndex - yStep] != 0)
-                            bottomObscured = true;
-                    }
-                    if(y < chunkWidth - 1)
-                    {
-                        if(voxelTypes[currentIndex + yStep] != 0)
-                            topObscured = true;
-                    }
-                    if(z > 0)
-                    {
-                        if(voxelTypes[currentIndex - zStep] != 0)
-                            frontObscured = true;
-                    }
-                    if(z < chunkWidth - 1)
-                    {
-                        if(voxelTypes[currentIndex + zStep] != 0)
-                            backObscured = true;
-                    }
+					bool frontObscured = false;
+					bool backObscured = false;
+					bool leftObscured = false;
+					bool rightObscured = false;
+					bool topObscured = false;
+					bool bottomObscured = false;
 
-                    if(!frontObscured)
-                    {
-                        Rectangle front;
-                        front.setPosition(0, x + chunkOffset.x,        y + 1.0f + chunkOffset.y, z + chunkOffset.z);
-                        front.setPosition(1, x + chunkOffset.x,        y + chunkOffset.y,        z + chunkOffset.z);
-                        front.setPosition(2, x + 1.0f + chunkOffset.x, y + chunkOffset.y,        z + chunkOffset.z);
-                        front.setPosition(3, x + 1.0f + chunkOffset.x, y + 1.0f + chunkOffset.y, z + chunkOffset.z);
-                        front.setUV(0, 0.125f + (float)textureLocation.x * 0.125, 0.0f + (float)textureLocation.y * 0.125f);
-                        front.setUV(1, 0.125f + (float)textureLocation.x * 0.125, 0.125f + (float)textureLocation.y * 0.125f);
-                        front.setUV(2, 0.0f + (float)textureLocation.x * 0.125,   0.125f + (float)textureLocation.y * 0.125f);
-                        front.setUV(3, 0.0f + (float)textureLocation.x * 0.125,   0.0f + (float)textureLocation.y * 0.125f);
-                        front.calculateNormal();
-                        vbo.PushRectangle(front);
-                    }
+					if(x > 0)
+					{
+						if(voxelTypes[currentIndex - xStep] != 0)
+							leftObscured = true;
+					}
+					if(x < chunkWidth - 1)
+					{
+						if(voxelTypes[currentIndex + xStep] != 0)
+							rightObscured = true;
+					}
+					if(y > 0)
+					{
+						if(voxelTypes[currentIndex - yStep] != 0)
+							bottomObscured = true;
+					}
+					if(y < chunkWidth - 1)
+					{
+						if(voxelTypes[currentIndex + yStep] != 0)
+							topObscured = true;
+					}
+					if(z > 0)
+					{
+						if(voxelTypes[currentIndex - zStep] != 0)
+							backObscured = true;
+					}
+					if(z < chunkWidth - 1)
+					{
+						if(voxelTypes[currentIndex + zStep] != 0)
+							frontObscured = true;
+					}
 
-                    if(!backObscured)
-                    {
-                        Rectangle back;
-                        back.setPosition(0, x + 1.0f + chunkOffset.x, y + 1.0f + chunkOffset.y, z + 1.0f + chunkOffset.z);
-                        back.setPosition(1, x + 1.0f + chunkOffset.x, y + chunkOffset.y,        z + 1.0f + chunkOffset.z);
-                        back.setPosition(2, x + chunkOffset.x,        y + chunkOffset.y,        z + 1.0f + chunkOffset.z);
-                        back.setPosition(3, x + chunkOffset.x,        y + 1.0f + chunkOffset.y, z + 1.0f + chunkOffset.z);
-                        back.setUV(0, 0.125f + (float)textureLocation.x * 0.125, 0.0f + (float)textureLocation.y * 0.125f);
-                        back.setUV(1, 0.125f + (float)textureLocation.x * 0.125, 0.125f + (float)textureLocation.y * 0.125f);
-                        back.setUV(2, 0.0f + (float)textureLocation.x * 0.125,   0.125f + (float)textureLocation.y * 0.125f);
-                        back.setUV(3, 0.0f + (float)textureLocation.x * 0.125,   0.0f + (float)textureLocation.y * 0.125f);
-                        back.calculateNormal();
-                        vbo.PushRectangle(back);
-                    }
+					float worldX = x + chunkOffset.x;
+					float worldY = y + chunkOffset.y;
+					float worldZ = z + chunkOffset.z;
 
-                    if(!leftObscured)
-                    {
-                        Rectangle left;
-                        left.setPosition(0, x + chunkOffset.x, y + 1.0f + chunkOffset.y, z + 1.0f + chunkOffset.z);
-                        left.setPosition(1, x + chunkOffset.x, y + chunkOffset.y,        z + 1.0f + chunkOffset.z);
-                        left.setPosition(2, x + chunkOffset.x, y + chunkOffset.y,        z + chunkOffset.z);
-                        left.setPosition(3, x + chunkOffset.x, y + 1.0f + chunkOffset.y, z + chunkOffset.z);
-                        left.setUV(0, 0.125f + (float)textureLocation.x * 0.125, 0.0f + (float)textureLocation.y * 0.125f);
-                        left.setUV(1, 0.125f + (float)textureLocation.x * 0.125, 0.125f + (float)textureLocation.y * 0.125f);
-                        left.setUV(2, 0.0f + (float)textureLocation.x * 0.125,   0.125f + (float)textureLocation.y * 0.125f);
-                        left.setUV(3, 0.0f + (float)textureLocation.x * 0.125,   0.0f + (float)textureLocation.y * 0.125f);
-                        left.calculateNormal();
-                        vbo.PushRectangle(left);
-                    }
 
-                    if(!rightObscured)
-                    {
-                        Rectangle right;
-                        right.setPosition(0, x + 1.0f + chunkOffset.x, y + 1.0f + chunkOffset.y, z + chunkOffset.z);
-                        right.setPosition(1, x + 1.0f + chunkOffset.x, y + chunkOffset.y,        z + chunkOffset.z);
-                        right.setPosition(2, x + 1.0f + chunkOffset.x, y + chunkOffset.y,        z + 1.0f + chunkOffset.z);
-                        right.setPosition(3, x + 1.0f + chunkOffset.x, y + 1.0f + chunkOffset.y, z + 1.0f + chunkOffset.z);
-                        right.setUV(0, 0.125f + (float)textureLocation.x * 0.125, 0.0f + (float)textureLocation.y * 0.125f);
-                        right.setUV(1, 0.125f + (float)textureLocation.x * 0.125, 0.125f + (float)textureLocation.y * 0.125f);
-                        right.setUV(2, 0.0f + (float)textureLocation.x * 0.125,   0.125f + (float)textureLocation.y * 0.125f);
-                        right.setUV(3, 0.0f + (float)textureLocation.x * 0.125,   0.0f + (float)textureLocation.y * 0.125f);
-                        right.calculateNormal();
-                        vbo.PushRectangle(right);
-                    }
+					Rectangle r;
+					if(!frontObscured)
+					{
+						setRectData(r, worldX, worldY, worldZ, FRONT, (float)textureLocation.x, (float)textureLocation.y);
+						r.calculateNormal();
+						vbo.PushRectangle(r);
+					}
 
-                    if(!topObscured)
-                    {
-                        Rectangle top;
-                        top.setPosition(0, x + 1.0f + chunkOffset.x, y + 1.0f + chunkOffset.y, z + 1.0f + chunkOffset.z);
-                        top.setPosition(1, x + chunkOffset.x,        y + 1.0f + chunkOffset.y, z + 1.0f + chunkOffset.z);
-                        top.setPosition(2, x + chunkOffset.x,        y + 1.0f + chunkOffset.y, z + chunkOffset.z);
-                        top.setPosition(3, x + 1.0f + chunkOffset.x, y + 1.0f + chunkOffset.y, z + chunkOffset.z);
-                        top.setUV(0, 0.125f + (float)textureLocation.x * 0.125, 0.0f + (float)textureLocation.y * 0.125f);
-                        top.setUV(1, 0.125f + (float)textureLocation.x * 0.125, 0.125f + (float)textureLocation.y * 0.125f);
-                        top.setUV(2, 0.0f + (float)textureLocation.x * 0.125,   0.125f + (float)textureLocation.y * 0.125f);
-                        top.setUV(3, 0.0f + (float)textureLocation.x * 0.125,   0.0f + (float)textureLocation.y * 0.125f);
-                        top.calculateNormal();
-                        vbo.PushRectangle(top);
-                    }
+					if(!backObscured)
+					{
+						setRectData(r, worldX, worldY, worldZ, BACK, (float)textureLocation.x, (float)textureLocation.y);
+						r.calculateNormal();
+						vbo.PushRectangle(r);
+					}
 
-                    if(!bottomObscured)
-                    {
-                        Rectangle bottom;
-                        bottom.setPosition(0, x + 1.0f + chunkOffset.x, y + chunkOffset.y, z + chunkOffset.z);
-                        bottom.setPosition(1, x + chunkOffset.x,        y + chunkOffset.y, z + chunkOffset.z);
-                        bottom.setPosition(2, x + chunkOffset.x,        y + chunkOffset.y, z + 1.0f + chunkOffset.z);
-                        bottom.setPosition(3, x + 1.0f + chunkOffset.x, y + chunkOffset.y, z + 1.0f + chunkOffset.z);
-                        bottom.setUV(0, 0.125f + (float)textureLocation.x * 0.125, 0.0f + (float)textureLocation.y * 0.125f);
-                        bottom.setUV(1, 0.125f + (float)textureLocation.x * 0.125, 0.125f + (float)textureLocation.y * 0.125f);
-                        bottom.setUV(2, 0.0f + (float)textureLocation.x * 0.125,   0.125f + (float)textureLocation.y * 0.125f);
-                        bottom.setUV(3, 0.0f + (float)textureLocation.x * 0.125,   0.0f + (float)textureLocation.y * 0.125f);
-                        bottom.calculateNormal();
-                        vbo.PushRectangle(bottom);
-                    }
-                }
-            }
-        }
+					if(!leftObscured)
+					{
+						setRectData(r, worldX, worldY, worldZ, LEFT, (float)textureLocation.x, (float)textureLocation.y);
+						r.calculateNormal();
+						vbo.PushRectangle(r);
+					}
+
+					if(!rightObscured)
+					{
+						setRectData(r, worldX, worldY, worldZ, RIGHT, (float)textureLocation.x, (float)textureLocation.y);
+						r.calculateNormal();
+						vbo.PushRectangle(r);
+					}
+
+					if(!topObscured)
+					{
+						setRectData(r, worldX, worldY, worldZ, TOP, (float)textureLocation.x, (float)textureLocation.y);
+						r.calculateNormal();
+						vbo.PushRectangle(r);
+					}
+
+					if(!bottomObscured)
+					{
+						setRectData(r, worldX, worldY, worldZ, BOTTOM, (float)textureLocation.x, (float)textureLocation.y);
+						r.calculateNormal();
+						vbo.PushRectangle(r);
+					}
+				}
+			}
+		}
 	}
 
 	//After stuff has been added, you have to update the gpu vbo data.
 	vbo.UpdateVBO();
 
 	return vbo;
+}
+
+inline void VBOCreator::setRectData(Rectangle& r, float x, float y, float z, int face, float u, float v) const
+{
+	float boxSize = 1.f;
+	float hs      = boxSize * 0.5f;
+	switch(face){
+		case FRONT:
+			z += hs;
+			r.setPosition(0, x - hs,  y + hs, z);
+			r.setPosition(1, x - hs,  y - hs, z);
+			r.setPosition(2, x + hs,  y - hs, z);
+			r.setPosition(3, x + hs,  y + hs, z);
+			break;
+		case RIGHT:
+			x += hs;
+			r.setPosition(0, x, y + hs, z + hs);
+			r.setPosition(1, x, y - hs, z + hs);
+			r.setPosition(2, x, y - hs, z - hs);
+			r.setPosition(3, x, y + hs, z - hs);
+			break;
+		case BACK:
+			z -= hs;
+			r.setPosition(0, x + hs,  y + hs, z);
+			r.setPosition(1, x + hs,  y - hs, z);
+			r.setPosition(2, x - hs,  y - hs, z);
+			r.setPosition(3, x - hs,  y + hs, z);
+			break;
+		case LEFT:
+			x -= hs;
+			r.setPosition(0, x, y + hs, z - hs);
+			r.setPosition(1, x, y - hs, z - hs);
+			r.setPosition(2, x, y - hs, z + hs);
+			r.setPosition(3, x, y + hs, z + hs);
+			break;
+		case TOP:
+			y += hs;
+			r.setPosition(0, x - hs, y, z - hs);
+			r.setPosition(1, x - hs, y, z + hs);
+			r.setPosition(2, x + hs, y, z + hs);
+			r.setPosition(3, x + hs, y, z - hs);
+			break;
+		case BOTTOM:
+			y -= hs;
+			r.setPosition(0, x + hs, y, z - hs);
+			r.setPosition(1, x + hs, y, z + hs);
+			r.setPosition(2, x - hs, y, z + hs);
+			r.setPosition(3, x - hs, y, z - hs);
+			break;
+	}
+
+	float uo, vo;
+	uo = vo	= 0.125f; 
+	r.setUV(0,      (float)u * uo,      (float)v * vo);
+	r.setUV(1,      (float)u * uo, vo + (float)v * vo);
+	r.setUV(2, uo + (float)u * uo, vo + (float)v * vo);
+	r.setUV(3, uo + (float)u * uo,      (float)v * vo);
+
 }

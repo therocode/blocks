@@ -17,6 +17,7 @@ void BlocksApplication::setup()
 {
     window.create(fea::VideoMode(800, 600, 32), "Blocky", fea::Style::Default, fea::ContextSettings(32));
 
+	//window.setFramerateLimit(30);
     renderer.setup();
     bus.sendMessage<WindowResizeMessage>(WindowResizeMessage(800, 600));
 

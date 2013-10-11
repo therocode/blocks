@@ -18,7 +18,6 @@ class Renderer
     public:
         Renderer(fea::MessageBus& messageBus);
         ~Renderer();
-		Camera cam;
         void makeTexture(std::string path, uint32_t width, uint32_t height, GLuint& textureId);
         void setup();
         virtual void handleMessage(const ChunkCreatedMessage& received);
@@ -29,7 +28,7 @@ class Renderer
         void cameraUpdate();    // camera function
 		void setCameraMatrix(glm::mat4 m);
     private:
-
+		Camera cam;
 		Timer mTimer;
 		glm::mat4 projectionMatrix;
         fea::MessageBus& bus;

@@ -7,6 +7,7 @@
 Renderer::Renderer(fea::MessageBus& messageBus) : bus(messageBus)
 {
 	mTimer.start();
+	mTimer.setDeltaThreshold(2);
 	movingUp = movingLeft = movingRight = movingDown = false;
 	bus.addMessageSubscriber<ChunkCreatedMessage>(*this);
 	bus.addMessageSubscriber<WindowResizeMessage>(*this);
@@ -56,6 +57,7 @@ void Renderer::setup()
     glEnable(GL_TEXTURE_2D);
 
     glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -66,6 +68,8 @@ void Renderer::setup()
 	glLoadIdentity();
 
     makeTexture("data/textures/blocks.png", 256, 256, blockTexture);
+	//Setting it to this because haha.
+	cam.SetPosition(glm::vec3(0, 0, -50.f));
 }
 void Renderer::setCameraMatrix(glm::mat4 m){
 	glMatrixMode(GL_MODELVIEW);
@@ -140,6 +144,7 @@ void Renderer::cameraUpdate()
 		cam.Strafe(camSpeed.x);	
 		cam.AddPosition(glm::vec3(0, camSpeed.y, 0));	
 	}
+
 	cam.Update();
 
 	setCameraMatrix(cam.GetMatrix());
