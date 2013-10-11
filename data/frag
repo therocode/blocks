@@ -1,18 +1,19 @@
-#version 330
+//#version 330
+#version 120
 
 uniform sampler2D tex0;
-out vec4 fragColor;
+//out vec4 fragColor;
 
 
-in vec3 vColor;
-in vec3 vNorm;
-in vec3 vLight;
-in vec3 eyeDir;
+varying vec3 vColor;
+varying vec3 vNorm;
+varying vec3 vLight;
+varying vec3 eyeDir;
 
-in vec3 modelSpace;
+varying vec3 modelSpace;
 
-in vec2 texCoord;
-in vec3 posWorldSpace;
+varying vec2 texCoord;
+varying vec3 posWorldSpace;
 
 
 float random2f(vec2 co){
@@ -22,7 +23,7 @@ float random2f(vec2 co){
 vec2 voronoi( in vec2 x )
 {
 	vec2 p = floor( x );
-	vec2  f = fract( x );
+	vec2  f = vec2(fract( x ));
 
 	vec2 res = vec2( 8.0 );
 	vec2 res2 = vec2( 8.0 );
@@ -56,6 +57,7 @@ vec2 voronoi( in vec2 x )
 	return sqrt( res2) - sqrt( res );
 }
 void main(){
+vec4 fragColor;
 	vec3 spec = vec3(1.0, 1.0, 1.0);
 	vec3 R = reflect(-vLight, -vNorm);
 	vec3 E = normalize(eyeDir);
@@ -82,4 +84,5 @@ void main(){
 	//gamme correction kinda 
 	if (fragColor.x<0.50)
 		fragColor.rgb = pow(fragColor.rgb, vec3(1.0 / 0.8));
+gl_FragColor = fragColor;
 }
