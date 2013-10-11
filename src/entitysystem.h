@@ -6,11 +6,12 @@
 class EntitySystem
 {
     public:
-        EntitySystem();
+        EntitySystem(fea::MessageBus& b);
         void initialise();
         void update();
         fea::WeakEntityPtr spawnEntity(const std::string& type);
     private:
+        fea::MessageBus& bus;
         fea::EntityManager manager;
         std::vector<std::unique_ptr<EntityController> > controllers;
 };

@@ -33,6 +33,7 @@ set(source_files
     src/defaultsetters.cpp
     src/controllers/entitycontroller.cpp
     src/controllers/physicscontroller.cpp
+    src/controllers/collisioncontroller.cpp
     src/worldinterface.cpp
 )
 set(header_files
@@ -59,6 +60,7 @@ set(header_files
     src/defaultsetters.h
     src/controllers/entitycontroller.h
     src/controllers/physicscontroller.h
+    src/controllers/collisioncontroller.h
     src/worldinterface.h
 )
 

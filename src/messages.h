@@ -1,7 +1,9 @@
 #pragma once
 #include "input/inputactions.h"
 #include "chunk.h"
+#include "blockstd.h"
 #include <featherkit/messaging.h>
+#include <featherkit/entitysystem.h>
 
 struct ChunkCreated_tag{};//                               coordinate              chunk
 using ChunkCreatedMessage = fea::Message<ChunkCreated_tag, const ChunkCoordinate*, const Chunk*>;
@@ -14,3 +16,9 @@ using InputActionMessage = fea::Message<InputAction_tag, const InputAction>;
 
 struct MouseMoved_tag{};//                                moveX         moveY
 using MouseMovedMessage = fea::Message<MouseMoved_tag, const float, const float>;
+
+struct EntityMoveRequested_tag{};//                                      id             new position
+using EntityMoveRequestedMessage = fea::Message<EntityMoveRequested_tag, fea::EntityId, const glm::vec3&>;
+
+struct EntityMoved_tag{};//                              id             old position      new position
+using EntityMovedMessage = fea::Message<EntityMoved_tag, fea::EntityId, const glm::vec3&, const glm::vec3&>;
