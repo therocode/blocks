@@ -1,5 +1,10 @@
 #include "entitysystem.h"
 #include "controllers/physicscontroller.h"
+#include <featherkit/entitysystemutil.h>
+
+EntitySystem::EntitySystem() : manager(new fea::util::BasicEntityBackend())
+{
+}
 
 void EntitySystem::initialise()
 {

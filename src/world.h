@@ -1,6 +1,7 @@
 #pragma once
 #include "dimension.h"
 #include "worldinterface.h"
+#include "entitysystem.h"
 #include <featherkit/messaging.h>
 
 class World
@@ -13,4 +14,5 @@ class World
         fea::MessageBus& bus;
         Dimension standardDimension;
         WorldInterface worldInterface;
+        EntitySystem entitySystem;
 };

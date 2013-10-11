@@ -6,6 +6,7 @@
 class EntitySystem
 {
     public:
+        EntitySystem();
         void initialise();
         void update();
         fea::WeakEntityPtr spawnEntity(const std::string& type);
