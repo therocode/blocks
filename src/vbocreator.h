@@ -14,6 +14,7 @@ class VBOCreator
 	};
     public:
     VBO generateChunkVBO(const Chunk& chunk) const;
+    VBO generateCubeVBO(const glm::vec3& dimensions) const;
 private:
 	///Helper function for vbo creation.
 	inline void setRectData(Rectangle& r, float x, float y, float z, int face, float u, float v) const;
