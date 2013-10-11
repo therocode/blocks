@@ -61,13 +61,13 @@ void Renderer::setup()
     glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
+	//glMatrixMode(GL_PROJECTION);
+	//glLoadIdentity();
 	//I create a projection matrix, instead of gluproejction.
 	projectionMatrix = glm::perspective(80.f, 1.f, 0.1f, 100.f);
-	glMultMatrixf(glm::value_ptr(projectionMatrix));
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
+	//glMultMatrixf(glm::value_ptr(projectionMatrix));
+	//glMatrixMode(GL_MODELVIEW);
+	//glLoadIdentity();
 
     makeTexture("data/textures/blocks.png", 256, 256, blockTexture);
 	//Setting it to this because haha.
@@ -98,10 +98,10 @@ void Renderer::handleMessage(const WindowResizeMessage& received)
 	//I create a projection matrix, instead of gluproejction.
 	projectionMatrix = glm::perspective(80.f, ((float)width)/((float)height), 0.1f, 100.f);
 
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	gluPerspective(70.0f, ((float)width)/((float)height), 0.1f, 100.0f);
-	glMatrixMode(GL_MODELVIEW);
+	//glMatrixMode(GL_PROJECTION);
+	//glLoadIdentity();
+	//gluPerspective(70.0f, ((float)width)/((float)height), 0.1f, 100.0f);
+	//glMatrixMode(GL_MODELVIEW);
     glViewport(0, 0, width, height);
 }
 
