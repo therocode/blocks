@@ -35,7 +35,7 @@ class Renderer
 		Timer mTimer;
 		glm::mat4 projectionMatrix;
         fea::MessageBus& bus;
-        std::vector<VBO> chunks;
+        std::vector<VBO> vbos;
         GLuint blockTexture;
         
         // camera stuff

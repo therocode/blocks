@@ -87,7 +87,7 @@ void Renderer::handleMessage(const ChunkCreatedMessage& received)
 
 	std::tie(coordinate, chunk) = received.data;
 	VBOCreator vboCreator;
-	chunks.push_back(vboCreator.generateChunkVBO(*chunk));
+	vbos.push_back(vboCreator.generateChunkVBO(*chunk));
 }
 
 void Renderer::handleMessage(const WindowResizeMessage& received)
@@ -117,9 +117,9 @@ void Renderer::render()
 
     glBindTexture(GL_TEXTURE_2D, blockTexture);
 
-	for(auto& chunk : chunks)
+	for(auto& vbo : vbos)
 	{
-		chunk.DrawVBO(mShaderProgram);
+		vbo.DrawVBO(mShaderProgram);
 	}
     glBindTexture(GL_TEXTURE_2D, 0);
 }
