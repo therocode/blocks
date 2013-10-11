@@ -34,6 +34,8 @@ set(source_files
     src/controllers/entitycontroller.cpp
     src/controllers/physicscontroller.cpp
     src/worldinterface.cpp
+	src/shader.cpp
+	src/shaderprogram.cpp
 )
 set(header_files
 	src/blocksapp.h
@@ -60,6 +62,8 @@ set(header_files
     src/controllers/entitycontroller.h
     src/controllers/physicscontroller.h
     src/worldinterface.h
+	src/shader.h
+	src/shaderprogram.h
 )
 
 add_executable(${project_name} ${header_files} ${source_files})
