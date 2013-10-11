@@ -9,7 +9,7 @@ void PhysicsController::inspectEntity(fea::WeakEntityPtr entity)
        locked->hasAttribute("acceleration") && 
        locked->hasAttribute("boundingbox"))
     {
-        entities.add(entity);
+        entities.emplace(locked->getId(), entity);
     }
 }
 
