@@ -37,7 +37,7 @@ class Renderer
         GLuint blockTexture;
         
         // camera stuff
-		float moveSpeed = 0.01f;
+		float moveSpeed = 0.0001f;
 		float lastY, lastX;
 		bool movingLeft, movingRight, movingUp, movingDown, elevate, delevate;
 		bool mouseDown = false;
