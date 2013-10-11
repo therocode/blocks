@@ -31,6 +31,7 @@ set(source_files
 	src/timer.cpp
     src/controllers/entitycontroller.cpp
     src/controllers/physicscontroller.cpp
+    src/worldinterface.cpp
 )
 set(header_files
 	src/blocksapp.h
@@ -54,6 +55,7 @@ set(header_files
 	src/timer.h
     src/controllers/entitycontroller.h
     src/controllers/physicscontroller.h
+    src/worldinterface.h
 )
 
 add_executable(${project_name} ${header_files} ${source_files})

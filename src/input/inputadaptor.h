@@ -1,3 +1,4 @@
+#pragma once
 #include <featherkit/userinterface.h>
 #include <featherkit/messaging.h>
 #include <SFML/Window.hpp>
