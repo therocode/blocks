@@ -95,6 +95,8 @@ void Renderer::handleMessage(const WindowResizeMessage& received)
     uint32_t width;
     uint32_t height;
 	std::tie(width, height) = received.data;
+	//I create a projection matrix, instead of gluproejction.
+	projectionMatrix = glm::perspective(80.f, ((float)width)/((float)height), 0.1f, 100.f);
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
