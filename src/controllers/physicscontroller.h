@@ -1,5 +1,5 @@
 #pragma once
-#include "entitycontroller"
+#include "entitycontroller.h"
 
 class PhysicsController : public EntityController
 {
