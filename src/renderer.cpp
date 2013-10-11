@@ -75,9 +75,9 @@ void Renderer::setup()
 	mShaderProgram.setShaderPaths("data/vert", "data/frag");
 }
 void Renderer::setCameraMatrix(glm::mat4 m){
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	glMultMatrixf(glm::value_ptr(m));
+	//glMatrixMode(GL_MODELVIEW);
+	//glLoadIdentity();
+	//glMultMatrixf(glm::value_ptr(m));
 }
 
 void Renderer::handleMessage(const ChunkCreatedMessage& received)
