@@ -6,6 +6,7 @@
 #include "camera.h"
 #include <vector>
 #include <featherkit/messaging.h>
+#include "timer.h"
 
 class Renderer
     :   public fea::MessageReceiver<ChunkCreatedMessage>,
@@ -28,13 +29,15 @@ class Renderer
         void cameraUpdate();    // camera function
 		void setCameraMatrix(glm::mat4 m);
     private:
+
+		Timer mTimer;
 		glm::mat4 projectionMatrix;
         fea::MessageBus& bus;
         std::vector<ChunkVBO> chunks;
         GLuint blockTexture;
         
         // camera stuff
-		float moveSpeed = 0.001f;
+		float moveSpeed = 0.0001f;
 		float lastY, lastX;
 		bool movingLeft, movingRight, movingUp, movingDown, elevate, delevate;
 		bool mouseDown = false;
