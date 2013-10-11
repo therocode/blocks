@@ -29,6 +29,7 @@ set(source_files
     src/simplexnoise.cpp
     src/focuspoint.cpp
 	src/timer.cpp
+    src/controllers/entitycontroller.cpp
 )
 set(header_files
 	src/blocksapp.h
@@ -50,6 +51,7 @@ set(header_files
     src/focuspoint.h
     src/input/inputactions.h
 	src/timer.h
+    src/controllers/entitycontroller.h
 )
 
 add_executable(${project_name} ${header_files} ${source_files})
