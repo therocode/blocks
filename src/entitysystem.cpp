@@ -1,16 +1,18 @@
 #include "entitysystem.h"
 #include "controllers/physicscontroller.h"
+#include "controllers/collisioncontroller.h"
 #include "blockstd.h"
 #include "defaultsetters.h"
 #include <featherkit/entitysystemutil.h>
 
-EntitySystem::EntitySystem() : manager(new fea::util::BasicEntityBackend())
+EntitySystem::EntitySystem(fea::MessageBus& b) : bus(b), manager(new fea::util::BasicEntityBackend())
 {
 }
 
 void EntitySystem::initialise()
 {
-    controllers.push_back(std::unique_ptr<EntityController>(new PhysicsController()));
+    controllers.push_back(std::unique_ptr<EntityController>(new PhysicsController(bus)));
+    controllers.push_back(std::unique_ptr<EntityController>(new CollisionController(bus)));
 
     fea::util::JsonEntityLoader loader;
     loader.registerType("#vec3#",sizeof(glm::vec3));
