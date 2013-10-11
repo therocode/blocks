@@ -113,6 +113,7 @@ void Renderer::cameraUpdate()
 {
 	glm::vec3 m;
 	int dT = mTimer.getDeltaTime();
+	camSpeed *= glm::pow(0.999f, (float)dT);
 
 	float moveSpeedT = (float) dT / 1000.f * moveSpeed;
 	if(movingRight){
@@ -141,7 +142,6 @@ void Renderer::cameraUpdate()
 	cam.AddPosition(glm::vec3(0, camSpeed.y, 0));	
 
 	cam.Update();
-	camSpeed *= glm::pow(0.995f, (float)dT);
 
 	setCameraMatrix(cam.GetMatrix());
 
