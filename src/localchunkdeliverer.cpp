@@ -7,15 +7,15 @@ Chunk LocalChunkDeliverer::fetchChunk(const ChunkCoordinate& location) const
 
     VoxelTypeArray& types = newChunk.getVoxelTypes();
 
-    for(uint32_t z = 0; z < chunkWidth; z++)
+    for(int32_t z = 0; z < chunkWidth; z++)
     {
-        for(uint32_t y = 0; y < chunkWidth; y++)
+        for(int32_t y = 0; y < chunkWidth; y++)
         {
-            for(uint32_t x = 0; x < chunkWidth; x++)
+            for(int32_t x = 0; x < chunkWidth; x++)
             {
-                float noiseXPos = ((float)(x + location.x * chunkWidth)) / 14.0f;
-                float noiseYPos = ((float)(y + location.y * chunkWidth)) / 14.0f;
-                float noiseZPos = ((float)(z + location.z * chunkWidth)) / 14.0f;
+                float noiseXPos = ((float)(x + location.x * (int32_t)chunkWidth)) / 14.0f;
+                float noiseYPos = ((float)(y + location.y * (int32_t)chunkWidth)) / 14.0f;
+                float noiseZPos = ((float)(z + location.z * (int32_t)chunkWidth)) / 14.0f;
                 float noise = raw_noise_3d(noiseXPos, noiseYPos, noiseZPos);
                 if(noise < -0.5f)
                 {

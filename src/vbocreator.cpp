@@ -8,11 +8,13 @@ ChunkVBO VBOCreator::generateChunkVBO(const Chunk& chunk) const
 
     const ChunkCoordinate location = chunk.getLocation();
 
-    glm::vec3 chunkOffset(location.x * chunkWidth, location.y * chunkWidth, location.z * chunkWidth);
+    glm::vec3 chunkOffset(location.x * (float)chunkWidth, location.y * (float)chunkWidth, location.z * (float)chunkWidth);
 
 	const VoxelTypeArray& voxelTypes = chunk.getVoxelTypes();
 
     glm::uvec2 textureLocation;
+
+    std::cout << "generating a vbo for a chunk with location: " << chunkOffset.x << " " << chunkOffset.y << " " << chunkOffset.z << "\n";
 
     for(int z = 0; z < chunkWidth; z++)
     {
