@@ -1,4 +1,8 @@
 //For often used headers.
+//GL
+#define  GLEW_STATIC
+#include <GL/glew.h>
+#include <GL/gl.h>
 //GLM
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"

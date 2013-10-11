@@ -8,6 +8,8 @@
 #include <featherkit/messaging.h>
 #include "timer.h"
 
+#include "shaderprogram.h"
+
 class Renderer
     :   public fea::MessageReceiver<ChunkCreatedMessage>,
         public fea::MessageReceiver<WindowResizeMessage>,
@@ -28,6 +30,7 @@ class Renderer
         void cameraUpdate();    // camera function
 		void setCameraMatrix(glm::mat4 m);
     private:
+		ShaderProgram mShaderProgram;
 		Camera cam;
 		Timer mTimer;
 		glm::mat4 projectionMatrix;

@@ -1,0 +1,56 @@
+#version 330
+
+layout(location = 0)in vec3 vert;
+layout(location = 1)in vec3 color;
+layout(location = 2)in vec3 normal;
+layout(location = 3)in vec2 uv;
+
+uniform mat4 modelToWorld;
+
+uniform mat4 worldToCamera;
+uniform mat4 cameraToClip;
+
+uniform float time;
+
+out vec3 vColor;
+out vec3 vNorm;
+out vec3 vLight;
+
+out vec3 eyeDir;
+
+out vec3 modelSpace;
+
+out vec2 texCoord;
+
+out vec3 posWorldSpace;
+
+void main(){
+	texCoord = uv;
+	modelSpace = vert;
+
+	mat3 normalWorldToCamera = mat3(worldToCamera);
+	mat3 normalModelToWorld  = mat3(modelToWorld);
+	mat3 normalModelToCamera = normalWorldToCamera * normalModelToWorld ;
+
+    vec4 lightPos =  vec4(100.0, 100.0, 100.0, 1.0);
+	lightPos = worldToCamera * lightPos;
+
+	vec4 v =  modelToWorld * vec4(vert, 1.0);
+
+	posWorldSpace = v.xyz;
+	v = worldToCamera * v;
+	eyeDir = -v.xyz;
+	vec3 ld = normalize(v.xyz-lightPos.xyz);
+
+	vec3 nd =normal;
+	nd = normalize(normalModelToWorld * nd);
+	nd = normalize(normalWorldToCamera* nd);
+
+	vLight = ld;
+	vNorm =  nd; 
+
+	v = cameraToClip * v; 
+	//vColor = mix(modelAmbient + modelColor *  color, modelDiffuse *vec3(clamp(dot(nd, ld), .2, 1.0)), 0.5);
+	vColor = vec3(1.0) *clamp(dot(nd, ld), .2, 1.0);
+	gl_Position = v;
+}

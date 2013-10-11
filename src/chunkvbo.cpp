@@ -55,7 +55,7 @@ void ChunkVBO::UpdateVBO(){
 void ChunkVBO::DrawVBO(){
 	BindBuffer();
 	int stride = sizeof(Vertex);
-#if 1
+#if 0 
 	//Use vertexpointer and stuff
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glVertexPointer(3, GL_FLOAT, stride, 0);

@@ -50,7 +50,7 @@ void Renderer::makeTexture(std::string path, uint32_t width, uint32_t height, GL
 void Renderer::setup()
 {
 	glewInit();
-	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+	glClearColor(0.3f, 0.4f, 0.5f, 0.0f);
 
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
@@ -72,6 +72,7 @@ void Renderer::setup()
     makeTexture("data/textures/blocks.png", 256, 256, blockTexture);
 	//Setting it to this because haha.
 	cam.SetPosition(glm::vec3(0, 0, -50.f));
+	mShaderProgram.setShaderPaths("data/vert", "data/frag");
 }
 void Renderer::setCameraMatrix(glm::mat4 m){
 	glMatrixMode(GL_MODELVIEW);
@@ -105,6 +106,12 @@ void Renderer::handleMessage(const WindowResizeMessage& received)
 void Renderer::render()
 {
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+	mShaderProgram.bind();
+	mShaderProgram.setUniform("worldToCamera", cam.GetMatrix());
+	mShaderProgram.setUniform("cameraToClip",  projectionMatrix);
+	mShaderProgram.setUniform("modelToWorld",  glm::mat4(1.f));
+	mShaderProgram.setTexture("tex0", blockTexture);
+
 
     glBindTexture(GL_TEXTURE_2D, blockTexture);
 
