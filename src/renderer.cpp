@@ -6,6 +6,7 @@
 
 Renderer::Renderer(fea::MessageBus& messageBus) : bus(messageBus)
 {
+	mTimer.start();
 	movingUp = movingLeft = movingRight = movingDown = false;
 	bus.addMessageSubscriber<ChunkCreatedMessage>(*this);
 	bus.addMessageSubscriber<WindowResizeMessage>(*this);
@@ -111,23 +112,26 @@ void Renderer::render()
 void Renderer::cameraUpdate()
 {
 	glm::vec3 m;
+	int dT = mTimer.getDeltaTime();
+
+	float moveSpeedT = (float) dT / 1000.f * moveSpeed;
 	if(movingRight){
-		m.x += moveSpeed;	
+		m.x += moveSpeedT;	
 	}
 	if(movingLeft){
-		m.x -= moveSpeed;	
+		m.x -= moveSpeedT;	
 	}
 	if(movingUp){
-		m.z += moveSpeed;	
+		m.z += moveSpeedT;	
 	}
 	if(movingDown){
-		m.z -= moveSpeed;	
+		m.z -= moveSpeedT;	
 	}
 	if(elevate){
-		m.y += moveSpeed;
+		m.y += moveSpeedT;
 	}
 	if(delevate){
-		m.y -= moveSpeed;
+		m.y -= moveSpeedT;
 	}
 	camSpeed += m;
 
@@ -137,7 +141,7 @@ void Renderer::cameraUpdate()
 	cam.AddPosition(glm::vec3(0, camSpeed.y, 0));	
 
 	cam.Update();
-	camSpeed *= 0.995f;
+	camSpeed *= glm::pow(0.995f, (float)dT);
 
 	setCameraMatrix(cam.GetMatrix());
 
