@@ -29,6 +29,7 @@ set(source_files
     src/simplexnoise.cpp
     src/focuspoint.cpp
 	src/timer.cpp
+    src/entitysystem.cpp
     src/controllers/entitycontroller.cpp
     src/controllers/physicscontroller.cpp
     src/worldinterface.cpp
@@ -53,6 +54,7 @@ set(header_files
     src/focuspoint.h
     src/input/inputactions.h
 	src/timer.h
+    src/entitysystem.h
     src/controllers/entitycontroller.h
     src/controllers/physicscontroller.h
     src/worldinterface.h

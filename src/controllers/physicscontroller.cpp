@@ -12,3 +12,8 @@ void PhysicsController::inspectEntity(fea::WeakEntityPtr entity)
         entities.add(entity);
     }
 }
+
+void PhysicsController::update()
+{
+
+}

@@ -1,4 +1,7 @@
 #pragma once
+#include <vector>
+#include <memory>
+#include "controllers/entitycontroller.h"
 
 class EntitySystem
 {
@@ -6,5 +9,5 @@ class EntitySystem
         void initialise();
         void update();
     private:
-        std::vector<unique_ptr<EntityController> > controllers;
+        std::vector<std::unique_ptr<EntityController> > controllers;
 };
