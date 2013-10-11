@@ -18,8 +18,8 @@ class Timer
 		///Stops timer, resetting time. The year will become 0 and we'll all live with jesus christ.
 		void stop();
 	private:
-		system_clock::time_point mLastTime;
-		system_clock::time_point mStartTime;
+		high_resolution_clock::time_point mLastTime;
+		high_resolution_clock::time_point mStartTime;
 		high_resolution_clock mClock;
 		bool mStarted;
 };

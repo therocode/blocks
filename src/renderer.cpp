@@ -113,34 +113,33 @@ void Renderer::cameraUpdate()
 {
 	glm::vec3 m;
 	int dT = mTimer.getDeltaTime();
-	camSpeed *= 0.999f;
 
-	float moveSpeedT = (float) dT / 1000.f * moveSpeed;
 	if(movingRight){
-		m.x += moveSpeedT;	
+		m.x += moveSpeed;	
 	}
 	if(movingLeft){
-		m.x -= moveSpeedT;	
+		m.x -= moveSpeed;	
 	}
 	if(movingUp){
-		m.z += moveSpeedT;	
+		m.z += moveSpeed;	
 	}
 	if(movingDown){
-		m.z -= moveSpeedT;	
+		m.z -= moveSpeed;	
 	}
 	if(elevate){
-		m.y += moveSpeedT;
+		m.y += moveSpeed;
 	}
 	if(delevate){
-		m.y -= moveSpeedT;
+		m.y -= moveSpeed;
 	}
-	camSpeed += m;
 
-	cam.MoveForward(camSpeed.z);
-	cam.Strafe(camSpeed.x);
-	
-	cam.AddPosition(glm::vec3(0, camSpeed.y, 0));	
-
+	for(int i = 0; i < dT; i ++){
+		camSpeed += m;
+		camSpeed *= 0.99f;
+		cam.MoveForward(camSpeed.z);
+		cam.Strafe(camSpeed.x);	
+		cam.AddPosition(glm::vec3(0, camSpeed.y, 0));	
+	}
 	cam.Update();
 
 	setCameraMatrix(cam.GetMatrix());
