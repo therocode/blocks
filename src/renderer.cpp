@@ -113,7 +113,7 @@ void Renderer::cameraUpdate()
 {
 	glm::vec3 m;
 	int dT = mTimer.getDeltaTime();
-	camSpeed *= glm::pow(0.999f, (float)dT);
+	camSpeed *= 0.999f;
 
 	float moveSpeedT = (float) dT / 1000.f * moveSpeed;
 	if(movingRight){
