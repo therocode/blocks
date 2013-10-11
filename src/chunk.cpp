@@ -30,6 +30,11 @@ uint16_t Chunk::getVoxelType(uint32_t x, uint32_t y, uint32_t z) const
     return voxelTypes[x + y * chunkWidth + z * chunkWidthx3];
 }
 
+VoxelTypeArray& Chunk::getVoxelTypes()
+{
+    return voxelTypes;
+}
+
 const VoxelTypeArray& Chunk::getVoxelTypes() const
 {
     return voxelTypes;

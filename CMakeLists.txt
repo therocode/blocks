@@ -21,7 +21,13 @@ set(source_files
 	src/world.cpp
 	src/main.cpp
 	src/camera.cpp
-    src/chunkgenerator.cpp
+    src/lodepng.cpp
+    src/dimension.cpp
+    src/landscape.cpp
+    src/localchunkdeliverer.cpp
+    src/input/inputadaptor.cpp
+    src/simplexnoise.cpp
+    src/focuspoint.cpp
 )
 set(header_files
 	src/blocksapp.h
@@ -33,7 +39,15 @@ set(header_files
 	src/vbocreator.h
 	src/world.h
 	src/camera.h
-    src/chunkgenerator.h
+    src/lodepng.h
+    src/dimension.h
+    src/landscape.h
+    src/chunkdeliverer.h
+    src/localchunkdeliverer.h
+    src/input/inputadaptor.h
+    src/simplexnoise.h
+    src/focuspoint.h
+    src/input/inputactions.h
 )
 
 add_executable(${project_name} ${header_files} ${source_files})
