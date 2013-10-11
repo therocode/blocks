@@ -35,7 +35,11 @@ void ShaderProgram::refresh()
 		fprintf(stderr, "program failed to link: %s\n",  strInfo);
 		delete[] strInfo;
 
-	}else{printf("Program Linked and compiled.\n");}
+	}else{
+        printf("Program Linked and compiled.\n");
+
+        parameterCache.clear();
+        }
 }
 void ShaderProgram::bind()
 {
@@ -48,7 +52,11 @@ void ShaderProgram::unbind()
 
 GLint ShaderProgram::getAttribLocation(std::string name)
 {
-	return glGetAttribLocation(mProgramID, name.c_str());
+    if(parameterCache.find(name) == parameterCache.end())
+    {
+        parameterCache.emplace(name, glGetAttribLocation(mProgramID, name.c_str()));
+    }
+	return parameterCache.at(name);
 }	
 void ShaderProgram::setTexture(std::string name, GLint texture)
 {
@@ -58,32 +66,62 @@ void ShaderProgram::setTexture(std::string name, GLint texture)
 }
 void ShaderProgram::setUniform(std::string name, float f)
 {
-	glUniform1f(getUniformLocation(name), f);
+    if(parameterCache.find(name) == parameterCache.end())
+    {
+        parameterCache.emplace(name, glGetUniformLocation(mProgramID, name.c_str()));
+    }
+
+	glUniform1f(parameterCache.at(name), f);
 }
 
 void ShaderProgram::setUniform(std::string name, int   i)
 {
-	glUniform1i(getUniformLocation(name), i);
+    if(parameterCache.find(name) == parameterCache.end())
+    {
+        parameterCache.emplace(name, glGetUniformLocation(mProgramID, name.c_str()));
+    }
+
+	glUniform1i(parameterCache.at(name), i);
 }
 
 void ShaderProgram::setUniform(std::string name, glm::vec4 v)
 {
-	glUniform4fv(getUniformLocation(name), 1, glm::value_ptr(v));
+    if(parameterCache.find(name) == parameterCache.end())
+    {
+        parameterCache.emplace(name, glGetUniformLocation(mProgramID, name.c_str()));
+    }
+
+	glUniform4fv(parameterCache.at(name), 1, glm::value_ptr(v));
 }
 
 void ShaderProgram::setUniform(std::string name, glm::vec3 v)
 {
-	glUniform3fv(getUniformLocation(name), 1, glm::value_ptr(v));
+    if(parameterCache.find(name) == parameterCache.end())
+    {
+        parameterCache.emplace(name, glGetUniformLocation(mProgramID, name.c_str()));
+    }
+
+	glUniform3fv(parameterCache.at(name), 1, glm::value_ptr(v));
 }
 
 void ShaderProgram::setUniform(std::string name, glm::mat4 m)
 {
-	glUniformMatrix4fv(getUniformLocation(name), 1, GL_FALSE, glm::value_ptr(m));
+    if(parameterCache.find(name) == parameterCache.end())
+    {
+        parameterCache.emplace(name, glGetUniformLocation(mProgramID, name.c_str()));
+    }
+
+	glUniformMatrix4fv(parameterCache.at(name), 1, GL_FALSE, glm::value_ptr(m));
 }
 
 void ShaderProgram::setUniform(std::string name, glm::mat3 m)
 {
-	glUniformMatrix3fv(getUniformLocation(name), 1, GL_FALSE, glm::value_ptr(m));
+    if(parameterCache.find(name) == parameterCache.end())
+    {
+        parameterCache.emplace(name, glGetUniformLocation(mProgramID, name.c_str()));
+    }
+
+	glUniformMatrix3fv(parameterCache.at(name), 1, GL_FALSE, glm::value_ptr(m));
 }
 
 void ShaderProgram::compile()
@@ -93,5 +131,9 @@ void ShaderProgram::compile()
 
 GLint ShaderProgram::getUniformLocation(std::string name)
 {
-	return glGetUniformLocation(mProgramID, name.c_str());
+    if(parameterCache.find(name) == parameterCache.end())
+    {
+        parameterCache.emplace(name, glGetUniformLocation(mProgramID, name.c_str()));
+    }
+	return parameterCache.at(name);
 }

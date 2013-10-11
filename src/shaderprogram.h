@@ -3,6 +3,7 @@
 #include "shader.h"
 #include <fstream>
 #include <sstream>
+#include <unordered_map>
 
 class ShaderProgram
 {
@@ -36,4 +37,6 @@ class ShaderProgram
 		//At the moment I just have one fragment and one vertex shader here.
 		Shader mVertShader;
 		Shader mFragShader;
+
+        std::unordered_map<std::string, GLint> parameterCache;
 };
