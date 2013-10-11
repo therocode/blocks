@@ -1,5 +1,5 @@
 #pragma once
-#include "chunkvbo.h"
+#include "vbo.h"
 #include "chunk.h"
 
 class VBOCreator
@@ -13,7 +13,7 @@ class VBOCreator
 		BACK
 	};
     public:
-    ChunkVBO generateChunkVBO(const Chunk& chunk) const;
+    VBO generateChunkVBO(const Chunk& chunk) const;
 private:
 	///Helper function for vbo creation.
 	inline void setRectData(Rectangle& r, float x, float y, float z, int face, float u, float v) const;

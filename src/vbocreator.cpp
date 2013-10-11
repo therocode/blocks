@@ -2,9 +2,9 @@
 #include <vector>
 #include <iostream>
 
-ChunkVBO VBOCreator::generateChunkVBO(const Chunk& chunk) const
+VBO VBOCreator::generateChunkVBO(const Chunk& chunk) const
 {
-	ChunkVBO vbo;
+	VBO vbo;
 
 	const ChunkCoordinate location = chunk.getLocation();
 

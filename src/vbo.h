@@ -57,15 +57,15 @@ struct Rectangle{
 		}	
 	};
 };
-enum ChunkVBOIDs{
+enum VBOIDs{
 	VERTICES = 0, 
 	INDICES
 };
 
-class ChunkVBO {
+class VBO {
 	public:
-		ChunkVBO();
-		~ChunkVBO();
+		VBO();
+		~VBO();
 		void PushTriangle(Triangle t);
 		void PushRectangle(Rectangle r);
 		void PushVertex(Vertex v);
@@ -77,8 +77,8 @@ class ChunkVBO {
 		GLint GetDrawType();
 	private:
 		GLuint mID[2];
-		int mCurrentChunkVBOByteSize;
-		bool mChunkVBOCreated;
+		int mCurrentVBOByteSize;
+		bool mVBOCreated;
 		std::vector<Vertex> mvVertices;
 		std::vector<int>	mvIndices;
 		void BindBuffer();

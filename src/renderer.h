@@ -1,7 +1,7 @@
 #pragma once
 #include "blockstd.h"
 #include "chunk.h"
-#include "chunkvbo.h"
+#include "vbo.h"
 #include "messages.h"
 #include "camera.h"
 #include <vector>
@@ -35,7 +35,7 @@ class Renderer
 		Timer mTimer;
 		glm::mat4 projectionMatrix;
         fea::MessageBus& bus;
-        std::vector<ChunkVBO> chunks;
+        std::vector<VBO> chunks;
         GLuint blockTexture;
         
         // camera stuff
