@@ -27,7 +27,9 @@ class Chunk
     public:
         Chunk(const ChunkCoordinate& loc);
         void setVoxelType(uint32_t x, uint32_t y, uint32_t z, VoxelType type);
+        void setVoxelType(const VoxelCoordinate& voxel, VoxelType type);
         VoxelType getVoxelType(uint32_t x, uint32_t y, uint32_t z) const;
+        VoxelType getVoxelType(const VoxelCoordinate& voxel) const;
         VoxelTypeArray& getVoxelTypes();
         const VoxelTypeArray& getVoxelTypes() const;
         uint32_t getWidth() const;

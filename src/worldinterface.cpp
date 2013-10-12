@@ -12,7 +12,16 @@ VoxelType WorldInterface::getVoxelType(float x, float y, float z) const
     ChunkCoordinate chunkCoordinate = worldToChunk(x, y, z);
     VoxelCoordinate voxelCoordinate = worldToVoxel(x, y, z);
 
-    return 0;
+    const Landscape& landscape = mDimension.getLandscape();
+
+    if(landscape.chunkIsLoaded(chunkCoordinate))
+    {
+        return landscape.getChunk(chunkCoordinate).getVoxelType(voxelCoordinate);
+    }
+    else
+    {
+        return 0;
+    }
 }
 
 VoxelType WorldInterface::getVoxelType(const glm::vec3& position) const

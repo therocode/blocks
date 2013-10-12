@@ -13,6 +13,11 @@ Chunk& Landscape::loadChunk(const ChunkCoordinate& location)
     return chunks[chunks.size() - 1];
 }
 
+bool Landscape::chunkIsLoaded(const ChunkCoordinate& location) const
+{
+    return chunkIndices.find(location) != chunkIndices.end();
+}
+
 const Chunk& Landscape::getChunk(const ChunkCoordinate& location) const
 {
     return chunks[chunkIndices.at(location)];
