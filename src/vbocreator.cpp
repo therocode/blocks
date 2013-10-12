@@ -183,10 +183,11 @@ inline void VBOCreator::setRectData(Rectangle& r, float x, float y, float z, int
 
 	float uo, vo;
 	uo = vo	= 0.125f; 
-	r.setUV(0,      (float)u * uo,      (float)v * vo);
-	r.setUV(1,      (float)u * uo, vo + (float)v * vo);
-	r.setUV(2, uo + (float)u * uo, vo + (float)v * vo);
-	r.setUV(3, uo + (float)u * uo,      (float)v * vo);
+	float e = 0.001f;
+	r.setUV(0, e+      (float)u * uo,  e+      (float)v * vo);
+	r.setUV(1, e+      (float)u * uo, -e+ vo + (float)v * vo);
+	r.setUV(2,-e+ uo + (float)u * uo, -e+ vo + (float)v * vo);
+	r.setUV(3,-e+ uo + (float)u * uo,  e+      (float)v * vo);
 
 }
 
