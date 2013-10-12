@@ -28,7 +28,7 @@ varying vec3 modelSpace;
 
 varying vec2 texCoord;
 
-varying vec3 posWorldSpace;
+varying vec3 posCamSpace;
 
 void main(){
 	texCoord = uv;
@@ -42,9 +42,9 @@ void main(){
 	lightPos = worldToCamera * lightPos;
 
 	vec4 v =  modelToWorld * vec4(vert, 1.0);
-
-	posWorldSpace = v.xyz;
+	
 	v = worldToCamera * v;
+	posCamSpace = v.xyz;
 	eyeDir = -v.xyz;
 	vec3 ld = normalize(v.xyz-lightPos.xyz);
 
@@ -57,6 +57,6 @@ void main(){
 
 	v = cameraToClip * v; 
 	//vColor = mix(modelAmbient + modelColor *  color, modelDiffuse *vec3(clamp(dot(nd, ld), .2, 1.0)), 0.5);
-	vColor = vec3(1.0) *clamp(dot(nd, ld), .2, 1.0);
+	vColor = vec3(1.0) *clamp(dot(nd, ld), .2, 1.0) * color;
 	gl_Position = v;
 }

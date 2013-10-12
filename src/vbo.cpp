@@ -97,14 +97,15 @@ void VBO::DrawVBO(ShaderProgram program)
 	glEnableVertexAttribArray(i);
 	glVertexAttribPointer(i, 3, GL_FLOAT, GL_FALSE, stride , 0);
 	
-	i = program.getAttribLocation("color");
-	glEnableVertexAttribArray(i);
-	glVertexAttribPointer(i, 3, GL_FLOAT, GL_FALSE, stride , BUFFER_OFFSET(3 * sizeof(float)));
-	
+
 	i = program.getAttribLocation("normal");
 	glEnableVertexAttribArray(i);
 	glVertexAttribPointer(i, 3, GL_FLOAT, GL_FALSE, stride , BUFFER_OFFSET(6 * sizeof(float)));
 
+	i = program.getAttribLocation("color");
+	glEnableVertexAttribArray(i);
+	glVertexAttribPointer(i, 3, GL_FLOAT, GL_FALSE, stride , BUFFER_OFFSET(3 * sizeof(float)));
+	
 	i = program.getAttribLocation("uv");
 	glEnableVertexAttribArray(i);
 	glVertexAttribPointer(i, 2, GL_FLOAT, GL_FALSE, stride , BUFFER_OFFSET(9 * sizeof(float)));
