@@ -72,7 +72,7 @@ class VBO {
 		void Clear();
 		void UpdateVBO();
 		void DrawVBO();
-		void DrawVBO(ShaderProgram program);
+		void DrawVBO(ShaderProgram& program);
 		void SetDrawType(GLint type = GL_TRIANGLES);
 		GLint GetDrawType();
 	private:

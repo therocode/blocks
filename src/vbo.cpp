@@ -88,7 +88,7 @@ void VBO::DrawVBO(){
 #endif
 	UnbindBuffer();
 }
-void VBO::DrawVBO(ShaderProgram program)
+void VBO::DrawVBO(ShaderProgram& program)
 {
 	BindBuffer();
 	int stride = sizeof(Vertex);
