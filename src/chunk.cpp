@@ -1,20 +1,30 @@
 #include "chunk.h"
 
-//ChunkCoordinate::ChunkCoordinate(int32_t xCoord, int32_t yCoord, int32_t zCoord) : x(xCoord), y(yCoord), z(zCoord)
-//{
-//}
-//
-//ChunkCoordinate::ChunkCoordinate(const ChunkCoordinate& other)
-//{
-//    x = other.x;
-//    y = other.y;
-//    z = other.z;
-//}
-//
-//bool ChunkCoordinate::operator==(const ChunkCoordinate& other) const
-//{
-//    return (x == other.x) && (y == other.y) && (z == other.z);
-//}
+ChunkCoordinate worldToChunk(float x, float y, float z)
+{
+    return ChunkCoordinate(floor(x / (float)chunkWidth), floor(y / (float)chunkWidth), floor(z / (float)chunkWidth));
+}
+
+ChunkCoordinate worldToChunk(const glm::vec3& position)
+{
+    return worldToChunk(position.x, position.y, position.z);
+}
+
+VoxelCoordinate worldToVoxel(float x, float y, float z)
+{
+    bool xNegative = x < 0.0f;
+    bool yNegative = y < 0.0f;
+    bool zNegative = z < 0.0f;
+
+    return VoxelCoordinate((((int)x) % chunkWidth) + (xNegative?chunkWidth-1:0),
+                           (((int)y) % chunkWidth) + (yNegative?chunkWidth-1:0),
+                           (((int)z) % chunkWidth) + (zNegative?chunkWidth-1:0));
+}
+
+VoxelCoordinate worldToVoxel(const glm::vec3& position)
+{
+    return worldToVoxel(position.x, position.y, position.z);
+}
 
 Chunk::Chunk(const ChunkCoordinate& loc) : location(loc)
 {

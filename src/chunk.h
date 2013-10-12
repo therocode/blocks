@@ -14,7 +14,13 @@ const uint32_t voxelAmount = chunkWidthx3;
 using VoxelType = uint16_t;
 using VoxelTypeArray = std::array<VoxelType, voxelAmount>;
 
+ChunkCoordinate worldToChunk(float x, float y, float z);
 
+ChunkCoordinate worldToChunk(const glm::vec3& position);
+
+VoxelCoordinate worldToVoxel(float x, float y, float z);
+
+VoxelCoordinate worldToVoxel(const glm::vec3& position);
 
 class Chunk
 {
