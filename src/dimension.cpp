@@ -19,8 +19,6 @@ void Dimension::addFocusPoint(const FocusPoint& focusPoint)
     int32_t centerX = floor(focusPoint.position.x / (float)chunkWidth);
     int32_t centerY = floor(focusPoint.position.y / (float)chunkWidth);
     int32_t centerZ = floor(focusPoint.position.z / (float)chunkWidth);
-                ChunkCoordinate coordinate(centerX, centerY, centerZ);
-                bus.sendMessage<ChunkCreatedMessage>(ChunkCreatedMessage(&coordinate,&landscape.loadChunk(coordinate)));
 
     for(int32_t x = centerX - halfCheatBoxWidth; x <= centerX + halfCheatBoxWidth; x++)
     {
@@ -29,7 +27,7 @@ void Dimension::addFocusPoint(const FocusPoint& focusPoint)
             for(int32_t z = centerZ - halfCheatBoxWidth; z <= centerZ + halfCheatBoxWidth; z++)
             {
                 ChunkCoordinate coordinate(x, y, z);
-                //bus.sendMessage<ChunkCreatedMessage>(ChunkCreatedMessage(&coordinate,&landscape.loadChunk(coordinate)));
+                bus.sendMessage<ChunkCreatedMessage>(ChunkCreatedMessage(&coordinate,&landscape.loadChunk(coordinate)));
             }
         }
     }
