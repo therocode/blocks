@@ -32,7 +32,7 @@ Chunk::Chunk(const ChunkCoordinate& loc) : location(loc)
 
 void Chunk::setVoxelType(uint32_t x, uint32_t y, uint32_t z, VoxelType type)
 {
-    voxelTypes[x + y * chunkWidth + z * chunkWidthx3] = type;
+    voxelTypes[x + y * chunkWidth + z * chunkWidthx2] = type;
 }
 
 void Chunk::setVoxelType(const VoxelCoordinate& voxel, VoxelType type)
@@ -42,7 +42,7 @@ void Chunk::setVoxelType(const VoxelCoordinate& voxel, VoxelType type)
 
 VoxelType Chunk::getVoxelType(uint32_t x, uint32_t y, uint32_t z) const
 {
-    return voxelTypes[x + y * chunkWidth + z * chunkWidthx3];
+    return voxelTypes[x + y * chunkWidth + z * chunkWidthx2];
 }
 
 VoxelType Chunk::getVoxelType(const VoxelCoordinate& voxel) const
