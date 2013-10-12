@@ -34,7 +34,7 @@ void PhysicsController::update()
         glm::vec3 newVelocity = currentVelocity + acceleration;
         glm::vec3 newPosition = currentPosition + newVelocity;
 
-        entity->setAttribute<glm::vec3>("velocity", newVelocity);
+        //entity->setAttribute<glm::vec3>("velocity", newVelocity);
 
         bus.sendMessage<EntityMoveRequestedMessage>(EntityMoveRequestedMessage(entity->getId(), newPosition));
     }

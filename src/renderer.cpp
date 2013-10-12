@@ -3,9 +3,11 @@
 #include <featherkit/rendering/opengl.h>
 #include <iostream>
 #include "lodepng.h"
+#include <cmath>
 
 Renderer::Renderer(fea::MessageBus& messageBus) : bus(messageBus)
 {
+	movingLeft = movingRight = movingUp = movingDown = elevate = delevate = false;
 	mTimer.start();
 	mTimer.setDeltaThreshold(2);
 	movingUp = movingLeft = movingRight = movingDown = false;
@@ -131,7 +133,12 @@ void Renderer::render()
     for(auto& billboard : billboards)
     {
         glm::mat4 modelToWorld = glm::translate(glm::mat4(1.0f), billboard.second.mPosition);
-        std::cout << "set the position to " << billboard.second.mPosition.x << " " << billboard.second.mPosition.y << " " << billboard.second.mPosition.z << "\n";
+		glm::vec3 cameraDir = billboard.second.mPosition - cam.GetPosition();
+		
+		float t = atan2(cameraDir.z, cameraDir.x);
+		
+		modelToWorld *= glm::rotate(-t / glm::pi<float>() * 180.f + 90.f, 0.f, 1.f, 0.f);
+        // std::cout << "set the position to " << billboard.second.mPosition.x << " " << billboard.second.mPosition.y << " " << billboard.second.mPosition.z << "\n";
 
         mShaderProgram.setUniform("modelToWorld",  modelToWorld);
 
