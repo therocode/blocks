@@ -33,6 +33,7 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
         glm::vec3 velocity = mEntities.at(id).lock()->getAttribute<glm::vec3>("velocity");
         velocity.y = 0.0f;
         mEntities.at(id).lock()->setAttribute<glm::vec3>("velocity", velocity);
+		approvedPosition.y = glm::ceil(approvedPosition.y);
     }
 
     mEntities.at(id).lock()->setAttribute<glm::vec3>("position", approvedPosition);

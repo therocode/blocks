@@ -3,7 +3,6 @@
 #include <featherkit/rendering/opengl.h>
 #include <iostream>
 #include "lodepng.h"
-#include <cmath>
 
 Renderer::Renderer(fea::MessageBus& messageBus) : bus(messageBus)
 {
@@ -79,7 +78,7 @@ void Renderer::setup()
 
     makeTexture("data/textures/blocks.png", 256, 256, blockTexture);
 	//Setting it to this because haha.
-	cam.SetPosition(glm::vec3(0.0f, 0.0f, -50.0f));
+	cam.SetPosition(glm::vec3(0.0f, 100.0f, -50.0f));
 	mShaderProgram.setShaderPaths("data/vert", "data/frag");
 }
 void Renderer::setCameraMatrix(glm::mat4 m){
@@ -122,7 +121,6 @@ void Renderer::render()
 	mShaderProgram.setUniform("modelToWorld",  glm::mat4(1.f));
 	mShaderProgram.setTexture("tex0", blockTexture);
 
-
     glBindTexture(GL_TEXTURE_2D, blockTexture);
 
 	for(auto& vbo : vbos)
@@ -130,16 +128,23 @@ void Renderer::render()
 		vbo.DrawVBO(mShaderProgram);
 	}
 
-    for(auto& billboard : billboards)
-    {
-        glm::mat4 modelToWorld = glm::translate(glm::mat4(1.0f), billboard.second.mPosition);
+     for(auto& billboard : billboards)
+     {
+        glm::mat4 modelToWorld = glm::mat4(1.f);
+		modelToWorld[3][0] = billboard.second.mPosition.x;
+		modelToWorld[3][1] = billboard.second.mPosition.y;
+		modelToWorld[3][2] = billboard.second.mPosition.z;
+		
 		glm::vec3 cameraDir = billboard.second.mPosition - cam.GetPosition();
+		cameraDir.y = 0;
 		
-		float t = atan2(cameraDir.z, cameraDir.x);
+		cameraDir = glm::normalize(cameraDir);
 		
-		modelToWorld *= glm::rotate(-t / glm::pi<float>() * 180.f - 90.f, 0.f, 1.f, 0.f);
-        // std::cout << "set the position to " << billboard.second.mPosition.x << " " << billboard.second.mPosition.y << " " << billboard.second.mPosition.z << "\n";
-
+		modelToWorld[0][0] = -cameraDir.z;
+		modelToWorld[2][2] = -cameraDir.z;
+		modelToWorld[0][2] = cameraDir.x;
+		modelToWorld[2][0] = -cameraDir.x;
+		
         mShaderProgram.setUniform("modelToWorld",  modelToWorld);
 
         billboard.second.mVbo.DrawVBO(mShaderProgram);
