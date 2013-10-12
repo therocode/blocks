@@ -18,6 +18,7 @@ void World::initialise()
 
     fea::EntityPtr human = entitySystem.spawnEntity("human").lock();
     human->setAttribute<glm::vec3>("position", glm::vec3(0.0f, 100.0f, 0.0f));
+    entitySystem.attachEntity(human);
 }
 
 void World::update()

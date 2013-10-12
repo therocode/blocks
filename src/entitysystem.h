@@ -10,6 +10,7 @@ class EntitySystem
         void initialise();
         void update();
         fea::WeakEntityPtr spawnEntity(const std::string& type);
+        void attachEntity(fea::WeakEntityPtr entity);
     private:
         fea::MessageBus& bus;
         fea::EntityManager manager;

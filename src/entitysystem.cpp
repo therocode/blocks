@@ -37,12 +37,13 @@ void EntitySystem::update()
 
 fea::WeakEntityPtr EntitySystem::spawnEntity(const std::string& type)
 {
-    fea::WeakEntityPtr spawned = manager.createEntity(type);
+    return manager.createEntity(type);
+}
 
+void EntitySystem::attachEntity(fea::WeakEntityPtr entity)
+{
     for(auto& controller : controllers)
     {
-        controller->inspectEntity(spawned);
+        controller->inspectEntity(entity);
     }
-
-    return spawned;
 }
