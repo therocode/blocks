@@ -56,6 +56,7 @@ GLint ShaderProgram::getAttribLocation(std::string name)
     {
         parameterCache.emplace(name, glGetAttribLocation(mProgramID, name.c_str()));
     }
+	
 	return parameterCache.at(name);
 }	
 void ShaderProgram::setTexture(std::string name, GLint texture)
