@@ -194,12 +194,14 @@ VBO VBOCreator::generateBoardVBO(const glm::vec2& dimensions) const
 {
     VBO vbo;
 
-    glm::uvec2 textureLocation(0, 2);
+    glm::uvec2 textureLocation(0, 0);
 
     Rectangle r;
     setRectData(r, 0.0f, 0.0f, 0.0f, FRONT, (float)textureLocation.x, (float)textureLocation.y);
     r.calculateNormal();
     vbo.PushRectangle(r);
+
+	vbo.UpdateVBO();
 
     return vbo;
 }
