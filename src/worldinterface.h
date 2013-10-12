@@ -6,7 +6,7 @@ class WorldInterface
 {
     public:
         WorldInterface(Dimension& dimension, EntitySystem& entitySystem);
-
+        
     private:
         Dimension& mDimension;
         EntitySystem& mEntitySystem;

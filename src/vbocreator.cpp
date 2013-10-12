@@ -28,7 +28,7 @@ VBO VBOCreator::generateChunkVBO(const Chunk& chunk) const
 			for(int x = 0; x < chunkWidth; x++)
 			{
 				currentIndex = x + y * chunkWidth + z * chunkWidthx2;
-				uint16_t type = voxelTypes[currentIndex];
+				VoxelType type = voxelTypes[currentIndex];
 				if(type != 0)
 				{
 

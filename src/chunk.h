@@ -18,14 +18,15 @@ const uint32_t chunkWidthx2 = chunkWidth * chunkWidth;
 const uint32_t chunkWidthx3 = chunkWidth * chunkWidth * chunkWidth;
 const uint32_t voxelAmount = chunkWidthx3;
 
-using VoxelTypeArray = std::array<uint16_t, voxelAmount>;
+using VoxelType = uint16_t;
+using VoxelTypeArray = std::array<VoxelType, voxelAmount>;
 
 class Chunk
 {
     public:
         Chunk(const ChunkCoordinate& loc);
-        void setVoxelType(uint32_t x, uint32_t y, uint32_t z, uint16_t type);
-        uint16_t getVoxelType(uint32_t x, uint32_t y, uint32_t z) const;
+        void setVoxelType(uint32_t x, uint32_t y, uint32_t z, VoxelType type);
+        VoxelType getVoxelType(uint32_t x, uint32_t y, uint32_t z) const;
         VoxelTypeArray& getVoxelTypes();
         const VoxelTypeArray& getVoxelTypes() const;
         uint32_t getWidth() const;

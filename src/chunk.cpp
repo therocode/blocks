@@ -20,12 +20,12 @@ Chunk::Chunk(const ChunkCoordinate& loc) : location(loc)
 {
 }
 
-void Chunk::setVoxelType(uint32_t x, uint32_t y, uint32_t z, uint16_t type)
+void Chunk::setVoxelType(uint32_t x, uint32_t y, uint32_t z, VoxelType type)
 {
     voxelTypes[x + y * chunkWidth + z * chunkWidthx3] = type;
 }
 
-uint16_t Chunk::getVoxelType(uint32_t x, uint32_t y, uint32_t z) const
+VoxelType Chunk::getVoxelType(uint32_t x, uint32_t y, uint32_t z) const
 {
     return voxelTypes[x + y * chunkWidth + z * chunkWidthx3];
 }
