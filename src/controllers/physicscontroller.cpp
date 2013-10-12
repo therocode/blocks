@@ -28,7 +28,7 @@ void PhysicsController::update()
 
         glm::vec3 currentPosition = entity->getAttribute<glm::vec3>("position");
         glm::vec3 currentVelocity = entity->getAttribute<glm::vec3>("velocity");
-        glm::vec3 acceleration = entity->getAttribute<glm::vec3>("acceleration") + glm::vec3(0.0f, -1.0f, 0.0f);
+        glm::vec3 acceleration = entity->getAttribute<glm::vec3>("acceleration") + glm::vec3(0.0f, -0.1f, 0.0f);
         float mass = entity->getAttribute<float>("mass");
 
         glm::vec3 newVelocity = currentVelocity + acceleration;

@@ -130,7 +130,7 @@ void Renderer::render()
 
     for(auto& billboard : billboards)
     {
-        glm::mat4 modelToWorld = glm::mat4(1.f);//glm::translate(glm::mat4(1.0f), billboard.second.mPosition);
+        glm::mat4 modelToWorld = glm::translate(glm::mat4(1.0f), billboard.second.mPosition);
         std::cout << "set the position to " << billboard.second.mPosition.x << " " << billboard.second.mPosition.y << " " << billboard.second.mPosition.z << "\n";
 
         mShaderProgram.setUniform("modelToWorld",  modelToWorld);
