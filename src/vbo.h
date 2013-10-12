@@ -75,6 +75,8 @@ class VBO {
 		void DrawVBO(ShaderProgram& program);
 		void SetDrawType(GLint type = GL_TRIANGLES);
 		GLint GetDrawType();
+		void DestroyVBO();
+		void CreateVBO();
 	private:
 		GLuint mID[2];
 		int mCurrentVBOByteSize;

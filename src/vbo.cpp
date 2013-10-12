@@ -37,10 +37,7 @@ void VBO::PushRectangle(Rectangle r){
 }
 
 void VBO::UpdateVBO(){
-	if(!mVBOCreated){
-		glGenBuffers(2, mID);
-		mVBOCreated = true;
-	}
+	CreateVBO();
 	mCurrentVBOByteSize = sizeof(Vertex) * mvVertices.size();
 	int idSize = sizeof(int) * mvIndices.size();
 
@@ -51,7 +48,22 @@ void VBO::UpdateVBO(){
 
 	UnbindBuffer();
 }
-
+void VBO::DestroyVBO()
+{
+	Clear();
+	if(mVBOCreated)
+	{
+		glDeleteBuffers(2, mID);
+		mVBOCreated = false;
+	}
+}
+void VBO::CreateVBO()
+{
+	if(!mVBOCreated){
+		glGenBuffers(2, mID);
+		mVBOCreated = true;
+	}
+}
 void VBO::DrawVBO(){
 	BindBuffer();
 	int stride = sizeof(Vertex);
