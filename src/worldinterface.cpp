@@ -1,7 +1,8 @@
 #include "worldinterface.h"
 
-WorldInterface::WorldInterface(Dimension& dim)
-    :   dimension(dim)
+WorldInterface::WorldInterface(Dimension& dimension, EntitySystem& entitySystem)
+    :   mDimension(dimension),
+        mEntitySystem(entitySystem)
 {
     
 }

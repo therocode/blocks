@@ -1,6 +1,6 @@
 #include "entitycontroller.h"
 
-EntityController::EntityController(fea::MessageBus& b) : bus(b)
+EntityController::EntityController(fea::MessageBus& bus, WorldInterface& worldInterface) : mBus(bus), mWorldInterface(worldInterface)
 {
 }
 

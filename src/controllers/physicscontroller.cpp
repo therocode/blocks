@@ -2,7 +2,7 @@
 #include "../blockstd.h"
 #include "../messages.h"
 
-PhysicsController::PhysicsController(fea::MessageBus& b) : EntityController(b)
+PhysicsController::PhysicsController(fea::MessageBus& bus, WorldInterface& worldInterface) : EntityController(bus, worldInterface)
 {
 }
 
@@ -16,13 +16,13 @@ void PhysicsController::inspectEntity(fea::WeakEntityPtr entity)
        locked->hasAttribute("acceleration") && 
        locked->hasAttribute("hitbox"))
     {
-        entities.emplace(locked->getId(), entity);
+        mEntities.emplace(locked->getId(), entity);
     }
 }
 
 void PhysicsController::update()
 {
-    for(auto wEntity : entities)
+    for(auto wEntity : mEntities)
     {
         fea::EntityPtr entity = wEntity.second.lock();
 
@@ -36,6 +36,6 @@ void PhysicsController::update()
 
         //entity->setAttribute<glm::vec3>("velocity", newVelocity);
 
-        bus.sendMessage<EntityMoveRequestedMessage>(EntityMoveRequestedMessage(entity->getId(), newPosition));
+        mBus.sendMessage<EntityMoveRequestedMessage>(EntityMoveRequestedMessage(entity->getId(), newPosition));
     }
 }

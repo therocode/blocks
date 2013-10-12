@@ -1,11 +1,13 @@
 #pragma once
 #include "dimension.h"
+#include "entitysystem.h"
 
 class WorldInterface
 {
     public:
-        WorldInterface(Dimension& dim);
+        WorldInterface(Dimension& dimension, EntitySystem& entitySystem);
 
     private:
-        Dimension& dimension;
+        Dimension& mDimension;
+        EntitySystem& mEntitySystem;
 };

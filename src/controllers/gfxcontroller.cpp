@@ -1,7 +1,7 @@
 #include "gfxcontroller.h"
 #include <iostream>
 
-GfxController::GfxController(fea::MessageBus& b) : EntityController(b)
+GfxController::GfxController(fea::MessageBus& bus, WorldInterface& worldInterface) : EntityController(bus, worldInterface)
 {
     bus.addMessageSubscriber<EntityMovedMessage>(*this);
 }
@@ -12,8 +12,8 @@ void GfxController::inspectEntity(fea::WeakEntityPtr entity)
 
     if(locked->hasAttribute("position"))
     {
-        entities.emplace(locked->getId(), entity);
-        bus.sendMessage<AddGfxEntityMessage>(AddGfxEntityMessage(locked->getId(), locked->getAttribute<glm::vec3>("position")));
+        mEntities.emplace(locked->getId(), entity);
+        mBus.sendMessage<AddGfxEntityMessage>(AddGfxEntityMessage(locked->getId(), locked->getAttribute<glm::vec3>("position")));
     }
 }
 
@@ -25,5 +25,5 @@ void GfxController::handleMessage(const EntityMovedMessage& message)
    
    std::tie(id, oldPosition, newPosition) = message.data;
    
-   bus.sendMessage<MoveGfxEntityMessage>(MoveGfxEntityMessage(id, newPosition));
+   mBus.sendMessage<MoveGfxEntityMessage>(MoveGfxEntityMessage(id, newPosition));
 }

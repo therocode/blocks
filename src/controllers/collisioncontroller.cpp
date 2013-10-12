@@ -1,6 +1,6 @@
 #include "collisioncontroller.h"
 
-CollisionController::CollisionController(fea::MessageBus& b) : EntityController(b)
+CollisionController::CollisionController(fea::MessageBus& bus, WorldInterface& worldInterface) : EntityController(bus, worldInterface)
 {
     bus.addMessageSubscriber<EntityMoveRequestedMessage>(*this);
 }
@@ -13,7 +13,7 @@ void CollisionController::inspectEntity(fea::WeakEntityPtr entity)
        locked->hasAttribute("velocity") &&
        locked->hasAttribute("hitbox"))
     {
-        entities.emplace(locked->getId(), entity);
+        mEntities.emplace(locked->getId(), entity);
     }
 }
 
@@ -31,12 +31,12 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
     {
         approvedPosition.y = 0.0f;
 
-        glm::vec3 velocity = entities.at(id).lock()->getAttribute<glm::vec3>("velocity");
+        glm::vec3 velocity = mEntities.at(id).lock()->getAttribute<glm::vec3>("velocity");
         velocity.y *= -1.0f;
-        entities.at(id).lock()->setAttribute<glm::vec3>("velocity", velocity);
+        mEntities.at(id).lock()->setAttribute<glm::vec3>("velocity", velocity);
     }
 
-    entities.at(id).lock()->setAttribute<glm::vec3>("position", approvedPosition);
+    mEntities.at(id).lock()->setAttribute<glm::vec3>("position", approvedPosition);
     
-    bus.sendMessage<EntityMovedMessage>(EntityMovedMessage(id, requestedPosition, approvedPosition));
+    mBus.sendMessage<EntityMovedMessage>(EntityMovedMessage(id, requestedPosition, approvedPosition));
 }

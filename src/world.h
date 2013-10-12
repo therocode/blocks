@@ -13,6 +13,6 @@ class World
     private:
         fea::MessageBus& bus;
         Dimension standardDimension;
-        WorldInterface worldInterface;
         EntitySystem entitySystem;
+        WorldInterface worldInterface;
 };
