@@ -1,17 +1,10 @@
 #pragma once
 #include <stdint.h>
 #include <functional>
+#include "blockstd.h"
 
-class ChunkCoordinate
-{
-    public:
-        ChunkCoordinate(int32_t xCoord, int32_t yCoord, int32_t zCoord);
-        ChunkCoordinate(const ChunkCoordinate& other);
-        bool operator==(const ChunkCoordinate& other) const;
-        int32_t x;
-        int32_t y;
-        int32_t z;
-};
+using ChunkCoordinate = glm::ivec3;
+using VoxelCoordinate = glm::uvec3;
 
 const uint32_t chunkWidth = 16;
 const uint32_t chunkWidthx2 = chunkWidth * chunkWidth;
@@ -20,6 +13,8 @@ const uint32_t voxelAmount = chunkWidthx3;
 
 using VoxelType = uint16_t;
 using VoxelTypeArray = std::array<VoxelType, voxelAmount>;
+
+
 
 class Chunk
 {
