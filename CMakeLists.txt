@@ -16,6 +16,7 @@ set(source_files
 	src/blocksapp.cpp
 	src/chunk.cpp
 	src/vbo.cpp
+	src/billboard.cpp
 	src/renderer.cpp
 	src/vbocreator.cpp
 	src/world.cpp
@@ -43,6 +44,7 @@ set(header_files
 	src/blockstd.h
 	src/chunk.h
 	src/vbo.h
+	src/billboard.h
 	src/messages.h
 	src/renderer.h
 	src/vbocreator.h

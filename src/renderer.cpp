@@ -13,6 +13,9 @@ Renderer::Renderer(fea::MessageBus& messageBus) : bus(messageBus)
 	bus.addMessageSubscriber<WindowResizeMessage>(*this);
 	bus.addMessageSubscriber<InputActionMessage>(*this);
 	bus.addMessageSubscriber<MouseMovedMessage>(*this);
+	bus.addMessageSubscriber<AddGfxEntityMessage>(*this);
+	bus.addMessageSubscriber<MoveGfxEntityMessage>(*this);
+	bus.addMessageSubscriber<RemoveGfxEntityMessage>(*this);
 }
 
 Renderer::~Renderer()
@@ -21,6 +24,9 @@ Renderer::~Renderer()
 	bus.removeMessageSubscriber<WindowResizeMessage>(*this);
 	bus.removeMessageSubscriber<InputActionMessage>(*this);
 	bus.removeMessageSubscriber<MouseMovedMessage>(*this);
+	bus.removeMessageSubscriber<AddGfxEntityMessage>(*this);
+	bus.removeMessageSubscriber<MoveGfxEntityMessage>(*this);
+	bus.removeMessageSubscriber<RemoveGfxEntityMessage>(*this);
 }
 
 void Renderer::makeTexture(std::string path, uint32_t width, uint32_t height, GLuint& textureId)
@@ -224,4 +230,33 @@ void Renderer::handleMessage(const MouseMovedMessage& received)
         cam.AddDirection((newX - lastX)  * mspeed,(newY - lastY) * mspeed);
     lastX = newX;
     lastY = newY;
+}
+
+void Renderer::handleMessage(const AddGfxEntityMessage& received)
+{
+    size_t id;
+    glm::vec3 position;
+
+    std::tie(id, position) = received.data;
+
+    //create a billboard and stuff it into the billboards map, e.g. billboards.emplace(id, billboard);
+}
+
+void Renderer::handleMessage(const MoveGfxEntityMessage& received)
+{
+    size_t id;
+    glm::vec3 position;
+
+    std::tie(id, position) = received.data;
+
+    billboards.at(id).mPosition = position;
+}
+
+void Renderer::handleMessage(const RemoveGfxEntityMessage& received)
+{
+    size_t id;
+
+    std::tie(id) = received.data;
+
+    //remove the billboard from the map
 }

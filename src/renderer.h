@@ -2,6 +2,7 @@
 #include "blockstd.h"
 #include "chunk.h"
 #include "vbo.h"
+#include "billboard.h"
 #include "messages.h"
 #include "camera.h"
 #include <vector>
@@ -14,7 +15,10 @@ class Renderer
     :   public fea::MessageReceiver<ChunkCreatedMessage>,
         public fea::MessageReceiver<WindowResizeMessage>,
         public fea::MessageReceiver<InputActionMessage>,
-        public fea::MessageReceiver<MouseMovedMessage>
+        public fea::MessageReceiver<MouseMovedMessage>,
+        public fea::MessageReceiver<AddGfxEntityMessage>,
+        public fea::MessageReceiver<MoveGfxEntityMessage>,
+        public fea::MessageReceiver<RemoveGfxEntityMessage>
                 
 {
     public:
@@ -26,6 +30,9 @@ class Renderer
         virtual void handleMessage(const WindowResizeMessage& received);
         virtual void handleMessage(const InputActionMessage& received);
         virtual void handleMessage(const MouseMovedMessage& received);
+        virtual void handleMessage(const AddGfxEntityMessage& received);
+        virtual void handleMessage(const MoveGfxEntityMessage& received);
+        virtual void handleMessage(const RemoveGfxEntityMessage& received);
         void render();
         void cameraUpdate();    // camera function
 		void setCameraMatrix(glm::mat4 m);
@@ -36,6 +43,7 @@ class Renderer
 		glm::mat4 projectionMatrix;
         fea::MessageBus& bus;
         std::vector<VBO> vbos;
+        std::map<size_t, Billboard> billboards;
         GLuint blockTexture;
         
         // camera stuff

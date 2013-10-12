@@ -22,3 +22,12 @@ using EntityMoveRequestedMessage = fea::Message<EntityMoveRequested_tag, fea::En
 
 struct EntityMoved_tag{};//                              id             old position      new position
 using EntityMovedMessage = fea::Message<EntityMoved_tag, fea::EntityId, const glm::vec3&, const glm::vec3&>;
+
+struct AddGfxEntity_tag{};//                               id      position
+using AddGfxEntityMessage = fea::Message<AddGfxEntity_tag, size_t, const glm::vec3&>;
+
+struct MoveGfxEntity_tag{};//                                id      position
+using MoveGfxEntityMessage = fea::Message<MoveGfxEntity_tag, size_t, const glm::vec3&>;
+
+struct RemoveGfxEntity_tag{};//
+using RemoveGfxEntityMessage = fea::Message<RemoveGfxEntity_tag, size_t>;
