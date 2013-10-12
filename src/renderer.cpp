@@ -128,6 +128,18 @@ void Renderer::render()
 		vbo.DrawVBO(mShaderProgram);
 	}
     glBindTexture(GL_TEXTURE_2D, 0);
+
+    for(auto& billboard : billboards)
+    {
+        glm::mat4 modelToWorld = glm::mat4(1.0f);
+        modelToWorld[3][0] = billboard.second.mPosition.x;
+        modelToWorld[3][1] = billboard.second.mPosition.y;
+        modelToWorld[3][2] = billboard.second.mPosition.z;
+
+        mShaderProgram.setUniform("modelToWorld",  modelToWorld);
+
+        billboard.second.mVbo.DrawVBO(mShaderProgram);
+    }
 }
 
 void Renderer::cameraUpdate()
@@ -239,7 +251,11 @@ void Renderer::handleMessage(const AddGfxEntityMessage& received)
 
     std::tie(id, position) = received.data;
 
-    //create a billboard and stuff it into the billboards map, e.g. billboards.emplace(id, billboard);
+	VBOCreator vboCreator;
+
+    Billboard newBillboard(vboCreator.generateBoardVBO(glm::vec2(1.0f, 1.0f)), position);
+
+    billboards.emplace(id, newBillboard);
 }
 
 void Renderer::handleMessage(const MoveGfxEntityMessage& received)
@@ -258,5 +274,6 @@ void Renderer::handleMessage(const RemoveGfxEntityMessage& received)
 
     std::tie(id) = received.data;
 
-    //remove the billboard from the map
+    //billboards.at(id).mVbo.DeleteBuffer();
+    billboards.erase(id);
 }

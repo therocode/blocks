@@ -190,14 +190,16 @@ inline void VBOCreator::setRectData(Rectangle& r, float x, float y, float z, int
 
 }
 
-VBO VBOCreator::generateCubeVBO(const glm::vec3& dimensions) const
+VBO VBOCreator::generateBoardVBO(const glm::vec2& dimensions) const
 {
     VBO vbo;
 
-    //Rectangle r;
-    //setRectData(r, worldX, worldY, worldZ, FRONT, (float)textureLocation.x, (float)textureLocation.y);
-    //r.calculateNormal();
-    //vbo.PushRectangle(r);
+    glm::uvec2 textureLocation(0, 2);
+
+    Rectangle r;
+    setRectData(r, 0.0f, 0.0f, 0.0f, FRONT, (float)textureLocation.x, (float)textureLocation.y);
+    r.calculateNormal();
+    vbo.PushRectangle(r);
 
     return vbo;
 }
