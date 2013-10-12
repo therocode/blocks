@@ -137,7 +137,7 @@ void Renderer::render()
 		
 		float t = atan2(cameraDir.z, cameraDir.x);
 		
-		modelToWorld *= glm::rotate(-t / glm::pi<float>() * 180.f + 90.f, 0.f, 1.f, 0.f);
+		modelToWorld *= glm::rotate(-t / glm::pi<float>() * 180.f - 90.f, 0.f, 1.f, 0.f);
         // std::cout << "set the position to " << billboard.second.mPosition.x << " " << billboard.second.mPosition.y << " " << billboard.second.mPosition.z << "\n";
 
         mShaderProgram.setUniform("modelToWorld",  modelToWorld);

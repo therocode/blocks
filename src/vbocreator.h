@@ -10,7 +10,8 @@ class VBOCreator
 		TOP,
 		RIGHT,
 		FRONT,
-		BACK
+		BACK,
+		CENTER//Center is a front in the center.
 	};
     public:
     VBO generateChunkVBO(const Chunk& chunk) const;

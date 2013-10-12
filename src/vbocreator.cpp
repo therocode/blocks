@@ -179,11 +179,21 @@ inline void VBOCreator::setRectData(Rectangle& r, float x, float y, float z, int
 			r.setPosition(2, x - hs, y, z + hs);
 			r.setPosition(3, x - hs, y, z - hs);
 			break;
+		case CENTER:
+			r.setPosition(0, x - hs,  y + hs, z);
+			r.setPosition(1, x - hs,  y - hs, z);
+			r.setPosition(2, x + hs,  y - hs, z);
+			r.setPosition(3, x + hs,  y + hs, z);
+			break;
 	}
 
 	float uo, vo;
-	uo = vo	= 0.125f; 
-	float e = 0.0005f;
+	uo = vo	= 0.125f;
+#ifdef EMSCRIPTEN
+	float e = 0.001f;
+#else
+	float e = 0.0006f;
+#endif
 	r.setUV(0, e+      (float)u * uo,  e+      (float)v * vo);
 	r.setUV(1, e+      (float)u * uo, -e+ vo + (float)v * vo);
 	r.setUV(2,-e+ uo + (float)u * uo, -e+ vo + (float)v * vo);
@@ -194,11 +204,10 @@ inline void VBOCreator::setRectData(Rectangle& r, float x, float y, float z, int
 VBO VBOCreator::generateBoardVBO(const glm::vec2& dimensions) const
 {
     VBO vbo;
-
     glm::uvec2 textureLocation(0, 2);
 
     Rectangle r;
-    setRectData(r, 0.0f, 0.0f, 0.0f, BACK, (float)textureLocation.x, (float)textureLocation.y);
+    setRectData(r, 0.0f, 0.0f, 0.0f, CENTER, (float)textureLocation.x, (float)textureLocation.y);
     r.calculateNormal();
     vbo.PushRectangle(r);
 
