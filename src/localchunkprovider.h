@@ -1,7 +1,7 @@
 #pragma once
-#include "chunkdeliverer.h"
+#include "chunkprovider.h"
 
-class LocalChunkDeliverer : public ChunkDeliverer
+class LocalChunkProvider : public ChunkProvider
 {
     public:
         virtual Chunk fetchChunk(const ChunkCoordinate& location) const;

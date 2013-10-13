@@ -1,6 +1,6 @@
 #include "landscape.h"
 
-void Landscape::setChunkDeliverer(ChunkDeliverer* del)
+void Landscape::setChunkProvider(ChunkProvider* del)
 {
     chunkDeliverer = del;
 }

@@ -1,6 +1,6 @@
 #include "dimension.h"
 #include "messages.h"
-#include "localchunkdeliverer.h"
+#include "localchunkprovider.h"
 
 Dimension::Dimension(fea::MessageBus& messageBus) : bus(messageBus)
 {
@@ -9,7 +9,7 @@ Dimension::Dimension(fea::MessageBus& messageBus) : bus(messageBus)
 
 void Dimension::initialise()
 {
-    landscape.setChunkDeliverer(new LocalChunkDeliverer());
+    landscape.setChunkProvider(new LocalChunkProvider());
 }
 
 void Dimension::addFocusPoint(const FocusPoint& focusPoint)

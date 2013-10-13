@@ -1,7 +1,7 @@
-#include "localchunkdeliverer.h"
+#include "localchunkprovider.h"
 #include "simplexnoise.h"
 
-Chunk LocalChunkDeliverer::fetchChunk(const ChunkCoordinate& location) const
+Chunk LocalChunkProvider::fetchChunk(const ChunkCoordinate& location) const
 {
     Chunk newChunk(location);
 

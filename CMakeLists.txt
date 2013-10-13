@@ -25,7 +25,7 @@ set(source_files
     src/lodepng.cpp
     src/dimension.cpp
     src/landscape.cpp
-    src/localchunkdeliverer.cpp
+    src/localchunkprovider.cpp
     src/input/inputadaptor.cpp
     src/simplexnoise.cpp
     src/focuspoint.cpp
@@ -54,8 +54,8 @@ set(header_files
     src/lodepng.h
     src/dimension.h
     src/landscape.h
-    src/chunkdeliverer.h
-    src/localchunkdeliverer.h
+    src/chunkprovider.h
+    src/localchunkprovider.h
     src/input/inputadaptor.h
     src/simplexnoise.h
     src/focuspoint.h
