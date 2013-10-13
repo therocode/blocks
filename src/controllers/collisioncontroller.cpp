@@ -31,7 +31,7 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
     if(approvedPosition.y < 0.0f || mWorldInterface.getVoxelType(approvedPosition) != 0)
     {
         glm::vec3 velocity = mEntities.at(id).lock()->getAttribute<glm::vec3>("velocity");
-        velocity.y = 0.0f;
+        velocity.y *= -0.5f;
         mEntities.at(id).lock()->setAttribute<glm::vec3>("velocity", velocity);
 		approvedPosition.y = glm::ceil(approvedPosition.y);
     }

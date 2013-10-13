@@ -1,4 +1,5 @@
 #pragma once
+#include "blockstd.h"
 #include "dimension.h"
 #include "worldinterface.h"
 #include "entitysystem.h"
