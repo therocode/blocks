@@ -37,7 +37,7 @@ struct Rectangle{
 		tPos = vs[1].position;
 		glm::vec3 v1(tPos[0], tPos[1], tPos[2]);
 
-		tPos = vs[2].position;
+		tPos = vs[3].position;
 		glm::vec3 v2(tPos[0], tPos[1], tPos[2]);
 
 		v2 = v2 - v0;

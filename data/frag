@@ -2,6 +2,7 @@
 #version 120
 
 uniform sampler2D tex0;
+uniform vec2 screenSize;
 //out vec4 fragColor;
 
 
@@ -14,6 +15,7 @@ varying vec3 modelSpace;
 
 varying vec2 texCoord;
 varying vec3 posCamSpace;
+varying vec3 normalWorldSpace;
 
 
 float random2f(vec2 co){
@@ -61,30 +63,32 @@ vec4 fragColor;
 	vec3 spec = vec3(1.0, 1.0, 1.0);
 	vec3 R = reflect(-vLight, -vNorm);
 	vec3 E = normalize(eyeDir);
-	float f = pow(max(dot(R, E), 0.0),10.f);// 0.0, 1.0);
+	float f = pow(max(dot(R, E), 0.0),2.f);// 0.0, 1.0);
 	fragColor = vec4((vColor + spec *  f), 1.0) ;
-	fragColor -= 0.1*pow(length(vec2(0.5)-texCoord), 1.8) + 0.03 * length(voronoi(texCoord.xy * 10.0));
+	fragColor -= 0.1*pow(length(vec2(0.5)-texCoord), 1.8);// + 0.03 * length(voronoi(texCoord.xy * 10.0));
 
 	vec4 texColor = texture2D(tex0, texCoord);
 	fragColor *= texColor;
 	//Crosshair
-	vec2 d = vec2(gl_FragCoord.xy);
-	vec2 screenSize = vec2(0.0, 0.0);
+		vec2 d = vec2(gl_FragCoord.xy);
+
 	d -= screenSize * 0.5;
 	d = floor(d);
 
 	float chW = 1;
-	float chS = 9.0;
+	float chS = 6.0;
 
 	if(abs(d.x)  < chW || abs(d.y) < chW  ){
 		if(abs(d.x) < chS && abs(d.y) < chS)
 			fragColor = vec4(1.0) - fragColor;	
 	}
-	vec4 ff = vec4(1.0, 1.0,1.0, 1.0);
+	
+	vec4 ff = vec4(1.0, 1.0, 1.0, 1.0);
 	ff.w = 1.0;
 	fragColor += texColor * ff * max( 1.0 - length(posCamSpace) * 0.1, 0.0);
 	//gamme correction kinda 
 	if (fragColor.x<0.50)
 		fragColor.rgb = pow(fragColor.rgb, vec3(1.0 / 0.8));
 	gl_FragColor = fragColor;
+//	gl_FragColor = vec4(normalWorldSpace, 1.0);
 }

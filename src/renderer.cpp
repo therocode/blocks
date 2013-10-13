@@ -104,12 +104,18 @@ void Renderer::handleMessage(const WindowResizeMessage& received)
 	std::tie(width, height) = received.data;
 	//I create a projection matrix, instead of gluproejction.
 	projectionMatrix = glm::perspective(80.f, ((float)width)/((float)height), 0.1f, 100.f);
-
+	
+	mScreenSize = glm::vec2((float)width, (float)height);
+	
+	//printf("Set screen size, %f, %f\n", screenSize.x, screenSize.y);
+	
 	//glMatrixMode(GL_PROJECTION);
 	//glLoadIdentity();
 	//gluPerspective(70.0f, ((float)width)/((float)height), 0.1f, 100.0f);
 	//glMatrixMode(GL_MODELVIEW);
     glViewport(0, 0, width, height);
+	
+	
 }
 
 void Renderer::render()
@@ -120,6 +126,7 @@ void Renderer::render()
 	mShaderProgram.setUniform("cameraToClip",  projectionMatrix);
 	mShaderProgram.setUniform("modelToWorld",  glm::mat4(1.f));
 	mShaderProgram.setTexture("tex0", blockTexture);
+	mShaderProgram.setUniform("screenSize", mScreenSize);
 
     glBindTexture(GL_TEXTURE_2D, blockTexture);
 
@@ -127,15 +134,17 @@ void Renderer::render()
 	{
 		vbo.DrawVBO(mShaderProgram);
 	}
-	float matr[16] = {	1.f, 0.f, 0.f, 0.f, 
+	float matr[16]=	{	1.f, 0.f, 0.f, 0.f, 
 						0.f, 1.f, 0.f, 0.f,
 						0.f, 0.f, 1.f, 0.f,
-						0.f, 0.f, 0.f, 1.f};
+						0.f, 0.f, 0.f, 1.f
+					};
 	for(auto& billboard : billboards)
 	{
 		glm::vec3 cameraDir = billboard.second.mPosition - cam.GetPosition();
 		cameraDir.y = 0;
 		cameraDir = glm::normalize(cameraDir);
+
 		#if 1
 		matr[12] = billboard.second.mPosition.x;
 		matr[13] = billboard.second.mPosition.y;		
@@ -156,8 +165,6 @@ void Renderer::render()
 		modelToWorld[2][0] = -cameraDir.x;
         mShaderProgram.setUniform("modelToWorld",  modelToWorld);
 		#endif
-
-	
 
         billboard.second.mVbo.DrawVBO(mShaderProgram);
     }

@@ -26,6 +26,7 @@ class ShaderProgram
 		void setUniform(std::string name, int   i);
 		void setUniform(std::string name, glm::vec4 v);
 		void setUniform(std::string name, glm::vec3 v);
+		void setUniform(std::string name, glm::vec2 v);
 		void setUniform(std::string name, glm::mat4 m);
 		void setUniform(std::string name, glm::mat3 m);
 		
@@ -34,6 +35,7 @@ class ShaderProgram
 		GLint getAttribLocation(std::string name);
 	private:
 		void compile();
+		bool   mProgramCreated;
 		GLint getUniformLocation(std::string name);
 		GLuint mProgramID;
 		//At the moment I just have one fragment and one vertex shader here.

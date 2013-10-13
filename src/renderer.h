@@ -45,7 +45,7 @@ class Renderer
         std::vector<VBO> vbos;
         std::map<size_t, Billboard> billboards;
         GLuint blockTexture;
-        
+        glm::vec2 mScreenSize;
         // camera stuff
 		float moveSpeed = 0.0001f;
 		float lastY, lastX;

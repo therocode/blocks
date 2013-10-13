@@ -29,6 +29,8 @@ varying vec3 modelSpace;
 varying vec2 texCoord;
 
 varying vec3 posCamSpace;
+varying vec3 normalWorldSpace;
+uniform vec2 screenSize;
 
 void main(){
 	texCoord = uv;
@@ -37,8 +39,9 @@ void main(){
 	mat3 normalWorldToCamera = mat3(worldToCamera);
 	mat3 normalModelToWorld  = mat3(modelToWorld);
 	mat3 normalModelToCamera = normalWorldToCamera * normalModelToWorld ;
+	
 
-    vec4 lightPos =  vec4(100.0, 100.0, 100.0, 1.0);
+    vec4 lightPos =  vec4(0.0, 100.0, 0.0, 1.0);
 	lightPos = worldToCamera * lightPos;
 
 	vec4 v =  modelToWorld * vec4(vert, 1.0);
@@ -46,10 +49,12 @@ void main(){
 	v = worldToCamera * v;
 	posCamSpace = v.xyz;
 	eyeDir = -v.xyz;
-	vec3 ld = normalize(v.xyz-lightPos.xyz);
+	vec3 ld = normalize(lightPos.xyz - v.xyz);
 
 	vec3 nd =normal;
 	nd = normalize(normalModelToWorld * nd);
+	
+	normalWorldSpace = nd;
 	nd = normalize(normalWorldToCamera* nd);
 
 	vLight = ld;
