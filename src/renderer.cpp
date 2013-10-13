@@ -284,6 +284,6 @@ void Renderer::handleMessage(const RemoveGfxEntityMessage& received)
 
     std::tie(id) = received.data;
 
-    //billboards.at(id).mVbo.DeleteBuffer();
+    billboards.at(id).mVbo.DestroyVBO();
     billboards.erase(id);
 }

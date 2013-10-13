@@ -22,9 +22,9 @@ void World::initialise()
     entitySystem.addController(std::unique_ptr<EntityController>(new CollisionController(bus, worldInterface)));
     entitySystem.addController(std::unique_ptr<EntityController>(new GfxController(bus, worldInterface)));
 
-    for(int x = 0; x < 48; x++)
+    for(int x = 0; x < 10; x++)
     {
-        for(int y = 0; y < 48; y++)
+        for(int y = 0; y < 20; y++)
         {
             fea::EntityPtr human = entitySystem.spawnEntity("human").lock();
             human->setAttribute<glm::vec3>("position", glm::vec3(1.0f * x, 100.0f, 1.0f * y));
