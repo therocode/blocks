@@ -28,6 +28,8 @@ class ShaderProgram
 		void setUniform(std::string name, glm::vec3 v);
 		void setUniform(std::string name, glm::mat4 m);
 		void setUniform(std::string name, glm::mat3 m);
+		
+		void setUniformMat4(std::string name, float* a);
 
 		GLint getAttribLocation(std::string name);
 	private:

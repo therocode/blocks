@@ -127,25 +127,37 @@ void Renderer::render()
 	{
 		vbo.DrawVBO(mShaderProgram);
 	}
-
-     for(auto& billboard : billboards)
-     {
-        glm::mat4 modelToWorld = glm::mat4(1.f);
+	float matr[16] = {	1.f, 0.f, 0.f, 0.f, 
+						0.f, 1.f, 0.f, 0.f,
+						0.f, 0.f, 1.f, 0.f,
+						0.f, 0.f, 0.f, 1.f};
+	for(auto& billboard : billboards)
+	{
+		glm::vec3 cameraDir = billboard.second.mPosition - cam.GetPosition();
+		cameraDir.y = 0;
+		cameraDir = glm::normalize(cameraDir);
+		#if 1
+		matr[12] = billboard.second.mPosition.x;
+		matr[13] = billboard.second.mPosition.y;		
+		matr[14] = billboard.second.mPosition.z;
+		matr[0] = -cameraDir.z;
+		matr[10]= -cameraDir.z;
+		matr[2] =  cameraDir.x;		
+		matr[8] = -cameraDir.x;
+		mShaderProgram.setUniformMat4("modelToWorld",  &matr[0]);
+		#else
+		glm::mat4 modelToWorld = glm::mat4(1.f);
 		modelToWorld[3][0] = billboard.second.mPosition.x;
 		modelToWorld[3][1] = billboard.second.mPosition.y;
 		modelToWorld[3][2] = billboard.second.mPosition.z;
-		
-		glm::vec3 cameraDir = billboard.second.mPosition - cam.GetPosition();
-		cameraDir.y = 0;
-		
-		cameraDir = glm::normalize(cameraDir);
-		
 		modelToWorld[0][0] = -cameraDir.z;
 		modelToWorld[2][2] = -cameraDir.z;
 		modelToWorld[0][2] = cameraDir.x;
 		modelToWorld[2][0] = -cameraDir.x;
-		
         mShaderProgram.setUniform("modelToWorld",  modelToWorld);
+		#endif
+
+	
 
         billboard.second.mVbo.DrawVBO(mShaderProgram);
     }

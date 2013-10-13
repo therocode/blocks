@@ -190,7 +190,7 @@ inline void VBOCreator::setRectData(Rectangle& r, float x, float y, float z, int
 	float uo, vo;
 	uo = vo	= 0.125f;
 #ifdef EMSCRIPTEN
-	float e = 0.002f;
+	float e = 0.006f;
 #else
 	float e = 0.0006f;
 #endif

@@ -114,6 +114,15 @@ void ShaderProgram::setUniform(std::string name, glm::mat4 m)
 
 	glUniformMatrix4fv(parameterCache.at(name), 1, GL_FALSE, glm::value_ptr(m));
 }
+void ShaderProgram::setUniformMat4(std::string name, float* a)
+{
+    if(parameterCache.find(name) == parameterCache.end())
+    {
+        parameterCache.emplace(name, glGetUniformLocation(mProgramID, name.c_str()));
+    }
+
+	glUniformMatrix4fv(parameterCache.at(name), 1, GL_FALSE, a);
+}
 
 void ShaderProgram::setUniform(std::string name, glm::mat3 m)
 {
