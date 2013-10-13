@@ -78,7 +78,7 @@ void Renderer::setup()
 
     makeTexture("data/textures/blocks.png", 256, 256, blockTexture);
 	//Setting it to this because haha.
-	cam.SetPosition(glm::vec3(0.0f, 100.0f, -50.0f));
+	cam.SetPosition(glm::vec3(0.0f, 50.0f, -50.0f));
 	mShaderProgram.setShaderPaths("data/vert", "data/frag");
 }
 void Renderer::setCameraMatrix(glm::mat4 m){
