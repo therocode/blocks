@@ -1,9 +1,16 @@
 #include "server.h"
+#include "chunkloadedpackage.h"
 #include <iostream>
 
 Server::Server() : world(mBus),
                    mBridge(nullptr)
 {
+    mBus.addMessageSubscriber<ChunkCreatedMessage>(*this);
+}
+
+Server::~Server()
+{
+    mBus.removeMessageSubscriber<ChunkCreatedMessage>(*this);
 }
 
 void Server::setup()
@@ -34,5 +41,12 @@ void Server::addClientBridge(std::unique_ptr<ServerClientBridge> clientBridge)
 
 void Server::handleMessage(const ChunkCreatedMessage& received)
 {
+    std::cout << "Server has created a chunk and will send it to the client\n";
     
+	const ChunkCoordinate* coordinate;
+	const Chunk* chunk;
+
+	std::tie(coordinate, chunk) = received.data;
+
+    mBridge->enqueuePackage(std::unique_ptr<Package>(new ChunkLoadedPackage(chunk->getVoxelTypes())));
 }

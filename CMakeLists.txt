@@ -16,6 +16,7 @@ set(source_files
 	src/blocksapp.cpp
     src/client.cpp
     src/server.cpp
+    src/serverclientbridge.cpp
     src/localserverclientbridge.cpp
     src/package.cpp
     src/chunkloadedpackage.cpp

@@ -1,11 +1,13 @@
 #pragma once
 #include "world.h"
 #include "serverclientbridge.h"
+#include "messages.h"
 
 class Server : public fea::MessageReceiver<ChunkCreatedMessage>
 {
     public:
         Server();
+        ~Server();
         void setup();
         void doLogic();
         void destroy();
