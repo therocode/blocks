@@ -1,15 +1,15 @@
 #pragma once
 #include "package.h"
-#include <vector>
+#include <deque>
 #include <memory>
 
 class ServerClientBridge
 {
     public:
-        std::unique_ptr<Package> pollPackage(); //fetch a received package
+        bool pollPackage(std::unique_ptr<Package>& package); //fetch a received package
         virtual void flush() = 0; //send all information
         void enqueuePackage(std::unique_ptr<Package>&& package);
     protected:
-        std::vector<std::unique_ptr<Package> > mIncoming;
-        std::vector<std::unique_ptr<Package> > mOutgoing;
+        std::deque<std::unique_ptr<Package> > mIncoming;
+        std::deque<std::unique_ptr<Package> > mOutgoing;
 };

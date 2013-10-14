@@ -5,8 +5,9 @@
 class ChunkLoadedPackage : public Package
 {
     public:
-        ChunkLoadedPackage(const VoxelTypeArray& voxelTypes);
+        ChunkLoadedPackage(const ChunkCoordinate& coordinate, const Chunk& chunk);
         virtual std::vector<uint8_t> serialise() const;
         virtual void deserialise(std::vector<uint8_t> bytes);
-        VoxelTypeArray mVoxelTypes;
+        ChunkCoordinate mCoordinate;
+        Chunk mChunk;
 };

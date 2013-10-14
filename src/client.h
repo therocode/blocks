@@ -18,6 +18,7 @@ class Client : public fea::MessageReceiver<InputActionMessage>
         bool requestedQuit();
         void setServerBridge(std::unique_ptr<ServerClientBridge> bridge);
     private:
+        void fetchServerData();
         fea::MessageBus mBus;
         sf::Window sfWindow;
         fea::Window window;
