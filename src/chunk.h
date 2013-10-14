@@ -6,10 +6,10 @@
 using ChunkCoordinate = glm::ivec3;
 using VoxelCoordinate = glm::uvec3;
 
-const uint32_t chunkWidth = 16;
-const uint32_t chunkWidthx2 = chunkWidth * chunkWidth;
-const uint32_t chunkWidthx3 = chunkWidth * chunkWidth * chunkWidth;
-const uint32_t voxelAmount = chunkWidthx3;
+const int32_t chunkWidth = 16;
+const int32_t chunkWidthx2 = chunkWidth * chunkWidth;
+const int32_t chunkWidthx3 = chunkWidth * chunkWidth * chunkWidth;
+const int32_t voxelAmount = chunkWidthx3;
 
 using VoxelType = uint16_t;
 using VoxelTypeArray = std::array<VoxelType, voxelAmount>;
