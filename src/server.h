@@ -2,7 +2,7 @@
 #include "world.h"
 #include "serverclientbridge.h"
 
-class Server
+class Server : public fea::MessageReceiver<ChunkCreatedMessage>
 {
     public:
         Server();
@@ -10,6 +10,7 @@ class Server
         void doLogic();
         void destroy();
         void addClientBridge(std::unique_ptr<ServerClientBridge> clientBridge);
+        void handleMessage(const ChunkCreatedMessage& received);
     private:
         fea::MessageBus mBus;
         World world;

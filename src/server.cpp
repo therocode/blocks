@@ -31,3 +31,8 @@ void Server::addClientBridge(std::unique_ptr<ServerClientBridge> clientBridge)
     mBridge = std::move(clientBridge);
     std::cout << "Server got a client connected\n";
 }
+
+void Server::handleMessage(const ChunkCreatedMessage& received)
+{
+    
+}
