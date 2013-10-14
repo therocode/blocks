@@ -36,6 +36,7 @@ set(source_files
     src/controllers/physicscontroller.cpp
     src/controllers/collisioncontroller.cpp
     src/controllers/gfxcontroller.cpp
+    src/controllers/playercontroller.cpp
     src/worldinterface.cpp
 	src/shader.cpp
 	src/shaderprogram.cpp
@@ -67,6 +68,7 @@ set(header_files
     src/controllers/physicscontroller.h
     src/controllers/collisioncontroller.h
     src/controllers/gfxcontroller.cpp
+    src/controllers/playercontroller.h
     src/worldinterface.h
 	src/shader.h
 	src/shaderprogram.h
