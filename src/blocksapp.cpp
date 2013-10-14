@@ -10,8 +10,6 @@ void BlocksApplication::setup()
 {
     server = std::unique_ptr<Server>(new Server());
     client = std::unique_ptr<Client>(new Client());
-    server->setup();
-    client->setup();
 
     LocalServerClientBridge* clientToServer = new LocalServerClientBridge();
     LocalServerClientBridge* serverToClient = new LocalServerClientBridge();
@@ -21,6 +19,9 @@ void BlocksApplication::setup()
 
     client->setServerBridge(std::unique_ptr<LocalServerClientBridge>(clientToServer));
     server->addClientBridge(std::unique_ptr<LocalServerClientBridge>(serverToClient));
+
+    server->setup();
+    client->setup();
 }
 
 void BlocksApplication::loop()
