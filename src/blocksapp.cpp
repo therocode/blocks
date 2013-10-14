@@ -1,5 +1,6 @@
 #include "blocksapp.h"
 #include "input/inputactions.h"
+#include "localserverclientbridge.h"
 
 BlocksApplication::BlocksApplication()
 {
@@ -11,6 +12,15 @@ void BlocksApplication::setup()
     client = std::unique_ptr<Client>(new Client());
     server->setup();
     client->setup();
+
+    LocalServerClientBridge* clientToServer = new LocalServerClientBridge();
+    LocalServerClientBridge* serverToClient = new LocalServerClientBridge();
+
+    clientToServer->connect(serverToClient);
+    serverToClient->connect(clientToServer);
+
+    client->setServerBridge(std::unique_ptr<LocalServerClientBridge>(clientToServer));
+    server->addClientBridge(std::unique_ptr<LocalServerClientBridge>(serverToClient));
 }
 
 void BlocksApplication::loop()

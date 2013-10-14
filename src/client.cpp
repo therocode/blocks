@@ -5,7 +5,8 @@
 Client::Client() : window(new fea::util::SFMLWindowBackend(sfWindow)),
                    renderer(mBus),
                    inputAdaptor(sfWindow, mBus),
-                   quit(false)
+                   quit(false),
+                   mBridge(nullptr)
 {
 	mBus.addMessageSubscriber<InputActionMessage>(*this);
 }
@@ -21,7 +22,11 @@ void Client::setup()
 
 void Client::handleInput()
 {
+    //fetch server stuff
+
     inputAdaptor.update();
+
+    mBridge->flush();
 }
 
 void Client::render()
@@ -50,4 +55,9 @@ void Client::handleMessage(const InputActionMessage& received)
 bool Client::requestedQuit()
 {
     return quit;
+}
+
+void Client::setServerBridge(std::unique_ptr<ServerClientBridge> bridge)
+{
+    mBridge = std::move(bridge);
 }
