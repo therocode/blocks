@@ -31,3 +31,9 @@ using MoveGfxEntityMessage = fea::Message<MoveGfxEntity_tag, size_t, const glm::
 
 struct RemoveGfxEntity_tag{};//
 using RemoveGfxEntityMessage = fea::Message<RemoveGfxEntity_tag, size_t>;
+
+struct CameraUpdated_tag{};//
+using CameraUpdatedMessage = fea::Message<CameraUpdated_tag, const glm::vec3&, const glm::vec3&>;
+
+struct CurrentlyFacingBlock_tag{};
+using CurrentlyFacingBlockMessage = fea::Message<CurrentlyFacingBlock_tag, const glm::vec3&>;

@@ -18,6 +18,7 @@ class Renderer
         public fea::MessageReceiver<MouseMovedMessage>,
         public fea::MessageReceiver<AddGfxEntityMessage>,
         public fea::MessageReceiver<MoveGfxEntityMessage>,
+        public fea::MessageReceiver<CurrentlyFacingBlockMessage>,
         public fea::MessageReceiver<RemoveGfxEntityMessage>
                 
 {
@@ -33,6 +34,7 @@ class Renderer
         virtual void handleMessage(const AddGfxEntityMessage& received);
         virtual void handleMessage(const MoveGfxEntityMessage& received);
         virtual void handleMessage(const RemoveGfxEntityMessage& received);
+        virtual void handleMessage(const CurrentlyFacingBlockMessage& received);
         void render();
         void cameraUpdate();    // camera function
 		void setCameraMatrix(glm::mat4 m);
@@ -40,6 +42,7 @@ class Renderer
 		ShaderProgram mShaderProgram;
 		Camera cam;
 		Timer mTimer;
+		glm::vec3 mCurrentlyFacingBlock;
 		glm::mat4 projectionMatrix;
         fea::MessageBus& bus;
         std::vector<VBO> vbos;

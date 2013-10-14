@@ -135,54 +135,57 @@ VBO VBOCreator::generateChunkVBO(const Chunk& chunk) const
 inline void VBOCreator::setRectData(Rectangle& r, float x, float y, float z, int face, float u, float v) const
 {
 	float boxSize = 1.f;
-	float hs      = boxSize * 0.5f;
+	float hs      = boxSize;
+	float nhs = 0.f;
 	switch(face){
 		case FRONT:
 			z += hs;
-			r.setPosition(0, x - hs,  y + hs, z);
-			r.setPosition(1, x - hs,  y - hs, z);
-			r.setPosition(2, x + hs,  y - hs, z);
+			r.setPosition(0, x + nhs,  y + hs, z);
+			r.setPosition(1, x + nhs,  y + nhs, z);
+			r.setPosition(2, x + hs,  y + nhs, z);
 			r.setPosition(3, x + hs,  y + hs, z);
 			break;
 		case RIGHT:
 			x += hs;
 			r.setPosition(0, x, y + hs, z + hs);
-			r.setPosition(1, x, y - hs, z + hs);
-			r.setPosition(2, x, y - hs, z - hs);
-			r.setPosition(3, x, y + hs, z - hs);
+			r.setPosition(1, x, y + nhs, z + hs);
+			r.setPosition(2, x, y + nhs, z + nhs);
+			r.setPosition(3, x, y + hs, z + nhs);
 			break;
 		case BACK:
-			z -= hs;
+			//z -= hs;
 			r.setPosition(0, x + hs,  y + hs, z);
-			r.setPosition(1, x + hs,  y - hs, z);
-			r.setPosition(2, x - hs,  y - hs, z);
-			r.setPosition(3, x - hs,  y + hs, z);
+			r.setPosition(1, x + hs,  y + nhs, z);
+			r.setPosition(2, x + nhs,  y + nhs, z);
+			r.setPosition(3, x + nhs,  y + hs, z);
 			break;
 		case LEFT:
-			x -= hs;
-			r.setPosition(0, x, y + hs, z - hs);
-			r.setPosition(1, x, y - hs, z - hs);
-			r.setPosition(2, x, y - hs, z + hs);
+			//x -= hs;
+			r.setPosition(0, x, y + hs, z + nhs);
+			r.setPosition(1, x, y + nhs, z + nhs);
+			r.setPosition(2, x, y + nhs, z + hs);
 			r.setPosition(3, x, y + hs, z + hs);
 			break;
 		case TOP:
 			y += hs;
-			r.setPosition(0, x - hs, y, z - hs);
-			r.setPosition(1, x - hs, y, z + hs);
+			r.setPosition(0, x + nhs, y, z + nhs);
+			r.setPosition(1, x + nhs, y, z + hs);
 			r.setPosition(2, x + hs, y, z + hs);
-			r.setPosition(3, x + hs, y, z - hs);
+			r.setPosition(3, x + hs, y, z + nhs);
 			break;
 		case BOTTOM:
-			y -= hs;
-			r.setPosition(0, x + hs, y, z - hs);
+			//y -= hs;
+			r.setPosition(0, x + hs, y, z + nhs);
 			r.setPosition(1, x + hs, y, z + hs);
-			r.setPosition(2, x - hs, y, z + hs);
-			r.setPosition(3, x - hs, y, z - hs);
+			r.setPosition(2, x + nhs, y, z + hs);
+			r.setPosition(3, x + nhs, y, z + nhs);
 			break;
 		case CENTER:
-			r.setPosition(0, x - hs,  y + hs, z);
-			r.setPosition(1, x - hs,  y - hs, z);
-			r.setPosition(2, x + hs,  y - hs, z);
+			hs *= 0.5f;
+			nhs = -hs;
+			r.setPosition(0, x + nhs,  y + hs, z);
+			r.setPosition(1, x + nhs,  y + nhs, z);
+			r.setPosition(2, x + hs,  y + nhs, z);
 			r.setPosition(3, x + hs,  y + hs, z);
 			break;
 	}
