@@ -1,4 +1,5 @@
 #include "client.h"
+#include <iostream>
 #include <featherkit/util/window/sfml/sfmlwindowbackend.h>
 #include <featherkit/util/input/sfml/sfmlinputbackend.h>
 
@@ -18,6 +19,8 @@ void Client::setup()
 	//window.setFramerateLimit(30);
     renderer.setup();
     mBus.sendMessage<WindowResizeMessage>(WindowResizeMessage(800, 600));
+
+    std::cout << "client setup\n";
 }
 
 void Client::handleInput()
@@ -39,6 +42,7 @@ void Client::render()
 void Client::destroy()
 {
     window.close();
+    std::cout << "client destroyed\n";
 }
 
 void Client::handleMessage(const InputActionMessage& received)
@@ -60,4 +64,5 @@ bool Client::requestedQuit()
 void Client::setServerBridge(std::unique_ptr<ServerClientBridge> bridge)
 {
     mBridge = std::move(bridge);
+    std::cout << "client connected to server\n";
 }
