@@ -2,7 +2,12 @@
 
 ChunkCoordinate worldToChunk(float x, float y, float z)
 {
-    return ChunkCoordinate(floor(x / (float)chunkWidth), floor(y / (float)chunkWidth), floor(z / (float)chunkWidth));
+	bool xNegative = x < 0.0f;
+    bool yNegative = y < 0.0f;
+    bool zNegative = z < 0.0f;
+    return ChunkCoordinate(	floor(x / (float)chunkWidth), 
+							floor(y / (float)chunkWidth), 
+							floor(z / (float)chunkWidth));
 }
 
 ChunkCoordinate worldToChunk(const glm::vec3& position)

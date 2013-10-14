@@ -28,12 +28,12 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
 
     approvedPosition = requestedPosition;
 
-    if(approvedPosition.y < 0.0f || mWorldInterface.getVoxelType(approvedPosition) != 0)
+    if(approvedPosition.y < 0.0f || mWorldInterface.getVoxelType(approvedPosition + glm::vec3(0.f, -0.5f, 0.f)) != 0)
     {
         glm::vec3 velocity = mEntities.at(id).lock()->getAttribute<glm::vec3>("velocity");
         velocity.y *= -0.5f;
         mEntities.at(id).lock()->setAttribute<glm::vec3>("velocity", velocity);
-		approvedPosition.y = glm::ceil(approvedPosition.y);
+		approvedPosition.y = glm::floor(approvedPosition.y) + 0.5f;
     }
 
     mEntities.at(id).lock()->setAttribute<glm::vec3>("position", approvedPosition);

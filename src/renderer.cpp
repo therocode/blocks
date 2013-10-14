@@ -209,6 +209,7 @@ void Renderer::render()
 
 	glEnd();
 	glEnable(GL_DEPTH_TEST);
+
 }
 
 void Renderer::cameraUpdate()
