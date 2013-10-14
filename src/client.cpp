@@ -4,6 +4,7 @@
 #include <featherkit/util/input/sfml/sfmlinputbackend.h>
 #include <typeinfo>
 #include "chunkloadedpackage.h"
+#include "gfxentityaddedpackage.h"
 
 Client::Client() : window(new fea::util::SFMLWindowBackend(sfWindow)),
                    renderer(mBus),
@@ -81,6 +82,13 @@ void Client::fetchServerData()
             ChunkLoadedPackage* chunkPackage = (ChunkLoadedPackage*)package.get();
             
             mBus.sendMessage<ChunkCreatedMessage>(ChunkCreatedMessage(&chunkPackage->mCoordinate, &chunkPackage->mChunk));
+        }
+        else if(package->mType == typeid(GfxEntityAddedPackage))
+        {
+            std::cout << "it was gfx message\n";
+            GfxEntityAddedPackage* gfxAddedPackage = (GfxEntityAddedPackage*)package.get();
+
+            mBus.sendMessage<AddGfxEntityMessage>(AddGfxEntityMessage(gfxAddedPackage->mId, gfxAddedPackage->mPosition));
         }
     }
 }

@@ -1,16 +1,19 @@
 #include "server.h"
 #include "chunkloadedpackage.h"
+#include "gfxentityaddedpackage.h"
 #include <iostream>
 
 Server::Server() : world(mBus),
                    mBridge(nullptr)
 {
     mBus.addMessageSubscriber<ChunkCreatedMessage>(*this);
+    mBus.addMessageSubscriber<AddGfxEntityMessage>(*this);
 }
 
 Server::~Server()
 {
     mBus.removeMessageSubscriber<ChunkCreatedMessage>(*this);
+    mBus.removeMessageSubscriber<AddGfxEntityMessage>(*this);
 }
 
 void Server::setup()
@@ -49,4 +52,14 @@ void Server::handleMessage(const ChunkCreatedMessage& received)
 	std::tie(coordinate, chunk) = received.data;
 
     mBridge->enqueuePackage(std::unique_ptr<Package>(new ChunkLoadedPackage(*coordinate, *chunk)));
+}
+
+void Server::handleMessage(const AddGfxEntityMessage& received)
+{
+    size_t id;
+    glm::vec3 position;
+
+    std::tie(id, position) = received.data;
+
+    mBridge->enqueuePackage(std::unique_ptr<Package>(new GfxEntityAddedPackage(id, position)));
 }
