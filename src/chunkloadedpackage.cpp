@@ -1,7 +1,8 @@
 #include "chunkloadedpackage.h"
 
-ChunkLoadedPackage::ChunkLoadedPackage(const VoxelTypeArray& voxelTypes) : Package(typeid(ChunkLoadedPackage)),
-                                                                           mVoxelTypes(voxelTypes)
+ChunkLoadedPackage::ChunkLoadedPackage(const ChunkCoordinate& coordinate, const Chunk& chunk) : Package(typeid(ChunkLoadedPackage)),
+                                                                           mCoordinate(coordinate),
+                                                                           mChunk(chunk)
 {
 }
 

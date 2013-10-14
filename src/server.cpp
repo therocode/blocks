@@ -48,5 +48,5 @@ void Server::handleMessage(const ChunkCreatedMessage& received)
 
 	std::tie(coordinate, chunk) = received.data;
 
-    mBridge->enqueuePackage(std::unique_ptr<Package>(new ChunkLoadedPackage(chunk->getVoxelTypes())));
+    mBridge->enqueuePackage(std::unique_ptr<Package>(new ChunkLoadedPackage(*coordinate, *chunk)));
 }

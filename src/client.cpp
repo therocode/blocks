@@ -2,6 +2,8 @@
 #include <iostream>
 #include <featherkit/util/window/sfml/sfmlwindowbackend.h>
 #include <featherkit/util/input/sfml/sfmlinputbackend.h>
+#include <typeinfo>
+#include "chunkloadedpackage.h"
 
 Client::Client() : window(new fea::util::SFMLWindowBackend(sfWindow)),
                    renderer(mBus),
@@ -25,7 +27,7 @@ void Client::setup()
 
 void Client::handleInput()
 {
-    //fetch server stuff
+    fetchServerData();
 
     inputAdaptor.update();
 
@@ -65,4 +67,20 @@ void Client::setServerBridge(std::unique_ptr<ServerClientBridge> bridge)
 {
     mBridge = std::move(bridge);
     std::cout << "client connected to server\n";
+}
+
+void Client::fetchServerData()
+{
+    std::unique_ptr<Package> package;
+
+    while(mBridge->pollPackage(package))
+    {
+        std::cout << "i am the client and i've seen a pachage\n";
+        if(package->mType == typeid(ChunkLoadedPackage))
+        {
+            ChunkLoadedPackage* chunkPackage = (ChunkLoadedPackage*)package.get();
+            
+            mBus.sendMessage<ChunkCreatedMessage>(ChunkCreatedMessage(&chunkPackage->mCoordinate, &chunkPackage->mChunk));
+        }
+    }
 }
