@@ -47,7 +47,8 @@ class Renderer
         GLuint blockTexture;
         glm::vec2 mScreenSize;
         // camera stuff
-		float moveSpeed = 0.0001f;
+		float moveSpeed = 0.0002f;
+		float mTimeStep = 2.f;
 		float lastY, lastX;
 		bool movingLeft, movingRight, movingUp, movingDown, elevate, delevate;
 		bool mouseDown = false;

@@ -8,6 +8,7 @@ Renderer::Renderer(fea::MessageBus& messageBus) : bus(messageBus)
 {
 	movingLeft = movingRight = movingUp = movingDown = elevate = delevate = false;
 	mTimer.start();
+	mTimer.setDeltaThreshold(mTimeStep);
 	mTimer.setDeltaThreshold(2);
 	movingUp = movingLeft = movingRight = movingDown = false;
 	bus.addMessageSubscriber<ChunkCreatedMessage>(*this);
@@ -195,12 +196,12 @@ void Renderer::cameraUpdate()
 		m.y -= moveSpeed;
 	}
 
-	for(int i = 0; i < dT; i ++){
-		camSpeed += m;
-		camSpeed *= 0.99f;
+	for(int i = 0; i < dT; i += (int)mTimeStep){
 		cam.MoveForward(camSpeed.z);
 		cam.Strafe(camSpeed.x);	
 		cam.AddPosition(glm::vec3(0, camSpeed.y, 0));	
+		camSpeed += m;
+		camSpeed *= 0.99f;
 	}
 
 	cam.Update();
