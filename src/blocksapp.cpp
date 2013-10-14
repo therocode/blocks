@@ -1,52 +1,30 @@
 #include "blocksapp.h"
-#include "messages.h"
 #include "input/inputactions.h"
-#include <featherkit/util/window/sfml/sfmlwindowbackend.h>
-#include <featherkit/util/input/sfml/sfmlinputbackend.h>
 
 BlocksApplication::BlocksApplication()
-    :   window(new fea::util::SFMLWindowBackend(sfWindow)),
-        inputAdaptor(sfWindow, bus),
-        world(bus),
-        renderer(bus)
 {
-	bus.addMessageSubscriber<InputActionMessage>(*this);
 }
 
 void BlocksApplication::setup()
 {
-    window.create(fea::VideoMode(800, 600, 32), "Blocky", fea::Style::Default, fea::ContextSettings(32));
-
-	//window.setFramerateLimit(30);
-    renderer.setup();
-    bus.sendMessage<WindowResizeMessage>(WindowResizeMessage(800, 600));
-
-    world.initialise();
-	window.lockCursor(true);
+    server = std::unique_ptr<Server>(new Server());
+    client = std::unique_ptr<Client>(new Client());
+    server->setup();
+    client->setup();
 }
 
 void BlocksApplication::loop()
 {
-    inputAdaptor.update();
+    client->handleInput();
+    server->doLogic(); //implement timestep later on. should also only happen if the server is a local instance
+    client->render();
 
-    renderer.cameraUpdate();
-    world.update();
-    renderer.render();
-    window.swapBuffers();
+    if(client->requestedQuit())
+        quit();
 }
 
 void BlocksApplication::destroy()
 {
-    window.close();
-}
-
-void BlocksApplication::handleMessage(const InputActionMessage& received)
-{
-    int action;
-	std::tie(action) = received.data;
-
-    if(action == InputAction::QUIT)
-    {
-        quit();
-    }
+    client->destroy();
+    server->destroy();
 }

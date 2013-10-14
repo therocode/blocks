@@ -1,8 +1,8 @@
 #include "landscape.h"
 
-void Landscape::setChunkProvider(ChunkProvider* del)
+void Landscape::setChunkProvider(std::unique_ptr<ChunkProvider> del)
 {
-    chunkDeliverer = del;
+    chunkDeliverer = std::move(del);
 }
 
 Chunk& Landscape::loadChunk(const ChunkCoordinate& location)

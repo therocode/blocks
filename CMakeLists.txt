@@ -14,6 +14,8 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 #Set source files.
 set(source_files
 	src/blocksapp.cpp
+    src/client.cpp
+    src/server.cpp
 	src/chunk.cpp
 	src/vbo.cpp
 	src/billboard.cpp
@@ -43,6 +45,8 @@ set(source_files
 )
 set(header_files
 	src/blocksapp.h
+    src/client.h
+    src/server.h
 	src/blockstd.h
 	src/chunk.h
 	src/vbo.h

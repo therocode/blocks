@@ -9,7 +9,7 @@ Dimension::Dimension(fea::MessageBus& messageBus) : bus(messageBus)
 
 void Dimension::initialise()
 {
-    landscape.setChunkProvider(new LocalChunkProvider());
+    landscape.setChunkProvider(std::unique_ptr<ChunkProvider>(new LocalChunkProvider()));
 }
 
 void Dimension::addFocusPoint(const FocusPoint& focusPoint)
