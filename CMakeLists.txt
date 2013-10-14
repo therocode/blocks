@@ -16,6 +16,7 @@ set(source_files
 	src/blocksapp.cpp
     src/client.cpp
     src/server.cpp
+    src/localserverclientbridge.cpp
 	src/chunk.cpp
 	src/vbo.cpp
 	src/billboard.cpp
@@ -47,6 +48,9 @@ set(header_files
 	src/blocksapp.h
     src/client.h
     src/server.h
+    src/serverclientbridge.h
+    src/localserverclientbridge.h
+    src/package.h
 	src/blockstd.h
 	src/chunk.h
 	src/vbo.h

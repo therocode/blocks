@@ -14,5 +14,5 @@ class Landscape
     private:
         std::unordered_map<ChunkCoordinate, uint32_t> chunkIndices;
         std::vector<Chunk> chunks;
-        std::unique_ptr<ChunkProvider> chunkDeliverer; //unique_ptr
+        std::unique_ptr<ChunkProvider> chunkDeliverer;
 };
