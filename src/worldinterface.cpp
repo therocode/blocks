@@ -36,22 +36,33 @@ glm::vec3 WorldInterface::getVoxelAtRay(const glm::vec3& position, const glm::ve
 
 glm::vec3 WorldInterface::getVoxelAtRay(float ox, float oy, float oz, float dx, float dy, float dz) const
 {
+	glm::vec3 d = glm::vec3(dx, dy, dz);
+	if(glm::length2(d) != 0)
+	d = glm::normalize(d);
+	d*= 0.1f;
+	glm::vec3 p = glm::vec3(ox, oy, oz);
+	
 	float l = glm::sqrt(dx * dx + dy * dy + dz * dz);
 	l *= 0.01;
 	dx *= l;
 	dy *= l;
 	dz *= l;
-	float x = ox, y = oy, z = oz;
 	int steps = 0;
 	uint16_t vtype = 0;
-	while(vtype < (uint16_t)1 && steps < 200){
-		vtype = getVoxelType(x - 1.f, y-1.f, z-1.f);
-		printf("voxel type: %i\n", vtype);
-		x += dx;	
-		y += dy;	
-		z += dz;	
+	while(steps < 900){
+		
+		glm::vec3 lp = glm::fract(p);
+		float nd = 10.f;
+		float ddot = glm::dot(glm::vec3(1.f, 0.f, 0.f), d);
+		if(ddot>0){
+			
+		}
+		
+		vtype = getVoxelType(p.x, p.y, p.z);
+		if(vtype != (uint16_t)0 ) break;
+		p += d;
+		
 		steps ++;
 	}
-	printf("steps: %i, step length: %f\n", steps, l);
-	return glm::floor(glm::vec3(x, y, z)) + glm::vec3(0.5f);
+	return glm::floor(p) + glm::vec3(0.5f);
 }
