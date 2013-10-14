@@ -3,7 +3,8 @@
 #include "serverclientbridge.h"
 #include "messages.h"
 
-class Server : public fea::MessageReceiver<ChunkCreatedMessage>
+class Server : public fea::MessageReceiver<ChunkCreatedMessage>,
+               public fea::MessageReceiver<AddGfxEntityMessage>
 {
     public:
         Server();
@@ -13,6 +14,7 @@ class Server : public fea::MessageReceiver<ChunkCreatedMessage>
         void destroy();
         void addClientBridge(std::unique_ptr<ServerClientBridge> clientBridge);
         void handleMessage(const ChunkCreatedMessage& received);
+        void handleMessage(const AddGfxEntityMessage& received);
     private:
         fea::MessageBus mBus;
         World world;
