@@ -2,9 +2,6 @@
 
 ChunkCoordinate worldToChunk(float x, float y, float z)
 {
-	bool xNegative = x < 0.0f;
-    bool yNegative = y < 0.0f;
-    bool zNegative = z < 0.0f;
     return ChunkCoordinate(	floor(x / (float)chunkWidth), 
 							floor(y / (float)chunkWidth), 
 							floor(z / (float)chunkWidth));
