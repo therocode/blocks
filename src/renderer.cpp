@@ -58,7 +58,7 @@ void Renderer::makeTexture(std::string path, uint32_t width, uint32_t height, GL
 void Renderer::setup()
 {
 	glewInit();
-	glClearColor(0.3f, 0.4f, 0.5f, 0.0f);
+	glClearColor((float)0x00 / 255.f, (float)0xb2 / 255.f, (float)0xff / 255.f, 0.0f);
 
 	//glEnable(GL_LIGHTING);
 	//glEnable(GL_LIGHT0);
