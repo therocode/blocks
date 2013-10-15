@@ -5,6 +5,7 @@
 #include <typeinfo>
 #include "chunkloadedpackage.h"
 #include "gfxentityaddedpackage.h"
+#include "gfxentitymovedpackage.h"
 
 Client::Client() : window(new fea::util::SFMLWindowBackend(sfWindow)),
                    renderer(mBus),
@@ -76,7 +77,6 @@ void Client::fetchServerData()
 
     while(mBridge->pollPackage(package))
     {
-        std::cout << "i am the client and i've seen a pachage\n";
         if(package->mType == typeid(ChunkLoadedPackage))
         {
             ChunkLoadedPackage* chunkPackage = (ChunkLoadedPackage*)package.get();
@@ -85,10 +85,15 @@ void Client::fetchServerData()
         }
         else if(package->mType == typeid(GfxEntityAddedPackage))
         {
-            std::cout << "it was gfx message\n";
             GfxEntityAddedPackage* gfxAddedPackage = (GfxEntityAddedPackage*)package.get();
 
             mBus.sendMessage<AddGfxEntityMessage>(AddGfxEntityMessage(gfxAddedPackage->mId, gfxAddedPackage->mPosition));
+        }
+        else if(package->mType == typeid(GfxEntityMovedPackage))
+        {
+            GfxEntityMovedPackage* gfxMovedPackage = (GfxEntityMovedPackage*)package.get();
+
+            mBus.sendMessage<MoveGfxEntityMessage>(MoveGfxEntityMessage(gfxMovedPackage->mId, gfxMovedPackage->mPosition));
         }
     }
 }
