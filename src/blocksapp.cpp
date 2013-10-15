@@ -22,6 +22,7 @@ void BlocksApplication::setup()
     bus.sendMessage<WindowResizeMessage>(WindowResizeMessage(800, 600));
 
     world.initialise();
+	window.lockCursor(true);
 }
 
 void BlocksApplication::loop()
