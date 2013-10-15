@@ -4,7 +4,8 @@
 #include "messages.h"
 
 class Server : public fea::MessageReceiver<ChunkCreatedMessage>,
-               public fea::MessageReceiver<AddGfxEntityMessage>
+               public fea::MessageReceiver<AddGfxEntityMessage>,
+               public fea::MessageReceiver<MoveGfxEntityMessage>
 {
     public:
         Server();
@@ -15,6 +16,7 @@ class Server : public fea::MessageReceiver<ChunkCreatedMessage>,
         void addClientBridge(std::unique_ptr<ServerClientBridge> clientBridge);
         void handleMessage(const ChunkCreatedMessage& received);
         void handleMessage(const AddGfxEntityMessage& received);
+        void handleMessage(const MoveGfxEntityMessage& received);
     private:
         fea::MessageBus mBus;
         World world;

@@ -21,6 +21,7 @@ set(source_files
     src/package.cpp
     src/chunkloadedpackage.cpp
     src/gfxentityaddedpackage.cpp
+    src/gfxentitymovedpackage.cpp
 	src/chunk.cpp
 	src/vbo.cpp
 	src/billboard.cpp
@@ -56,6 +57,7 @@ set(header_files
     src/package.h
     src/chunkloadedpackage.h
     src/gfxentityaddedpackage.h
+    src/gfxentitymovedpackage.h
 	src/blockstd.h
 	src/chunk.h
 	src/vbo.h

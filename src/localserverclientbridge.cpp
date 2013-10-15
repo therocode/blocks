@@ -6,7 +6,6 @@ void LocalServerClientBridge::flush()
     for(uint32_t i = 0; i < mOutgoing.size(); i++)
     {
         mOther->receivePackage(std::move(mOutgoing[i]));
-        std::cout << "transferred a package to the other side\n";
     }
 
     mOutgoing.clear();
