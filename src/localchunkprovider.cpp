@@ -16,8 +16,15 @@ Chunk LocalChunkProvider::fetchChunk(const ChunkCoordinate& location) const
                 float noiseXPos = ((float)(x + location.x * (int32_t)chunkWidth)) / 14.0f;
                 float noiseYPos = ((float)(y + location.y * (int32_t)chunkWidth)) / 14.0f;
                 float noiseZPos = ((float)(z + location.z * (int32_t)chunkWidth)) / 14.0f;
+
                 float noise = raw_noise_3d(noiseXPos, noiseYPos, noiseZPos);
-                if(noise < -0.5f)
+				float noiseHeight = ((raw_noise_2d(noiseXPos * 0.5f, noiseZPos * 0.5f) +1.f) * 5.f ); 
+				if(noiseHeight > (40 - (location.y * (int32_t)chunkWidth + y)) )
+				{
+                	if(noise < 0.0f && (40 - (location.y * (int32_t)chunkWidth + y)) > noiseHeight - 1) noise = -0.9f;  
+					else noise = 1.0f; 
+				}
+				if(noise < -0.5f)
                 {
                     types[x + y * chunkWidth + z * chunkWidthx2] = 1;
                 }
