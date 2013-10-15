@@ -1,13 +1,29 @@
 #include "blocksapp.h"
 #include "input/inputactions.h"
 #include "localserverclientbridge.h"
+#include <iostream>
 
 BlocksApplication::BlocksApplication()
 {
 }
 
-void BlocksApplication::setup()
+void BlocksApplication::setup(const std::vector<std::string>& args)
 {
+    if(!args.size())
+    {
+        setupSinglePlayer(); //setup local server and local client and connect with LocalServerClientBridge
+    }
+    else if(args[0] == "--dedicated")
+    {
+        setupDedicatedServer();  //do not create a client and only initialise a server and give it a NetworkServerClientBridge
+    }
+    else if(args[0] == "--join")
+    {
+        std::string address = args[1];
+        int32_t port = std::stoi(args[2]);
+        joinServer(address, port);   //setup local client and do not setup a server. give client a NetworkServerClientBridge and connect it to remote
+    }
+
     server = std::unique_ptr<Server>(new Server());
     client = std::unique_ptr<Client>(new Client());
 
@@ -38,4 +54,16 @@ void BlocksApplication::destroy()
 {
     client->destroy();
     server->destroy();
+}
+
+void BlocksApplication::setupSinglePlayer()
+{
+}
+
+void BlocksApplication::setupDedicatedServer()
+{
+}
+
+void BlocksApplication::joinServer(const std::string& address, int32_t port)
+{
 }
