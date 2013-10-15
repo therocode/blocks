@@ -13,6 +13,7 @@ class BlocksApplication
         void loop() override;
         void destroy() override;
     private:
+		void setupMultiPlayer();
         void setupSinglePlayer();
         void setupDedicatedServer();
         void joinServer(const std::string& address, int32_t port);

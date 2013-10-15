@@ -46,6 +46,7 @@ set(source_files
     src/worldinterface.cpp
 	src/shader.cpp
 	src/shaderprogram.cpp
+	src/remoteserverclientbridge.cpp
 )
 set(header_files
 	src/blocksapp.h
@@ -86,6 +87,7 @@ set(header_files
     src/worldinterface.h
 	src/shader.h
 	src/shaderprogram.h
+	src/remoteserverclientbridge.h
 )
 
 find_package(Featherkit REQUIRED COMPONENTS entity structure ui messaging)
@@ -93,6 +95,7 @@ find_package(GLM)
 find_package(SFML COMPONENTS window system graphics)
 find_package(GLEW)
 find_package(OpenGL REQUIRED)
+find_package(ENet)
 
 #This has to be done before add_executable. I'm adding source files.
 if(NOT GLEW_FOUND)
@@ -101,9 +104,13 @@ if(NOT GLEW_FOUND)
 endif()
 
 add_executable(${project_name} ${header_files} ${source_files})
+#instead of setting compiler flags globally. SFML doesn't like building with this flag on.
+set_target_properties(${project_name} PROPERTIES COMPILE_FLAGS "-std=c++11 -pthread")
 
-#instead of setting it globally. SFML doesn't like building with this flag on.
-set_target_properties(${project_name} PROPERTIES COMPILE_FLAGS -std=c++11)
+if(ENET_FOUND)
+	include_directories(${ENet_INCLUDE_DIRS})
+	target_link_libraries(${project_name} ${ENet_LIBRARIES})
+endif(ENET_FOUND)
 
 if(FEATHERKIT_FOUND)
 	include_directories(${FEATHERKIT_INCLUDE_DIRS})

@@ -1,6 +1,7 @@
 #include "blocksapp.h"
 #include "input/inputactions.h"
 #include "localserverclientbridge.h"
+#include "remoteserverclientbridge.h"
 #include <iostream>
 #include <thread>
 
@@ -24,14 +25,15 @@ void BlocksApplication::setup(const std::vector<std::string>& args)
         int32_t port = std::stoi(args[3]);
         joinServer(address, port);   //setup local client and do not setup a server. give client a NetworkServerClientBridge and connect it to remote
     }
+	else if(args[1] == "--host")
+	{
+		setupMultiPlayer();	
+	}
     else
     {
         std::cout << "Error! Malformed input! Must start ethier without arguments, or with one of the following: \"--dedicated\"  \"--join <server_address> <port_number>\"\n";
         exit(1);
     }
-#ifdef __UNIX__
-	printf("HEJJJ UNIX\n");
-#endif
 }
 
 void BlocksApplication::loop()
@@ -56,22 +58,46 @@ void BlocksApplication::setupSinglePlayer()
     server = std::unique_ptr<Server>(new Server());
     client = std::unique_ptr<Client>(new Client());
 
-    LocalServerClientBridge* clientToServer = new LocalServerClientBridge();
-    LocalServerClientBridge* serverToClient = new LocalServerClientBridge();
+    //LocalServerClientBridge* clientToServer = new LocalServerClientBridge();
+    //LocalServerClientBridge* serverToClient = new LocalServerClientBridge();
+	//Remote
+    RemoteServerClientBridge* serverToClient = new RemoteServerClientBridge(true);
+   	RemoteServerClientBridge* clientToServer = new RemoteServerClientBridge(false);
 
     clientToServer->connect(serverToClient);
     serverToClient->connect(clientToServer);
 
-    client->setServerBridge(std::unique_ptr<LocalServerClientBridge>(clientToServer));
-    server->addClientBridge(std::unique_ptr<LocalServerClientBridge>(serverToClient));
+    client->setServerBridge(std::unique_ptr<RemoteServerClientBridge>(clientToServer));
+    server->addClientBridge(std::unique_ptr<RemoteServerClientBridge>(serverToClient));
 
     server->setup();
     client->setup();
 }
+void BlocksApplication::setupMultiPlayer()
+{
+    server = std::unique_ptr<Server>(new Server());
+	client = std::unique_ptr<Client>(new Client());
+
+    RemoteServerClientBridge* serverToClient = new RemoteServerClientBridge(true);
+  	RemoteServerClientBridge* clientToServer = new RemoteServerClientBridge(false);
+
+    clientToServer->connect(serverToClient);
+    serverToClient->connect(clientToServer);
+
+	serverToClient->startListening();
+
+    client->setServerBridge(std::unique_ptr<RemoteServerClientBridge>(clientToServer));
+    server->addClientBridge(std::unique_ptr<RemoteServerClientBridge>(serverToClient));
+
+    server->setup();
+	client->setup();
+
+	clientToServer->connectToAddress("localhost");
+}
 
 void BlocksApplication::setupDedicatedServer()
 {
-    std::cout << "Initialising dedicated server without a local client\n";
+/*  std::cout << "Initialising dedicated server without a local client\n";
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     std::cout << "...\n";
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
@@ -84,7 +110,7 @@ void BlocksApplication::setupDedicatedServer()
     std::cout << "CRAHSHCA SEGMENTATION FAULT HIHIHI!\n";
     std::this_thread::sleep_for(std::chrono::milliseconds(3000));
     std::cout << "No, just kidding, not implemented yet\n";
-    exit(1);
+    exit(1);*/
 }
 
 void BlocksApplication::joinServer(const std::string& address, int32_t port)

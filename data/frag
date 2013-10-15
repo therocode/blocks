@@ -64,7 +64,7 @@ vec4 fragColor;
 	vec3 R = reflect(-vLight, -vNorm);
 	vec3 E = normalize(eyeDir);
 	float f = pow(max(dot(R, E), 0.0),2.f);// 0.0, 1.0);
-	fragColor = vec4((vColor + spec *  f), 1.0) ;
+	fragColor = vec4((vColor + spec *  f), 0.5) ;
 	fragColor -= 0.1*pow(length(vec2(0.5)-texCoord), 1.8);// + 0.03 * length(voronoi(texCoord.xy * 10.0));
 
 	vec4 texColor = texture2D(tex0, texCoord);
