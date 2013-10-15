@@ -1,6 +1,5 @@
 #include "vbocreator.h"
 #include <vector>
-#include <iostream>
 
 VBO VBOCreator::generateChunkVBO(const Chunk& chunk) const
 {
@@ -13,8 +12,6 @@ VBO VBOCreator::generateChunkVBO(const Chunk& chunk) const
 	const VoxelTypeArray& voxelTypes = chunk.getVoxelTypes();
 
 	glm::uvec2 textureLocation;
-
-	std::cout << "generating a vbo for a chunk with location: " << chunkOffset.x << " " << chunkOffset.y << " " << chunkOffset.z << "\n";
 
 	uint32_t xStep = 1;
 	uint32_t yStep = chunkWidth;
