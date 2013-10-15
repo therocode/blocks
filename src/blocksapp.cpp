@@ -22,6 +22,9 @@ void BlocksApplication::setup()
 
     server->setup();
     client->setup();
+#ifdef __UNIX__
+	printf("HEJJJ UNIX\n");
+#endif
 }
 
 void BlocksApplication::loop()
