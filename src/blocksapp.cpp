@@ -13,7 +13,7 @@ void BlocksApplication::setup(const std::vector<std::string>& args)
 {
     if(args.size() <= 1)
     {
-        setupSinglePlayer(); //setup local server and local client and connect with LocalServerClientBridge
+        setupMultiPlayer();	//setup local server and local client and connect with LocalServerClientBridge
     }
     else if(args[1] == "--dedicated")
     {

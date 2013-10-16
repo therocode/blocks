@@ -107,7 +107,7 @@ void ShaderProgram::compile()
 		delete[] strInfo;
 
 	}else{
-        printf("Program Linked and compiled.\n");
+//        printf("Program Linked and compiled.\n");
         parameterCache.clear();
     }
 }
@@ -121,7 +121,7 @@ GLint ShaderProgram::getUniformLocation(std::string name)
     if(parameterCache.find(name) == parameterCache.end())
     {
         parameterCache.emplace(name, glGetUniformLocation(mProgramID, name.c_str()));
-		printf("Cached shader uniform location %s\n", name.c_str());
+//		printf("Cached shader uniform location %s\n", name.c_str());
     }
 	return parameterCache.at(name);
 }
