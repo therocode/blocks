@@ -1,7 +1,7 @@
 #pragma once
 #include "blockstd.h"
 #include "serverclientbridge.h"
-#include <enet/enet.h>
+#include "enet/enet.h"
 #include <thread>
 #include <atomic>
 

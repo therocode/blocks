@@ -23,6 +23,7 @@ void Client::setup()
 //	window.setFramerateLimit(30);
     renderer.setup();
     mBus.sendMessage<WindowResizeMessage>(WindowResizeMessage(800, 600));
+	// window.lockCursor(true);
 
 //    std::cout << "client setup\n";
 }
