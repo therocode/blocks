@@ -14,7 +14,6 @@ ScriptEngine::ScriptEngine()
     RegisterStdStringUtils(mEngine);
 
     int32_t r = mEngine->SetMessageCallback(asMETHOD(ScriptEngine, messageCallback), this, asCALL_THISCALL); assert( r >= 0 );
-    mEngine->RegisterGlobalFunction("void print(string text)", asMETHOD(ScriptEngine, scriptPrint), asCALL_THISCALL_ASGLOBAL, this); assert( r >= 0);
 };
 
 ScriptEngine::~ScriptEngine()
@@ -50,11 +49,6 @@ void ScriptEngine::messageCallback(const asSMessageInfo &msg)
     {
         //m_has_compile_errors = true;
     }
-}
-
-void ScriptEngine::scriptPrint(std::string text)
-{
-    std::cout << text;
 }
 
 asIScriptContext* ScriptEngine::getContext()

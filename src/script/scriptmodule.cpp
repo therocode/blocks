@@ -24,7 +24,7 @@ const std::string& ScriptModule::getName()
     return mName;
 }
 
-void ScriptModule::compileFromSourceList(const std::vector<std::string>& files)
+bool ScriptModule::compileFromSourceList(const std::vector<std::string>& files)
 {
     mHasErrors = false;
 
@@ -47,7 +47,7 @@ void ScriptModule::compileFromSourceList(const std::vector<std::string>& files)
             // preprocessing commands are incorrectly written.
             std::cout << "Error loading script file " << path << "\n";
             mHasErrors = true;
-            return;
+            return false;
         }
     }
 
@@ -56,10 +56,11 @@ void ScriptModule::compileFromSourceList(const std::vector<std::string>& files)
     {
         std::cout << "Please correct the errors in the script and try again.\n";
         mHasErrors = true;
-        return;
+        return false;
     }
      
     mAsModule = mEngine.getEngine()->GetModule(mName.c_str());
+    return true;
 }
 
 asIScriptFunction* ScriptModule::getFunctionByDecl(const std::string& decl)

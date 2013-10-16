@@ -1,6 +1,6 @@
 #pragma once
 #include "scriptengine.h"
-#include "callers/onframecaller.h"
+#include "scriptinterface.h"
 
 class ScriptHandler :
     public fea::MessageReceiver<RebuildScriptsRequestedMessage>
@@ -18,5 +18,5 @@ class ScriptHandler :
         std::vector<std::string> sourceFiles;
 
         //callers
-        OnFrameCaller mOnFrameCaller;
+        ScriptInterface mScriptInterface;
 };

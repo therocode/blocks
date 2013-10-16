@@ -13,7 +13,6 @@ class ScriptEngine
         asIScriptEngine* getEngine();
     private:
         void messageCallback(const asSMessageInfo &msg);
-        void scriptPrint(std::string text);
         asIScriptEngine* mEngine;
         asIScriptContext* mContext;
 };

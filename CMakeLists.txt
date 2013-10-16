@@ -51,7 +51,7 @@ set(source_files
     src/script/scriptengine.cpp
     src/script/scripthandler.cpp
     src/script/scriptmodule.cpp
-    src/script/callers/onframecaller.cpp
+    src/script/scriptinterface.cpp
     src/script/asaddons/scriptarray.cpp
     src/script/asaddons/scriptstdstring.cpp
     src/script/asaddons/scriptstdstring_utils.cpp
@@ -101,7 +101,7 @@ set(header_files
     src/script/scriptengine.h
     src/script/scripthandler.h
     src/script/scriptmodule.h
-    src/script/callers/onframecaller.h
+    src/script/scriptinterface.cpp
     src/script/asaddons/scriptstdstring.h
     src/script/asaddons/scriptarray.h
     src/script/asaddons/scriptbuilder.h

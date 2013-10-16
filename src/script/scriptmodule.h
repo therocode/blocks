@@ -11,7 +11,7 @@ class ScriptModule
         ScriptModule(const std::string& name, ScriptEngine& engine);
         ScriptModule(const ScriptModule&& other);
         const std::string& getName();
-        void compileFromSourceList(const std::vector<std::string>& files);
+        bool compileFromSourceList(const std::vector<std::string>& files);
         asIScriptFunction* getFunctionByDecl(const std::string& decl);
         bool hasErrors() const;
     private:

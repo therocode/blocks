@@ -5,7 +5,7 @@
 ScriptHandler::ScriptHandler(fea::MessageBus& bus) : 
     mBus(bus),
     mScripts(mEngine.createModule("scripts")),
-    mOnFrameCaller(mBus, mEngine, mScripts)
+    mScriptInterface(mBus, mEngine, mScripts)
 {
     mBus.addMessageSubscriber<RebuildScriptsRequestedMessage>(*this);
 }
@@ -18,15 +18,20 @@ ScriptHandler::~ScriptHandler()
 
 void ScriptHandler::setup()
 {
+    mScriptInterface.registerInterface();
+
     sourceFiles = {"data/scripts/general.as"};
     std::cout << "\nCompiling scripts...\n";
 
-    mScripts.compileFromSourceList(sourceFiles);
+    bool succeeded = mScripts.compileFromSourceList(sourceFiles);
     std::cout << "Compilation process over.\n";
 
-    std::cout << "Setting up script callers...\n";
-    mOnFrameCaller.initialise();
-    std::cout << "Done with callers!\n\n";
+    if(succeeded)
+    {
+        std::cout << "Setting up script callbacks...\n";
+        mScriptInterface.registerCallbacks();
+        std::cout << "Done with callbacks!\n\n";
+    }
 
 }
 
@@ -40,7 +45,7 @@ void ScriptHandler::handleMessage(const RebuildScriptsRequestedMessage& message)
     mScripts.compileFromSourceList(sourceFiles);
     std::cout << "Compilation process over.\n";
 
-    std::cout << "Setting up script callers...\n";
-    mOnFrameCaller.initialise();
-    std::cout << "Done with callers!\n\n";
+    std::cout << "Setting up script callbacks...\n";
+    mScriptInterface.registerCallbacks();
+    std::cout << "Done with callbacks!\n\n";
 }

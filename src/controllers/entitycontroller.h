@@ -9,6 +9,7 @@ class EntityController
 {
     public:
         EntityController(fea::MessageBus& bus, WorldInterface& worldInterface);
+        virtual ~EntityController(){};
         virtual void inspectEntity(fea::WeakEntityPtr entity) = 0;
         virtual void update();
     protected:
