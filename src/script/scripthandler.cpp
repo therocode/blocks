@@ -8,7 +8,10 @@ ScriptHandler::ScriptHandler() : mScripts(mEngine.createModule("scripts"))
 void ScriptHandler::setup()
 {
     std::cout << "\nCompiling scripts...\n";
-    mScripts.addScriptSection("kloss.as", "int kalle = 234;\nint roger = kalle;");   
+
+    std::string source = "void kork() {\nint kalle = 234;\nint roger = kalle;\nprint(\"hejhej\");}";
+    
+    mScripts.addScriptSection("kloss.as", source);   
     mScripts.compileScripts();   
     std::cout << "Compilation process over.\n\n";
 }

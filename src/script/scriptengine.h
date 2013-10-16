@@ -11,5 +11,6 @@ class ScriptEngine
         void destroyModule(ScriptModule& module);
     private:
         void messageCallback(const asSMessageInfo &msg);
+        void scriptPrint(std::string text);
         asIScriptEngine* mEngine;
 };
