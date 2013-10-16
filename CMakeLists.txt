@@ -48,6 +48,8 @@ set(source_files
 	src/shaderprogram.cpp
 	src/remoteserverclientbridge.cpp
     src/script/scriptengine.cpp
+    src/script/scripthandler.cpp
+    src/script/scriptmodule.cpp
 )
 set(header_files
 	src/blocksapp.h
@@ -90,6 +92,8 @@ set(header_files
 	src/shaderprogram.h
 	src/remoteserverclientbridge.h
     src/script/scriptengine.h
+    src/script/scripthandler.h
+    src/script/scriptmodule.h
 )
 
 find_package(Featherkit REQUIRED COMPONENTS entity structure ui messaging)

@@ -21,6 +21,7 @@ Server::~Server()
 
 void Server::setup()
 {
+    scriptHandler.setup();
     world.initialise();
     std::cout << "Server initialised and ready to go\n";
 }
@@ -36,6 +37,7 @@ void Server::doLogic()
 
 void Server::destroy()
 {
+    scriptHandler.destroy();
     std::cout << "Server destroyed\n";
 }
 
