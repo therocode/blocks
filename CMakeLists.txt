@@ -96,6 +96,7 @@ find_package(SFML COMPONENTS window system graphics)
 find_package(GLEW)
 find_package(OpenGL REQUIRED)
 find_package(ENet)
+find_package(angelscript REQUIRED)
 
 #This has to be done before add_executable. I'm adding source files.
 if(NOT GLEW_FOUND)
@@ -111,6 +112,11 @@ if(ENET_FOUND)
 	include_directories(${ENet_INCLUDE_DIRS})
 	target_link_libraries(${project_name} ${ENet_LIBRARIES})
 endif(ENET_FOUND)
+
+if(ANGELSCRIPT_FOUND)
+    include_directories(${ANGELSCRIPT_INCLUDE_DIRECTORY})
+    target_link_libraries(${project_name} ${ANGELSCRIPT_LIBRARY})
+endif(ANGELSCRIPT_FOUND)
 
 if(FEATHERKIT_FOUND)
 	include_directories(${FEATHERKIT_INCLUDE_DIRS})
