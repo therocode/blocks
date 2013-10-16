@@ -20,6 +20,7 @@ set(source_files
     src/chunkloadedpackage.cpp
     src/gfxentityaddedpackage.cpp
     src/gfxentitymovedpackage.cpp
+    src/reloadscriptspackage.cpp
 	src/chunk.cpp
 	src/vbo.cpp
 	src/billboard.cpp
@@ -54,6 +55,7 @@ set(source_files
     src/script/asaddons/scriptarray.cpp
     src/script/asaddons/scriptstdstring.cpp
     src/script/asaddons/scriptstdstring_utils.cpp
+    src/script/asaddons/scriptbuilder.cpp
 )
 set(header_files
 	src/blocksapp.h
@@ -65,6 +67,7 @@ set(header_files
     src/chunkloadedpackage.h
     src/gfxentityaddedpackage.h
     src/gfxentitymovedpackage.h
+    src/reloadscriptspackage.h
 	src/blockstd.h
 	src/chunk.h
 	src/vbo.h
@@ -101,6 +104,7 @@ set(header_files
     src/script/callers/onframecaller.h
     src/script/asaddons/scriptstdstring.h
     src/script/asaddons/scriptarray.h
+    src/script/asaddons/scriptbuilder.h
 )
 
 find_package(Featherkit REQUIRED COMPONENTS entity structure ui messaging)

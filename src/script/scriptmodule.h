@@ -1,17 +1,20 @@
 #pragma once
 #include <angelscript.h>
 #include <string>
+#include <vector>
+
+class ScriptEngine;
 
 class ScriptModule
 {
     public:
-        ScriptModule(const std::string& name, asIScriptModule* module);
+        ScriptModule(const std::string& name, ScriptEngine& engine);
         ScriptModule(const ScriptModule&& other);
         const std::string& getName();
-        void addScriptSection(const std::string& name, const std::string& source);
-        void compileScripts();
+        void compileFromSourceList(const std::vector<std::string>& files);
         asIScriptFunction* getFunctionByDecl(const std::string& decl);
     private:
         const std::string mName;
+        ScriptEngine& mEngine;
         asIScriptModule* mAsModule;
 };

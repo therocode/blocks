@@ -19,6 +19,7 @@ class Server : public fea::MessageReceiver<ChunkCreatedMessage>,
         void handleMessage(const AddGfxEntityMessage& received);
         void handleMessage(const MoveGfxEntityMessage& received);
     private:
+        void fetchClientData();
         fea::MessageBus mBus;
         World mWorld;
         ScriptHandler mScriptHandler;

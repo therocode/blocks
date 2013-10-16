@@ -10,6 +10,7 @@ class ScriptEngine
         ScriptModule createModule(const std::string& name);
         void destroyModule(ScriptModule& module);
         asIScriptContext* getContext();
+        asIScriptEngine* getEngine();
     private:
         void messageCallback(const asSMessageInfo &msg);
         void scriptPrint(std::string text);

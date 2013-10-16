@@ -6,6 +6,7 @@
 #include "chunkloadedpackage.h"
 #include "gfxentityaddedpackage.h"
 #include "gfxentitymovedpackage.h"
+#include "reloadscriptspackage.h"
 
 Client::Client() : window(new fea::util::SFMLWindowBackend(sfWindow)),
                    renderer(mBus),
@@ -14,6 +15,13 @@ Client::Client() : window(new fea::util::SFMLWindowBackend(sfWindow)),
                    mBridge(nullptr)
 {
 	mBus.addMessageSubscriber<InputActionMessage>(*this);
+	mBus.addMessageSubscriber<RebuildScriptsRequestedMessage>(*this);
+}
+
+Client::~Client()
+{
+    mBus.removeMessageSubscriber<InputActionMessage>(*this);
+    mBus.removeMessageSubscriber<RebuildScriptsRequestedMessage>(*this);
 }
 
 void Client::setup()
@@ -59,6 +67,11 @@ void Client::handleMessage(const InputActionMessage& received)
     {
         quit = true;
     }
+}
+
+void Client::handleMessage(const RebuildScriptsRequestedMessage& received)
+{
+    mBridge->enqueuePackage(std::unique_ptr<Package>(new ReloadScriptsPackage()));
 }
 
 bool Client::requestedQuit()

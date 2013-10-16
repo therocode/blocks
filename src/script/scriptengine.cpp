@@ -24,7 +24,7 @@ ScriptEngine::~ScriptEngine()
 
 ScriptModule ScriptEngine::createModule(const std::string& name)
 {
-    return ScriptModule(name, mEngine->GetModule(name.c_str(), asGM_CREATE_IF_NOT_EXISTS));
+    return ScriptModule(name, *this);
 }
 
 void ScriptEngine::destroyModule(ScriptModule& module)
@@ -60,4 +60,9 @@ void ScriptEngine::scriptPrint(std::string text)
 asIScriptContext* ScriptEngine::getContext()
 {
     return mContext;
+}
+
+asIScriptEngine* ScriptEngine::getEngine()
+{
+    return mEngine;
 }

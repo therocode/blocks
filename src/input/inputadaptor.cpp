@@ -42,7 +42,7 @@ void InputAdaptor::update()
                 bus.sendMessage<InputActionMessage>(InputActionMessage(InputAction::STOPMOUSELEFT));
 			}
 		}
-        else if (event.type == fea::Event::RESIZED){
+        else if(event.type == fea::Event::RESIZED){
             bus.sendMessage<WindowResizeMessage>(WindowResizeMessage(event.size.width, event.size.height));
         }
     }
@@ -63,6 +63,8 @@ void InputAdaptor::update()
             bus.sendMessage<InputActionMessage>(InputActionMessage(InputAction::JUMP));
         else if(action == "crouch")
             bus.sendMessage<InputActionMessage>(InputActionMessage(InputAction::CROUCH));
+        else if(action == "rebuild_scripts")
+            bus.sendMessage<RebuildScriptsRequestedMessage>(RebuildScriptsRequestedMessage());
 
         else if(action == "stopforwards")
             bus.sendMessage<InputActionMessage>(InputActionMessage(InputAction::STOPFORWARDS));

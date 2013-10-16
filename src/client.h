@@ -6,15 +6,19 @@
 #include "input/inputadaptor.h"
 #include "serverclientbridge.h"
 
-class Client : public fea::MessageReceiver<InputActionMessage>
+class Client : 
+    public fea::MessageReceiver<InputActionMessage>,
+    public fea::MessageReceiver<RebuildScriptsRequestedMessage>
 {
     public:
         Client();
+        ~Client();
         void setup();
         void handleInput();
         void render();
         void destroy();
         virtual void handleMessage(const InputActionMessage& received);
+        virtual void handleMessage(const RebuildScriptsRequestedMessage& received);
         bool requestedQuit();
         void setServerBridge(std::unique_ptr<ServerClientBridge> bridge);
     private:

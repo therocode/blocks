@@ -2,6 +2,7 @@
 #include "chunkloadedpackage.h"
 #include "gfxentityaddedpackage.h"
 #include "gfxentitymovedpackage.h"
+#include "reloadscriptspackage.h"
 #include <iostream>
 
 Server::Server() : mWorld(mBus),
@@ -29,7 +30,7 @@ void Server::setup()
 
 void Server::doLogic()
 {
-    //fetch client stuff
+    fetchClientData();
 
     mBus.sendMessage<FrameMessage>(FrameMessage(true));
 
@@ -78,4 +79,17 @@ void Server::handleMessage(const MoveGfxEntityMessage& received)
     std::tie(id, position) = received.data;
 
     mBridge->enqueuePackage(std::unique_ptr<Package>(new GfxEntityMovedPackage(id, position)));
+}
+
+void Server::fetchClientData()
+{
+    std::unique_ptr<Package> package;
+
+    while(mBridge->pollPackage(package))
+    {
+        if(package->mType == typeid(ReloadScriptsPackage))
+        {
+            mBus.sendMessage<RebuildScriptsRequestedMessage>(RebuildScriptsRequestedMessage());
+        }
+    }
 }

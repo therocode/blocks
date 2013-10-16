@@ -1,4 +1,5 @@
 #include "scripthandler.h"
+#include "../messages.h"
 #include <iostream>
 
 ScriptHandler::ScriptHandler(fea::MessageBus& bus) : 
@@ -6,16 +7,21 @@ ScriptHandler::ScriptHandler(fea::MessageBus& bus) :
     mScripts(mEngine.createModule("scripts")),
     mOnFrameCaller(mBus, mEngine, mScripts)
 {
+    mBus.addMessageSubscriber<RebuildScriptsRequestedMessage>(*this);
+}
+
+ScriptHandler::~ScriptHandler()
+{
+    mEngine.destroyModule(mScripts);
+    mBus.removeMessageSubscriber<RebuildScriptsRequestedMessage>(*this);
 }
 
 void ScriptHandler::setup()
 {
+    sourceFiles = {"data/scripts/general.as"};
     std::cout << "\nCompiling scripts...\n";
 
-    std::string source = "void onrame() {\nint kalle = 234;\nint roger = kalle;\nprint(\"hejhej\\n\");}";
-    
-    mScripts.addScriptSection("kloss.as", source);   
-    mScripts.compileScripts();   
+    mScripts.compileFromSourceList(sourceFiles);
     std::cout << "Compilation process over.\n";
 
     std::cout << "Setting up script callers...\n";
@@ -28,7 +34,13 @@ void ScriptHandler::destroy()
 {
 }
 
-ScriptHandler::~ScriptHandler()
+void ScriptHandler::handleMessage(const RebuildScriptsRequestedMessage& message)
 {
-    mEngine.destroyModule(mScripts);
+    std::cout << "\nCompiling scripts...\n";
+    mScripts.compileFromSourceList(sourceFiles);
+    std::cout << "Compilation process over.\n";
+
+    std::cout << "Setting up script callers...\n";
+    mOnFrameCaller.initialise();
+    std::cout << "Done with callers!\n\n";
 }

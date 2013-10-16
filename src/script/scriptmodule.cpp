@@ -1,13 +1,21 @@
 #include "scriptmodule.h"
+#include "scriptengine.h"
+#include "asaddons/scriptbuilder.h"
 #include <assert.h>
+#include <iostream>
 
-ScriptModule::ScriptModule(const std::string& name, asIScriptModule* module) : mName(name), 
-                                                                               mAsModule(module)
+ScriptModule::ScriptModule(const std::string& name, ScriptEngine& engine) : 
+    mName(name),
+    mEngine(engine),
+    mAsModule(nullptr)
 {
     
 }
 
-ScriptModule::ScriptModule(const ScriptModule&& other) : mName(other.mName), mAsModule(other.mAsModule)
+ScriptModule::ScriptModule(const ScriptModule&& other) : 
+    mName(other.mName),
+    mEngine(other.mEngine),
+    mAsModule(other.mAsModule)
 {
 }
 
@@ -16,14 +24,38 @@ const std::string& ScriptModule::getName()
     return mName;
 }
 
-void ScriptModule::addScriptSection(const std::string& name, const std::string& source)
+void ScriptModule::compileFromSourceList(const std::vector<std::string>& files)
 {
-    int r = mAsModule->AddScriptSection(name.c_str(), &source[0], source.size()); assert(r >= 0);
-}
+    if(mAsModule != nullptr)
+    {
+        mEngine.destroyModule(*this);
+    }
 
-void ScriptModule::compileScripts()
-{
-    int r = mAsModule->Build(); assert(r >= 0);
+    CScriptBuilder builder;
+    
+    int32_t r = builder.StartNewModule(mEngine.getEngine(), mName.c_str()); assert(r >= 0);
+
+    for(auto& path : files)
+    {
+        r = builder.AddSectionFromFile(path.c_str());
+        if( r < 0 )
+        {
+            // The builder wasn't able to load the file. Maybe the file
+            // has been removed, or the wrong name was given, or some
+            // preprocessing commands are incorrectly written.
+            std::cout << "Error loading script file " << path << "\n";
+            return;
+        }
+    }
+
+    r = builder.BuildModule();
+    if( r < 0 )
+    {
+        std::cout << "Please correct the errors in the script and try again.\n";
+        return;
+    }
+     
+    mAsModule = mEngine.getEngine()->GetModule(mName.c_str());
 }
 
 asIScriptFunction* ScriptModule::getFunctionByDecl(const std::string& decl)
