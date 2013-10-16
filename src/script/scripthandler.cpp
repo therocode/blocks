@@ -12,7 +12,7 @@ void ScriptHandler::setup()
 {
     std::cout << "\nCompiling scripts...\n";
 
-    std::string source = "void onFrame() {\nint kalle = 234;\nint roger = kalle;\nprint(\"hejhej\\n\");}";
+    std::string source = "void onrame() {\nint kalle = 234;\nint roger = kalle;\nprint(\"hejhej\\n\");}";
     
     mScripts.addScriptSection("kloss.as", source);   
     mScripts.compileScripts();   
