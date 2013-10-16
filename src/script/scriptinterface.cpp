@@ -5,7 +5,8 @@ ScriptInterface::ScriptInterface(fea::MessageBus& bus, ScriptEngine& engine, Scr
     mBus(bus),
     mEngine(engine), 
     mModule(module),
-    mOnFrameFunc(nullptr)
+    mOnFrameFunc(nullptr),
+    frameTick(0)
 {
     mBus.addMessageSubscriber<FrameMessage>(*this);
 }
@@ -25,7 +26,7 @@ void ScriptInterface::registerCallbacks()
 {
     if(!mModule.hasErrors())
     {
-        mOnFrameFunc = mModule.getFunctionByDecl("void onFrame()");
+        mOnFrameFunc = mModule.getFunctionByDecl("void onFrame(int frameNumber)");
     }
 }
 
@@ -38,9 +39,11 @@ void ScriptInterface::handleMessage(const FrameMessage& received)
         if(mOnFrameFunc)
         {
             int r = context->Prepare(mOnFrameFunc); assert( r >= 0 );
+            r = context->SetArgDWord(0, frameTick); assert( r >= 0 );
             r = context->Execute(); assert( r >= 0 );
             r = context->Unprepare(); assert( r >= 0 );
         }
+        frameTick++;
     }
 }
 

@@ -18,6 +18,7 @@ class ScriptInterface :
         ScriptModule& mModule;
 
         asIScriptFunction* mOnFrameFunc;
+        int32_t frameTick;
         
         //interface functions
 
