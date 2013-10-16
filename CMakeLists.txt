@@ -47,6 +47,7 @@ set(source_files
 	src/shader.cpp
 	src/shaderprogram.cpp
 	src/remoteserverclientbridge.cpp
+    src/script/scriptengine.cpp
 )
 set(header_files
 	src/blocksapp.h
@@ -88,6 +89,7 @@ set(header_files
 	src/shader.h
 	src/shaderprogram.h
 	src/remoteserverclientbridge.h
+    src/script/scriptengine.h
 )
 
 find_package(Featherkit REQUIRED COMPONENTS entity structure ui messaging)
@@ -108,7 +110,7 @@ add_executable(${project_name} ${header_files} ${source_files})
 #instead of setting compiler flags globally. SFML doesn't like building with this flag on.
 set_target_properties(${project_name} PROPERTIES COMPILE_FLAGS "-std=c++11 -pthread")
 if(WIN32)
-add_definitions(-std=c++11 -pthread)
+    add_definitions(-std=c++11 -pthread)
 endif(WIN32)
 if(ENET_FOUND)
 	include_directories(${ENet_INCLUDE_DIRS})
@@ -129,7 +131,7 @@ endif(ENET_FOUND)
 
 if(ANGELSCRIPT_FOUND)
     include_directories(${ANGELSCRIPT_INCLUDE_DIRECTORY})
-    target_link_libraries(${project_name} ${ANGELSCRIPT_LIBRARY})
+    target_link_libraries(${project_name} ${ANGELSCRIPT_LIBRARY} -lpthread)
 endif(ANGELSCRIPT_FOUND)
 
 if(FEATHERKIT_FOUND)
