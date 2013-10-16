@@ -1,4 +1,4 @@
 void onFrame()
 {
-    print("asdfkle asdlka s\n");
+    print("scripts are running!\n");
 }

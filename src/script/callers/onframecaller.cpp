@@ -17,17 +17,23 @@ OnFrameCaller::~OnFrameCaller()
 
 void OnFrameCaller::initialise()
 {
-    mOnFrameFunc = mModule.getFunctionByDecl("void onFrame()");
+    if(!mModule.hasErrors())
+    {
+        mOnFrameFunc = mModule.getFunctionByDecl("void onFrame()");
+    }
 }
 
 void OnFrameCaller::handleMessage(const FrameMessage& received)
 {
-    asIScriptContext* context = mEngine.getContext();
-
-    if(mOnFrameFunc)
+    if(!mModule.hasErrors())
     {
-        int r = context->Prepare(mOnFrameFunc); assert( r >= 0 );
-        r = context->Execute(); assert( r >= 0 );
-        r = context->Unprepare(); assert( r >= 0 );
+        asIScriptContext* context = mEngine.getContext();
+
+        if(mOnFrameFunc)
+        {
+            int r = context->Prepare(mOnFrameFunc); assert( r >= 0 );
+            r = context->Execute(); assert( r >= 0 );
+            r = context->Unprepare(); assert( r >= 0 );
+        }
     }
 }

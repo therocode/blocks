@@ -26,6 +26,8 @@ const std::string& ScriptModule::getName()
 
 void ScriptModule::compileFromSourceList(const std::vector<std::string>& files)
 {
+    mHasErrors = false;
+
     if(mAsModule != nullptr)
     {
         mEngine.destroyModule(*this);
@@ -44,6 +46,7 @@ void ScriptModule::compileFromSourceList(const std::vector<std::string>& files)
             // has been removed, or the wrong name was given, or some
             // preprocessing commands are incorrectly written.
             std::cout << "Error loading script file " << path << "\n";
+            mHasErrors = true;
             return;
         }
     }
@@ -52,6 +55,7 @@ void ScriptModule::compileFromSourceList(const std::vector<std::string>& files)
     if( r < 0 )
     {
         std::cout << "Please correct the errors in the script and try again.\n";
+        mHasErrors = true;
         return;
     }
      
@@ -61,4 +65,9 @@ void ScriptModule::compileFromSourceList(const std::vector<std::string>& files)
 asIScriptFunction* ScriptModule::getFunctionByDecl(const std::string& decl)
 {
     return mAsModule->GetFunctionByDecl(decl.c_str());
+}
+
+bool ScriptModule::hasErrors() const
+{
+    return mHasErrors;
 }
