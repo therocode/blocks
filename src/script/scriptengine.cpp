@@ -7,4 +7,5 @@ ScriptEngine::ScriptEngine()
 
 ScriptEngine::~ScriptEngine()
 {
+    mEngine->Release();
 }
