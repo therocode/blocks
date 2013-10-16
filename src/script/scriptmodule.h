@@ -10,6 +10,7 @@ class ScriptModule
         const std::string& getName();
         void addScriptSection(const std::string& name, const std::string& source);
         void compileScripts();
+        asIScriptFunction* getFunctionByDecl(const std::string& decl);
     private:
         const std::string mName;
         asIScriptModule* mAsModule;

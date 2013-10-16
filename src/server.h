@@ -20,8 +20,8 @@ class Server : public fea::MessageReceiver<ChunkCreatedMessage>,
         void handleMessage(const MoveGfxEntityMessage& received);
     private:
         fea::MessageBus mBus;
-        World world;
-        ScriptHandler scriptHandler;
+        World mWorld;
+        ScriptHandler mScriptHandler;
 
         std::unique_ptr<ServerClientBridge> mBridge;      //this could be a list of many clients in the future
 };

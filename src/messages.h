@@ -37,3 +37,6 @@ using CameraUpdatedMessage = fea::Message<CameraUpdated_tag, const glm::vec3&, c
 
 struct CurrentlyFacingBlock_tag{};
 using CurrentlyFacingBlockMessage = fea::Message<CurrentlyFacingBlock_tag, const glm::vec3&>;
+
+struct Frame_tag{};//                                       true if beginning of frame, false if ending of frame
+using FrameMessage = fea::Message<CurrentlyFacingBlock_tag, bool>;

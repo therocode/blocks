@@ -7,6 +7,7 @@
 ScriptEngine::ScriptEngine()
 {
     mEngine = asCreateScriptEngine(ANGELSCRIPT_VERSION);
+    mContext = mEngine->CreateContext();
 
     RegisterScriptArray(mEngine, true);
     RegisterStdString(mEngine);
@@ -33,7 +34,7 @@ void ScriptEngine::destroyModule(ScriptModule& module)
 
 void ScriptEngine::messageCallback(const asSMessageInfo &msg)
 {
-    const char *type = "error";
+    std::string type = "error";
     if(msg.type == asMSGTYPE_WARNING)
     {
         type = "warning";
@@ -54,4 +55,9 @@ void ScriptEngine::messageCallback(const asSMessageInfo &msg)
 void ScriptEngine::scriptPrint(std::string text)
 {
     std::cout << text;
+}
+
+asIScriptContext* ScriptEngine::getContext()
+{
+    return mContext;
 }

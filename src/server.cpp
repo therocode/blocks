@@ -4,8 +4,9 @@
 #include "gfxentitymovedpackage.h"
 #include <iostream>
 
-Server::Server() : world(mBus),
-                   mBridge(nullptr)
+Server::Server() : mWorld(mBus),
+                   mBridge(nullptr),
+                   mScriptHandler(mBus)
 {
     mBus.addMessageSubscriber<ChunkCreatedMessage>(*this);
     mBus.addMessageSubscriber<AddGfxEntityMessage>(*this);
@@ -21,8 +22,8 @@ Server::~Server()
 
 void Server::setup()
 {
-    scriptHandler.setup();
-    world.initialise();
+    mScriptHandler.setup();
+    mWorld.initialise();
     std::cout << "Server initialised and ready to go\n";
 }
 
@@ -30,14 +31,16 @@ void Server::doLogic()
 {
     //fetch client stuff
 
-    world.update();
+    mBus.sendMessage<FrameMessage>(FrameMessage(true));
+
+    mWorld.update();
 
     mBridge->flush();
 }
 
 void Server::destroy()
 {
-    scriptHandler.destroy();
+    mScriptHandler.destroy();
     std::cout << "Server destroyed\n";
 }
 
