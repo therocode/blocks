@@ -8,12 +8,14 @@ ScriptHandler::ScriptHandler(fea::MessageBus& bus) :
     mScriptInterface(mBus, mEngine, mScripts)
 {
     mBus.addMessageSubscriber<RebuildScriptsRequestedMessage>(*this);
+    mBus.addMessageSubscriber<EntitySpawnedMessage>(*this);
 }
 
 ScriptHandler::~ScriptHandler()
 {
     mEngine.destroyModule(mScripts);
     mBus.removeMessageSubscriber<RebuildScriptsRequestedMessage>(*this);
+    mBus.removeMessageSubscriber<EntitySpawnedMessage>(*this);
 }
 
 void ScriptHandler::setup()
@@ -48,4 +50,8 @@ void ScriptHandler::handleMessage(const RebuildScriptsRequestedMessage& message)
     std::cout << "Setting up script callbacks...\n";
     mScriptInterface.registerCallbacks();
     std::cout << "Done with callbacks!\n\n";
+}
+
+void ScriptHandler::handleMessage(const EntitySpawnedMessage& message)
+{
 }

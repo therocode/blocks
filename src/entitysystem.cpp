@@ -1,6 +1,7 @@
 #include "entitysystem.h"
 #include "blockstd.h"
 #include "defaultsetters.h"
+#include "messages.h"
 #include <featherkit/entitysystemutil.h>
 
 EntitySystem::EntitySystem(fea::MessageBus& b) : bus(b), manager(new fea::util::BasicEntityBackend())
@@ -35,7 +36,9 @@ void EntitySystem::update()
 
 fea::WeakEntityPtr EntitySystem::spawnEntity(const std::string& type)
 {
-    return manager.createEntity(type);
+    fea::WeakEntityPtr spawned = manager.createEntity(type);
+    bus.sendMessage<EntitySpawnedMessage>(EntitySpawnedMessage(spawned));
+    return spawned;
 }
 
 void EntitySystem::attachEntity(fea::WeakEntityPtr entity)
