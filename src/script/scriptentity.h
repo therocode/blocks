@@ -1,10 +1,11 @@
 #pragma once
+#include <featherkit/entitysystem.h>
 
 class ScriptEntity
 {
     public:
-        ScriptEntity(WeakEntityPtr entity);
+        ScriptEntity(fea::WeakEntityPtr entity);
     private:
-        EntityId mId;
-        WeakEntityPtr mEntity;
+        fea::EntityId mId;
+        fea::WeakEntityPtr mEntity;
 };
