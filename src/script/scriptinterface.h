@@ -2,6 +2,7 @@
 #include <featherkit/messaging.h>
 #include "../messages.h"
 #include "scriptcallback.h"
+#include "../random.h"
 
 class ScriptInterface : 
     public fea::MessageReceiver<FrameMessage>
@@ -16,12 +17,12 @@ class ScriptInterface :
         fea::MessageBus& mBus;
         ScriptEngine& mEngine;
         ScriptModule& mModule;
+        Random random;
 
         ScriptCallback<int32_t> onFrameCallback;
         int32_t frameTick;
         
         //interface functions
-
         void scriptPrint(std::string text);
         void setGravity(float constant);
 };

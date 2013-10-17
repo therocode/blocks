@@ -1,9 +1,9 @@
 #include "package.h"
 
-Package::Package() : mType(typeid(Package))
+BasePackage::BasePackage() : mType(typeid(BasePackage))
 {
 }
 
-Package::Package(std::type_index type) : mType(type)
+BasePackage::BasePackage(std::type_index type) : mType(type)
 {
 }

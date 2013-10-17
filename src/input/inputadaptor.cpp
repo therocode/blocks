@@ -64,7 +64,7 @@ void InputAdaptor::update()
         else if(action == "crouch")
             bus.sendMessage<InputActionMessage>(InputActionMessage(InputAction::CROUCH));
         else if(action == "rebuild_scripts")
-            bus.sendMessage<RebuildScriptsRequestedMessage>(RebuildScriptsRequestedMessage());
+            bus.sendMessage<RebuildScriptsRequestedMessage>(RebuildScriptsRequestedMessage('0'));
 
         else if(action == "stopforwards")
             bus.sendMessage<InputActionMessage>(InputActionMessage(InputAction::STOPFORWARDS));

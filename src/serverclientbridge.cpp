@@ -1,6 +1,6 @@
 #include "serverclientbridge.h"
 
-bool ServerClientBridge::pollPackage(std::unique_ptr<Package>& package)
+bool ServerClientBridge::pollPackage(std::unique_ptr<BasePackage>& package)
 {
     if(mIncoming.size())
     {
@@ -14,7 +14,7 @@ bool ServerClientBridge::pollPackage(std::unique_ptr<Package>& package)
     }
 }
 
-void ServerClientBridge::enqueuePackage(std::unique_ptr<Package>&& package)
+void ServerClientBridge::enqueuePackage(std::unique_ptr<BasePackage>&& package)
 {
     mOutgoing.push_back(std::move(package));
 }

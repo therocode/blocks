@@ -27,7 +27,7 @@ void Dimension::addFocusPoint(const FocusPoint& focusPoint)
             for(int32_t z = centerZ - halfCheatBoxWidth; z <= centerZ + halfCheatBoxWidth; z++)
             {
                 ChunkCoordinate coordinate(x, y, z);
-                bus.sendMessage<ChunkCreatedMessage>(ChunkCreatedMessage(&coordinate,&landscape.loadChunk(coordinate)));
+                bus.sendMessage<ChunkCreatedMessage>(ChunkCreatedMessage(coordinate,landscape.loadChunk(coordinate).getVoxelTypes()));
             }
         }
     }

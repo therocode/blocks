@@ -1,8 +1,5 @@
 #include "server.h"
-#include "chunkloadedpackage.h"
-#include "gfxentityaddedpackage.h"
-#include "gfxentitymovedpackage.h"
-#include "reloadscriptspackage.h"
+#include "packages.h"
 #include <iostream>
 
 Server::Server() : mWorld(mBus),
@@ -53,12 +50,12 @@ void Server::addClientBridge(std::unique_ptr<ServerClientBridge> clientBridge)
 
 void Server::handleMessage(const ChunkCreatedMessage& received)
 {
-	const ChunkCoordinate* coordinate;
-	const Chunk* chunk;
+	ChunkCoordinate coordinate;
+	VoxelTypeArray types;
 
-	std::tie(coordinate, chunk) = received.data;
+	std::tie(coordinate, types) = received.data;
 
-    mBridge->enqueuePackage(std::unique_ptr<Package>(new ChunkLoadedPackage(*coordinate, *chunk)));
+    mBridge->enqueuePackage(std::unique_ptr<BasePackage>(new ChunkLoadedPackage(coordinate, types)));
 }
 
 void Server::handleMessage(const AddGfxEntityMessage& received)
@@ -68,7 +65,7 @@ void Server::handleMessage(const AddGfxEntityMessage& received)
 
     std::tie(id, position) = received.data;
 
-    mBridge->enqueuePackage(std::unique_ptr<Package>(new GfxEntityAddedPackage(id, position)));
+    mBridge->enqueuePackage(std::unique_ptr<BasePackage>(new GfxEntityAddedPackage(id, position)));
 }
 
 void Server::handleMessage(const MoveGfxEntityMessage& received)
@@ -78,18 +75,18 @@ void Server::handleMessage(const MoveGfxEntityMessage& received)
 
     std::tie(id, position) = received.data;
 
-    mBridge->enqueuePackage(std::unique_ptr<Package>(new GfxEntityMovedPackage(id, position)));
+    mBridge->enqueuePackage(std::unique_ptr<BasePackage>(new GfxEntityMovedPackage(id, position)));
 }
 
 void Server::fetchClientData()
 {
-    std::unique_ptr<Package> package;
+    std::unique_ptr<BasePackage> package;
 
     while(mBridge->pollPackage(package))
     {
-        if(package->mType == typeid(ReloadScriptsPackage))
+        if(package->mType == typeid(RebuildScriptsRequestedPackage))
         {
-            mBus.sendMessage<RebuildScriptsRequestedMessage>(RebuildScriptsRequestedMessage());
+            mBus.sendMessage<RebuildScriptsRequestedMessage>(RebuildScriptsRequestedMessage('0'));
         }
     }
 }
