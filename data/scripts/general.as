@@ -4,7 +4,7 @@ void onFrame(int frameNumber)
 {
     //consolePrint("scripts are running:!\n");
 
-    if(randomIntRange(0, 60) == 0)
+    if(randomChance(0.5f / 60.0f))
     {
         if(!flip)
         {
