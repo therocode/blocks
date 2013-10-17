@@ -1,0 +1,4 @@
+class Entity
+{
+    void onFrame() {}
+}
