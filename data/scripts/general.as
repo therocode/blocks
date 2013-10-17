@@ -16,7 +16,7 @@ void onFrame(int frameNumber)
         {
             setGravity(-0.003f);
             flip = false;
-            consolePrint("flipped gravity!\n");
+            consolePrint("flipped gravity to " + toString(-0.003f) + " !\n");
         }
 
     }
