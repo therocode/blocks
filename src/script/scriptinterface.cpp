@@ -18,7 +18,7 @@ ScriptInterface::~ScriptInterface()
 
 void ScriptInterface::registerInterface()
 {
-        int r = mEngine.getEngine()->RegisterGlobalFunction("void print(string text)", asMETHOD(ScriptInterface, scriptPrint), asCALL_THISCALL_ASGLOBAL, this); assert( r >= 0);
+        int r = mEngine.getEngine()->RegisterGlobalFunction("void consolePrint(string text)", asMETHOD(ScriptInterface, scriptPrint), asCALL_THISCALL_ASGLOBAL, this); assert( r >= 0);
         r = mEngine.getEngine()->RegisterGlobalFunction("void setGravity(float constant)", asMETHOD(ScriptInterface, setGravity), asCALL_THISCALL_ASGLOBAL, this); assert( r >= 0);
 }
 
