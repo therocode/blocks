@@ -2,7 +2,7 @@
 #include <vector>
 #include <stdint.h>
 #include <typeindex>
-#include <featherkit/messaging.h>
+#include <tuple>
 #include "serialize.h"
 
 class BasePackage
@@ -19,19 +19,23 @@ template<typename Tag, typename... Types>
 class Package : public BasePackage
 {
     public:
-        Package(Types... values) : BasePackage(typeid(Package)), message(values...)
+        Package(Types... values) : BasePackage(typeid(Package)), data(values...)
         {
         }
         virtual std::vector<uint8_t> serialise() const override
         {
             std::vector<uint8_t> bytes;
-            serialize(message.data, bytes);
+            serialize(data, bytes);
             return bytes;
         }
         virtual void deserialise(const std::vector<uint8_t>& bytes) override
         {
-            message.data = deserialize<std::tuple<Types...> >(bytes);
+            data = deserialize<std::tuple<Types...> >(bytes);
+        }
+        std::tuple<Types...> getData()
+        {
+            return data;
         }
     private:
-        fea::Message<Tag, Types...> message;
+        std::tuple<Types...> data;
 };

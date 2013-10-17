@@ -92,12 +92,15 @@ void Renderer::setCameraMatrix(glm::mat4 m){
 
 void Renderer::handleMessage(const ChunkCreatedMessage& received)
 {
-	const ChunkCoordinate* coordinate;
-	const Chunk* chunk;
+	ChunkCoordinate coordinate;
+	VoxelTypeArray types;
 
-	std::tie(coordinate, chunk) = received.data;
+	std::tie(coordinate, types) = received.data;
+
+    Chunk chunk(coordinate, types);
+
 	VBOCreator vboCreator;
-	vbos.push_back(vboCreator.generateChunkVBO(*chunk));
+	vbos.push_back(vboCreator.generateChunkVBO(chunk));
 }
 
 void Renderer::handleMessage(const CurrentlyFacingBlockMessage& received)

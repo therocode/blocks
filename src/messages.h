@@ -6,7 +6,7 @@
 #include <featherkit/entitysystem.h>
 
 struct ChunkCreated_tag{};//                               coordinate              chunk
-using ChunkCreatedMessage = fea::Message<ChunkCreated_tag, const ChunkCoordinate*, const Chunk*>;
+using ChunkCreatedMessage = fea::Message<ChunkCreated_tag, ChunkCoordinate, VoxelTypeArray&>;
 
 struct WindowResize_tag{};//                               width                 height
 using WindowResizeMessage = fea::Message<WindowResize_tag, const uint32_t, const uint32_t>;
