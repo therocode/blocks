@@ -20,7 +20,7 @@ void ScriptHandler::setup()
 {
     mScriptInterface.registerInterface();
 
-    sourceFiles = {"data/scripts/general.as"};
+    sourceFiles = {"data/scripts/general.as", "data/scripts/entity.as"};
     std::cout << "\nCompiling scripts...\n";
 
     bool succeeded = mScripts.compileFromSourceList(sourceFiles);

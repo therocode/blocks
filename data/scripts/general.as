@@ -8,7 +8,7 @@ void onFrame(int frameNumber)
     {
         if(!flip)
         {
-            setGravity(0.003f);
+            setGravity(0.001f);
             flip = true;
             consolePrint("flipped gravity!\n");
         }
@@ -22,5 +22,5 @@ void onFrame(int frameNumber)
     }
 
     if(frameNumber > 2000)
-        setGravity(0.001f);
+        setGravity(-0.001f);
 }
