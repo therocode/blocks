@@ -33,6 +33,7 @@ set(source_files
     src/simplexnoise.cpp
     src/focuspoint.cpp
 	src/timer.cpp
+	src/random.cpp
     src/entitysystem.cpp
     src/defaultsetters.cpp
     src/controllers/entitycontroller.cpp
@@ -80,6 +81,7 @@ set(header_files
     src/focuspoint.h
     src/input/inputactions.h
 	src/timer.h
+	src/random.h
     src/entitysystem.h
     src/defaultsetters.h
     src/controllers/entitycontroller.h
