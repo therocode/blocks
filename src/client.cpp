@@ -7,6 +7,7 @@
 #include "gfxentityaddedpackage.h"
 #include "gfxentitymovedpackage.h"
 #include "reloadscriptspackage.h"
+#include "packages.h"
 
 Client::Client() : window(new fea::util::SFMLWindowBackend(sfWindow)),
                    renderer(mBus),
@@ -71,7 +72,7 @@ void Client::handleMessage(const InputActionMessage& received)
 
 void Client::handleMessage(const RebuildScriptsRequestedMessage& received)
 {
-    mBridge->enqueuePackage(std::unique_ptr<BasePackage>(new ReloadScriptsPackage()));
+    mBridge->enqueuePackage(std::unique_ptr<BasePackage>(new RebuildScriptsRequestedPackage('0')));
 }
 
 bool Client::requestedQuit()

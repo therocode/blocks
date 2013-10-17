@@ -17,10 +17,6 @@ set(source_files
     src/serverclientbridge.cpp
     src/localserverclientbridge.cpp
     src/package.cpp
-    src/chunkloadedpackage.cpp
-    src/gfxentityaddedpackage.cpp
-    src/gfxentitymovedpackage.cpp
-    src/reloadscriptspackage.cpp
 	src/chunk.cpp
 	src/vbo.cpp
 	src/billboard.cpp
@@ -65,10 +61,6 @@ set(header_files
     src/serverclientbridge.h
     src/localserverclientbridge.h
     src/package.h
-    src/chunkloadedpackage.h
-    src/gfxentityaddedpackage.h
-    src/gfxentitymovedpackage.h
-    src/reloadscriptspackage.h
 	src/blockstd.h
 	src/chunk.h
 	src/vbo.h
