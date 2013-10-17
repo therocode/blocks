@@ -1,7 +1,7 @@
 #pragma once
 #include <featherkit/messaging.h>
 #include "../messages.h"
-#include "scriptengine.h"
+#include "scriptcallback.h"
 
 class ScriptInterface : 
     public fea::MessageReceiver<FrameMessage>
@@ -17,7 +17,7 @@ class ScriptInterface :
         ScriptEngine& mEngine;
         ScriptModule& mModule;
 
-        asIScriptFunction* mOnFrameFunc;
+        ScriptCallback<int32_t> onFrameCallback;
         int32_t frameTick;
         
         //interface functions

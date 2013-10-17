@@ -52,6 +52,7 @@ set(source_files
     src/script/scripthandler.cpp
     src/script/scriptmodule.cpp
     src/script/scriptinterface.cpp
+    src/script/scriptcallback.cpp
     src/script/asaddons/scriptarray.cpp
     src/script/asaddons/scriptstdstring.cpp
     src/script/asaddons/scriptstdstring_utils.cpp
@@ -92,7 +93,7 @@ set(header_files
     src/controllers/entitycontroller.h
     src/controllers/physicscontroller.h
     src/controllers/collisioncontroller.h
-    src/controllers/gfxcontroller.cpp
+    src/controllers/gfxcontroller.h
     src/controllers/playercontroller.h
     src/worldinterface.h
 	src/shader.h
@@ -101,7 +102,8 @@ set(header_files
     src/script/scriptengine.h
     src/script/scripthandler.h
     src/script/scriptmodule.h
-    src/script/scriptinterface.cpp
+    src/script/scriptinterface.h
+    src/script/scriptcallback.h
     src/script/asaddons/scriptstdstring.h
     src/script/asaddons/scriptarray.h
     src/script/asaddons/scriptbuilder.h
