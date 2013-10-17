@@ -3,6 +3,12 @@
 
 VBO VBOCreator::generateChunkVBO(const Chunk& chunk) const
 {
+
+int texture1X = rand() % 8;
+int texture2X = rand() % 8;
+int texture1Y = rand() % 2;
+int texture2Y = rand() % 2;
+
 	VBO vbo;
 
 	const ChunkCoordinate location = chunk.getLocation();
@@ -30,9 +36,9 @@ VBO VBOCreator::generateChunkVBO(const Chunk& chunk) const
 				{
 
 					if(type == 1)
-						textureLocation = glm::uvec2(0, 0);
+						textureLocation = glm::uvec2(texture1X, texture1Y);
 					if(type == 2)
-						textureLocation = glm::uvec2(1, 0);
+						textureLocation = glm::uvec2(texture2X, texture2Y);
 
 					bool frontObscured = false;
 					bool backObscured = false;
