@@ -38,18 +38,38 @@ void BlocksApplication::setup(const std::vector<std::string>& args)
 
 void BlocksApplication::loop()
 {
-    client->handleInput();
-    server->doLogic(); //implement timestep later on. should also only happen if the server is a local instance
-    client->render();
+    if(client)
+    {
+        client->handleInput();
+    }
 
-    if(client->requestedQuit())
-        quit();
+    if(server)
+    {
+        server->doLogic(); //implement timestep later on. should also only happen if the server is a local instance
+    }
+
+    if(client)
+    {
+        client->render();
+    }
+
+    if(client)
+    {
+        if(client->requestedQuit())
+            quit();
+    }
 }
 
 void BlocksApplication::destroy()
 {
-    client->destroy();
-    server->destroy();
+    if(client)
+    {
+        client->destroy();
+    }
+    if(server)
+    {
+        server->destroy();
+    }
 }
 
 void BlocksApplication::setupSinglePlayer()
@@ -97,6 +117,14 @@ void BlocksApplication::setupMultiPlayer()
 
 void BlocksApplication::setupDedicatedServer()
 {
+    server = std::unique_ptr<Server>(new Server());
+
+    //ugly hack to make it not segfault
+    LocalServerClientBridge* clientToServer = new LocalServerClientBridge();
+    clientToServer->connect(clientToServer);
+    server->addClientBridge(std::unique_ptr<LocalServerClientBridge>(clientToServer));
+
+    server->setup();
 /*  std::cout << "Initialising dedicated server without a local client\n";
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     std::cout << "...\n";
