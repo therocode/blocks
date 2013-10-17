@@ -1,6 +1,6 @@
 #include "gfxentitymovedpackage.h"
 
-GfxEntityMovedPackage::GfxEntityMovedPackage(size_t id, const glm::vec3& position) : Package(typeid(GfxEntityMovedPackage)),
+GfxEntityMovedPackage::GfxEntityMovedPackage(size_t id, const glm::vec3& position) : BasePackage(typeid(GfxEntityMovedPackage)),
                                                                            mId(id),
                                                                            mPosition(position)
 {

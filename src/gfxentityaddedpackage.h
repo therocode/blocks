@@ -2,7 +2,7 @@
 #include "package.h"
 #include "chunk.h"
 
-class GfxEntityAddedPackage : public Package
+class GfxEntityAddedPackage : public BasePackage
 {
     public:
         GfxEntityAddedPackage(size_t id, const glm::vec3& position);

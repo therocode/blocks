@@ -1,6 +1,6 @@
 #include "chunkloadedpackage.h"
 
-ChunkLoadedPackage::ChunkLoadedPackage(const ChunkCoordinate& coordinate, const Chunk& chunk) : Package(typeid(ChunkLoadedPackage)),
+ChunkLoadedPackage::ChunkLoadedPackage(const ChunkCoordinate& coordinate, const Chunk& chunk) : BasePackage(typeid(ChunkLoadedPackage)),
                                                                            mCoordinate(coordinate),
                                                                            mChunk(chunk)
 {

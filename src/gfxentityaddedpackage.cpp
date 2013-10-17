@@ -1,6 +1,6 @@
 #include "gfxentityaddedpackage.h"
 
-GfxEntityAddedPackage::GfxEntityAddedPackage(size_t id, const glm::vec3& position) : Package(typeid(GfxEntityAddedPackage)),
+GfxEntityAddedPackage::GfxEntityAddedPackage(size_t id, const glm::vec3& position) : BasePackage(typeid(GfxEntityAddedPackage)),
                                                                            mId(id),
                                                                            mPosition(position)
 {

@@ -2,7 +2,7 @@
 #include "package.h"
 #include "chunk.h"
 
-class ChunkLoadedPackage : public Package
+class ChunkLoadedPackage : public BasePackage
 {
     public:
         ChunkLoadedPackage(const ChunkCoordinate& coordinate, const Chunk& chunk);

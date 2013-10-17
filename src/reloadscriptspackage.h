@@ -2,7 +2,7 @@
 #include "package.h"
 #include "chunk.h"
 
-class ReloadScriptsPackage : public Package
+class ReloadScriptsPackage : public BasePackage
 {
     public:
         ReloadScriptsPackage();
