@@ -11,3 +11,4 @@ lib/*
 doxy/gen/*
 remake.sh
 *HEJ*
+*.obj
