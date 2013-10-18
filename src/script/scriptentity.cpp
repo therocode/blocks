@@ -4,3 +4,8 @@ ScriptEntity::ScriptEntity(fea::WeakEntityPtr entity, asIScriptObject* scriptObj
 {
     mId = mEntity.lock()->getId();
 }
+
+ScriptEntity::~ScriptEntity()
+{
+    mScriptObject->Release();
+}

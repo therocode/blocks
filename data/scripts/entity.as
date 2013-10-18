@@ -11,4 +11,9 @@ class Elephant : Entity
     {
         consolePrint("hej jag skapades och luktar elefant\n");
     }
+
+    ~Elephant()
+    {
+        consolePrint("en... elefant destruerades...\n");
+    }
 }
