@@ -31,9 +31,7 @@ void World::initialise()
 	{
 		for(int y = 0; y < 2; y++)
 		{
-			fea::EntityPtr human = entitySystem.spawnEntity("human", "Elephant").lock();
-			human->setAttribute<glm::vec3>("position", glm::vec3(1.0f * x + 0.5f, 100.0f + glm::linearRand(0.f, 80.f), 1.0f * y + 0.5f));
-			entitySystem.attachEntity(human);
+			entitySystem.spawnEntity("Elephant", glm::vec3(1.0f * x + 0.5f, 100.0f + glm::linearRand(0.f, 80.f), 1.0f * y + 0.5f));
 		}
 	}
 
