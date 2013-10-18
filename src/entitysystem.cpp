@@ -1,6 +1,5 @@
 #include "entitysystem.h"
 #include "blockstd.h"
-#include "defaultsetters.h"
 #include "messages.h"
 #include <featherkit/entitysystemutil.h>
 
@@ -15,19 +14,6 @@ EntitySystem::EntitySystem(fea::MessageBus& bus) :
 EntitySystem::~EntitySystem()
 {
     mBus.removeMessageSubscriber<SpawnEntityMessage>(*this);
-}
-
-void EntitySystem::initialise()
-{
-    fea::util::JsonEntityLoader loader;
-    loader.registerType("#vec3#",sizeof(glm::vec3));
-    mManager.registerAttributes(loader.loadAttributesJson("data/attributes.json"));
-    mManager.registerEntityTemplates(loader.loadEntitiesJson("data/entities.json"));
-    mManager.registerDefaultSetter("mass", fea::util::floatSetter);
-    mManager.registerDefaultSetter("position", vec3Setter);
-    mManager.registerDefaultSetter("velocity", vec3Setter);
-    mManager.registerDefaultSetter("acceleration", vec3Setter);
-    mManager.registerDefaultSetter("hitbox", vec3Setter);
 }
 
 void EntitySystem::addController(std::unique_ptr<EntityController> controller)

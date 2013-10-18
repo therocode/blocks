@@ -22,7 +22,6 @@ void World::initialise()
 
 	standardDimension.addFocusPoint(FocusPoint(glm::vec3(0.0f, 0.0f, 0.0f), 4.0f));
 
-	entitySystem.initialise();
 	entitySystem.addController(std::unique_ptr<EntityController>(new PhysicsController(bus, worldInterface)));
 	entitySystem.addController(std::unique_ptr<EntityController>(new CollisionController(bus, worldInterface)));
 	entitySystem.addController(std::unique_ptr<EntityController>(new GfxController(bus, worldInterface)));

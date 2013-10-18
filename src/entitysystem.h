@@ -12,7 +12,6 @@ class EntitySystem :
     public:
         EntitySystem(fea::MessageBus& bus);
         ~EntitySystem();
-        void initialise();
         void addController(std::unique_ptr<EntityController> controller);
         void update();
         fea::WeakEntityPtr spawnEntity(const std::string& scriptType, const glm::vec3& position);
@@ -28,8 +27,6 @@ class EntitySystem :
 
 
 //todo:
-//entity creation:
-//catch by entity system, make factory spawn entity
 //
 //entity desctruction:
 //destroy entity message sent with id
