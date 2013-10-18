@@ -18,6 +18,7 @@ ScriptEngine::ScriptEngine()
 
 ScriptEngine::~ScriptEngine()
 {
+    mContext->Release();
     mEngine->Release();
 }
 
