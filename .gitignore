@@ -1,8 +1,8 @@
 *.swp
 *.swo
 *~
-CMakeCache.txt
-CMakeFiles/*
+*CMakeCache.txt
+*CMakeFiles/*
 cmake_install.cmake
 Makefile
 *.a
