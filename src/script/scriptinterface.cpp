@@ -62,7 +62,7 @@ void ScriptInterface::handleMessage(const FrameMessage& received)
 
 void ScriptInterface::scriptPrint(std::string text)
 {
-    std::cout << text;
+    std::cout << "[script]: " << text;
 }
 
 void ScriptInterface::setGravity(float constant)
