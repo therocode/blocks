@@ -62,10 +62,37 @@ void ScriptInterface::handleMessage(const FrameMessage& received)
 
 void ScriptInterface::scriptPrint(std::string text)
 {
-    std::cout << text;
+    std::cout << "[script]: " << text;
 }
 
 void ScriptInterface::setGravity(float constant)
 {
     mBus.sendMessage<GravityRequestedMessage>(GravityRequestedMessage(constant));
+}
+
+asIScriptObject* ScriptInterface::instanciateScriptEntity(const std::string& type)
+{
+    asIObjectType* objectType = mModule.getObjectTypeByDecl(type);
+    
+    asIScriptFunction *factory = objectType->GetFactoryByDecl(std::string(type + " @" + type +"()").c_str());
+
+    if(factory)
+    {
+        asIScriptContext* ctx = mEngine.getContext();
+        // Prepare the context to call the factory function
+        ctx->Prepare(factory);
+        // Execute the call
+        ctx->Execute();
+        // Get the object that was created
+        asIScriptObject *obj = *(asIScriptObject**)ctx->GetAddressOfReturnValue();
+        // If you're going to store the object you must increase the reference,
+        // otherwise it will be destroyed when the context is reused or destroyed.
+        obj->AddRef();
+
+        return obj;
+    }
+    else
+    {
+        return nullptr;
+    }
 }

@@ -11,7 +11,7 @@ class EntitySystem
         void initialise();
         void addController(std::unique_ptr<EntityController> controller);
         void update();
-        fea::WeakEntityPtr spawnEntity(const std::string& type);
+        fea::WeakEntityPtr spawnEntity(const std::string& type, const std::string& scriptType);
         void attachEntity(fea::WeakEntityPtr entity);
     private:
         fea::MessageBus& bus;

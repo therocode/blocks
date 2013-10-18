@@ -1,6 +1,8 @@
 #pragma once
 #include "scriptengine.h"
 #include "scriptinterface.h"
+#include "scriptentity.h"
+#include <map>
 
 class ScriptHandler :
     public fea::MessageReceiver<RebuildScriptsRequestedMessage>,
@@ -18,6 +20,7 @@ class ScriptHandler :
         ScriptEngine mEngine;
         ScriptModule mScripts;
         std::vector<std::string> sourceFiles;
+        std::map<size_t, ScriptEntity> scriptEntities;
 
         //callers
         ScriptInterface mScriptInterface;
