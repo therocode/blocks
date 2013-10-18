@@ -66,3 +66,8 @@ glm::vec3 WorldInterface::getVoxelAtRay(float ox, float oy, float oz, float dx, 
 	}
 	return glm::floor(p) + glm::vec3(0.5f);
 }
+
+fea::WeakEntityPtr WorldInterface::spawnEntity(const std::string& scriptType, const glm::vec3& position)
+{
+    return mEntitySystem.spawnEntity(scriptType, position);
+}
