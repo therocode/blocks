@@ -4,10 +4,9 @@
 #include "asaddons/scriptstdstring.h"
 #include "asaddons/scriptarray.h"
 
-ScriptEngine::ScriptEngine()
+ScriptEngine::ScriptEngine() : mContextsInUse(0)
 {
     mEngine = asCreateScriptEngine(ANGELSCRIPT_VERSION);
-    mContext = mEngine->CreateContext();
 
     RegisterScriptArray(mEngine, true);
     RegisterStdString(mEngine);
@@ -18,7 +17,10 @@ ScriptEngine::ScriptEngine()
 
 ScriptEngine::~ScriptEngine()
 {
-    mContext->Release();
+    for(auto context : mContexts)
+    {
+        context->Release();
+    }
     mEngine->Release();
 }
 
@@ -52,12 +54,21 @@ void ScriptEngine::messageCallback(const asSMessageInfo &msg)
     }
 }
 
-asIScriptContext* ScriptEngine::getContext()
-{
-    return mContext;
-}
-
 asIScriptEngine* ScriptEngine::getEngine()
 {
     return mEngine;
+}
+
+asIScriptContext* ScriptEngine::requestContext()
+{
+    if(mContextsInUse == mContexts.size())
+        mContexts.push_back(mEngine->CreateContext());
+
+    mContextsInUse++;
+    return mContexts[mContextsInUse - 1];
+}
+
+void ScriptEngine::freeContext(asIScriptContext* context)
+{
+    mContextsInUse--;
 }

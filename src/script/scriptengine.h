@@ -9,10 +9,13 @@ class ScriptEngine
         ~ScriptEngine();
         ScriptModule createModule(const std::string& name);
         void destroyModule(ScriptModule& module);
-        asIScriptContext* getContext();
+        asIScriptContext* requestContext();
+        void freeContext(asIScriptContext* context);
         asIScriptEngine* getEngine();
     private:
         void messageCallback(const asSMessageInfo &msg);
         asIScriptEngine* mEngine;
         asIScriptContext* mContext;
+        std::vector<asIScriptContext*> mContexts;
+        uint32_t mContextsInUse;
 };
