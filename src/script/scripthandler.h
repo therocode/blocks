@@ -2,6 +2,7 @@
 #include "scriptengine.h"
 #include "scriptinterface.h"
 #include "scriptentity.h"
+#include "../worldinterface.h"
 #include <map>
 
 class ScriptHandler :
@@ -9,7 +10,7 @@ class ScriptHandler :
     public fea::MessageReceiver<EntitySpawnedMessage>
 {
     public:
-        ScriptHandler(fea::MessageBus& bus);
+        ScriptHandler(fea::MessageBus& bus, WorldInterface& worldInterface);
         ~ScriptHandler();
         void setup();
         void destroy();
@@ -19,6 +20,7 @@ class ScriptHandler :
         fea::MessageBus& mBus;
         ScriptEngine mEngine;
         ScriptModule mScripts;
+        WorldInterface& mWorldInterface;
         std::vector<std::string> sourceFiles;
         std::map<size_t, ScriptEntity> scriptEntities;
 

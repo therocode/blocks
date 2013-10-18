@@ -52,3 +52,8 @@ void World::handleMessage(const CameraUpdatedMessage& received)
 	mCamPos = pos;
 	mCamDir = dir;
 }
+
+WorldInterface& World::getWorldInterface()
+{
+    return worldInterface;
+}

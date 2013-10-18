@@ -15,6 +15,7 @@ class World :
         void initialise();
         void update();
         virtual void handleMessage(const CameraUpdatedMessage& received);
+        WorldInterface& getWorldInterface();
     private:
 		glm::vec3 mCamPos, mCamDir;
         fea::MessageBus& bus;
