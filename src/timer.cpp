@@ -1,6 +1,5 @@
 #include "timer.h"
 #include <thread>
-#include <iostream>
 
 Timer::Timer()
 {
@@ -66,7 +65,6 @@ void Timer::sleepForTheRestOfTheFrame()
     std::chrono::microseconds frameLength = std::chrono::microseconds(1000000) / 60;
     std::chrono::microseconds microsecondsElapsed = duration_cast<microseconds>(mClock.now() - mLastTime);
     std::chrono::microseconds microsecondsLeft =  frameLength - microsecondsElapsed;
-        std::cout << "microseconds to sleep for: " << microsecondsLeft.count() << "\n";
 
     if(microsecondsLeft > std::chrono::microseconds(0))
     {
