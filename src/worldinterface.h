@@ -10,6 +10,7 @@ class WorldInterface
         VoxelType getVoxelType(const glm::vec3& position) const; 
 		glm::vec3 getVoxelAtRay(const glm::vec3& position, const glm::vec3& direction) const;
 		glm::vec3 getVoxelAtRay(float ox, float oy, float oz, float dx, float dy, float dz) const;
+        fea::WeakEntityPtr spawnEntity(const std::string& scriptType, const glm::vec3& position);
     private:
         Dimension& mDimension;
         EntitySystem& mEntitySystem;

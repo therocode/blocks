@@ -22,7 +22,6 @@ void World::initialise()
 
 	standardDimension.addFocusPoint(FocusPoint(glm::vec3(0.0f, 0.0f, 0.0f), 4.0f));
 
-	entitySystem.initialise();
 	entitySystem.addController(std::unique_ptr<EntityController>(new PhysicsController(bus, worldInterface)));
 	entitySystem.addController(std::unique_ptr<EntityController>(new CollisionController(bus, worldInterface)));
 	entitySystem.addController(std::unique_ptr<EntityController>(new GfxController(bus, worldInterface)));
@@ -31,9 +30,7 @@ void World::initialise()
 	{
 		for(int y = 0; y < 2; y++)
 		{
-			fea::EntityPtr human = entitySystem.spawnEntity("human", "Elephant").lock();
-			human->setAttribute<glm::vec3>("position", glm::vec3(1.0f * x + 0.5f, 100.0f + glm::linearRand(0.f, 80.f), 1.0f * y + 0.5f));
-			entitySystem.attachEntity(human);
+            bus.sendMessage<SpawnEntityMessage>(SpawnEntityMessage("Elephant", glm::vec3(1.0f * x + 0.5f, 100.0f + glm::linearRand(0.f, 80.f), 1.0f * y + 0.5f)));
 		}
 	}
 
@@ -54,4 +51,9 @@ void World::handleMessage(const CameraUpdatedMessage& received)
 	std::tie(pos, dir) = received.data;
 	mCamPos = pos;
 	mCamDir = dir;
+}
+
+WorldInterface& World::getWorldInterface()
+{
+    return worldInterface;
 }

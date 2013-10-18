@@ -2,10 +2,11 @@
 #include "../messages.h"
 #include <iostream>
 
-ScriptHandler::ScriptHandler(fea::MessageBus& bus) : 
+ScriptHandler::ScriptHandler(fea::MessageBus& bus, WorldInterface& worldInterface) : 
     mBus(bus),
     mScripts(mEngine.createModule("scripts")),
-    mScriptInterface(mBus, mEngine, mScripts)
+    mScriptInterface(mBus, mEngine, mScripts, worldInterface),
+    mWorldInterface(worldInterface)
 {
     mBus.addMessageSubscriber<RebuildScriptsRequestedMessage>(*this);
     mBus.addMessageSubscriber<EntitySpawnedMessage>(*this);

@@ -35,6 +35,7 @@ set(source_files
 	src/timer.cpp
 	src/random.cpp
     src/entitysystem.cpp
+    src/entityfactory.cpp
     src/defaultsetters.cpp
     src/controllers/entitycontroller.cpp
     src/controllers/physicscontroller.cpp
@@ -84,6 +85,7 @@ set(header_files
 	src/timer.h
 	src/random.h
     src/entitysystem.h
+    src/entityfactory.h
     src/defaultsetters.h
     src/controllers/entitycontroller.h
     src/controllers/physicscontroller.h
