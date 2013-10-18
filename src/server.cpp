@@ -22,6 +22,7 @@ void Server::setup()
 {
     mScriptHandler.setup();
     mWorld.initialise();
+    mFrameTimer.start();
     std::cout << "Server initialised and ready to go\n";
 }
 
@@ -34,6 +35,8 @@ void Server::doLogic()
     mWorld.update();
 
     mBridge->flush();
+    mFrameTimer.sleepForTheRestOfTheFrame();
+    mFrameTimer.start();
 }
 
 void Server::destroy()

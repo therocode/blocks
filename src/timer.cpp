@@ -1,4 +1,6 @@
 #include "timer.h"
+#include <thread>
+#include <iostream>
 
 Timer::Timer()
 {
@@ -52,4 +54,22 @@ long Timer::getDeltaTime()
 void Timer::setDeltaThreshold(int milliseconds)
 {
 	mDeltaThreshold = milliseconds;	
+}
+
+void Timer::setDesiredFPSRate(float rate)
+{
+    fps = rate;   
+}
+
+void Timer::sleepForTheRestOfTheFrame()
+{
+    std::chrono::microseconds frameLength = std::chrono::microseconds(1000000) / 60;
+    std::chrono::microseconds microsecondsElapsed = duration_cast<microseconds>(mClock.now() - mLastTime);
+    std::chrono::microseconds microsecondsLeft =  frameLength - microsecondsElapsed;
+        std::cout << "microseconds to sleep for: " << microsecondsLeft.count() << "\n";
+
+    if(microsecondsLeft > std::chrono::microseconds(0))
+    {
+        std::this_thread::sleep_for(microsecondsLeft);
+    }
 }
