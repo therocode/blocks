@@ -6,8 +6,12 @@ CMakeFiles/*
 cmake_install.cmake
 Makefile
 *.a
+*.o
 bin/*
 lib/*
 doxy/gen/*
 remake.sh
 *HEJ*
+extlibs/angelscript/angelscript/projects
+extlibs/angelscript/samples
+extlibs/enet/CMakeFiles
