@@ -17,10 +17,6 @@ set(source_files
     src/serverclientbridge.cpp
     src/localserverclientbridge.cpp
     src/package.cpp
-    src/chunkloadedpackage.cpp
-    src/gfxentityaddedpackage.cpp
-    src/gfxentitymovedpackage.cpp
-    src/reloadscriptspackage.cpp
 	src/chunk.cpp
 	src/vbo.cpp
 	src/billboard.cpp
@@ -37,7 +33,9 @@ set(source_files
     src/simplexnoise.cpp
     src/focuspoint.cpp
 	src/timer.cpp
+	src/random.cpp
     src/entitysystem.cpp
+    src/entityfactory.cpp
     src/defaultsetters.cpp
     src/controllers/entitycontroller.cpp
     src/controllers/physicscontroller.cpp
@@ -53,6 +51,8 @@ set(source_files
     src/script/scriptmodule.cpp
     src/script/scriptinterface.cpp
     src/script/scriptcallback.cpp
+    src/script/scriptentity.cpp
+    src/script/scriptentitycore.cpp
     src/script/asaddons/scriptarray.cpp
     src/script/asaddons/scriptstdstring.cpp
     src/script/asaddons/scriptstdstring_utils.cpp
@@ -65,10 +65,6 @@ set(header_files
     src/serverclientbridge.h
     src/localserverclientbridge.h
     src/package.h
-    src/chunkloadedpackage.h
-    src/gfxentityaddedpackage.h
-    src/gfxentitymovedpackage.h
-    src/reloadscriptspackage.h
 	src/blockstd.h
 	src/chunk.h
 	src/vbo.h
@@ -88,7 +84,9 @@ set(header_files
     src/focuspoint.h
     src/input/inputactions.h
 	src/timer.h
+	src/random.h
     src/entitysystem.h
+    src/entityfactory.h
     src/defaultsetters.h
     src/controllers/entitycontroller.h
     src/controllers/physicscontroller.h
@@ -104,6 +102,8 @@ set(header_files
     src/script/scriptmodule.h
     src/script/scriptinterface.h
     src/script/scriptcallback.h
+    src/script/scriptentity.h
+    src/script/scriptentitycore.h
     src/script/asaddons/scriptstdstring.h
     src/script/asaddons/scriptarray.h
     src/script/asaddons/scriptbuilder.h

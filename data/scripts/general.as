@@ -1,7 +1,26 @@
+bool flip = false;
+
 void onFrame(int frameNumber)
 {
-    print("scripts are running:!\n");
+    //consolePrint("scripts are running:!\n");
 
-    if(frameNumber > 1200)
-        setGravity(0.001f);
+    if(randomChance(0.5f / 60.0f))
+    {
+        if(!flip)
+        {
+            setGravity(0.001f);
+            flip = true;
+            consolePrint("flipped gravity!\n");
+        }
+        else
+        {
+            setGravity(-0.003f);
+            flip = false;
+            consolePrint("flipped gravity to " + toString(-0.003f) + " !\n");
+        }
+
+    }
+
+    if(frameNumber > 2000)
+        setGravity(-0.001f);
 }

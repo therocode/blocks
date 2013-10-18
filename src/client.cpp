@@ -3,10 +3,7 @@
 #include <featherkit/util/window/sfml/sfmlwindowbackend.h>
 #include <featherkit/util/input/sfml/sfmlinputbackend.h>
 #include <typeinfo>
-#include "chunkloadedpackage.h"
-#include "gfxentityaddedpackage.h"
-#include "gfxentitymovedpackage.h"
-#include "reloadscriptspackage.h"
+#include "packages.h"
 
 Client::Client() : window(new fea::util::SFMLWindowBackend(sfWindow)),
                    renderer(mBus),
@@ -71,7 +68,7 @@ void Client::handleMessage(const InputActionMessage& received)
 
 void Client::handleMessage(const RebuildScriptsRequestedMessage& received)
 {
-    mBridge->enqueuePackage(std::unique_ptr<Package>(new ReloadScriptsPackage()));
+    mBridge->enqueuePackage(std::unique_ptr<BasePackage>(new RebuildScriptsRequestedPackage('0')));
 }
 
 bool Client::requestedQuit()
@@ -87,27 +84,38 @@ void Client::setServerBridge(std::unique_ptr<ServerClientBridge> bridge)
 
 void Client::fetchServerData()
 {
-    std::unique_ptr<Package> package;
+    std::unique_ptr<BasePackage> package;
 
     while(mBridge->pollPackage(package))
     {
         if(package->mType == typeid(ChunkLoadedPackage))
         {
             ChunkLoadedPackage* chunkPackage = (ChunkLoadedPackage*)package.get();
-            
-            mBus.sendMessage<ChunkCreatedMessage>(ChunkCreatedMessage(&chunkPackage->mCoordinate, &chunkPackage->mChunk));
+            ChunkCoordinate coordinate;
+            VoxelTypeArray types;
+            std::tie(coordinate, types) = chunkPackage->getData();
+            mBus.sendMessage<ChunkCreatedMessage>(ChunkCreatedMessage(coordinate, types));
         }
         else if(package->mType == typeid(GfxEntityAddedPackage))
         {
             GfxEntityAddedPackage* gfxAddedPackage = (GfxEntityAddedPackage*)package.get();
 
-            mBus.sendMessage<AddGfxEntityMessage>(AddGfxEntityMessage(gfxAddedPackage->mId, gfxAddedPackage->mPosition));
+        size_t id;
+        glm::vec3 position;
+
+        std::tie(id, position) = gfxAddedPackage->getData();
+            mBus.sendMessage<AddGfxEntityMessage>(AddGfxEntityMessage(id, position));
         }
         else if(package->mType == typeid(GfxEntityMovedPackage))
         {
             GfxEntityMovedPackage* gfxMovedPackage = (GfxEntityMovedPackage*)package.get();
+        
+        size_t id;
+        glm::vec3 position;
 
-            mBus.sendMessage<MoveGfxEntityMessage>(MoveGfxEntityMessage(gfxMovedPackage->mId, gfxMovedPackage->mPosition));
+        std::tie(id, position) = gfxMovedPackage->getData();
+
+            mBus.sendMessage<MoveGfxEntityMessage>(MoveGfxEntityMessage(id, position));
         }
     }
 }

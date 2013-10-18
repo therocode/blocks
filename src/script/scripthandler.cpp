@@ -2,25 +2,28 @@
 #include "../messages.h"
 #include <iostream>
 
-ScriptHandler::ScriptHandler(fea::MessageBus& bus) : 
+ScriptHandler::ScriptHandler(fea::MessageBus& bus, WorldInterface& worldInterface) : 
     mBus(bus),
     mScripts(mEngine.createModule("scripts")),
-    mScriptInterface(mBus, mEngine, mScripts)
+    mScriptInterface(mBus, mEngine, mScripts, worldInterface),
+    mWorldInterface(worldInterface)
 {
     mBus.addMessageSubscriber<RebuildScriptsRequestedMessage>(*this);
+    mBus.addMessageSubscriber<EntitySpawnedMessage>(*this);
 }
 
 ScriptHandler::~ScriptHandler()
 {
     mEngine.destroyModule(mScripts);
     mBus.removeMessageSubscriber<RebuildScriptsRequestedMessage>(*this);
+    mBus.removeMessageSubscriber<EntitySpawnedMessage>(*this);
 }
 
 void ScriptHandler::setup()
 {
     mScriptInterface.registerInterface();
 
-    sourceFiles = {"data/scripts/general.as"};
+    sourceFiles = {"data/scripts/general.as", "data/scripts/entity.as"};
     std::cout << "\nCompiling scripts...\n";
 
     bool succeeded = mScripts.compileFromSourceList(sourceFiles);
@@ -48,4 +51,17 @@ void ScriptHandler::handleMessage(const RebuildScriptsRequestedMessage& message)
     std::cout << "Setting up script callbacks...\n";
     mScriptInterface.registerCallbacks();
     std::cout << "Done with callbacks!\n\n";
+}
+
+void ScriptHandler::handleMessage(const EntitySpawnedMessage& message)
+{
+    fea::WeakEntityPtr entity;
+    std::string scriptType;
+
+    std::tie(entity, scriptType) = message.data;
+    size_t id = entity.lock()->getId();
+
+    ScriptEntity scriptEntity(id, entity, mScriptInterface.instanciateScriptEntity(scriptType));
+
+    scriptEntities.emplace(id, scriptEntity);
 }

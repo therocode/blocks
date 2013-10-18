@@ -6,7 +6,7 @@
 #include <featherkit/entitysystem.h>
 
 struct ChunkCreated_tag{};//                               coordinate              chunk
-using ChunkCreatedMessage = fea::Message<ChunkCreated_tag, const ChunkCoordinate*, const Chunk*>;
+using ChunkCreatedMessage = fea::Message<ChunkCreated_tag, ChunkCoordinate, VoxelTypeArray&>;
 
 struct WindowResize_tag{};//                               width                 height
 using WindowResizeMessage = fea::Message<WindowResize_tag, const uint32_t, const uint32_t>;
@@ -41,8 +41,14 @@ using CurrentlyFacingBlockMessage = fea::Message<CurrentlyFacingBlock_tag, const
 struct Frame_tag{};//                                       true if beginning of frame, false if ending of frame
 using FrameMessage = fea::Message<CurrentlyFacingBlock_tag, bool>;
 
-struct RebuildScriptsRequested_tag{};//
-using RebuildScriptsRequestedMessage = fea::Message<RebuildScriptsRequested_tag>;
+struct RebuildScriptsRequested_tag{};//                                          nothing
+using RebuildScriptsRequestedMessage = fea::Message<RebuildScriptsRequested_tag, char>;
 
 struct GravityRequested_tag{};//                                   gravity constant
 using GravityRequestedMessage = fea::Message<GravityRequested_tag, float>;
+
+struct SpawnEntity_tag{};//                              script type         position
+using SpawnEntityMessage = fea::Message<SpawnEntity_tag, const std::string&, const glm::vec3&>;
+
+struct EntitySpawned_tag{};//                                entity              //script type
+using EntitySpawnedMessage = fea::Message<EntitySpawned_tag, fea::WeakEntityPtr, const std::string&>;

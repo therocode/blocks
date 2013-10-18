@@ -1,6 +1,6 @@
 #include "reloadscriptspackage.h"
 
-ReloadScriptsPackage::ReloadScriptsPackage() : Package(typeid(ReloadScriptsPackage))
+ReloadScriptsPackage::ReloadScriptsPackage() : BasePackage(typeid(ReloadScriptsPackage))
 {
 }
 

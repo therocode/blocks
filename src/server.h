@@ -3,6 +3,7 @@
 #include "serverclientbridge.h"
 #include "messages.h"
 #include "script/scripthandler.h"
+#include "timer.h"
 
 class Server : public fea::MessageReceiver<ChunkCreatedMessage>,
                public fea::MessageReceiver<AddGfxEntityMessage>,
@@ -23,6 +24,7 @@ class Server : public fea::MessageReceiver<ChunkCreatedMessage>,
         fea::MessageBus mBus;
         World mWorld;
         ScriptHandler mScriptHandler;
+        Timer mFrameTimer;
 
         std::unique_ptr<ServerClientBridge> mBridge;      //this could be a list of many clients in the future
 };

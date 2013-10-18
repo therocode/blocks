@@ -123,7 +123,6 @@ void BlocksApplication::setupDedicatedServer()
     LocalServerClientBridge* clientToServer = new LocalServerClientBridge();
     clientToServer->connect(clientToServer);
     server->addClientBridge(std::unique_ptr<LocalServerClientBridge>(clientToServer));
-
     server->setup();
 /*  std::cout << "Initialising dedicated server without a local client\n";
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));

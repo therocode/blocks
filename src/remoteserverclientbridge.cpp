@@ -148,7 +148,7 @@ void RemoteServerClientBridge::connect(RemoteServerClientBridge* other)
 	mOther = other;
 }
 
-void RemoteServerClientBridge::receivePackage(std::unique_ptr<Package>&& incoming)
+void RemoteServerClientBridge::receivePackage(std::unique_ptr<BasePackage>&& incoming)
 {
 	mIncoming.push_back(std::move(incoming));
 }
