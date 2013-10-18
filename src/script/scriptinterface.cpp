@@ -23,11 +23,13 @@ void ScriptInterface::registerInterface()
     //printing
     int r = mEngine.getEngine()->RegisterGlobalFunction("void consolePrint(string text)", asMETHOD(ScriptInterface, scriptPrint), asCALL_THISCALL_ASGLOBAL, this); assert(r >= 0);
 
-    //entitycore
-    mEngine.getEngine()->RegisterObjectType("EntityCore", sizeof(ScriptEntityCore), asOBJ_REF); assert(r >= 0);
+    //entity
+    r = mEngine.getEngine()->RegisterInterface("Entity"); assert(r >= 0);
+    //mEngine.getEngine()->RegisterObjectType("EntityCore", sizeof(ScriptEntityCore), asOBJ_REF); assert(r >= 0);
     //r = mEngine.getEngine()->RegisterObjectBehaviour("EntityCore", asBEHAVE_FACTORY,"EntityCore@ spawnEntity()", asFUNCTIONPR(spawnEntityHere,(),ScriptEntityCore*), asCALL_STDCALL );
-    r = mEngine.getEngine()->RegisterObjectBehaviour("EntityCore", asBEHAVE_ADDREF, "void f()", asMETHOD(ScriptEntityCore,addRef), asCALL_THISCALL ); assert(r >= 0);
-    r = mEngine.getEngine()->RegisterObjectBehaviour("EntityCore", asBEHAVE_RELEASE, "void f()", asMETHOD(ScriptEntityCore,release), asCALL_THISCALL); assert(r >= 0);
+    //r = mEngine.getEngine()->RegisterObjectBehaviour("EntityCore", asBEHAVE_ADDREF, "void f()", asMETHOD(ScriptEntityCore,addRef), asCALL_THISCALL ); assert(r >= 0);
+    //r = mEngine.getEngine()->RegisterObjectBehaviour("EntityCore", asBEHAVE_RELEASE, "void f()", asMETHOD(ScriptEntityCore,release), asCALL_THISCALL); assert(r >= 0);
+    r = mEngine.getEngine()->RegisterGlobalFunction("Entity @createEntity(const string &in)", asMETHOD(ScriptInterface, instanciateScriptEntity), asCALL_THISCALL_ASGLOBAL, this); assert(r >= 0);
 
     //string conversion
     r = mEngine.getEngine()->RegisterGlobalFunction("string toString(int num)", asFUNCTIONPR(std::to_string, (int32_t), std::string), asCALL_CDECL); assert(r >= 0);
@@ -61,7 +63,7 @@ void ScriptInterface::handleMessage(const FrameMessage& received)
 {
     if(!mModule.hasErrors())
     {
-        asIScriptContext* context = mEngine.getContext();
+        //asIScriptContext* context = mEngine.getContext();
 
         onFrameCallback.execute(frameTick);
         frameTick++;
@@ -84,9 +86,11 @@ asIScriptObject* ScriptInterface::instanciateScriptEntity(const std::string& typ
     
     asIScriptFunction *factory = objectType->GetFactoryByDecl(std::string(type + " @" + type +"()").c_str());
 
+
     if(factory)
     {
-        asIScriptContext* ctx = mEngine.getContext();
+        asIScriptContext* ctx = mEngine.requestContext();
+    std::cout << "object type is " << objectType << " and factory is " << factory << " and context is " << ctx << "\n";
         // Prepare the context to call the factory function
         ctx->Prepare(factory);
         // Execute the call
@@ -96,6 +100,7 @@ asIScriptObject* ScriptInterface::instanciateScriptEntity(const std::string& typ
         // If you're going to store the object you must increase the reference,
         // otherwise it will be destroyed when the context is reused or destroyed.
         obj->AddRef();
+        mEngine.freeContext(ctx);
 
         return obj;
     }

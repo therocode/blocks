@@ -14,6 +14,7 @@ void onFrame(int frameNumber)
         }
         else
         {
+            Entity@ entity = createEntity("Elephant");
             setGravity(-0.003f);
             flip = false;
             consolePrint("flipped gravity to " + toString(-0.003f) + " !\n");

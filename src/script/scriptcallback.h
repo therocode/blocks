@@ -46,11 +46,11 @@ class ScriptCallback
         {
             if(mFunction)
             {
-                asIScriptContext* context = mEngine.getContext();
+                asIScriptContext* context = mEngine.requestContext();
                 int32_t r = context->Prepare(mFunction); assert( r >= 0 );
                 ParameterHelper<0, Types...>::do_(context, parameters...);
                 r = context->Execute(); assert( r >= 0 );
-                r = context->Unprepare(); assert( r >= 0 );
+                mEngine.freeContext(context);
             }
         }
 
