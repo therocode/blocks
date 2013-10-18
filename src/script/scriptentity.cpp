@@ -1,8 +1,24 @@
 #include "scriptentity.h"
 
-ScriptEntity::ScriptEntity(fea::WeakEntityPtr entity, asIScriptObject* scriptObject) : mEntity(entity), mScriptObject(scriptObject)
+ScriptEntity::ScriptEntity(size_t id, fea::WeakEntityPtr entity, asIScriptObject* scriptObject) : 
+    mId(id),
+    mEntity(entity),
+    mScriptObject(scriptObject)
 {
-    mId = mEntity.lock()->getId();
+}
+
+ScriptEntity::ScriptEntity(const ScriptEntity& other) : mId(other.mId), mEntity(other.mEntity), mScriptObject(other.mScriptObject)
+{
+    mScriptObject->AddRef();
+}
+
+const ScriptEntity& ScriptEntity::operator=(const ScriptEntity& other)
+{
+    mId = other.mId;
+    mEntity = other.mEntity;
+    mScriptObject = other.mScriptObject;
+    mScriptObject->AddRef();
+    return *this;
 }
 
 ScriptEntity::~ScriptEntity()
