@@ -1,6 +1,7 @@
 #pragma once
 #include <featherkit/entitysystem.h>
 #include <angelscript.h>
+#include "scriptentitycore.h"
 
 class ScriptEntity
 {

@@ -1,4 +1,5 @@
 #include "scriptinterface.h"
+#include "scriptentitycore.h"
 #include <iostream>
 
 ScriptInterface::ScriptInterface(fea::MessageBus& bus, ScriptEngine& engine, ScriptModule& module, WorldInterface& worldInterface) : 
@@ -21,6 +22,12 @@ void ScriptInterface::registerInterface()
 {
     //printing
     int r = mEngine.getEngine()->RegisterGlobalFunction("void consolePrint(string text)", asMETHOD(ScriptInterface, scriptPrint), asCALL_THISCALL_ASGLOBAL, this); assert(r >= 0);
+
+    //entitycore
+    mEngine.getEngine()->RegisterObjectType("EntityCore", sizeof(ScriptEntityCore), asOBJ_REF); assert(r >= 0);
+    //r = mEngine.getEngine()->RegisterObjectBehaviour("EntityCore", asBEHAVE_FACTORY,"EntityCore@ spawnEntity()", asFUNCTIONPR(spawnEntityHere,(),ScriptEntityCore*), asCALL_STDCALL );
+    r = mEngine.getEngine()->RegisterObjectBehaviour("EntityCore", asBEHAVE_ADDREF, "void f()", asMETHOD(ScriptEntityCore,addRef), asCALL_THISCALL ); assert(r >= 0);
+    r = mEngine.getEngine()->RegisterObjectBehaviour("EntityCore", asBEHAVE_RELEASE, "void f()", asMETHOD(ScriptEntityCore,release), asCALL_THISCALL); assert(r >= 0);
 
     //string conversion
     r = mEngine.getEngine()->RegisterGlobalFunction("string toString(int num)", asFUNCTIONPR(std::to_string, (int32_t), std::string), asCALL_CDECL); assert(r >= 0);
