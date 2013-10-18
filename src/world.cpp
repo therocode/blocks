@@ -31,7 +31,7 @@ void World::initialise()
 	{
 		for(int y = 0; y < 2; y++)
 		{
-			entitySystem.spawnEntity("Elephant", glm::vec3(1.0f * x + 0.5f, 100.0f + glm::linearRand(0.f, 80.f), 1.0f * y + 0.5f));
+            bus.sendMessage<SpawnEntityMessage>(SpawnEntityMessage("Elephant", glm::vec3(1.0f * x + 0.5f, 100.0f + glm::linearRand(0.f, 80.f), 1.0f * y + 0.5f)));
 		}
 	}
 
