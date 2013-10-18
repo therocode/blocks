@@ -35,6 +35,7 @@ fea::WeakEntityPtr EntitySystem::spawnEntity(const std::string& scriptType, cons
 
     entity.lock()->setAttribute<glm::vec3>("position", position);
 
+    mBus.sendMessage<EntityNeedsScriptMessage>(EntityNeedsScriptMessage(entity, scriptType));
     mBus.sendMessage<EntitySpawnedMessage>(EntitySpawnedMessage(entity, scriptType));
 
     attachEntity(entity);

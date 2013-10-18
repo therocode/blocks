@@ -9,14 +9,14 @@ ScriptHandler::ScriptHandler(fea::MessageBus& bus, WorldInterface& worldInterfac
     mWorldInterface(worldInterface)
 {
     mBus.addMessageSubscriber<RebuildScriptsRequestedMessage>(*this);
-    mBus.addMessageSubscriber<EntitySpawnedMessage>(*this);
+    mBus.addMessageSubscriber<EntityNeedsScriptMessage>(*this);
 }
 
 ScriptHandler::~ScriptHandler()
 {
     mEngine.destroyModule(mScripts);
     mBus.removeMessageSubscriber<RebuildScriptsRequestedMessage>(*this);
-    mBus.removeMessageSubscriber<EntitySpawnedMessage>(*this);
+    mBus.removeMessageSubscriber<EntityNeedsScriptMessage>(*this);
 }
 
 void ScriptHandler::setup()
@@ -53,7 +53,7 @@ void ScriptHandler::handleMessage(const RebuildScriptsRequestedMessage& message)
     std::cout << "Done with callbacks!\n\n";
 }
 
-void ScriptHandler::handleMessage(const EntitySpawnedMessage& message)
+void ScriptHandler::handleMessage(const EntityNeedsScriptMessage& message)
 {
     fea::WeakEntityPtr entity;
     std::string scriptType;

@@ -50,5 +50,8 @@ using GravityRequestedMessage = fea::Message<GravityRequested_tag, float>;
 struct SpawnEntity_tag{};//                              script type         position
 using SpawnEntityMessage = fea::Message<SpawnEntity_tag, const std::string&, const glm::vec3&>;
 
+struct EntityNeedsScript_tag{};//                                entity              //script type
+using EntityNeedsScriptMessage = fea::Message<EntityNeedsScript_tag, fea::WeakEntityPtr, const std::string&>;
+
 struct EntitySpawned_tag{};//                                entity              //script type
 using EntitySpawnedMessage = fea::Message<EntitySpawned_tag, fea::WeakEntityPtr, const std::string&>;
