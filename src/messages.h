@@ -47,5 +47,5 @@ using RebuildScriptsRequestedMessage = fea::Message<RebuildScriptsRequested_tag,
 struct GravityRequested_tag{};//                                   gravity constant
 using GravityRequestedMessage = fea::Message<GravityRequested_tag, float>;
 
-struct EntitySpawned_tag{};//                                entity
-using EntitySpawnedMessage = fea::Message<EntitySpawned_tag, fea::WeakEntityPtr>;
+struct EntitySpawned_tag{};//                                entity              //script type
+using EntitySpawnedMessage = fea::Message<EntitySpawned_tag, fea::WeakEntityPtr, const std::string&>;

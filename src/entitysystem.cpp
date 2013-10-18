@@ -34,10 +34,10 @@ void EntitySystem::update()
     }
 }
 
-fea::WeakEntityPtr EntitySystem::spawnEntity(const std::string& type)
+fea::WeakEntityPtr EntitySystem::spawnEntity(const std::string& type, const std::string& scriptType)
 {
     fea::WeakEntityPtr spawned = manager.createEntity(type);
-    bus.sendMessage<EntitySpawnedMessage>(EntitySpawnedMessage(spawned));
+    bus.sendMessage<EntitySpawnedMessage>(EntitySpawnedMessage(spawned, scriptType));
     return spawned;
 }
 

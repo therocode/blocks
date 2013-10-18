@@ -68,6 +68,11 @@ asIScriptFunction* ScriptModule::getFunctionByDecl(const std::string& decl)
     return mAsModule->GetFunctionByDecl(decl.c_str());
 }
 
+asIObjectType* ScriptModule::getObjectTypeByDecl(const std::string& decl)
+{
+    return mEngine.getEngine()->GetObjectTypeById(mAsModule->GetTypeIdByDecl(decl.c_str()));
+}
+
 bool ScriptModule::hasErrors() const
 {
     return mHasErrors;

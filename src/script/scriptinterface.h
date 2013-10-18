@@ -13,6 +13,7 @@ class ScriptInterface :
         void registerInterface();
         void registerCallbacks();
         void handleMessage(const FrameMessage& received);
+        asIScriptObject* instanciateScriptEntity(const std::string& type);
     private:
         fea::MessageBus& mBus;
         ScriptEngine& mEngine;

@@ -1,6 +1,7 @@
 #pragma once
 #include "scriptengine.h"
 #include "scriptinterface.h"
+#include "scriptentity.h"
 
 class ScriptHandler :
     public fea::MessageReceiver<RebuildScriptsRequestedMessage>,

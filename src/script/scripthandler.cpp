@@ -54,4 +54,12 @@ void ScriptHandler::handleMessage(const RebuildScriptsRequestedMessage& message)
 
 void ScriptHandler::handleMessage(const EntitySpawnedMessage& message)
 {
+    fea::WeakEntityPtr entity;
+    std::string scriptType;
+
+    std::tie(entity, scriptType) = message.data;
+
+    ScriptEntity scriptEntity(entity, mScriptInterface.instanciateScriptEntity(scriptType));
+
+    //need to store the scriptEntity somewhere
 }

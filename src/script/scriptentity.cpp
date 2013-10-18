@@ -1,6 +1,6 @@
 #include "scriptentity.h"
 
-ScriptEntity::ScriptEntity(fea::WeakEntityPtr entity) : mEntity(entity)
+ScriptEntity::ScriptEntity(fea::WeakEntityPtr entity, asIScriptObject* scriptObject) : mEntity(entity), mScriptObject(scriptObject)
 {
     mId = mEntity.lock()->getId();
 }
