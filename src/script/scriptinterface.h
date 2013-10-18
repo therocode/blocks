@@ -3,12 +3,13 @@
 #include "../messages.h"
 #include "scriptcallback.h"
 #include "../random.h"
+#include "../worldinterface.h"
 
 class ScriptInterface : 
     public fea::MessageReceiver<FrameMessage>
 {
     public:
-        ScriptInterface(fea::MessageBus& bus, ScriptEngine& engine, ScriptModule& module);
+        ScriptInterface(fea::MessageBus& bus, ScriptEngine& engine, ScriptModule& module, WorldInterface& worldInterface);
         ~ScriptInterface();
         void registerInterface();
         void registerCallbacks();
@@ -18,6 +19,7 @@ class ScriptInterface :
         fea::MessageBus& mBus;
         ScriptEngine& mEngine;
         ScriptModule& mModule;
+        WorldInterface& mWorldInterface;
         Random random;
 
         ScriptCallback<int32_t> onFrameCallback;

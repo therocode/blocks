@@ -1,10 +1,11 @@
 #include "scriptinterface.h"
 #include <iostream>
 
-ScriptInterface::ScriptInterface(fea::MessageBus& bus, ScriptEngine& engine, ScriptModule& module) : 
+ScriptInterface::ScriptInterface(fea::MessageBus& bus, ScriptEngine& engine, ScriptModule& module, WorldInterface& worldInterface) : 
     mBus(bus),
     mEngine(engine), 
     mModule(module),
+    mWorldInterface(worldInterface),
     onFrameCallback(engine),
     frameTick(0)
 {
