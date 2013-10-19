@@ -17,7 +17,6 @@ ScriptHandler::ScriptHandler(fea::MessageBus& bus, WorldInterface& worldInterfac
 
 ScriptHandler::~ScriptHandler()
 {
-    mEngine.destroyModule(mScripts);
     mBus.removeMessageSubscriber<RebuildScriptsRequestedMessage>(*this);
     mBus.removeMessageSubscriber<EntityNeedsScriptMessage>(*this);
     mBus.removeMessageSubscriber<ScriptEntityFinishedMessage>(*this);
@@ -27,6 +26,7 @@ ScriptHandler::~ScriptHandler()
 
 void ScriptHandler::setup()
 {
+    mEngine.setup();
     mScriptInterface.registerInterface();
 
     sourceFiles = {"data/scripts/general.as", "data/scripts/entity.as"};
@@ -46,6 +46,10 @@ void ScriptHandler::setup()
 
 void ScriptHandler::destroy()
 {
+    scriptEntities.clear();
+    scriptEntityIds.clear();
+    mEngine.destroyModule(mScripts);
+    mEngine.destroy();
 }
 
 void ScriptHandler::handleMessage(const RebuildScriptsRequestedMessage& message)

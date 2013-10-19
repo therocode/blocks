@@ -7,6 +7,8 @@ class ScriptEngine
     public:
         ScriptEngine();
         ~ScriptEngine();
+        void setup();
+        void destroy();
         ScriptModule createModule(const std::string& name);
         void destroyModule(ScriptModule& module);
         asIScriptContext* requestContext();

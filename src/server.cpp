@@ -3,9 +3,9 @@
 #include <iostream>
 
 Server::Server() : mWorld(mBus),
+                   mLogger(mBus),
                    mBridge(nullptr),
-                   mScriptHandler(mBus, mWorld.getWorldInterface()),
-                   mLogger(mBus)
+                   mScriptHandler(mBus, mWorld.getWorldInterface())
 {
     mBus.addMessageSubscriber<ChunkCreatedMessage>(*this);
     mBus.addMessageSubscriber<AddGfxEntityMessage>(*this);

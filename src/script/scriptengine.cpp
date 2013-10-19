@@ -6,6 +6,16 @@
 
 ScriptEngine::ScriptEngine() : mContextsInUse(0)
 {
+};
+
+ScriptEngine::~ScriptEngine()
+{
+}
+
+void ScriptEngine::setup()
+{
+    mContextsInUse = 0;
+
     mEngine = asCreateScriptEngine(ANGELSCRIPT_VERSION);
 
     RegisterScriptArray(mEngine, true);
@@ -13,9 +23,9 @@ ScriptEngine::ScriptEngine() : mContextsInUse(0)
     RegisterStdStringUtils(mEngine);
 
     int32_t r = mEngine->SetMessageCallback(asMETHOD(ScriptEngine, messageCallback), this, asCALL_THISCALL); assert( r >= 0 );
-};
+}
 
-ScriptEngine::~ScriptEngine()
+void ScriptEngine::destroy()
 {
     for(auto context : mContexts)
     {
