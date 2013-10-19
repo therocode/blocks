@@ -153,7 +153,6 @@ asIScriptObject* ScriptInterface::instanciateScriptEntity(const std::string& typ
 
 void ScriptInterface::removeEntity(asIScriptObject* entity)
 {
-    //std::cout << "will remove entity: " << entity << "\n";
-
+    mBus.sendMessage<RemoveScriptEntityMessage>(RemoveScriptEntityMessage(entity));
     entity->Release();
 }

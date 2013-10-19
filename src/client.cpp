@@ -117,5 +117,15 @@ void Client::fetchServerData()
 
             mBus.sendMessage<MoveGfxEntityMessage>(MoveGfxEntityMessage(id, position));
         }
+        else if(package->mType == typeid(GfxEntityRemovedPackage))
+        {
+            GfxEntityRemovedPackage* gfxRemovedPackage = (GfxEntityRemovedPackage*)package.get();
+        
+        size_t id;
+
+        std::tie(id) = gfxRemovedPackage->getData();
+
+            mBus.sendMessage<RemoveGfxEntityMessage>(RemoveGfxEntityMessage(id));
+        }
     }
 }

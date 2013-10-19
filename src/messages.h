@@ -59,3 +59,12 @@ using EntitySpawnedMessage = fea::Message<EntitySpawned_tag, fea::WeakEntityPtr,
 class asIScriptObject;
 struct ScriptEntityFinished_tag{};//             id      obj
 using ScriptEntityFinishedMessage = fea::Message<ScriptEntityFinished_tag, size_t, asIScriptObject*, fea::WeakEntityPtr>;
+
+struct RemoveEntity_tag{};//                               id 
+using RemoveEntityMessage = fea::Message<RemoveEntity_tag, size_t>;
+
+struct RemoveScriptEntity_tag{};//                                     obj 
+using RemoveScriptEntityMessage = fea::Message<RemoveScriptEntity_tag, asIScriptObject*>;
+
+struct EntityRemoved_tag{};//                               id 
+using EntityRemovedMessage = fea::Message<EntityRemoved_tag, size_t>;

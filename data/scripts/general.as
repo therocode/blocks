@@ -1,5 +1,7 @@
 bool flip = false;
 
+Entity@ created;
+
 void onFrame(int frameNumber)
 {
     //consolePrint("scripts are running:!\n");
@@ -21,11 +23,14 @@ void onFrame(int frameNumber)
 
     }
     
-    if(frameNumber % 2 == 0)
+    if(frameNumber % 10 == 0)
     {
-        Entity@ entity = createEntity("Elephant", randomFloatRange(-30.0f, 30.0f), 70.0f, randomFloatRange(-30.0f, 30.0f));
+        @created = createEntity("Elephant", randomFloatRange(-30.0f, 30.0f), 70.0f, randomFloatRange(-30.0f, 30.0f));
 
-        removeEntity(entity);
+    }
+    else if(frameNumber % 10 == 1)
+    {
+        //removeEntity(created);
     }
 
     setGravity(-0.005f);

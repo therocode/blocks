@@ -9,5 +9,6 @@ class CollisionController : public EntityController,
         CollisionController(fea::MessageBus& bus, WorldInterface& worldInterface);
         virtual void inspectEntity(fea::WeakEntityPtr entity) override;
         void handleMessage(const EntityMoveRequestedMessage& message) override;
+        virtual void removeEntity(fea::EntityId id);
     private:
 };

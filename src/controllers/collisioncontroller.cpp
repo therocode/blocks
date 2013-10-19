@@ -40,3 +40,8 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
     
     mBus.sendMessage<EntityMovedMessage>(EntityMovedMessage(id, requestedPosition, approvedPosition));
 }
+
+void CollisionController::removeEntity(fea::EntityId id)
+{
+    mEntities.erase(id);
+}

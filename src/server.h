@@ -7,7 +7,8 @@
 
 class Server : public fea::MessageReceiver<ChunkCreatedMessage>,
                public fea::MessageReceiver<AddGfxEntityMessage>,
-               public fea::MessageReceiver<MoveGfxEntityMessage>
+               public fea::MessageReceiver<MoveGfxEntityMessage>,
+               public fea::MessageReceiver<RemoveGfxEntityMessage>
 {
     public:
         Server();
@@ -19,6 +20,7 @@ class Server : public fea::MessageReceiver<ChunkCreatedMessage>,
         void handleMessage(const ChunkCreatedMessage& received);
         void handleMessage(const AddGfxEntityMessage& received);
         void handleMessage(const MoveGfxEntityMessage& received);
+        void handleMessage(const RemoveGfxEntityMessage& received);
     private:
         void fetchClientData();
         fea::MessageBus mBus;

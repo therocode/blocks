@@ -9,4 +9,5 @@ class GfxController : public EntityController,
         GfxController(fea::MessageBus& bus, WorldInterface& worldinterface);
         virtual void inspectEntity(fea::WeakEntityPtr entity) override;
         void handleMessage(const EntityMovedMessage& message) override;
+        virtual void removeEntity(fea::EntityId id) override;
 };

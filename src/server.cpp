@@ -9,6 +9,7 @@ Server::Server() : mWorld(mBus),
     mBus.addMessageSubscriber<ChunkCreatedMessage>(*this);
     mBus.addMessageSubscriber<AddGfxEntityMessage>(*this);
     mBus.addMessageSubscriber<MoveGfxEntityMessage>(*this);
+    mBus.addMessageSubscriber<RemoveGfxEntityMessage>(*this);
 }
 
 Server::~Server()
@@ -16,6 +17,7 @@ Server::~Server()
     mBus.removeMessageSubscriber<ChunkCreatedMessage>(*this);
     mBus.removeMessageSubscriber<AddGfxEntityMessage>(*this);
     mBus.removeMessageSubscriber<MoveGfxEntityMessage>(*this);
+    mBus.removeMessageSubscriber<RemoveGfxEntityMessage>(*this);
 }
 
 void Server::setup()
@@ -79,6 +81,15 @@ void Server::handleMessage(const MoveGfxEntityMessage& received)
     std::tie(id, position) = received.data;
 
     mBridge->enqueuePackage(std::unique_ptr<BasePackage>(new GfxEntityMovedPackage(id, position)));
+}
+
+void Server::handleMessage(const RemoveGfxEntityMessage& received)
+{
+    size_t id;
+
+    std::tie(id) = received.data;
+
+    mBridge->enqueuePackage(std::unique_ptr<BasePackage>(new GfxEntityRemovedPackage(id)));
 }
 
 void Server::fetchClientData()

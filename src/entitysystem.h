@@ -9,7 +9,8 @@
 class asIScriptObject;
 
 class EntitySystem : 
-    public fea::MessageReceiver<SpawnEntityMessage>
+    public fea::MessageReceiver<SpawnEntityMessage>,
+    public fea::MessageReceiver<RemoveEntityMessage>
 {
     public:
         EntitySystem(fea::MessageBus& bus);
@@ -19,20 +20,12 @@ class EntitySystem :
         fea::WeakEntityPtr spawnEntity(const std::string& scriptType, const glm::vec3& position);
         void spawnEntityFromScriptHandle(const std::string& scriptType, const glm::vec3& position, asIScriptObject* obj);
         void handleMessage(const SpawnEntityMessage& received);
+        void handleMessage(const RemoveEntityMessage& received);
     private:
         void attachEntity(fea::WeakEntityPtr entity);
+        void removeEntity(fea::EntityId id);
         fea::MessageBus& mBus;
         fea::EntityManager mManager;
         EntityFactory mFactory;
         std::vector<std::unique_ptr<EntityController> > mControllers;
 };
-
-
-
-//todo:
-//entity desctruction:
-//destroy entity message sent with id
-//catch by entity system
-//entity system informs others with entity deleted message
-//entity system removes from controllers
-//entity system removes from manager

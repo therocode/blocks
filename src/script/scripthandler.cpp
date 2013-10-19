@@ -11,6 +11,8 @@ ScriptHandler::ScriptHandler(fea::MessageBus& bus, WorldInterface& worldInterfac
     mBus.addMessageSubscriber<RebuildScriptsRequestedMessage>(*this);
     mBus.addMessageSubscriber<EntityNeedsScriptMessage>(*this);
     mBus.addMessageSubscriber<ScriptEntityFinishedMessage>(*this);
+    mBus.addMessageSubscriber<RemoveScriptEntityMessage>(*this);
+    mBus.addMessageSubscriber<EntityRemovedMessage>(*this);
 }
 
 ScriptHandler::~ScriptHandler()
@@ -19,6 +21,8 @@ ScriptHandler::~ScriptHandler()
     mBus.removeMessageSubscriber<RebuildScriptsRequestedMessage>(*this);
     mBus.removeMessageSubscriber<EntityNeedsScriptMessage>(*this);
     mBus.removeMessageSubscriber<ScriptEntityFinishedMessage>(*this);
+    mBus.removeMessageSubscriber<RemoveScriptEntityMessage>(*this);
+    mBus.removeMessageSubscriber<EntityRemovedMessage>(*this);
 }
 
 void ScriptHandler::setup()
@@ -62,10 +66,12 @@ void ScriptHandler::handleMessage(const EntityNeedsScriptMessage& message)
 
     std::tie(entity, scriptType) = message.data;
     size_t id = entity.lock()->getId();
+    asIScriptObject* obj = mScriptInterface.instanciateScriptEntity(scriptType);
 
-    ScriptEntity scriptEntity(id, entity, mScriptInterface.instanciateScriptEntity(scriptType));
+    ScriptEntity scriptEntity(id, entity, obj);
 
     scriptEntities.emplace(id, scriptEntity);
+    scriptEntityIds.emplace(obj, id);
 }
 
 void ScriptHandler::handleMessage(const ScriptEntityFinishedMessage& message)
@@ -79,4 +85,24 @@ void ScriptHandler::handleMessage(const ScriptEntityFinishedMessage& message)
     ScriptEntity scriptEntity(id, entity, obj);
 
     scriptEntities.emplace(id, scriptEntity);
+    scriptEntityIds.emplace(obj, id);
+}
+
+void ScriptHandler::handleMessage(const RemoveScriptEntityMessage& message)
+{
+    asIScriptObject* obj;
+    std::tie(obj) = message.data;
+
+    size_t id = scriptEntityIds.at(obj);
+    scriptEntityIds.erase(obj);
+
+    mBus.sendMessage<RemoveEntityMessage>(RemoveEntityMessage(id));
+}
+
+void ScriptHandler::handleMessage(const EntityRemovedMessage& message)
+{
+    size_t id;
+    std::tie(id) = message.data;
+
+    scriptEntities.erase(id);
 }

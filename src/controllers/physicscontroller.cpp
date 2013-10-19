@@ -50,3 +50,8 @@ void PhysicsController::handleMessage(const GravityRequestedMessage& received)
 {
     std::tie(gravityConstant) = received.data;
 }
+
+void PhysicsController::removeEntity(fea::EntityId id)
+{
+    mEntities.erase(id);
+}

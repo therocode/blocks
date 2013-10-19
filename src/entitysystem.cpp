@@ -9,11 +9,13 @@ EntitySystem::EntitySystem(fea::MessageBus& bus) :
     mFactory(mManager)
 {
     mBus.addMessageSubscriber<SpawnEntityMessage>(*this);
+    mBus.addMessageSubscriber<RemoveEntityMessage>(*this);
 }
 
 EntitySystem::~EntitySystem()
 {
     mBus.removeMessageSubscriber<SpawnEntityMessage>(*this);
+    mBus.removeMessageSubscriber<RemoveEntityMessage>(*this);
 }
 
 void EntitySystem::addController(std::unique_ptr<EntityController> controller)
@@ -55,14 +57,6 @@ void EntitySystem::spawnEntityFromScriptHandle(const std::string& scriptType, co
     attachEntity(entity);
 }
 
-void EntitySystem::attachEntity(fea::WeakEntityPtr entity)
-{
-    for(auto& controller : mControllers)
-    {
-        controller->inspectEntity(entity);
-    }
-}
-
 void EntitySystem::handleMessage(const SpawnEntityMessage& received) 
 {
     std::string scriptType;
@@ -71,4 +65,33 @@ void EntitySystem::handleMessage(const SpawnEntityMessage& received)
     std::tie(scriptType, position) = received.data;
 
     spawnEntity(scriptType, position);
+}
+
+void EntitySystem::handleMessage(const RemoveEntityMessage& received)
+{
+    size_t id;
+
+    std::tie(id) = received.data;
+
+    removeEntity(id);
+}
+
+void EntitySystem::attachEntity(fea::WeakEntityPtr entity)
+{
+    for(auto& controller : mControllers)
+    {
+        controller->inspectEntity(entity);
+    }
+}
+
+void EntitySystem::removeEntity(fea::EntityId id)
+{
+    for(auto& controller : mControllers)
+    {
+        controller->removeEntity(id);
+    }
+
+    mManager.removeEntity(id);
+
+    mBus.sendMessage<EntityRemovedMessage>(EntityRemovedMessage(id));
 }
