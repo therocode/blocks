@@ -16,6 +16,7 @@ class ScriptInterface :
         void handleMessage(const FrameMessage& received);
         asIScriptObject* createEntity(const std::string& type, float x, float y, float z);
         asIScriptObject* instanciateScriptEntity(const std::string& type);
+        void removeEntity(asIScriptObject* entity);
     private:
         fea::MessageBus& mBus;
         ScriptEngine& mEngine;

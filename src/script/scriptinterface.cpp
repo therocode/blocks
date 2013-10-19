@@ -1,5 +1,6 @@
 #include "scriptinterface.h"
 #include <iostream>
+#include <chrono>
 
 ScriptInterface::ScriptInterface(fea::MessageBus& bus, ScriptEngine& engine, ScriptModule& module, WorldInterface& worldInterface) : 
     mBus(bus),
@@ -28,7 +29,8 @@ void ScriptInterface::registerInterface()
     //r = mEngine.getEngine()->RegisterObjectBehaviour("EntityCore", asBEHAVE_FACTORY,"EntityCore@ spawnEntity()", asFUNCTIONPR(spawnEntityHere,(),ScriptEntityCore*), asCALL_STDCALL );
     //r = mEngine.getEngine()->RegisterObjectBehaviour("EntityCore", asBEHAVE_ADDREF, "void f()", asMETHOD(ScriptEntityCore,addRef), asCALL_THISCALL ); assert(r >= 0);
     //r = mEngine.getEngine()->RegisterObjectBehaviour("EntityCore", asBEHAVE_RELEASE, "void f()", asMETHOD(ScriptEntityCore,release), asCALL_THISCALL); assert(r >= 0);
-    r = mEngine.getEngine()->RegisterGlobalFunction("Entity @createEntity(const string &in, float x, float y, float z)", asMETHOD(ScriptInterface, createEntity), asCALL_THISCALL_ASGLOBAL, this); assert(r >= 0);
+    r = mEngine.getEngine()->RegisterGlobalFunction("Entity@ createEntity(const string &in, float x, float y, float z)", asMETHOD(ScriptInterface, createEntity), asCALL_THISCALL_ASGLOBAL, this); assert(r >= 0);
+    r = mEngine.getEngine()->RegisterGlobalFunction("void removeEntity(Entity@ entity)", asMETHOD(ScriptInterface, removeEntity), asCALL_THISCALL_ASGLOBAL, this); assert(r >= 0);
 
     //string conversion
     r = mEngine.getEngine()->RegisterGlobalFunction("string toString(int num)", asFUNCTIONPR(std::to_string, (int32_t), std::string), asCALL_CDECL); assert(r >= 0);
@@ -71,7 +73,15 @@ void ScriptInterface::handleMessage(const FrameMessage& received)
 
 void ScriptInterface::scriptPrint(std::string text)
 {
-    std::cout << "[script]: " << text;
+    auto now = std::chrono::system_clock::now();
+    std::time_t now_c = std::chrono::system_clock::to_time_t(now);
+    struct tm *parts = std::localtime(&now_c);
+
+    std::string hour = parts->tm_hour < 10 ? std::string("0") + std::to_string(parts->tm_hour) : std::to_string(parts->tm_hour);
+    std::string min = parts->tm_min < 10 ? std::string("0") + std::to_string(parts->tm_min) : std::to_string(parts->tm_min);
+    std::string sec = parts->tm_sec < 10 ? std::string("0") + std::to_string(parts->tm_sec) : std::to_string(parts->tm_sec);
+
+    std::cout << "[" << hour << ":" << min << ":" << sec << "][script]: " << text;
 }
 
 void ScriptInterface::setGravity(float constant)
@@ -139,4 +149,11 @@ asIScriptObject* ScriptInterface::instanciateScriptEntity(const std::string& typ
     {
         return nullptr;
     }
+}
+
+void ScriptInterface::removeEntity(asIScriptObject* entity)
+{
+    //std::cout << "will remove entity: " << entity << "\n";
+
+    entity->Release();
 }

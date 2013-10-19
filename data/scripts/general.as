@@ -24,6 +24,8 @@ void onFrame(int frameNumber)
     if(frameNumber % 2 == 0)
     {
         Entity@ entity = createEntity("Elephant", randomFloatRange(-30.0f, 30.0f), 70.0f, randomFloatRange(-30.0f, 30.0f));
+
+        removeEntity(entity);
     }
 
     setGravity(-0.005f);
