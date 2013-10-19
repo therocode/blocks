@@ -24,11 +24,12 @@ class Client :
     private:
         void fetchServerData();
         fea::MessageBus mBus;
-        sf::Window sfWindow;
-        fea::Window window;
-        Renderer renderer;
-        InputAdaptor inputAdaptor;
-        bool quit;
+        sf::Window mSfWindow;
+        fea::Window mWindow;
+        Renderer mRenderer;
+        InputAdaptor mInputAdaptor;
+        bool mQuit;
+        std::string mLogName;
 
         std::unique_ptr<ServerClientBridge> mBridge;
 };

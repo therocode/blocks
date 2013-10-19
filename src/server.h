@@ -29,6 +29,7 @@ class Server : public fea::MessageReceiver<ChunkCreatedMessage>,
         World mWorld;
         ScriptHandler mScriptHandler;
         Timer mFrameTimer;
+        std::string mLogName;
 
         std::unique_ptr<ServerClientBridge> mBridge;      //this could be a list of many clients in the future
 };

@@ -1,11 +1,11 @@
 #include "server.h"
 #include "packages.h"
-#include <iostream>
 
 Server::Server() : mWorld(mBus),
                    mLogger(mBus),
                    mBridge(nullptr),
-                   mScriptHandler(mBus, mWorld.getWorldInterface())
+                   mScriptHandler(mBus, mWorld.getWorldInterface()),
+                   mLogName("server")
 {
     mBus.addMessageSubscriber<ChunkCreatedMessage>(*this);
     mBus.addMessageSubscriber<AddGfxEntityMessage>(*this);
@@ -26,7 +26,7 @@ void Server::setup()
     mScriptHandler.setup();
     mWorld.initialise();
     mFrameTimer.start();
-    std::cout << "Server initialised and ready to go\n";
+    mBus.sendMessage<LogMessage>(LogMessage("Server initialised and ready to go", mLogName));
 }
 
 void Server::doLogic()
@@ -45,13 +45,13 @@ void Server::doLogic()
 void Server::destroy()
 {
     mScriptHandler.destroy();
-    std::cout << "Server destroyed\n";
+    mBus.sendMessage<LogMessage>(LogMessage("Server destroyed", mLogName));
 }
 
 void Server::addClientBridge(std::unique_ptr<ServerClientBridge> clientBridge)
 {
     mBridge = std::move(clientBridge);
-    std::cout << "Server got a client connected\n";
+    mBus.sendMessage<LogMessage>(LogMessage("Server got a client connected", mLogName));
 }
 
 void Server::handleMessage(const ChunkCreatedMessage& received)

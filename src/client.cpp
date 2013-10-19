@@ -5,10 +5,11 @@
 #include <typeinfo>
 #include "packages.h"
 
-Client::Client() : window(new fea::util::SFMLWindowBackend(sfWindow)),
-                   renderer(mBus),
-                   inputAdaptor(sfWindow, mBus),
-                   quit(false),
+Client::Client() : mWindow(new fea::util::SFMLWindowBackend(mSfWindow)),
+                   mRenderer(mBus),
+                   mInputAdaptor(mSfWindow, mBus),
+                   mQuit(false),
+                   mLogName("client"),
                    mBridge(nullptr)
 {
 	mBus.addMessageSubscriber<InputActionMessage>(*this);
@@ -23,12 +24,12 @@ Client::~Client()
 
 void Client::setup()
 {
-    window.create(fea::VideoMode(800, 600, 32), "Blocky", fea::Style::Default, fea::ContextSettings(32));
+    mWindow.create(fea::VideoMode(800, 600, 32), "Blocky", fea::Style::Default, fea::ContextSettings(32));
 
-//	window.setFramerateLimit(30);
-    renderer.setup();
+//	mWindow.setFramerateLimit(30);
+    mRenderer.setup();
     mBus.sendMessage<WindowResizeMessage>(WindowResizeMessage(800, 600));
-	// window.lockCursor(true);
+	// mWindow.lockCursor(true);
 
 //    std::cout << "client setup\n";
 }
@@ -37,22 +38,22 @@ void Client::handleInput()
 {
     fetchServerData();
 
-    inputAdaptor.update();
+    mInputAdaptor.update();
 
     mBridge->flush();
 }
 
 void Client::render()
 {
-    renderer.cameraUpdate();
-    renderer.render();
-    window.swapBuffers();
+    mRenderer.cameraUpdate();
+    mRenderer.render();
+    mWindow.swapBuffers();
 }
 
 void Client::destroy()
 {
-    window.close();
-    std::cout << "client destroyed\n";
+    mWindow.close();
+    mBus.sendMessage<LogMessage>(LogMessage("client destroyed", mLogName));
 }
 
 void Client::handleMessage(const InputActionMessage& received)
@@ -62,7 +63,7 @@ void Client::handleMessage(const InputActionMessage& received)
 
     if(action == InputAction::QUIT)
     {
-        quit = true;
+        mQuit = true;
     }
 }
 
@@ -73,13 +74,13 @@ void Client::handleMessage(const RebuildScriptsRequestedMessage& received)
 
 bool Client::requestedQuit()
 {
-    return quit;
+    return mQuit;
 }
 
 void Client::setServerBridge(std::unique_ptr<ServerClientBridge> bridge)
 {
     mBridge = std::move(bridge);
-    std::cout << "client connected to server\n";
+    mBus.sendMessage<LogMessage>(LogMessage("client connected to server", mLogName));
 }
 
 void Client::fetchServerData()

@@ -16,6 +16,7 @@ World::~World()
 {
 	bus.removeMessageSubscriber<CameraUpdatedMessage>(*this);
 }
+
 void World::initialise()
 {
 	standardDimension.initialise();

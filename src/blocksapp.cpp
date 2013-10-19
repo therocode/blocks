@@ -13,7 +13,7 @@ void BlocksApplication::setup(const std::vector<std::string>& args)
 {
     if(args.size() <= 1)
     {
-        setupMultiPlayer();	//setup local server and local client and connect with LocalServerClientBridge
+        setupSinglePlayer();	//setup local server and local client and connect with LocalServerClientBridge
     }
     else if(args[1] == "--dedicated")
     {
@@ -78,17 +78,17 @@ void BlocksApplication::setupSinglePlayer()
     server = std::unique_ptr<Server>(new Server());
     client = std::unique_ptr<Client>(new Client());
 
-    //LocalServerClientBridge* clientToServer = new LocalServerClientBridge();
-    //LocalServerClientBridge* serverToClient = new LocalServerClientBridge();
+    LocalServerClientBridge* clientToServer = new LocalServerClientBridge();
+    LocalServerClientBridge* serverToClient = new LocalServerClientBridge();
 	//Remote
-    RemoteServerClientBridge* serverToClient = new RemoteServerClientBridge(true);
-   	RemoteServerClientBridge* clientToServer = new RemoteServerClientBridge(false);
+    //RemoteServerClientBridge* serverToClient = new RemoteServerClientBridge(true);
+   	//RemoteServerClientBridge* clientToServer = new RemoteServerClientBridge(false);
 
     clientToServer->connect(serverToClient);
     serverToClient->connect(clientToServer);
 
-    client->setServerBridge(std::unique_ptr<RemoteServerClientBridge>(clientToServer));
-    server->addClientBridge(std::unique_ptr<RemoteServerClientBridge>(serverToClient));
+    client->setServerBridge(std::unique_ptr<LocalServerClientBridge>(clientToServer));
+    server->addClientBridge(std::unique_ptr<LocalServerClientBridge>(serverToClient));
 
     server->setup();
     client->setup();
