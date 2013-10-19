@@ -1,6 +1,6 @@
 #include "entitysystem.h"
-#include "blockstd.h"
-#include "messages.h"
+#include "../blockstd.h"
+#include "../messages.h"
 #include <featherkit/entitysystemutil.h>
 
 EntitySystem::EntitySystem(fea::MessageBus& bus) : 

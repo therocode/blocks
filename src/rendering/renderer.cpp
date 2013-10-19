@@ -2,7 +2,7 @@
 #include "vbocreator.h"
 #include <featherkit/rendering/opengl.h>
 #include <iostream>
-#include "lodepng.h"
+#include "../utilities/lodepng.h"
 
 Renderer::Renderer(fea::MessageBus& messageBus) : bus(messageBus)
 {

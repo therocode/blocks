@@ -1,10 +1,10 @@
 #pragma once
 #include <SFML/Window.hpp>
 #include <featherkit/userinterface.h>
-#include "messages.h"
-#include "renderer.h"
-#include "input/inputadaptor.h"
-#include "serverclientbridge.h"
+#include "../messages.h"
+#include "../rendering/renderer.h"
+#include "../input/inputadaptor.h"
+#include "../networking/serverclientbridge.h"
 
 class Client : 
     public fea::MessageReceiver<InputActionMessage>,

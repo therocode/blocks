@@ -3,7 +3,7 @@
 #include <featherkit/util/window/sfml/sfmlwindowbackend.h>
 #include <featherkit/util/input/sfml/sfmlinputbackend.h>
 #include <typeinfo>
-#include "packages.h"
+#include "../networking/packages.h"
 
 Client::Client() : mWindow(new fea::util::SFMLWindowBackend(mSfWindow)),
                    mRenderer(mBus),

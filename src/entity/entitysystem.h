@@ -4,7 +4,7 @@
 #include <featherkit/entitysystem.h>
 #include "controllers/entitycontroller.h"
 #include "entityfactory.h"
-#include "messages.h"
+#include "../messages.h"
 
 class asIScriptObject;
 

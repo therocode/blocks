@@ -1,5 +1,5 @@
 #include "server.h"
-#include "packages.h"
+#include "../networking/packages.h"
 
 Server::Server() : mWorld(mBus),
                    mLogger(mBus),

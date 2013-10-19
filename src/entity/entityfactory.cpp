@@ -1,5 +1,5 @@
 #include <featherkit/entitysystemutil.h>
-#include "blockstd.h"
+#include "../blockstd.h"
 #include "entityfactory.h"
 #include "defaultsetters.h"
 

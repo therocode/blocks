@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include <featherkit/rendering/opengl.h>
-#include "blockstd.h"
+#include "../blockstd.h"
 #include "shaderprogram.h"
 
 struct Vertex{

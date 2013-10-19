@@ -1,5 +1,5 @@
 #pragma once
-#include "blockstd.h"
+#include "../blockstd.h"
 #include "serverclientbridge.h"
 #include "enet/enet.h"
 #include <thread>

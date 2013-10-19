@@ -1,10 +1,10 @@
 #pragma once
-#include "world.h"
-#include "serverclientbridge.h"
-#include "messages.h"
-#include "script/scripthandler.h"
-#include "timer.h"
-#include "logger.h"
+#include "../world/world.h"
+#include "../networking/serverclientbridge.h"
+#include "../messages.h"
+#include "../script/scripthandler.h"
+#include "../utilities/timer.h"
+#include "../utilities/logger.h"
 
 class Server : public fea::MessageReceiver<ChunkCreatedMessage>,
                public fea::MessageReceiver<AddGfxEntityMessage>,

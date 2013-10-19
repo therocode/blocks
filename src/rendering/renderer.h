@@ -1,13 +1,13 @@
 #pragma once
-#include "blockstd.h"
-#include "chunk.h"
+#include "../blockstd.h"
+#include "../world/chunk.h"
 #include "vbo.h"
 #include "billboard.h"
-#include "messages.h"
+#include "../messages.h"
 #include "camera.h"
 #include <vector>
 #include <featherkit/messaging.h>
-#include "timer.h"
+#include "../utilities/timer.h"
 
 #include "shaderprogram.h"
 

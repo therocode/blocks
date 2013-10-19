@@ -1,6 +1,6 @@
 #pragma once
 #include "entitycontroller.h"
-#include "../messages.h"
+#include "../../messages.h"
 
 class GfxController : public EntityController,
                       public fea::MessageReceiver<EntityMovedMessage>

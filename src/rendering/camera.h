@@ -1,6 +1,6 @@
 #ifndef CAMERA_H
 #define CAMERA_H
-#include "blockstd.h"
+#include "../blockstd.h"
 
 //!A camera that converts stuff from world space to camera space. or something like that.
 class Camera 

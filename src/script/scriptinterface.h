@@ -2,8 +2,8 @@
 #include <featherkit/messaging.h>
 #include "../messages.h"
 #include "scriptcallback.h"
-#include "../random.h"
-#include "../worldinterface.h"
+#include "../utilities/random.h"
+#include "../world/worldinterface.h"
 
 class ScriptInterface : 
     public fea::MessageReceiver<FrameMessage>

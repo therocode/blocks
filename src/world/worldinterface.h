@@ -1,6 +1,6 @@
 #pragma once
 #include "dimension.h"
-#include "entitysystem.h"
+#include "../entity/entitysystem.h"
 
 class asIScriptObject;
 

@@ -1,6 +1,6 @@
 #pragma once
 #include <featherkit/messaging.h>
-#include "messages.h"
+#include "../messages.h"
 
 class Logger : public fea::MessageReceiver<LogMessage>
 {

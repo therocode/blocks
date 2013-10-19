@@ -1,6 +1,6 @@
 #pragma once
 #include "input/inputactions.h"
-#include "chunk.h"
+#include "world/chunk.h"
 #include "blockstd.h"
 #include <featherkit/messaging.h>
 #include <featherkit/entitysystem.h>

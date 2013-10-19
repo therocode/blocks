@@ -2,7 +2,7 @@
 #include "scriptengine.h"
 #include "scriptinterface.h"
 #include "scriptentity.h"
-#include "../worldinterface.h"
+#include "../world/worldinterface.h"
 #include <map>
 #include <unordered_map>
 

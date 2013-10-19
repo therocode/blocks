@@ -1,7 +1,7 @@
 #include "blocksapp.h"
-#include "input/inputactions.h"
-#include "localserverclientbridge.h"
-#include "remoteserverclientbridge.h"
+#include "../input/inputactions.h"
+#include "../networking/localserverclientbridge.h"
+#include "../networking/remoteserverclientbridge.h"
 #include <iostream>
 #include <thread>
 

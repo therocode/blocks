@@ -1,7 +1,7 @@
 #pragma once
 #include <stdint.h>
 #include <functional>
-#include "blockstd.h"
+#include "../blockstd.h"
 
 using ChunkCoordinate = glm::ivec3;
 using VoxelCoordinate = glm::uvec3;

@@ -1,6 +1,6 @@
 #include "physicscontroller.h"
-#include "../blockstd.h"
-#include "../messages.h"
+#include "../../blockstd.h"
+#include "../../messages.h"
 
 PhysicsController::PhysicsController(fea::MessageBus& bus, WorldInterface& worldInterface) : EntityController(bus, worldInterface), gravityConstant(-0.001f)
 {

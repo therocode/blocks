@@ -1,7 +1,7 @@
 #include "world.h"
-#include "controllers/physicscontroller.h"
-#include "controllers/collisioncontroller.h"
-#include "controllers/gfxcontroller.h"
+#include "../entity/controllers/physicscontroller.h"
+#include "../entity/controllers/collisioncontroller.h"
+#include "../entity/controllers/gfxcontroller.h"
 
 	World::World(fea::MessageBus& messageBus) 
 :   bus(messageBus),

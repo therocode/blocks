@@ -1,6 +1,6 @@
 #pragma once
 #include "vbo.h"
-#include "chunk.h"
+#include "../world/chunk.h"
 
 class VBOCreator
 {
