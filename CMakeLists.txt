@@ -60,10 +60,11 @@ set(source_files
 )
 set(header_files
 	src/blockstd.h
-	src/messages.h
+	src/application/applicationmessages.h
 	src/application/blocksapp.h
     src/application/client.h
     src/application/server.h
+	src/entity/entitymessages.h
     src/entity/defaultsetters.h
     src/entity/entityfactory.h
     src/entity/entitysystem.h
@@ -72,12 +73,14 @@ set(header_files
     src/entity/controllers/gfxcontroller.h
     src/entity/controllers/physicscontroller.h
     src/entity/controllers/playercontroller.h
+	src/input/inputmessages.h
     src/input/inputactions.h
     src/input/inputadaptor.h
     src/networking/localserverclientbridge.h
     src/networking/package.h
 	src/networking/remoteserverclientbridge.h
     src/networking/serverclientbridge.h
+	src/rendering/renderingmessages.h
 	src/rendering/billboard.h
 	src/rendering/camera.h
 	src/rendering/renderer.h
@@ -85,6 +88,7 @@ set(header_files
 	src/rendering/shaderprogram.h
 	src/rendering/vbo.h
 	src/rendering/vbocreator.h
+	src/script/scriptmessages.h
     src/script/scriptcallback.h
     src/script/scriptengine.h
     src/script/scriptentity.h
@@ -99,6 +103,7 @@ set(header_files
 	src/utilities/random.h
     src/utilities/simplexnoise.h
 	src/utilities/timer.h
+	src/world/worldmessages.h
 	src/world/chunk.h
     src/world/chunkprovider.h
     src/world/dimension.h

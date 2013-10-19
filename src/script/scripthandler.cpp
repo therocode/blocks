@@ -1,5 +1,6 @@
 #include "scripthandler.h"
-#include "../messages.h"
+#include "scriptmessages.h"
+#include "../entity/entitymessages.h"
 
 ScriptHandler::ScriptHandler(fea::MessageBus& bus, WorldInterface& worldInterface) : 
     mBus(bus),

@@ -74,7 +74,6 @@ void BlocksApplication::destroy()
 
 void BlocksApplication::setupSinglePlayer()
 {
-    std::cout << "Initialising single player game with a local server and a local client\n";
     server = std::unique_ptr<Server>(new Server());
     client = std::unique_ptr<Client>(new Client());
 

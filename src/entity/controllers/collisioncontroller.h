@@ -1,6 +1,6 @@
 #pragma once
 #include "entitycontroller.h"
-#include "../../messages.h"
+#include "../entitymessages.h"
 
 class CollisionController : public EntityController,
                             public fea::MessageReceiver<EntityMoveRequestedMessage>

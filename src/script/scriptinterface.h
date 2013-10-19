@@ -1,6 +1,6 @@
 #pragma once
 #include <featherkit/messaging.h>
-#include "../messages.h"
+#include "../application/applicationmessages.h"
 #include "scriptcallback.h"
 #include "../utilities/random.h"
 #include "../world/worldinterface.h"

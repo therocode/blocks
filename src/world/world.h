@@ -4,7 +4,7 @@
 #include "worldinterface.h"
 #include "../entity/entitysystem.h"
 #include <featherkit/messaging.h>
-#include "../messages.h"
+#include "../rendering/renderingmessages.h"
 
 class World : 
         public fea::MessageReceiver<CameraUpdatedMessage>

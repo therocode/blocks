@@ -1,4 +1,5 @@
-#include "../messages.h"
+#include "inputmessages.h"
+#include "../script/scriptmessages.h"
 #include "inputadaptor.h"
 #include "inputactions.h"
 #include <featherkit/util/input/sfml/sfmlinputbackend.h>

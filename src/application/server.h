@@ -1,7 +1,8 @@
 #pragma once
 #include "../world/world.h"
 #include "../networking/serverclientbridge.h"
-#include "../messages.h"
+#include "../world/worldmessages.h"
+#include "../rendering/renderingmessages.h"
 #include "../script/scripthandler.h"
 #include "../utilities/timer.h"
 #include "../utilities/logger.h"

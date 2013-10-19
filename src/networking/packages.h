@@ -1,6 +1,6 @@
 #pragma once
 #include "package.h"
-#include "../messages.h"
+#include "../script/scriptmessages.h"
 
 using RebuildScriptsRequestedPackage = Package<RebuildScriptsRequested_tag, char>;
 

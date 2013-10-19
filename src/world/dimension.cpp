@@ -1,5 +1,5 @@
 #include "dimension.h"
-#include "../messages.h"
+#include "worldmessages.h"
 #include "localchunkprovider.h"
 
 Dimension::Dimension(fea::MessageBus& messageBus) : bus(messageBus)

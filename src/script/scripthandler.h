@@ -3,6 +3,7 @@
 #include "scriptinterface.h"
 #include "scriptentity.h"
 #include "../world/worldinterface.h"
+#include "scriptmessages.h"
 #include <map>
 #include <unordered_map>
 

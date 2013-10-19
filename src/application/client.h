@@ -1,7 +1,9 @@
 #pragma once
 #include <SFML/Window.hpp>
 #include <featherkit/userinterface.h>
-#include "../messages.h"
+#include "../input/inputmessages.h"
+#include "../rendering/renderingmessages.h"
+#include "../script/scriptmessages.h"
 #include "../rendering/renderer.h"
 #include "../input/inputadaptor.h"
 #include "../networking/serverclientbridge.h"

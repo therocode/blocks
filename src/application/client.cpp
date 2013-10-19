@@ -4,6 +4,7 @@
 #include <featherkit/util/input/sfml/sfmlinputbackend.h>
 #include <typeinfo>
 #include "../networking/packages.h"
+#include "../application/applicationmessages.h"
 
 Client::Client() : mWindow(new fea::util::SFMLWindowBackend(mSfWindow)),
                    mRenderer(mBus),

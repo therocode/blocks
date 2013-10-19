@@ -3,10 +3,12 @@
 #include "../world/chunk.h"
 #include "vbo.h"
 #include "billboard.h"
-#include "../messages.h"
+#include "../input/inputmessages.h"
+#include "../rendering/renderingmessages.h"
+#include "../world/worldmessages.h"
 #include "camera.h"
 #include <vector>
-#include <featherkit/messaging.h>
+#include <map>
 #include "../utilities/timer.h"
 
 #include "shaderprogram.h"
