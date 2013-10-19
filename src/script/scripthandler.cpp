@@ -10,6 +10,7 @@ ScriptHandler::ScriptHandler(fea::MessageBus& bus, WorldInterface& worldInterfac
 {
     mBus.addMessageSubscriber<RebuildScriptsRequestedMessage>(*this);
     mBus.addMessageSubscriber<EntityNeedsScriptMessage>(*this);
+    mBus.addMessageSubscriber<ScriptEntityFinishedMessage>(*this);
 }
 
 ScriptHandler::~ScriptHandler()
@@ -17,6 +18,7 @@ ScriptHandler::~ScriptHandler()
     mEngine.destroyModule(mScripts);
     mBus.removeMessageSubscriber<RebuildScriptsRequestedMessage>(*this);
     mBus.removeMessageSubscriber<EntityNeedsScriptMessage>(*this);
+    mBus.removeMessageSubscriber<ScriptEntityFinishedMessage>(*this);
 }
 
 void ScriptHandler::setup()
@@ -62,6 +64,19 @@ void ScriptHandler::handleMessage(const EntityNeedsScriptMessage& message)
     size_t id = entity.lock()->getId();
 
     ScriptEntity scriptEntity(id, entity, mScriptInterface.instanciateScriptEntity(scriptType));
+
+    scriptEntities.emplace(id, scriptEntity);
+}
+
+void ScriptHandler::handleMessage(const ScriptEntityFinishedMessage& message)
+{
+    size_t id;
+    asIScriptObject* obj;
+    fea::WeakEntityPtr entity;
+
+    std::tie(id, obj, entity) = message.data;
+
+    ScriptEntity scriptEntity(id, entity, obj);
 
     scriptEntities.emplace(id, scriptEntity);
 }

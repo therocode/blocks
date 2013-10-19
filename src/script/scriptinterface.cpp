@@ -1,5 +1,4 @@
 #include "scriptinterface.h"
-#include "scriptentitycore.h"
 #include <iostream>
 
 ScriptInterface::ScriptInterface(fea::MessageBus& bus, ScriptEngine& engine, ScriptModule& module, WorldInterface& worldInterface) : 
@@ -29,7 +28,7 @@ void ScriptInterface::registerInterface()
     //r = mEngine.getEngine()->RegisterObjectBehaviour("EntityCore", asBEHAVE_FACTORY,"EntityCore@ spawnEntity()", asFUNCTIONPR(spawnEntityHere,(),ScriptEntityCore*), asCALL_STDCALL );
     //r = mEngine.getEngine()->RegisterObjectBehaviour("EntityCore", asBEHAVE_ADDREF, "void f()", asMETHOD(ScriptEntityCore,addRef), asCALL_THISCALL ); assert(r >= 0);
     //r = mEngine.getEngine()->RegisterObjectBehaviour("EntityCore", asBEHAVE_RELEASE, "void f()", asMETHOD(ScriptEntityCore,release), asCALL_THISCALL); assert(r >= 0);
-    r = mEngine.getEngine()->RegisterGlobalFunction("Entity @createEntity(const string &in)", asMETHOD(ScriptInterface, instanciateScriptEntity), asCALL_THISCALL_ASGLOBAL, this); assert(r >= 0);
+    r = mEngine.getEngine()->RegisterGlobalFunction("Entity @createEntity(const string &in)", asMETHOD(ScriptInterface, createEntity), asCALL_THISCALL_ASGLOBAL, this); assert(r >= 0);
 
     //string conversion
     r = mEngine.getEngine()->RegisterGlobalFunction("string toString(int num)", asFUNCTIONPR(std::to_string, (int32_t), std::string), asCALL_CDECL); assert(r >= 0);
@@ -80,6 +79,38 @@ void ScriptInterface::setGravity(float constant)
     mBus.sendMessage<GravityRequestedMessage>(GravityRequestedMessage(constant));
 }
 
+asIScriptObject* ScriptInterface::createEntity(const std::string& type)
+{
+    asIObjectType* objectType = mModule.getObjectTypeByDecl(type);
+    
+    asIScriptFunction *factory = objectType->GetFactoryByDecl(std::string(type + " @" + type +"()").c_str());
+
+
+    if(factory)
+    {
+        asIScriptContext* ctx = mEngine.requestContext();
+        // Prepare the context to call the factory function
+        ctx->Prepare(factory);
+        // Execute the call
+        ctx->Execute();
+        // Get the object that was created
+        asIScriptObject *obj = *(asIScriptObject**)ctx->GetAddressOfReturnValue();
+        // If you're going to store the object you must increase the reference,
+        // otherwise it will be destroyed when the context is reused or destroyed.
+        obj->AddRef();
+        obj->AddRef();
+
+        mWorldInterface.spawnEntityFromScriptHandle(type, glm::vec3(0.0f, 0.0f, 0.0f), obj);
+        mEngine.freeContext(ctx);
+
+        return obj;
+    }
+    else
+    {
+        return nullptr;
+    }
+}
+
 asIScriptObject* ScriptInterface::instanciateScriptEntity(const std::string& type)
 {
     asIObjectType* objectType = mModule.getObjectTypeByDecl(type);
@@ -90,7 +121,6 @@ asIScriptObject* ScriptInterface::instanciateScriptEntity(const std::string& typ
     if(factory)
     {
         asIScriptContext* ctx = mEngine.requestContext();
-    std::cout << "object type is " << objectType << " and factory is " << factory << " and context is " << ctx << "\n";
         // Prepare the context to call the factory function
         ctx->Prepare(factory);
         // Execute the call
@@ -100,9 +130,8 @@ asIScriptObject* ScriptInterface::instanciateScriptEntity(const std::string& typ
         // If you're going to store the object you must increase the reference,
         // otherwise it will be destroyed when the context is reused or destroyed.
         obj->AddRef();
-        mEngine.freeContext(ctx);
 
-        mWorldInterface.spawnEntityFromScriptHandle(type, glm::vec3(0.0f, 0.0f, 0.0f), obj);
+        mEngine.freeContext(ctx);
 
         return obj;
     }

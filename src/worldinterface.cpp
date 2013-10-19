@@ -74,5 +74,5 @@ fea::WeakEntityPtr WorldInterface::spawnEntity(const std::string& scriptType, co
 
 void WorldInterface::spawnEntityFromScriptHandle(const std::string& scriptType, const glm::vec3& position, asIScriptObject* obj)
 {
-    
+    mEntitySystem.spawnEntityFromScriptHandle(scriptType, position, obj);    
 }

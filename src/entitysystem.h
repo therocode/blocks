@@ -6,6 +6,8 @@
 #include "entityfactory.h"
 #include "messages.h"
 
+class asIScriptObject;
+
 class EntitySystem : 
     public fea::MessageReceiver<SpawnEntityMessage>
 {
@@ -15,6 +17,7 @@ class EntitySystem :
         void addController(std::unique_ptr<EntityController> controller);
         void update();
         fea::WeakEntityPtr spawnEntity(const std::string& scriptType, const glm::vec3& position);
+        void spawnEntityFromScriptHandle(const std::string& scriptType, const glm::vec3& position, asIScriptObject* obj);
         void handleMessage(const SpawnEntityMessage& received);
     private:
         void attachEntity(fea::WeakEntityPtr entity);

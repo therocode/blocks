@@ -7,7 +7,8 @@
 
 class ScriptHandler :
     public fea::MessageReceiver<RebuildScriptsRequestedMessage>,
-    public fea::MessageReceiver<EntityNeedsScriptMessage>
+    public fea::MessageReceiver<EntityNeedsScriptMessage>,
+    public fea::MessageReceiver<ScriptEntityFinishedMessage>
 {
     public:
         ScriptHandler(fea::MessageBus& bus, WorldInterface& worldInterface);
@@ -16,6 +17,7 @@ class ScriptHandler :
         void destroy();
         void handleMessage(const RebuildScriptsRequestedMessage& message);
         void handleMessage(const EntityNeedsScriptMessage& message);
+        void handleMessage(const ScriptEntityFinishedMessage& message);
     private:
         fea::MessageBus& mBus;
         ScriptEngine mEngine;

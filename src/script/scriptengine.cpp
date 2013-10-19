@@ -71,4 +71,5 @@ asIScriptContext* ScriptEngine::requestContext()
 void ScriptEngine::freeContext(asIScriptContext* context)
 {
     mContextsInUse--;
+    context->Unprepare();
 }

@@ -1,4 +1,5 @@
 #include "scriptentity.h"
+#include <iostream>
 
 ScriptEntity::ScriptEntity(size_t id, fea::WeakEntityPtr entity, asIScriptObject* scriptObject) : 
     mId(id),
