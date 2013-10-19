@@ -6,7 +6,8 @@ ScriptHandler::ScriptHandler(fea::MessageBus& bus, WorldInterface& worldInterfac
     mBus(bus),
     mScripts(mEngine.createModule("scripts")),
     mScriptInterface(mBus, mEngine, mScripts, worldInterface),
-    mWorldInterface(worldInterface)
+    mWorldInterface(worldInterface),
+    logName("script")
 {
     mBus.addMessageSubscriber<RebuildScriptsRequestedMessage>(*this);
     mBus.addMessageSubscriber<EntityNeedsScriptMessage>(*this);
