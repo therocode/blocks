@@ -52,6 +52,14 @@ void Server::addClientBridge(std::unique_ptr<ServerClientBridge> clientBridge)
 {
     mBridge = std::move(clientBridge);
     mBus.sendMessage<LogMessage>(LogMessage("Server got a client connected", mLogName));
+
+    //client will probably get some kind of player ID;
+    size_t playerId = 0;
+
+    //Load previous position or choose a spawn position if it is the first time a player connects
+    glm::vec3 spawnPos(0.0f, -50.0f, 0.0f);
+
+    //mBus.sendMessage<PlayerJoinedMessage>(PlayerJoinedMessage(playerId));
 }
 
 void Server::handleMessage(const ChunkCreatedMessage& received)
