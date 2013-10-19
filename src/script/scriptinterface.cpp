@@ -81,7 +81,7 @@ void ScriptInterface::scriptPrint(std::string text)
     std::string min = parts->tm_min < 10 ? std::string("0") + std::to_string(parts->tm_min) : std::to_string(parts->tm_min);
     std::string sec = parts->tm_sec < 10 ? std::string("0") + std::to_string(parts->tm_sec) : std::to_string(parts->tm_sec);
 
-    std::cout << "[" << hour << ":" << min << ":" << sec << "][script]: " << text;
+    std::cout << "[" << hour << ":" << min << ":" << sec << "|script]: " << text;
 }
 
 void ScriptInterface::setGravity(float constant)
