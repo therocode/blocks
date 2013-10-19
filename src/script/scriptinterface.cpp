@@ -1,12 +1,11 @@
 #include "scriptinterface.h"
-#include <iostream>
-#include <chrono>
 
 ScriptInterface::ScriptInterface(fea::MessageBus& bus, ScriptEngine& engine, ScriptModule& module, WorldInterface& worldInterface) : 
     mBus(bus),
     mEngine(engine), 
     mModule(module),
     mWorldInterface(worldInterface),
+    logName("script"),
     onFrameCallback(engine),
     frameTick(0)
 {
@@ -73,15 +72,7 @@ void ScriptInterface::handleMessage(const FrameMessage& received)
 
 void ScriptInterface::scriptPrint(std::string text)
 {
-    auto now = std::chrono::system_clock::now();
-    std::time_t now_c = std::chrono::system_clock::to_time_t(now);
-    struct tm *parts = std::localtime(&now_c);
-
-    std::string hour = parts->tm_hour < 10 ? std::string("0") + std::to_string(parts->tm_hour) : std::to_string(parts->tm_hour);
-    std::string min = parts->tm_min < 10 ? std::string("0") + std::to_string(parts->tm_min) : std::to_string(parts->tm_min);
-    std::string sec = parts->tm_sec < 10 ? std::string("0") + std::to_string(parts->tm_sec) : std::to_string(parts->tm_sec);
-
-    std::cout << "[" << hour << ":" << min << ":" << sec << "|script]: " << text;
+    mBus.sendMessage<LogMessage>(LogMessage(text, logName));
 }
 
 void ScriptInterface::setGravity(float constant)

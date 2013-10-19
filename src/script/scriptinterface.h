@@ -23,6 +23,7 @@ class ScriptInterface :
         ScriptModule& mModule;
         WorldInterface& mWorldInterface;
         Random random;
+        std::string logName;
 
         ScriptCallback<int32_t> onFrameCallback;
         int32_t frameTick;

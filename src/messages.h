@@ -68,3 +68,6 @@ using RemoveScriptEntityMessage = fea::Message<RemoveScriptEntity_tag, asIScript
 
 struct EntityRemoved_tag{};//                               id 
 using EntityRemovedMessage = fea::Message<EntityRemoved_tag, size_t>;
+
+struct Log_tag{};//                      message             component
+using LogMessage = fea::Message<Log_tag, const std::string&, const std::string&>;
