@@ -11,102 +11,102 @@ project(${project_name})
 
 #Set source files.
 set(source_files
-	src/blocksapp.cpp
-    src/client.cpp
-    src/server.cpp
-    src/serverclientbridge.cpp
-    src/localserverclientbridge.cpp
-    src/package.cpp
-	src/chunk.cpp
-	src/vbo.cpp
-	src/billboard.cpp
-	src/renderer.cpp
-	src/vbocreator.cpp
-	src/world.cpp
-	src/main.cpp
-	src/camera.cpp
-    src/lodepng.cpp
-    src/dimension.cpp
-    src/landscape.cpp
-    src/localchunkprovider.cpp
+	src/application/blocksapp.cpp
+    src/application/client.cpp
+	src/application/main.cpp
+    src/application/server.cpp
+    src/entity/defaultsetters.cpp
+    src/entity/entityfactory.cpp
+    src/entity/entitysystem.cpp
+    src/entity/controllers/collisioncontroller.cpp
+    src/entity/controllers/entitycontroller.cpp
+    src/entity/controllers/gfxcontroller.cpp
+    src/entity/controllers/physicscontroller.cpp
+    src/entity/controllers/playercontroller.cpp
     src/input/inputadaptor.cpp
-    src/simplexnoise.cpp
-    src/focuspoint.cpp
-	src/timer.cpp
-    src/logger.cpp
-	src/random.cpp
-    src/entitysystem.cpp
-    src/entityfactory.cpp
-    src/defaultsetters.cpp
-    src/controllers/entitycontroller.cpp
-    src/controllers/physicscontroller.cpp
-    src/controllers/collisioncontroller.cpp
-    src/controllers/gfxcontroller.cpp
-    src/controllers/playercontroller.cpp
-    src/worldinterface.cpp
-	src/shader.cpp
-	src/shaderprogram.cpp
-	src/remoteserverclientbridge.cpp
-    src/script/scriptengine.cpp
-    src/script/scripthandler.cpp
-    src/script/scriptmodule.cpp
-    src/script/scriptinterface.cpp
+    src/networking/localserverclientbridge.cpp
+    src/networking/package.cpp
+	src/networking/remoteserverclientbridge.cpp
+    src/networking/serverclientbridge.cpp
+	src/rendering/billboard.cpp
+	src/rendering/camera.cpp
+	src/rendering/renderer.cpp
+	src/rendering/shader.cpp
+	src/rendering/shaderprogram.cpp
+	src/rendering/vbo.cpp
+	src/rendering/vbocreator.cpp
     src/script/scriptcallback.cpp
+    src/script/scriptengine.cpp
     src/script/scriptentity.cpp
+    src/script/scripthandler.cpp
+    src/script/scriptinterface.cpp
+    src/script/scriptmodule.cpp
     src/script/asaddons/scriptarray.cpp
+    src/script/asaddons/scriptbuilder.cpp
     src/script/asaddons/scriptstdstring.cpp
     src/script/asaddons/scriptstdstring_utils.cpp
-    src/script/asaddons/scriptbuilder.cpp
+    src/utilities/lodepng.cpp
+    src/utilities/logger.cpp
+	src/utilities/random.cpp
+    src/utilities/simplexnoise.cpp
+	src/utilities/timer.cpp
+	src/world/chunk.cpp
+    src/world/dimension.cpp
+    src/world/focuspoint.cpp
+    src/world/landscape.cpp
+    src/world/localchunkprovider.cpp
+	src/world/world.cpp
+    src/world/worldinterface.cpp
 )
 set(header_files
-	src/blocksapp.h
-    src/client.h
-    src/server.h
-    src/serverclientbridge.h
-    src/localserverclientbridge.h
-    src/package.h
 	src/blockstd.h
-	src/chunk.h
-	src/vbo.h
-	src/billboard.h
 	src/messages.h
-	src/renderer.h
-	src/vbocreator.h
-	src/world.h
-	src/camera.h
-    src/lodepng.h
-    src/dimension.h
-    src/landscape.h
-    src/chunkprovider.h
-    src/localchunkprovider.h
-    src/input/inputadaptor.h
-    src/simplexnoise.h
-    src/focuspoint.h
+	src/application/blocksapp.h
+    src/application/client.h
+    src/application/server.h
+    src/entity/defaultsetters.h
+    src/entity/entityfactory.h
+    src/entity/entitysystem.h
+    src/entity/controllers/collisioncontroller.h
+    src/entity/controllers/entitycontroller.h
+    src/entity/controllers/gfxcontroller.h
+    src/entity/controllers/physicscontroller.h
+    src/entity/controllers/playercontroller.h
     src/input/inputactions.h
-	src/timer.h
-    src/logger.h
-	src/random.h
-    src/entitysystem.h
-    src/entityfactory.h
-    src/defaultsetters.h
-    src/controllers/entitycontroller.h
-    src/controllers/physicscontroller.h
-    src/controllers/collisioncontroller.h
-    src/controllers/gfxcontroller.h
-    src/controllers/playercontroller.h
-    src/worldinterface.h
-	src/shader.h
-	src/shaderprogram.h
-	src/remoteserverclientbridge.h
-    src/script/scriptengine.h
-    src/script/scripthandler.h
-    src/script/scriptmodule.h
-    src/script/scriptinterface.h
+    src/input/inputadaptor.h
+    src/networking/localserverclientbridge.h
+    src/networking/package.h
+	src/networking/remoteserverclientbridge.h
+    src/networking/serverclientbridge.h
+	src/rendering/billboard.h
+	src/rendering/camera.h
+	src/rendering/renderer.h
+	src/rendering/shader.h
+	src/rendering/shaderprogram.h
+	src/rendering/vbo.h
+	src/rendering/vbocreator.h
     src/script/scriptcallback.h
+    src/script/scriptengine.h
     src/script/scriptentity.h
-    src/script/asaddons/scriptstdstring.h
+    src/script/scripthandler.h
+    src/script/scriptinterface.h
+    src/script/scriptmodule.h
     src/script/asaddons/scriptarray.h
     src/script/asaddons/scriptbuilder.h
+    src/script/asaddons/scriptstdstring.h
+    src/utilities/lodepng.h
+    src/utilities/logger.h
+	src/utilities/random.h
+    src/utilities/simplexnoise.h
+	src/utilities/timer.h
+	src/world/chunk.h
+    src/world/chunkprovider.h
+    src/world/dimension.h
+    src/world/focuspoint.h
+    src/world/landscape.h
+    src/world/localchunkprovider.h
+	src/world/world.h
+    src/world/worldinterface.h
 )
 
 find_package(Featherkit REQUIRED COMPONENTS entity structure ui messaging)
