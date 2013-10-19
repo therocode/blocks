@@ -100,7 +100,7 @@ asIScriptObject* ScriptInterface::createEntity(const std::string& type)
         obj->AddRef();
         obj->AddRef();
 
-        mWorldInterface.spawnEntityFromScriptHandle(type, glm::vec3(0.0f, 0.0f, 0.0f), obj);
+        mWorldInterface.spawnEntityFromScriptHandle(type, glm::vec3(0.0f, 50.0f, 0.0f), obj);
         mEngine.freeContext(ctx);
 
         return obj;
