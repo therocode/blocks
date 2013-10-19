@@ -1,6 +1,5 @@
 #include "scripthandler.h"
 #include "../messages.h"
-#include <iostream>
 
 ScriptHandler::ScriptHandler(fea::MessageBus& bus, WorldInterface& worldInterface) : 
     mBus(bus),
@@ -31,18 +30,18 @@ void ScriptHandler::setup()
     mScriptInterface.registerInterface();
 
     sourceFiles = {"data/scripts/general.as", "data/scripts/entity.as"};
-    std::cout << "\nCompiling scripts...\n";
 
+    mBus.sendMessage<LogMessage>(LogMessage("Compiling scripts...", logName));
     bool succeeded = mScripts.compileFromSourceList(sourceFiles);
-    std::cout << "Compilation process over.\n";
+    mBus.sendMessage<LogMessage>(LogMessage("Compilation process over.", logName));
 
     if(succeeded)
     {
-        std::cout << "Setting up script callbacks...\n";
+        mBus.sendMessage<LogMessage>(LogMessage("Setting up script callbacks...", logName));
         mScriptInterface.registerCallbacks();
-        std::cout << "Done with callbacks!\n\n";
+        mBus.sendMessage<LogMessage>(LogMessage("Compilation process over.", logName));
+        mBus.sendMessage<LogMessage>(LogMessage("Done setting up callbacks.", logName));
     }
-
 }
 
 void ScriptHandler::destroy()
@@ -51,13 +50,17 @@ void ScriptHandler::destroy()
 
 void ScriptHandler::handleMessage(const RebuildScriptsRequestedMessage& message)
 {
-    std::cout << "\nCompiling scripts...\n";
-    mScripts.compileFromSourceList(sourceFiles);
-    std::cout << "Compilation process over.\n";
+    mBus.sendMessage<LogMessage>(LogMessage("Compiling scripts...", logName));
+    bool succeeded = mScripts.compileFromSourceList(sourceFiles);
+    mBus.sendMessage<LogMessage>(LogMessage("Compilation process over.", logName));
 
-    std::cout << "Setting up script callbacks...\n";
-    mScriptInterface.registerCallbacks();
-    std::cout << "Done with callbacks!\n\n";
+    if(succeeded)
+    {
+        mBus.sendMessage<LogMessage>(LogMessage("Setting up script callbacks...", logName));
+        mScriptInterface.registerCallbacks();
+        mBus.sendMessage<LogMessage>(LogMessage("Compilation process over.", logName));
+        mBus.sendMessage<LogMessage>(LogMessage("Done setting up callbacks.", logName));
+    }
 }
 
 void ScriptHandler::handleMessage(const EntityNeedsScriptMessage& message)

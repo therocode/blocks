@@ -25,10 +25,10 @@ class Server : public fea::MessageReceiver<ChunkCreatedMessage>,
     private:
         void fetchClientData();
         fea::MessageBus mBus;
+        Logger mLogger;
         World mWorld;
         ScriptHandler mScriptHandler;
         Timer mFrameTimer;
-        Logger mLogger;
 
         std::unique_ptr<ServerClientBridge> mBridge;      //this could be a list of many clients in the future
 };
