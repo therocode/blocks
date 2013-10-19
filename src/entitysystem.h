@@ -30,7 +30,6 @@ class EntitySystem :
 
 
 //todo:
-//
 //entity desctruction:
 //destroy entity message sent with id
 //catch by entity system

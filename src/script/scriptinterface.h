@@ -14,7 +14,7 @@ class ScriptInterface :
         void registerInterface();
         void registerCallbacks();
         void handleMessage(const FrameMessage& received);
-        asIScriptObject* createEntity(const std::string& type);
+        asIScriptObject* createEntity(const std::string& type, float x, float y, float z);
         asIScriptObject* instanciateScriptEntity(const std::string& type);
     private:
         fea::MessageBus& mBus;

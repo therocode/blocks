@@ -28,7 +28,7 @@ void ScriptInterface::registerInterface()
     //r = mEngine.getEngine()->RegisterObjectBehaviour("EntityCore", asBEHAVE_FACTORY,"EntityCore@ spawnEntity()", asFUNCTIONPR(spawnEntityHere,(),ScriptEntityCore*), asCALL_STDCALL );
     //r = mEngine.getEngine()->RegisterObjectBehaviour("EntityCore", asBEHAVE_ADDREF, "void f()", asMETHOD(ScriptEntityCore,addRef), asCALL_THISCALL ); assert(r >= 0);
     //r = mEngine.getEngine()->RegisterObjectBehaviour("EntityCore", asBEHAVE_RELEASE, "void f()", asMETHOD(ScriptEntityCore,release), asCALL_THISCALL); assert(r >= 0);
-    r = mEngine.getEngine()->RegisterGlobalFunction("Entity @createEntity(const string &in)", asMETHOD(ScriptInterface, createEntity), asCALL_THISCALL_ASGLOBAL, this); assert(r >= 0);
+    r = mEngine.getEngine()->RegisterGlobalFunction("Entity @createEntity(const string &in, float x, float y, float z)", asMETHOD(ScriptInterface, createEntity), asCALL_THISCALL_ASGLOBAL, this); assert(r >= 0);
 
     //string conversion
     r = mEngine.getEngine()->RegisterGlobalFunction("string toString(int num)", asFUNCTIONPR(std::to_string, (int32_t), std::string), asCALL_CDECL); assert(r >= 0);
@@ -79,7 +79,7 @@ void ScriptInterface::setGravity(float constant)
     mBus.sendMessage<GravityRequestedMessage>(GravityRequestedMessage(constant));
 }
 
-asIScriptObject* ScriptInterface::createEntity(const std::string& type)
+asIScriptObject* ScriptInterface::createEntity(const std::string& type, float x, float y, float z)
 {
     asIObjectType* objectType = mModule.getObjectTypeByDecl(type);
     
@@ -100,7 +100,7 @@ asIScriptObject* ScriptInterface::createEntity(const std::string& type)
         obj->AddRef();
         obj->AddRef();
 
-        mWorldInterface.spawnEntityFromScriptHandle(type, glm::vec3(0.0f, 50.0f, 0.0f), obj);
+        mWorldInterface.spawnEntityFromScriptHandle(type, glm::vec3(x, y, z), obj);
         mEngine.freeContext(ctx);
 
         return obj;

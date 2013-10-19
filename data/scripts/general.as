@@ -4,7 +4,7 @@ void onFrame(int frameNumber)
 {
     //consolePrint("scripts are running:!\n");
 
-    if(randomChance(0.5f / 60.0f))
+    if(randomChance(0.0f))
     {
         if(!flip)
         {
@@ -21,10 +21,12 @@ void onFrame(int frameNumber)
 
     }
     
-    if(frameNumber % 60 == 0)
+    if(frameNumber % 2 == 0)
     {
-        Entity@ entity = createEntity("Elephant");
+        Entity@ entity = createEntity("Elephant", randomFloatRange(-30.0f, 30.0f), 70.0f, randomFloatRange(-30.0f, 30.0f));
     }
+
+    setGravity(-0.005f);
 
     if(frameNumber > 2000)
         setGravity(-0.001f);
