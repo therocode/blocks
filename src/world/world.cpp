@@ -1,4 +1,5 @@
 #include "world.h"
+#include "../entity/controllers/playercontroller.h"
 #include "../entity/controllers/physicscontroller.h"
 #include "../entity/controllers/collisioncontroller.h"
 #include "../entity/controllers/gfxcontroller.h"
@@ -23,6 +24,7 @@ void World::initialise()
 
 	standardDimension.addFocusPoint(FocusPoint(glm::vec3(0.0f, 0.0f, 0.0f), 4.0f));
 
+	entitySystem.addController(std::unique_ptr<EntityController>(new PlayerController(bus, worldInterface)));
 	entitySystem.addController(std::unique_ptr<EntityController>(new PhysicsController(bus, worldInterface)));
 	entitySystem.addController(std::unique_ptr<EntityController>(new CollisionController(bus, worldInterface)));
 	entitySystem.addController(std::unique_ptr<EntityController>(new GfxController(bus, worldInterface)));

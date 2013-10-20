@@ -83,13 +83,13 @@ void BlocksApplication::setupSinglePlayer()
     //RemoteServerClientBridge* serverToClient = new RemoteServerClientBridge(true);
    	//RemoteServerClientBridge* clientToServer = new RemoteServerClientBridge(false);
 
-    clientToServer->connect(serverToClient);
-    serverToClient->connect(clientToServer);
+    server->setup();
 
     client->setServerBridge(std::unique_ptr<LocalServerClientBridge>(clientToServer));
     server->addClientBridge(std::unique_ptr<LocalServerClientBridge>(serverToClient));
+    clientToServer->connect(serverToClient);
+    serverToClient->connect(clientToServer);
 
-    server->setup();
     client->setup();
 }
 void BlocksApplication::setupMultiPlayer()
@@ -100,15 +100,15 @@ void BlocksApplication::setupMultiPlayer()
     RemoteServerClientBridge* serverToClient = new RemoteServerClientBridge(true);
   	RemoteServerClientBridge* clientToServer = new RemoteServerClientBridge(false);
 
-    clientToServer->connect(serverToClient);
-    serverToClient->connect(clientToServer);
 
 	serverToClient->startListening();
 
-    client->setServerBridge(std::unique_ptr<RemoteServerClientBridge>(clientToServer));
-    server->addClientBridge(std::unique_ptr<RemoteServerClientBridge>(serverToClient));
 
     server->setup();
+    client->setServerBridge(std::unique_ptr<RemoteServerClientBridge>(clientToServer));
+    server->addClientBridge(std::unique_ptr<RemoteServerClientBridge>(serverToClient));
+    clientToServer->connect(serverToClient);
+    serverToClient->connect(clientToServer);
 	client->setup();
 
 	clientToServer->connectToAddress("localhost");

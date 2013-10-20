@@ -59,7 +59,7 @@ void Server::addClientBridge(std::unique_ptr<ServerClientBridge> clientBridge)
     //Load previous position or choose a spawn position if it is the first time a player connects
     glm::vec3 spawnPos(0.0f, -50.0f, 0.0f);
 
-    //mBus.sendMessage<PlayerJoinedMessage>(PlayerJoinedMessage(playerId));
+    mBus.sendMessage<PlayerJoinedMessage>(PlayerJoinedMessage(playerId, spawnPos));
 }
 
 void Server::handleMessage(const ChunkCreatedMessage& received)

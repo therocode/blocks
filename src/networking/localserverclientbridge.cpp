@@ -1,11 +1,18 @@
 #include "localserverclientbridge.h"
 #include <iostream>
 
+LocalServerClientBridge::LocalServerClientBridge() : mOther(nullptr)
+{
+}
+
 void LocalServerClientBridge::flush()
 {
-    for(uint32_t i = 0; i < mOutgoing.size(); i++)
+    if(mOther)
     {
-        mOther->receivePackage(std::move(mOutgoing[i]));
+        for(uint32_t i = 0; i < mOutgoing.size(); i++)
+        {
+            mOther->receivePackage(std::move(mOutgoing[i]));
+        }
     }
 
     mOutgoing.clear();
