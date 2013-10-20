@@ -135,6 +135,13 @@ void Server::acceptClientConnection(std::shared_ptr<ClientConnection> client)
         client->enqueuePackage(gfxEntityAddedPackage);
     }
 
+    //resend chunk created messages
+    for(const auto& chunk : mWorld.getWorldInterface().getChunkList())
+    {
+        std::shared_ptr<BasePackage> chunkAddedPackage(new ChunkLoadedPackage(chunk.getLocation(), chunk.getVoxelTypes()));
+        client->enqueuePackage(chunkAddedPackage);
+    }
+
     //create entity
 }
 

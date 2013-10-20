@@ -76,3 +76,8 @@ void WorldInterface::spawnEntityFromScriptHandle(const std::string& scriptType, 
 {
     mEntitySystem.spawnEntityFromScriptHandle(scriptType, position, obj);    
 }
+
+const std::vector<Chunk>& WorldInterface::getChunkList() const
+{
+    return mDimension.getLandscape().getChunkList();
+}

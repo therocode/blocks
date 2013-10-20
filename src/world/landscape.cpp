@@ -22,3 +22,8 @@ const Chunk& Landscape::getChunk(const ChunkCoordinate& location) const
 {
     return chunks[chunkIndices.at(location)];
 }
+
+const std::vector<Chunk>& Landscape::getChunkList() const
+{
+    return chunks;
+}

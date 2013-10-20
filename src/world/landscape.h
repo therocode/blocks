@@ -11,6 +11,7 @@ class Landscape
         Chunk& loadChunk(const ChunkCoordinate& location);
         bool chunkIsLoaded(const ChunkCoordinate& location) const;
         const Chunk& getChunk(const ChunkCoordinate& location) const;
+        const std::vector<Chunk>& getChunkList() const;
     private:
         std::unordered_map<ChunkCoordinate, uint32_t> chunkIndices;
         std::vector<Chunk> chunks;

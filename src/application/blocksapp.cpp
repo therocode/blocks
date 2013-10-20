@@ -78,11 +78,13 @@ void BlocksApplication::setupSinglePlayer()
     server = std::unique_ptr<Server>(new Server());
     client = std::unique_ptr<Client>(new Client());
 
-    LocalServerClientBridge* clientToServer = new LocalServerClientBridge();
-    LocalClientConnectionListener* localListener = new LocalClientConnectionListener();
-
+    //setup server and client separately
     server->setup();
     client->setup();
+
+    //setup client and server local connection
+    LocalServerClientBridge* clientToServer = new LocalServerClientBridge();
+    LocalClientConnectionListener* localListener = new LocalClientConnectionListener();
     
     server->setClientListener(std::unique_ptr<LocalClientConnectionListener>(localListener));
     client->setServerBridge(std::unique_ptr<LocalServerClientBridge>(clientToServer));
