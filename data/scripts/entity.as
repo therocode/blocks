@@ -5,18 +5,24 @@ Entity@ createEntity(const string type, float x, float y, float z)
 
 shared class Entity : IEntity
 {
-    //EntityCore @mCore;
+    Entity(EntityCore@ core)
+    {
+        @mCore = core;
+    }
+
+    EntityCore @mCore;
 
     void setPosition(int x, int y)
     {
-        //mCore.setPosition(x,y);
+        mCore.setPosition(x,y);
     }
 }
 
 class Elephant : Entity
 {
-    Elephant()
+    Elephant(EntityCore@ core)
     {
+        super(core);
         consolePrint("hej jag skapades och luktar elefant");
     }
 
