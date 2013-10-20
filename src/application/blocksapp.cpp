@@ -2,6 +2,7 @@
 #include "../input/inputactions.h"
 #include "../networking/localserverclientbridge.h"
 #include "../networking/remoteserverclientbridge.h"
+#include "../networking/localclientconnectionlistener.h"
 #include <iostream>
 #include <thread>
 
@@ -78,20 +79,16 @@ void BlocksApplication::setupSinglePlayer()
     client = std::unique_ptr<Client>(new Client());
 
     LocalServerClientBridge* clientToServer = new LocalServerClientBridge();
-    LocalServerClientBridge* serverToClient = new LocalServerClientBridge();
-	//Remote
-    //RemoteServerClientBridge* serverToClient = new RemoteServerClientBridge(true);
-   	//RemoteServerClientBridge* clientToServer = new RemoteServerClientBridge(false);
+    LocalClientConnectionListener* localListener = new LocalClientConnectionListener();
 
     server->setup();
     client->setup();
-
+    
+    server->setClientListener(std::unique_ptr<LocalClientConnectionListener>(localListener));
     client->setServerBridge(std::unique_ptr<LocalServerClientBridge>(clientToServer));
-    server->addClientBridge(std::unique_ptr<LocalServerClientBridge>(serverToClient));
-    clientToServer->connect(serverToClient);
-    serverToClient->connect(clientToServer);
-
+    localListener->createClientConnection(clientToServer);
 }
+
 void BlocksApplication::setupMultiPlayer()
 {
     server = std::unique_ptr<Server>(new Server());

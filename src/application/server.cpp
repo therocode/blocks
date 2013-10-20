@@ -43,6 +43,9 @@ void Server::doLogic()
     {
         client.second->flush();
     }
+
+    pollNewClients();
+
     mFrameTimer.sleepForTheRestOfTheFrame();
     mFrameTimer.start();
 }
@@ -122,6 +125,11 @@ void Server::handleMessage(const RemoveGfxEntityMessage& received)
     }
 }
 
+void Server::setClientListener(std::unique_ptr<ClientConnectionListener> clientListener)
+{
+    mListener = std::move(clientListener);
+}
+
 void Server::acceptClientConnection(std::shared_ptr<ClientConnection> client)
 {
     ClientId newClientId = client->getId();
@@ -133,10 +141,13 @@ void Server::acceptClientConnection(std::shared_ptr<ClientConnection> client)
 void Server::pollNewClients()
 {
     std::shared_ptr<ClientConnection> client;
-
-    while((client = mListener->fetchIncomingConnection()))
+    
+    if(mListener)
     {
-        acceptClientConnection(client);
+        while((client = mListener->fetchIncomingConnection()))
+        {
+            acceptClientConnection(client);
+        }
     }
 }
 

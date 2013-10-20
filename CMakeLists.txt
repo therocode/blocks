@@ -26,6 +26,7 @@ set(source_files
     src/input/inputadaptor.cpp
     src/networking/clientconnection.cpp
     src/networking/clientconnectionlistener.cpp
+    src/networking/localclientconnectionlistener.cpp
     src/networking/localserverclientbridge.cpp
     src/networking/package.cpp
 	src/networking/remoteserverclientbridge.cpp
@@ -80,6 +81,7 @@ set(header_files
     src/input/inputadaptor.h
     src/networking/clientconnection.h
     src/networking/clientconnectionlistener.h
+    src/networking/localclientconnectionlistener.h
     src/networking/localserverclientbridge.h
     src/networking/package.h
 	src/networking/remoteserverclientbridge.h

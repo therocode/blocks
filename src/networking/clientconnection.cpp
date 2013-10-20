@@ -27,3 +27,8 @@ bool ClientConnection::pollPackage(std::shared_ptr<BasePackage>& package)
 {
     return mBridge->pollPackage(package);
 }
+
+void ClientConnection::setBridge(std::unique_ptr<ServerClientBridge> bridge)
+{
+    mBridge = std::move(bridge);
+}
