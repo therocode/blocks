@@ -9,7 +9,6 @@ using ClientId = size_t;
 class ClientConnection
 {
     public:
-        ClientConnection();
         ClientConnection(ClientId id);
         ClientId getId();
         void flush();

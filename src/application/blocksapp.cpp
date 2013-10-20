@@ -103,7 +103,7 @@ void BlocksApplication::setupMultiPlayer()
 
     server->setup();
     client->setServerBridge(std::unique_ptr<RemoteServerClientBridge>(clientToServer));
-    server->addClientBridge(std::unique_ptr<RemoteServerClientBridge>(serverToClient));
+    //server->addClientBridge(std::unique_ptr<RemoteServerClientBridge>(serverToClient));
     clientToServer->connect(serverToClient);
     serverToClient->connect(clientToServer);
 	client->setup();
@@ -118,7 +118,7 @@ void BlocksApplication::setupDedicatedServer()
     //ugly hack to make it not segfault
     LocalServerClientBridge* clientToServer = new LocalServerClientBridge();
     clientToServer->connect(clientToServer);
-    server->addClientBridge(std::unique_ptr<LocalServerClientBridge>(clientToServer));
+    //server->addClientBridge(std::unique_ptr<LocalServerClientBridge>(clientToServer));
     server->setup();
 /*  std::cout << "Initialising dedicated server without a local client\n";
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));

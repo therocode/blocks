@@ -1,8 +1,8 @@
 #include "clientconnection.h"
 
-ClientConnection::ClientConnection() : mId(-1)
-{
-}
+//ClientConnection::ClientConnection() : mId(-1)
+//{
+//}
 
 ClientConnection::ClientConnection(ClientId id) : mId(id)
 {

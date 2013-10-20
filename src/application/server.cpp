@@ -56,20 +56,6 @@ void Server::destroy()
     mBus.sendMessage<LogMessage>(LogMessage("Server destroyed", mLogName));
 }
 
-void Server::addClientBridge(std::unique_ptr<ServerClientBridge> clientBridge)
-{
-    //mBridge = std::move(clientBridge);
-    //mBus.sendMessage<LogMessage>(LogMessage("Server got a client connected", mLogName));
-
-    ////client will probably get some kind of player ID;
-    //size_t playerId = 0;
-
-    ////Load previous position or choose a spawn position if it is the first time a player connects
-    //glm::vec3 spawnPos(0.0f, -50.0f, 0.0f);
-
-    //mBus.sendMessage<PlayerJoinedMessage>(PlayerJoinedMessage(playerId, spawnPos));
-}
-
 void Server::handleMessage(const ChunkCreatedMessage& received)
 {
 	ChunkCoordinate coordinate;
@@ -96,6 +82,8 @@ void Server::handleMessage(const AddGfxEntityMessage& received)
     {
         client.second->enqueuePackage(gfxEntityAddedPackage);
     }
+
+    graphicsEntities.insert(id); //temphack
 }
 
 void Server::handleMessage(const MoveGfxEntityMessage& received)
@@ -123,6 +111,8 @@ void Server::handleMessage(const RemoveGfxEntityMessage& received)
     {
         client.second->enqueuePackage(gfxEntityRemovedPackage);
     }
+
+    graphicsEntities.erase(id); //temphack
 }
 
 void Server::setClientListener(std::unique_ptr<ClientConnectionListener> clientListener)
@@ -136,6 +126,16 @@ void Server::acceptClientConnection(std::shared_ptr<ClientConnection> client)
 
     mClients.emplace(newClientId, client);
 
+    mBus.sendMessage<LogMessage>(LogMessage(std::string("Client id ") + std::to_string(newClientId) + std::string(" connected"), mLogName));
+
+    //resend current gfx entities. this is a hack right now. in the futuer it probably has to send the whole game state or something, i dunno
+    for(size_t id : graphicsEntities)
+    {
+        std::shared_ptr<BasePackage> gfxEntityAddedPackage(new GfxEntityAddedPackage(id, glm::vec3(0.0f, 0.0f, 0.0f)));
+        client->enqueuePackage(gfxEntityAddedPackage);
+    }
+
+    //create entity
 }
 
 void Server::pollNewClients()

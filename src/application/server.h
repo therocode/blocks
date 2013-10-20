@@ -20,7 +20,6 @@ class Server : public fea::MessageReceiver<ChunkCreatedMessage>,
         void setup();
         void doLogic();
         void destroy();
-        void addClientBridge(std::unique_ptr<ServerClientBridge> clientBridge);
         void handleMessage(const ChunkCreatedMessage& received);
         void handleMessage(const AddGfxEntityMessage& received);
         void handleMessage(const MoveGfxEntityMessage& received);
@@ -39,4 +38,6 @@ class Server : public fea::MessageReceiver<ChunkCreatedMessage>,
 
         std::map<ClientId, std::shared_ptr<ClientConnection> > mClients;
         std::unique_ptr<ClientConnectionListener> mListener;
+
+        std::set<size_t> graphicsEntities; //temporary solution on how to resend things
 };
