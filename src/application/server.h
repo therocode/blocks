@@ -1,6 +1,8 @@
 #pragma once
 #include "../world/world.h"
 #include "../networking/serverclientbridge.h"
+#include "../networking/clientconnection.h"
+#include "../networking/clientconnectionlistener.h"
 #include "../world/worldmessages.h"
 #include "../rendering/renderingmessages.h"
 #include "../script/scripthandler.h"
@@ -24,7 +26,9 @@ class Server : public fea::MessageReceiver<ChunkCreatedMessage>,
         void handleMessage(const MoveGfxEntityMessage& received);
         void handleMessage(const RemoveGfxEntityMessage& received);
     private:
-        void fetchClientData();
+        void acceptClientConnection(const std::shared_ptr<ClientConnection> client);
+        void pollNewClients();
+        void fetchClientData(std::weak_ptr<ClientConnection> client);
         fea::MessageBus mBus;
         Logger mLogger;
         World mWorld;
@@ -32,5 +36,6 @@ class Server : public fea::MessageReceiver<ChunkCreatedMessage>,
         Timer mFrameTimer;
         std::string mLogName;
 
-        std::unique_ptr<ServerClientBridge> mBridge;      //this could be a list of many clients in the future
+        std::map<ClientId, std::shared_ptr<ClientConnection> > mClients;
+        std::unique_ptr<ClientConnectionListener> mListener;
 };

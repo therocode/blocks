@@ -11,7 +11,7 @@ class RemoteServerClientBridge : public ServerClientBridge
 		RemoteServerClientBridge(bool isServer);
         virtual void flush() override;
         void connect(RemoteServerClientBridge* other); 
-        void receivePackage(std::unique_ptr<BasePackage>&& incoming);
+        void receivePackage(std::weak_ptr<BasePackage> incoming);
 
 		void connectToAddress(std::string address);
 

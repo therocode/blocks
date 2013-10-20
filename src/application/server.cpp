@@ -3,7 +3,6 @@
 
 Server::Server() : mWorld(mBus),
                    mLogger(mBus),
-                   mBridge(nullptr),
                    mScriptHandler(mBus, mWorld.getWorldInterface()),
                    mLogName("server")
 {
@@ -31,18 +30,18 @@ void Server::setup()
 
 void Server::doLogic()
 {
-    if(mBridge)
+    for(auto& client : mClients)
     {
-        fetchClientData();
+        fetchClientData(client.second);
     }
 
     mBus.sendMessage<FrameMessage>(FrameMessage(true));
 
     mWorld.update();
 
-    if(mBridge)
+    for(auto& client : mClients)
     {
-        mBridge->flush();
+        client.second->flush();
     }
     mFrameTimer.sleepForTheRestOfTheFrame();
     mFrameTimer.start();
@@ -56,16 +55,16 @@ void Server::destroy()
 
 void Server::addClientBridge(std::unique_ptr<ServerClientBridge> clientBridge)
 {
-    mBridge = std::move(clientBridge);
-    mBus.sendMessage<LogMessage>(LogMessage("Server got a client connected", mLogName));
+    //mBridge = std::move(clientBridge);
+    //mBus.sendMessage<LogMessage>(LogMessage("Server got a client connected", mLogName));
 
-    //client will probably get some kind of player ID;
-    size_t playerId = 0;
+    ////client will probably get some kind of player ID;
+    //size_t playerId = 0;
 
-    //Load previous position or choose a spawn position if it is the first time a player connects
-    glm::vec3 spawnPos(0.0f, -50.0f, 0.0f);
+    ////Load previous position or choose a spawn position if it is the first time a player connects
+    //glm::vec3 spawnPos(0.0f, -50.0f, 0.0f);
 
-    mBus.sendMessage<PlayerJoinedMessage>(PlayerJoinedMessage(playerId, spawnPos));
+    //mBus.sendMessage<PlayerJoinedMessage>(PlayerJoinedMessage(playerId, spawnPos));
 }
 
 void Server::handleMessage(const ChunkCreatedMessage& received)
@@ -75,9 +74,10 @@ void Server::handleMessage(const ChunkCreatedMessage& received)
 
 	std::tie(coordinate, types) = received.data;
 
-    if(mBridge)
+    std::shared_ptr<BasePackage> chunkLoadedPackage(new ChunkLoadedPackage(coordinate, types));
+    for(auto& client : mClients)
     {
-        mBridge->enqueuePackage(std::unique_ptr<BasePackage>(new ChunkLoadedPackage(coordinate, types)));
+        client.second->enqueuePackage(chunkLoadedPackage);
     }
 }
 
@@ -88,9 +88,10 @@ void Server::handleMessage(const AddGfxEntityMessage& received)
 
     std::tie(id, position) = received.data;
 
-    if(mBridge)
+    std::shared_ptr<BasePackage> gfxEntityAddedPackage(new GfxEntityAddedPackage(id, position));
+    for(auto& client : mClients)
     {
-        mBridge->enqueuePackage(std::unique_ptr<BasePackage>(new GfxEntityAddedPackage(id, position)));
+        client.second->enqueuePackage(gfxEntityAddedPackage);
     }
 }
 
@@ -101,9 +102,10 @@ void Server::handleMessage(const MoveGfxEntityMessage& received)
 
     std::tie(id, position) = received.data;
 
-    if(mBridge)
+    std::shared_ptr<BasePackage> gfxEntityMovedPackage(new GfxEntityMovedPackage(id, position));
+    for(auto& client : mClients)
     {
-        mBridge->enqueuePackage(std::unique_ptr<BasePackage>(new GfxEntityMovedPackage(id, position)));
+        client.second->enqueuePackage(gfxEntityMovedPackage);
     }
 }
 
@@ -113,21 +115,43 @@ void Server::handleMessage(const RemoveGfxEntityMessage& received)
 
     std::tie(id) = received.data;
 
-    if(mBridge)
+    std::shared_ptr<BasePackage> gfxEntityRemovedPackage(new GfxEntityRemovedPackage(id));
+    for(auto& client : mClients)
     {
-        mBridge->enqueuePackage(std::unique_ptr<BasePackage>(new GfxEntityRemovedPackage(id)));
+        client.second->enqueuePackage(gfxEntityRemovedPackage);
     }
 }
 
-void Server::fetchClientData()
+void Server::acceptClientConnection(std::shared_ptr<ClientConnection> client)
 {
-    std::unique_ptr<BasePackage> package;
+    ClientId newClientId = client->getId();
 
-    while(mBridge->pollPackage(package))
+    mClients.emplace(newClientId, client);
+
+}
+
+void Server::pollNewClients()
+{
+    std::shared_ptr<ClientConnection> client;
+
+    while((client = mListener->fetchIncomingConnection()))
     {
-        if(package->mType == typeid(RebuildScriptsRequestedPackage))
+        acceptClientConnection(client);
+    }
+}
+
+void Server::fetchClientData(std::weak_ptr<ClientConnection> client)
+{
+    std::shared_ptr<BasePackage> package;
+
+    for(auto& client : mClients)
+    {
+        while(client.second->pollPackage(package))
         {
-            mBus.sendMessage<RebuildScriptsRequestedMessage>(RebuildScriptsRequestedMessage('0'));
+            if(package->mType == typeid(RebuildScriptsRequestedPackage))
+            {
+                mBus.sendMessage<RebuildScriptsRequestedMessage>(RebuildScriptsRequestedMessage('0'));
+            }
         }
     }
 }

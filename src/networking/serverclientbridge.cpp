@@ -1,10 +1,10 @@
 #include "serverclientbridge.h"
 
-bool ServerClientBridge::pollPackage(std::unique_ptr<BasePackage>& package)
+bool ServerClientBridge::pollPackage(std::shared_ptr<BasePackage>& package)
 {
     if(mIncoming.size())
     {
-        package = std::move(mIncoming.front());
+        package = mIncoming.front();
         mIncoming.pop_front();
         return true;
     }
@@ -14,7 +14,7 @@ bool ServerClientBridge::pollPackage(std::unique_ptr<BasePackage>& package)
     }
 }
 
-void ServerClientBridge::enqueuePackage(std::unique_ptr<BasePackage>&& package)
+void ServerClientBridge::enqueuePackage(std::weak_ptr<BasePackage> package)
 {
-    mOutgoing.push_back(std::move(package));
+    mOutgoing.push_back(package.lock());
 }

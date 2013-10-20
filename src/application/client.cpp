@@ -76,7 +76,7 @@ void Client::handleMessage(const InputActionMessage& received)
 
 void Client::handleMessage(const RebuildScriptsRequestedMessage& received)
 {
-    mBridge->enqueuePackage(std::unique_ptr<BasePackage>(new RebuildScriptsRequestedPackage('0')));
+    mBridge->enqueuePackage(std::shared_ptr<BasePackage>(new RebuildScriptsRequestedPackage('0')));
 }
 
 bool Client::requestedQuit()
@@ -92,7 +92,7 @@ void Client::setServerBridge(std::unique_ptr<ServerClientBridge> bridge)
 
 void Client::fetchServerData()
 {
-    std::unique_ptr<BasePackage> package;
+    std::shared_ptr<BasePackage> package;
 
     while(mBridge->pollPackage(package))
     {

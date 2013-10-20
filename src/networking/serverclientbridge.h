@@ -6,10 +6,10 @@
 class ServerClientBridge
 {
     public:
-        bool pollPackage(std::unique_ptr<BasePackage>& package); //fetch a received package
+        bool pollPackage(std::shared_ptr<BasePackage>& package); //fetch a received package
         virtual void flush() = 0; //send all information
-        void enqueuePackage(std::unique_ptr<BasePackage>&& package);
+        void enqueuePackage(std::weak_ptr<BasePackage> package);
     protected:
-        std::deque<std::unique_ptr<BasePackage> > mIncoming;
-        std::deque<std::unique_ptr<BasePackage> > mOutgoing;
+        std::deque<std::shared_ptr<BasePackage> > mIncoming;
+        std::deque<std::shared_ptr<BasePackage> > mOutgoing;
 };

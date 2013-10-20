@@ -23,7 +23,7 @@ void LocalServerClientBridge::connect(LocalServerClientBridge* other)
     mOther = other;
 }
 
-void LocalServerClientBridge::receivePackage(std::unique_ptr<BasePackage>&& incoming)
+void LocalServerClientBridge::receivePackage(std::weak_ptr<BasePackage> incoming)
 {
-    mIncoming.push_back(std::move(incoming));
+    mIncoming.push_back(incoming.lock());
 }
