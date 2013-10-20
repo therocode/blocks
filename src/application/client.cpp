@@ -37,11 +37,17 @@ void Client::setup()
 
 void Client::handleInput()
 {
-    fetchServerData();
+    if(mBridge)
+    {
+        fetchServerData();
+    }
 
     mInputAdaptor.update();
 
-    mBridge->flush();
+    if(mBridge)
+    {
+        mBridge->flush();
+    }
 }
 
 void Client::render()
@@ -102,30 +108,30 @@ void Client::fetchServerData()
         {
             GfxEntityAddedPackage* gfxAddedPackage = (GfxEntityAddedPackage*)package.get();
 
-        size_t id;
-        glm::vec3 position;
+            size_t id;
+            glm::vec3 position;
 
-        std::tie(id, position) = gfxAddedPackage->getData();
+            std::tie(id, position) = gfxAddedPackage->getData();
             mBus.sendMessage<AddGfxEntityMessage>(AddGfxEntityMessage(id, position));
         }
         else if(package->mType == typeid(GfxEntityMovedPackage))
         {
             GfxEntityMovedPackage* gfxMovedPackage = (GfxEntityMovedPackage*)package.get();
-        
-        size_t id;
-        glm::vec3 position;
 
-        std::tie(id, position) = gfxMovedPackage->getData();
+            size_t id;
+            glm::vec3 position;
+
+            std::tie(id, position) = gfxMovedPackage->getData();
 
             mBus.sendMessage<MoveGfxEntityMessage>(MoveGfxEntityMessage(id, position));
         }
         else if(package->mType == typeid(GfxEntityRemovedPackage))
         {
             GfxEntityRemovedPackage* gfxRemovedPackage = (GfxEntityRemovedPackage*)package.get();
-        
-        size_t id;
 
-        std::tie(id) = gfxRemovedPackage->getData();
+            size_t id;
+
+            std::tie(id) = gfxRemovedPackage->getData();
 
             mBus.sendMessage<RemoveGfxEntityMessage>(RemoveGfxEntityMessage(id));
         }

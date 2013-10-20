@@ -31,13 +31,19 @@ void Server::setup()
 
 void Server::doLogic()
 {
-    fetchClientData();
+    if(mBridge)
+    {
+        fetchClientData();
+    }
 
     mBus.sendMessage<FrameMessage>(FrameMessage(true));
 
     mWorld.update();
 
-    mBridge->flush();
+    if(mBridge)
+    {
+        mBridge->flush();
+    }
     mFrameTimer.sleepForTheRestOfTheFrame();
     mFrameTimer.start();
 }
@@ -69,7 +75,10 @@ void Server::handleMessage(const ChunkCreatedMessage& received)
 
 	std::tie(coordinate, types) = received.data;
 
-    mBridge->enqueuePackage(std::unique_ptr<BasePackage>(new ChunkLoadedPackage(coordinate, types)));
+    if(mBridge)
+    {
+        mBridge->enqueuePackage(std::unique_ptr<BasePackage>(new ChunkLoadedPackage(coordinate, types)));
+    }
 }
 
 void Server::handleMessage(const AddGfxEntityMessage& received)
@@ -79,7 +88,10 @@ void Server::handleMessage(const AddGfxEntityMessage& received)
 
     std::tie(id, position) = received.data;
 
-    mBridge->enqueuePackage(std::unique_ptr<BasePackage>(new GfxEntityAddedPackage(id, position)));
+    if(mBridge)
+    {
+        mBridge->enqueuePackage(std::unique_ptr<BasePackage>(new GfxEntityAddedPackage(id, position)));
+    }
 }
 
 void Server::handleMessage(const MoveGfxEntityMessage& received)
@@ -89,7 +101,10 @@ void Server::handleMessage(const MoveGfxEntityMessage& received)
 
     std::tie(id, position) = received.data;
 
-    mBridge->enqueuePackage(std::unique_ptr<BasePackage>(new GfxEntityMovedPackage(id, position)));
+    if(mBridge)
+    {
+        mBridge->enqueuePackage(std::unique_ptr<BasePackage>(new GfxEntityMovedPackage(id, position)));
+    }
 }
 
 void Server::handleMessage(const RemoveGfxEntityMessage& received)
@@ -98,7 +113,10 @@ void Server::handleMessage(const RemoveGfxEntityMessage& received)
 
     std::tie(id) = received.data;
 
-    mBridge->enqueuePackage(std::unique_ptr<BasePackage>(new GfxEntityRemovedPackage(id)));
+    if(mBridge)
+    {
+        mBridge->enqueuePackage(std::unique_ptr<BasePackage>(new GfxEntityRemovedPackage(id)));
+    }
 }
 
 void Server::fetchClientData()

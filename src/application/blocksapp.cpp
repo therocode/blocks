@@ -84,13 +84,13 @@ void BlocksApplication::setupSinglePlayer()
    	//RemoteServerClientBridge* clientToServer = new RemoteServerClientBridge(false);
 
     server->setup();
+    client->setup();
 
     client->setServerBridge(std::unique_ptr<LocalServerClientBridge>(clientToServer));
     server->addClientBridge(std::unique_ptr<LocalServerClientBridge>(serverToClient));
     clientToServer->connect(serverToClient);
     serverToClient->connect(clientToServer);
 
-    client->setup();
 }
 void BlocksApplication::setupMultiPlayer()
 {
