@@ -72,9 +72,9 @@ fea::WeakEntityPtr WorldInterface::spawnEntity(const std::string& scriptType, co
     return mEntitySystem.spawnEntity(scriptType, position);
 }
 
-void WorldInterface::spawnEntityFromScriptHandle(const std::string& scriptType, const glm::vec3& position, asIScriptObject* obj)
+size_t WorldInterface::spawnEntityFromScriptHandle(const std::string& scriptType, const glm::vec3& position, asIScriptObject* obj)
 {
-    mEntitySystem.spawnEntityFromScriptHandle(scriptType, position, obj);    
+    return mEntitySystem.spawnEntityFromScriptHandle(scriptType, position, obj);    
 }
 
 const std::vector<Chunk>& WorldInterface::getChunkList() const

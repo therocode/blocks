@@ -27,6 +27,8 @@ void onFrame(int frameNumber)
     {
         @created = createEntity("Elephant", randomFloatRange(-30.0f, 30.0f), 70.0f, randomFloatRange(-30.0f, 30.0f));
 
+        //created.setPosition(0.0f, 50.0f, 0.0f);
+
     }
     else if(frameNumber % 10 == 1)
     {

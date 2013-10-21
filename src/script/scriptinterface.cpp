@@ -1,4 +1,6 @@
 #include "scriptinterface.h"
+#include "scriptentitycore.h"
+#include <iostream>
 
 ScriptInterface::ScriptInterface(fea::MessageBus& bus, ScriptEngine& engine, ScriptModule& module, WorldInterface& worldInterface) : 
     mBus(bus),
@@ -24,11 +26,13 @@ void ScriptInterface::registerInterface()
 
     //entity
     r = mEngine.getEngine()->RegisterInterface("IEntity"); assert(r >= 0);
-    mEngine.getEngine()->RegisterObjectType("EntityCore", sizeof(ScriptEntityCore), asOBJ_REF); assert(r >= 0);
-    //r = mEngine.getEngine()->RegisterObjectBehaviour("EntityCore", asBEHAVE_ADDREF, "void f()", asMETHOD(ScriptEntityCore,addRef), asCALL_THISCALL ); assert(r >= 0);
-    //r = mEngine.getEngine()->RegisterObjectBehaviour("EntityCore", asBEHAVE_RELEASE, "void f()", asMETHOD(ScriptEntityCore,release), asCALL_THISCALL); assert(r >= 0);
     r = mEngine.getEngine()->RegisterGlobalFunction("IEntity@ createIEntity(const string &in, float x, float y, float z)", asMETHOD(ScriptInterface, createEntity), asCALL_THISCALL_ASGLOBAL, this); assert(r >= 0);
     r = mEngine.getEngine()->RegisterGlobalFunction("void removeEntity(IEntity@ entity)", asMETHOD(ScriptInterface, removeEntity), asCALL_THISCALL_ASGLOBAL, this); assert(r >= 0);
+
+    mEngine.getEngine()->RegisterObjectType("EntityCore", sizeof(ScriptEntityCore), asOBJ_REF); assert(r >= 0);
+    r = mEngine.getEngine()->RegisterObjectBehaviour("EntityCore", asBEHAVE_ADDREF, "void f()", asMETHOD(ScriptEntityCore, addRef), asCALL_THISCALL ); assert(r >= 0);
+    r = mEngine.getEngine()->RegisterObjectBehaviour("EntityCore", asBEHAVE_RELEASE, "void f()", asMETHOD(ScriptEntityCore, release), asCALL_THISCALL); assert(r >= 0);
+    r = mEngine.getEngine()->RegisterObjectMethod("EntityCore", "void setPosition(float x, float y, float z)", asMETHOD(ScriptEntityCore, setPosition), asCALL_THISCALL); assert(r >= 0);
 
     //string conversion
     r = mEngine.getEngine()->RegisterGlobalFunction("string toString(int num)", asFUNCTIONPR(std::to_string, (int32_t), std::string), asCALL_CDECL); assert(r >= 0);
@@ -83,14 +87,18 @@ asIScriptObject* ScriptInterface::createEntity(const std::string& type, float x,
 {
     asIObjectType* objectType = mModule.getObjectTypeByDecl(type);
     
-    asIScriptFunction *factory = objectType->GetFactoryByDecl(std::string(type + " @" + type +"()").c_str());
+    asIScriptFunction *factory = objectType->GetFactoryByDecl(std::string(type + " @" + type +"(EntityCore@ core)").c_str());
 
 
     if(factory)
     {
+        ScriptEntityCore* entityCore = new ScriptEntityCore(mBus, 0);
+
         asIScriptContext* ctx = mEngine.requestContext();
         // Prepare the context to call the factory function
         ctx->Prepare(factory);
+        // Add an entity core
+        ctx->SetArgObject(0, entityCore);
         // Execute the call
         ctx->Execute();
         // Get the object that was created
@@ -100,7 +108,9 @@ asIScriptObject* ScriptInterface::createEntity(const std::string& type, float x,
         obj->AddRef();
         obj->AddRef();
 
-        mWorldInterface.spawnEntityFromScriptHandle(type, glm::vec3(x, y, z), obj);
+        size_t createdId = mWorldInterface.spawnEntityFromScriptHandle(type, glm::vec3(x, y, z), obj);
+        entityCore->setId(createdId);
+
         mEngine.freeContext(ctx);
 
         return obj;
@@ -111,18 +121,19 @@ asIScriptObject* ScriptInterface::createEntity(const std::string& type, float x,
     }
 }
 
-asIScriptObject* ScriptInterface::instanciateScriptEntity(const std::string& type)
+asIScriptObject* ScriptInterface::instanciateScriptEntity(const std::string& type, size_t id)
 {
     asIObjectType* objectType = mModule.getObjectTypeByDecl(type);
     
-    asIScriptFunction *factory = objectType->GetFactoryByDecl(std::string(type + " @" + type +"()").c_str());
-
+    asIScriptFunction* factory = objectType->GetFactoryByDecl(std::string(type + " @" + type +"(EntityCore@ core)").c_str());
 
     if(factory)
     {
         asIScriptContext* ctx = mEngine.requestContext();
         // Prepare the context to call the factory function
         ctx->Prepare(factory);
+        // Add an entity core
+        ctx->SetArgObject(0, new ScriptEntityCore(mBus, id));
         // Execute the call
         ctx->Execute();
         // Get the object that was created
@@ -146,14 +157,3 @@ void ScriptInterface::removeEntity(asIScriptObject* entity)
     mBus.sendMessage<RemoveScriptEntityMessage>(RemoveScriptEntityMessage(entity));
     entity->Release();
 }
-
-
-
-
-
-
-
-
-
-
-secretError = <3

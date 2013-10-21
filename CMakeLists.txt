@@ -41,6 +41,7 @@ set(source_files
     src/script/scriptcallback.cpp
     src/script/scriptengine.cpp
     src/script/scriptentity.cpp
+    src/script/scriptentitycore.cpp
     src/script/scripthandler.cpp
     src/script/scriptinterface.cpp
     src/script/scriptmodule.cpp
@@ -98,6 +99,7 @@ set(header_files
     src/script/scriptcallback.h
     src/script/scriptengine.h
     src/script/scriptentity.h
+    src/script/scriptentitycore.h
     src/script/scripthandler.h
     src/script/scriptinterface.h
     src/script/scriptmodule.h

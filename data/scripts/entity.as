@@ -12,9 +12,10 @@ shared class Entity : IEntity
 
     EntityCore @mCore;
 
-    void setPosition(int x, int y)
+    void setPosition(float x, float y, float z)
     {
-        mCore.setPosition(x,y);
+        consolePrint("script trying to set entity to " + x + " " + y + " " + z);
+        mCore.setPosition(x, y, z);
     }
 }
 

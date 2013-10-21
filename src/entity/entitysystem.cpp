@@ -45,7 +45,7 @@ fea::WeakEntityPtr EntitySystem::spawnEntity(const std::string& scriptType, cons
     return entity;
 }
 
-void EntitySystem::spawnEntityFromScriptHandle(const std::string& scriptType, const glm::vec3& position, asIScriptObject* obj)
+size_t EntitySystem::spawnEntityFromScriptHandle(const std::string& scriptType, const glm::vec3& position, asIScriptObject* obj)
 {
     fea::WeakEntityPtr entity = mFactory.spawnEntity(scriptType);
 
@@ -55,6 +55,8 @@ void EntitySystem::spawnEntityFromScriptHandle(const std::string& scriptType, co
     mBus.sendMessage<EntitySpawnedMessage>(EntitySpawnedMessage(entity, scriptType));
 
     attachEntity(entity);
+
+    return entity.lock()->getId();
 }
 
 void EntitySystem::handleMessage(const SpawnEntityMessage& received) 

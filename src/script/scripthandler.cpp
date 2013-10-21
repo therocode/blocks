@@ -75,7 +75,7 @@ void ScriptHandler::handleMessage(const EntityNeedsScriptMessage& message)
 
     std::tie(entity, scriptType) = message.data;
     size_t id = entity.lock()->getId();
-    asIScriptObject* obj = mScriptInterface.instanciateScriptEntity(scriptType);
+    asIScriptObject* obj = mScriptInterface.instanciateScriptEntity(scriptType, id);
 
     ScriptEntity scriptEntity(id, entity, obj);
 
