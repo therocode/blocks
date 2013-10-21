@@ -73,6 +73,19 @@ asIObjectType* ScriptModule::getObjectTypeByDecl(const std::string& decl)
     return mEngine.getEngine()->GetObjectTypeById(mAsModule->GetTypeIdByDecl(decl.c_str()));
 }
 
+std::vector<asIObjectType*> ScriptModule::getObjectTypes() const
+{
+    uint32_t objectCount = mAsModule->GetObjectTypeCount();
+    std::vector<asIObjectType*> objectTypes;
+
+    for(uint32_t i = 0; i < objectCount; i++)
+    {
+        objectTypes.push_back(mAsModule->GetObjectTypeByIndex(i));
+    }
+
+    return objectTypes;
+}
+
 bool ScriptModule::hasErrors() const
 {
     return mHasErrors;

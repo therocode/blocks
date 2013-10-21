@@ -1,7 +1,11 @@
 #include "scriptentitycore.h"
 #include "../entity/entitymessages.h"
 
-ScriptEntityCore::ScriptEntityCore(fea::MessageBus& bus, size_t id) : mBus(bus)
+
+WorldInterface* ScriptEntityCore::sWorldInterface = nullptr;
+fea::MessageBus* ScriptEntityCore::sBus = nullptr;
+
+ScriptEntityCore::ScriptEntityCore(size_t id)
 {
     mRefCount = 0;
     mId = id;
@@ -23,7 +27,7 @@ void ScriptEntityCore::release()
 
 void ScriptEntityCore::setPosition(float x, float y, float z)
 {
-    mBus.sendMessage<EntityMoveRequestedMessage>(EntityMoveRequestedMessage(mId, glm::vec3(x, y, z)));
+    sBus->sendMessage<EntityMoveRequestedMessage>(EntityMoveRequestedMessage(mId, glm::vec3(x, y, z)));
 }
 
 void ScriptEntityCore::setId(size_t id)

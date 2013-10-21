@@ -2,16 +2,20 @@
 #include "scriptentitycore.h"
 #include <iostream>
 
-ScriptInterface::ScriptInterface(fea::MessageBus& bus, ScriptEngine& engine, ScriptModule& module, WorldInterface& worldInterface) : 
+ScriptInterface::ScriptInterface(fea::MessageBus& bus, ScriptEngine& engine, ScriptModule& module, WorldInterface& worldInterface, std::unordered_map<asIScriptObject*, size_t>& uglyReference) : 
     mBus(bus),
     mEngine(engine), 
     mModule(module),
     mWorldInterface(worldInterface),
     logName("script"),
+    mUglyReference(uglyReference),
     onFrameCallback(engine),
     frameTick(0)
 {
     mBus.addMessageSubscriber<FrameMessage>(*this);
+
+    ScriptEntityCore::sWorldInterface = &worldInterface;
+    ScriptEntityCore::sBus = &bus;
 }
 
 ScriptInterface::~ScriptInterface()
@@ -54,11 +58,13 @@ void ScriptInterface::registerInterface()
     r = mEngine.getEngine()->RegisterGlobalFunction("void setGravity(float constant)", asMETHOD(ScriptInterface, setGravity), asCALL_THISCALL_ASGLOBAL, this); assert(r >= 0);
 }
 
-void ScriptInterface::registerCallbacks()
+void ScriptInterface::registerCallbacks(const std::map<size_t, ScriptEntity>& scriptEntities)
 {
     if(!mModule.hasErrors())
     {
         onFrameCallback.setFunction(mModule.getFunctionByDecl("void onFrame(int frameNumber)"));
+
+        std::vector<asIObjectType*> objectTypes = mModule.getObjectTypes();
     }
 }
 
@@ -66,9 +72,19 @@ void ScriptInterface::handleMessage(const FrameMessage& received)
 {
     if(!mModule.hasErrors())
     {
-        //asIScriptContext* context = mEngine.getContext();
-
         onFrameCallback.execute(frameTick);
+
+        for(auto& object : mUglyReference)
+        {
+            ScriptMemberCallback<int32_t> callback(mEngine);
+            asIScriptFunction* function = object.first->GetObjectType()->GetMethodByDecl("void onFrame(int frameNumber)");
+            if(function)
+            {
+                callback.setFunction(function);
+                callback.execute(object.first, frameTick);
+            }
+        }
+
         frameTick++;
     }
 }
@@ -87,18 +103,19 @@ asIScriptObject* ScriptInterface::createEntity(const std::string& type, float x,
 {
     asIObjectType* objectType = mModule.getObjectTypeByDecl(type);
     
-    asIScriptFunction *factory = objectType->GetFactoryByDecl(std::string(type + " @" + type +"(EntityCore@ core)").c_str());
+    asIScriptFunction *factory = objectType->GetFactoryByDecl(std::string(type + " @" + type +"(EntityCore@ core, uint id)").c_str());
 
 
     if(factory)
     {
-        ScriptEntityCore* entityCore = new ScriptEntityCore(mBus, 0);
+        ScriptEntityCore* entityCore = new ScriptEntityCore(0);
 
         asIScriptContext* ctx = mEngine.requestContext();
         // Prepare the context to call the factory function
         ctx->Prepare(factory);
         // Add an entity core
         ctx->SetArgObject(0, entityCore);
+        ctx->SetArgDWord(1, 0);
         // Execute the call
         ctx->Execute();
         // Get the object that was created
@@ -110,6 +127,13 @@ asIScriptObject* ScriptInterface::createEntity(const std::string& type, float x,
 
         size_t createdId = mWorldInterface.spawnEntityFromScriptHandle(type, glm::vec3(x, y, z), obj);
         entityCore->setId(createdId);
+
+        asIScriptFunction* function = obj->GetObjectType()->GetMethodByDecl("void setId(uint id)");
+        std::cout << "hejhej:" << function << "\n";
+        ctx->Prepare(function);
+        ctx->SetObject(obj);
+        ctx->SetArgDWord(0, createdId);
+        ctx->Execute();
 
         mEngine.freeContext(ctx);
 
@@ -125,7 +149,7 @@ asIScriptObject* ScriptInterface::instanciateScriptEntity(const std::string& typ
 {
     asIObjectType* objectType = mModule.getObjectTypeByDecl(type);
     
-    asIScriptFunction* factory = objectType->GetFactoryByDecl(std::string(type + " @" + type +"(EntityCore@ core)").c_str());
+    asIScriptFunction* factory = objectType->GetFactoryByDecl(std::string(type + " @" + type +"(EntityCore@ core, uint id)").c_str());
 
     if(factory)
     {
@@ -133,7 +157,8 @@ asIScriptObject* ScriptInterface::instanciateScriptEntity(const std::string& typ
         // Prepare the context to call the factory function
         ctx->Prepare(factory);
         // Add an entity core
-        ctx->SetArgObject(0, new ScriptEntityCore(mBus, id));
+        ctx->SetArgObject(0, new ScriptEntityCore(id));
+        ctx->SetArgDWord(1, id);
         // Execute the call
         ctx->Execute();
         // Get the object that was created

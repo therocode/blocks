@@ -14,6 +14,7 @@ class ScriptModule
         bool compileFromSourceList(const std::vector<std::string>& files);
         asIScriptFunction* getFunctionByDecl(const std::string& decl);
         asIObjectType* getObjectTypeByDecl(const std::string& decl);
+        std::vector<asIObjectType*> getObjectTypes() const;
         bool hasErrors() const;
     private:
         const std::string mName;

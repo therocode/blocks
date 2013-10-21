@@ -58,3 +58,34 @@ class ScriptCallback
         ScriptEngine& mEngine;
         asIScriptFunction* mFunction;
 };
+
+template <typename... Types>
+class ScriptMemberCallback
+{
+    public:
+        ScriptMemberCallback(ScriptEngine& engine) : mEngine(engine), mFunction(nullptr)
+        {
+        }
+
+        void setFunction(asIScriptFunction* function)
+        {
+            mFunction = function;
+        }
+
+        void execute(asIScriptObject* object, Types... parameters)
+        {
+            if(mFunction)
+            {
+                asIScriptContext* context = mEngine.requestContext();
+                int32_t r = context->Prepare(mFunction); assert( r >= 0 );
+                ParameterHelper<0, Types...>::do_(context, parameters...);
+                context->SetObject(object);
+                r = context->Execute(); assert( r >= 0 );
+                mEngine.freeContext(context);
+            }
+        }
+
+    private:
+        ScriptEngine& mEngine;
+        asIScriptFunction* mFunction;
+};

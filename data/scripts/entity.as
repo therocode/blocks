@@ -5,12 +5,19 @@ Entity@ createEntity(const string type, float x, float y, float z)
 
 shared class Entity : IEntity
 {
-    Entity(EntityCore@ core)
+    Entity(EntityCore@ core, uint id)
     {
         @mCore = core;
+        mId = id;
+    }
+
+    void setId(uint id)
+    {
+        mId = id;
     }
 
     EntityCore @mCore;
+    uint mId;
 
     void setPosition(float x, float y, float z)
     {
@@ -21,10 +28,15 @@ shared class Entity : IEntity
 
 class Elephant : Entity
 {
-    Elephant(EntityCore@ core)
+    Elephant(EntityCore@ core, uint id)
     {
-        super(core);
+        super(core, id);
         consolePrint("hej jag skapades och luktar elefant");
+    }
+
+    void onFrame(int frameNumber)
+    {
+        consolePrint("I am an onframe elephant and my id is " + mId);
     }
 
     ~Elephant()

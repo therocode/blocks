@@ -5,7 +5,7 @@
 ScriptHandler::ScriptHandler(fea::MessageBus& bus, WorldInterface& worldInterface) : 
     mBus(bus),
     mScripts(mEngine.createModule("scripts")),
-    mScriptInterface(mBus, mEngine, mScripts, worldInterface),
+    mScriptInterface(mBus, mEngine, mScripts, worldInterface, scriptEntityIds),
     mWorldInterface(worldInterface),
     logName("script")
 {
@@ -39,7 +39,7 @@ void ScriptHandler::setup()
     if(succeeded)
     {
         mBus.sendMessage<LogMessage>(LogMessage("Setting up script callbacks...", logName));
-        mScriptInterface.registerCallbacks();
+        mScriptInterface.registerCallbacks(scriptEntities);
         mBus.sendMessage<LogMessage>(LogMessage("Compilation process over.", logName));
         mBus.sendMessage<LogMessage>(LogMessage("Done setting up callbacks.", logName));
     }
@@ -62,7 +62,7 @@ void ScriptHandler::handleMessage(const RebuildScriptsRequestedMessage& message)
     if(succeeded)
     {
         mBus.sendMessage<LogMessage>(LogMessage("Setting up script callbacks...", logName));
-        mScriptInterface.registerCallbacks();
+        mScriptInterface.registerCallbacks(scriptEntities);
         mBus.sendMessage<LogMessage>(LogMessage("Compilation process over.", logName));
         mBus.sendMessage<LogMessage>(LogMessage("Done setting up callbacks.", logName));
     }
