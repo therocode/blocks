@@ -129,7 +129,6 @@ asIScriptObject* ScriptInterface::createEntity(const std::string& type, float x,
         entityCore->setId(createdId);
 
         asIScriptFunction* function = obj->GetObjectType()->GetMethodByDecl("void setId(uint id)");
-        std::cout << "hejhej:" << function << "\n";
         ctx->Prepare(function);
         ctx->SetObject(obj);
         ctx->SetArgDWord(0, createdId);

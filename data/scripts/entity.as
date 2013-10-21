@@ -21,26 +21,29 @@ shared class Entity : IEntity
 
     void setPosition(float x, float y, float z)
     {
-        consolePrint("script trying to set entity to " + x + " " + y + " " + z);
         mCore.setPosition(x, y, z);
     }
 }
 
 class Elephant : Entity
 {
+    bool teleporter;
+
     Elephant(EntityCore@ core, uint id)
     {
         super(core, id);
-        consolePrint("hej jag skapades och luktar elefant");
+        teleporter = randomChance(0.1f);
     }
 
     void onFrame(int frameNumber)
     {
-        consolePrint("I am an onframe elephant and my id is " + mId);
+        if(teleporter)
+        {
+            setPosition(randomFloatRange(-30.0f, 30.0f), 70.0f, randomFloatRange(-30.0f, 30.0f));
+        }
     }
 
     ~Elephant()
     {
-        consolePrint("en... elefant destruerades...");
     }
 }
