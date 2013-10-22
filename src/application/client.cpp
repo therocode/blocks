@@ -13,13 +13,13 @@ Client::Client() : mWindow(new fea::util::SFMLWindowBackend(mSfWindow)),
                    mLogName("client"),
                    mBridge(nullptr)
 {
-	mBus.addMessageSubscriber<InputActionMessage>(*this);
+	mBus.addMessageSubscriber<PlayerActionMessage>(*this);
 	mBus.addMessageSubscriber<RebuildScriptsRequestedMessage>(*this);
 }
 
 Client::~Client()
 {
-    mBus.removeMessageSubscriber<InputActionMessage>(*this);
+    mBus.removeMessageSubscriber<PlayerActionMessage>(*this);
     mBus.removeMessageSubscriber<RebuildScriptsRequestedMessage>(*this);
 }
 
@@ -63,10 +63,11 @@ void Client::destroy()
     mBus.sendMessage<LogMessage>(LogMessage("client destroyed", mLogName));
 }
 
-void Client::handleMessage(const InputActionMessage& received)
+void Client::handleMessage(const PlayerActionMessage& received)
 {
-    int action;
-	std::tie(action) = received.data;
+    size_t playerId;
+    int32_t action;
+	std::tie(playerId, action) = received.data;
 
     if(action == InputAction::QUIT)
     {

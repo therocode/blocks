@@ -18,6 +18,8 @@ InputAdaptor::InputAdaptor(sf::Window& sfw, fea::MessageBus& b)
 
 void InputAdaptor::update()
 {
+    size_t playerId = 0; //this needs changing
+
     fea::Event event;
     std::string action;
 
@@ -28,19 +30,19 @@ void InputAdaptor::update()
     {
         if(event.type == fea::Event::CLOSED)
         {
-            bus.sendMessage<InputActionMessage>(InputActionMessage(InputAction::QUIT));
+            bus.sendMessage<PlayerActionMessage>(PlayerActionMessage(playerId, InputAction::QUIT));
         }
 		else if(event.type == fea::Event::MOUSEMOVED){
             bus.sendMessage<MouseMovedMessage>(MouseMovedMessage((float)event.mouseMove.x, (float)event.mouseMove.y));
 		}
 		else if(event.type == fea::Event::MOUSEBUTTONPRESSED){
 			if(event.mouseButton.button == fea::Mouse::Button::LEFT){
-                bus.sendMessage<InputActionMessage>(InputActionMessage(InputAction::MOUSELEFT));
+                bus.sendMessage<PlayerActionMessage>(PlayerActionMessage(playerId, InputAction::MOUSELEFT));
 			}
 		}
 		else if(event.type == fea::Event::MOUSEBUTTONRELEASED){
 			if(event.mouseButton.button == fea::Mouse::Button::LEFT){
-                bus.sendMessage<InputActionMessage>(InputActionMessage(InputAction::STOPMOUSELEFT));
+                bus.sendMessage<PlayerActionMessage>(PlayerActionMessage(playerId, InputAction::STOPMOUSELEFT));
 			}
 		}
         else if(event.type == fea::Event::RESIZED){
@@ -51,33 +53,33 @@ void InputAdaptor::update()
     while(actionHandler.pollAction(action))
     {
         if(action == "quit")
-            bus.sendMessage<InputActionMessage>(InputActionMessage(InputAction::QUIT));
+            bus.sendMessage<PlayerActionMessage>(PlayerActionMessage(playerId, InputAction::QUIT));
         else if(action == "forwards")
-            bus.sendMessage<InputActionMessage>(InputActionMessage(InputAction::FORWARDS));
+            bus.sendMessage<PlayerActionMessage>(PlayerActionMessage(playerId, InputAction::FORWARDS));
         else if(action == "backwards")
-            bus.sendMessage<InputActionMessage>(InputActionMessage(InputAction::BACKWARDS));
+            bus.sendMessage<PlayerActionMessage>(PlayerActionMessage(playerId, InputAction::BACKWARDS));
         else if(action == "left")
-            bus.sendMessage<InputActionMessage>(InputActionMessage(InputAction::LEFT));
+            bus.sendMessage<PlayerActionMessage>(PlayerActionMessage(playerId, InputAction::LEFT));
         else if(action == "right")
-            bus.sendMessage<InputActionMessage>(InputActionMessage(InputAction::RIGHT));
+            bus.sendMessage<PlayerActionMessage>(PlayerActionMessage(playerId, InputAction::RIGHT));
         else if(action == "jump")
-            bus.sendMessage<InputActionMessage>(InputActionMessage(InputAction::JUMP));
+            bus.sendMessage<PlayerActionMessage>(PlayerActionMessage(playerId, InputAction::JUMP));
         else if(action == "crouch")
-            bus.sendMessage<InputActionMessage>(InputActionMessage(InputAction::CROUCH));
+            bus.sendMessage<PlayerActionMessage>(PlayerActionMessage(playerId, InputAction::CROUCH));
         else if(action == "rebuild_scripts")
             bus.sendMessage<RebuildScriptsRequestedMessage>(RebuildScriptsRequestedMessage('0'));
 
         else if(action == "stopforwards")
-            bus.sendMessage<InputActionMessage>(InputActionMessage(InputAction::STOPFORWARDS));
+            bus.sendMessage<PlayerActionMessage>(PlayerActionMessage(playerId, InputAction::STOPFORWARDS));
         else if(action == "stopbackwards")
-            bus.sendMessage<InputActionMessage>(InputActionMessage(InputAction::STOPBACKWARDS));
+            bus.sendMessage<PlayerActionMessage>(PlayerActionMessage(playerId, InputAction::STOPBACKWARDS));
         else if(action == "stopleft")
-            bus.sendMessage<InputActionMessage>(InputActionMessage(InputAction::STOPLEFT));
+            bus.sendMessage<PlayerActionMessage>(PlayerActionMessage(playerId, InputAction::STOPLEFT));
         else if(action == "stopright")
-            bus.sendMessage<InputActionMessage>(InputActionMessage(InputAction::STOPRIGHT));
+            bus.sendMessage<PlayerActionMessage>(PlayerActionMessage(playerId, InputAction::STOPRIGHT));
         else if(action == "stopjump")
-            bus.sendMessage<InputActionMessage>(InputActionMessage(InputAction::STOPJUMP));
+            bus.sendMessage<PlayerActionMessage>(PlayerActionMessage(playerId, InputAction::STOPJUMP));
         else if(action == "stopcrouch")
-            bus.sendMessage<InputActionMessage>(InputActionMessage(InputAction::STOPCROUCH));
+            bus.sendMessage<PlayerActionMessage>(PlayerActionMessage(playerId, InputAction::STOPCROUCH));
     }
 }

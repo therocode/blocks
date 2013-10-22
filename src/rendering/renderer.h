@@ -16,7 +16,7 @@
 class Renderer
     :   public fea::MessageReceiver<ChunkCreatedMessage>,
         public fea::MessageReceiver<WindowResizeMessage>,
-        public fea::MessageReceiver<InputActionMessage>,
+        public fea::MessageReceiver<PlayerActionMessage>,
         public fea::MessageReceiver<MouseMovedMessage>,
         public fea::MessageReceiver<AddGfxEntityMessage>,
         public fea::MessageReceiver<MoveGfxEntityMessage>,
@@ -31,7 +31,7 @@ class Renderer
         void setup();
         virtual void handleMessage(const ChunkCreatedMessage& received);
         virtual void handleMessage(const WindowResizeMessage& received);
-        virtual void handleMessage(const InputActionMessage& received);
+        virtual void handleMessage(const PlayerActionMessage& received);
         virtual void handleMessage(const MouseMovedMessage& received);
         virtual void handleMessage(const AddGfxEntityMessage& received);
         virtual void handleMessage(const MoveGfxEntityMessage& received);

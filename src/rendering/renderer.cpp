@@ -13,7 +13,7 @@ Renderer::Renderer(fea::MessageBus& messageBus) : bus(messageBus)
 	movingUp = movingLeft = movingRight = movingDown = false;
 	bus.addMessageSubscriber<ChunkCreatedMessage>(*this);
 	bus.addMessageSubscriber<WindowResizeMessage>(*this);
-	bus.addMessageSubscriber<InputActionMessage>(*this);
+	bus.addMessageSubscriber<PlayerActionMessage>(*this);
 	bus.addMessageSubscriber<MouseMovedMessage>(*this);
 	bus.addMessageSubscriber<AddGfxEntityMessage>(*this);
 	bus.addMessageSubscriber<MoveGfxEntityMessage>(*this);
@@ -25,7 +25,7 @@ Renderer::~Renderer()
 {
 	bus.removeMessageSubscriber<ChunkCreatedMessage>(*this);
 	bus.removeMessageSubscriber<WindowResizeMessage>(*this);
-	bus.removeMessageSubscriber<InputActionMessage>(*this);
+	bus.removeMessageSubscriber<PlayerActionMessage>(*this);
 	bus.removeMessageSubscriber<MouseMovedMessage>(*this);
 	bus.removeMessageSubscriber<AddGfxEntityMessage>(*this);
 	bus.removeMessageSubscriber<MoveGfxEntityMessage>(*this);
@@ -255,10 +255,11 @@ void Renderer::cameraUpdate()
 
 }
 
-void Renderer::handleMessage(const InputActionMessage& received)
+void Renderer::handleMessage(const PlayerActionMessage& received)
 {
-	int action;
-	std::tie(action) = received.data;
+    size_t playerId;
+	int32_t action;
+	std::tie(playerId, action) = received.data;
 
 	switch(action)
 	{
