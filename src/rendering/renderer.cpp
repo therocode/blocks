@@ -165,8 +165,10 @@ void Renderer::render()
 	{
 		glm::vec3 cameraDir = billboard.second.mPosition - cam.GetPosition();
 		cameraDir.y = 0;
-		cameraDir = glm::normalize(cameraDir);
-
+        if(glm::length2(cameraDir) != 0)
+		    cameraDir = glm::normalize(cameraDir);
+        else
+            cameraDir.z = 1.0f;
 #if 1
 		matr[12] = billboard.second.mPosition.x;
 		matr[13] = billboard.second.mPosition.y;		
