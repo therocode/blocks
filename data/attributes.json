@@ -3,5 +3,6 @@
     "position":"#vec3#",
     "velocity":"#vec3#",
     "acceleration":"#vec3#",
-    "hitbox":"#vec3#"
+    "hitbox":"#vec3#",
+    "floating":"#bool#"
 }

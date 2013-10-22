@@ -28,5 +28,6 @@ void PlayerController::handleMessage(const PlayerJoinedMessage& received)
     std::tie(playerId, position) = received.data;
 
     fea::WeakEntityPtr playerEntity = mWorldInterface.spawnEntity("Player", position);
+    playerEntity.lock()->setAttribute<bool>("floating", true);
     mPlayerEntities.emplace(playerId, playerEntity);
 }

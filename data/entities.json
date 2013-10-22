@@ -1,6 +1,6 @@
 {
     "human":
     {
-        "mass":"10.0f", "position":"", "velocity":"0.0f,0.0f,0.0f", "acceleration":"0.0f,0.0f,0.0f", "hitbox":"1.0f,2.0f,1.0f"
+        "mass":"10.0f", "position":"", "velocity":"0.0f,0.0f,0.0f", "acceleration":"0.0f,0.0f,0.0f", "hitbox":"1.0f,2.0f,1.0f", "floating":"false"
     }
 }

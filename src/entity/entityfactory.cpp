@@ -15,6 +15,7 @@ EntityFactory::EntityFactory(fea::EntityManager& manager) : mManager(manager)
     mManager.registerDefaultSetter("velocity", vec3Setter);
     mManager.registerDefaultSetter("acceleration", vec3Setter);
     mManager.registerDefaultSetter("hitbox", vec3Setter);
+    mManager.registerDefaultSetter("floating", fea::util::boolSetter);
 }
 
 fea::WeakEntityPtr EntityFactory::spawnEntity(const std::string& scriptType)
