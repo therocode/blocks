@@ -5,11 +5,13 @@
 PlayerController::PlayerController(fea::MessageBus& bus, WorldInterface& worldInterface) : EntityController(bus, worldInterface)
 {
     mBus.addMessageSubscriber<PlayerJoinedMessage>(*this);
+    mBus.addMessageSubscriber<PlayerActionMessage>(*this);
 }
 
 PlayerController::~PlayerController()
 {
     mBus.removeMessageSubscriber<PlayerJoinedMessage>(*this);
+    mBus.removeMessageSubscriber<PlayerActionMessage>(*this);
 }
 
 void PlayerController::inspectEntity(fea::WeakEntityPtr entity)
@@ -30,4 +32,14 @@ void PlayerController::handleMessage(const PlayerJoinedMessage& received)
     fea::WeakEntityPtr playerEntity = mWorldInterface.spawnEntity("Player", position);
     playerEntity.lock()->setAttribute<bool>("floating", true);
     mPlayerEntities.emplace(playerId, playerEntity);
+}
+
+void PlayerController::handleMessage(const PlayerActionMessage& received)
+{
+    size_t playerId;
+    InputAction action;
+
+    std::tie(playerId, action) = received.data;
+
+    //if(action == 
 }

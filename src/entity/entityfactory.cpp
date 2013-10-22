@@ -14,13 +14,15 @@ EntityFactory::EntityFactory(fea::EntityManager& manager) : mManager(manager)
     mManager.registerDefaultSetter("position", vec3Setter);
     mManager.registerDefaultSetter("velocity", vec3Setter);
     mManager.registerDefaultSetter("acceleration", vec3Setter);
+    mManager.registerDefaultSetter("pitch", fea::util::floatSetter);
+    mManager.registerDefaultSetter("yaw", fea::util::floatSetter);
     mManager.registerDefaultSetter("hitbox", vec3Setter);
     mManager.registerDefaultSetter("floating", fea::util::boolSetter);
 }
 
 fea::WeakEntityPtr EntityFactory::spawnEntity(const std::string& scriptType)
 {
-    std::string type = "human";  //work out underlying type from script type
+    std::string type = "living";  //work out underlying type from script type
 
     fea::WeakEntityPtr spawned = mManager.createEntity(type);
 

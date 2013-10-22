@@ -3,6 +3,8 @@
     "position":"#vec3#",
     "velocity":"#vec3#",
     "acceleration":"#vec3#",
+    "pitch":"#float#",
+    "yaw":"#float#",
     "hitbox":"#vec3#",
     "floating":"#bool#"
 }

@@ -14,7 +14,7 @@ Renderer::Renderer(fea::MessageBus& messageBus) : bus(messageBus)
 	bus.addMessageSubscriber<ChunkCreatedMessage>(*this);
 	bus.addMessageSubscriber<WindowResizeMessage>(*this);
 	bus.addMessageSubscriber<PlayerActionMessage>(*this);
-	bus.addMessageSubscriber<MouseMovedMessage>(*this);
+	bus.addMessageSubscriber<PlayerPitchYawMessage>(*this);
 	bus.addMessageSubscriber<AddGfxEntityMessage>(*this);
 	bus.addMessageSubscriber<MoveGfxEntityMessage>(*this);
 	bus.addMessageSubscriber<RemoveGfxEntityMessage>(*this);
@@ -26,7 +26,7 @@ Renderer::~Renderer()
 	bus.removeMessageSubscriber<ChunkCreatedMessage>(*this);
 	bus.removeMessageSubscriber<WindowResizeMessage>(*this);
 	bus.removeMessageSubscriber<PlayerActionMessage>(*this);
-	bus.removeMessageSubscriber<MouseMovedMessage>(*this);
+	bus.removeMessageSubscriber<PlayerPitchYawMessage>(*this);
 	bus.removeMessageSubscriber<AddGfxEntityMessage>(*this);
 	bus.removeMessageSubscriber<MoveGfxEntityMessage>(*this);
 	bus.removeMessageSubscriber<RemoveGfxEntityMessage>(*this);
@@ -309,11 +309,11 @@ void Renderer::handleMessage(const PlayerActionMessage& received)
 	}
 }
 
-void Renderer::handleMessage(const MouseMovedMessage& received)
+void Renderer::handleMessage(const PlayerPitchYawMessage& received)
 {
 	float newX, newY;
 	float mspeed = 0.01f;
-	std::tie(newX, newY) = received.data;
+	std::tie(std::ignore, newY, newX) = received.data;
 	if(mouseDown)
 		cam.AddDirection((newX - lastX)  * mspeed,(newY - lastY) * mspeed);
 	lastX = newX;

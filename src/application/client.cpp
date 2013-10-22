@@ -66,12 +66,16 @@ void Client::destroy()
 void Client::handleMessage(const PlayerActionMessage& received)
 {
     size_t playerId;
-    int32_t action;
+    InputAction action;
 	std::tie(playerId, action) = received.data;
 
     if(action == InputAction::QUIT)
     {
         mQuit = true;
+    }
+    else
+    {
+        mBridge->enqueuePackage(std::shared_ptr<BasePackage>(new PlayerActionPackage(playerId, action)));
     }
 }
 

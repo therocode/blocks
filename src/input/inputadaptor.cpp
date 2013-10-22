@@ -33,7 +33,7 @@ void InputAdaptor::update()
             bus.sendMessage<PlayerActionMessage>(PlayerActionMessage(playerId, InputAction::QUIT));
         }
 		else if(event.type == fea::Event::MOUSEMOVED){
-            bus.sendMessage<MouseMovedMessage>(MouseMovedMessage((float)event.mouseMove.x, (float)event.mouseMove.y));
+            bus.sendMessage<PlayerPitchYawMessage>(PlayerPitchYawMessage(playerId, (float)event.mouseMove.y, (float)event.mouseMove.x));
 		}
 		else if(event.type == fea::Event::MOUSEBUTTONPRESSED){
 			if(event.mouseButton.button == fea::Mouse::Button::LEFT){

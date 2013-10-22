@@ -170,6 +170,11 @@ void Server::fetchClientData(std::weak_ptr<ClientConnection> client)
             {
                 mBus.sendMessage<RebuildScriptsRequestedMessage>(RebuildScriptsRequestedMessage('0'));
             }
+            else if(package->mType == typeid(PlayerActionPackage))
+            {
+                PlayerActionPackage* playerActionPackage = (PlayerActionPackage*) package.get();
+                mBus.sendMessage<PlayerActionMessage>(PlayerActionMessage(playerActionPackage->getData()));
+            }
         }
     }
 }
