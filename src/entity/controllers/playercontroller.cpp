@@ -27,8 +27,6 @@ void PlayerController::handleMessage(const PlayerJoinedMessage& received)
 
     std::tie(playerId, position) = received.data;
 
-    fea::WeakEntityPtr playerEntity = mWorldInterface.spawnEntity("Elephant", position);
-    std::cout << "spawned a good one\n";
-
+    fea::WeakEntityPtr playerEntity = mWorldInterface.spawnEntity("Player", position);
     mPlayerEntities.emplace(playerId, playerEntity);
 }

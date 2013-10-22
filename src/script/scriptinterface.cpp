@@ -63,8 +63,6 @@ void ScriptInterface::registerCallbacks(const std::map<size_t, ScriptEntity>& sc
     if(!mModule.hasErrors())
     {
         onFrameCallback.setFunction(mModule.getFunctionByDecl("void onFrame(int frameNumber)"));
-
-        std::vector<asIObjectType*> objectTypes = mModule.getObjectTypes();
     }
 }
 

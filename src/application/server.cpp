@@ -142,7 +142,7 @@ void Server::acceptClientConnection(std::shared_ptr<ClientConnection> client)
         client->enqueuePackage(chunkAddedPackage);
     }
 
-    //create entity
+    mBus.sendMessage<PlayerJoinedMessage>(PlayerJoinedMessage(newClientId, glm::vec3(0.0f, 50.0f, -50.0f))); //position could be loaded from file or at spawn
 }
 
 void Server::pollNewClients()

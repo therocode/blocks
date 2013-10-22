@@ -33,3 +33,6 @@ using RemoveScriptEntityMessage = fea::Message<RemoveScriptEntity_tag, asIScript
 
 struct EntityRemoved_tag{};//                               id 
 using EntityRemovedMessage = fea::Message<EntityRemoved_tag, size_t>;
+
+struct PlayerEntity_tag{};//                               player id      player entity
+using PlayerEntityMessage = fea::Message<PlayerEntity_tag, fea::EntityId, fea::WeakEntityPtr>;
