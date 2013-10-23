@@ -153,18 +153,22 @@ void Camera::LookAt(float eyeX, float eyeY, float eyeZ, float centerX, float cen
 }
 void Camera::AddDirection(float x, float y)
 {
-	phi+=x;
-	theta+=y;
-	if(theta>=glm::pi<float>())theta=glm::pi<float>()-0.001f;
-	if(theta<0)theta=0.001f;
+	phi   +=x;
+	theta +=y;
+	
+	if(theta >= glm::pi<float>() * 0.5f)
+		theta = glm::pi<float>() * 0.5f - 0.001f;
+	if(theta <= -glm::pi<float>() * 0.5f)
+		theta = -glm::pi<float>() * 0.5f + 0.001f;
+		
 	float fSinTheta = glm::sin(theta);
 	float fCosTheta = glm::cos(theta);
-	float fCosPhi = glm::cos(phi);
-	float fSinPhi = glm::sin(phi);
+	float fCosPhi = glm::cos(-phi);
+	float fSinPhi = glm::sin(-phi);
 	
-	direction.x = (fSinTheta*fCosPhi);
+	direction.x = (fCosTheta*fSinPhi);
 	direction.y = (fSinTheta);
-	direction.z = (fSinTheta*fSinPhi);
+	direction.z = (fCosTheta*fCosPhi);
 	if(glm::length2(direction) != 0)
 	direction = glm::normalize(direction);
 	Update();
@@ -175,5 +179,5 @@ void Camera::SetPitchYaw(float pitch, float yaw)
 	phi	 =0.001;
 	theta=0.001;
 	AddDirection(pitch, yaw);
-	//printf("direction:%f, %f, %f\n", pitch, yaw, direction.z);
+	//printf("direction:%f, %f, %f\n---\n", pitch, yaw, direction.z);
 }
