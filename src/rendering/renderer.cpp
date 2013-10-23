@@ -282,7 +282,7 @@ void Renderer::handleMessage(const RotateGfxEntityMessage& received)
     float pitch;
     float yaw;
 
-    std::tie(id, yaw, pitch) = received.data;
+    std::tie(id, pitch, yaw) = received.data;
 
     billboards.at(id).mPitch = pitch;
     billboards.at(id).mYaw = yaw;

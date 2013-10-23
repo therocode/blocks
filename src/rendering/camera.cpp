@@ -176,8 +176,14 @@ void Camera::AddDirection(float x, float y)
 
 void Camera::SetPitchYaw(float pitch, float yaw)
 {
-	phi	 =0.001;
-	theta=0.001;
-	AddDirection(pitch, yaw);
-	//printf("direction:%f, %f, %f\n---\n", pitch, yaw, direction.z);
+	//phi	 =0.001;
+	//theta=0.001;
+	if(pitch >= glm::pi<float>() * 0.5f)
+		pitch = glm::pi<float>() * 0.5f - 0.001f;
+	if(pitch <= -glm::pi<float>() * 0.5f)
+		pitch = -glm::pi<float>() * 0.5f + 0.001f;
+		
+	SetDirection(glm::vec3(glm::cos(pitch)*glm::sin(yaw), glm::sin(pitch), glm::cos(pitch) * glm::cos(yaw)));
+	//AddDirection(pitch, yaw);
+	//printf("direction2:%f, %f, %f\n---\n", pitch, yaw,0);//s direction.z);
 }

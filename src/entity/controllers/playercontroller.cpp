@@ -41,6 +41,7 @@ void PlayerController::onFrame()
 			if(pitch <= -glm::pi<float>() * 0.5f)
 				pitch = -glm::pi<float>() * 0.5f + 0.001f;
 			
+			//printf("direction1:%f, %f, %f\n", pitch, yaw,0);
            // std::cout << "pitch " << pitch << "\n";
             //std::cout << "yaw " << yaw << "\n";
 			glm::vec3 currentSpeed = entity->getAttribute<glm::vec3>("velocity");
@@ -129,10 +130,19 @@ void PlayerController::handleMessage(const PlayerPitchYawMessage& received)
     if(playerEntry != mPlayerEntities.end())
     {
         fea::EntityPtr entity = playerEntry->second.lock();
-        entity->addToAttribute<float>("pitch", glm::radians(pitch));
+		float newPitch = entity->getAttribute<float>("pitch");
+		newPitch += glm::radians(pitch);
+		
+		if(newPitch >= glm::pi<float>() * 0.5f)
+			newPitch = glm::pi<float>() * 0.5f - 0.001f;
+		if(newPitch <= -glm::pi<float>() * 0.5f)
+			newPitch = -glm::pi<float>() * 0.5f + 0.001f;
+		
+		
+			
+        entity->setAttribute<float>("pitch", newPitch);
         entity->addToAttribute<float>("yaw",   glm::radians(yaw));
 
-        float newPitch = entity->getAttribute<float>("pitch");
         float newYaw = entity->getAttribute<float>("yaw");
 		//printf("Pitch: %f, and yaw: %f\n", newPitch, newYaw);
         mBus.sendMessage<RotateGfxEntityMessage>(RotateGfxEntityMessage(playerEntry->second.lock()->getId(), newPitch, newYaw));
