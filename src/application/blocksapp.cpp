@@ -116,10 +116,13 @@ void BlocksApplication::setupMultiPlayer()
 void BlocksApplication::setupDedicatedServer()
 {
     server = std::unique_ptr<Server>(new Server());
-
+	RemoteServerClientBridge *serverToClient = new RemoteServerClientBridge(true);
     //ugly hack to make it not segfault
     LocalServerClientBridge* clientToServer = new LocalServerClientBridge();
     clientToServer->connect(clientToServer);
+
+
+	serverToClient->startListening();
     //server->addClientBridge(std::unique_ptr<LocalServerClientBridge>(clientToServer));
     server->setup();
 /*  std::cout << "Initialising dedicated server without a local client\n";
@@ -140,7 +143,20 @@ void BlocksApplication::setupDedicatedServer()
 
 void BlocksApplication::joinServer(const std::string& address, int32_t port)
 {
-    std::cout << "Initialising single player game with a local server and a local client\n";
+   // server = std::unique_ptr<Server>(new Server());
+	client = std::unique_ptr<Client>(new Client());
+
+    //RemoteServerClientBridge* serverToClient = new RemoteServerClientBridge(true);
+  	RemoteServerClientBridge* clientToServer = new RemoteServerClientBridge(false);
+	//serverToClient->startListening();
+    //server->setup();
+    //client->setServerBridge(std::unique_ptr<RemoteServerClientBridge>(clientToServer));
+    //server->addClientBridge(std::unique_ptr<RemoteServerClientBridge>(serverToClient));
+    //clientToServer->connect(serverToClient);
+    //serverToClient->connect(clientToServer);
+	clientToServer->connectToAddress(address);
+	client->setup();
+   /* std::cout << "Initialising single player game with a local server and a local client\n";
     std::cout << "Joining server " << address << " on port " << port << "...\n";
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     std::cout << "...\n";
@@ -154,5 +170,6 @@ void BlocksApplication::joinServer(const std::string& address, int32_t port)
     std::cout << "fatal error! You have been permanently banned!\n";
     std::this_thread::sleep_for(std::chrono::milliseconds(3000));
     std::cout << "No, just kidding, not implemented yet\n";
-    exit(1);
+    exit(1);*/
+
 }

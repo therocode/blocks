@@ -23,6 +23,7 @@ RemoteServerClientBridge::RemoteServerClientBridge(bool isServer)
 }
 void RemoteServerClientBridge::connectToAddress(std::string address)
 {
+	printf("Going to try to connect to %s\n", address.c_str());
 	if(!mIsHost && !mConnected)
 	{
 		enet_address_set_host(&mAddress, address.c_str());	
@@ -70,6 +71,7 @@ void RemoteServerClientBridge::mListenerFunction()
 	while(!mStop){
 		while(enet_host_service(mHost, &event, 10) > 0)
 		{
+			printf("stuff happened\n");
 			switch(event.type)
 			{
 				case ENET_EVENT_TYPE_CONNECT:
