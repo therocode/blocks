@@ -229,6 +229,7 @@ void Renderer::render()
 void Renderer::cameraUpdate()
 {
     cam.SetPosition(mCameraPosition);
+    //camera must be updated from mPitch and mYaw
 	cam.Update();
 
 	setCameraMatrix(cam.GetMatrix());
@@ -260,6 +261,24 @@ void Renderer::handleMessage(const MoveGfxEntityMessage& received)
     if(id == mCameraEntity)
     {
         mCameraPosition = position;
+    }
+}
+
+void Renderer::handleMessage(const RotateGfxEntityMessage& received)
+{
+    size_t id;
+    float pitch;
+    float yaw;
+
+    std::tie(id, pitch, yaw) = received.data;
+
+    billboards.at(id).mPitch = pitch;
+    billboards.at(id).mYaw = yaw;
+
+    if(id == mCameraEntity)
+    {
+        mCameraPitch = pitch;
+        mCameraYaw = yaw;
     }
 }
 
