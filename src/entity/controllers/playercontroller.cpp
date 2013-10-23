@@ -43,16 +43,28 @@ void PlayerController::handleMessage(const PlayerActionMessage& received)
 
     std::tie(playerId, action) = received.data;
 
-    //if(action == 
+    auto playerEntry = mPlayerEntities.find(playerId);
+    if(playerEntry != mPlayerEntities.end())
+    {
+        glm::vec3 forwardDir(0.0f, 0.0f, 1.0f);
+
+        playerEntry->second.lock()->addToAttribute("velocity", forwardDir);
+    }
+    
 }
 
 void PlayerController::handleMessage(const PlayerPitchYawMessage& received)
 {
-    size_t playerId;
+ size_t playerId;
     float pitch;
     float yaw;
 
     std::tie(playerId, pitch, yaw) = received.data;
 
-    //if(action == 
+    auto playerEntry = mPlayerEntities.find(playerId);
+    if(playerEntry != mPlayerEntities.end())
+    {
+        playerEntry->second.lock()->addToAttribute<float>("pitch", pitch);
+        playerEntry->second.lock()->addToAttribute<float>("yaw", yaw);
+    }
 }

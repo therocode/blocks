@@ -18,5 +18,5 @@ class PlayerController :
         void handleMessage(const PlayerActionMessage& received);
         void handleMessage(const PlayerPitchYawMessage& received);
     private:
-        std::unordered_map<fea::EntityId, fea::WeakEntityPtr> mPlayerEntities;
+        std::unordered_map<size_t, fea::WeakEntityPtr> mPlayerEntities;
 };

@@ -29,21 +29,25 @@ void PhysicsController::update()
 {
     for(auto wEntity : mEntities)
     {
+        glm::vec3 gravityForce;
+
         fea::EntityPtr entity = wEntity.second.lock();
         if(!entity->getAttribute<bool>("floating"))
         {
-            glm::vec3 currentPosition = entity->getAttribute<glm::vec3>("position");
-            glm::vec3 currentVelocity = entity->getAttribute<glm::vec3>("velocity");
-            glm::vec3 acceleration = entity->getAttribute<glm::vec3>("acceleration") + glm::vec3(0.0f, gravityConstant, 0.0f);
-            float mass = entity->getAttribute<float>("mass");
-
-            glm::vec3 newVelocity = currentVelocity + acceleration;
-            glm::vec3 newPosition = currentPosition + newVelocity;
-
-            entity->setAttribute<glm::vec3>("velocity", newVelocity);
-
-            mBus.sendMessage<EntityMoveRequestedMessage>(EntityMoveRequestedMessage(entity->getId(), newPosition));
+            gravityForce = glm::vec3(0.0f, gravityConstant, 0.0f);
         }
+
+        glm::vec3 currentPosition = entity->getAttribute<glm::vec3>("position");
+        glm::vec3 currentVelocity = entity->getAttribute<glm::vec3>("velocity");
+        glm::vec3 acceleration = entity->getAttribute<glm::vec3>("acceleration") + gravityForce;
+        float mass = entity->getAttribute<float>("mass");
+
+        glm::vec3 newVelocity = currentVelocity + acceleration;
+        glm::vec3 newPosition = currentPosition + newVelocity;
+
+        entity->setAttribute<glm::vec3>("velocity", newVelocity);
+
+        mBus.sendMessage<EntityMoveRequestedMessage>(EntityMoveRequestedMessage(entity->getId(), newPosition));
     }
 }
 
