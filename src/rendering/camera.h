@@ -30,6 +30,9 @@ class Camera
 		void LookAt(float eyeX, float eyeY, float eyeZ, float centerX, float centerY,float centerZ, float upX, float upY, float upZ);
 		//!Updates the camera matrix.
 		void Update();
+		//!Sets pitch and yaw for the camera.
+		void SetPitchYaw(float pitch, float yaw);
+		
 		glm::mat4 GetMatrix(){
 			return matrix;
 		};

@@ -40,8 +40,8 @@ void PlayerController::onFrame()
 			if(pitch <= -glm::pi<float>() * 0.5f)
 				pitch = -glm::pi<float>() * 0.5f + 0.001f;
 			
-            std::cout << "pitch " << pitch << "\n";
-            std::cout << "yaw " << yaw << "\n";
+           // std::cout << "pitch " << pitch << "\n";
+            //std::cout << "yaw " << yaw << "\n";
 			glm::vec3 currentSpeed = entity->getAttribute<glm::vec3>("velocity");
             glm::vec3 speedDir(0.0f, 0.0f, 0.1f);
 			
@@ -104,7 +104,7 @@ void PlayerController::handleMessage(const PlayerActionMessage& received)
 
 void PlayerController::handleMessage(const PlayerPitchYawMessage& received)
 {
- size_t playerId;
+	size_t playerId;
     float pitch;
     float yaw;
 

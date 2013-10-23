@@ -140,6 +140,7 @@ void Camera::Update()
 	matrix[0][ 2 ] = -( cx * x + cy * y + cz * z );
 	matrix[0][ 3 ] = 1.0f;*/
 	matrix = glm::lookAt(position, position + direction, upDirection);
+
 }
 
 void Camera::LookAt(float eyeX, float eyeY, float eyeZ, float centerX, float centerY, float centerZ, float upX, float upY, float upZ)
@@ -169,3 +170,10 @@ void Camera::AddDirection(float x, float y)
 	Update();
 }
 
+void Camera::SetPitchYaw(float pitch, float yaw)
+{
+	phi	 =0.001;
+	theta=0.001;
+	AddDirection(pitch, yaw);
+	//printf("direction:%f, %f, %f\n", pitch, yaw, direction.z);
+}

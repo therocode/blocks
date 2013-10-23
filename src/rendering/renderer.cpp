@@ -79,6 +79,7 @@ void Renderer::setup()
 	mShaderProgram.setShaderPaths("data/vert", "data/frag");
 }
 void Renderer::setCameraMatrix(glm::mat4 m){
+
 	//glMatrixMode(GL_MODELVIEW);
 	//glLoadIdentity();
 	//glMultMatrixf(glm::value_ptr(m));
@@ -144,20 +145,22 @@ void Renderer::render()
 	bus.sendMessage<CameraUpdatedMessage>(CameraUpdatedMessage(cam.GetPosition(), cam.GetDirection()));
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	mShaderProgram.bind();
-	mShaderProgram.setUniform("worldToCamera", cam.GetMatrix());
+	cam.Update();
+		mShaderProgram.setUniform("worldToCamera", cam.GetMatrix());
+
 	mShaderProgram.setUniform("cameraToClip",  projectionMatrix);
 	mShaderProgram.setUniform("modelToWorld",  glm::mat4(1.f));
 	mShaderProgram.setTexture("tex0", blockTexture);
 	mShaderProgram.setUniform("screenSize", mScreenSize);
 	//I set these because easier to debug.
-#ifndef EMSCRIPTEN
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glMultMatrixf(glm::value_ptr(projectionMatrix));
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	glMultMatrixf(glm::value_ptr(cam.GetMatrix()));
-#endif
+	#ifndef EMSCRIPTEN
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glMultMatrixf(glm::value_ptr(projectionMatrix));
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+		glMultMatrixf(glm::value_ptr(cam.GetMatrix()));
+	#endif
 
 	glBindTexture(GL_TEXTURE_2D, blockTexture);
 
@@ -228,7 +231,8 @@ void Renderer::render()
 
 void Renderer::cameraUpdate()
 {
-    cam.SetPosition(mCameraPosition);
+   // cam.SetPosition(mCameraPosition);
+	cam.SetPitchYaw(mCameraPitch, mCameraYaw);
     //camera must be updated from mPitch and mYaw
 	cam.Update();
 
