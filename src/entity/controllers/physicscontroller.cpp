@@ -25,7 +25,7 @@ void PhysicsController::inspectEntity(fea::WeakEntityPtr entity)
     }
 }
 
-void PhysicsController::update()
+void PhysicsController::onFrame()
 {
     for(auto wEntity : mEntities)
     {
