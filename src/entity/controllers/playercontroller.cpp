@@ -44,7 +44,7 @@ void PlayerController::onFrame()
            // std::cout << "pitch " << pitch << "\n";
             //std::cout << "yaw " << yaw << "\n";
 			glm::vec3 currentSpeed = entity->getAttribute<glm::vec3>("velocity");
-            glm::vec3 speedDir(0.0f, 0.0f, 0.1f);
+            glm::vec3 speedDir(0.0f, 0.0f, 1.0f);
 			
             glm::mat3 xRot( glm::vec3(1, 			0, 			0),
 							glm::vec3(0, glm::cos(pitch), -glm::sin(pitch)),
@@ -56,7 +56,7 @@ void PlayerController::onFrame()
                            glm::vec3(-glm::sin(yaw), 0, glm::cos(yaw))
                           );
 			
-            currentSpeed = glm::vec3(glm::cos(pitch)*glm::sin(yaw), glm::sin(pitch), glm::cos(pitch) * glm::cos(yaw)) * 0.01f;//glm::vec3(yRot * xRot * speedDir);
+            currentSpeed = glm::vec3(glm::cos(pitch)*glm::sin(yaw), glm::sin(pitch), glm::cos(pitch) * glm::cos(yaw)) * 0.1f;//glm::vec3(yRot * xRot * speedDir);
             entity->setAttribute("velocity", currentSpeed);
             glm::vec3 vel = entity->getAttribute<glm::vec3>("velocity");
         }

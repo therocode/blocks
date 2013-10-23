@@ -24,8 +24,6 @@ void World::initialise()
 {
 	standardDimension.initialise();
 
-	standardDimension.addFocusPoint(FocusPoint(glm::vec3(0.0f, 0.0f, 0.0f), 4.0f));
-
 	entitySystem.addController(std::unique_ptr<EntityController>(new PlayerController(bus, worldInterface)));
 	entitySystem.addController(std::unique_ptr<EntityController>(new PhysicsController(bus, worldInterface)));
 	entitySystem.addController(std::unique_ptr<EntityController>(new CollisionController(bus, worldInterface)));
@@ -64,7 +62,7 @@ void World::handleMessage(const PlayerEntersChunkMessage& received)
 
 	std::tie(playerId, chunkCoordinate) = received.data;
 
-    standardDimension.addFocusPoint(FocusPoint(glm::vec3(chunkCoordinate.x * 16.0f, chunkCoordinate.y * 16.0f, chunkCoordinate.z * 16.0f), 4.0f));
+    //standardDimension.addFocusPoint();
 }
 
 WorldInterface& World::getWorldInterface()
