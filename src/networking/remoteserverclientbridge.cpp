@@ -12,9 +12,6 @@ RemoteServerClientBridge::RemoteServerClientBridge(bool isServer)
 		if(enet_initialize() < 0)
 		{
 			printf("ENet failed to initialize\n");
-		}else
-		{
-			printf("ENet initialized\n");
 		}
 		RemoteServerClientBridge::sEnetInitialized = true;
 	}
@@ -93,7 +90,7 @@ void RemoteServerClientBridge::mListenerFunction()
 					printf ("A packet of length %u containing %s was received from %s on channel %u.\n",
 							event.packet -> dataLength,
 							event.packet -> data,
-							event.peer -> data,
+							event.peer -> address.host,
 							event.channelID);
 					/* Clean up the packet now that we're done using it. */
 					enet_packet_destroy (event.packet);
@@ -133,7 +130,6 @@ void RemoteServerClientBridge::createHost()
 
 void RemoteServerClientBridge::createClient()
 {
-	//mAddress.port = mPort;
 	mHost = enet_host_create(NULL, //This isn't going to host anything.
 			1,//one outgoing connection.
 			2,//channels
