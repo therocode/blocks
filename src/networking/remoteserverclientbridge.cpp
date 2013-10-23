@@ -84,7 +84,7 @@ void RemoteServerClientBridge::mListenerFunction()
 							event.peer -> address.host,
 							event.peer -> address.port);
 					/* Store any relevant client information here. */
-					event.peer -> data = (void*)event.peer ->address.host;
+					//event.peer -> data = "Client information";
 					break;
 				case ENET_EVENT_TYPE_RECEIVE:
 					printf ("A packet of length %u containing %s was received from %s on channel %u.\n",
