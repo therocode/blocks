@@ -40,6 +40,7 @@ void RemoteServerClientBridge::connectToAddress(std::string address)
 		if(enet_host_service(mHost, &event, 5000) > 0 &&
 				event.type == ENET_EVENT_TYPE_CONNECT)
 		{
+			printf("Wow, we really connected to %s.\n", address.c_str());
 			//When connected, greet the server!
 			char i[100];
 			for(int o = 0; o < 100; o++)i[o] = (char)(64 + rand()%26);
@@ -95,6 +96,7 @@ void RemoteServerClientBridge::mListenerFunction()
 					event.peer -> data = NULL;
 			}
 		}
+		flush();
 	}
 }
 
