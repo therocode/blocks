@@ -51,6 +51,7 @@ void PlayerController::handleMessage(const PlayerJoinedMessage& received)
     playerEntity.lock()->setAttribute("floating", true);
     mPlayerEntities.emplace(playerId, playerEntity);
     mPlayerThrottles.emplace(playerId, 0.0f);
+    std::cout << "entity id spawned for client id " << playerId << " is " << playerEntity.lock()->getId() << " \n";
 }
 
 void PlayerController::handleMessage(const PlayerActionMessage& received)
