@@ -108,8 +108,8 @@ void RemoteServerClientBridge::mListenerFunction()
 
 void RemoteServerClientBridge::createHost()
 {
-	enet_address_set_host(&mAddress, "jefvel.net");
-	//	mAddress.host = ENET_HOST_ANY;
+//	enet_address_set_host(&mAddress, "localhost");
+	mAddress.host = ENET_HOST_ANY;
 	mAddress.port = mPort;
 	mHost = enet_host_create(&mAddress, //What address to host on.
 			32,		//Maximum connections.
