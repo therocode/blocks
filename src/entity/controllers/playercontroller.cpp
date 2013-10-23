@@ -31,11 +31,29 @@ void PlayerController::onFrame()
         float throttle = throttleEntry.second;
         if(throttle > 0.001f)
         {
-            fea::WeakEntityPtr entity = mPlayerEntities.at(throttleEntry.first);
-            glm::vec3 forwardDir(0.0f, 0.0f, 1.0f);
-            entity.lock()->addToAttribute("velocity", forwardDir);
-            glm::vec3 vel = entity.lock()->getAttribute<glm::vec3>("velocity");
-            std::cout << "changed velocity of entity id " << entity.lock()->getId() << " and vel is now " << vel.x << " " << vel.y << " " << vel.z << "\n";
+            fea::EntityPtr entity = mPlayerEntities.at(throttleEntry.first).lock();
+            float pitch = glm::radians(entity->getAttribute<float>("pitch"));
+            float yaw = glm::radians(entity->getAttribute<float>("yaw"));
+
+            std::cout << "pitch " << pitch << "\n";
+            std::cout << "yaw " << yaw << "\n";
+
+            glm::vec4 speedDir(0.0f, 0.0f, 0.1f, 1.0f);
+
+            glm::mat4 xRot(glm::vec4(glm::cos(yaw), -glm::sin(yaw), 0, 0),
+                           glm::vec4(glm::sin(yaw), glm::cos(yaw), 0, 0),
+                           glm::vec4(0, 0, 1, 0),
+                           glm::vec4(0, 0, 0, 1));
+
+            glm::mat4 yRot(glm::vec4(glm::cos(pitch), 0, glm::sin(pitch), 0),
+                           glm::vec4(0, 1, 0, 0),
+                           glm::vec4(-glm::sin(pitch), 0, glm::cos(pitch), 0),
+                           glm::vec4(0, 0, 0, 1));
+
+            speedDir = yRot  * xRot * speedDir;
+
+            entity->addToAttribute("velocity", glm::vec3(speedDir.x, speedDir.y, speedDir.z));
+            glm::vec3 vel = entity->getAttribute<glm::vec3>("velocity");
         }
     }
 }
@@ -51,7 +69,6 @@ void PlayerController::handleMessage(const PlayerJoinedMessage& received)
     playerEntity.lock()->setAttribute("floating", true);
     mPlayerEntities.emplace(playerId, playerEntity);
     mPlayerThrottles.emplace(playerId, 0.0f);
-    std::cout << "entity id spawned for client id " << playerId << " is " << playerEntity.lock()->getId() << " \n";
 }
 
 void PlayerController::handleMessage(const PlayerActionMessage& received)
@@ -61,10 +78,21 @@ void PlayerController::handleMessage(const PlayerActionMessage& received)
 
     std::tie(playerId, action) = received.data;
 
-    auto playerEntry = mPlayerThrottles.find(playerId);
-    if(playerEntry != mPlayerThrottles.end())
+    if(action == FORWARDS)
     {
-        playerEntry->second = 1.0f;
+        auto playerEntry = mPlayerThrottles.find(playerId);
+        if(playerEntry != mPlayerThrottles.end())
+        {
+            playerEntry->second = 1.0f;
+        }
+    }
+    else if(action == STOPFORWARDS)
+    {
+        auto playerEntry = mPlayerThrottles.find(playerId);
+        if(playerEntry != mPlayerThrottles.end())
+        {
+            playerEntry->second = 0.0f;
+        }
     }
 }
 
