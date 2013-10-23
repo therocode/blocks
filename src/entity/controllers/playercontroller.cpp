@@ -61,6 +61,18 @@ void PlayerController::onFrame()
             glm::vec3 vel = entity->getAttribute<glm::vec3>("velocity");
         }
     }
+
+    for(auto& chunkEntry : mPlayerChunks)
+    {
+        fea::EntityPtr entity = mPlayerEntities.at(chunkEntry.first).lock();
+
+        glm::vec3 position = entity->getAttribute<glm::vec3>("position");
+
+        if(worldToChunk(position) != chunkEntry.second)
+        {
+            playerEntersChunk(chunkEntry.first, worldToChunk(position));
+        }
+    }
 }
 
 void PlayerController::handleMessage(const PlayerJoinedMessage& received)
@@ -74,6 +86,7 @@ void PlayerController::handleMessage(const PlayerJoinedMessage& received)
     playerEntity.lock()->setAttribute("floating", true);
     mPlayerEntities.emplace(playerId, playerEntity);
     mPlayerThrottles.emplace(playerId, 0.0f);
+    playerEntersChunk(playerId, worldToChunk(position));
 
     mBus.sendMessage<PlayerConnectedToEntityMessage>(PlayerConnectedToEntityMessage(playerId, playerEntity.lock()->getId()));
 }
@@ -123,4 +136,10 @@ void PlayerController::handleMessage(const PlayerPitchYawMessage& received)
 
         mBus.sendMessage<RotateGfxEntityMessage>(RotateGfxEntityMessage(playerEntry->second.lock()->getId(), newPitch, newYaw));
     }
+}
+
+void PlayerController::playerEntersChunk(size_t playerId, const ChunkCoordinate& chunk)
+{
+    //send message
+    mPlayerChunks[playerId] = chunk;
 }
