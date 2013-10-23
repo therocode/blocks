@@ -79,10 +79,7 @@ vec4 fragColor;
 	float chW = 1;
 	float chS = 6.0;
 
-	if(abs(d.x)  < chW || abs(d.y) < chW  ){
-		if(abs(d.x) < chS && abs(d.y) < chS)
-			fragColor = vec4(1.0) - fragColor;	
-	}
+
 	
 	vec4 ff = vec4(1.0, 1.0, 1.0, 1.0);
 	ff.w = 1.0;
@@ -90,6 +87,11 @@ vec4 fragColor;
 	//gamme correction kinda 
 	if (fragColor.x<0.50)
 		fragColor.rgb = pow(fragColor.rgb, vec3(1.0 / 0.8));
+
+	if(abs(d.x)  < chW || abs(d.y) < chW  ){
+		if(abs(d.x) < chS && abs(d.y) < chS)
+			fragColor = vec4(1.0) - fragColor;	
+	}
 	gl_FragColor = fragColor;
 //	gl_FragColor = vec4(normalWorldSpace, 1.0);
 }
