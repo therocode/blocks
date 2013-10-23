@@ -55,7 +55,7 @@ void PlayerController::onFrame()
                            glm::vec3(-glm::sin(yaw), 0, glm::cos(yaw))
                           );
 			
-            currentSpeed = glm::vec3(yRot * xRot * speedDir);
+            currentSpeed = glm::vec3(glm::sin(yaw), glm::sin(pitch), glm::cos(yaw)) * 0.01f;//glm::vec3(yRot * xRot * speedDir);
             entity->setAttribute("velocity", currentSpeed);
             glm::vec3 vel = entity->getAttribute<glm::vec3>("velocity");
         }
