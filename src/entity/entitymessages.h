@@ -1,5 +1,6 @@
 #pragma once
 #include "../blockstd.h"
+#include "../world/chunk.h"
 #include <featherkit/messaging.h>
 #include <featherkit/entitysystem.h>
 
@@ -39,3 +40,6 @@ using PlayerEntityMessage = fea::Message<PlayerEntity_tag, size_t, fea::WeakEnti
 
 struct PlayerConnectedToEntity_tag{};//                                          player id  entity id
 using PlayerConnectedToEntityMessage = fea::Message<PlayerConnectedToEntity_tag, size_t, fea::EntityId>;
+
+struct PlayerEntersChunk_tag{};//                                    playrid      chunk coord
+using PlayerEntersChunkMessage = fea::Message<PlayerEntersChunk_tag, size_t, const ChunkCoordinate&>;
