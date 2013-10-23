@@ -19,6 +19,7 @@ Renderer::Renderer(fea::MessageBus& messageBus) : bus(messageBus)
 	bus.addMessageSubscriber<MoveGfxEntityMessage>(*this);
 	bus.addMessageSubscriber<RemoveGfxEntityMessage>(*this);
 	bus.addMessageSubscriber<CurrentlyFacingBlockMessage>(*this);
+	bus.addMessageSubscriber<PlayerConnectedToEntityMessage>(*this);
 }
 
 Renderer::~Renderer()
@@ -31,6 +32,7 @@ Renderer::~Renderer()
 	bus.removeMessageSubscriber<MoveGfxEntityMessage>(*this);
 	bus.removeMessageSubscriber<RemoveGfxEntityMessage>(*this);
 	bus.removeMessageSubscriber<CurrentlyFacingBlockMessage>(*this);
+	bus.removeMessageSubscriber<PlayerConnectedToEntityMessage>(*this);
 }
 
 void Renderer::makeTexture(std::string path, uint32_t width, uint32_t height, GLuint& textureId)
@@ -128,6 +130,11 @@ void Renderer::handleMessage(const WindowResizeMessage& received)
 	glViewport(0, 0, width, height);
 
 
+}
+
+void Renderer::handleMessage(const PlayerConnectedToEntityMessage& received)
+{
+    //connect to player
 }
 
 void Renderer::render()

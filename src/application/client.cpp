@@ -137,5 +137,10 @@ void Client::fetchServerData()
             GfxEntityRemovedPackage* gfxRemovedPackage = (GfxEntityRemovedPackage*)package.get();
             mBus.sendMessage<RemoveGfxEntityMessage>(RemoveGfxEntityMessage(gfxRemovedPackage->getData()));
         }
+        else if(package->mType == typeid(PlayerConnectedToEntityPackage))
+        {
+            PlayerConnectedToEntityPackage* playerConnectedToEntityPackage = (PlayerConnectedToEntityPackage*)package.get();
+            mBus.sendMessage<PlayerConnectedToEntityMessage>(PlayerConnectedToEntityMessage(playerConnectedToEntityPackage->getData()));
+        }
     }
 }

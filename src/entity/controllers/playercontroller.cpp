@@ -38,7 +38,7 @@ void PlayerController::onFrame()
             std::cout << "pitch " << pitch << "\n";
             std::cout << "yaw " << yaw << "\n";
 
-            glm::vec4 speedDir(0.0f, 0.0f, 0.1f, 1.0f);
+            glm::vec4 speedDir(0.0f, 0.0f, 0.01f, 1.0f);
 
             glm::mat4 xRot(glm::vec4(glm::cos(yaw), -glm::sin(yaw), 0, 0),
                            glm::vec4(glm::sin(yaw), glm::cos(yaw), 0, 0),
@@ -69,6 +69,8 @@ void PlayerController::handleMessage(const PlayerJoinedMessage& received)
     playerEntity.lock()->setAttribute("floating", true);
     mPlayerEntities.emplace(playerId, playerEntity);
     mPlayerThrottles.emplace(playerId, 0.0f);
+
+    mBus.sendMessage<PlayerConnectedToEntityMessage>(PlayerConnectedToEntityMessage(playerId, playerEntity.lock()->getId()));
 }
 
 void PlayerController::handleMessage(const PlayerActionMessage& received)

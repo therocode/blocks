@@ -4,7 +4,8 @@
 #include "vbo.h"
 #include "billboard.h"
 #include "../input/inputmessages.h"
-#include "../rendering/renderingmessages.h"
+#include "renderingmessages.h"
+#include "../entity/entitymessages.h"
 #include "../world/worldmessages.h"
 #include "camera.h"
 #include <vector>
@@ -21,7 +22,8 @@ class Renderer
         public fea::MessageReceiver<AddGfxEntityMessage>,
         public fea::MessageReceiver<MoveGfxEntityMessage>,
         public fea::MessageReceiver<CurrentlyFacingBlockMessage>,
-        public fea::MessageReceiver<RemoveGfxEntityMessage>
+        public fea::MessageReceiver<RemoveGfxEntityMessage>,
+        public fea::MessageReceiver<PlayerConnectedToEntityMessage>
                 
 {
     public:
@@ -37,6 +39,7 @@ class Renderer
         virtual void handleMessage(const MoveGfxEntityMessage& received);
         virtual void handleMessage(const RemoveGfxEntityMessage& received);
         virtual void handleMessage(const CurrentlyFacingBlockMessage& received);
+        virtual void handleMessage(const PlayerConnectedToEntityMessage& received);
         void render();
         void cameraUpdate();    // camera function
 		void setCameraMatrix(glm::mat4 m);
@@ -58,4 +61,6 @@ class Renderer
 		bool movingLeft, movingRight, movingUp, movingDown, elevate, delevate;
 		bool mouseDown = false;
 		glm::vec3 camSpeed;
+
+        size_t cameraEntity;
 };
