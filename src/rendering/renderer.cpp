@@ -11,6 +11,7 @@ Renderer::Renderer(fea::MessageBus& messageBus) : bus(messageBus)
 	bus.addMessageSubscriber<WindowResizeMessage>(*this);
 	bus.addMessageSubscriber<AddGfxEntityMessage>(*this);
 	bus.addMessageSubscriber<MoveGfxEntityMessage>(*this);
+	bus.addMessageSubscriber<RotateGfxEntityMessage>(*this);
 	bus.addMessageSubscriber<RemoveGfxEntityMessage>(*this);
 	bus.addMessageSubscriber<CurrentlyFacingBlockMessage>(*this);
 	bus.addMessageSubscriber<PlayerConnectedToEntityMessage>(*this);
@@ -22,6 +23,7 @@ Renderer::~Renderer()
 	bus.removeMessageSubscriber<WindowResizeMessage>(*this);
 	bus.removeMessageSubscriber<AddGfxEntityMessage>(*this);
 	bus.removeMessageSubscriber<MoveGfxEntityMessage>(*this);
+	bus.removeMessageSubscriber<RotateGfxEntityMessage>(*this);
 	bus.removeMessageSubscriber<RemoveGfxEntityMessage>(*this);
 	bus.removeMessageSubscriber<CurrentlyFacingBlockMessage>(*this);
 	bus.removeMessageSubscriber<PlayerConnectedToEntityMessage>(*this);

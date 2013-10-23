@@ -1,5 +1,6 @@
 #include "playercontroller.h"
 #include "../../world/worldinterface.h"
+#include "../../rendering/renderingmessages.h"
 #include <iostream>
 
 PlayerController::PlayerController(fea::MessageBus& bus, WorldInterface& worldInterface) : EntityController(bus, worldInterface), mForward(false)
@@ -115,5 +116,7 @@ void PlayerController::handleMessage(const PlayerPitchYawMessage& received)
     {
         playerEntry->second.lock()->addToAttribute<float>("pitch", pitch);
         playerEntry->second.lock()->addToAttribute<float>("yaw", yaw);
+
+        mBus.sendMessage<RotateGfxEntityMessage>(RotateGfxEntityMessage(playerEntry->second.lock()->getId(), pitch, yaw));
     }
 }

@@ -132,6 +132,11 @@ void Client::fetchServerData()
             GfxEntityMovedPackage* gfxMovedPackage = (GfxEntityMovedPackage*)package.get();
             mBus.sendMessage<MoveGfxEntityMessage>(MoveGfxEntityMessage(gfxMovedPackage->getData()));
         }
+        else if(package->mType == typeid(GfxEntityRotatedPackage))
+        {
+            GfxEntityRotatedPackage* gfxEntityRotatedPackage = (GfxEntityRotatedPackage*)package.get();
+            mBus.sendMessage<RotateGfxEntityMessage>(RotateGfxEntityMessage(gfxEntityRotatedPackage->getData()));
+        }
         else if(package->mType == typeid(GfxEntityRemovedPackage))
         {
             GfxEntityRemovedPackage* gfxRemovedPackage = (GfxEntityRemovedPackage*)package.get();
