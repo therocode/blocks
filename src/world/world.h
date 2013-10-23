@@ -7,7 +7,8 @@
 #include "../rendering/renderingmessages.h"
 
 class World : 
-        public fea::MessageReceiver<CameraUpdatedMessage>
+        public fea::MessageReceiver<CameraUpdatedMessage>,
+        public fea::MessageReceiver<PlayerEntersChunkMessage>
 {
     public:
         World(fea::MessageBus& messageBus);
@@ -15,6 +16,7 @@ class World :
         void initialise();
         void update();
         virtual void handleMessage(const CameraUpdatedMessage& received);
+        virtual void handleMessage(const PlayerEntersChunkMessage& received);
         WorldInterface& getWorldInterface();
     private:
 		glm::vec3 mCamPos, mCamDir;

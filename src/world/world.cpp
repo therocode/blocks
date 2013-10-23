@@ -11,11 +11,13 @@
 	worldInterface(standardDimension, entitySystem)
 {
 	bus.addMessageSubscriber<CameraUpdatedMessage>(*this);
+	bus.addMessageSubscriber<PlayerEntersChunkMessage>(*this);
 }
 
 World::~World()
 {
 	bus.removeMessageSubscriber<CameraUpdatedMessage>(*this);
+	bus.removeMessageSubscriber<PlayerEntersChunkMessage>(*this);
 }
 
 void World::initialise()
@@ -47,13 +49,22 @@ void World::update()
 
 }
 
-
 void World::handleMessage(const CameraUpdatedMessage& received)
 {
 	glm::vec3 pos, dir;
 	std::tie(pos, dir) = received.data;
 	mCamPos = pos;
 	mCamDir = dir;
+}
+
+void World::handleMessage(const PlayerEntersChunkMessage& received)
+{
+    size_t playerId;
+    ChunkCoordinate chunkCoordinate;
+
+	std::tie(playerId, chunkCoordinate) = received.data;
+
+    standardDimension.addFocusPoint(FocusPoint(glm::vec3(chunkCoordinate.x * 16.0f, chunkCoordinate.y * 16.0f, chunkCoordinate.z * 16.0f), 4.0f));
 }
 
 WorldInterface& World::getWorldInterface()
