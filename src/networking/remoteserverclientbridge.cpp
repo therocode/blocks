@@ -9,7 +9,13 @@ RemoteServerClientBridge::RemoteServerClientBridge(bool isServer)
 	mConnected = false;
 	if(!RemoteServerClientBridge::sEnetInitialized)
 	{
-		enet_initialize();
+		if(enet_initialize() < 0)
+		{
+			printf("ENet failed to initialize\n");
+		}else
+		{
+			printf("ENet initialized\n");
+		}
 		RemoteServerClientBridge::sEnetInitialized = true;
 	}
 	mPort = 35940;
@@ -96,13 +102,13 @@ void RemoteServerClientBridge::mListenerFunction()
 					event.peer -> data = NULL;
 			}
 		}
-		flush();
+		enet_host_flush(mHost);
 	}
 }
 
 void RemoteServerClientBridge::createHost()
 {
-	enet_address_set_host(&mAddress, "localhost");
+	enet_address_set_host(&mAddress, "jefvel.net");
 	//	mAddress.host = ENET_HOST_ANY;
 	mAddress.port = mPort;
 	mHost = enet_host_create(&mAddress, //What address to host on.
@@ -113,7 +119,8 @@ void RemoteServerClientBridge::createHost()
 	mIsHost = true;
 	if(mHost == NULL)
 	{
-		printf("Server couldn't create\n");
+		printf("Server couldn't create, port already in use.\n");
+		exit(1);
 	}else
 	{
 		printf("ENet host created!\n");
@@ -122,6 +129,7 @@ void RemoteServerClientBridge::createHost()
 
 void RemoteServerClientBridge::createClient()
 {
+	//mAddress.port = mPort;
 	mHost = enet_host_create(NULL, //This isn't going to host anything.
 			1,//one outgoing connection.
 			2,//channels
