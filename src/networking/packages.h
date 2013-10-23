@@ -2,6 +2,7 @@
 #include "package.h"
 #include "../script/scriptmessages.h"
 #include "../input/inputmessages.h"
+#include "../entity/entitymessages.h"
 
 using RebuildScriptsRequestedPackage = Package<RebuildScriptsRequested_tag, char>;
 
@@ -12,3 +13,4 @@ using GfxEntityRemovedPackage = Package<RemoveGfxEntity_tag, size_t>;
 
 using PlayerActionPackage = Package<PlayerAction_tag, size_t, InputAction>;
 using PlayerPitchYawPackage = Package<PlayerAction_tag, size_t, float, float>;
+using PlayerConnectedToEntityPackage = Package<PlayerConnectedToEntity_tag, size_t, fea::EntityId>;

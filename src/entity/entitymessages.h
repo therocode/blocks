@@ -35,4 +35,7 @@ struct EntityRemoved_tag{};//                               id
 using EntityRemovedMessage = fea::Message<EntityRemoved_tag, size_t>;
 
 struct PlayerEntity_tag{};//                               player id      player entity
-using PlayerEntityMessage = fea::Message<PlayerEntity_tag, fea::EntityId, fea::WeakEntityPtr>;
+using PlayerEntityMessage = fea::Message<PlayerEntity_tag, size_t, fea::WeakEntityPtr>;
+
+struct PlayerConnectedToEntity_tag{};//                                          player id  entity id
+using PlayerConnectedToEntityMessage = fea::Message<PlayerConnectedToEntity_tag, size_t, fea::EntityId>;

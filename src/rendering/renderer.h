@@ -4,7 +4,8 @@
 #include "vbo.h"
 #include "billboard.h"
 #include "../input/inputmessages.h"
-#include "../rendering/renderingmessages.h"
+#include "renderingmessages.h"
+#include "../entity/entitymessages.h"
 #include "../world/worldmessages.h"
 #include "camera.h"
 #include <vector>
@@ -16,12 +17,11 @@
 class Renderer
     :   public fea::MessageReceiver<ChunkCreatedMessage>,
         public fea::MessageReceiver<WindowResizeMessage>,
-        public fea::MessageReceiver<PlayerActionMessage>,
-        public fea::MessageReceiver<PlayerPitchYawMessage>,
         public fea::MessageReceiver<AddGfxEntityMessage>,
         public fea::MessageReceiver<MoveGfxEntityMessage>,
         public fea::MessageReceiver<CurrentlyFacingBlockMessage>,
-        public fea::MessageReceiver<RemoveGfxEntityMessage>
+        public fea::MessageReceiver<RemoveGfxEntityMessage>,
+        public fea::MessageReceiver<PlayerConnectedToEntityMessage>
                 
 {
     public:
@@ -31,12 +31,11 @@ class Renderer
         void setup();
         virtual void handleMessage(const ChunkCreatedMessage& received);
         virtual void handleMessage(const WindowResizeMessage& received);
-        virtual void handleMessage(const PlayerActionMessage& received);
-        virtual void handleMessage(const PlayerPitchYawMessage& received);
         virtual void handleMessage(const AddGfxEntityMessage& received);
         virtual void handleMessage(const MoveGfxEntityMessage& received);
         virtual void handleMessage(const RemoveGfxEntityMessage& received);
         virtual void handleMessage(const CurrentlyFacingBlockMessage& received);
+        virtual void handleMessage(const PlayerConnectedToEntityMessage& received);
         void render();
         void cameraUpdate();    // camera function
 		void setCameraMatrix(glm::mat4 m);
@@ -52,10 +51,7 @@ class Renderer
         GLuint blockTexture;
         glm::vec2 mScreenSize;
         // camera stuff
-		float moveSpeed = 0.0002f;
-		float mTimeStep = 2.f;
-		float lastY, lastX;
-		bool movingLeft, movingRight, movingUp, movingDown, elevate, delevate;
-		bool mouseDown = false;
-		glm::vec3 camSpeed;
+        glm::vec3 mCameraPosition;
+
+        size_t mCameraEntity;
 };

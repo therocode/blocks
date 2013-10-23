@@ -6,31 +6,25 @@
 
 Renderer::Renderer(fea::MessageBus& messageBus) : bus(messageBus)
 {
-	movingLeft = movingRight = movingUp = movingDown = elevate = delevate = false;
 	mTimer.start();
-	mTimer.setDeltaThreshold(mTimeStep);
-	mTimer.setDeltaThreshold(2);
-	movingUp = movingLeft = movingRight = movingDown = false;
 	bus.addMessageSubscriber<ChunkCreatedMessage>(*this);
 	bus.addMessageSubscriber<WindowResizeMessage>(*this);
-	bus.addMessageSubscriber<PlayerActionMessage>(*this);
-	bus.addMessageSubscriber<PlayerPitchYawMessage>(*this);
 	bus.addMessageSubscriber<AddGfxEntityMessage>(*this);
 	bus.addMessageSubscriber<MoveGfxEntityMessage>(*this);
 	bus.addMessageSubscriber<RemoveGfxEntityMessage>(*this);
 	bus.addMessageSubscriber<CurrentlyFacingBlockMessage>(*this);
+	bus.addMessageSubscriber<PlayerConnectedToEntityMessage>(*this);
 }
 
 Renderer::~Renderer()
 {
 	bus.removeMessageSubscriber<ChunkCreatedMessage>(*this);
 	bus.removeMessageSubscriber<WindowResizeMessage>(*this);
-	bus.removeMessageSubscriber<PlayerActionMessage>(*this);
-	bus.removeMessageSubscriber<PlayerPitchYawMessage>(*this);
 	bus.removeMessageSubscriber<AddGfxEntityMessage>(*this);
 	bus.removeMessageSubscriber<MoveGfxEntityMessage>(*this);
 	bus.removeMessageSubscriber<RemoveGfxEntityMessage>(*this);
 	bus.removeMessageSubscriber<CurrentlyFacingBlockMessage>(*this);
+	bus.removeMessageSubscriber<PlayerConnectedToEntityMessage>(*this);
 }
 
 void Renderer::makeTexture(std::string path, uint32_t width, uint32_t height, GLuint& textureId)
@@ -130,6 +124,21 @@ void Renderer::handleMessage(const WindowResizeMessage& received)
 
 }
 
+void Renderer::handleMessage(const PlayerConnectedToEntityMessage& received)
+{
+    //connect to player. right now it will always connect to player id 0, but that could be changed.
+
+    size_t playerId;
+    size_t entityId;
+
+    std::tie(playerId, entityId) = received.data;
+
+    if(playerId == 0)
+    {
+        mCameraEntity = entityId;
+    }
+}
+
 void Renderer::render()
 {
 	bus.sendMessage<CameraUpdatedMessage>(CameraUpdatedMessage(cam.GetPosition(), cam.GetDirection()));
@@ -219,105 +228,10 @@ void Renderer::render()
 
 void Renderer::cameraUpdate()
 {
-	glm::vec3 m;
-	int dT = mTimer.getDeltaTime();
-
-	if(movingRight){
-		m.x += moveSpeed;	
-	}
-	if(movingLeft){
-		m.x -= moveSpeed;	
-	}
-	if(movingUp){
-		m.z += moveSpeed;	
-	}
-	if(movingDown){
-		m.z -= moveSpeed;	
-	}
-	if(elevate){
-		m.y += moveSpeed;
-	}
-	if(delevate){
-		m.y -= moveSpeed;
-	}
-
-	for(int i = 0; i < dT; i += (int)mTimeStep){
-		cam.MoveForward(camSpeed.z);
-		cam.Strafe(camSpeed.x);	
-		cam.AddPosition(glm::vec3(0, camSpeed.y, 0));	
-		camSpeed += m;
-		camSpeed *= 0.99f;
-	}
-
+    cam.SetPosition(mCameraPosition);
 	cam.Update();
 
 	setCameraMatrix(cam.GetMatrix());
-
-}
-
-void Renderer::handleMessage(const PlayerActionMessage& received)
-{
-    size_t playerId;
-	int32_t action;
-	std::tie(playerId, action) = received.data;
-
-	switch(action)
-	{
-		case InputAction::FORWARDS:
-			movingUp = true;
-			break;
-		case InputAction::BACKWARDS:
-			movingDown = true;
-			break;
-		case InputAction::LEFT:
-			movingLeft = true;
-			break;
-		case InputAction::RIGHT:
-			movingRight = true;
-			break;
-		case InputAction::JUMP:
-			elevate = true;
-			break;
-		case InputAction::CROUCH:
-			delevate = true;
-			break;
-
-		case InputAction::STOPFORWARDS:
-			movingUp = false;
-			break;
-		case InputAction::STOPBACKWARDS:
-			movingDown = false;
-			break;
-		case InputAction::STOPLEFT:
-			movingLeft = false;
-			break;
-		case InputAction::STOPRIGHT:
-			movingRight = false;
-			break;
-		case InputAction::STOPJUMP:
-			elevate = false;
-			break;
-		case InputAction::STOPCROUCH:
-			delevate = false;
-			break;
-		case InputAction::MOUSELEFT:
-			mouseDown = true;
-			break;
-		case InputAction::STOPMOUSELEFT:
-			mouseDown = false;
-			break;
-	}
-}
-
-void Renderer::handleMessage(const PlayerPitchYawMessage& received)
-{
-	float newX, newY;
-	float mspeed = 0.01f;
-	std::tie(std::ignore, newY, newX) = received.data;
-	if(mouseDown)
-		cam.AddDirection((newX - lastX)  * mspeed,(newY - lastY) * mspeed);
-	lastX = newX;
-	lastY = newY;
 }
 
 void Renderer::handleMessage(const AddGfxEntityMessage& received)
@@ -342,6 +256,11 @@ void Renderer::handleMessage(const MoveGfxEntityMessage& received)
 	std::tie(id, position) = received.data;
 
 	billboards.at(id).mPosition = position;
+
+    if(id == mCameraEntity)
+    {
+        mCameraPosition = position;
+    }
 }
 
 void Renderer::handleMessage(const RemoveGfxEntityMessage& received)

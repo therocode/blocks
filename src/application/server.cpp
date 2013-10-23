@@ -10,6 +10,7 @@ Server::Server() : mWorld(mBus),
     mBus.addMessageSubscriber<AddGfxEntityMessage>(*this);
     mBus.addMessageSubscriber<MoveGfxEntityMessage>(*this);
     mBus.addMessageSubscriber<RemoveGfxEntityMessage>(*this);
+    mBus.addMessageSubscriber<PlayerConnectedToEntityMessage>(*this);
 }
 
 Server::~Server()
@@ -18,6 +19,7 @@ Server::~Server()
     mBus.removeMessageSubscriber<AddGfxEntityMessage>(*this);
     mBus.removeMessageSubscriber<MoveGfxEntityMessage>(*this);
     mBus.removeMessageSubscriber<RemoveGfxEntityMessage>(*this);
+    mBus.removeMessageSubscriber<PlayerConnectedToEntityMessage>(*this);
 }
 
 void Server::setup()
@@ -58,12 +60,7 @@ void Server::destroy()
 
 void Server::handleMessage(const ChunkCreatedMessage& received)
 {
-	ChunkCoordinate coordinate;
-	VoxelTypeArray types;
-
-	std::tie(coordinate, types) = received.data;
-
-    std::shared_ptr<BasePackage> chunkLoadedPackage(new ChunkLoadedPackage(coordinate, types));
+    std::shared_ptr<BasePackage> chunkLoadedPackage(new ChunkLoadedPackage(received.data));
     for(auto& client : mClients)
     {
         client.second->enqueuePackage(chunkLoadedPackage);
@@ -73,11 +70,10 @@ void Server::handleMessage(const ChunkCreatedMessage& received)
 void Server::handleMessage(const AddGfxEntityMessage& received)
 {
     size_t id;
-    glm::vec3 position;
 
-    std::tie(id, position) = received.data;
+    std::tie(id, std::ignore) = received.data;
 
-    std::shared_ptr<BasePackage> gfxEntityAddedPackage(new GfxEntityAddedPackage(id, position));
+    std::shared_ptr<BasePackage> gfxEntityAddedPackage(new GfxEntityAddedPackage(received.data));
     for(auto& client : mClients)
     {
         client.second->enqueuePackage(gfxEntityAddedPackage);
@@ -88,12 +84,7 @@ void Server::handleMessage(const AddGfxEntityMessage& received)
 
 void Server::handleMessage(const MoveGfxEntityMessage& received)
 {
-    size_t id;
-    glm::vec3 position;
-
-    std::tie(id, position) = received.data;
-
-    std::shared_ptr<BasePackage> gfxEntityMovedPackage(new GfxEntityMovedPackage(id, position));
+    std::shared_ptr<BasePackage> gfxEntityMovedPackage(new GfxEntityMovedPackage(received.data));
     for(auto& client : mClients)
     {
         client.second->enqueuePackage(gfxEntityMovedPackage);
@@ -106,13 +97,22 @@ void Server::handleMessage(const RemoveGfxEntityMessage& received)
 
     std::tie(id) = received.data;
 
-    std::shared_ptr<BasePackage> gfxEntityRemovedPackage(new GfxEntityRemovedPackage(id));
+    std::shared_ptr<BasePackage> gfxEntityRemovedPackage(new GfxEntityRemovedPackage(received.data));
     for(auto& client : mClients)
     {
         client.second->enqueuePackage(gfxEntityRemovedPackage);
     }
 
     graphicsEntities.erase(id); //temphack
+}
+
+void Server::handleMessage(const PlayerConnectedToEntityMessage& received)
+{
+    std::shared_ptr<BasePackage> playerConnectedToEntityPackage(new PlayerConnectedToEntityPackage(received.data));
+    for(auto& client : mClients)
+    {
+        client.second->enqueuePackage(playerConnectedToEntityPackage);
+    }
 }
 
 void Server::setClientListener(std::unique_ptr<ClientConnectionListener> clientListener)
