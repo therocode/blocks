@@ -7,6 +7,9 @@ using AddGfxEntityMessage = fea::Message<AddGfxEntity_tag, size_t, const glm::ve
 struct MoveGfxEntity_tag{};//                                id      position
 using MoveGfxEntityMessage = fea::Message<MoveGfxEntity_tag, size_t, const glm::vec3&>;
 
+struct RotateGfxEntity_tag{};//                                  id      pitch  yaw
+using RotateGfxEntityMessage = fea::Message<RotateGfxEntity_tag, size_t, float, float>;
+
 struct RemoveGfxEntity_tag{};//
 using RemoveGfxEntityMessage = fea::Message<RemoveGfxEntity_tag, size_t>;
 

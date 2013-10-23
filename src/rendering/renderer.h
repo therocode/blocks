@@ -19,6 +19,7 @@ class Renderer
         public fea::MessageReceiver<WindowResizeMessage>,
         public fea::MessageReceiver<AddGfxEntityMessage>,
         public fea::MessageReceiver<MoveGfxEntityMessage>,
+        public fea::MessageReceiver<RotateGfxEntityMessage>,
         public fea::MessageReceiver<CurrentlyFacingBlockMessage>,
         public fea::MessageReceiver<RemoveGfxEntityMessage>,
         public fea::MessageReceiver<PlayerConnectedToEntityMessage>
@@ -33,6 +34,7 @@ class Renderer
         virtual void handleMessage(const WindowResizeMessage& received);
         virtual void handleMessage(const AddGfxEntityMessage& received);
         virtual void handleMessage(const MoveGfxEntityMessage& received);
+        virtual void handleMessage(const RotateGfxEntityMessage& received);
         virtual void handleMessage(const RemoveGfxEntityMessage& received);
         virtual void handleMessage(const CurrentlyFacingBlockMessage& received);
         virtual void handleMessage(const PlayerConnectedToEntityMessage& received);
@@ -54,4 +56,6 @@ class Renderer
         glm::vec3 mCameraPosition;
 
         size_t mCameraEntity;
+        float mCameraPitch;
+        float mCameraYaw;
 };
