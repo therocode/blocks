@@ -14,12 +14,14 @@ Client::Client() : mWindow(new fea::util::SFMLWindowBackend(mSfWindow)),
                    mBridge(nullptr)
 {
 	mBus.addMessageSubscriber<PlayerActionMessage>(*this);
+	mBus.addMessageSubscriber<PlayerPitchYawMessage>(*this);
 	mBus.addMessageSubscriber<RebuildScriptsRequestedMessage>(*this);
 }
 
 Client::~Client()
 {
     mBus.removeMessageSubscriber<PlayerActionMessage>(*this);
+    mBus.removeMessageSubscriber<PlayerPitchYawMessage>(*this);
     mBus.removeMessageSubscriber<RebuildScriptsRequestedMessage>(*this);
 }
 
@@ -77,6 +79,17 @@ void Client::handleMessage(const PlayerActionMessage& received)
     {
         mBridge->enqueuePackage(std::shared_ptr<BasePackage>(new PlayerActionPackage(playerId, action)));
     }
+}
+
+void Client::handleMessage(const PlayerPitchYawMessage& received)
+{
+    size_t playerId;
+    float pitch;
+    float yaw;
+
+	std::tie(playerId, pitch, yaw) = received.data;
+
+    mBridge->enqueuePackage(std::shared_ptr<BasePackage>(new PlayerPitchYawPackage(received.data)));
 }
 
 void Client::handleMessage(const RebuildScriptsRequestedMessage& received)

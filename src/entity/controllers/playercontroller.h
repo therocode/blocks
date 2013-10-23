@@ -6,7 +6,8 @@
 class PlayerController : 
     public EntityController,
     public fea::MessageReceiver<PlayerJoinedMessage>,
-    public fea::MessageReceiver<PlayerActionMessage>
+    public fea::MessageReceiver<PlayerActionMessage>,
+    public fea::MessageReceiver<PlayerPitchYawMessage>
 {
     public:
         PlayerController(fea::MessageBus& bus, WorldInterface& worldInterface);
@@ -15,6 +16,7 @@ class PlayerController :
         virtual void removeEntity(fea::EntityId id);
         void handleMessage(const PlayerJoinedMessage& received);
         void handleMessage(const PlayerActionMessage& received);
+        void handleMessage(const PlayerPitchYawMessage& received);
     private:
         std::unordered_map<fea::EntityId, fea::WeakEntityPtr> mPlayerEntities;
 };

@@ -10,6 +10,7 @@
 
 class Client : 
     public fea::MessageReceiver<PlayerActionMessage>,
+    public fea::MessageReceiver<PlayerPitchYawMessage>,
     public fea::MessageReceiver<RebuildScriptsRequestedMessage>
 {
     public:
@@ -20,6 +21,7 @@ class Client :
         void render();
         void destroy();
         virtual void handleMessage(const PlayerActionMessage& received);
+        virtual void handleMessage(const PlayerPitchYawMessage& received);
         virtual void handleMessage(const RebuildScriptsRequestedMessage& received);
         bool requestedQuit();
         void setServerBridge(std::unique_ptr<ServerClientBridge> bridge);

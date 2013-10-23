@@ -6,12 +6,14 @@ PlayerController::PlayerController(fea::MessageBus& bus, WorldInterface& worldIn
 {
     mBus.addMessageSubscriber<PlayerJoinedMessage>(*this);
     mBus.addMessageSubscriber<PlayerActionMessage>(*this);
+    mBus.addMessageSubscriber<PlayerPitchYawMessage>(*this);
 }
 
 PlayerController::~PlayerController()
 {
     mBus.removeMessageSubscriber<PlayerJoinedMessage>(*this);
     mBus.removeMessageSubscriber<PlayerActionMessage>(*this);
+    mBus.removeMessageSubscriber<PlayerPitchYawMessage>(*this);
 }
 
 void PlayerController::inspectEntity(fea::WeakEntityPtr entity)
@@ -40,6 +42,17 @@ void PlayerController::handleMessage(const PlayerActionMessage& received)
     InputAction action;
 
     std::tie(playerId, action) = received.data;
+
+    //if(action == 
+}
+
+void PlayerController::handleMessage(const PlayerPitchYawMessage& received)
+{
+    size_t playerId;
+    float pitch;
+    float yaw;
+
+    std::tie(playerId, pitch, yaw) = received.data;
 
     //if(action == 
 }

@@ -11,3 +11,4 @@ using GfxEntityMovedPackage = Package<MoveGfxEntity_tag, size_t, glm::vec3>;
 using GfxEntityRemovedPackage = Package<RemoveGfxEntity_tag, size_t>;
 
 using PlayerActionPackage = Package<PlayerAction_tag, size_t, InputAction>;
+using PlayerPitchYawPackage = Package<PlayerAction_tag, size_t, float, float>;

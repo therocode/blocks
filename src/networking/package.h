@@ -22,6 +22,9 @@ class Package : public BasePackage
         Package(Types... values) : BasePackage(typeid(Package)), data(values...)
         {
         }
+        Package(std::tuple<Types...> value) : BasePackage(typeid(Package)), data(value)
+        {
+        }
         virtual std::vector<uint8_t> serialise() const override
         {
             std::vector<uint8_t> bytes;

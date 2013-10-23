@@ -175,6 +175,11 @@ void Server::fetchClientData(std::weak_ptr<ClientConnection> client)
                 PlayerActionPackage* playerActionPackage = (PlayerActionPackage*) package.get();
                 mBus.sendMessage<PlayerActionMessage>(PlayerActionMessage(playerActionPackage->getData()));
             }
+            else if(package->mType == typeid(PlayerPitchYawPackage))
+            {
+                PlayerPitchYawPackage* playerPitchYawPackage = (PlayerPitchYawPackage*) package.get();
+                mBus.sendMessage<PlayerPitchYawMessage>(PlayerPitchYawMessage(playerPitchYawPackage->getData()));
+            }
         }
     }
 }
