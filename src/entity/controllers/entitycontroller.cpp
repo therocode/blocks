@@ -4,6 +4,6 @@ EntityController::EntityController(fea::MessageBus& bus, WorldInterface& worldIn
 {
 }
 
-void EntityController::update()
+void EntityController::onFrame()
 {
 }

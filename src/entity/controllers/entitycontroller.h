@@ -11,7 +11,7 @@ class EntityController
         EntityController(fea::MessageBus& bus, WorldInterface& worldInterface);
         virtual ~EntityController(){};
         virtual void inspectEntity(fea::WeakEntityPtr entity) = 0;
-        virtual void update();
+        virtual void onFrame();
         virtual void removeEntity(fea::EntityId id) = 0;
     protected:
         fea::MessageBus& mBus;

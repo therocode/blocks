@@ -2,7 +2,7 @@
 #include "../../world/worldinterface.h"
 #include <iostream>
 
-PlayerController::PlayerController(fea::MessageBus& bus, WorldInterface& worldInterface) : EntityController(bus, worldInterface)
+PlayerController::PlayerController(fea::MessageBus& bus, WorldInterface& worldInterface) : EntityController(bus, worldInterface), mForward(false)
 {
     mBus.addMessageSubscriber<PlayerJoinedMessage>(*this);
     mBus.addMessageSubscriber<PlayerActionMessage>(*this);
@@ -24,6 +24,22 @@ void PlayerController::removeEntity(fea::EntityId id)
 {
 }
 
+void PlayerController::onFrame()
+{
+    for(auto& throttleEntry : mPlayerThrottles)
+    {
+        float throttle = throttleEntry.second;
+        if(throttle > 0.001f)
+        {
+            fea::WeakEntityPtr entity = mPlayerEntities.at(throttleEntry.first);
+            glm::vec3 forwardDir(0.0f, 0.0f, 1.0f);
+            entity.lock()->addToAttribute("velocity", forwardDir);
+            glm::vec3 vel = entity.lock()->getAttribute<glm::vec3>("velocity");
+            std::cout << "changed velocity of entity id " << entity.lock()->getId() << " and vel is now " << vel.x << " " << vel.y << " " << vel.z << "\n";
+        }
+    }
+}
+
 void PlayerController::handleMessage(const PlayerJoinedMessage& received)
 {
     size_t playerId;
@@ -32,8 +48,9 @@ void PlayerController::handleMessage(const PlayerJoinedMessage& received)
     std::tie(playerId, position) = received.data;
 
     fea::WeakEntityPtr playerEntity = mWorldInterface.spawnEntity("Player", position);
-    playerEntity.lock()->setAttribute<bool>("floating", true);
+    playerEntity.lock()->setAttribute("floating", true);
     mPlayerEntities.emplace(playerId, playerEntity);
+    mPlayerThrottles.emplace(playerId, 0.0f);
 }
 
 void PlayerController::handleMessage(const PlayerActionMessage& received)
@@ -43,14 +60,11 @@ void PlayerController::handleMessage(const PlayerActionMessage& received)
 
     std::tie(playerId, action) = received.data;
 
-    auto playerEntry = mPlayerEntities.find(playerId);
-    if(playerEntry != mPlayerEntities.end())
+    auto playerEntry = mPlayerThrottles.find(playerId);
+    if(playerEntry != mPlayerThrottles.end())
     {
-        glm::vec3 forwardDir(0.0f, 0.0f, 1.0f);
-
-        playerEntry->second.lock()->addToAttribute("velocity", forwardDir);
+        playerEntry->second = 1.0f;
     }
-    
 }
 
 void PlayerController::handleMessage(const PlayerPitchYawMessage& received)

@@ -27,7 +27,7 @@ void EntitySystem::update()
 {
     for(auto& controller : mControllers)
     {
-        controller->update();
+        controller->onFrame();
     }
 }
 
