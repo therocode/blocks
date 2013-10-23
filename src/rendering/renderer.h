@@ -17,8 +17,6 @@
 class Renderer
     :   public fea::MessageReceiver<ChunkCreatedMessage>,
         public fea::MessageReceiver<WindowResizeMessage>,
-        public fea::MessageReceiver<PlayerActionMessage>,
-        public fea::MessageReceiver<PlayerPitchYawMessage>,
         public fea::MessageReceiver<AddGfxEntityMessage>,
         public fea::MessageReceiver<MoveGfxEntityMessage>,
         public fea::MessageReceiver<CurrentlyFacingBlockMessage>,
@@ -33,8 +31,6 @@ class Renderer
         void setup();
         virtual void handleMessage(const ChunkCreatedMessage& received);
         virtual void handleMessage(const WindowResizeMessage& received);
-        virtual void handleMessage(const PlayerActionMessage& received);
-        virtual void handleMessage(const PlayerPitchYawMessage& received);
         virtual void handleMessage(const AddGfxEntityMessage& received);
         virtual void handleMessage(const MoveGfxEntityMessage& received);
         virtual void handleMessage(const RemoveGfxEntityMessage& received);
@@ -55,12 +51,7 @@ class Renderer
         GLuint blockTexture;
         glm::vec2 mScreenSize;
         // camera stuff
-		float moveSpeed = 0.0002f;
-		float mTimeStep = 2.f;
-		float lastY, lastX;
-		bool movingLeft, movingRight, movingUp, movingDown, elevate, delevate;
-		bool mouseDown = false;
-		glm::vec3 camSpeed;
+        glm::vec3 mCameraPosition;
 
-        size_t cameraEntity;
+        size_t mCameraEntity;
 };
