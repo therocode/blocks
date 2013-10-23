@@ -156,6 +156,7 @@ void BlocksApplication::joinServer(const std::string& address, int32_t port)
     //serverToClient->connect(clientToServer);
 	clientToServer->connectToAddress(address);
 	client->setup();
+	clientToServer->startListening();
    /* std::cout << "Initialising single player game with a local server and a local client\n";
     std::cout << "Joining server " << address << " on port " << port << "...\n";
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));

@@ -12,7 +12,7 @@ RemoteServerClientBridge::RemoteServerClientBridge(bool isServer)
 		enet_initialize();
 		RemoteServerClientBridge::sEnetInitialized = true;
 	}
-	mPort = 6354;
+	mPort = 35940;
 	if(isServer)
 	{
 		createHost();
@@ -45,14 +45,12 @@ void RemoteServerClientBridge::connectToAddress(std::string address)
 			for(int o = 0; o < 100; o++)i[o] = (char)(64 + rand()%26);
 			ENetPacket* packet = enet_packet_create(i, sizeof(char) * 100, ENET_PACKET_FLAG_RELIABLE);
 			enet_peer_send(mHostPeer, 0, packet);
-		
 		}else
 		{
 			printf("Enet client couldn't connect to host\n");
 			enet_peer_reset(mHostPeer);
 		}
 	}
-
 }
 
 void RemoteServerClientBridge::startListening()
@@ -71,7 +69,6 @@ void RemoteServerClientBridge::mListenerFunction()
 	while(!mStop){
 		while(enet_host_service(mHost, &event, 10) > 0)
 		{
-			printf("stuff happened\n");
 			switch(event.type)
 			{
 				case ENET_EVENT_TYPE_CONNECT:
