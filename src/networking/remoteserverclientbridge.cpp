@@ -12,7 +12,7 @@ RemoteServerClientBridge::RemoteServerClientBridge(bool isServer)
 		enet_initialize();
 		RemoteServerClientBridge::sEnetInitialized = true;
 	}
-	mPort = 35940;
+	mPort = 25565;
 	if(isServer)
 	{
 		createHost();
