@@ -14,6 +14,11 @@ InputAdaptor::InputAdaptor(sf::Window& sfw, fea::MessageBus& b)
       jsonHandler.loadBindingsFile("data/bindings.json");
       actionHandler.setPrimaryBindings(jsonHandler.getPrimaryBindings());
       actionHandler.setSecondaryBindings(jsonHandler.getSecondaryBindings());
+
+      lastMouseX = 0;
+      lastMouseY = 0;
+      first = true;
+      mouseDown = false;
 }
 
 void InputAdaptor::update()
@@ -33,17 +38,34 @@ void InputAdaptor::update()
             bus.sendMessage<PlayerActionMessage>(PlayerActionMessage(playerId, InputAction::QUIT));
         }
 		else if(event.type == fea::Event::MOUSEMOVED){
-            bus.sendMessage<PlayerPitchYawMessage>(PlayerPitchYawMessage(playerId, (float)event.mouseMove.y, (float)event.mouseMove.x));
+            if(!first)
+            {
+                if(mouseDown)
+                {
+                    bus.sendMessage<PlayerPitchYawMessage>(PlayerPitchYawMessage(playerId, (float)(event.mouseMove.y - lastMouseY), (float)(event.mouseMove.x - lastMouseX)));
+                }
+                lastMouseX = event.mouseMove.x;
+                lastMouseY = event.mouseMove.y;
+            }
+            else
+            {
+                first = false;
+
+                lastMouseX = event.mouseMove.x;
+                lastMouseY = event.mouseMove.y;
+            }
 		}
 		else if(event.type == fea::Event::MOUSEBUTTONPRESSED){
-			if(event.mouseButton.button == fea::Mouse::Button::LEFT){
-                bus.sendMessage<PlayerActionMessage>(PlayerActionMessage(playerId, InputAction::MOUSELEFT));
-			}
+            mouseDown = true;
+			//if(event.mouseButton.button == fea::Mouse::Button::LEFT){
+            //    bus.sendMessage<PlayerActionMessage>(PlayerActionMessage(playerId, InputAction::MOUSELEFT));
+			//}
 		}
 		else if(event.type == fea::Event::MOUSEBUTTONRELEASED){
-			if(event.mouseButton.button == fea::Mouse::Button::LEFT){
-                bus.sendMessage<PlayerActionMessage>(PlayerActionMessage(playerId, InputAction::STOPMOUSELEFT));
-			}
+            mouseDown = false;
+			//if(event.mouseButton.button == fea::Mouse::Button::LEFT){
+            //    bus.sendMessage<PlayerActionMessage>(PlayerActionMessage(playerId, InputAction::STOPMOUSELEFT));
+			//}
 		}
         else if(event.type == fea::Event::RESIZED){
             bus.sendMessage<WindowResizeMessage>(WindowResizeMessage(event.size.width, event.size.height));

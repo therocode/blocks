@@ -14,4 +14,10 @@ class InputAdaptor
         fea::MessageBus& bus;
         fea::InputHandler inputHandler;
         fea::ActionHandler<std::string> actionHandler;
+
+        int32_t lastMouseX;
+        int32_t lastMouseY;
+        bool first;
+
+        bool mouseDown;
 };

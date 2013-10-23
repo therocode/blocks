@@ -50,7 +50,7 @@ void PlayerController::onFrame()
                            glm::vec4(-glm::sin(pitch), 0, glm::cos(pitch), 0),
                            glm::vec4(0, 0, 0, 1));
 
-            speedDir = yRot  * xRot * speedDir;
+            speedDir = xRot * yRot * speedDir;
 
             entity->addToAttribute("velocity", glm::vec3(speedDir.x, speedDir.y, speedDir.z));
             glm::vec3 vel = entity->getAttribute<glm::vec3>("velocity");
