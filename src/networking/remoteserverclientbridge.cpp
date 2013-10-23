@@ -5,7 +5,8 @@ bool RemoteServerClientBridge::sEnetInitialized = false;
 
 RemoteServerClientBridge::RemoteServerClientBridge(bool isServer)
 {
-	mIsHost = false;
+	mOther = NULL;
+	mIsHost = isServer;
 	mConnected = false;
 	if(!RemoteServerClientBridge::sEnetInitialized)
 	{
@@ -16,19 +17,13 @@ RemoteServerClientBridge::RemoteServerClientBridge(bool isServer)
 		RemoteServerClientBridge::sEnetInitialized = true;
 	}
 	mPort = 35940;
-	if(isServer)
-	{
-		createHost();
-	}else
-	{
-		createClient();
-	}
 }
 void RemoteServerClientBridge::connectToAddress(std::string address, int port)
 {
 	printf("Going to try to connect to %s\n", address.c_str());
 	if(!mIsHost && !mConnected)
 	{
+		createClient();
 		enet_address_set_host(&mAddress, address.c_str());	
 		if(port != -1)
 		{
@@ -49,10 +44,10 @@ void RemoteServerClientBridge::connectToAddress(std::string address, int port)
 		{
 			printf("Wow, we really connected to %s.\n", address.c_str());
 			//When connected, greet the server!
-			int i[100];
-			for(int o = 1; o < 100; o++)i[o] = (int)(64 + rand()%26);
+			int i[4];
+			for(int o = 1; o < 4; o++)i[o] = (int)(64 + rand()%26);
 			i[0] = 1;
-			ENetPacket* packet = enet_packet_create(i, sizeof(int) * 100, ENET_PACKET_FLAG_RELIABLE);
+			ENetPacket* packet = enet_packet_create(i, sizeof(int) * 4, ENET_PACKET_FLAG_UNSEQUENCED);
 			enet_peer_send(mHostPeer, 0, packet);
 		}else
 		{
@@ -65,6 +60,10 @@ void RemoteServerClientBridge::connectToAddress(std::string address, int port)
 void RemoteServerClientBridge::startListening()
 {
 	mStop = false;
+	if(mIsHost)
+	{
+		createHost();
+	}
 	mThread = std::thread(&RemoteServerClientBridge::mListenerFunction, this);
 }
 void RemoteServerClientBridge::stopListening()
@@ -88,26 +87,18 @@ void RemoteServerClientBridge::mListenerFunction()
 					event.peer -> data = (void*)"Client"; 
 					break;
 				case ENET_EVENT_TYPE_RECEIVE:
-				{
-					int pp = ((int*)event.packet->data)[0];
-					printf ("A packet of length %u containing %i was received from %s on channel %u.\n",
-							event.packet -> dataLength,
-							pp,
-							event.peer   -> data,
-							event.channelID);
-					pp ++;
-					((int*)event.packet->data)[0] = pp;
+					{
+						int pp = ((int*)event.packet->data)[0];
+						printf ("A packet of length %u containing %i was received from %s on channel %u.\n",
+								event.packet -> dataLength,
+								pp,
+								event.peer   -> data,
+								event.channelID);
+						/* Clean up the packet now that we're done using it. */
+						enet_packet_destroy (event.packet);
 
-					if(mIsHost)
-						enet_host_broadcast(mHost,0, event.packet);
-					else
-						enet_peer_send(mHostPeer, 0, event.packet);
-
-					/* Clean up the packet now that we're done using it. */
-					//enet_packet_destroy (event.packet);
-
-					break;
-				}
+						break;
+					}
 
 				case ENET_EVENT_TYPE_DISCONNECT:
 					printf ("%s disconnected.\n", event.peer -> data);
@@ -121,7 +112,7 @@ void RemoteServerClientBridge::mListenerFunction()
 
 void RemoteServerClientBridge::createHost()
 {
-//	enet_address_set_host(&mAddress, "localhost");
+	//	enet_address_set_host(&mAddress, "localhost");
 	mAddress.host = ENET_HOST_ANY;
 	mAddress.port = mPort;
 	mHost = enet_host_create(&mAddress, //What address to host on.
@@ -142,7 +133,7 @@ void RemoteServerClientBridge::createHost()
 
 void RemoteServerClientBridge::createClient()
 {
-	mHost = enet_host_create(NULL, //This isn't going to host anything.
+	mHost = enet_host_create(NULL, //This isn't going to host anything. noone can connect to this.
 			1,//one outgoing connection.
 			2,//channels
 			0,//out
@@ -156,12 +147,15 @@ void RemoteServerClientBridge::flush()
 {
 
 	enet_host_flush(mHost);
-	for(uint32_t i = 0; i < mOutgoing.size(); i++)
+	if(mOther != NULL)
 	{
-		mOther->receivePackage(std::move(mOutgoing[i]));
-	}
+		for(uint32_t i = 0; i < mOutgoing.size(); i++)
+		{
+			mOther->receivePackage(std::move(mOutgoing[i]));
+		}
 
-	mOutgoing.clear();
+		mOutgoing.clear();
+	}
 }
 
 void RemoteServerClientBridge::connect(RemoteServerClientBridge* other)

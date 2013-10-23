@@ -147,34 +147,21 @@ void BlocksApplication::setupDedicatedServer()
 
 void BlocksApplication::joinServer(const std::string& address, int32_t port)
 {
+    server = std::unique_ptr<Server>(new Server());
    // server = std::unique_ptr<Server>(new Server());
 	client = std::unique_ptr<Client>(new Client());
 
-    //RemoteServerClientBridge* serverToClient = new RemoteServerClientBridge(true);
+    RemoteServerClientBridge* serverToClient = new RemoteServerClientBridge(true);
   	RemoteServerClientBridge* clientToServer = new RemoteServerClientBridge(false);
+
 	//serverToClient->startListening();
     //server->setup();
-    //client->setServerBridge(std::unique_ptr<RemoteServerClientBridge>(clientToServer));
+    client->setServerBridge(std::unique_ptr<RemoteServerClientBridge>(clientToServer));
     //server->addClientBridge(std::unique_ptr<RemoteServerClientBridge>(serverToClient));
     //clientToServer->connect(serverToClient);
     //serverToClient->connect(clientToServer);
 	clientToServer->connectToAddress(address, port);
+	server->setup();
 	client->setup();
 	clientToServer->startListening();
-   /* std::cout << "Initialising single player game with a local server and a local client\n";
-    std::cout << "Joining server " << address << " on port " << port << "...\n";
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-    std::cout << "...\n";
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-    std::cout << "...\n";
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-    std::cout << "...\n";
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-    std::cout << "...\n";
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-    std::cout << "fatal error! You have been permanently banned!\n";
-    std::this_thread::sleep_for(std::chrono::milliseconds(3000));
-    std::cout << "No, just kidding, not implemented yet\n";
-    exit(1);*/
-
 }
