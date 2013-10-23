@@ -46,7 +46,7 @@ void RemoteServerClientBridge::connectToAddress(std::string address, int port)
 			//When connected, greet the server!
 			int i[4];
 			for(int o = 1; o < 4; o++)i[o] = (int)(64 + rand()%26);
-			i[0] = 1;
+			i[0] = 12345678;
 			ENetPacket* packet = enet_packet_create(i, sizeof(int) * 4, ENET_PACKET_FLAG_UNSEQUENCED);
 			enet_peer_send(mHostPeer, 0, packet);
 		}else
