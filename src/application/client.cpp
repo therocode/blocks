@@ -112,33 +112,17 @@ void Client::fetchServerData()
         else if(package->mType == typeid(GfxEntityAddedPackage))
         {
             GfxEntityAddedPackage* gfxAddedPackage = (GfxEntityAddedPackage*)package.get();
-
-            size_t id;
-            glm::vec3 position;
-
-            std::tie(id, position) = gfxAddedPackage->getData();
-            mBus.sendMessage<AddGfxEntityMessage>(AddGfxEntityMessage(id, position));
+            mBus.sendMessage<AddGfxEntityMessage>(AddGfxEntityMessage(gfxAddedPackage->getData()));
         }
         else if(package->mType == typeid(GfxEntityMovedPackage))
         {
             GfxEntityMovedPackage* gfxMovedPackage = (GfxEntityMovedPackage*)package.get();
-
-            size_t id;
-            glm::vec3 position;
-
-            std::tie(id, position) = gfxMovedPackage->getData();
-
-            mBus.sendMessage<MoveGfxEntityMessage>(MoveGfxEntityMessage(id, position));
+            mBus.sendMessage<MoveGfxEntityMessage>(MoveGfxEntityMessage(gfxMovedPackage->getData()));
         }
         else if(package->mType == typeid(GfxEntityRemovedPackage))
         {
             GfxEntityRemovedPackage* gfxRemovedPackage = (GfxEntityRemovedPackage*)package.get();
-
-            size_t id;
-
-            std::tie(id) = gfxRemovedPackage->getData();
-
-            mBus.sendMessage<RemoveGfxEntityMessage>(RemoveGfxEntityMessage(id));
+            mBus.sendMessage<RemoveGfxEntityMessage>(RemoveGfxEntityMessage(gfxRemovedPackage->getData()));
         }
     }
 }
