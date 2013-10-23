@@ -141,6 +141,6 @@ void PlayerController::handleMessage(const PlayerPitchYawMessage& received)
 
 void PlayerController::playerEntersChunk(size_t playerId, const ChunkCoordinate& chunk)
 {
-    //send message
+    mBus.sendMessage<PlayerEntersChunkMessage>(PlayerEntersChunkMessage(playerId, chunk));
     mPlayerChunks[playerId] = chunk;
 }
