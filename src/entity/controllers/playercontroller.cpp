@@ -43,7 +43,7 @@ void PlayerController::onFrame()
             std::cout << "pitch " << pitch << "\n";
             std::cout << "yaw " << yaw << "\n";
 			glm::vec3 currentSpeed = entity->getAttribute<glm::vec3>("velocity");
-            glm::vec3 speedDir(0.0f, 0.0f, 0.01f);
+            glm::vec3 speedDir(0.0f, 0.0f, 0.1f);
 			
             glm::mat3 xRot( glm::vec3(1, 			0, 			0),
 							glm::vec3(0, glm::cos(pitch), -glm::sin(pitch)),
