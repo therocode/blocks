@@ -157,13 +157,13 @@ void Camera::AddDirection(float x, float y)
 	theta+=y;
 	if(theta>=glm::pi<float>())theta=glm::pi<float>()-0.001f;
 	if(theta<0)theta=0.001f;
-	float fSinTheta = sin(theta);
-	float fCosTheta = cos(theta);
-	float fCosPhi = cos(phi);
-	float fSinPhi = sin(phi);
+	float fSinTheta = glm::sin(theta);
+	float fCosTheta = glm::cos(theta);
+	float fCosPhi = glm::cos(phi);
+	float fSinPhi = glm::sin(phi);
 	
 	direction.x = (fSinTheta*fCosPhi);
-	direction.y = (fCosTheta);
+	direction.y = (fSinTheta);
 	direction.z = (fSinTheta*fSinPhi);
 	if(glm::length2(direction) != 0)
 	direction = glm::normalize(direction);

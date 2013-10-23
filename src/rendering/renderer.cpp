@@ -11,6 +11,7 @@ Renderer::Renderer(fea::MessageBus& messageBus) : bus(messageBus)
 	bus.addMessageSubscriber<WindowResizeMessage>(*this);
 	bus.addMessageSubscriber<AddGfxEntityMessage>(*this);
 	bus.addMessageSubscriber<MoveGfxEntityMessage>(*this);
+	bus.addMessageSubscriber<RotateGfxEntityMessage>(*this);
 	bus.addMessageSubscriber<RemoveGfxEntityMessage>(*this);
 	bus.addMessageSubscriber<CurrentlyFacingBlockMessage>(*this);
 	bus.addMessageSubscriber<PlayerConnectedToEntityMessage>(*this);
@@ -22,6 +23,7 @@ Renderer::~Renderer()
 	bus.removeMessageSubscriber<WindowResizeMessage>(*this);
 	bus.removeMessageSubscriber<AddGfxEntityMessage>(*this);
 	bus.removeMessageSubscriber<MoveGfxEntityMessage>(*this);
+	bus.removeMessageSubscriber<RotateGfxEntityMessage>(*this);
 	bus.removeMessageSubscriber<RemoveGfxEntityMessage>(*this);
 	bus.removeMessageSubscriber<CurrentlyFacingBlockMessage>(*this);
 	bus.removeMessageSubscriber<PlayerConnectedToEntityMessage>(*this);
@@ -231,9 +233,15 @@ void Renderer::render()
 
 void Renderer::cameraUpdate()
 {
+
    // cam.SetPosition(mCameraPosition);
 	cam.SetPitchYaw(mCameraPitch, mCameraYaw);
     //camera must be updated from mPitch and mYaw
+    cam.SetPosition(mCameraPosition);
+
+    std::cout << "i am camera and i will update pitch and yaw: " << mCameraPitch << " " << mCameraYaw << "\n";
+
+
 	cam.Update();
 
 	setCameraMatrix(cam.GetMatrix());

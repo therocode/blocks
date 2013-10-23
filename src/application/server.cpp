@@ -9,6 +9,7 @@ Server::Server() : mWorld(mBus),
     mBus.addMessageSubscriber<ChunkCreatedMessage>(*this);
     mBus.addMessageSubscriber<AddGfxEntityMessage>(*this);
     mBus.addMessageSubscriber<MoveGfxEntityMessage>(*this);
+    mBus.addMessageSubscriber<RotateGfxEntityMessage>(*this);
     mBus.addMessageSubscriber<RemoveGfxEntityMessage>(*this);
     mBus.addMessageSubscriber<PlayerConnectedToEntityMessage>(*this);
 }
@@ -18,6 +19,7 @@ Server::~Server()
     mBus.removeMessageSubscriber<ChunkCreatedMessage>(*this);
     mBus.removeMessageSubscriber<AddGfxEntityMessage>(*this);
     mBus.removeMessageSubscriber<MoveGfxEntityMessage>(*this);
+    mBus.removeMessageSubscriber<RotateGfxEntityMessage>(*this);
     mBus.removeMessageSubscriber<RemoveGfxEntityMessage>(*this);
     mBus.removeMessageSubscriber<PlayerConnectedToEntityMessage>(*this);
 }
@@ -88,6 +90,15 @@ void Server::handleMessage(const MoveGfxEntityMessage& received)
     for(auto& client : mClients)
     {
         client.second->enqueuePackage(gfxEntityMovedPackage);
+    }
+}
+
+void Server::handleMessage(const RotateGfxEntityMessage& received)
+{
+    std::shared_ptr<BasePackage> gfxEntityRotatedPackage(new GfxEntityRotatedPackage(received.data));
+    for(auto& client : mClients)
+    {
+        client.second->enqueuePackage(gfxEntityRotatedPackage);
     }
 }
 
