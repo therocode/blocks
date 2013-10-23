@@ -49,9 +49,10 @@ void RemoteServerClientBridge::connectToAddress(std::string address, int port)
 		{
 			printf("Wow, we really connected to %s.\n", address.c_str());
 			//When connected, greet the server!
-			char i[100];
-			for(int o = 0; o < 100; o++)i[o] = (char)(64 + rand()%26);
-			ENetPacket* packet = enet_packet_create(i, sizeof(char) * 100, ENET_PACKET_FLAG_RELIABLE);
+			int i[100];
+			for(int o = 1; o < 100; o++)i[o] = (int)(64 + rand()%26);
+			i[0] = 1;
+			ENetPacket* packet = enet_packet_create(i, sizeof(int) * 100, ENET_PACKET_FLAG_RELIABLE);
 			enet_peer_send(mHostPeer, 0, packet);
 		}else
 		{
@@ -84,21 +85,32 @@ void RemoteServerClientBridge::mListenerFunction()
 							event.peer -> address.host,
 							event.peer -> address.port);
 					/* Store any relevant client information here. */
-					//event.peer -> data = "Client information";
+					event.peer -> data = (void*)"Client"; 
 					break;
 				case ENET_EVENT_TYPE_RECEIVE:
-					printf ("A packet of length %u containing %s was received from %s on channel %u.\n",
+				{
+					int pp = ((int*)event.packet->data)[0];
+					printf ("A packet of length %u containing %i was received from %s on channel %u.\n",
 							event.packet -> dataLength,
-							event.packet -> data,
-							event.peer -> data,
+							pp,
+							event.peer   -> data,
 							event.channelID);
+					pp ++;
+					((int*)event.packet->data)[0] = pp;
+
+					if(mIsHost)
+						enet_host_broadcast(mHost,0, event.packet);
+					else
+						enet_peer_send(mHostPeer, 0, event.packet);
+
 					/* Clean up the packet now that we're done using it. */
-					enet_packet_destroy (event.packet);
+					//enet_packet_destroy (event.packet);
 
 					break;
+				}
 
 				case ENET_EVENT_TYPE_DISCONNECT:
-					printf ("%s disconected.\n", event.peer -> data);
+					printf ("%s disconnected.\n", event.peer -> data);
 					/* Reset the peer's client information. */
 					event.peer -> data = NULL;
 			}
