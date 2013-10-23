@@ -13,7 +13,7 @@ class RemoteServerClientBridge : public ServerClientBridge
         void connect(RemoteServerClientBridge* other); 
         void receivePackage(std::weak_ptr<BasePackage> incoming);
 
-		void connectToAddress(std::string address);
+		void connectToAddress(std::string address, int port = -1);
 
 		void startListening();
 		void stopListening();

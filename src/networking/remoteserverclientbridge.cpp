@@ -27,12 +27,16 @@ RemoteServerClientBridge::RemoteServerClientBridge(bool isServer)
 		createClient();
 	}
 }
-void RemoteServerClientBridge::connectToAddress(std::string address)
+void RemoteServerClientBridge::connectToAddress(std::string address, int port)
 {
 	printf("Going to try to connect to %s\n", address.c_str());
 	if(!mIsHost && !mConnected)
 	{
 		enet_address_set_host(&mAddress, address.c_str());	
+		if(port != -1)
+		{
+			mPort = port;
+		}
 		mAddress.port = mPort;
 
 		mHostPeer = enet_host_connect(mHost, &mAddress, 2, 0);
