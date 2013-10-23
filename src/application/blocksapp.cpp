@@ -16,17 +16,21 @@ void BlocksApplication::setup(const std::vector<std::string>& args)
     {
         setupSinglePlayer();	//setup local server and local client and connect with LocalServerClientBridge
     }
-    else if(args[1] == "--dedicated")
+    else if(args[1] == "--dedicated" || args[1] == "dedicated")
     {
         setupDedicatedServer();  //do not create a client and only initialise a server and give it a NetworkServerClientBridge
     }
-    else if(args[1] == "--join")
+    else if(args[1] == "--join" || args[1] == "join")
     {
         std::string address = args[2];
-        int32_t port = std::stoi(args[3]);
-        joinServer(address, port);   //setup local client and do not setup a server. give client a NetworkServerClientBridge and connect it to remote
+		int32_t port = -1;
+		if(args.size() > 3)
+		{
+        	port = std::stoi(args[3]);
+		}
+		joinServer(address, port);   //setup local client and do not setup a server. give client a NetworkServerClientBridge and connect it to remote
     }
-	else if(args[1] == "--host")
+	else if(args[1] == "--host" || args[1] == "host")
 	{
 		setupMultiPlayer();	
 	}
@@ -154,7 +158,7 @@ void BlocksApplication::joinServer(const std::string& address, int32_t port)
     //server->addClientBridge(std::unique_ptr<RemoteServerClientBridge>(serverToClient));
     //clientToServer->connect(serverToClient);
     //serverToClient->connect(clientToServer);
-	clientToServer->connectToAddress(address);
+	clientToServer->connectToAddress(address, port);
 	client->setup();
 	clientToServer->startListening();
    /* std::cout << "Initialising single player game with a local server and a local client\n";

@@ -9,7 +9,10 @@ RemoteServerClientBridge::RemoteServerClientBridge(bool isServer)
 	mConnected = false;
 	if(!RemoteServerClientBridge::sEnetInitialized)
 	{
-		enet_initialize();
+		if(enet_initialize() < 0)
+		{
+			printf("ENet failed to initialize\n");
+		}
 		RemoteServerClientBridge::sEnetInitialized = true;
 	}
 	mPort = 35940;
@@ -21,12 +24,16 @@ RemoteServerClientBridge::RemoteServerClientBridge(bool isServer)
 		createClient();
 	}
 }
-void RemoteServerClientBridge::connectToAddress(std::string address)
+void RemoteServerClientBridge::connectToAddress(std::string address, int port)
 {
 	printf("Going to try to connect to %s\n", address.c_str());
 	if(!mIsHost && !mConnected)
 	{
 		enet_address_set_host(&mAddress, address.c_str());	
+		if(port != -1)
+		{
+			mPort = port;
+		}
 		mAddress.port = mPort;
 
 		mHostPeer = enet_host_connect(mHost, &mAddress, 2, 0);
@@ -96,14 +103,14 @@ void RemoteServerClientBridge::mListenerFunction()
 					event.peer -> data = NULL;
 			}
 		}
-		flush();
+		enet_host_flush(mHost);
 	}
 }
 
 void RemoteServerClientBridge::createHost()
 {
-	enet_address_set_host(&mAddress, "localhost");
-	//	mAddress.host = ENET_HOST_ANY;
+//	enet_address_set_host(&mAddress, "localhost");
+	mAddress.host = ENET_HOST_ANY;
 	mAddress.port = mPort;
 	mHost = enet_host_create(&mAddress, //What address to host on.
 			32,		//Maximum connections.
@@ -113,7 +120,8 @@ void RemoteServerClientBridge::createHost()
 	mIsHost = true;
 	if(mHost == NULL)
 	{
-		printf("Server couldn't create\n");
+		printf("Server couldn't create, port already in use.\n");
+		exit(1);
 	}else
 	{
 		printf("ENet host created!\n");
