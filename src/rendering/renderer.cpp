@@ -231,7 +231,9 @@ void Renderer::render()
 void Renderer::cameraUpdate()
 {
     cam.SetPosition(mCameraPosition);
-    //camera must be updated from mPitch and mYaw
+
+    std::cout << "i am camera and i will update pitch and yaw: " << mCameraPitch << " " << mCameraYaw << "\n";
+
 	cam.Update();
 
 	setCameraMatrix(cam.GetMatrix());

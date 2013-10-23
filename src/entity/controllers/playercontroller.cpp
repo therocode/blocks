@@ -33,8 +33,8 @@ void PlayerController::onFrame()
         //if(throttle > 0.001f)
         {
             fea::EntityPtr entity = mPlayerEntities.at(throttleEntry.first).lock();
-            float pitch = glm::radians(entity->getAttribute<float>("pitch"));
-            float yaw = glm::radians(entity->getAttribute<float>("yaw"));
+            float pitch = entity->getAttribute<float>("pitch");
+            float yaw = entity->getAttribute<float>("yaw");
 
 			if(pitch >= glm::pi<float>() * 0.5f)
 				pitch = glm::pi<float>() * 0.5f - 0.001f;
@@ -105,7 +105,7 @@ void PlayerController::handleMessage(const PlayerActionMessage& received)
 
 void PlayerController::handleMessage(const PlayerPitchYawMessage& received)
 {
- size_t playerId;
+    size_t playerId;
     float pitch;
     float yaw;
 
@@ -114,9 +114,13 @@ void PlayerController::handleMessage(const PlayerPitchYawMessage& received)
     auto playerEntry = mPlayerEntities.find(playerId);
     if(playerEntry != mPlayerEntities.end())
     {
-        playerEntry->second.lock()->addToAttribute<float>("pitch", pitch);
-        playerEntry->second.lock()->addToAttribute<float>("yaw", yaw);
+        fea::EntityPtr entity = playerEntry->second.lock();
+        entity->addToAttribute<float>("pitch", glm::radians(pitch));
+        entity->addToAttribute<float>("yaw", glm::radians(yaw));
 
-        mBus.sendMessage<RotateGfxEntityMessage>(RotateGfxEntityMessage(playerEntry->second.lock()->getId(), pitch, yaw));
+        float newPitch = entity->getAttribute<float>("pitch");
+        float newYaw = entity->getAttribute<float>("yaw");
+
+        mBus.sendMessage<RotateGfxEntityMessage>(RotateGfxEntityMessage(playerEntry->second.lock()->getId(), newPitch, newYaw));
     }
 }
