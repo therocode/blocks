@@ -5,7 +5,6 @@ bool RemoteServerClientBridge::sEnetInitialized = false;
 
 RemoteServerClientBridge::RemoteServerClientBridge(bool isServer)
 {
-	mOther = NULL;
 	mIsHost = isServer;
 	mConnected = false;
 	if(!RemoteServerClientBridge::sEnetInitialized)
@@ -96,10 +95,8 @@ void RemoteServerClientBridge::mListenerFunction()
 								event.channelID);
 						/* Clean up the packet now that we're done using it. */
 						enet_packet_destroy (event.packet);
-
 						break;
 					}
-
 				case ENET_EVENT_TYPE_DISCONNECT:
 					printf ("%s disconnected.\n", event.peer -> data);
 					/* Reset the peer's client information. */
@@ -147,20 +144,6 @@ void RemoteServerClientBridge::flush()
 {
 
 	enet_host_flush(mHost);
-	if(mOther != NULL)
-	{
-		for(uint32_t i = 0; i < mOutgoing.size(); i++)
-		{
-			mOther->receivePackage(std::move(mOutgoing[i]));
-		}
-
-		mOutgoing.clear();
-	}
-}
-
-void RemoteServerClientBridge::connect(RemoteServerClientBridge* other)
-{
-	mOther = other;
 }
 
 void RemoteServerClientBridge::receivePackage(std::weak_ptr<BasePackage> incoming)

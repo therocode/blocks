@@ -10,7 +10,7 @@ class RemoteServerClientBridge : public ServerClientBridge
     public:
 		RemoteServerClientBridge(bool isServer);
         virtual void flush() override;
-        void connect(RemoteServerClientBridge* other); 
+        //void connect(RemoteServerClientBridge* other); 
         void receivePackage(std::weak_ptr<BasePackage> incoming);
 
 		void connectToAddress(std::string address, int port = -1);
@@ -23,7 +23,6 @@ class RemoteServerClientBridge : public ServerClientBridge
 		static bool sEnetInitialized;
 		void createHost();
 		void createClient();
-        RemoteServerClientBridge* mOther;
 		ENetAddress mAddress;
 		ENetHost*	mHost;
 		int			mPort;

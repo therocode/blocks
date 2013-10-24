@@ -185,10 +185,24 @@ void Renderer::render()
 
 	glBindTexture(GL_TEXTURE_2D, blockTexture);
 
-	for(auto& vbo : vbos)
-	{
-		vbo.second.DrawVBO(mShaderProgram);
+	ChunkCoordinate currentChunk = worldToChunk(cam.GetPosition());
+
+	for(int x = -2; x < 3; x++)
+	for(int y = -2; y < 3; y++)
+	for(int z = -2; z < 3; z++)
+	{	
+		ChunkCoordinate p = ChunkCoordinate(x,y,z);
+		p += currentChunk;
+        std::unordered_map<ChunkCoordinate, VBO>::const_iterator got= vbos.find(p);
+		if(got != vbos.end())
+		{
+			vbos[p].DrawVBO(mShaderProgram);
+		}
 	}
+//	for(auto& vbo : vbos)
+//	{
+//		vbo.second.DrawVBO(mShaderProgram);
+//	}
 	float matr[16]=	{	1.f, 0.f, 0.f, 0.f, 
 		0.f, 1.f, 0.f, 0.f,
 		0.f, 0.f, 1.f, 0.f,

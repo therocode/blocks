@@ -103,17 +103,12 @@ void BlocksApplication::setupMultiPlayer()
     RemoteServerClientBridge* serverToClient = new RemoteServerClientBridge(true);
   	RemoteServerClientBridge* clientToServer = new RemoteServerClientBridge(false);
 
-
 	serverToClient->startListening();
 
-
     server->setup();
-    client->setServerBridge(std::unique_ptr<RemoteServerClientBridge>(clientToServer));
-    //server->addClientBridge(std::unique_ptr<RemoteServerClientBridge>(serverToClient));
-    clientToServer->connect(serverToClient);
-    serverToClient->connect(clientToServer);
-	client->setup();
 
+    client->setServerBridge(std::unique_ptr<RemoteServerClientBridge>(clientToServer));
+	client->setup();
 	clientToServer->connectToAddress("localhost");
 }
 
@@ -121,47 +116,16 @@ void BlocksApplication::setupDedicatedServer()
 {
     server = std::unique_ptr<Server>(new Server());
 	RemoteServerClientBridge *serverToClient = new RemoteServerClientBridge(true);
-    //ugly hack to make it not segfault
-    LocalServerClientBridge* clientToServer = new LocalServerClientBridge();
-    clientToServer->connect(clientToServer);
-
-
 	serverToClient->startListening();
-    //server->addClientBridge(std::unique_ptr<LocalServerClientBridge>(clientToServer));
     server->setup();
-/*  std::cout << "Initialising dedicated server without a local client\n";
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-    std::cout << "...\n";
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-    std::cout << "...\n";
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-    std::cout << "...\n";
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-    std::cout << "...\n";
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-    std::cout << "CRAHSHCA SEGMENTATION FAULT HIHIHI!\n";
-    std::this_thread::sleep_for(std::chrono::milliseconds(3000));
-    std::cout << "No, just kidding, not implemented yet\n";
-    exit(1);*/
 }
 
 void BlocksApplication::joinServer(const std::string& address, int32_t port)
 {
-    server = std::unique_ptr<Server>(new Server());
-   // server = std::unique_ptr<Server>(new Server());
 	client = std::unique_ptr<Client>(new Client());
-
-    RemoteServerClientBridge* serverToClient = new RemoteServerClientBridge(true);
   	RemoteServerClientBridge* clientToServer = new RemoteServerClientBridge(false);
-
-	//serverToClient->startListening();
-    //server->setup();
     client->setServerBridge(std::unique_ptr<RemoteServerClientBridge>(clientToServer));
-    //server->addClientBridge(std::unique_ptr<RemoteServerClientBridge>(serverToClient));
-    //clientToServer->connect(serverToClient);
-    //serverToClient->connect(clientToServer);
 	clientToServer->connectToAddress(address, port);
-	server->setup();
 	client->setup();
 	clientToServer->startListening();
 }
