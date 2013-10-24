@@ -1,5 +1,6 @@
 #include "landscape.h"
 #include "worldmessages.h"
+#include <iostream>
 
 Landscape::Landscape(fea::MessageBus& bus) : mBus(bus)
 {
@@ -40,7 +41,7 @@ const ChunkMap& Landscape::getChunkList() const
 void Landscape::highlightChunk(size_t id, const ChunkCoordinate& chunk)
 {
 
-    int32_t halfCheatBoxWidth = 5;
+    int32_t halfCheatBoxWidth = 4;
 
     int32_t centerX = chunk.x;
     int32_t centerY = chunk.y;
@@ -52,13 +53,14 @@ void Landscape::highlightChunk(size_t id, const ChunkCoordinate& chunk)
         {
             for(int32_t z = centerZ - halfCheatBoxWidth; z <= centerZ + halfCheatBoxWidth; z++)
             {
+                std::cout << "generated chunk " << x << " " << y << " " << z << "\n";
                 ChunkCoordinate coordinate(x, y, z);
                 loadChunk(coordinate);
             }
         }
     }
 
-    highlightedChunks.emplace(id, chunk);
+    highlightedChunks[id] = chunk;
     checkUnloads(id);
 }
 
@@ -71,9 +73,9 @@ void Landscape::checkUnloads(size_t id)
         ChunkCoordinate& highlighted = highlightedChunks.at(id);
         for(auto& chunk : chunks)
         {
-            ChunkCoordinate distance = chunk.first - highlighted;
+            ChunkCoordinate distance = highlighted - chunk.first;
 
-            if(distance.x + distance.y > 5)
+            if(distance.x + distance.z > 6)
             {
                 chunksToUnload.push_back(chunk.first);
             }
@@ -82,8 +84,11 @@ void Landscape::checkUnloads(size_t id)
         for(auto& chunk : chunksToUnload)
         {
             unloadChunk(chunk);
+            std::cout << "removed chunk\n";
         }
     }
+
+    std::cout << "there are now " << chunks.size() << " chunks loaded\n";
 }
 
 void Landscape::unloadChunk(const ChunkCoordinate& chunk)
