@@ -186,10 +186,11 @@ void Renderer::render()
 	glBindTexture(GL_TEXTURE_2D, blockTexture);
 
 	ChunkCoordinate currentChunk = worldToChunk(cam.GetPosition());
+	int size = 3;
 
-	for(int x = -2; x < 3; x++)
-	for(int y = -2; y < 3; y++)
-	for(int z = -2; z < 3; z++)
+	for(int x = -size; x < size+1; x++)
+	for(int y = -size; y < size+1; y++)
+	for(int z = -size; z < size+1; z++)
 	{	
 		ChunkCoordinate p = ChunkCoordinate(x,y,z);
 		p += currentChunk;
@@ -203,7 +204,8 @@ void Renderer::render()
 //	{
 //		vbo.second.DrawVBO(mShaderProgram);
 //	}
-	float matr[16]=	{	1.f, 0.f, 0.f, 0.f, 
+	float matr[16]=	{	
+		1.f, 0.f, 0.f, 0.f, 
 		0.f, 1.f, 0.f, 0.f,
 		0.f, 0.f, 1.f, 0.f,
 		0.f, 0.f, 0.f, 1.f
