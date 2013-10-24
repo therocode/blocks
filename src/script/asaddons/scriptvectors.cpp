@@ -7,9 +7,24 @@ void registerGlmVectors(asIScriptEngine* engine)
 
     r = engine->RegisterObjectType("Vec3", sizeof(glm::vec3), asOBJ_VALUE|asOBJ_APP_CLASS_CDAK); assert(r >= 0);
 	r = engine->RegisterObjectBehaviour("Vec3", asBEHAVE_CONSTRUCT, "void f()", asFUNCTION(constructVec3), asCALL_CDECL_OBJLAST); assert( r >= 0 );
+	r = engine->RegisterObjectBehaviour("Vec3", asBEHAVE_CONSTRUCT, "void f(float x, float y, float z)", asFUNCTION(floatConstructVec3), asCALL_CDECL_OBJLAST); assert( r >= 0 );
 	r = engine->RegisterObjectBehaviour("Vec3", asBEHAVE_CONSTRUCT, "void f(const Vec3 &in)", asFUNCTION(copyConstructVec3), asCALL_CDECL_OBJLAST); assert( r >= 0 );
 	r = engine->RegisterObjectBehaviour("Vec3", asBEHAVE_DESTRUCT,  "void f()", asFUNCTION(destructVec3),  asCALL_CDECL_OBJLAST); assert( r >= 0 );
-    //r = engine->RegisterObjectMethod("Vec3", "float x()", asMETHOD(glm::vec3, x), asCALL_THISCALL); assert(r >= 0);
+
+    r = engine->RegisterObjectProperty("Vec3", "float x", asOFFSET(glm::vec3, x)); assert(r >= 0);
+    r = engine->RegisterObjectProperty("Vec3", "float y", asOFFSET(glm::vec3, y)); assert(r >= 0);
+    r = engine->RegisterObjectProperty("Vec3", "float z", asOFFSET(glm::vec3, z)); assert(r >= 0);
+
+    //r = engine->RegisterObjectMethod("Vec3", "Vec3 opSub(Vec3 vec) const", asMETHODPR(glm::vec3, operator-, (const glm::vec3&) const, glm::vec3), asCALL_THISCALL); assert(r >= 0);
+
+    r = engine->RegisterObjectMethod("Vec3", "Vec3 opAdd(const Vec3& in) const", asFUNCTIONPR(vec3Add, (const glm::vec3&, const glm::vec3&), glm::vec3), asCALL_CDECL_OBJLAST); assert(r >= 0);
+    r = engine->RegisterObjectMethod("Vec3", "Vec3 opSub(const Vec3& in) const", asFUNCTIONPR(vec3Sub, (const glm::vec3&, const glm::vec3&), glm::vec3), asCALL_CDECL_OBJLAST); assert(r >= 0);
+    r = engine->RegisterObjectMethod("Vec3", "Vec3 opMul(const Vec3& in) const", asFUNCTIONPR(vec3Mul, (const glm::vec3&, const glm::vec3&), glm::vec3), asCALL_CDECL_OBJLAST); assert(r >= 0);
+    r = engine->RegisterObjectMethod("Vec3", "Vec3 opDiv(const Vec3& in) const", asFUNCTIONPR(vec3Div, (const glm::vec3&, const glm::vec3&), glm::vec3), asCALL_CDECL_OBJLAST); assert(r >= 0);
+    r = engine->RegisterObjectMethod("Vec3", "Vec3 opMul(float val) const", asFUNCTIONPR(vec3Mul, (const glm::vec3&, float), glm::vec3), asCALL_CDECL_OBJLAST); assert(r >= 0);
+    r = engine->RegisterObjectMethod("Vec3", "Vec3 opDiv(float val) const", asFUNCTIONPR(vec3Div, (const glm::vec3&, float), glm::vec3), asCALL_CDECL_OBJLAST); assert(r >= 0);
+
+    r = engine->RegisterGlobalFunction("string toString(const Vec3& in)", asFUNCTIONPR(vec3ToString, (const glm::vec3&), std::string), asCALL_CDECL); assert(r >= 0);
 }
 
 using namespace glm;
@@ -24,9 +39,47 @@ void copyConstructVec3(const glm::vec3& other, void* pointer)
     new(pointer) glm::vec3(other);
 }
 
-using namespace glm;
+void floatConstructVec3(float x, float y, float z, void* pointer)
+{
+    new(pointer) glm::vec3(x, y, z);
+}
 
 void destructVec3(void* pointer)
 {
     ((glm::vec3*) pointer)->~vec3();
+}
+
+glm::vec3 vec3Add(const glm::vec3& vec1, const glm::vec3& vec2)
+{
+    return vec1 + vec2;
+}
+
+glm::vec3 vec3Sub(const glm::vec3& vec1, const glm::vec3& vec2)
+{
+    return vec1 - vec2;
+}
+
+glm::vec3 vec3Mul(const glm::vec3& vec1, const glm::vec3& vec2)
+{
+    return vec1 * vec2;
+}
+
+glm::vec3 vec3Div(const glm::vec3& vec1, const glm::vec3& vec2)
+{
+    return vec1 / vec2;
+}
+
+glm::vec3 vec3Mul(const glm::vec3& vec1, float val)
+{
+    return vec1 * val;
+}
+
+glm::vec3 vec3Div(const glm::vec3& vec1, float val)
+{
+    return vec1 / val;
+}
+
+std::string vec3ToString(const glm::vec3& vec)
+{
+    return std::to_string(vec.x) + ", " + std::to_string(vec.y) + ", " + std::to_string(vec.z);
 }

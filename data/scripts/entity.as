@@ -40,8 +40,10 @@ class Elephant : Entity
         if(teleporter)
         {
             setPosition(randomFloatRange(-30.0f, 30.0f), 70.0f, randomFloatRange(-30.0f, 30.0f));
-            Vec3 vector;
-            //consolePrint(vector.x);
+            Vec3 vector(1.0f, 2.0f, 3.0f);
+            Vec3 vector2(1.0f, 2.0f, 3.0f);
+            vector.x = 6.0f;
+            //consolePrint("vector is " + toString(vector * 2));
         }
     }
 
