@@ -42,7 +42,7 @@ void Landscape::highlightChunk(size_t id, const ChunkCoordinate& chunk)
 {
     checkUnloads(id);
 
-    int32_t halfCheatBoxWidth = 2;
+    int32_t halfCheatBoxWidth = 6;
 
     int32_t centerX = chunk.x;
     int32_t centerY = chunk.y;
@@ -50,7 +50,7 @@ void Landscape::highlightChunk(size_t id, const ChunkCoordinate& chunk)
 
     for(int32_t x = centerX - halfCheatBoxWidth; x <= centerX + halfCheatBoxWidth; x++)
     {
-        for(int32_t y = centerY - halfCheatBoxWidth; y <= centerY + halfCheatBoxWidth; y++)
+        for(int32_t y = centerY - halfCheatBoxWidth / 3; y <= centerY + halfCheatBoxWidth / 3; y++)
         {
             for(int32_t z = centerZ - halfCheatBoxWidth; z <= centerZ + halfCheatBoxWidth; z++)
             {
