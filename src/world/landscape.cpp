@@ -53,7 +53,6 @@ void Landscape::highlightChunk(size_t id, const ChunkCoordinate& chunk)
         {
             for(int32_t z = centerZ - halfCheatBoxWidth; z <= centerZ + halfCheatBoxWidth; z++)
             {
-                std::cout << "generated chunk " << x << " " << y << " " << z << "\n";
                 ChunkCoordinate coordinate(x, y, z);
                 loadChunk(coordinate);
             }
@@ -84,11 +83,8 @@ void Landscape::checkUnloads(size_t id)
         for(auto& chunk : chunksToUnload)
         {
             unloadChunk(chunk);
-            std::cout << "removed chunk\n";
         }
     }
-
-    std::cout << "there are now " << chunks.size() << " chunks loaded\n";
 }
 
 void Landscape::unloadChunk(const ChunkCoordinate& chunk)
