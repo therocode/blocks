@@ -70,7 +70,17 @@ asIScriptFunction* ScriptModule::getFunctionByDecl(const std::string& decl)
 
 asIObjectType* ScriptModule::getObjectTypeByDecl(const std::string& decl)
 {
-    return mEngine.getEngine()->GetObjectTypeById(mAsModule->GetTypeIdByDecl(decl.c_str()));
+    if(!mAsModule)
+        return nullptr;
+
+    int32_t id = mAsModule->GetTypeIdByDecl(decl.c_str());
+
+    if(id < 0)
+    {
+        return nullptr;
+    }
+
+    return mEngine.getEngine()->GetObjectTypeById(id);
 }
 
 std::vector<asIObjectType*> ScriptModule::getObjectTypes() const

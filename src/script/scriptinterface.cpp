@@ -108,9 +108,13 @@ void ScriptInterface::setGravity(float constant)
 asIScriptObject* ScriptInterface::createEntity(const std::string& type, float x, float y, float z)
 {
     asIObjectType* objectType = mModule.getObjectTypeByDecl(type);
+    if(!objectType)
+    {
+        mBus.sendMessage<LogMessage>(LogMessage("Script runtime error: Tying to create entity of invalid type '" + type + "'", logName));
+        return nullptr;
+    }
     
     asIScriptFunction *factory = objectType->GetFactoryByDecl(std::string(type + " @" + type +"(EntityCore@ core, uint id)").c_str());
-
 
     if(factory)
     {
@@ -153,19 +157,30 @@ asIScriptObject* ScriptInterface::createEntity(const std::string& type, float x,
 asIScriptObject* ScriptInterface::instanciateScriptEntity(const std::string& type, size_t id)
 {
     asIObjectType* objectType = mModule.getObjectTypeByDecl(type);
+    if(!objectType)
+    {
+        mBus.sendMessage<LogMessage>(LogMessage("Script runtime error: Trying to create entity of invalid type '" + type + "'", logName));
+        return nullptr;
+    }
     
     asIScriptFunction* factory = objectType->GetFactoryByDecl(std::string(type + " @" + type +"(EntityCore@ core, uint id)").c_str());
 
     if(factory)
     {
+        bool error = false;
+
         asIScriptContext* ctx = mEngine.requestContext();
         // Prepare the context to call the factory function
         ctx->Prepare(factory);
+
         // Add an entity core
         ctx->SetArgObject(0, new ScriptEntityCore(id));
+
         ctx->SetArgDWord(1, id);
+
         // Execute the call
         ctx->Execute();
+
         // Get the object that was created
         asIScriptObject *obj = *(asIScriptObject**)ctx->GetAddressOfReturnValue();
         // If you're going to store the object you must increase the reference,
