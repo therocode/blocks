@@ -31,9 +31,6 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
 	float moveY = 999;
 	float moveZ = 999;
     
-	 //glm::vec3 velocity = mEntities.at(id).lock()->getAttribute<glm::vec3>("velocity");
-    //    velocity.y *= -0.5f;
-     //   mEntities.at(id).lock()->setAttribute<glm::vec3>("velocity", velocity);
 	
 	if(mWorldInterface.getVoxelType(approvedPosition + glm::vec3(0.f, -0.5f, 0.f)) != 0)
     {
@@ -78,14 +75,25 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
     }
 	
 	
+	glm::vec3 velocity = mEntities.at(id).lock()->getAttribute<glm::vec3>("velocity");
+    
+   
 	if(move.y < 999)
+	{
 		approvedPosition.y += move.y;
+		velocity.y *= -0.5f;
+	}
 	if(move.x < 999)
+	{
 		approvedPosition.x += move.x;
+		velocity.x *= -0.5f;
+	}
 	if(move.z < 999)
+	{
 		approvedPosition.z += move.z;
-	
-
+		velocity.z *= -0.5f;
+	}
+	mEntities.at(id).lock()->setAttribute<glm::vec3>("velocity", velocity);
     mEntities.at(id).lock()->setAttribute<glm::vec3>("position", approvedPosition);
     
     mBus.sendMessage<EntityMovedMessage>(EntityMovedMessage(id, requestedPosition, approvedPosition));
