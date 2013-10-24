@@ -46,6 +46,8 @@ set(source_files
     src/script/scriptinterface.cpp
     src/script/scriptmodule.cpp
     src/script/asaddons/scriptarray.cpp
+    src/script/asaddons/scriptmath.cpp
+    src/script/asaddons/scriptvectors.cpp
     src/script/asaddons/scriptbuilder.cpp
     src/script/asaddons/scriptstdstring.cpp
     src/script/asaddons/scriptstdstring_utils.cpp
@@ -103,6 +105,8 @@ set(header_files
     src/script/scriptinterface.h
     src/script/scriptmodule.h
     src/script/asaddons/scriptarray.h
+    src/script/asaddons/scriptmath.h
+    src/script/asaddons/scriptvectors.h
     src/script/asaddons/scriptbuilder.h
     src/script/asaddons/scriptstdstring.h
     src/utilities/lodepng.h

@@ -1,5 +1,7 @@
 #include "scriptinterface.h"
 #include "scriptentitycore.h"
+#include "asaddons/scriptmath.h"
+#include "asaddons/scriptvectors.h"
 #include <iostream>
 
 ScriptInterface::ScriptInterface(fea::MessageBus& bus, ScriptEngine& engine, ScriptModule& module, WorldInterface& worldInterface, std::unordered_map<asIScriptObject*, size_t>& uglyReference) : 
@@ -28,12 +30,16 @@ void ScriptInterface::registerInterface()
     //printing
     int r = mEngine.getEngine()->RegisterGlobalFunction("void consolePrint(string text)", asMETHOD(ScriptInterface, scriptPrint), asCALL_THISCALL_ASGLOBAL, this); assert(r >= 0);
 
+    //maths
+    RegisterScriptMath(mEngine.getEngine());
+    registerGlmVectors(mEngine.getEngine());
+
     //entity
     r = mEngine.getEngine()->RegisterInterface("IEntity"); assert(r >= 0);
     r = mEngine.getEngine()->RegisterGlobalFunction("IEntity@ createIEntity(const string &in, float x, float y, float z)", asMETHOD(ScriptInterface, createEntity), asCALL_THISCALL_ASGLOBAL, this); assert(r >= 0);
     r = mEngine.getEngine()->RegisterGlobalFunction("void removeEntity(IEntity@ entity)", asMETHOD(ScriptInterface, removeEntity), asCALL_THISCALL_ASGLOBAL, this); assert(r >= 0);
 
-    mEngine.getEngine()->RegisterObjectType("EntityCore", sizeof(ScriptEntityCore), asOBJ_REF); assert(r >= 0);
+    r = mEngine.getEngine()->RegisterObjectType("EntityCore", sizeof(ScriptEntityCore), asOBJ_REF); assert(r >= 0);
     r = mEngine.getEngine()->RegisterObjectBehaviour("EntityCore", asBEHAVE_ADDREF, "void f()", asMETHOD(ScriptEntityCore, addRef), asCALL_THISCALL ); assert(r >= 0);
     r = mEngine.getEngine()->RegisterObjectBehaviour("EntityCore", asBEHAVE_RELEASE, "void f()", asMETHOD(ScriptEntityCore, release), asCALL_THISCALL); assert(r >= 0);
     r = mEngine.getEngine()->RegisterObjectMethod("EntityCore", "void setPosition(float x, float y, float z)", asMETHOD(ScriptEntityCore, setPosition), asCALL_THISCALL); assert(r >= 0);
