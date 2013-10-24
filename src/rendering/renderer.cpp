@@ -4,7 +4,7 @@
 #include <iostream>
 #include "../utilities/lodepng.h"
 
-Renderer::Renderer(fea::MessageBus& messageBus) : bus(messageBus)
+Renderer::Renderer(fea::MessageBus& messageBus) : bus(messageBus), mPlayerId(-1)
 {
 	mTimer.start();
 	bus.addMessageSubscriber<ChunkCreatedMessage>(*this);
@@ -15,6 +15,7 @@ Renderer::Renderer(fea::MessageBus& messageBus) : bus(messageBus)
 	bus.addMessageSubscriber<RotateGfxEntityMessage>(*this);
 	bus.addMessageSubscriber<RemoveGfxEntityMessage>(*this);
 	bus.addMessageSubscriber<CurrentlyFacingBlockMessage>(*this);
+	bus.addMessageSubscriber<PlayerIdMessage>(*this);
 	bus.addMessageSubscriber<PlayerConnectedToEntityMessage>(*this);
 }
 
@@ -28,6 +29,7 @@ Renderer::~Renderer()
 	bus.removeMessageSubscriber<RotateGfxEntityMessage>(*this);
 	bus.removeMessageSubscriber<RemoveGfxEntityMessage>(*this);
 	bus.removeMessageSubscriber<CurrentlyFacingBlockMessage>(*this);
+	bus.removeMessageSubscriber<PlayerIdMessage>(*this);
 	bus.removeMessageSubscriber<PlayerConnectedToEntityMessage>(*this);
 }
 
@@ -139,16 +141,21 @@ void Renderer::handleMessage(const WindowResizeMessage& received)
 
 }
 
+void Renderer::handleMessage(const PlayerIdMessage& received)
+{
+    size_t playerId;
+
+    std::tie(mPlayerId) = received.data;
+}
+
 void Renderer::handleMessage(const PlayerConnectedToEntityMessage& received)
 {
-    //connect to player. right now it will always connect to player id 0, but that could be changed.
-
     size_t playerId;
     size_t entityId;
 
     std::tie(playerId, entityId) = received.data;
 
-    if(playerId == 0)
+    if(playerId == mPlayerId)
     {
         mCameraEntity = entityId;
     }

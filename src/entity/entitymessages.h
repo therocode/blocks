@@ -43,3 +43,6 @@ using PlayerConnectedToEntityMessage = fea::Message<PlayerConnectedToEntity_tag,
 
 struct PlayerEntersChunk_tag{};//                                    playrid      chunk coord
 using PlayerEntersChunkMessage = fea::Message<PlayerEntersChunk_tag, size_t, const ChunkCoordinate&>;
+
+struct PlayerId_tag{};//                           id
+using PlayerIdMessage = fea::Message<PlayerId_tag, size_t>;

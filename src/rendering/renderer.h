@@ -23,6 +23,7 @@ class Renderer
         public fea::MessageReceiver<RotateGfxEntityMessage>,
         public fea::MessageReceiver<CurrentlyFacingBlockMessage>,
         public fea::MessageReceiver<RemoveGfxEntityMessage>,
+        public fea::MessageReceiver<PlayerIdMessage>,
         public fea::MessageReceiver<PlayerConnectedToEntityMessage>
                 
 {
@@ -39,6 +40,7 @@ class Renderer
         virtual void handleMessage(const RotateGfxEntityMessage& received);
         virtual void handleMessage(const RemoveGfxEntityMessage& received);
         virtual void handleMessage(const CurrentlyFacingBlockMessage& received);
+        virtual void handleMessage(const PlayerIdMessage& received);
         virtual void handleMessage(const PlayerConnectedToEntityMessage& received);
         void render();
         void cameraUpdate();    // camera function
@@ -56,6 +58,8 @@ class Renderer
         glm::vec2 mScreenSize;
         // camera stuff
         glm::vec3 mCameraPosition;
+
+        size_t mPlayerId;
 
         size_t mCameraEntity;
         float mCameraPitch;

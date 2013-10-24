@@ -150,6 +150,9 @@ void Server::acceptClientConnection(std::shared_ptr<ClientConnection> client)
 
     mBus.sendMessage<LogMessage>(LogMessage(std::string("Client id ") + std::to_string(newClientId) + std::string(" connected"), mLogName));
 
+    std::shared_ptr<BasePackage> playerIdPackage(new PlayerIdPackage(newClientId));
+    client->enqueuePackage(playerIdPackage);
+
     //resend current gfx entities. this is a hack right now. in the futuer it probably has to send the whole game state or something, i dunno
     for(size_t id : graphicsEntities)
     {
