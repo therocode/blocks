@@ -17,6 +17,7 @@ set(source_files
     src/application/server.cpp
     src/entity/defaultsetters.cpp
     src/entity/entityfactory.cpp
+    src/entity/entitydefinitionloader.cpp
     src/entity/entitysystem.cpp
     src/entity/controllers/collisioncontroller.cpp
     src/entity/controllers/entitycontroller.cpp
@@ -73,6 +74,7 @@ set(header_files
     src/entity/defaultsetters.h
     src/entity/entityfactory.h
     src/entity/entitydefinition.h
+    src/entity/entitydefinitionloader.h
     src/entity/entitysystem.h
     src/entity/controllers/collisioncontroller.h
     src/entity/controllers/entitycontroller.h

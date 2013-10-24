@@ -7,6 +7,7 @@ class EntityFactory
     public:
         EntityFactory(fea::EntityManager& manager);
         fea::WeakEntityPtr spawnEntity(const std::string& scriptType);
+        void addDefinition(const std::string& name, const EntityDefinition& definition);
     private:
         fea::EntityManager& mManager;
         std::unordered_map<std::string, EntityDefinition> mEntityDefinitions;

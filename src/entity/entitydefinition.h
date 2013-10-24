@@ -2,5 +2,5 @@
 
 struct EntityDefinition
 {
-    
+    std::string category;
 };

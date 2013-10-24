@@ -30,3 +30,8 @@ fea::WeakEntityPtr EntityFactory::spawnEntity(const std::string& scriptType)
 
     return spawned;
 }
+
+void EntityFactory::addDefinition(const std::string& type, const EntityDefinition& definition)
+{
+    mEntityDefinitions.emplace(type, definition);
+}
