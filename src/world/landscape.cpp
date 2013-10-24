@@ -59,8 +59,35 @@ void Landscape::highlightChunk(size_t id, const ChunkCoordinate& chunk)
             }
         }
     }
+
+    highlightedChunks.emplace(id, chunk);
 }
 
 void Landscape::checkUnloads(size_t id)
 {
+    if(highlightedChunks.find(id) != highlightedChunks.end())
+    {
+        std::vector<ChunkCoordinate> chunksToUnload;
+
+        ChunkCoordinate& highlighted = highlightedChunks.at(id);
+        for(auto& chunk : chunkIndices)
+        {
+            ChunkCoordinate distance = chunk.first - highlighted;
+
+            if(distance.x + distance.y > 7)
+            {
+                chunksToUnload.push_back(chunk.first);
+            }
+        }
+
+        for(auto& chunk : chunksToUnload)
+        {
+            unloadChunk(chunk);
+        }
+    }
+}
+
+void Landscape::unloadChunk(const ChunkCoordinate& chunk)
+{
+    
 }
