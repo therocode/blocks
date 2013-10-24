@@ -6,7 +6,6 @@ VBO::VBO():mCurrentVBOByteSize(0),mVBOCreated(false){
 
 }
 VBO::~VBO(){
-
 }
 void VBO::PushTriangle(Triangle t){
 	for(Vertex i : t.vs){

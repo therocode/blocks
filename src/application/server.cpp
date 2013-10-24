@@ -7,6 +7,7 @@ Server::Server() : mWorld(mBus),
                    mLogName("server")
 {
     mBus.addMessageSubscriber<ChunkCreatedMessage>(*this);
+    mBus.addMessageSubscriber<ChunkDeletedMessage>(*this);
     mBus.addMessageSubscriber<AddGfxEntityMessage>(*this);
     mBus.addMessageSubscriber<MoveGfxEntityMessage>(*this);
     mBus.addMessageSubscriber<RotateGfxEntityMessage>(*this);
@@ -17,6 +18,7 @@ Server::Server() : mWorld(mBus),
 Server::~Server()
 {
     mBus.removeMessageSubscriber<ChunkCreatedMessage>(*this);
+    mBus.removeMessageSubscriber<ChunkDeletedMessage>(*this);
     mBus.removeMessageSubscriber<AddGfxEntityMessage>(*this);
     mBus.removeMessageSubscriber<MoveGfxEntityMessage>(*this);
     mBus.removeMessageSubscriber<RotateGfxEntityMessage>(*this);
@@ -66,6 +68,15 @@ void Server::handleMessage(const ChunkCreatedMessage& received)
     for(auto& client : mClients)
     {
         client.second->enqueuePackage(chunkLoadedPackage);
+    }
+}
+
+void Server::handleMessage(const ChunkDeletedMessage& received)
+{
+    std::shared_ptr<BasePackage> chunkDeletedPackage(new ChunkDeletedPackage(received.data));
+    for(auto& client : mClients)
+    {
+        client.second->enqueuePackage(chunkDeletedPackage);
     }
 }
 
@@ -149,7 +160,7 @@ void Server::acceptClientConnection(std::shared_ptr<ClientConnection> client)
     //resend chunk created messages
     for(const auto& chunk : mWorld.getWorldInterface().getChunkList())
     {
-        std::shared_ptr<BasePackage> chunkAddedPackage(new ChunkLoadedPackage(chunk.getLocation(), chunk.getVoxelTypes()));
+        std::shared_ptr<BasePackage> chunkAddedPackage(new ChunkLoadedPackage(chunk.second.getLocation(), chunk.second.getVoxelTypes()));
         client->enqueuePackage(chunkAddedPackage);
     }
 

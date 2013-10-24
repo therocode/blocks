@@ -122,6 +122,11 @@ void Client::fetchServerData()
             std::tie(coordinate, types) = chunkPackage->getData();
             mBus.sendMessage<ChunkCreatedMessage>(ChunkCreatedMessage(coordinate, types));
         }
+        else if(package->mType == typeid(ChunkDeletedPackage))
+        {
+            ChunkDeletedPackage* chunkPackage = (ChunkDeletedPackage*)package.get();
+            mBus.sendMessage<ChunkDeletedMessage>(ChunkDeletedMessage(chunkPackage->getData()));
+        }
         else if(package->mType == typeid(GfxEntityAddedPackage))
         {
             GfxEntityAddedPackage* gfxAddedPackage = (GfxEntityAddedPackage*)package.get();

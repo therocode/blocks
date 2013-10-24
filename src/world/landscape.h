@@ -5,6 +5,8 @@
 #include <memory>
 #include <featherkit/messaging.h>
 
+using ChunkMap = std::unordered_map<ChunkCoordinate, Chunk>;
+
 class Landscape
 {
     public:
@@ -13,14 +15,13 @@ class Landscape
         Chunk& loadChunk(const ChunkCoordinate& location);
         bool chunkIsLoaded(const ChunkCoordinate& location) const;
         const Chunk& getChunk(const ChunkCoordinate& location) const;
-        const std::vector<Chunk>& getChunkList() const;
+        const ChunkMap& getChunkList() const;
         void highlightChunk(size_t id, const ChunkCoordinate& chunk);
     private:
         void checkUnloads(size_t id);
         void unloadChunk(const ChunkCoordinate& chunk);
         fea::MessageBus& mBus;
-        std::unordered_map<ChunkCoordinate, uint32_t> chunkIndices;
-        std::vector<Chunk> chunks;
+        ChunkMap chunks;
         std::unique_ptr<ChunkProvider> chunkDeliverer;
         std::unordered_map<size_t, ChunkCoordinate> highlightedChunks;
 };

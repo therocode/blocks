@@ -16,6 +16,7 @@
 
 class Renderer
     :   public fea::MessageReceiver<ChunkCreatedMessage>,
+        public fea::MessageReceiver<ChunkDeletedMessage>,
         public fea::MessageReceiver<WindowResizeMessage>,
         public fea::MessageReceiver<AddGfxEntityMessage>,
         public fea::MessageReceiver<MoveGfxEntityMessage>,
@@ -31,6 +32,7 @@ class Renderer
         void makeTexture(std::string path, uint32_t width, uint32_t height, GLuint& textureId);
         void setup();
         virtual void handleMessage(const ChunkCreatedMessage& received);
+        virtual void handleMessage(const ChunkDeletedMessage& received);
         virtual void handleMessage(const WindowResizeMessage& received);
         virtual void handleMessage(const AddGfxEntityMessage& received);
         virtual void handleMessage(const MoveGfxEntityMessage& received);
@@ -48,8 +50,8 @@ class Renderer
 		glm::vec3 mCurrentlyFacingBlock;
 		glm::mat4 projectionMatrix;
         fea::MessageBus& bus;
-        std::vector<VBO> vbos;
-        std::map<size_t, Billboard> billboards;
+        std::unordered_map<ChunkCoordinate, VBO> vbos;
+        std::unordered_map<size_t, Billboard> billboards;
         GLuint blockTexture;
         glm::vec2 mScreenSize;
         // camera stuff

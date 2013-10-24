@@ -77,7 +77,7 @@ size_t WorldInterface::spawnEntityFromScriptHandle(const std::string& scriptType
     return mEntitySystem.spawnEntityFromScriptHandle(scriptType, position, obj);    
 }
 
-const std::vector<Chunk>& WorldInterface::getChunkList() const
+const ChunkMap& WorldInterface::getChunkList() const
 {
     return mDimension.getLandscape().getChunkList();
 }

@@ -8,6 +8,7 @@ Renderer::Renderer(fea::MessageBus& messageBus) : bus(messageBus)
 {
 	mTimer.start();
 	bus.addMessageSubscriber<ChunkCreatedMessage>(*this);
+	bus.addMessageSubscriber<ChunkDeletedMessage>(*this);
 	bus.addMessageSubscriber<WindowResizeMessage>(*this);
 	bus.addMessageSubscriber<AddGfxEntityMessage>(*this);
 	bus.addMessageSubscriber<MoveGfxEntityMessage>(*this);
@@ -20,6 +21,7 @@ Renderer::Renderer(fea::MessageBus& messageBus) : bus(messageBus)
 Renderer::~Renderer()
 {
 	bus.removeMessageSubscriber<ChunkCreatedMessage>(*this);
+	bus.removeMessageSubscriber<ChunkDeletedMessage>(*this);
 	bus.removeMessageSubscriber<WindowResizeMessage>(*this);
 	bus.removeMessageSubscriber<AddGfxEntityMessage>(*this);
 	bus.removeMessageSubscriber<MoveGfxEntityMessage>(*this);
@@ -97,7 +99,17 @@ void Renderer::handleMessage(const ChunkCreatedMessage& received)
     Chunk chunk(coordinate, types);
 
 	VBOCreator vboCreator;
-	vbos.push_back(vboCreator.generateChunkVBO(chunk));
+	vbos.emplace(coordinate, vboCreator.generateChunkVBO(chunk));
+}
+
+void Renderer::handleMessage(const ChunkDeletedMessage& received)
+{
+    ChunkCoordinate coordinate;
+
+    std::tie(coordinate) = received.data;
+
+    vbos.at(coordinate).DestroyVBO();
+    vbos.erase(coordinate);
 }
 
 void Renderer::handleMessage(const CurrentlyFacingBlockMessage& received)
@@ -168,7 +180,7 @@ void Renderer::render()
 
 	for(auto& vbo : vbos)
 	{
-		vbo.DrawVBO(mShaderProgram);
+		vbo.second.DrawVBO(mShaderProgram);
 	}
 	float matr[16]=	{	1.f, 0.f, 0.f, 0.f, 
 		0.f, 1.f, 0.f, 0.f,
