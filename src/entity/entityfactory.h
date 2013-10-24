@@ -1,5 +1,6 @@
 #pragma once
 #include <featherkit/entitysystem.h>
+#include "entitydefinition.h"
 
 class EntityFactory
 {
@@ -8,4 +9,5 @@ class EntityFactory
         fea::WeakEntityPtr spawnEntity(const std::string& scriptType);
     private:
         fea::EntityManager& mManager;
+        std::unordered_map<std::string, EntityDefinition> mEntityDefinitions;
 };

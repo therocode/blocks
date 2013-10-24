@@ -30,7 +30,11 @@ void ScriptHandler::setup()
     mEngine.setup();
     mScriptInterface.registerInterface();
 
-    sourceFiles = {"data/scripts/general.as", "data/scripts/entity.as"};
+    sourceFiles = {"data/scripts/general.as",
+                   "data/scripts/entity.as",
+                   "data/scripts/player.as",
+                   "data/scripts/elephant.as"
+                   };
 
     mBus.sendMessage<LogMessage>(LogMessage("Compiling scripts...", logName));
     bool succeeded = mScripts.compileFromSourceList(sourceFiles);

@@ -72,6 +72,7 @@ set(header_files
 	src/entity/entitymessages.h
     src/entity/defaultsetters.h
     src/entity/entityfactory.h
+    src/entity/entitydefinition.h
     src/entity/entitysystem.h
     src/entity/controllers/collisioncontroller.h
     src/entity/controllers/entitycontroller.h
