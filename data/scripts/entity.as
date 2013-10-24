@@ -23,6 +23,11 @@ shared class Entity : IEntity
     {
         mCore.setPosition(x, y, z);
     }
+
+    void setPosition(const Vec3 vec)
+    {
+        mCore.setPosition(vec.x, vec.y, vec.z);
+    }
 }
 
 class Elephant : Entity
@@ -39,7 +44,7 @@ class Elephant : Entity
     {
         if(teleporter)
         {
-            setPosition(randomFloatRange(-30.0f, 30.0f), 70.0f, randomFloatRange(-30.0f, 30.0f));
+            setPosition(Vec3(randomFloatRange(-30.0f, 30.0f), 70.0f, randomFloatRange(-30.0f, 30.0f)));
             Vec3 vector(1.0f, 2.0f, 3.0f);
             Vec3 vector2(1.0f, 2.0f, 3.0f);
             vector.x = 6.0f;

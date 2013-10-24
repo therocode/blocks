@@ -11,6 +11,7 @@ class ScriptEntityCore
         void addRef();
         void release();
         void setPosition(float x, float y, float z);
+        void setPosition(const glm::vec3& vec);
         void setId(size_t id);
         static WorldInterface* sWorldInterface;
         static fea::MessageBus* sBus;

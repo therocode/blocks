@@ -30,6 +30,11 @@ void ScriptEntityCore::setPosition(float x, float y, float z)
     sBus->sendMessage<EntityMoveRequestedMessage>(EntityMoveRequestedMessage(mId, glm::vec3(x, y, z)));
 }
 
+void ScriptEntityCore::setPosition(const glm::vec3& vec)
+{
+    sBus->sendMessage<EntityMoveRequestedMessage>(EntityMoveRequestedMessage(mId, vec));
+}
+
 void ScriptEntityCore::setId(size_t id)
 {
     mId = id;
