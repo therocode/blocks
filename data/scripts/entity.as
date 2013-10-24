@@ -3,6 +3,11 @@ Entity@ createEntity(const string type, float x, float y, float z)
     return cast<Entity@>(createIEntity(type, x, y, z));
 }
 
+Entity@ createEntity(const string type, Vec3 position)
+{
+    return cast<Entity@>(createIEntity(type, position.x, position.y, position.z));
+}
+
 shared class Entity : IEntity
 {
     Entity(EntityCore@ core, uint id)
@@ -28,6 +33,11 @@ shared class Entity : IEntity
     {
         mCore.setPosition(vec.x, vec.y, vec.z);
     }
+
+    Vec3 getPosition()
+    {
+        return mCore.getPosition();
+    }
 }
 
 class Elephant : Entity
@@ -47,8 +57,7 @@ class Elephant : Entity
             setPosition(Vec3(randomFloatRange(-30.0f, 30.0f), 70.0f, randomFloatRange(-30.0f, 30.0f)));
             Vec3 vector(1.0f, 2.0f, 3.0f);
             Vec3 vector2(1.0f, 2.0f, 3.0f);
-            vector.x = 6.0f;
-            //consolePrint("vector is " + toString(vector * 2));
+            //consolePrint("vector is " + length(vector));
         }
     }
 
@@ -64,8 +73,8 @@ class Player : Entity
         super(core, id);
     }
 
-    //void onFrame(int frameNumber)
-    //{
-    //    createEntity("Elephant", 
-    //}
+    void onFrame(int frameNumber)
+    {
+        //createEntity("Elephant", getPosition());
+    }
 }
