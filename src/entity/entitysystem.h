@@ -21,6 +21,12 @@ class EntitySystem :
         size_t spawnEntityFromScriptHandle(const std::string& scriptType, const glm::vec3& position, asIScriptObject* obj);
         void handleMessage(const SpawnEntityMessage& received);
         void handleMessage(const RemoveEntityMessage& received);
+
+        template<class Type>
+        Type getEntityAttribute(fea::EntityId id, const std::string& name)
+        {
+            return mManager.getEntity(id).lock()->getAttribute<Type>(name);
+        }
     private:
         void attachEntity(fea::WeakEntityPtr entity);
         void removeEntity(fea::EntityId id);
