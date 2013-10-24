@@ -17,6 +17,7 @@ Chunk& Landscape::loadChunk(const ChunkCoordinate& location)
     {
         chunks.push_back(chunkDeliverer->fetchChunk(location));
         chunkIndices.emplace(location, chunks.size() - 1);
+        mBus.sendMessage<ChunkCreatedMessage>(ChunkCreatedMessage(location, chunks[chunks.size() - 1].getVoxelTypes()));
     }
 
     return chunks[chunkIndices.at(location)];
@@ -54,7 +55,7 @@ void Landscape::highlightChunk(size_t id, const ChunkCoordinate& chunk)
             for(int32_t z = centerZ - halfCheatBoxWidth; z <= centerZ + halfCheatBoxWidth; z++)
             {
                 ChunkCoordinate coordinate(x, y, z);
-                mBus.sendMessage<ChunkCreatedMessage>(ChunkCreatedMessage(coordinate, loadChunk(coordinate).getVoxelTypes()));
+                loadChunk(coordinate);
             }
         }
     }
