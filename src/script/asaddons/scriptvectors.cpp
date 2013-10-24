@@ -23,6 +23,8 @@ void registerGlmVectors(asIScriptEngine* engine)
     r = engine->RegisterObjectMethod("Vec3", "Vec3 opDiv(const Vec3& in) const", asFUNCTIONPR(vec3Div, (const glm::vec3&, const glm::vec3&), glm::vec3), asCALL_CDECL_OBJLAST); assert(r >= 0);
     r = engine->RegisterObjectMethod("Vec3", "Vec3 opMul(float val) const", asFUNCTIONPR(vec3Mul, (const glm::vec3&, float), glm::vec3), asCALL_CDECL_OBJLAST); assert(r >= 0);
     r = engine->RegisterObjectMethod("Vec3", "Vec3 opDiv(float val) const", asFUNCTIONPR(vec3Div, (const glm::vec3&, float), glm::vec3), asCALL_CDECL_OBJLAST); assert(r >= 0);
+    r = engine->RegisterGlobalFunction("float distance(const Vec3& in, const Vec3& in)", asFUNCTION(vec3Distance), asCALL_CDECL); assert(r >= 0);
+    r = engine->RegisterGlobalFunction("float length(const Vec3& in)", asFUNCTION(vec3Length), asCALL_CDECL); assert(r >= 0);
 
     r = engine->RegisterGlobalFunction("string toString(const Vec3& in)", asFUNCTIONPR(vec3ToString, (const glm::vec3&), std::string), asCALL_CDECL); assert(r >= 0);
 }
@@ -77,6 +79,16 @@ glm::vec3 vec3Mul(const glm::vec3& vec1, float val)
 glm::vec3 vec3Div(const glm::vec3& vec1, float val)
 {
     return vec1 / val;
+}
+
+float vec3Distance(const glm::vec3& vec1, const glm::vec3& vec2)
+{
+    return glm::distance(vec1, vec2);
+}
+
+float vec3Length(const glm::vec3& vec)
+{
+    return glm::length(vec);
 }
 
 std::string vec3ToString(const glm::vec3& vec)

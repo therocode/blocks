@@ -16,4 +16,7 @@ glm::vec3 vec3Div(const glm::vec3& vec1, const glm::vec3& vec2);
 glm::vec3 vec3Mul(const glm::vec3& vec1, float);
 glm::vec3 vec3Div(const glm::vec3& vec1, float);
 
+float vec3Distance(const glm::vec3& vec1, const glm::vec3& vec2);
+float vec3Length(const glm::vec3& vec);
+
 std::string vec3ToString(const glm::vec3& vec);
