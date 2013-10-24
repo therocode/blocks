@@ -42,7 +42,7 @@ void InputAdaptor::update()
             {
                 if(mouseDown)
                 {
-                    bus.sendMessage<PlayerPitchYawMessage>(PlayerPitchYawMessage(playerId, (float)(event.mouseMove.y - lastMouseY), (float)(event.mouseMove.x - lastMouseX)));
+                    bus.sendMessage<PlayerPitchYawMessage>(PlayerPitchYawMessage(playerId, (float)(lastMouseY - event.mouseMove.y), (float)(lastMouseX - event.mouseMove.x)));
                 }
                 lastMouseX = event.mouseMove.x;
                 lastMouseY = event.mouseMove.y;

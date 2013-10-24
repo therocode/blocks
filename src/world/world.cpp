@@ -62,10 +62,11 @@ void World::handleMessage(const PlayerEntersChunkMessage& received)
 
 	std::tie(playerId, chunkCoordinate) = received.data;
 
-    //standardDimension.addFocusPoint();
+    standardDimension.highlightChunk(playerId, chunkCoordinate);
 }
 
 WorldInterface& World::getWorldInterface()
 {
     return worldInterface;
 }
+

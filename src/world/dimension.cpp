@@ -12,13 +12,13 @@ void Dimension::initialise()
     landscape.setChunkProvider(std::unique_ptr<ChunkProvider>(new LocalChunkProvider()));
 }
 
-void Dimension::addFocusPoint(const FocusPoint& focusPoint)
+void Dimension::highlightChunk(size_t id, const ChunkCoordinate& chunk)
 {
-    int32_t halfCheatBoxWidth = (focusPoint.radius + 1) / 2;
+    int32_t halfCheatBoxWidth = 2;
 
-    int32_t centerX = floor(focusPoint.position.x / (float)chunkWidth);
-    int32_t centerY = floor(focusPoint.position.y / (float)chunkWidth);
-    int32_t centerZ = floor(focusPoint.position.z / (float)chunkWidth);
+    int32_t centerX = chunk.x;
+    int32_t centerY = chunk.y;
+    int32_t centerZ = chunk.z;
 
     for(int32_t x = centerX - halfCheatBoxWidth; x <= centerX + halfCheatBoxWidth; x++)
     {

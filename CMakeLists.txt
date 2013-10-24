@@ -56,7 +56,6 @@ set(source_files
 	src/utilities/timer.cpp
 	src/world/chunk.cpp
     src/world/dimension.cpp
-    src/world/focuspoint.cpp
     src/world/landscape.cpp
     src/world/localchunkprovider.cpp
 	src/world/world.cpp
@@ -115,7 +114,6 @@ set(header_files
 	src/world/chunk.h
     src/world/chunkprovider.h
     src/world/dimension.h
-    src/world/focuspoint.h
     src/world/landscape.h
     src/world/localchunkprovider.h
 	src/world/world.h
