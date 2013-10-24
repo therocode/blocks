@@ -25,6 +25,9 @@ void registerGlmVectors(asIScriptEngine* engine)
     r = engine->RegisterObjectMethod("Vec3", "Vec3 opDiv(float val) const", asFUNCTIONPR(vec3Div, (const glm::vec3&, float), glm::vec3), asCALL_CDECL_OBJLAST); assert(r >= 0);
     r = engine->RegisterGlobalFunction("float distance(const Vec3& in, const Vec3& in)", asFUNCTION(vec3Distance), asCALL_CDECL); assert(r >= 0);
     r = engine->RegisterGlobalFunction("float length(const Vec3& in)", asFUNCTION(vec3Length), asCALL_CDECL); assert(r >= 0);
+    r = engine->RegisterGlobalFunction("float dot(const Vec3& in, const Vec3& in)", asFUNCTION(vec3Dot), asCALL_CDECL); assert(r >= 0);
+    r = engine->RegisterGlobalFunction("Vec3 cross(const Vec3& in, const Vec3& in)", asFUNCTION(vec3Cross), asCALL_CDECL); assert(r >= 0);
+    r = engine->RegisterGlobalFunction("Vec3 normalise(const Vec3& in)", asFUNCTION(vec3Normalise), asCALL_CDECL); assert(r >= 0);
 
     r = engine->RegisterGlobalFunction("string toString(const Vec3& in)", asFUNCTIONPR(vec3ToString, (const glm::vec3&), std::string), asCALL_CDECL); assert(r >= 0);
 }
@@ -89,6 +92,21 @@ float vec3Distance(const glm::vec3& vec1, const glm::vec3& vec2)
 float vec3Length(const glm::vec3& vec)
 {
     return glm::length(vec);
+}
+
+float vec3Dot(const glm::vec3& vec1, const glm::vec3& vec2)
+{
+    return glm::dot(vec1, vec2);
+}
+
+glm::vec3 vec3Cross(const glm::vec3& vec1, const glm::vec3& vec2)
+{
+    return glm::cross(vec1, vec2);
+}
+
+glm::vec3 vec3Normalise(const glm::vec3& vec)
+{
+    return glm::normalize(vec);
 }
 
 std::string vec3ToString(const glm::vec3& vec)
