@@ -1,6 +1,7 @@
 #include "entitysystem.h"
 #include "../blockstd.h"
 #include "entitymessages.h"
+#include "entitydefinitionloader.h"
 #include <featherkit/entitysystemutil.h>
 
 EntitySystem::EntitySystem(fea::MessageBus& bus) : 
@@ -10,6 +11,11 @@ EntitySystem::EntitySystem(fea::MessageBus& bus) :
 {
     mBus.addMessageSubscriber<SpawnEntityMessage>(*this);
     mBus.addMessageSubscriber<RemoveEntityMessage>(*this);
+
+    EntityDefinitionLoader loader;
+
+    mFactory.addDefinition(loader.loadFromJSONFile("data/entities/elephant.def"));
+    mFactory.addDefinition(loader.loadFromJSONFile("data/entities/player.def"));
 }
 
 EntitySystem::~EntitySystem()

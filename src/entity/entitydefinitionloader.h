@@ -4,5 +4,6 @@
 
 class EntityDefinitionLoader
 {
-    EntityDefinition loadFromJSONFile(const std::string& path);
+    public:
+        EntityDefinition loadFromJSONFile(const std::string& path);
 };

@@ -1,4 +1,5 @@
 #include <featherkit/entitysystemutil.h>
+#include <iostream>
 #include "../blockstd.h"
 #include "entityfactory.h"
 #include "defaultsetters.h"
@@ -22,7 +23,12 @@ EntityFactory::EntityFactory(fea::EntityManager& manager) : mManager(manager)
 
 fea::WeakEntityPtr EntityFactory::spawnEntity(const std::string& scriptType)
 {
-    std::string type = "living";  //work out underlying type from script type
+    if(mEntityDefinitions.find(scriptType) == mEntityDefinitions.end())
+    {
+        std::cout << "Error! Trying to spawn entity of type " << scriptType << " but it lacks a definition file\n";
+    }
+
+    std::string type = mEntityDefinitions.at(scriptType).category;
 
     fea::WeakEntityPtr spawned = mManager.createEntity(type);
 
@@ -31,7 +37,7 @@ fea::WeakEntityPtr EntityFactory::spawnEntity(const std::string& scriptType)
     return spawned;
 }
 
-void EntityFactory::addDefinition(const std::string& type, const EntityDefinition& definition)
+void EntityFactory::addDefinition(const EntityDefinition& definition)
 {
-    mEntityDefinitions.emplace(type, definition);
+    mEntityDefinitions.emplace(definition.name, definition);
 }
