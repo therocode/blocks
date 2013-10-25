@@ -168,5 +168,20 @@ void PlayerController::updateVoxelLookAt(size_t playerId)
     glm::vec3 direction(glm::normalize(glm::vec3(glm::cos(pitch)*glm::sin(yaw), glm::sin(pitch), glm::cos(pitch) * glm::cos(yaw))) * 10.0f);
 
 	glm::vec3 block = mWorldInterface.getVoxelAtRay(position, direction);
-	mBus.sendMessage<CurrentlyFacingBlockMessage>(CurrentlyFacingBlockMessage(block));
+
+    auto iterator = mPlayerFacings.find(playerId);
+    if(iterator == mPlayerFacings.end())
+    {
+        mPlayerFacings[playerId] = block;
+        mBus.sendMessage<PlayerFacingBlockMessage>(PlayerFacingBlockMessage(block));
+    }
+    else
+    {
+        if(block != iterator->second)
+        {
+            iterator->second = block;
+            mBus.sendMessage<PlayerFacingBlockMessage>(PlayerFacingBlockMessage(block));
+        }
+    }
+
 }

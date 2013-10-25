@@ -21,7 +21,7 @@ class Renderer
         public fea::MessageReceiver<AddGfxEntityMessage>,
         public fea::MessageReceiver<MoveGfxEntityMessage>,
         public fea::MessageReceiver<RotateGfxEntityMessage>,
-        public fea::MessageReceiver<CurrentlyFacingBlockMessage>,
+        public fea::MessageReceiver<PlayerFacingBlockMessage>,
         public fea::MessageReceiver<RemoveGfxEntityMessage>,
         public fea::MessageReceiver<PlayerIdMessage>,
         public fea::MessageReceiver<PlayerConnectedToEntityMessage>
@@ -39,7 +39,7 @@ class Renderer
         virtual void handleMessage(const MoveGfxEntityMessage& received);
         virtual void handleMessage(const RotateGfxEntityMessage& received);
         virtual void handleMessage(const RemoveGfxEntityMessage& received);
-        virtual void handleMessage(const CurrentlyFacingBlockMessage& received);
+        virtual void handleMessage(const PlayerFacingBlockMessage& received);
         virtual void handleMessage(const PlayerIdMessage& received);
         virtual void handleMessage(const PlayerConnectedToEntityMessage& received);
         void render();

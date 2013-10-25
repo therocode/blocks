@@ -17,4 +17,4 @@ struct CameraUpdated_tag{};//
 using CameraUpdatedMessage = fea::Message<CameraUpdated_tag, const glm::vec3&, const glm::vec3&>;
 
 struct CurrentlyFacingBlock_tag{};
-using CurrentlyFacingBlockMessage = fea::Message<CurrentlyFacingBlock_tag, const glm::vec3&>;
+using PlayerFacingBlockMessage = fea::Message<CurrentlyFacingBlock_tag, const glm::vec3&>;
