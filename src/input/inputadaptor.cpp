@@ -2,11 +2,15 @@
 #include "../script/scriptmessages.h"
 #include "inputadaptor.h"
 #include "inputactions.h"
+#if 0
 #include <featherkit/util/input/sfml/sfmlinputbackend.h>
+#else
+#include <featherkit/util/input/sdl2/sdl2inputbackend.h>
+#endif
 #include <featherkit/userinterfaceutil.h>
 
 InputAdaptor::InputAdaptor(sf::Window& sfw, fea::MessageBus& b)
-    :   inputHandler(new fea::util::SFMLInputBackend(sfw)),
+    :   inputHandler(new fea::util::SDL2InputBackend),
         sfWindow(sfw),
         bus(b)
 {
@@ -40,9 +44,9 @@ void InputAdaptor::update()
 		else if(event.type == fea::Event::MOUSEMOVED){
             if(!first)
             {
-                if(mouseDown)
+                //if(mouseDown)
                 {
-                    bus.sendMessage<PlayerPitchYawMessage>(PlayerPitchYawMessage(playerId, (float)(lastMouseY - event.mouseMove.y), (float)(lastMouseX - event.mouseMove.x)));
+                    bus.sendMessage<PlayerPitchYawMessage>(PlayerPitchYawMessage(playerId, -event.mouseMove.rely, -event.mouseMove.relx));//(float)(lastMouseY - event.mouseMove.y), (float)(lastMouseX - event.mouseMove.x)));
                 }
                 lastMouseX = event.mouseMove.x;
                 lastMouseY = event.mouseMove.y;

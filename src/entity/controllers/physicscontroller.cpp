@@ -45,7 +45,7 @@ void PhysicsController::onFrame()
         glm::vec3 newVelocity = currentVelocity + acceleration;
         glm::vec3 newPosition = currentPosition + newVelocity;
 
-		newVelocity *= 0.98f;
+		//newVelocity *= 0.98f;
         entity->setAttribute<glm::vec3>("velocity", newVelocity);
 
         mBus.sendMessage<EntityMoveRequestedMessage>(EntityMoveRequestedMessage(entity->getId(), newPosition));

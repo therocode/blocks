@@ -25,7 +25,9 @@ class Client :
         virtual void handleMessage(const RebuildScriptsRequestedMessage& received);
         bool requestedQuit();
         void setServerBridge(std::unique_ptr<ServerClientBridge> bridge);
+		void lockMouse(bool lock);
     private:
+		bool mMouseLocked;
         void fetchServerData();
         fea::MessageBus mBus;
         sf::Window mSfWindow;
