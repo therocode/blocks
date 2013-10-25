@@ -165,6 +165,20 @@ void Client::fetchServerData()
 			PlayerConnectedToEntityPackage* playerConnectedToEntityPackage = (PlayerConnectedToEntityPackage*)package.get();
 			mBus.sendMessage<PlayerConnectedToEntityMessage>(PlayerConnectedToEntityMessage(playerConnectedToEntityPackage->getData()));
 		}
+		else if(package->mType == typeid(PlayerFacingBlockPackage))
+		{
+			PlayerFacingBlockPackage* playerFacingBlockPackage = (PlayerFacingBlockPackage*)package.get();
+
+            size_t playerId;
+
+            float x;
+            float y;
+            float z;
+
+            std::tie(playerId, x, y, z) = playerFacingBlockPackage->getData();
+
+			mBus.sendMessage<PlayerFacingBlockMessage>(PlayerFacingBlockMessage(playerId, glm::vec3(x, y, z)));
+		}
 	}
 }
 
