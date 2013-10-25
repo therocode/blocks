@@ -17,14 +17,14 @@ struct ParameterHelper<I, Type, Types...>
     static void do_(asIScriptContext* context, Type first, Types... rest)
     {
         parameterFunction(context, I, first);
-        ParameterHelper<I + 1, Types...>::do_(rest...);
+        ParameterHelper<I + 1, Types...>::do_(context, rest...);
     }
 };
 
 template <std::size_t I>
 struct ParameterHelper<I> 
 {
-    static void do_()
+    static void do_(asIScriptContext* context)
     {
     }
 };

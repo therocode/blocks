@@ -35,6 +35,7 @@ void Server::setup()
 	mFrameTimer.setDesiredFPSRate(144);
     mFrameTimer.start();
     mBus.sendMessage<LogMessage>(LogMessage("Server initialised and ready to go", mLogName));
+    mBus.sendMessage<GameStartMessage>(GameStartMessage());
 }
 
 void Server::doLogic()

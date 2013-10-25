@@ -10,3 +10,6 @@ using LogMessage = fea::Message<Log_tag, const std::string&, const std::string&>
 
 struct PlayerJoined_tag{};//                               player id   position
 using PlayerJoinedMessage = fea::Message<PlayerJoined_tag, size_t, const::glm::vec3&>;
+
+struct GameStart_tag{};//
+using GameStartMessage = fea::Message<GameStart_tag>;

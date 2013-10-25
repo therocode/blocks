@@ -12,9 +12,11 @@ ScriptInterface::ScriptInterface(fea::MessageBus& bus, ScriptEngine& engine, Scr
     logName("script"),
     mUglyReference(uglyReference),
     onFrameCallback(engine),
+    gameStartCallback(engine),
     frameTick(0)
 {
     mBus.addMessageSubscriber<FrameMessage>(*this);
+    mBus.addMessageSubscriber<GameStartMessage>(*this);
 
     ScriptEntityCore::sWorldInterface = &worldInterface;
     ScriptEntityCore::sBus = &bus;
@@ -23,6 +25,7 @@ ScriptInterface::ScriptInterface(fea::MessageBus& bus, ScriptEngine& engine, Scr
 ScriptInterface::~ScriptInterface()
 {
     mBus.removeMessageSubscriber<FrameMessage>(*this);
+    mBus.removeMessageSubscriber<GameStartMessage>(*this);
 }
 
 void ScriptInterface::registerInterface()
@@ -71,6 +74,7 @@ void ScriptInterface::registerCallbacks(const std::map<size_t, ScriptEntity>& sc
     if(!mModule.hasErrors())
     {
         onFrameCallback.setFunction(mModule.getFunctionByDecl("void onFrame(int frameNumber)"));
+        gameStartCallback.setFunction(mModule.getFunctionByDecl("void gameStarted()"));
     }
 }
 
@@ -92,6 +96,14 @@ void ScriptInterface::handleMessage(const FrameMessage& received)
         }
 
         frameTick++;
+    }
+}
+
+void ScriptInterface::handleMessage(const GameStartMessage& received)
+{
+    if(!mModule.hasErrors())
+    {
+        gameStartCallback.execute();
     }
 }
 

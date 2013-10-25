@@ -2,6 +2,11 @@ bool flip = false;
 
 Entity@ created;
 
+void gameStarted()
+{
+    consolePrint("asssssooooo");
+}
+
 void onFrame(int frameNumber)
 {
     //consolePrint("scripts are running:!\n");

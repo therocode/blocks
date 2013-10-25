@@ -7,7 +7,8 @@
 #include "scriptentity.h"
 
 class ScriptInterface : 
-    public fea::MessageReceiver<FrameMessage>
+    public fea::MessageReceiver<FrameMessage>,
+    public fea::MessageReceiver<GameStartMessage>
 {
     public:
         ScriptInterface(fea::MessageBus& bus, ScriptEngine& engine, ScriptModule& module, WorldInterface& worldInterface, std::unordered_map<asIScriptObject*, size_t>& uglyReference);
@@ -15,6 +16,7 @@ class ScriptInterface :
         void registerInterface();
         void registerCallbacks(const std::map<size_t, ScriptEntity>& scriptEntities);
         void handleMessage(const FrameMessage& received);
+        void handleMessage(const GameStartMessage& received);
         asIScriptObject* createEntity(const std::string& type, float x, float y, float z);
         asIScriptObject* instanciateScriptEntity(const std::string& type, size_t id);
         void removeEntity(asIScriptObject* entity);
@@ -28,6 +30,7 @@ class ScriptInterface :
         std::unordered_map<asIScriptObject*, size_t>& mUglyReference;
 
         ScriptCallback<int32_t> onFrameCallback;
+        ScriptCallback<> gameStartCallback;
         int32_t frameTick;
         
         //interface functions
