@@ -40,7 +40,6 @@ void Client::setup()
 	mRenderer.setup();
 	mBus.sendMessage<WindowResizeMessage>(WindowResizeMessage(800, 600));
 	// mWindow.lockCursor(true);
-
 	//    std::cout << "client setup\n";
 }
 

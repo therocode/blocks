@@ -106,7 +106,10 @@ glm::vec3 vec3Cross(const glm::vec3& vec1, const glm::vec3& vec2)
 
 glm::vec3 vec3Normalise(const glm::vec3& vec)
 {
-    return glm::normalize(vec);
+	if(glm::length2(vec) != 0)
+		return glm::normalize(vec);
+	else 
+		return glm::vec3(0,0,0);
 }
 
 std::string vec3ToString(const glm::vec3& vec)

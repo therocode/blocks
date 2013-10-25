@@ -49,8 +49,10 @@ void Camera::Strafe(float speed)
 
 void Camera::SetDirection(glm::vec3 dir)
 {
-	direction=dir;
-	theta=acos(dir.y);
+	direction = dir;
+	if(glm::length2(direction) != 0)
+		direction = glm::normalize(direction);
+	theta = glm::acos(direction.y);
 }
 void Camera::SetPosition(glm::vec3 pos)
 {
@@ -63,7 +65,10 @@ void Camera::AddPosition(glm::vec3 p)
 
 void Camera::SetUpDir(glm::vec3 upDir)
 {
-	upDirection=glm::normalize(upDir);
+	if(glm::length2(upDir) != 0)
+		upDirection=glm::normalize(upDir);
+	else 
+		upDirection = upDir;
 }
 
 void Camera::Update()
