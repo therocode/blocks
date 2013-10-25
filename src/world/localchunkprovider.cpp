@@ -37,6 +37,10 @@ Chunk LocalChunkProvider::fetchChunk(const ChunkCoordinate& location) const
                 {
                     types[currentBlock] = 0;
                 }
+				if(noiseYPos + noiseHeight * 1.f < -1 && types[currentBlock] != 0) 
+				{
+					types[currentBlock] = 6;
+				}
 				if(types[currentBlock] != 0)
 				{
 					float s = 0.5f;
