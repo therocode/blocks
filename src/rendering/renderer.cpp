@@ -117,8 +117,12 @@ void Renderer::handleMessage(const ChunkDeletedMessage& received)
 void Renderer::handleMessage(const PlayerFacingBlockMessage& received)
 {
 	glm::vec3 v;
-	std::tie(v) = received.data;
-	mCurrentlyFacingBlock = v;
+    size_t playerId;
+
+	std::tie(playerId, v) = received.data;
+
+    if(playerId == mPlayerId)
+	    mCurrentlyFacingBlock = v;
 }
 void Renderer::handleMessage(const WindowResizeMessage& received)
 {

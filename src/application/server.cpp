@@ -13,6 +13,7 @@ Server::Server() : mWorld(mBus),
     mBus.addMessageSubscriber<RotateGfxEntityMessage>(*this);
     mBus.addMessageSubscriber<RemoveGfxEntityMessage>(*this);
     mBus.addMessageSubscriber<PlayerConnectedToEntityMessage>(*this);
+    mBus.addMessageSubscriber<PlayerFacingBlockMessage>(*this);
 }
 
 Server::~Server()
@@ -24,6 +25,7 @@ Server::~Server()
     mBus.removeMessageSubscriber<RotateGfxEntityMessage>(*this);
     mBus.removeMessageSubscriber<RemoveGfxEntityMessage>(*this);
     mBus.removeMessageSubscriber<PlayerConnectedToEntityMessage>(*this);
+    mBus.removeMessageSubscriber<PlayerFacingBlockMessage>(*this);
 }
 
 void Server::setup()
@@ -135,6 +137,25 @@ void Server::handleMessage(const PlayerConnectedToEntityMessage& received)
     {
         client.second->enqueuePackage(playerConnectedToEntityPackage);
     }
+}
+
+void Server::handleMessage(const PlayerFacingBlockMessage& received)
+{
+    size_t id;
+    glm::vec3 vector;
+    float x;
+    float y;
+    float z;
+
+    std::tie(id, vector) = received.data;
+
+    x = vector.x;
+    y = vector.y;
+    z = vector.z;
+
+    std::shared_ptr<BasePackage> playerFacingBlockPackage(new PlayerFacingBlockPackage(id, x, y, z));
+    mClients.at(id)->enqueuePackage(playerFacingBlockPackage);
+
 }
 
 void Server::setClientListener(std::unique_ptr<ClientConnectionListener> clientListener)

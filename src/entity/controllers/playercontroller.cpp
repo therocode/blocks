@@ -173,14 +173,14 @@ void PlayerController::updateVoxelLookAt(size_t playerId)
     if(iterator == mPlayerFacings.end())
     {
         mPlayerFacings[playerId] = block;
-        mBus.sendMessage<PlayerFacingBlockMessage>(PlayerFacingBlockMessage(block));
+        mBus.sendMessage<PlayerFacingBlockMessage>(PlayerFacingBlockMessage(playerId, block));
     }
     else
     {
         if(block != iterator->second)
         {
             iterator->second = block;
-            mBus.sendMessage<PlayerFacingBlockMessage>(PlayerFacingBlockMessage(block));
+            mBus.sendMessage<PlayerFacingBlockMessage>(PlayerFacingBlockMessage(playerId, block));
         }
     }
 

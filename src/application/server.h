@@ -15,7 +15,8 @@ class Server : public fea::MessageReceiver<ChunkCreatedMessage>,
                public fea::MessageReceiver<MoveGfxEntityMessage>,
                public fea::MessageReceiver<RotateGfxEntityMessage>,
                public fea::MessageReceiver<RemoveGfxEntityMessage>,
-               public fea::MessageReceiver<PlayerConnectedToEntityMessage>
+               public fea::MessageReceiver<PlayerConnectedToEntityMessage>,
+               public fea::MessageReceiver<PlayerFacingBlockMessage>
 {
     public:
         Server();
@@ -30,6 +31,7 @@ class Server : public fea::MessageReceiver<ChunkCreatedMessage>,
         void handleMessage(const RotateGfxEntityMessage& received);
         void handleMessage(const RemoveGfxEntityMessage& received);
         void handleMessage(const PlayerConnectedToEntityMessage& received);
+        void handleMessage(const PlayerFacingBlockMessage& received);
         void setClientListener(std::unique_ptr<ClientConnectionListener> clientListener);
     private:
         void acceptClientConnection(const std::shared_ptr<ClientConnection> client);
