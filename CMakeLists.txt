@@ -134,6 +134,7 @@ set(header_files
 find_package(Featherkit REQUIRED COMPONENTS entity structure ui messaging)
 find_package(GLM)
 find_package(SFML COMPONENTS window system graphics)
+find_package(SDL2)
 find_package(GLEW)
 find_package(OpenGL REQUIRED)
 find_package(ENet)
@@ -145,7 +146,22 @@ if(NOT GLEW_FOUND)
 	set(source_files ${CMAKE_CURRENT_SOURCE_DIR}/extlibs/glew/glew.c ${source_files})
 endif()
 
+if(SDL2_FOUND)
+	include_directories(${SDL2_INCLUDE_DIR})
+else(SDL2_FOUND)
+	link_directories(${CMAKE_CURRENT_SOURCE_DIR}/extlibs/SDL-2.0/lib)
+	include_directories(${CMAKE_CURRENT_SOURCE_DIR}/extlibs/SDL-2.0/include)
+endif(SDL2_FOUND)
+
 add_executable(${project_name} ${header_files} ${source_files})
+
+
+if(SDL2_FOUND)
+	target_link_libraries(${project_name} ${SDL2_LIBRARY})
+else(SDL2_FOUND)
+	target_link_libraries(${project_name} opengl32 SDL2)
+endif()
+
 #instead of setting compiler flags globally. SFML doesn't like building with this flag on.
 set_target_properties(${project_name} PROPERTIES COMPILE_FLAGS "-std=c++11 -pthread")
 if(WIN32)
