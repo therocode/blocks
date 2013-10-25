@@ -17,6 +17,8 @@ Renderer::Renderer(fea::MessageBus& messageBus) : bus(messageBus), mPlayerId(-1)
 	bus.addMessageSubscriber<PlayerFacingBlockMessage>(*this);
 	bus.addMessageSubscriber<PlayerIdMessage>(*this);
 	bus.addMessageSubscriber<PlayerConnectedToEntityMessage>(*this);
+	mCameraPitch = 0;
+	mCameraYaw = 0;
 }
 
 Renderer::~Renderer()
