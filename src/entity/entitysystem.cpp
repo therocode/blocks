@@ -1,21 +1,32 @@
 #include "entitysystem.h"
 #include "../blockstd.h"
 #include "entitymessages.h"
+#include "../application/applicationmessages.h"
 #include "entitydefinitionloader.h"
+#include "../utilities/folderexploder.h"
 #include <featherkit/entitysystemutil.h>
 
 EntitySystem::EntitySystem(fea::MessageBus& bus) : 
     mBus(bus), 
     mManager(new fea::util::BasicEntityBackend()),
-    mFactory(mManager)
+    mFactory(mManager),
+    mLogName("entity")
 {
     mBus.addMessageSubscriber<SpawnEntityMessage>(*this);
     mBus.addMessageSubscriber<RemoveEntityMessage>(*this);
 
     EntityDefinitionLoader loader;
 
-    mFactory.addDefinition(loader.loadFromJSONFile("data/entities/elephant.def"));
-    mFactory.addDefinition(loader.loadFromJSONFile("data/entities/player.def"));
+    FolderExploder exploder;
+    std::vector<std::string> definitionFiles;
+    exploder.explodeFolder("data", ".*\\.def", definitionFiles);
+
+    for(auto& fileName : definitionFiles)
+    {
+        EntityDefinition temp = loader.loadFromJSONFile(fileName);
+        mFactory.addDefinition(temp);
+        mBus.sendMessage<LogMessage>(LogMessage("Added entity type '" + temp.name + "' to entity definitions", mLogName));
+    }
 }
 
 EntitySystem::~EntitySystem()

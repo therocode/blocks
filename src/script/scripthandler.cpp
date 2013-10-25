@@ -1,6 +1,8 @@
 #include "scripthandler.h"
 #include "scriptmessages.h"
 #include "../entity/entitymessages.h"
+#include "../utilities/folderexploder.h"
+#include <iostream>
 
 ScriptHandler::ScriptHandler(fea::MessageBus& bus, WorldInterface& worldInterface) : 
     mBus(bus),
@@ -30,11 +32,15 @@ void ScriptHandler::setup()
     mEngine.setup();
     mScriptInterface.registerInterface();
 
-    sourceFiles = {"data/scripts/general.as",
-                   "data/scripts/entity.as",
-                   "data/scripts/player.as",
-                   "data/scripts/elephant.as"
-                   };
+    FolderExploder exploder;
+
+    sourceFiles.clear();
+
+    exploder.explodeFolder("data", ".*\\.as", sourceFiles);
+    for(auto& string : sourceFiles)
+    {
+        mBus.sendMessage<LogMessage>(LogMessage("Adding " + string + " for compilation.", logName));
+    }
 
     mBus.sendMessage<LogMessage>(LogMessage("Compiling scripts...", logName));
     bool succeeded = mScripts.compileFromSourceList(sourceFiles);
