@@ -1,5 +1,4 @@
 #pragma once
-#include <SFML/Window.hpp>
 #include <featherkit/userinterface.h>
 #include "../input/inputmessages.h"
 #include "../rendering/renderingmessages.h"
@@ -28,7 +27,6 @@ class Client :
     private:
         void fetchServerData();
         fea::MessageBus mBus;
-        sf::Window mSfWindow;
         fea::Window mWindow;
         Renderer mRenderer;
         InputAdaptor mInputAdaptor;

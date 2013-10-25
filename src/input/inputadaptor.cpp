@@ -2,16 +2,11 @@
 #include "../script/scriptmessages.h"
 #include "inputadaptor.h"
 #include "inputactions.h"
-#if 0
-#include <featherkit/util/input/sfml/sfmlinputbackend.h>
-#else
 #include <featherkit/util/input/sdl2/sdl2inputbackend.h>
-#endif
 #include <featherkit/userinterfaceutil.h>
 
-	InputAdaptor::InputAdaptor(sf::Window& sfw, fea::MessageBus& b)
+	InputAdaptor::InputAdaptor(fea::MessageBus& b)
 :   inputHandler(new fea::util::SDL2InputBackend),
-	sfWindow(sfw),
     mPlayerId(-1),
 	mBus(b)
 {

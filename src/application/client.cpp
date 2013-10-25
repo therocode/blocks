@@ -14,7 +14,7 @@
 
 Client::Client() : mWindow(new fea::util::SDL2WindowBackend()),
 	mRenderer(mBus),
-	mInputAdaptor(mSfWindow, mBus),
+	mInputAdaptor(mBus),
 	mQuit(false),
 	mLogName("client"),
 	mBridge(nullptr)
