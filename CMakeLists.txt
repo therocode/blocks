@@ -80,6 +80,7 @@ set(header_files
     src/entity/controllers/entitycontroller.h
     src/entity/controllers/gfxcontroller.h
     src/entity/controllers/physicscontroller.h
+    src/entity/controllers/physicstype.h
     src/entity/controllers/playercontroller.h
 	src/input/inputmessages.h
     src/input/inputactions.h

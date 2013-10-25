@@ -1,6 +1,7 @@
 {
     "Elephant":
     {
-        "category":"living"
+        "category":"living",
+        "physics_type":"NORMAL"
     }
 }

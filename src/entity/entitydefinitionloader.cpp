@@ -1,10 +1,15 @@
 #include "entitydefinitionloader.h"
+#include "controllers/physicstype.h"
 #include "../json/json.h"
 #include <fstream>
 
 EntityDefinition EntityDefinitionLoader::loadFromJSONFile(const std::string& path)
 {
     EntityDefinition definition;
+
+    //setting defaults
+    definition.category = "living";
+    definition.physics = PhysicsType::FALLING;
 
     std::ifstream file(path);
 
@@ -18,13 +23,40 @@ EntityDefinition EntityDefinitionLoader::loadFromJSONFile(const std::string& pat
     root.SetObject();
     json::read(file, root);
 
-    json::Member temp = root.GetMember(0);
+    json::Member entity = root.GetMember(0);
     //reading name
-    definition.name = temp.name;
+    definition.name = entity.name;
+
+    json::Value entityMembers = entity.value;
+    std::size_t attributeAmount = entityMembers.GetNumMembers();
     
-    //reading category
-    json::Member category = temp.value.GetMember(0);
-    definition.category = category.value.GetString();
+    for(uint32_t i = 0; i < attributeAmount; i++)
+    {
+        //reading category
+        json::Member member = entityMembers.GetMember(i);
+        std::string memberName = member.name;
+
+        if(memberName == "category")
+            definition.category = member.value.GetString();
+        
+        //reading physics type
+        else if(memberName == "physics")
+        {
+            std::string physicsString = member.value.GetString();
+
+            if(physicsString == "FALLING")
+                definition.physics = PhysicsType::FALLING;
+            else if(physicsString == "FLOATING")
+                definition.physics = PhysicsType::FLOATING;
+            else if(physicsString == "FLYING")
+                definition.physics = PhysicsType::FLYING;
+            else
+            {
+                std::cout << "Error in file '" << path << "': physics_type " << physicsString << " is not a valid type!\n";
+                exit(4);
+            }
+        }
+    }
 
     return definition;
 }
