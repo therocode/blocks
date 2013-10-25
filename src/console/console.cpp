@@ -199,28 +199,28 @@ void Console::SetBGColor(const short color){
     string val;
     switch(color){
         default:
-        case ColorBlack:
+        case (int)ConsoleColour::BLACK:
             val = "40";
         break;
-        case ColorBlue:
+        case (int)ConsoleColour::BLUE:
             val = "44";
         break;
-        case ColorCyan:
+        case (int)ConsoleColour::CYAN:
             val = "46";
         break;
-        case ColorGreen:
+        case (int)ConsoleColour::GREEN:
             val = "42";
         break;
-        case ColorMagenta:
+        case (int)ConsoleColour::MAGENTA:
             val = "45";
         break;
-        case ColorRed:
+        case (int)ConsoleColour::RED:
             val = "41";
         break;
-        case ColorWhite:
+        case (int)ConsoleColour::WHITE:
             val = "47";
         break;
-        case ColorYellow:
+        case (int)ConsoleColour::YELLOW:
             val = "43";
         break;
     }
@@ -264,29 +264,29 @@ void Console::SetFGColor(const short color){
     #else
     string val;
     switch(color){
-        case ColorBlack:
+        case (int)ConsoleColour::BLACK:
             val = "30";
         break;
-        case ColorBlue:
+        case (int)ConsoleColour::BLUE:
             val = "34";
         break;
-        case ColorCyan:
+        case (int)ConsoleColour::CYAN:
             val = "36";
         break;
-        case ColorGreen:
+        case (int)ConsoleColour::GREEN:
             val = "32";
         break;
-        case ColorMagenta:
+        case (int)ConsoleColour::MAGENTA:
             val = "35";
         break;
-        case ColorRed:
+        case (int)ConsoleColour::RED:
             val = "31";
         break;
         default:
-        case ColorWhite:
+        case (int)ConsoleColour::WHITE:
             val = "37";
         break;
-        case ColorYellow:
+        case (int)ConsoleColour::YELLOW:
             val = "33";
         break;
     }

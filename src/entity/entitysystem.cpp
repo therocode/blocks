@@ -25,7 +25,7 @@ EntitySystem::EntitySystem(fea::MessageBus& bus) :
     {
         EntityDefinition temp = loader.loadFromJSONFile(fileName);
         mFactory.addDefinition(temp);
-        mBus.sendMessage<LogMessage>(LogMessage("Added entity type '" + temp.name + "' to entity definitions", mLogName));
+        mBus.sendMessage<LogMessage>(LogMessage("Added entity type '" + temp.name + "' to entity definitions", mLogName, LogLevel::VERBOSE));
     }
 }
 

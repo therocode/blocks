@@ -27,13 +27,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef CCOLOR_H
 #define CCOLOR_H
 
-const short ColorBlack = 0;
-const short ColorRed = 1;
-const short ColorGreen = 2;
-const short ColorYellow = 3;
-const short ColorBlue = 4;
-const short ColorMagenta = 5;
-const short ColorCyan = 6;
-const short ColorWhite = 7;
+enum class ConsoleColour {BLACK = 0, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE};
+
 
 #endif

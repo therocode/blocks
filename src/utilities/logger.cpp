@@ -4,7 +4,8 @@
 #include <iostream>
 #include "../console/console.h"
 
-Logger::Logger(fea::MessageBus& bus) : mBus(bus)
+Logger::Logger(fea::MessageBus& bus) : mBus(bus),
+                                       mLogLevel(LogLevel::INFO)
 {
     mBus.addMessageSubscriber<LogMessage>(*this);
 }
@@ -18,14 +19,23 @@ void Logger::handleMessage(const LogMessage& received)
 {
     std::string message;
     std::string component;
+    LogLevel level;
 
-    std::tie(message, component) = received.data;
+    std::tie(message, component, level) = received.data;
 
 
     for(auto& line : explode(message, '\n'))
     {
         printLine("[" + getTimeString() + "|" + component + "]: ", line);
     }
+}
+
+void Logger::handleMessage(const LogLevelMessage& received)
+{
+    std::tie(mLogLevel) = received.data;
+
+    if(mLogLevel > LogLevel::VERBOSE)
+        mLogLevel = LogLevel::VERBOSE;
 }
 
 std::string Logger::getTimeString() const
@@ -43,6 +53,7 @@ std::string Logger::getTimeString() const
 
 void Logger::printLine(const std::string& lineStart, const std::string& message) const
 {
+    //Console::SetFGColor(ConsoleColour::RED);
     Console::Write(lineStart + message + "\n");
     //std::cout << lineStart << message << "\n";
 }

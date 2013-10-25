@@ -34,7 +34,7 @@ void Server::setup()
     mWorld.initialise();
 	mFrameTimer.setDesiredFPSRate(144);
     mFrameTimer.start();
-    mBus.sendMessage<LogMessage>(LogMessage("Server initialised and ready to go", mLogName));
+    mBus.sendMessage<LogMessage>(LogMessage("Server initialised and ready to go", mLogName, LogLevel::INFO));
     mBus.sendMessage<GameStartMessage>(GameStartMessage());
 }
 
@@ -63,7 +63,7 @@ void Server::doLogic()
 void Server::destroy()
 {
     mScriptHandler.destroy();
-    mBus.sendMessage<LogMessage>(LogMessage("Server destroyed", mLogName));
+    mBus.sendMessage<LogMessage>(LogMessage("Server destroyed", mLogName, LogLevel::INFO));
 }
 
 void Server::handleMessage(const ChunkCreatedMessage& received)
@@ -171,7 +171,7 @@ void Server::acceptClientConnection(std::shared_ptr<ClientConnection> client)
 
     mClients.emplace(newClientId, client);
 
-    mBus.sendMessage<LogMessage>(LogMessage(std::string("Client id ") + std::to_string(newClientId) + std::string(" connected"), mLogName));
+    mBus.sendMessage<LogMessage>(LogMessage(std::string("Client id ") + std::to_string(newClientId) + std::string(" connected"), mLogName, LogLevel::INFO));
 
     std::shared_ptr<BasePackage> playerIdPackage(new PlayerIdPackage(newClientId));
     client->enqueuePackage(playerIdPackage);

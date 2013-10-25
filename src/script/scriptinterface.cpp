@@ -109,7 +109,7 @@ void ScriptInterface::handleMessage(const GameStartMessage& received)
 
 void ScriptInterface::scriptPrint(std::string text)
 {
-    mBus.sendMessage<LogMessage>(LogMessage(text, logName));
+    mBus.sendMessage<LogMessage>(LogMessage(text, logName, LogLevel::INFO));
 }
 
 void ScriptInterface::setGravity(float constant)
@@ -122,7 +122,7 @@ asIScriptObject* ScriptInterface::createEntity(const std::string& type, float x,
     asIObjectType* objectType = mModule.getObjectTypeByDecl(type);
     if(!objectType)
     {
-        mBus.sendMessage<LogMessage>(LogMessage("Script runtime error: Tying to create entity of invalid type '" + type + "'", logName));
+        mBus.sendMessage<LogMessage>(LogMessage("Script runtime error: Tying to create entity of invalid type '" + type + "'", logName, LogLevel::ERROR));
         return nullptr;
     }
     
@@ -171,7 +171,7 @@ asIScriptObject* ScriptInterface::instanciateScriptEntity(const std::string& typ
     asIObjectType* objectType = mModule.getObjectTypeByDecl(type);
     if(!objectType)
     {
-        mBus.sendMessage<LogMessage>(LogMessage("Script runtime error: Trying to create entity of invalid type '" + type + "'", logName));
+        mBus.sendMessage<LogMessage>(LogMessage("Script runtime error: Trying to create entity of invalid type '" + type + "'", logName, LogLevel::ERROR));
         return nullptr;
     }
     
