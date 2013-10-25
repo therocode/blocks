@@ -21,6 +21,7 @@ class PlayerController :
         void handleMessage(const PlayerPitchYawMessage& received);
     private:
         void playerEntersChunk(size_t playerId, const ChunkCoordinate& chunk);
+        void updateVoxelLookAt(size_t playerId);
         std::unordered_map<size_t, fea::WeakEntityPtr> mPlayerEntities;
         std::map<size_t, float> mPlayerThrottles;
         std::map<size_t, ChunkCoordinate> mPlayerChunks;

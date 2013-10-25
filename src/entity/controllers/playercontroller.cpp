@@ -147,6 +147,7 @@ void PlayerController::handleMessage(const PlayerPitchYawMessage& received)
         float newYaw = entity->getAttribute<float>("yaw");
 		//printf("Pitch: %f, and yaw: %f\n", newPitch, newYaw);
         mBus.sendMessage<RotateGfxEntityMessage>(RotateGfxEntityMessage(playerEntry->second.lock()->getId(), newPitch, newYaw));
+        updateVoxelLookAt(playerId);
     }
 }
 
@@ -154,4 +155,18 @@ void PlayerController::playerEntersChunk(size_t playerId, const ChunkCoordinate&
 {
     mBus.sendMessage<PlayerEntersChunkMessage>(PlayerEntersChunkMessage(playerId, chunk));
     mPlayerChunks[playerId] = chunk;
+}
+
+void PlayerController::updateVoxelLookAt(size_t playerId)
+{
+    fea::EntityPtr entity = mPlayerEntities.at(playerId).lock();
+
+
+    float pitch = entity->getAttribute<float>("pitch");
+    float yaw = entity->getAttribute<float>("yaw");
+    glm::vec3 position = entity->getAttribute<glm::vec3>("position");
+    glm::vec3 direction(glm::normalize(glm::vec3(glm::cos(pitch)*glm::sin(yaw), glm::sin(pitch), glm::cos(pitch) * glm::cos(yaw))) * 10.0f);
+
+	glm::vec3 block = mWorldInterface.getVoxelAtRay(position, direction);
+	mBus.sendMessage<CurrentlyFacingBlockMessage>(CurrentlyFacingBlockMessage(block));
 }

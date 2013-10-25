@@ -7,7 +7,6 @@
 #include "../rendering/renderingmessages.h"
 
 class World : 
-        public fea::MessageReceiver<CameraUpdatedMessage>,
         public fea::MessageReceiver<PlayerEntersChunkMessage>
 {
     public:
@@ -15,7 +14,6 @@ class World :
 		~World();
         void initialise();
         void update();
-        virtual void handleMessage(const CameraUpdatedMessage& received);
         virtual void handleMessage(const PlayerEntersChunkMessage& received);
         WorldInterface& getWorldInterface();
     private:

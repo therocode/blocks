@@ -10,13 +10,11 @@
 	entitySystem(messageBus),
 	worldInterface(standardDimension, entitySystem)
 {
-	bus.addMessageSubscriber<CameraUpdatedMessage>(*this);
 	bus.addMessageSubscriber<PlayerEntersChunkMessage>(*this);
 }
 
 World::~World()
 {
-	bus.removeMessageSubscriber<CameraUpdatedMessage>(*this);
 	bus.removeMessageSubscriber<PlayerEntersChunkMessage>(*this);
 }
 
@@ -42,17 +40,6 @@ void World::initialise()
 void World::update()
 {
 	entitySystem.update();
-	glm::vec3 d = worldInterface.getVoxelAtRay(mCamPos, mCamDir);
-	bus.sendMessage<CurrentlyFacingBlockMessage>(CurrentlyFacingBlockMessage(d));
-
-}
-
-void World::handleMessage(const CameraUpdatedMessage& received)
-{
-	glm::vec3 pos, dir;
-	std::tie(pos, dir) = received.data;
-	mCamPos = pos;
-	mCamDir = dir;
 }
 
 void World::handleMessage(const PlayerEntersChunkMessage& received)
