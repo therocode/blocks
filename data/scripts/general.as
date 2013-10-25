@@ -4,7 +4,15 @@ Entity@ created;
 
 void gameStarted()
 {
-    consolePrint("asssssooooo");
+    consolePrint("Game started!");
+
+	for(int x = 0; x < 4; x++)
+	{
+		for(int y = 0; y < 4; y++)
+		{
+            createEntity("Elephant", 1.0f * x + 0.5f, 100.0f + randomFloatRange(0.f, 80.f), 1.0f * y + 0.5f);
+		}
+	}
 }
 
 void onFrame(int frameNumber)
