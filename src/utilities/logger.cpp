@@ -2,6 +2,7 @@
 #include "../application/applicationmessages.h"
 #include <chrono>
 #include <iostream>
+#include "../console/console.h"
 
 Logger::Logger(fea::MessageBus& bus) : mBus(bus)
 {
@@ -42,7 +43,8 @@ std::string Logger::getTimeString() const
 
 void Logger::printLine(const std::string& lineStart, const std::string& message) const
 {
-    std::cout << lineStart << message << "\n";
+    Console::Write(lineStart + message + "\n");
+    //std::cout << lineStart << message << "\n";
 }
 
 std::vector<std::string> Logger::explode(const std::string& str, const char& ch)  const
