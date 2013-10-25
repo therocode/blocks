@@ -20,6 +20,7 @@ class InputAdaptor : public fea::MessageReceiver<PlayerIdMessage>
 
         size_t mPlayerId;
 
+		bool windowFocus;
         int32_t lastMouseX;
         int32_t lastMouseY;
         bool first;

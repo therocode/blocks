@@ -55,6 +55,5 @@ Chunk LocalChunkProvider::fetchChunk(const ChunkCoordinate& location) const
             }
         }
     }
-
     return newChunk;
 }
