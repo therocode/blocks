@@ -37,6 +37,11 @@ void InputAdaptor::update()
 
 	while(inputHandler.pollEvent(event))
 	{
+		if(event.type == fea::Event::GAINEDFOCUS)
+			windowFocus = true;
+		else if(event.type == fea::Event::LOSTFOCUS)
+			windowFocus = false;
+		else
 		if(event.type == fea::Event::CLOSED)
 		{
 			bus.sendMessage<PlayerActionMessage>(PlayerActionMessage(playerId, InputAction::QUIT));
@@ -44,7 +49,7 @@ void InputAdaptor::update()
 		else if(event.type == fea::Event::MOUSEMOVED){
 			if(!first)
 			{
-				//if(mouseDown)
+				if(windowFocus)
 				{
 					float pitch = -event.mouseMove.rely;
 					float yaw   = -event.mouseMove.relx;

@@ -15,6 +15,7 @@ class InputAdaptor
         fea::InputHandler inputHandler;
         fea::ActionHandler<std::string> actionHandler;
 
+		bool windowFocus;
         int32_t lastMouseX;
         int32_t lastMouseY;
         bool first;
