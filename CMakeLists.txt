@@ -52,6 +52,7 @@ set(source_files
     src/script/asaddons/scriptbuilder.cpp
     src/script/asaddons/scriptstdstring.cpp
     src/script/asaddons/scriptstdstring_utils.cpp
+    src/utilities/folderexploder.cpp
     src/utilities/lodepng.cpp
     src/utilities/logger.cpp
 	src/utilities/random.cpp
@@ -113,11 +114,13 @@ set(header_files
     src/script/asaddons/scriptvectors.h
     src/script/asaddons/scriptbuilder.h
     src/script/asaddons/scriptstdstring.h
+    src/utilities/folderexploder.h
     src/utilities/lodepng.h
     src/utilities/logger.h
 	src/utilities/random.h
     src/utilities/simplexnoise.h
 	src/utilities/timer.h
+	src/utilities/tinydir.h
 	src/world/worldmessages.h
 	src/world/chunk.h
     src/world/chunkprovider.h
