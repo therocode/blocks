@@ -39,7 +39,10 @@ void Server::setup()
     mBus.sendMessage<LogMessage>(LogMessage("Server initialised and ready to go", mLogName, LogLevel::INFO));
     mBus.sendMessage<GameStartMessage>(GameStartMessage());
 }
-
+fea::MessageBus& Server::getBus()
+{
+	return mBus;
+}
 void Server::doLogic()
 {
     for(auto& client : mClients)

@@ -50,6 +50,8 @@ class Renderer
 		Camera cam;
 		Timer mTimer;
 		glm::vec3 mCurrentlyFacingBlock;
+		glm::vec3 mLastFacingBlock;
+		float fadeIn = 0.f;
 		glm::mat4 projectionMatrix;
         fea::MessageBus& bus;
         std::unordered_map<ChunkCoordinate, VBO> vbos;

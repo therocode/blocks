@@ -1,11 +1,12 @@
 @echo off
+setlocal EnableDelayedExpansion
 echo Super Advanced Game Launcher©
 echo Singleplayer: 		1 
 echo Multiplayer Host: 	2 
 echo Dedicated server: 	3 
 echo Join Multiplayer:	4
 set /p poop="What do you want to do? Enter a number:" %=%
-
+echo %poop%
 IF "%poop%" == "1" (
 	start blocks
 	exit
@@ -16,8 +17,13 @@ IF "%poop%" == "1" (
 	start blocks dedicated
 	exit
 )ELSE IF "%poop%" == "4" (
-	set /p addr="Enter server address:" %=%
-	start blocks join %addr%
-	exit
+
+	set /p addre="Server Address:"
+	echo(!addre!
+	IF NOT "!addre!" == "" (
+		start blocks join !addre!
+		exit
+	)
+	echo pasdfasdf
 )
 

@@ -255,44 +255,108 @@ void Renderer::render()
 		billboard.second.mVbo.DrawVBO(mShaderProgram);
 	}
 	mShaderProgram.unbind();
+	
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+	glBlendEquation(GL_FUNC_ADD);
 	glBindTexture(GL_TEXTURE_2D, 0);
-	glDisable(GL_DEPTH_TEST);
+	//glDisable(GL_DEPTH_TEST);
 	glPointSize(4.f);
-	glColor3f(1.f, 1.f, 1.f);
-	glBegin(GL_LINE_STRIP);
+	
+	glBegin(GL_QUADS);
+	if(mCurrentlyFacingBlock != mLastFacingBlock)
+	{
+		mLastFacingBlock = mCurrentlyFacingBlock;
+		fadeIn = 0;
+	}else if(fadeIn < 0.2f){
+		fadeIn += 0.01f;
+	}
+	glColor4f(1.f, 1.f, 1.f, fadeIn);
 	glm::vec3 v = mCurrentlyFacingBlock;//glm::floor(cam.GetPosition()) + glm::vec3(0.5);
-
-	glm::vec3 p = v + glm::vec3(0.5f);
+	float s = 0.51f;
+	
+	//top
+	glm::vec3 p = v + glm::vec3(s);
 	glVertex3f(p.x, p.y, p.z);
 	
-	p = v + glm::vec3(-0.5f, 0.5f, 0.5f);
-	glVertex3f(p.x, p.y, p.z);
-
-	p = v + glm::vec3(0.5f, 0.5f, 0.5f);
-	glVertex3f(p.x, p.y, p.z);
-
-	p = v + glm::vec3(0.5f, 0.5f, -0.5f);
-	glVertex3f(p.x, p.y, p.z);
-	
-	p = v + glm::vec3(-0.5f, 0.5f, -0.5f);
-	glVertex3f(p.x, p.y, p.z);
-	
-	p = v + glm::vec3(-0.5f, -0.5f, -0.5f);
-	glVertex3f(p.x, p.y, p.z);
-	
-	p = v + glm::vec3(-0.5f, -0.5f, 0.5f);
+	p = v + glm::vec3(s, s, -s);
 	glVertex3f(p.x, p.y, p.z);
 
-	p = v + glm::vec3(0.5f, -0.5f, 0.5f);
+	p = v + glm::vec3(-s, s, -s);
+	glVertex3f(p.x, p.y, p.z);
+
+	p = v + glm::vec3(-s, s, s);
 	glVertex3f(p.x, p.y, p.z);
 	
-	p = v + glm::vec3(0.5f, -0.5f, -0.5f);
+	//bottom
+	p = v + glm::vec3(-s);
 	glVertex3f(p.x, p.y, p.z);
 	
-	p = v + glm::vec3(-0.5f, -0.5f, -0.5f);
+	p = v + glm::vec3(s, -s, -s);
 	glVertex3f(p.x, p.y, p.z);
+
+	p = v + glm::vec3(s, -s, s);
+	glVertex3f(p.x, p.y, p.z);
+
+	p = v + glm::vec3(-s, -s, s);
+	glVertex3f(p.x, p.y, p.z);
+	
+	//left
+	p = v + glm::vec3(-s, s, -s);
+	glVertex3f(p.x, p.y, p.z);
+	
+	p = v + glm::vec3(-s, -s, -s);
+	glVertex3f(p.x, p.y, p.z);
+	
+	p = v + glm::vec3(-s, -s, s);
+	glVertex3f(p.x, p.y, p.z);
+
+	p = v + glm::vec3(-s, s, s);
+	glVertex3f(p.x, p.y, p.z);
+	
+	//right
+	p = v + glm::vec3(s, -s, -s);
+	glVertex3f(p.x, p.y, p.z);
+	
+	p = v + glm::vec3(s, s, -s);
+	glVertex3f(p.x, p.y, p.z);
+	
+	p = v + glm::vec3(s, s, s);
+	glVertex3f(p.x, p.y, p.z);
+	
+	p = v + glm::vec3(s, -s, s);
+	glVertex3f(p.x, p.y, p.z);
+	
+	//-z
+	p = v + glm::vec3(s, s, -s);
+	glVertex3f(p.x, p.y, p.z);
+	
+	p = v + glm::vec3(s, -s, -s);
+	glVertex3f(p.x, p.y, p.z);
+	
+	p = v + glm::vec3(-s, -s, -s);
+	glVertex3f(p.x, p.y, p.z);
+	
+	p = v + glm::vec3(-s, s, -s);
+	glVertex3f(p.x, p.y, p.z);
+	
+	//z
+	p = v + glm::vec3(s, s, s);
+	glVertex3f(p.x, p.y, p.z);
+	
+	p = v + glm::vec3(-s, s, s);
+	glVertex3f(p.x, p.y, p.z);
+	
+	p = v + glm::vec3(-s, -s, s);
+	glVertex3f(p.x, p.y, p.z);
+	
+	p = v + glm::vec3(s, -s, s);
+	glVertex3f(p.x, p.y, p.z);
+	
+	
 	
 	glEnd();
+	glDisable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);
 
 }
