@@ -41,7 +41,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     string Console::FGColor = "47";
 #endif
 
-static void Initialise()
+void Console::Initialise()
 {
 #ifdef _WIN32
     GetConsoleScreenBufferInfo(hConsole, &csbiInfo);

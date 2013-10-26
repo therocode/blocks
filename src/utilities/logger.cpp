@@ -7,6 +7,7 @@
 Logger::Logger(fea::MessageBus& bus) : mBus(bus),
                                        mLogLevel(LogLevel::INFO)
 {
+    Console::Initialise();
     mBus.addMessageSubscriber<LogMessage>(*this);
     mBus.addMessageSubscriber<LogLevelMessage>(*this);
 }
