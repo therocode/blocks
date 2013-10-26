@@ -5,11 +5,13 @@
 PhysicsController::PhysicsController(fea::MessageBus& bus, WorldInterface& worldInterface) : EntityController(bus, worldInterface), gravityConstant(-0.001f)
 {
     mBus.addMessageSubscriber<GravityRequestedMessage>(*this);
+    mBus.addMessageSubscriber<PhysicsImpulseMessage>(*this);
 }
 
 PhysicsController::~PhysicsController()
 {
     mBus.removeMessageSubscriber<GravityRequestedMessage>(*this);
+    mBus.removeMessageSubscriber<PhysicsImpulseMessage>(*this);
 }
 
 void PhysicsController::inspectEntity(fea::WeakEntityPtr entity)
@@ -18,7 +20,6 @@ void PhysicsController::inspectEntity(fea::WeakEntityPtr entity)
 
     if(locked->hasAttribute("position") &&
        locked->hasAttribute("velocity") &&
-       locked->hasAttribute("acceleration") && 
        locked->hasAttribute("drag") && 
        locked->hasAttribute("physics_type"))
     {
@@ -40,7 +41,7 @@ void PhysicsController::onFrame()
 
         glm::vec3 currentPosition = entity->getAttribute<glm::vec3>("position");
         glm::vec3 currentVelocity = entity->getAttribute<glm::vec3>("velocity");
-        glm::vec3 acceleration = entity->getAttribute<glm::vec3>("acceleration") + gravityForce;
+        glm::vec3 acceleration = gravityForce;
 
         glm::vec3 newVelocity = currentVelocity + acceleration;
         glm::vec3 newPosition = currentPosition + newVelocity;
@@ -55,6 +56,21 @@ void PhysicsController::onFrame()
 void PhysicsController::handleMessage(const GravityRequestedMessage& received)
 {
     std::tie(gravityConstant) = received.data;
+}
+
+void PhysicsController::handleMessage(const PhysicsImpulseMessage& received)
+{
+    size_t id;
+    glm::vec3 force;
+
+    std::tie(id, force) = received.data;
+
+    auto entity = mEntities.find(id);
+
+    if(entity != mEntities.end())
+    {
+        entity->second.lock()->addToAttribute<glm::vec3>("velocity", force);
+    }
 }
 
 void PhysicsController::removeEntity(fea::EntityId id)

@@ -38,4 +38,9 @@ shared class Entity : IEntity
     {
         return mCore.getPosition();
     }
+
+    //void applyImpulse(const Vec3 force)
+    //{
+    //    applyImpulse(mId, force);
+    //}
 }

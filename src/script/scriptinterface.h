@@ -20,6 +20,7 @@ class ScriptInterface :
         asIScriptObject* createEntity(const std::string& type, float x, float y, float z);
         asIScriptObject* instanciateScriptEntity(const std::string& type, size_t id);
         void removeEntity(asIScriptObject* entity);
+        void applyImpulse(size_t id, const glm::vec3& force);
     private:
         fea::MessageBus& mBus;
         ScriptEngine& mEngine;

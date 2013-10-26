@@ -1,11 +1,12 @@
 #pragma once
 #include <angelscript.h>
+#include <featherkit/messaging.h>
 #include "scriptmodule.h"
 
 class ScriptEngine
 {
     public:
-        ScriptEngine();
+        ScriptEngine(fea::MessageBus& bus);
         ~ScriptEngine();
         void setup();
         void destroy();
@@ -16,6 +17,7 @@ class ScriptEngine
         asIScriptEngine* getEngine();
     private:
         void messageCallback(const asSMessageInfo &msg);
+        fea::MessageBus& mBus;
         asIScriptEngine* mEngine;
         asIScriptContext* mContext;
         std::vector<asIScriptContext*> mContexts;

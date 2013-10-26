@@ -7,6 +7,6 @@ class Player : Entity
 
     void onFrame(int frameNumber)
     {
-        //createEntity("Elephant", getPosition());
+        applyImpulse(mId, Vec3(randomFloatRange(-1.0f, 1.0f), randomFloatRange(-1.0f, 1.0f), randomFloatRange(-1.0f, 1.0f)));
     }
 }

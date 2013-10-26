@@ -5,6 +5,7 @@
 #include <iostream>
 
 ScriptHandler::ScriptHandler(fea::MessageBus& bus, WorldInterface& worldInterface) : 
+    mEngine(bus),
     mBus(bus),
     mScripts(mEngine.createModule("scripts")),
     mScriptInterface(mBus, mEngine, mScripts, worldInterface, scriptEntityIds),

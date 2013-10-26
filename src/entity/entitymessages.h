@@ -46,3 +46,6 @@ using PlayerEntersChunkMessage = fea::Message<PlayerEntersChunk_tag, size_t, con
 
 struct PlayerId_tag{};//                           id
 using PlayerIdMessage = fea::Message<PlayerId_tag, size_t>;
+
+struct PhysicsImpulse_tag{};//                                entity id    force
+using PhysicsImpulseMessage = fea::Message<PhysicsImpulse_tag, size_t, const glm::vec3&>;

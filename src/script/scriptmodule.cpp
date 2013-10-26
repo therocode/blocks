@@ -54,7 +54,6 @@ bool ScriptModule::compileFromSourceList(const std::vector<std::string>& files)
     r = builder.BuildModule();
     if( r < 0 )
     {
-        std::cout << "Please correct the errors in the script and try again.\n";
         mHasErrors = true;
         return false;
     }
