@@ -12,7 +12,8 @@
 #include "../networking/packages.h"
 #include "../application/applicationmessages.h"
 
-Client::Client() : mWindow(new fea::util::SDL2WindowBackend()),
+Client::Client() : 
+	mWindow(new fea::util::SDL2WindowBackend()),
 	mRenderer(mBus),
 	mInputAdaptor(mBus),
 	mQuit(false),
@@ -118,11 +119,10 @@ void Client::setServerBridge(std::unique_ptr<ServerClientBridge> bridge)
 void Client::fetchServerData()
 {
 	std::shared_ptr<BasePackage> package;
-
 	while(mBridge->pollPackage(package))
 	{
 		if(package->mType == typeid(ChunkLoadedPackage))
-		{
+		{	
 			ChunkLoadedPackage* chunkPackage = (ChunkLoadedPackage*)package.get();
 			ChunkCoordinate coordinate;
 			VoxelTypeArray types;

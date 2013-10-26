@@ -61,7 +61,14 @@ void Renderer::makeTexture(std::string path, uint32_t width, uint32_t height, GL
 
 void Renderer::setup()
 {
-	glewInit();
+	GLenum err = glewInit();
+	if(GLEW_OK != err)
+	{
+		fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
+	}else
+	{
+		fprintf(stdout, "Status: Using GLEW %s\n", glewGetString(GLEW_VERSION));
+	}
 	glClearColor((float)0x00 / 255.f, (float)0xb2 / 255.f, (float)0xff / 255.f, 0.0f);
 
 	//glEnable(GL_LIGHTING);

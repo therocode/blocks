@@ -19,7 +19,7 @@
 	lastMouseY = 0;
 	first = true;
 	mouseDown = false;
-
+	windowFocus = true;
     mBus.addMessageSubscriber<PlayerIdMessage>(*this);   
 }
 
