@@ -33,7 +33,7 @@ void onFrame(int frameNumber)
         }
         else
         {
-            setGravity(-0.003f);
+            setGravity(-0.001f);
             flip = false;
             consolePrint("flipped gravity to " + toString(-0.003f) + " !\n");
         }
@@ -49,7 +49,7 @@ void onFrame(int frameNumber)
         //removeEntity(created);
     }
 
-    setGravity(-0.005f);
+    setGravity(-0.001f);
 
     if(frameNumber > 2000)
         setGravity(-0.001f);
