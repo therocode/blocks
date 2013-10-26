@@ -2,7 +2,7 @@
 #include "../../blockstd.h"
 #include "physicstype.h"
 
-PhysicsController::PhysicsController(fea::MessageBus& bus, WorldInterface& worldInterface) : EntityController(bus, worldInterface), gravityConstant(-0.001f)
+PhysicsController::PhysicsController(fea::MessageBus& bus, WorldInterface& worldInterface) : EntityController(bus, worldInterface), gravityConstant(-0.0007f)
 {
 	mTimer.start();
 	accumulator = 0;

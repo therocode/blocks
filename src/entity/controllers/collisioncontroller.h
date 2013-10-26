@@ -11,4 +11,5 @@ class CollisionController : public EntityController,
         void handleMessage(const EntityMoveRequestedMessage& message) override;
         virtual void removeEntity(fea::EntityId id);
     private:
+        void checkIfOnGround(fea::EntityPtr entity);
 };

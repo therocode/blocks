@@ -1,5 +1,6 @@
 #include "collisioncontroller.h"
 #include "../../world/worldinterface.h"
+#include <iostream>
 
 CollisionController::CollisionController(fea::MessageBus& bus, WorldInterface& worldInterface) : EntityController(bus, worldInterface)
 {
@@ -30,11 +31,15 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
 	glm::vec3 move = glm::vec3(999, 999, 999);
 	float moveY = 999;
 	float moveZ = 999;
-    
+
+    fea::EntityPtr entity =  mEntities.at(id).lock();
+
 	
 	if(mWorldInterface.getVoxelType(approvedPosition + glm::vec3(0.f, -0.5f, 0.f)) != 0)
     {
-		move.y = (glm::floor(approvedPosition.y) + 0.5f) - approvedPosition.y ;
+		move.y = (glm::floor(approvedPosition.y) + 0.5f) - approvedPosition.y;
+        
+        checkIfOnGround(entity);
     }
 	
 	if(mWorldInterface.getVoxelType(approvedPosition + glm::vec3(0.f, 0.5f, 0.f)) != 0)
@@ -44,11 +49,15 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
 		{
 			move.y = p;
 		}
+        
+        checkIfOnGround(entity);
     }
 	
 	if(mWorldInterface.getVoxelType(approvedPosition + glm::vec3(-0.5f, 0.f, 0.f)) != 0)
     {
 		move.x = (glm::floor(approvedPosition.x) + 0.5f) - approvedPosition.x;
+        
+        checkIfOnGround(entity);
     }
 	
 	if(mWorldInterface.getVoxelType(approvedPosition + glm::vec3(0.5f, 0.0f, 0.f)) != 0)
@@ -58,11 +67,15 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
 		{
 			move.x = p;
 		}
+        
+        checkIfOnGround(entity);
     }
 	
 	if(mWorldInterface.getVoxelType(approvedPosition + glm::vec3(0,0,-0.5f)) != 0)
     {
 		move.z = (glm::floor(approvedPosition.z) + 0.5f) - approvedPosition.z;
+        
+        checkIfOnGround(entity);
     }
 	
 	if(mWorldInterface.getVoxelType(approvedPosition + glm::vec3(0,0,0.5f)) != 0)
@@ -72,6 +85,8 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
 		{
 			move.z = p;
 		}
+        
+        checkIfOnGround(entity);
     }
 	
 	
@@ -93,8 +108,8 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
 		approvedPosition.z += move.z;
 		velocity.z *= -0.5f;
 	}
-	mEntities.at(id).lock()->setAttribute<glm::vec3>("velocity", velocity);
-    mEntities.at(id).lock()->setAttribute<glm::vec3>("position", approvedPosition);
+	entity->setAttribute<glm::vec3>("velocity", velocity);
+    entity->setAttribute<glm::vec3>("position", approvedPosition);
     
     mBus.sendMessage<EntityMovedMessage>(EntityMovedMessage(id, requestedPosition, approvedPosition));
 }
@@ -102,4 +117,12 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
 void CollisionController::removeEntity(fea::EntityId id)
 {
     mEntities.erase(id);
+}
+
+void CollisionController::checkIfOnGround(fea::EntityPtr entity)
+{
+    glm::vec3 currentVelocity = entity->getAttribute<glm::vec3>("velocity");
+    
+        //-0.0355181
+    
 }

@@ -49,8 +49,8 @@ void onFrame(int frameNumber)
         //removeEntity(created);
     }
 
-    setGravity(-0.005f);
+    //setGravity(-0.005f);
 
     if(frameNumber > 2000)
-        setGravity(-0.001f);
+        setGravity(0.001f);
 }
