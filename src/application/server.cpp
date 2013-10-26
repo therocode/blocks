@@ -30,6 +30,7 @@ Server::~Server()
 
 void Server::setup()
 {
+    mBus.sendMessage<LogLevelMessage>(LogLevel::VERBOSE);
     mScriptHandler.setup();
     mWorld.initialise();
 	mFrameTimer.setDesiredFPSRate(144);

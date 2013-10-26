@@ -8,11 +8,14 @@ Logger::Logger(fea::MessageBus& bus) : mBus(bus),
                                        mLogLevel(LogLevel::INFO)
 {
     mBus.addMessageSubscriber<LogMessage>(*this);
+    mBus.addMessageSubscriber<LogLevelMessage>(*this);
 }
 
 Logger::~Logger()
 {
     mBus.removeMessageSubscriber<LogMessage>(*this);
+    mBus.removeMessageSubscriber<LogLevelMessage>(*this);
+    Console::ResetColor();
 }
 
 void Logger::handleMessage(const LogMessage& received)
@@ -24,9 +27,12 @@ void Logger::handleMessage(const LogMessage& received)
     std::tie(message, component, level) = received.data;
 
 
-    for(auto& line : explode(message, '\n'))
+    if(level <= mLogLevel)
     {
-        printLine("[" + getTimeString() + "|" + component + "]: ", line);
+        for(auto& line : explode(message, '\n'))
+        {
+            printLine("[" + getTimeString() + "|" + component + "|", line, level);
+        }
     }
 }
 
@@ -51,10 +57,35 @@ std::string Logger::getTimeString() const
     return hour + ":" + min + ":" + sec;
 }
 
-void Logger::printLine(const std::string& lineStart, const std::string& message) const
+void Logger::printLine(const std::string& lineStart, const std::string& message, LogLevel level) const
 {
-    //Console::SetFGColor(ConsoleColour::RED);
-    Console::Write(lineStart + message + "\n");
+    Console::Write(lineStart);
+
+    switch(level)
+    {
+        case LogLevel::ERROR:
+            Console::SetFGColor(ConsoleColour::RED);
+            Console::Write(std::string("ERROR"));
+            Console::ResetColor();
+            break;
+        case LogLevel::WARNING:
+            Console::SetFGColor(ConsoleColour::YELLOW);
+            Console::Write(std::string("WARNING"));
+            Console::ResetColor();
+            break;
+        case LogLevel::INFO:
+            Console::Write(std::string("INFO"));
+            break;
+        case LogLevel::VERBOSE:
+            Console::SetFGColor(ConsoleColour::CYAN);
+            Console::Write(std::string("VERBOSE"));
+            Console::ResetColor();
+            break;
+    }
+
+    Console::Write(std::string("]: "));
+
+    Console::Write(message + "\n");
     //std::cout << lineStart << message << "\n";
 }
 

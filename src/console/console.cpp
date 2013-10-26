@@ -294,6 +294,16 @@ void Console::SetFGColor(const short color){
     #endif
     SetColor();
 }
+
+void Console::ResetColor()
+{
+    #ifdef _WIN32
+        SetConsoleTextAttribute(hConsole, wOldColorAttrs);
+    #else
+        cout << "\033[0m";
+    #endif
+}
+
 //Sets the console title
 void Console::SetTitle(const string str){
     #ifdef _WIN32

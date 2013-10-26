@@ -73,6 +73,7 @@ class Console{
         static string ReadLine();
         static void SetBGColor(const short color);
         static void SetFGColor(const short color);
+        static void ResetColor();
         static void SetTitle(const string str);
         static void SetTitle(const char str[]);
         static void SetCursorPosition(int x,int y);

@@ -26,8 +26,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 #ifndef CCOLOR_H
 #define CCOLOR_H
-
-enum class ConsoleColour {BLACK = 0, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE};
+namespace ConsoleColour
+{
+    enum {BLACK = 0, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE};
+}
 
 
 #endif

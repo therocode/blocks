@@ -34,6 +34,7 @@ class ScriptInterface :
         int32_t frameTick;
         
         //interface functions
-        void scriptPrint(std::string text);
+        void scriptPrint(const std::string& text);
+        void scriptPrint(const std::string& text, LogLevel level);
         void setGravity(float constant);
 };
