@@ -16,8 +16,7 @@ void PhysicsController::inspectEntity(fea::WeakEntityPtr entity)
 {
     fea::EntityPtr locked = entity.lock();
 
-    if(locked->hasAttribute("mass") && 
-       locked->hasAttribute("position") &&
+    if(locked->hasAttribute("position") &&
        locked->hasAttribute("velocity") &&
        locked->hasAttribute("acceleration") && 
        locked->hasAttribute("drag") && 
@@ -42,7 +41,6 @@ void PhysicsController::onFrame()
         glm::vec3 currentPosition = entity->getAttribute<glm::vec3>("position");
         glm::vec3 currentVelocity = entity->getAttribute<glm::vec3>("velocity");
         glm::vec3 acceleration = entity->getAttribute<glm::vec3>("acceleration") + gravityForce;
-        float mass = entity->getAttribute<float>("mass");
 
         glm::vec3 newVelocity = currentVelocity + acceleration;
         glm::vec3 newPosition = currentPosition + newVelocity;
