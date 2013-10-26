@@ -262,8 +262,16 @@ void Renderer::render()
 	glBindTexture(GL_TEXTURE_2D, 0);
 	//glDisable(GL_DEPTH_TEST);
 	glPointSize(4.f);
-	glColor4f(1.f, 1.f, 1.f, 0.2f);
+	
 	glBegin(GL_QUADS);
+	if(mCurrentlyFacingBlock != mLastFacingBlock)
+	{
+		mLastFacingBlock = mCurrentlyFacingBlock;
+		fadeIn = 0;
+	}else if(fadeIn < 0.2f){
+		fadeIn += 0.01f;
+	}
+	glColor4f(1.f, 1.f, 1.f, fadeIn);
 	glm::vec3 v = mCurrentlyFacingBlock;//glm::floor(cam.GetPosition()) + glm::vec3(0.5);
 	float s = 0.51f;
 	
