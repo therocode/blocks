@@ -258,7 +258,7 @@ void Renderer::render()
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glDisable(GL_DEPTH_TEST);
 	glPointSize(4.f);
-	glColor3f(1.f, 0.f, 0.f);
+	glColor3f(1.f, 1.f, 1.f);
 	glBegin(GL_LINE_STRIP);
 	glm::vec3 v = mCurrentlyFacingBlock;//glm::floor(cam.GetPosition()) + glm::vec3(0.5);
 
@@ -268,12 +268,30 @@ void Renderer::render()
 	p = v + glm::vec3(-0.5f, 0.5f, 0.5f);
 	glVertex3f(p.x, p.y, p.z);
 
+	p = v + glm::vec3(0.5f, 0.5f, 0.5f);
+	glVertex3f(p.x, p.y, p.z);
+
 	p = v + glm::vec3(0.5f, 0.5f, -0.5f);
 	glVertex3f(p.x, p.y, p.z);
-
+	
 	p = v + glm::vec3(-0.5f, 0.5f, -0.5f);
 	glVertex3f(p.x, p.y, p.z);
+	
+	p = v + glm::vec3(-0.5f, -0.5f, -0.5f);
+	glVertex3f(p.x, p.y, p.z);
+	
+	p = v + glm::vec3(-0.5f, -0.5f, 0.5f);
+	glVertex3f(p.x, p.y, p.z);
 
+	p = v + glm::vec3(0.5f, -0.5f, 0.5f);
+	glVertex3f(p.x, p.y, p.z);
+	
+	p = v + glm::vec3(0.5f, -0.5f, -0.5f);
+	glVertex3f(p.x, p.y, p.z);
+	
+	p = v + glm::vec3(-0.5f, -0.5f, -0.5f);
+	glVertex3f(p.x, p.y, p.z);
+	
 	glEnd();
 	glEnable(GL_DEPTH_TEST);
 

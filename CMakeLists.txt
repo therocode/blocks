@@ -146,7 +146,8 @@ find_package(angelscript)
 #This has to be done before add_executable. I'm adding source files.
 if(NOT GLEW_FOUND)
 	include_directories(${CMAKE_CURRENT_SOURCE_DIR}/extlibs/glew/include)
-	set(source_files ${CMAKE_CURRENT_SOURCE_DIR}/extlibs/glew/glew.c ${source_files})
+	link_directories(${CMAKE_CURRENT_SOURCE_DIR}/extlibs/glew/lib)
+	# set(source_files ${CMAKE_CURRENT_SOURCE_DIR}/extlibs/glew/glew.c ${source_files})
 endif()
 
 
@@ -214,7 +215,7 @@ if(GLEW_FOUND)
 	include_directories(${GLEW_INCLUDE_DIR})
 	target_link_libraries(${project_name} ${GLEW_LIBRARIES})
 else(GLEW_FOUND)
-	
+	target_link_libraries(${project_name} glew32)
 endif(GLEW_FOUND)
 
 

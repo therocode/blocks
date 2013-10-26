@@ -34,11 +34,12 @@ Client::~Client()
 
 void Client::setup()
 {
+	
 	mWindow.create(fea::VideoMode(800, 600, 32), "Blocky", fea::Style::Default, fea::ContextSettings(32));
 	mWindow.lockCursor(true);
-
-	//	mWindow.setFramerateLimit(30);
 	mRenderer.setup();
+	//	mWindow.setFramerateLimit(30);
+
 	mBus.sendMessage<WindowResizeMessage>(WindowResizeMessage(800, 600));
 	// mWindow.lockCursor(true);
 	//    std::cout << "client setup\n";

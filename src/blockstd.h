@@ -1,7 +1,7 @@
 //For often used headers.
 //GL
 #ifndef GLEW_STATIC
-#define  GLEW_STATIC
+#define GLEW_STATIC
 #endif
 #include <GL/glew.h>
 #include <GL/gl.h>
