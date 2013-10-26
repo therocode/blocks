@@ -34,7 +34,7 @@ void PhysicsController::onFrame()
 	int dt = mTimer.getDeltaTime();
 	if(dt > 100) return;
 	dt += accumulator;
-	int millisecondsPerStep = 10;
+	int millisecondsPerStep = 1000/60;
 	int steps = dt / millisecondsPerStep;
 	accumulator = dt % millisecondsPerStep;
 	//printf("dt: %i\n", dt);

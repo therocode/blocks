@@ -7,6 +7,6 @@ class Player : Entity
 
     void onFrame(int frameNumber)
     {
-        consolePrint("entity id is " + mId);
+        //consolePrint("entity id is " + mId);
     }
 }
