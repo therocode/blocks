@@ -300,7 +300,8 @@ void Console::SetFGColor(const short color){
 void Console::ResetColor()
 {
     #ifdef _WIN32
-        SetConsoleTextAttribute(hConsole, wOldColorAttrs);
+        //SetConsoleTextAttribute(hConsole, wOldColorAttrs);
+        SetFGColor(ConsoleColour::WHITE);
     #else
         cout << "\033[0m";
     #endif
