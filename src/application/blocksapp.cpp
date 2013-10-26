@@ -22,14 +22,20 @@ void BlocksApplication::setup(const std::vector<std::string>& args)
     }
     else if(args[1] == "--join" || args[1] == "join")
     {
-        std::string address = args[2];
-		int32_t port = -1;
-		if(args.size() > 3)
+		if(args.size() > 2)
 		{
-        	port = std::stoi(args[3]);
+			std::string address = args[2];
+			int32_t port = -1;
+			if(args.size() > 3)
+			{
+				port = std::stoi(args[3]);
+			}
+			joinServer(address, port);   //setup local client and do not setup a server. give client a NetworkServerClientBridge and connect it to remote
+		}else{
+			printf("No address given. Good bye.\n");
+			exit(3);
 		}
-		joinServer(address, port);   //setup local client and do not setup a server. give client a NetworkServerClientBridge and connect it to remote
-    }
+	}
 	else if(args[1] == "--host" || args[1] == "host")
 	{
 		setupMultiPlayer();	
