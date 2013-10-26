@@ -35,6 +35,7 @@ class Server : public fea::MessageReceiver<FatalMessage>,
         void handleMessage(const PlayerConnectedToEntityMessage& received);
         void handleMessage(const PlayerFacingBlockMessage& received);
         void setClientListener(std::unique_ptr<ClientConnectionListener> clientListener);
+		fea::MessageBus& getBus();
     private:
         void acceptClientConnection(const std::shared_ptr<ClientConnection> client);
         void pollNewClients();

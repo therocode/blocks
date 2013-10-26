@@ -32,7 +32,9 @@ void BlocksApplication::setup(const std::vector<std::string>& args)
 			}
 			joinServer(address, port);   //setup local client and do not setup a server. give client a NetworkServerClientBridge and connect it to remote
 		}else{
-			printf("No address given. Good bye.\n");
+		//sergveri isn't craeted
+			// server->getBus().sendMessage<LogMessage>(LogMessage("No address given. Good bye.", "Client", LogLevel::INFO));
+			printf("No server address specified. Quitting.\n");
 			exit(3);
 		}
 	}
