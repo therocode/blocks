@@ -1,6 +1,7 @@
 #pragma once
 #include <stdint.h>
 #include <functional>
+#include <vector>
 #include "../blockstd.h"
 
 using ChunkCoordinate = glm::ivec3;
@@ -35,9 +36,13 @@ class Chunk
         const VoxelTypeArray& getVoxelTypes() const;
         uint32_t getWidth() const;
         const ChunkCoordinate& getLocation() const;
+        void compress();
     private:
         VoxelTypeArray voxelTypes;
         ChunkCoordinate location;
+
+        bool compressed;
+        std::vector<uint16_t> compressedData;
 };
 
 namespace std

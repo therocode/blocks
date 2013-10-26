@@ -1,4 +1,6 @@
 #include "chunk.h"
+#include <iostream>
+#include <chrono>
 
 ChunkCoordinate worldToChunk(float x, float y, float z)
 {
@@ -28,11 +30,11 @@ VoxelCoordinate worldToVoxel(const glm::vec3& position)
     return worldToVoxel(position.x, position.y, position.z);
 }
 
-Chunk::Chunk(const ChunkCoordinate& loc) : location(loc)
+Chunk::Chunk(const ChunkCoordinate& loc) : location(loc), compressed(false)
 {
 }
 
-Chunk::Chunk(const ChunkCoordinate& loc, const VoxelTypeArray& types) : location(loc), voxelTypes(types)
+Chunk::Chunk(const ChunkCoordinate& loc, const VoxelTypeArray& types) : location(loc), voxelTypes(types), compressed(false)
 {
 }
 
@@ -74,4 +76,41 @@ uint32_t Chunk::getWidth() const
 const ChunkCoordinate& Chunk::getLocation() const
 {
     return location;
+}
+
+void Chunk::compress()
+{
+    uint16_t currentType = voxelTypes[0];
+    size_t index = 0;
+    size_t voxelAmount = voxelTypes.size();
+    uint16_t counter = 1;
+
+    using namespace std::chrono;
+
+    std::cout << "size before compression: " << sizeof(VoxelTypeArray) << "\n";
+    high_resolution_clock::time_point now = high_resolution_clock::now();
+
+    while(index < voxelAmount)
+    {
+        index++;
+
+        uint16_t voxel = voxelTypes[index];
+        if(voxel == currentType)
+        {
+            counter++;
+        }
+        else
+        {
+            compressedData.push_back(voxel);
+            compressedData.push_back(counter);
+
+            counter = 1;
+            currentType = voxel;
+        }
+    }
+
+    high_resolution_clock::time_point then = high_resolution_clock::now();
+
+    std::cout << "size after compression: " << compressedData.size() * sizeof(uint16_t) << "\n";
+    std::cout << "the compression process took " << duration_cast<microseconds>(then - now).count() << " microseconds\n\n";
 }
