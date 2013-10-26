@@ -169,28 +169,28 @@ void Console::SetBGColor(const short color){
     short val;
     switch(color){
         default:
-        case ColorBlack:
+        case (int)ConsoleColour::BLACK:
             val = 0;
         break;
-        case ColorBlue:
+        case (int)ConsoleColour::BLUE:
             val = BACKGROUND_BLUE;
         break;
-        case ColorCyan:
+        case (int)ConsoleColour::CYAN:
             val =  BACKGROUND_BLUE|BACKGROUND_GREEN;
         break;
-        case ColorGreen:
+        case (int)ConsoleColour::GREEN:
             val = BACKGROUND_GREEN;
         break;
-        case ColorMagenta:
+        case (int)ConsoleColour::MAGENTA:
             val = BACKGROUND_BLUE|BACKGROUND_RED;
         break;
-        case ColorRed:
+        case (int)ConsoleColour::RED:
             val = BACKGROUND_RED;
         break;
-        case ColorWhite:
+        case (int)ConsoleColour::WHITE:
             val = BACKGROUND_BLUE|BACKGROUND_GREEN|BACKGROUND_RED;
         break;
-        case ColorYellow:
+        case (int)ConsoleColour::YELLOW:
             val = BACKGROUND_GREEN|BACKGROUND_RED;
         break;
     }
@@ -235,28 +235,28 @@ void Console::SetFGColor(const short color){
     int val;
     switch(color){
         default:
-        case ColorBlack:
+        case (int)ConsoleColour::BLACK:
             val = 0;
         break;
-        case ColorBlue:
+        case (int)ConsoleColour::BLUE:
             val = FOREGROUND_BLUE;
         break;
-        case ColorCyan:
+        case (int)ConsoleColour::CYAN:
             val =  FOREGROUND_BLUE|FOREGROUND_GREEN;
         break;
-        case ColorGreen:
+        case (int)ConsoleColour::GREEN:
             val = FOREGROUND_GREEN;
         break;
-        case ColorMagenta:
+        case (int)ConsoleColour::MAGENTA:
             val = FOREGROUND_BLUE|FOREGROUND_RED;
         break;
-        case ColorRed:
+        case (int)ConsoleColour::RED:
             val = FOREGROUND_RED;
         break;
-        case ColorWhite:
+        case (int)ConsoleColour::WHITE:
             val = FOREGROUND_BLUE|FOREGROUND_GREEN|FOREGROUND_RED;
         break;
-        case ColorYellow:
+        case (int)ConsoleColour::YELLOW:
             val = FOREGROUND_GREEN|FOREGROUND_RED;
         break;
     }
