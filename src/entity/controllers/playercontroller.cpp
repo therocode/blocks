@@ -8,6 +8,7 @@ PlayerController::PlayerController(fea::MessageBus& bus, WorldInterface& worldIn
     mBus.addMessageSubscriber<PlayerJoinedMessage>(*this);
     mBus.addMessageSubscriber<PlayerActionMessage>(*this);
     mBus.addMessageSubscriber<PlayerPitchYawMessage>(*this);
+    mBus.addMessageSubscriber<EntityMovedMessage>(*this);
 }
 
 PlayerController::~PlayerController()
@@ -15,6 +16,7 @@ PlayerController::~PlayerController()
     mBus.removeMessageSubscriber<PlayerJoinedMessage>(*this);
     mBus.removeMessageSubscriber<PlayerActionMessage>(*this);
     mBus.removeMessageSubscriber<PlayerPitchYawMessage>(*this);
+    mBus.removeMessageSubscriber<EntityMovedMessage>(*this);
 }
 
 void PlayerController::inspectEntity(fea::WeakEntityPtr entity)
@@ -148,6 +150,18 @@ void PlayerController::handleMessage(const PlayerPitchYawMessage& received)
 		//printf("Pitch: %f, and yaw: %f\n", newPitch, newYaw);
         mBus.sendMessage<RotateGfxEntityMessage>(RotateGfxEntityMessage(playerEntry->second.lock()->getId(), newPitch, newYaw));
         updateVoxelLookAt(playerId);
+    }
+}
+
+void PlayerController::handleMessage(const EntityMovedMessage& received)
+{
+    size_t id;
+
+    std::tie(id, std::ignore, std::ignore) = received.data;
+
+    if(mPlayerEntities.find(id) != mPlayerEntities.end())
+    {
+        updateVoxelLookAt(id);
     }
 }
 

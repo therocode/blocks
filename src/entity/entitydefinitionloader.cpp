@@ -48,8 +48,6 @@ EntityDefinition EntityDefinitionLoader::loadFromJSONFile(const std::string& pat
                 definition.physics = PhysicsType::FALLING;
             else if(physicsString == "FLOATING")
                 definition.physics = PhysicsType::FLOATING;
-            else if(physicsString == "FLYING")
-                definition.physics = PhysicsType::FLYING;
             else
             {
                 std::cout << "Error in file '" << path << "': physics_type " << physicsString << " is not a valid type!\n";
