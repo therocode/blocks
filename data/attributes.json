@@ -7,5 +7,9 @@
     "yaw":"#float#",
     "hitbox":"#vec3#",
     "physics_type":"#uint32#",
-    "drag":"#float#"
+    "drag":"#float#",
+
+    "throttle":"#float#",
+    "current_chunk":"#chunkcoordinate#",
+    "block_facing":"#vec3#"
 }

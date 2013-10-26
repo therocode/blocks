@@ -9,6 +9,9 @@
         "yaw":"0.0f",
         "hitbox":"1.0f,2.0f,1.0f", 
         "drag":"",
-        "physics_type":""
+        "physics_type":"",
+        "current_chunk":"",
+        "block_facing":"",
+        "throttle":"0.0f"
     }
 }

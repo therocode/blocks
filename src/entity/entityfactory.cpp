@@ -3,12 +3,14 @@
 #include "../blockstd.h"
 #include "entityfactory.h"
 #include "defaultsetters.h"
+#include "../world/chunk.h"
 
 EntityFactory::EntityFactory(fea::EntityManager& manager) : mManager(manager)
 {
     //register templates
     fea::util::JsonEntityLoader loader;
     loader.registerType("#vec3#",sizeof(glm::vec3));
+    loader.registerType("#chunkcoordinate#",sizeof(ChunkCoordinate));
     mManager.registerAttributes(loader.loadAttributesJson("data/attributes.json"));
     mManager.registerEntityTemplates(loader.loadEntitiesJson("data/entities.json"));
     mManager.registerDefaultSetter("mass", fea::util::floatSetter);
@@ -18,6 +20,7 @@ EntityFactory::EntityFactory(fea::EntityManager& manager) : mManager(manager)
     mManager.registerDefaultSetter("pitch", fea::util::floatSetter);
     mManager.registerDefaultSetter("yaw", fea::util::floatSetter);
     mManager.registerDefaultSetter("hitbox", vec3Setter);
+    mManager.registerDefaultSetter("throttle", fea::util::floatSetter);
 }
 
 fea::WeakEntityPtr EntityFactory::spawnEntity(const std::string& scriptType)

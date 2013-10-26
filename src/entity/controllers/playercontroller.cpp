@@ -29,12 +29,13 @@ void PlayerController::removeEntity(fea::EntityId id)
 
 void PlayerController::onFrame()
 {
-    for(auto& throttleEntry : mPlayerThrottles)
+    for(auto& wEntity : mPlayerEntities)
     {
-        float throttle = throttleEntry.second;
+        fea::EntityPtr entity = wEntity.second.lock();
+        float throttle = entity->getAttribute<float>("throttle");
+
         if(throttle > 0.001f)
         {
-            fea::EntityPtr entity = mPlayerEntities.at(throttleEntry.first).lock();
             float pitch = entity->getAttribute<float>("pitch");
             float yaw = entity->getAttribute<float>("yaw");
 
@@ -64,17 +65,14 @@ void PlayerController::onFrame()
             glm::vec3 vel = entity->getAttribute<glm::vec3>("velocity");
 			throttle = 0;
         }
-    }
 
-    for(auto& chunkEntry : mPlayerChunks)
-    {
-        fea::EntityPtr entity = mPlayerEntities.at(chunkEntry.first).lock();
 
+        //updating current chunk
         glm::vec3 position = entity->getAttribute<glm::vec3>("position");
 
-        if(worldToChunk(position) != chunkEntry.second)
+        if(worldToChunk(position) != entity->getAttribute<ChunkCoordinate>("current_chunk"))
         {
-            playerEntersChunk(chunkEntry.first, worldToChunk(position));
+            playerEntersChunk(wEntity.first, worldToChunk(position));
         }
     }
 }
@@ -88,8 +86,7 @@ void PlayerController::handleMessage(const PlayerJoinedMessage& received)
 
     fea::WeakEntityPtr playerEntity = mWorldInterface.spawnEntity("Player", position);
     mPlayerEntities.emplace(playerId, playerEntity);
-    mPlayerThrottles.emplace(playerId, 0.0f);
-    playerEntersChunk(playerId, worldToChunk(position));
+    playerEntity.lock()->setAttribute<ChunkCoordinate>("current_chunk", worldToChunk(position));
 
     mBus.sendMessage<PlayerConnectedToEntityMessage>(PlayerConnectedToEntityMessage(playerId, playerEntity.lock()->getId()));
 }
@@ -103,19 +100,13 @@ void PlayerController::handleMessage(const PlayerActionMessage& received)
 
     if(action == FORWARDS)
     {
-        auto playerEntry = mPlayerThrottles.find(playerId);
-        if(playerEntry != mPlayerThrottles.end())
-        {
-            playerEntry->second = 1.0f;
-        }
+        fea::EntityPtr player = mPlayerEntities.at(playerId).lock();
+        player->setAttribute<float>("throttle", 1.0f);
     }
     else if(action == STOPFORWARDS)
     {
-        auto playerEntry = mPlayerThrottles.find(playerId);
-        if(playerEntry != mPlayerThrottles.end())
-        {
-            playerEntry->second = 0.0f;
-        }
+        fea::EntityPtr player = mPlayerEntities.at(playerId).lock();
+        player->setAttribute<float>("throttle", 0.0f);
     }
 }
 
@@ -143,7 +134,7 @@ void PlayerController::handleMessage(const PlayerPitchYawMessage& received)
 		
 			
         entity->setAttribute<float>("pitch", newPitch);
-        entity->addToAttribute<float>("yaw",   glm::radians(yaw));
+        entity->addToAttribute<float>("yaw", glm::radians(yaw));
 
         float newYaw = entity->getAttribute<float>("yaw");
 		//printf("Pitch: %f, and yaw: %f\n", newPitch, newYaw);
@@ -167,7 +158,7 @@ void PlayerController::handleMessage(const EntityMovedMessage& received)
 void PlayerController::playerEntersChunk(size_t playerId, const ChunkCoordinate& chunk)
 {
     mBus.sendMessage<PlayerEntersChunkMessage>(PlayerEntersChunkMessage(playerId, chunk));
-    mPlayerChunks[playerId] = chunk;
+    mPlayerEntities.at(playerId).lock()->setAttribute<ChunkCoordinate>("current_chunk", chunk);
 }
 
 void PlayerController::updateVoxelLookAt(size_t playerId)
@@ -185,19 +176,9 @@ void PlayerController::updateVoxelLookAt(size_t playerId)
 
 	glm::vec3 block = mWorldInterface.getVoxelAtRay(position, direction);
 
-    auto iterator = mPlayerFacings.find(playerId);
-    if(iterator == mPlayerFacings.end())
+    if(block != entity->getAttribute<glm::vec3>("block_facing"))
     {
-        mPlayerFacings[playerId] = block;
+        entity->setAttribute<glm::vec3>("block_facing", block);
         mBus.sendMessage<PlayerFacingBlockMessage>(PlayerFacingBlockMessage(playerId, block));
     }
-    else
-    {
-        if(block != iterator->second)
-        {
-            iterator->second = block;
-            mBus.sendMessage<PlayerFacingBlockMessage>(PlayerFacingBlockMessage(playerId, block));
-        }
-    }
-
 }
