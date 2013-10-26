@@ -3,6 +3,7 @@
 #define BUFFER_OFFSET(i) ((char*)NULL + (i))
 VBO::VBO():mCurrentVBOByteSize(0),mVBOCreated(false){
 	mDrawType = GL_TRIANGLES;
+	mVBOCreated = false;
 
 }
 VBO::~VBO(){
@@ -36,15 +37,12 @@ void VBO::PushRectangle(Rectangle r){
 }
 
 void VBO::UpdateVBO(){
-	CreateVBO();
+	CreateVBO();	
 	mCurrentVBOByteSize = sizeof(Vertex) * mvVertices.size();
 	int idSize = sizeof(int) * mvIndices.size();
-
 	BindBuffer();
-
 	glBufferData(GL_ARRAY_BUFFER, mCurrentVBOByteSize, mvVertices.data(), GL_DYNAMIC_DRAW); 
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER,idSize, mvIndices.data(), GL_DYNAMIC_DRAW);
-
 	UnbindBuffer();
 }
 void VBO::DestroyVBO()
@@ -101,6 +99,7 @@ void VBO::DrawVBO(){
 }
 void VBO::DrawVBO(ShaderProgram& program)
 {
+	if(!mVBOCreated)return;
 	BindBuffer();
 	int stride = sizeof(Vertex);
 	
@@ -132,8 +131,10 @@ void VBO::BindBuffer(){
 	}
 }
 void VBO::UnbindBuffer(){
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	if(mVBOCreated){
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	}
 }
 void VBO::DeleteBuffer(){
 	if(mVBOCreated){

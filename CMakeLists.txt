@@ -149,20 +149,21 @@ if(NOT GLEW_FOUND)
 	set(source_files ${CMAKE_CURRENT_SOURCE_DIR}/extlibs/glew/glew.c ${source_files})
 endif()
 
-if(SDL2_FOUND)
-	include_directories(${SDL2_INCLUDE_DIR})
-else(SDL2_FOUND)
+
+if(NOT SDL2_FOUND)
 	link_directories(${CMAKE_CURRENT_SOURCE_DIR}/extlibs/SDL-2.0/lib)
-	include_directories(${CMAKE_CURRENT_SOURCE_DIR}/extlibs/SDL-2.0/include)
-endif(SDL2_FOUND)
+endif(NOT SDL2_FOUND)
 
 add_executable(${project_name} ${header_files} ${source_files})
 
 
+
 if(SDL2_FOUND)
+	include_directories(${SDL2_INCLUDE_DIR})
 	target_link_libraries(${project_name} ${SDL2_LIBRARY})
 else(SDL2_FOUND)
-	target_link_libraries(${project_name} opengl32 SDL2)
+	include_directories(${CMAKE_CURRENT_SOURCE_DIR}/extlibs/SDL-2.0/include)
+	target_link_libraries(${project_name} SDL2main SDL2)
 endif()
 
 #instead of setting compiler flags globally. SFML doesn't like building with this flag on.
@@ -170,6 +171,7 @@ set_target_properties(${project_name} PROPERTIES COMPILE_FLAGS "-std=c++11 -pthr
 if(WIN32)
     add_definitions(-std=c++11 -pthread)
 endif(WIN32)
+
 if(ENET_FOUND)
 	include_directories(${ENet_INCLUDE_DIRS})
 	target_link_libraries(${project_name} ${ENet_LIBRARIES})
@@ -211,11 +213,14 @@ endif(GLM_FOUND)
 if(GLEW_FOUND)
 	include_directories(${GLEW_INCLUDE_DIR})
 	target_link_libraries(${project_name} ${GLEW_LIBRARIES})
+else(GLEW_FOUND)
+	
 endif(GLEW_FOUND)
 
-#target_link_libraries(${project_name} GLEW GL GLU)
 
 if(OPENGL_FOUND)
 	include_directories(${OPENGL_INCLUDE_DIRS})
 	target_link_libraries(${project_name} ${OPENGL_LIBRARIES})
+else(OPENGL_FOUND)
+	target_link_libraries(${project_name} opengl32)
 endif(OPENGL_FOUND)
