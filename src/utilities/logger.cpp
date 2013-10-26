@@ -40,8 +40,8 @@ void Logger::handleMessage(const LogLevelMessage& received)
 {
     std::tie(mLogLevel) = received.data;
 
-    if(mLogLevel > LogLevel::VERBOSE)
-        mLogLevel = LogLevel::VERBOSE;
+    if(mLogLevel > LogLevel::VERB)
+        mLogLevel = LogLevel::VERB;
 }
 
 std::string Logger::getTimeString() const
@@ -63,12 +63,12 @@ void Logger::printLine(const std::string& lineStart, const std::string& message,
 
     switch(level)
     {
-        case LogLevel::ERROR:
+        case LogLevel::ERR:
             Console::SetFGColor(ConsoleColour::RED);
             Console::Write(std::string("ERROR"));
             Console::ResetColor();
             break;
-        case LogLevel::WARNING:
+        case LogLevel::WARN:
             Console::SetFGColor(ConsoleColour::YELLOW);
             Console::Write(std::string("WARNING"));
             Console::ResetColor();
@@ -76,9 +76,9 @@ void Logger::printLine(const std::string& lineStart, const std::string& message,
         case LogLevel::INFO:
             Console::Write(std::string("INFO"));
             break;
-        case LogLevel::VERBOSE:
+        case LogLevel::VERB:
             Console::SetFGColor(ConsoleColour::CYAN);
-            Console::Write(std::string("VERBOSE"));
+            Console::Write(std::string("VERB"));
             Console::ResetColor();
             break;
     }

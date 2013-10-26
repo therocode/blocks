@@ -2,5 +2,5 @@
 
 namespace LogLevel
 {
-    enum { ERROR = 0, WARNING, INFO, VERBOSE };
+    enum { ERR = 0, WARN, INFO, VERB };
 }

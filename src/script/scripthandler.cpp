@@ -39,7 +39,7 @@ void ScriptHandler::setup()
     exploder.explodeFolder("data", ".*\\.as", sourceFiles);
     for(auto& string : sourceFiles)
     {
-        mBus.sendMessage<LogMessage>(LogMessage("Adding " + string + " for compilation.", logName, LogLevel::VERBOSE));
+        mBus.sendMessage<LogMessage>(LogMessage("Adding " + string + " for compilation.", logName, LogLevel::VERB));
     }
 
     mBus.sendMessage<LogMessage>(LogMessage("Compiling scripts...", logName, LogLevel::INFO));
@@ -48,10 +48,10 @@ void ScriptHandler::setup()
 
     if(succeeded)
     {
-        mBus.sendMessage<LogMessage>(LogMessage("Setting up script callbacks...", logName, LogLevel::VERBOSE));
+        mBus.sendMessage<LogMessage>(LogMessage("Setting up script callbacks...", logName, LogLevel::VERB));
         mScriptInterface.registerCallbacks(scriptEntities);
-        mBus.sendMessage<LogMessage>(LogMessage("Compilation process over.", logName, LogLevel::VERBOSE));
-        mBus.sendMessage<LogMessage>(LogMessage("Done setting up callbacks.", logName, LogLevel::VERBOSE));
+        mBus.sendMessage<LogMessage>(LogMessage("Compilation process over.", logName, LogLevel::VERB));
+        mBus.sendMessage<LogMessage>(LogMessage("Done setting up callbacks.", logName, LogLevel::VERB));
     }
 }
 
@@ -71,10 +71,10 @@ void ScriptHandler::handleMessage(const RebuildScriptsRequestedMessage& message)
 
     if(succeeded)
     {
-        mBus.sendMessage<LogMessage>(LogMessage("Setting up script callbacks...", logName, LogLevel::VERBOSE));
+        mBus.sendMessage<LogMessage>(LogMessage("Setting up script callbacks...", logName, LogLevel::VERB));
         mScriptInterface.registerCallbacks(scriptEntities);
-        mBus.sendMessage<LogMessage>(LogMessage("Compilation process over.", logName, LogLevel::VERBOSE));
-        mBus.sendMessage<LogMessage>(LogMessage("Done setting up callbacks.", logName, LogLevel::VERBOSE));
+        mBus.sendMessage<LogMessage>(LogMessage("Compilation process over.", logName, LogLevel::VERB));
+        mBus.sendMessage<LogMessage>(LogMessage("Done setting up callbacks.", logName, LogLevel::VERB));
     }
 }
 

@@ -128,7 +128,7 @@ asIScriptObject* ScriptInterface::createEntity(const std::string& type, float x,
     asIObjectType* objectType = mModule.getObjectTypeByDecl(type);
     if(!objectType)
     {
-        mBus.sendMessage<LogMessage>(LogMessage("Script runtime error: Tying to create entity of invalid type '" + type + "'", logName, LogLevel::ERROR));
+        mBus.sendMessage<LogMessage>(LogMessage("Script runtime error: Tying to create entity of invalid type '" + type + "'", logName, LogLevel::ERR));
         return nullptr;
     }
     
@@ -177,7 +177,7 @@ asIScriptObject* ScriptInterface::instanciateScriptEntity(const std::string& typ
     asIObjectType* objectType = mModule.getObjectTypeByDecl(type);
     if(!objectType)
     {
-        mBus.sendMessage<LogMessage>(LogMessage("Script runtime error: Trying to create entity of invalid type '" + type + "'", logName, LogLevel::ERROR));
+        mBus.sendMessage<LogMessage>(LogMessage("Script runtime error: Trying to create entity of invalid type '" + type + "'", logName, LogLevel::ERR));
         return nullptr;
     }
     
