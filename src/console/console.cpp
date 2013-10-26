@@ -33,7 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     int Console::BGColor = 0;
     int Console::FGColor = FOREGROUND_BLUE|FOREGROUND_GREEN|FOREGROUND_RED;
     HANDLE Console::hConsole =  GetStdHandle(STD_OUTPUT_HANDLE);
-    CONSOLE_SCREEN_BUFFER_INFO csbiInfo; 
     WORD wOldColorAttrs;
 //if the plaform is other than Windows
 #else
@@ -44,8 +43,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 void Console::Initialise()
 {
 #ifdef _WIN32
+    CONSOLE_SCREEN_BUFFER_INFO csbiInfo; 
     GetConsoleScreenBufferInfo(hConsole, &csbiInfo);
-    WORD wOldColorAttrs = csbiInfo.wAttributes;
+    wOldColorAttrs = csbiInfo.wAttributes;
 #endif
 }
 
@@ -308,8 +308,8 @@ void Console::SetFGColor(const short color){
 void Console::ResetColor()
 {
     #ifdef _WIN32
-        //SetConsoleTextAttribute(hConsole, wOldColorAttrs);
-        SetFGColor(ConsoleColour::WHITE);
+        SetConsoleTextAttribute(hConsole, wOldColorAttrs);
+        //SetFGColor(ConsoleColour::WHITE);
     #else
         cout << "\033[0m";
     #endif
