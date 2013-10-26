@@ -39,8 +39,13 @@ shared class Entity : IEntity
         return mCore.getPosition();
     }
 
-    //void applyImpulse(const Vec3 force)
-    //{
-    //    applyImpulse(mId, force);
-    //}
+    void applyImpulse(float x, float y, float z)
+    {
+        applyImpulseOnEntity(mId, Vec3(x, y, z));
+    }
+
+    void applyImpulse(const Vec3 force)
+    {
+        applyImpulseOnEntity(mId, force);
+    }
 }

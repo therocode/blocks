@@ -68,7 +68,7 @@ void ScriptInterface::registerInterface()
 
     //physics
     r = mEngine.getEngine()->RegisterGlobalFunction("void setGravity(float constant)", asMETHOD(ScriptInterface, setGravity), asCALL_THISCALL_ASGLOBAL, this); assert(r >= 0);
-    r = mEngine.getEngine()->RegisterGlobalFunction("void applyImpulse(uint id, Vec3 vec)", asMETHOD(ScriptInterface, applyImpulse), asCALL_THISCALL_ASGLOBAL, this); assert(r >= 0);
+    r = mEngine.getEngine()->RegisterGlobalFunction("void applyImpulseOnEntity(uint id, const Vec3& in)", asMETHOD(ScriptInterface, applyImpulse), asCALL_THISCALL_ASGLOBAL, this); assert(r >= 0);
 }
 
 void ScriptInterface::registerCallbacks(const std::map<size_t, ScriptEntity>& scriptEntities)
