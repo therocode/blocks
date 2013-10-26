@@ -78,7 +78,7 @@ void Logger::printLine(const std::string& lineStart, const std::string& message,
             break;
         case LogLevel::VERB:
             Console::SetFGColor(ConsoleColour::CYAN);
-            Console::Write(std::string("VERB"));
+            Console::Write(std::string("VERBOSE"));
             Console::ResetColor();
             break;
     }
