@@ -5,6 +5,7 @@
 
 EntityDefinition EntityDefinitionLoader::loadFromJSONFile(const std::string& path)
 {
+    mError = false;
     EntityDefinition definition;
 
     //setting defaults
@@ -15,8 +16,9 @@ EntityDefinition EntityDefinitionLoader::loadFromJSONFile(const std::string& pat
 
     if(!file)
     {
-        std::cout << "Error, file '" << path << "' could not be found!\n";
-        exit(4);
+        mErrorString = "Error, file '" + path + "' could not be found!";
+        mError = true;
+        return definition;
     }
 
     json::Value root;
@@ -40,7 +42,7 @@ EntityDefinition EntityDefinitionLoader::loadFromJSONFile(const std::string& pat
             definition.category = member.value.GetString();
         
         //reading physics type
-        else if(memberName == "physics")
+        else if(memberName == "physics_type")
         {
             std::string physicsString = member.value.GetString();
 
@@ -50,11 +52,22 @@ EntityDefinition EntityDefinitionLoader::loadFromJSONFile(const std::string& pat
                 definition.physics = PhysicsType::FLOATING;
             else
             {
-                std::cout << "Error in file '" << path << "': physics_type " << physicsString << " is not a valid type!\n";
-                exit(4);
+                mErrorString = "Error in file '" + path + "': physics_type " + physicsString + " is not a valid type! (Try FALLING or FLOATING)";
+                mError = true;
+                return definition;
             }
         }
     }
 
     return definition;
+}
+
+bool EntityDefinitionLoader::errorOccurred()
+{
+    return mError;
+}
+
+const std::string& EntityDefinitionLoader::getErrorString()
+{
+    return mErrorString;
 }

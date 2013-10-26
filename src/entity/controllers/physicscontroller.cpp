@@ -1,5 +1,6 @@
 #include "physicscontroller.h"
 #include "../../blockstd.h"
+#include "physicstype.h"
 
 PhysicsController::PhysicsController(fea::MessageBus& bus, WorldInterface& worldInterface) : EntityController(bus, worldInterface), gravityConstant(-0.001f)
 {
@@ -19,7 +20,7 @@ void PhysicsController::inspectEntity(fea::WeakEntityPtr entity)
        locked->hasAttribute("position") &&
        locked->hasAttribute("velocity") &&
        locked->hasAttribute("acceleration") && 
-       locked->hasAttribute("hitbox"))
+       locked->hasAttribute("physics_type"))
     {
         mEntities.emplace(locked->getId(), entity);
     }
@@ -32,7 +33,7 @@ void PhysicsController::onFrame()
         glm::vec3 gravityForce;
 
         fea::EntityPtr entity = wEntity.second.lock();
-        if(!entity->getAttribute<bool>("floating"))
+        if(entity->getAttribute<PhysicsType>("physics_type") == PhysicsType::FALLING)
         {
             gravityForce = glm::vec3(0.0f, gravityConstant, 0.0f);
         }

@@ -14,19 +14,6 @@ EntitySystem::EntitySystem(fea::MessageBus& bus) :
 {
     mBus.addMessageSubscriber<SpawnEntityMessage>(*this);
     mBus.addMessageSubscriber<RemoveEntityMessage>(*this);
-
-    EntityDefinitionLoader loader;
-
-    FolderExploder exploder;
-    std::vector<std::string> definitionFiles;
-    exploder.explodeFolder("data", ".*\\.def", definitionFiles);
-
-    for(auto& fileName : definitionFiles)
-    {
-        EntityDefinition temp = loader.loadFromJSONFile(fileName);
-        mFactory.addDefinition(temp);
-        mBus.sendMessage<LogMessage>(LogMessage("Added entity type '" + temp.name + "' to entity definitions", mLogName, LogLevel::VERB));
-    }
 }
 
 EntitySystem::~EntitySystem()
@@ -38,6 +25,31 @@ EntitySystem::~EntitySystem()
 void EntitySystem::addController(std::unique_ptr<EntityController> controller)
 {
     mControllers.push_back(std::move(controller));
+}
+
+void EntitySystem::setup()
+{
+    mBus.sendMessage<LogMessage>(LogMessage("Loading entity definitions", mLogName, LogLevel::INFO));
+
+    EntityDefinitionLoader loader;
+
+    FolderExploder exploder;
+    std::vector<std::string> definitionFiles;
+    exploder.explodeFolder("data", ".*\\.def", definitionFiles);
+
+    mBus.sendMessage<LogMessage>(LogMessage("Found " + std::to_string(definitionFiles.size()) + " entity definitions", mLogName, LogLevel::INFO));
+    for(auto& fileName : definitionFiles)
+    {
+        EntityDefinition temp = loader.loadFromJSONFile(fileName);
+        if(loader.errorOccurred())
+        {
+            mBus.sendMessage<LogMessage>(LogMessage(loader.getErrorString(), mLogName, LogLevel::ERR));
+            mBus.sendMessage<FatalMessage>(std::string("Shutdown issued due to erroneous entity definition"));
+        }
+        mFactory.addDefinition(temp);
+        mBus.sendMessage<LogMessage>(LogMessage("Added entity type '" + temp.name + "' to entity definitions", mLogName, LogLevel::VERB));
+    }
+    mBus.sendMessage<LogMessage>(LogMessage("Entity definitions loaded", mLogName, LogLevel::INFO));
 }
 
 void EntitySystem::update()
