@@ -20,6 +20,7 @@ void PhysicsController::inspectEntity(fea::WeakEntityPtr entity)
        locked->hasAttribute("position") &&
        locked->hasAttribute("velocity") &&
        locked->hasAttribute("acceleration") && 
+       locked->hasAttribute("drag") && 
        locked->hasAttribute("physics_type"))
     {
         mEntities.emplace(locked->getId(), entity);
@@ -46,7 +47,7 @@ void PhysicsController::onFrame()
         glm::vec3 newVelocity = currentVelocity + acceleration;
         glm::vec3 newPosition = currentPosition + newVelocity;
 
-		newVelocity *= 0.98f;
+		newVelocity *= (1.0f - entity->getAttribute<float>("drag"));
         entity->setAttribute<glm::vec3>("velocity", newVelocity);
 
         mBus.sendMessage<EntityMoveRequestedMessage>(EntityMoveRequestedMessage(entity->getId(), newPosition));

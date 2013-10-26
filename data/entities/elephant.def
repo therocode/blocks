@@ -2,6 +2,7 @@
     "Elephant":
     {
         "category":"living",
-        "physics_type":"FALLING"
+        "physics_type":"FALLING",
+        "drag":0.01
     }
 }

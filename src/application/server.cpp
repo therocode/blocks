@@ -58,8 +58,8 @@ void Server::doLogic()
 
     pollNewClients();
 
-   // mFrameTimer.sleepForTheRestOfTheFrame();
-    //mFrameTimer.start();
+    mFrameTimer.sleepForTheRestOfTheFrame();
+    mFrameTimer.start();
 }
 
 void Server::destroy()

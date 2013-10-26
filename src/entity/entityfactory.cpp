@@ -18,7 +18,6 @@ EntityFactory::EntityFactory(fea::EntityManager& manager) : mManager(manager)
     mManager.registerDefaultSetter("pitch", fea::util::floatSetter);
     mManager.registerDefaultSetter("yaw", fea::util::floatSetter);
     mManager.registerDefaultSetter("hitbox", vec3Setter);
-    //mManager.registerDefaultSetter("floating", fea::util::boolSetter);
 }
 
 fea::WeakEntityPtr EntityFactory::spawnEntity(const std::string& scriptType)
@@ -33,7 +32,8 @@ fea::WeakEntityPtr EntityFactory::spawnEntity(const std::string& scriptType)
     std::string category = definition.category;
 
     fea::EntityPtr spawned = mManager.createEntity(category).lock();
-    spawned->setAttribute<PhysicsType>("physics_type", definition.physics);
+    spawned->setAttribute<PhysicsType>("physics_type", definition.physicsType);
+    spawned->setAttribute<float>("drag", definition.drag);
 
     return spawned;
 }
