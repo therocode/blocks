@@ -2,10 +2,11 @@
 #include "../networking/packages.h"
 
 Server::Server() : mWorld(mBus),
-                   mLogger(mBus),
+                   mLogger(mBus, LogLevel::VERB),
                    mScriptHandler(mBus, mWorld.getWorldInterface()),
                    mLogName("server")
 {
+    mBus.addMessageSubscriber<FatalMessage>(*this);
     mBus.addMessageSubscriber<ChunkCreatedMessage>(*this);
     mBus.addMessageSubscriber<ChunkDeletedMessage>(*this);
     mBus.addMessageSubscriber<AddGfxEntityMessage>(*this);
@@ -18,6 +19,7 @@ Server::Server() : mWorld(mBus),
 
 Server::~Server()
 {
+    mBus.removeMessageSubscriber<FatalMessage>(*this);
     mBus.removeMessageSubscriber<ChunkCreatedMessage>(*this);
     mBus.removeMessageSubscriber<ChunkDeletedMessage>(*this);
     mBus.removeMessageSubscriber<AddGfxEntityMessage>(*this);
@@ -30,7 +32,6 @@ Server::~Server()
 
 void Server::setup()
 {
-    mBus.sendMessage<LogLevelMessage>(LogLevel::VERB);
     mScriptHandler.setup();
     mWorld.initialise();
 	mFrameTimer.setDesiredFPSRate(144);
@@ -65,6 +66,15 @@ void Server::destroy()
 {
     mScriptHandler.destroy();
     mBus.sendMessage<LogMessage>(LogMessage("Server destroyed", mLogName, LogLevel::INFO));
+}
+
+void Server::handleMessage(const FatalMessage& received)
+{
+    std::string message;
+
+    std::tie(message) = received.data;
+    mBus.sendMessage<LogMessage>(LogMessage(message, mLogName, LogLevel::ERR));
+    exit(4);
 }
 
 void Server::handleMessage(const ChunkCreatedMessage& received)

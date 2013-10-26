@@ -12,6 +12,9 @@ using LogMessage = fea::Message<Log_tag, const std::string&, const std::string&,
 struct LogLevel_tag{};//                           level
 using LogLevelMessage = fea::Message<LogLevel_tag, uint32_t>;
 
+struct Fatal_tag{};//                        message
+using FatalMessage = fea::Message<Fatal_tag, const std::string&>;
+
 struct PlayerJoined_tag{};//                               player id   position
 using PlayerJoinedMessage = fea::Message<PlayerJoined_tag, size_t, const::glm::vec3&>;
 

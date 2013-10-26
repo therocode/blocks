@@ -9,7 +9,8 @@
 #include "../utilities/timer.h"
 #include "../utilities/logger.h"
 
-class Server : public fea::MessageReceiver<ChunkCreatedMessage>,
+class Server : public fea::MessageReceiver<FatalMessage>,
+               public fea::MessageReceiver<ChunkCreatedMessage>,
                public fea::MessageReceiver<ChunkDeletedMessage>,
                public fea::MessageReceiver<AddGfxEntityMessage>,
                public fea::MessageReceiver<MoveGfxEntityMessage>,
@@ -24,6 +25,7 @@ class Server : public fea::MessageReceiver<ChunkCreatedMessage>,
         void setup();
         void doLogic();
         void destroy();
+        void handleMessage(const FatalMessage& received);
         void handleMessage(const ChunkCreatedMessage& received);
         void handleMessage(const ChunkDeletedMessage& received);
         void handleMessage(const AddGfxEntityMessage& received);

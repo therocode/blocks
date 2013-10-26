@@ -1,6 +1,7 @@
 {
     "Player":
     {
-        "category":"living"
+        "category":"living",
+        "physics_type":"FALLING"
     }
 }

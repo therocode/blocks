@@ -16,6 +16,7 @@ class EntitySystem :
         EntitySystem(fea::MessageBus& bus);
         ~EntitySystem();
         void addController(std::unique_ptr<EntityController> controller);
+        void setup();
         void update();
         fea::WeakEntityPtr spawnEntity(const std::string& scriptType, const glm::vec3& position);
         size_t spawnEntityFromScriptHandle(const std::string& scriptType, const glm::vec3& position, asIScriptObject* obj);

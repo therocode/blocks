@@ -4,8 +4,8 @@
 #include <iostream>
 #include "../console/console.h"
 
-Logger::Logger(fea::MessageBus& bus) : mBus(bus),
-                                       mLogLevel(LogLevel::INFO)
+Logger::Logger(fea::MessageBus& bus, uint32_t logLevel) : mBus(bus),
+                                       mLogLevel(logLevel)
 {
     Console::Initialise();
     mBus.addMessageSubscriber<LogMessage>(*this);

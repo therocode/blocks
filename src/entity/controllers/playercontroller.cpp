@@ -87,7 +87,6 @@ void PlayerController::handleMessage(const PlayerJoinedMessage& received)
     std::tie(playerId, position) = received.data;
 
     fea::WeakEntityPtr playerEntity = mWorldInterface.spawnEntity("Player", position);
-    playerEntity.lock()->setAttribute("floating", false);
     mPlayerEntities.emplace(playerId, playerEntity);
     mPlayerThrottles.emplace(playerId, 0.0f);
     playerEntersChunk(playerId, worldToChunk(position));

@@ -18,7 +18,7 @@ EntityFactory::EntityFactory(fea::EntityManager& manager) : mManager(manager)
     mManager.registerDefaultSetter("pitch", fea::util::floatSetter);
     mManager.registerDefaultSetter("yaw", fea::util::floatSetter);
     mManager.registerDefaultSetter("hitbox", vec3Setter);
-    mManager.registerDefaultSetter("floating", fea::util::boolSetter);
+    //mManager.registerDefaultSetter("floating", fea::util::boolSetter);
 }
 
 fea::WeakEntityPtr EntityFactory::spawnEntity(const std::string& scriptType)
@@ -26,13 +26,14 @@ fea::WeakEntityPtr EntityFactory::spawnEntity(const std::string& scriptType)
     if(mEntityDefinitions.find(scriptType) == mEntityDefinitions.end())
     {
         std::cout << "Error! Trying to spawn entity of type " << scriptType << " but it lacks a definition file\n";
+        return fea::WeakEntityPtr();
     }
 
-    std::string type = mEntityDefinitions.at(scriptType).category;
+    const EntityDefinition& definition = mEntityDefinitions.at(scriptType);
+    std::string category = definition.category;
 
-    fea::WeakEntityPtr spawned = mManager.createEntity(type);
-
-    //set it all up according to the type;
+    fea::EntityPtr spawned = mManager.createEntity(category).lock();
+    spawned->setAttribute<PhysicsType>("physics_type", definition.physics);
 
     return spawned;
 }

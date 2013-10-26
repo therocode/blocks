@@ -6,7 +6,7 @@ class Logger : public fea::MessageReceiver<LogMessage>,
                public fea::MessageReceiver<LogLevelMessage>
 {
     public:
-        Logger(fea::MessageBus& bus);
+        Logger(fea::MessageBus& bus, uint32_t = LogLevel::INFO);
         ~Logger();
         virtual void handleMessage(const LogMessage& received);
         virtual void handleMessage(const LogLevelMessage& received);

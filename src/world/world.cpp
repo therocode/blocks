@@ -20,6 +20,7 @@ World::~World()
 
 void World::initialise()
 {
+    entitySystem.setup();
 	standardDimension.initialise();
 
 	entitySystem.addController(std::unique_ptr<EntityController>(new PlayerController(bus, worldInterface)));
