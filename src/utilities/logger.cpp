@@ -22,7 +22,7 @@ void Logger::handleMessage(const LogMessage& received)
 {
     std::string message;
     std::string component;
-    LogLevel level;
+    uint32_t level;
 
     std::tie(message, component, level) = received.data;
 
@@ -57,7 +57,7 @@ std::string Logger::getTimeString() const
     return hour + ":" + min + ":" + sec;
 }
 
-void Logger::printLine(const std::string& lineStart, const std::string& message, LogLevel level) const
+void Logger::printLine(const std::string& lineStart, const std::string& message, uint32_t level) const
 {
     Console::Write(lineStart);
 

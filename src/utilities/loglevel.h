@@ -1,3 +1,6 @@
 #pragma once
 
-enum class LogLevel { ERROR = 0, WARNING, INFO, VERBOSE };
+namespace LogLevel
+{
+    enum { ERROR = 0, WARNING, INFO, VERBOSE };
+}

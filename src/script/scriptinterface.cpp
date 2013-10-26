@@ -32,7 +32,7 @@ void ScriptInterface::registerInterface()
 {
     //printing
     int r = mEngine.getEngine()->RegisterGlobalFunction("void consolePrint(string text)", asMETHODPR(ScriptInterface, scriptPrint, (const std::string&), void), asCALL_THISCALL_ASGLOBAL, this); assert(r >= 0);
-    r = mEngine.getEngine()->RegisterGlobalFunction("void consolePrint(string text, uint level)", asMETHODPR(ScriptInterface, scriptPrint, (const std::string&, LogLevel), void), asCALL_THISCALL_ASGLOBAL, this); assert(r >= 0);
+    r = mEngine.getEngine()->RegisterGlobalFunction("void consolePrint(string text, uint level)", asMETHODPR(ScriptInterface, scriptPrint, (const std::string&, uint32_t), void), asCALL_THISCALL_ASGLOBAL, this); assert(r >= 0);
 
     //maths
     RegisterScriptMath(mEngine.getEngine());
@@ -113,7 +113,7 @@ void ScriptInterface::scriptPrint(const std::string& text)
     mBus.sendMessage<LogMessage>(LogMessage(text, logName, LogLevel::INFO));
 }
 
-void ScriptInterface::scriptPrint(const std::string& text, LogLevel level)
+void ScriptInterface::scriptPrint(const std::string& text, uint32_t level)
 {
     mBus.sendMessage<LogMessage>(LogMessage(text, logName, level));
 }

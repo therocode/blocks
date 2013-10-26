@@ -35,6 +35,6 @@ class ScriptInterface :
         
         //interface functions
         void scriptPrint(const std::string& text);
-        void scriptPrint(const std::string& text, LogLevel level);
+        void scriptPrint(const std::string& text, uint32_t level);
         void setGravity(float constant);
 };

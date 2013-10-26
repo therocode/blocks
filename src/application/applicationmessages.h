@@ -7,10 +7,10 @@ struct Frame_tag{};//                                       true if beginning of
 using FrameMessage = fea::Message<Frame_tag, bool>;
 
 struct Log_tag{};//                      message             component
-using LogMessage = fea::Message<Log_tag, const std::string&, const std::string&, LogLevel>;
+using LogMessage = fea::Message<Log_tag, const std::string&, const std::string&, uint32_t>;
 
 struct LogLevel_tag{};//                           level
-using LogLevelMessage = fea::Message<LogLevel_tag, LogLevel>;
+using LogLevelMessage = fea::Message<LogLevel_tag, uint32_t>;
 
 struct PlayerJoined_tag{};//                               player id   position
 using PlayerJoinedMessage = fea::Message<PlayerJoined_tag, size_t, const::glm::vec3&>;

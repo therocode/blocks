@@ -11,9 +11,9 @@ class Logger : public fea::MessageReceiver<LogMessage>,
         virtual void handleMessage(const LogMessage& received);
         virtual void handleMessage(const LogLevelMessage& received);
         std::string getTimeString() const;
-        void printLine(const std::string& lineStart, const std::string& message, LogLevel level) const;
+        void printLine(const std::string& lineStart, const std::string& message, uint32_t level) const;
         std::vector<std::string> explode(const std::string& str, const char& ch) const;
     private:
         fea::MessageBus& mBus;
-        LogLevel mLogLevel;
+        uint32_t mLogLevel;
 };
