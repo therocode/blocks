@@ -94,14 +94,20 @@ void Chunk::compress()
     {
         index++;
 
-        uint16_t voxel = voxelTypes[index];
+        uint16_t voxel;
+
+        if(index != voxelAmount)
+            voxel = voxelTypes[index];
+        else
+            voxel = -1;
+
         if(voxel == currentType)
         {
             counter++;
         }
         else
         {
-            compressedData.push_back(voxel);
+            compressedData.push_back(currentType);
             compressedData.push_back(counter);
 
             counter = 1;
