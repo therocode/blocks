@@ -33,6 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     int Console::BGColor = 0;
     int Console::FGColor = FOREGROUND_BLUE|FOREGROUND_GREEN|FOREGROUND_RED;
     HANDLE Console::hConsole =  GetStdHandle(STD_OUTPUT_HANDLE);
+    CONSOLE_SCREEN_BUFFER_INFO csbiInfo; 
     WORD wOldColorAttrs = csbiInfo.wAttributes;
 //if the plaform is other than Windows
 #else
