@@ -58,7 +58,7 @@ void BlocksApplication::loop()
 
     if(server)
     {
-        server->doLogic(); //implement timestep later on. should also only happen if the server is a local instance
+        server->doLogic();
     }
 
     if(client)

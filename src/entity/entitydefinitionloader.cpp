@@ -10,7 +10,8 @@ EntityDefinition EntityDefinitionLoader::loadFromJSONFile(const std::string& pat
 
     //setting defaults
     definition.category = "living";
-    definition.physics = PhysicsType::FALLING;
+    definition.physicsType = PhysicsType::FALLING;
+    definition.drag = 1.0f;
 
     std::ifstream file(path);
 
@@ -47,15 +48,20 @@ EntityDefinition EntityDefinitionLoader::loadFromJSONFile(const std::string& pat
             std::string physicsString = member.value.GetString();
 
             if(physicsString == "FALLING")
-                definition.physics = PhysicsType::FALLING;
+                definition.physicsType = PhysicsType::FALLING;
             else if(physicsString == "FLOATING")
-                definition.physics = PhysicsType::FLOATING;
+                definition.physicsType = PhysicsType::FLOATING;
             else
             {
                 mErrorString = "Error in file '" + path + "': physics_type " + physicsString + " is not a valid type! (Try FALLING or FLOATING)";
                 mError = true;
                 return definition;
             }
+        }
+        //reading drag
+        else if(memberName == "drag")
+        {
+            definition.drag = member.value.GetFloat();
         }
     }
 

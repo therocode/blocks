@@ -5,5 +5,6 @@ struct EntityDefinition
 {
     std::string name;
     std::string category;
-    PhysicsType physics;
+    PhysicsType physicsType;
+    float drag;
 };

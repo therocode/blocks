@@ -6,5 +6,6 @@
     "pitch":"#float#",
     "yaw":"#float#",
     "hitbox":"#vec3#",
-    "physics_type":"#uint32#"
+    "physics_type":"#uint32#",
+    "drag":"#float#"
 }
