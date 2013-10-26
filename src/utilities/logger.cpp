@@ -2,29 +2,46 @@
 #include "../application/applicationmessages.h"
 #include <chrono>
 #include <iostream>
+#include "../console/console.h"
 
-Logger::Logger(fea::MessageBus& bus) : mBus(bus)
+Logger::Logger(fea::MessageBus& bus) : mBus(bus),
+                                       mLogLevel(LogLevel::INFO)
 {
     mBus.addMessageSubscriber<LogMessage>(*this);
+    mBus.addMessageSubscriber<LogLevelMessage>(*this);
 }
 
 Logger::~Logger()
 {
     mBus.removeMessageSubscriber<LogMessage>(*this);
+    mBus.removeMessageSubscriber<LogLevelMessage>(*this);
+    Console::ResetColor();
 }
 
 void Logger::handleMessage(const LogMessage& received)
 {
     std::string message;
     std::string component;
+    LogLevel level;
 
-    std::tie(message, component) = received.data;
+    std::tie(message, component, level) = received.data;
 
 
-    for(auto& line : explode(message, '\n'))
+    if(level <= mLogLevel)
     {
-        printLine("[" + getTimeString() + "|" + component + "]: ", line);
+        for(auto& line : explode(message, '\n'))
+        {
+            printLine("[" + getTimeString() + "|" + component + "|", line, level);
+        }
     }
+}
+
+void Logger::handleMessage(const LogLevelMessage& received)
+{
+    std::tie(mLogLevel) = received.data;
+
+    if(mLogLevel > LogLevel::VERBOSE)
+        mLogLevel = LogLevel::VERBOSE;
 }
 
 std::string Logger::getTimeString() const
@@ -40,9 +57,36 @@ std::string Logger::getTimeString() const
     return hour + ":" + min + ":" + sec;
 }
 
-void Logger::printLine(const std::string& lineStart, const std::string& message) const
+void Logger::printLine(const std::string& lineStart, const std::string& message, LogLevel level) const
 {
-    std::cout << lineStart << message << "\n";
+    Console::Write(lineStart);
+
+    switch(level)
+    {
+        case LogLevel::ERROR:
+            Console::SetFGColor(ConsoleColour::RED);
+            Console::Write(std::string("ERROR"));
+            Console::ResetColor();
+            break;
+        case LogLevel::WARNING:
+            Console::SetFGColor(ConsoleColour::YELLOW);
+            Console::Write(std::string("WARNING"));
+            Console::ResetColor();
+            break;
+        case LogLevel::INFO:
+            Console::Write(std::string("INFO"));
+            break;
+        case LogLevel::VERBOSE:
+            Console::SetFGColor(ConsoleColour::CYAN);
+            Console::Write(std::string("VERBOSE"));
+            Console::ResetColor();
+            break;
+    }
+
+    Console::Write(std::string("]: "));
+
+    Console::Write(message + "\n");
+    //std::cout << lineStart << message << "\n";
 }
 
 std::vector<std::string> Logger::explode(const std::string& str, const char& ch)  const

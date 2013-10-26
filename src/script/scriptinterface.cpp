@@ -31,7 +31,8 @@ ScriptInterface::~ScriptInterface()
 void ScriptInterface::registerInterface()
 {
     //printing
-    int r = mEngine.getEngine()->RegisterGlobalFunction("void consolePrint(string text)", asMETHOD(ScriptInterface, scriptPrint), asCALL_THISCALL_ASGLOBAL, this); assert(r >= 0);
+    int r = mEngine.getEngine()->RegisterGlobalFunction("void consolePrint(string text)", asMETHODPR(ScriptInterface, scriptPrint, (const std::string&), void), asCALL_THISCALL_ASGLOBAL, this); assert(r >= 0);
+    r = mEngine.getEngine()->RegisterGlobalFunction("void consolePrint(string text, uint level)", asMETHODPR(ScriptInterface, scriptPrint, (const std::string&, LogLevel), void), asCALL_THISCALL_ASGLOBAL, this); assert(r >= 0);
 
     //maths
     RegisterScriptMath(mEngine.getEngine());
@@ -107,9 +108,14 @@ void ScriptInterface::handleMessage(const GameStartMessage& received)
     }
 }
 
-void ScriptInterface::scriptPrint(std::string text)
+void ScriptInterface::scriptPrint(const std::string& text)
 {
-    mBus.sendMessage<LogMessage>(LogMessage(text, logName));
+    mBus.sendMessage<LogMessage>(LogMessage(text, logName, LogLevel::INFO));
+}
+
+void ScriptInterface::scriptPrint(const std::string& text, LogLevel level)
+{
+    mBus.sendMessage<LogMessage>(LogMessage(text, logName, level));
 }
 
 void ScriptInterface::setGravity(float constant)
@@ -122,7 +128,7 @@ asIScriptObject* ScriptInterface::createEntity(const std::string& type, float x,
     asIObjectType* objectType = mModule.getObjectTypeByDecl(type);
     if(!objectType)
     {
-        mBus.sendMessage<LogMessage>(LogMessage("Script runtime error: Tying to create entity of invalid type '" + type + "'", logName));
+        mBus.sendMessage<LogMessage>(LogMessage("Script runtime error: Tying to create entity of invalid type '" + type + "'", logName, LogLevel::ERROR));
         return nullptr;
     }
     
@@ -171,7 +177,7 @@ asIScriptObject* ScriptInterface::instanciateScriptEntity(const std::string& typ
     asIObjectType* objectType = mModule.getObjectTypeByDecl(type);
     if(!objectType)
     {
-        mBus.sendMessage<LogMessage>(LogMessage("Script runtime error: Trying to create entity of invalid type '" + type + "'", logName));
+        mBus.sendMessage<LogMessage>(LogMessage("Script runtime error: Trying to create entity of invalid type '" + type + "'", logName, LogLevel::ERROR));
         return nullptr;
     }
     

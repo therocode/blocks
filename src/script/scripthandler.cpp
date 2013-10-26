@@ -39,19 +39,19 @@ void ScriptHandler::setup()
     exploder.explodeFolder("data", ".*\\.as", sourceFiles);
     for(auto& string : sourceFiles)
     {
-        mBus.sendMessage<LogMessage>(LogMessage("Adding " + string + " for compilation.", logName));
+        mBus.sendMessage<LogMessage>(LogMessage("Adding " + string + " for compilation.", logName, LogLevel::VERBOSE));
     }
 
-    mBus.sendMessage<LogMessage>(LogMessage("Compiling scripts...", logName));
+    mBus.sendMessage<LogMessage>(LogMessage("Compiling scripts...", logName, LogLevel::INFO));
     bool succeeded = mScripts.compileFromSourceList(sourceFiles);
-    mBus.sendMessage<LogMessage>(LogMessage("Compilation process over.", logName));
+    mBus.sendMessage<LogMessage>(LogMessage("Compilation process over.", logName, LogLevel::INFO));
 
     if(succeeded)
     {
-        mBus.sendMessage<LogMessage>(LogMessage("Setting up script callbacks...", logName));
+        mBus.sendMessage<LogMessage>(LogMessage("Setting up script callbacks...", logName, LogLevel::VERBOSE));
         mScriptInterface.registerCallbacks(scriptEntities);
-        mBus.sendMessage<LogMessage>(LogMessage("Compilation process over.", logName));
-        mBus.sendMessage<LogMessage>(LogMessage("Done setting up callbacks.", logName));
+        mBus.sendMessage<LogMessage>(LogMessage("Compilation process over.", logName, LogLevel::VERBOSE));
+        mBus.sendMessage<LogMessage>(LogMessage("Done setting up callbacks.", logName, LogLevel::VERBOSE));
     }
 }
 
@@ -65,16 +65,16 @@ void ScriptHandler::destroy()
 
 void ScriptHandler::handleMessage(const RebuildScriptsRequestedMessage& message)
 {
-    mBus.sendMessage<LogMessage>(LogMessage("Compiling scripts...", logName));
+    mBus.sendMessage<LogMessage>(LogMessage("Compiling scripts...", logName, LogLevel::INFO));
     bool succeeded = mScripts.compileFromSourceList(sourceFiles);
-    mBus.sendMessage<LogMessage>(LogMessage("Compilation process over.", logName));
+    mBus.sendMessage<LogMessage>(LogMessage("Compilation process over.", logName, LogLevel::INFO));
 
     if(succeeded)
     {
-        mBus.sendMessage<LogMessage>(LogMessage("Setting up script callbacks...", logName));
+        mBus.sendMessage<LogMessage>(LogMessage("Setting up script callbacks...", logName, LogLevel::VERBOSE));
         mScriptInterface.registerCallbacks(scriptEntities);
-        mBus.sendMessage<LogMessage>(LogMessage("Compilation process over.", logName));
-        mBus.sendMessage<LogMessage>(LogMessage("Done setting up callbacks.", logName));
+        mBus.sendMessage<LogMessage>(LogMessage("Compilation process over.", logName, LogLevel::VERBOSE));
+        mBus.sendMessage<LogMessage>(LogMessage("Done setting up callbacks.", logName, LogLevel::VERBOSE));
     }
 }
 

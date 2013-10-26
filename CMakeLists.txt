@@ -15,6 +15,7 @@ set(source_files
     src/application/client.cpp
 	src/application/main.cpp
     src/application/server.cpp
+    src/console/console.cpp
     src/entity/defaultsetters.cpp
     src/entity/entityfactory.cpp
     src/entity/entitydefinitionloader.cpp
@@ -71,6 +72,9 @@ set(header_files
 	src/application/blocksapp.h
     src/application/client.h
     src/application/server.h
+    src/console/consolecolor.h
+    src/console/console.h
+    src/console/keys.h
 	src/entity/entitymessages.h
     src/entity/defaultsetters.h
     src/entity/entityfactory.h

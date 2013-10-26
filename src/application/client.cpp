@@ -69,7 +69,7 @@ void Client::render()
 void Client::destroy()
 {
 	mWindow.close();
-	mBus.sendMessage<LogMessage>(LogMessage("client destroyed", mLogName));
+	mBus.sendMessage<LogMessage>(LogMessage("client destroyed", mLogName, LogLevel::INFO));
 }
 
 void Client::handleMessage(const PlayerActionMessage& received)
@@ -113,7 +113,7 @@ bool Client::requestedQuit()
 void Client::setServerBridge(std::unique_ptr<ServerClientBridge> bridge)
 {
 	mBridge = std::move(bridge);
-	mBus.sendMessage<LogMessage>(LogMessage("client connected to server", mLogName));
+	mBus.sendMessage<LogMessage>(LogMessage("client connected to server", mLogName, LogLevel::INFO));
 }
 
 void Client::fetchServerData()
