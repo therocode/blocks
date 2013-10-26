@@ -4,6 +4,8 @@
 
 PhysicsController::PhysicsController(fea::MessageBus& bus, WorldInterface& worldInterface) : EntityController(bus, worldInterface), gravityConstant(-0.001f)
 {
+	mTimer.start();
+	accumulator = 0;
     mBus.addMessageSubscriber<GravityRequestedMessage>(*this);
     mBus.addMessageSubscriber<PhysicsImpulseMessage>(*this);
 }
@@ -29,6 +31,15 @@ void PhysicsController::inspectEntity(fea::WeakEntityPtr entity)
 
 void PhysicsController::onFrame()
 {
+	int dt = mTimer.getDeltaTime();
+	if(dt > 100) return;
+	dt += accumulator;
+	int millisecondsPerStep = 10;
+	int steps = dt / millisecondsPerStep;
+	accumulator = dt % millisecondsPerStep;
+	//printf("dt: %i\n", dt);
+	if(steps == 0) return;
+	if(steps > 10) steps = 10;
     for(auto wEntity : mEntities)
     {
         glm::vec3 gravityForce;
@@ -41,14 +52,18 @@ void PhysicsController::onFrame()
 
         glm::vec3 currentPosition = entity->getAttribute<glm::vec3>("position");
         glm::vec3 currentVelocity = entity->getAttribute<glm::vec3>("velocity");
-        glm::vec3 acceleration = gravityForce;
-
-        glm::vec3 newVelocity = currentVelocity + acceleration;
-        glm::vec3 newPosition = currentPosition + newVelocity;
-
-		newVelocity *= (1.0f - entity->getAttribute<float>("drag"));
+     
+		glm::vec3 acceleration = gravityForce;
+		glm::vec3 newVelocity = currentVelocity + acceleration;
+		glm::vec3 newPosition = currentPosition + newVelocity;
+		float drag = entity->getAttribute<float>("drag");
+		for(int i = 0; i < steps; i ++)
+		{
+			newPosition = newPosition + newVelocity;
+			newVelocity += acceleration;
+			newVelocity *= (1.0f - drag);
+		}
         entity->setAttribute<glm::vec3>("velocity", newVelocity);
-
         mBus.sendMessage<EntityMoveRequestedMessage>(EntityMoveRequestedMessage(entity->getId(), newPosition));
     }
 }

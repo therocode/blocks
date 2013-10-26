@@ -1,6 +1,7 @@
 #pragma once
 #include "entitycontroller.h"
 #include "../entitymessages.h"
+#include "../../utilities/timer.h"
 
 class PhysicsController : 
     public EntityController,
@@ -16,5 +17,7 @@ class PhysicsController :
         void handleMessage(const PhysicsImpulseMessage& received);
         virtual void removeEntity(fea::EntityId id);
     private:
+		int accumulator;
+		Timer mTimer;
         float gravityConstant;
 };
