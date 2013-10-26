@@ -34,7 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     int Console::FGColor = FOREGROUND_BLUE|FOREGROUND_GREEN|FOREGROUND_RED;
     HANDLE Console::hConsole =  GetStdHandle(STD_OUTPUT_HANDLE);
     CONSOLE_SCREEN_BUFFER_INFO csbiInfo; 
-    WORD wOldColorAttrs = csbiInfo.wAttributes;
+    WORD wOldColorAttrs;
 //if the plaform is other than Windows
 #else
     string Console::BGColor = "30";
@@ -45,6 +45,7 @@ void Console::Initialise()
 {
 #ifdef _WIN32
     GetConsoleScreenBufferInfo(hConsole, &csbiInfo);
+    WORD wOldColorAttrs = csbiInfo.wAttributes;
 #endif
 }
 
