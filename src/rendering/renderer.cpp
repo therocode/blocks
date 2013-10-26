@@ -176,11 +176,12 @@ void Renderer::handleMessage(const PlayerConnectedToEntityMessage& received)
 
 void Renderer::render()
 {
+	float dT_f = mTimer.getDeltaTime();
 	bus.sendMessage<CameraUpdatedMessage>(CameraUpdatedMessage(cam.GetPosition(), cam.GetDirection()));
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	mShaderProgram.bind();
 	cam.Update();
-		mShaderProgram.setUniform("worldToCamera", cam.GetMatrix());
+	mShaderProgram.setUniform("worldToCamera", cam.GetMatrix());
 
 	mShaderProgram.setUniform("cameraToClip",  projectionMatrix);
 	mShaderProgram.setUniform("modelToWorld",  glm::mat4(1.f));
@@ -269,11 +270,11 @@ void Renderer::render()
 		mLastFacingBlock = mCurrentlyFacingBlock;
 		fadeIn = 0;
 	}else if(fadeIn < 0.2f){
-		fadeIn += 0.01f;
-	}
+		fadeIn +=  dT_f * 0.002f;
+	}else fadeIn = 0.2f;
 	glColor4f(1.f, 1.f, 1.f, fadeIn);
 	glm::vec3 v = mCurrentlyFacingBlock;//glm::floor(cam.GetPosition()) + glm::vec3(0.5);
-	float s = 0.51f;
+	float s =  (0.2f - fadeIn) * 2.f + 0.51f ;
 	
 	//top
 	glm::vec3 p = v + glm::vec3(s);
