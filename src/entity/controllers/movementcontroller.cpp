@@ -53,7 +53,7 @@ void MovementController::onFrame()
             float pitch = entity->getAttribute<float>("pitch");
             float yaw = entity->getAttribute<float>("yaw");
 
-            glm::vec3 direction = glm::vec3(glm::cos(pitch)*glm::sin(yaw), 0.0f, glm::cos(pitch) * glm::cos(yaw));
+            glm::vec3 direction = glm::vec3(glm::sin(yaw), 0.0f,glm::cos(yaw));
 
             glm::vec3 targetVel;
 
@@ -66,19 +66,25 @@ void MovementController::onFrame()
             currentVel.y = 0.0f;     //this handler does not do gravity or up/down things
 
             glm::vec3 acc = (targetVel - currentVel);// / timestep;
-
-            if(acc.x > maxAcc)
-                acc.x = maxAcc;
-            else if(acc.x < -maxAcc)
-                acc.x = -maxAcc;
-            if(acc.y > maxAcc)
-                acc.y = maxAcc;
-            else if(acc.y < -maxAcc)
-                acc.y = -maxAcc;
-            else if(acc.z > maxAcc)
-                acc.z = maxAcc;
-            if(acc.z < -maxAcc)
-                acc.z = -maxAcc;
+			glm::vec2 horizontalAcc = glm::vec2(acc.x, acc.z);
+			if(glm::length(horizontalAcc) > maxAcc)
+			{
+				horizontalAcc = glm::normalize(horizontalAcc) * maxAcc;
+				acc.x = horizontalAcc.x;
+				acc.z = horizontalAcc.y;
+			}
+            // if(acc.x > maxAcc)
+                // acc.x = maxAcc;
+            // else if(acc.x < -maxAcc)
+                // acc.x = -maxAcc;
+            // if(acc.y > maxAcc)
+                // acc.y = maxAcc;
+            // else if(acc.y < -maxAcc)
+                // acc.y = -maxAcc;
+            // else if(acc.z > maxAcc)
+                // acc.z = maxAcc;
+            // if(acc.z < -maxAcc)
+                // acc.z = -maxAcc;
 
             entity->setAttribute<glm::vec3>("acceleration", acc);
         }
