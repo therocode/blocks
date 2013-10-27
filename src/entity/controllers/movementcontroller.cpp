@@ -39,7 +39,7 @@ void MovementController::onFrame()
         MoveAction action = entity->getAttribute<MoveAction>("move_action");
         bool onGround = entity->getAttribute<bool>("on_ground");
 
-        float propellSpeed;
+        float propellSpeed = 0.0f;
 
         if(onGround)
         {
@@ -52,6 +52,8 @@ void MovementController::onFrame()
                 propellSpeed = 0.0f;
                 maxAcc = 0.0001f;
             }
+
+            std::cout << "I am player id " << entity->getId() << " and my propellation is " << propellSpeed << "\n";
 
             float pitch = entity->getAttribute<float>("pitch");
             float yaw = entity->getAttribute<float>("yaw");
