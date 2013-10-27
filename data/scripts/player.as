@@ -9,4 +9,16 @@ class Player : Entity
     {
         //consolePrint("entity id is " + mId);
     }
+
+    void onGround(bool landed)
+    {
+        if(landed)
+        {
+            consolePrint("player has landed", WARNING);
+        }
+        else
+        {
+            consolePrint("player has taken off", WARNING);
+        }
+    }
 }

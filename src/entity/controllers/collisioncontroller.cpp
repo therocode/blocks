@@ -33,6 +33,7 @@ void CollisionController::onFrame()
             if(mWorldInterface.getVoxelType(position + glm::vec3(0.f, -0.8f, 0.f)) == 0)
             {
                 entity->setAttribute<bool>("on_ground", false);
+                mBus.sendMessage<EntityOnGroundMessage>(EntityOnGroundMessage(entity->getId(), false));
             }
             else
             {
@@ -145,5 +146,6 @@ void CollisionController::checkIfOnGround(fea::EntityPtr entity)
     if(fabs(currentVelocity.y) < 0.04)
     {
         entity->setAttribute<bool>("on_ground", true);
+        mBus.sendMessage<EntityOnGroundMessage>(EntityOnGroundMessage(entity->getId(), true));
     }
 }

@@ -8,6 +8,8 @@ void parameterFunction(asIScriptContext* context, std::size_t index, int value);
  
 void parameterFunction(asIScriptContext* context, std::size_t index, float value);
 
+void parameterFunction(asIScriptContext* context, std::size_t index, bool value);
+
 template <std::size_t I, typename... Types>
 struct ParameterHelper;
 

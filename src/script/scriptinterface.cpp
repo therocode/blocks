@@ -17,6 +17,7 @@ ScriptInterface::ScriptInterface(fea::MessageBus& bus, ScriptEngine& engine, Scr
 {
     mBus.addMessageSubscriber<FrameMessage>(*this);
     mBus.addMessageSubscriber<GameStartMessage>(*this);
+    mBus.addMessageSubscriber<EntityOnGroundMessage>(*this);
 
     ScriptEntityCore::sWorldInterface = &worldInterface;
     ScriptEntityCore::sBus = &bus;
@@ -26,6 +27,7 @@ ScriptInterface::~ScriptInterface()
 {
     mBus.removeMessageSubscriber<FrameMessage>(*this);
     mBus.removeMessageSubscriber<GameStartMessage>(*this);
+    mBus.removeMessageSubscriber<EntityOnGroundMessage>(*this);
 }
 
 void ScriptInterface::registerInterface()
@@ -106,6 +108,31 @@ void ScriptInterface::handleMessage(const GameStartMessage& received)
     if(!mModule.hasErrors())
     {
         gameStartCallback.execute();
+    }
+}
+
+void ScriptInterface::handleMessage(const EntityOnGroundMessage& received)
+{
+    bool landed;
+    size_t id;
+
+    std::tie(id, landed) = received.data;
+
+    if(!mModule.hasErrors())
+    {
+        for(auto& object : mUglyReference)
+        {
+            if(id == object.second)
+            {
+                ScriptMemberCallback<bool> callback(mEngine);
+                asIScriptFunction* function = object.first->GetObjectType()->GetMethodByDecl("void onGround(bool landed)");
+                if(function)
+                {
+                    callback.setFunction(function);
+                    callback.execute(object.first, landed);
+                }
+            }
+        }
     }
 }
 
