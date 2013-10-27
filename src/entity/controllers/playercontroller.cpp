@@ -65,7 +65,7 @@ void PlayerController::handleMessage(const PlayerActionMessage& received)
     }
     else if(action == JUMP)
     {
-
+        mBus.sendMessage<EntityJumpMessage>(EntityJumpMessage(mPlayerEntities.at(playerId).lock()->getId()));
     }
 }
 

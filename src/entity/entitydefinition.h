@@ -9,4 +9,5 @@ struct EntityDefinition
     float drag;
     float walkSpeed;
     float runSpeed;
+    float jumpStrength;
 };

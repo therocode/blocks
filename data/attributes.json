@@ -16,5 +16,6 @@
 
     "walk_speed":"#float#",
     "run_speed":"#float#",
+    "jump_strength":"#float#",
     "move_action":"#uint32#"
 }

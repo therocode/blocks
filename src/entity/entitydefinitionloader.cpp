@@ -75,6 +75,11 @@ EntityDefinition EntityDefinitionLoader::loadFromJSONFile(const std::string& pat
         {
             definition.runSpeed = member.value.GetFloat();
         }
+        //reading jumstrength
+        else if(memberName == "jump_strength")
+        {
+            definition.jumpStrength = member.value.GetFloat();
+        }
     }
 
     return definition;

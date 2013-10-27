@@ -38,6 +38,7 @@ fea::WeakEntityPtr EntityFactory::spawnEntity(const std::string& scriptType)
     spawned->setAttribute<float>("drag", definition.drag);
     spawned->setAttribute<float>("walk_speed", definition.walkSpeed);
     spawned->setAttribute<float>("run_speed", definition.runSpeed);
+    spawned->setAttribute<float>("jump_strength", definition.jumpStrength);
 
     return spawned;
 }

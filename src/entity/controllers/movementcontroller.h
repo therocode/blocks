@@ -3,11 +3,14 @@
 #include "../../world/worldinterface.h"
 
 class MovementController : 
-    public EntityController
+    public EntityController,
+    public fea::MessageReceiver<EntityJumpMessage>
 {
     public:
+        ~MovementController();
         MovementController(fea::MessageBus& bus, WorldInterface& worldInterface);
         virtual void inspectEntity(fea::WeakEntityPtr entity) override;
         virtual void removeEntity(fea::EntityId id) override;
         virtual void onFrame() override;
+        void handleMessage(const EntityJumpMessage& received);
 };

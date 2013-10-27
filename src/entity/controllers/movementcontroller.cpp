@@ -4,6 +4,12 @@
         
 MovementController::MovementController(fea::MessageBus& bus, WorldInterface& worldInterface) : EntityController(bus, worldInterface)
 {
+    mBus.addMessageSubscriber<EntityJumpMessage>(*this);
+}
+
+MovementController::~MovementController()
+{
+    mBus.removeMessageSubscriber<EntityJumpMessage>(*this);
 }
 
 void MovementController::inspectEntity(fea::WeakEntityPtr entity)
@@ -87,5 +93,19 @@ void MovementController::onFrame()
             }
             entity->setAttribute<glm::vec3>("acceleration", glm::vec3());
         }
+    }
+}
+
+void MovementController::handleMessage(const EntityJumpMessage& received)
+{
+    size_t id;
+
+    std::tie(id) = received.data;
+
+    float jumpStrength = mEntities.at(id).lock()->getAttribute<float>("jump_strength");
+
+    if(mEntities.at(id).lock()->getAttribute<bool>("on_ground"))
+    {
+        mBus.sendMessage<PhysicsImpulseMessage>(PhysicsImpulseMessage(id, glm::vec3(0.0f, jumpStrength / 8.0f, 0.0f)));
     }
 }
