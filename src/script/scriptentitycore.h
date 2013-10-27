@@ -13,6 +13,7 @@ class ScriptEntityCore
         void setPosition(float x, float y, float z);
         void setPosition(const glm::vec3& vec);
         glm::vec3 getPosition();
+        bool isOnGround();
         void setId(size_t id);
         static WorldInterface* sWorldInterface;
         static fea::MessageBus* sBus;

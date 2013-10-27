@@ -39,6 +39,11 @@ shared class Entity : IEntity
         return mCore.getPosition();
     }
 
+    bool isOnGround()
+    {
+        return mCore.isOnGround();
+    }
+
     void applyImpulse(float x, float y, float z)
     {
         applyImpulseOnEntity(mId, Vec3(x, y, z));
