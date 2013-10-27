@@ -53,8 +53,6 @@ void MovementController::onFrame()
                 maxAcc = 0.0001f;
             }
 
-            std::cout << "I am player id " << entity->getId() << " and my propellation is " << propellSpeed << "\n";
-
             float pitch = entity->getAttribute<float>("pitch");
             float yaw = entity->getAttribute<float>("yaw");
 

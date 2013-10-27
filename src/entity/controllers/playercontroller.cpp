@@ -63,6 +63,10 @@ void PlayerController::handleMessage(const PlayerActionMessage& received)
         fea::EntityPtr player = mPlayerEntities.at(playerId).lock();
         player->setAttribute<MoveAction>("move_action", MoveAction::STANDING);
     }
+    else if(action == JUMP)
+    {
+
+    }
 }
 
 void PlayerController::handleMessage(const PlayerPitchYawMessage& received) //movement controller ni the future
