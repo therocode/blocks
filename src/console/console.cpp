@@ -332,7 +332,7 @@ void Console::SetTitle(const char str[]){
 }
 void Console::SetCursorPosition(int x,int y){
     #ifdef _WIN32
-        COORD pos  = {x,y};
+        COORD pos  = {(short)x,(short)y};
         SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE),pos);
     #else
 		stringstream str;
