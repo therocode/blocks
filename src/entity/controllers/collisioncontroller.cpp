@@ -37,7 +37,7 @@ void CollisionController::onFrame()
             }
             else
             {
-                entity->setAttribute<glm::vec3>("velocity", entity->getAttribute<glm::vec3>("velocity") * 0.7f);
+                entity->setAttribute<glm::vec3>("velocity", entity->getAttribute<glm::vec3>("velocity") * 0.8f);
             }
         }
     }

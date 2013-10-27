@@ -76,18 +76,6 @@ void MovementController::onFrame()
 				acc.x = horizontalAcc.x;
 				acc.z = horizontalAcc.y;
 			}
-            // if(acc.x > maxAcc)
-                // acc.x = maxAcc;
-            // else if(acc.x < -maxAcc)
-                // acc.x = -maxAcc;
-            // if(acc.y > maxAcc)
-                // acc.y = maxAcc;
-            // else if(acc.y < -maxAcc)
-                // acc.y = -maxAcc;
-            // else if(acc.z > maxAcc)
-                // acc.z = maxAcc;
-            // if(acc.z < -maxAcc)
-                // acc.z = -maxAcc;
 
             entity->setAttribute<glm::vec3>("acceleration", acc);
         }
