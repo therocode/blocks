@@ -1,3 +1,3 @@
 #pragma once
 
-enum class MoveAction {STANDING, WALKING, RUNNING};
+enum class MoveAction {STANDING, WALKING, RUNNING, BACKING};

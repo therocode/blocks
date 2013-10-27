@@ -46,11 +46,17 @@ void MovementController::onFrame()
         bool onGround = entity->getAttribute<bool>("on_ground");
 
         float propellSpeed = 0.0f;
+        bool backwards = false;
 
         if(onGround)
         {
             if(action == MoveAction::WALKING)
                 propellSpeed = entity->getAttribute<float>("walk_speed");
+            else if(action == MoveAction::BACKING)
+            {
+                propellSpeed = entity->getAttribute<float>("walk_speed");
+                backwards = true;
+            }
             else if(action == MoveAction::RUNNING)
                 propellSpeed = entity->getAttribute<float>("run_speed");
             else if(action == MoveAction::STANDING)
