@@ -113,5 +113,6 @@ void MovementController::handleMessage(const EntityJumpMessage& received)
     if(mEntities.at(id).lock()->getAttribute<bool>("on_ground"))
     {
         mBus.sendMessage<PhysicsImpulseMessage>(PhysicsImpulseMessage(id, glm::vec3(0.0f, jumpStrength / 8.0f, 0.0f)));
+		mEntities.at(id).lock()->setAttribute<bool>("on_ground", false);
     }
 }

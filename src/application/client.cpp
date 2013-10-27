@@ -37,6 +37,7 @@ void Client::setup()
 	
 	mWindow.create(fea::VideoMode(800, 600, 32), "Blocky", fea::Style::Default, fea::ContextSettings(32));
 	mWindow.lockCursor(true);
+	// mWindow.setVSyncEnabled(false);
 	mRenderer.setup();
 	//	mWindow.setFramerateLimit(30);
 
