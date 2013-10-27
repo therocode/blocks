@@ -51,6 +51,6 @@ void onFrame(int frameNumber)
 
     //setGravity(-0.005f);
 
-    if(frameNumber > 2000)
-        setGravity(0.001f);
+    //if(frameNumber > 2000)
+    //   setGravity(0.001f);
 }

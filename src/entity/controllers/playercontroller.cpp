@@ -48,21 +48,39 @@ void PlayerController::onFrame()
            // std::cout << "pitch " << pitch << "\n";
             //std::cout << "yaw " << yaw << "\n";
 			glm::vec3 currentSpeed = entity->getAttribute<glm::vec3>("velocity");
+			bool onGround = entity->getAttribute<bool>("on_ground");
             glm::vec3 speedDir(0.0f, 0.0f, 1.0f);
 			
-            glm::mat3 xRot( glm::vec3(1, 			0, 			0),
-							glm::vec3(0, glm::cos(pitch), -glm::sin(pitch)),
-							glm::vec3(0, glm::sin(pitch), glm::cos(pitch))
-                          );
+            // glm::mat3 xRot( glm::vec3(1, 			0, 			0),
+							// glm::vec3(0, glm::cos(pitch), -glm::sin(pitch)),
+							// glm::vec3(0, glm::sin(pitch), glm::cos(pitch))
+                          // );
 			
-            glm::mat3 yRot(glm::vec3(glm::cos(yaw), 0, glm::sin(yaw)),
-                           glm::vec3(0, 1, 0),
-                           glm::vec3(-glm::sin(yaw), 0, glm::cos(yaw))
-                          );
+            // glm::mat3 yRot(glm::vec3(glm::cos(yaw), 0, glm::sin(yaw)),
+                           // glm::vec3(0, 1, 0),
+                           // glm::vec3(-glm::sin(yaw), 0, glm::cos(yaw))
+                          // );
 			
-            currentSpeed = glm::vec3(glm::cos(pitch)*glm::sin(yaw), glm::sin(pitch), glm::cos(pitch) * glm::cos(yaw)) * 0.1f;//glm::vec3(yRot * xRot * speedDir);
-            entity->setAttribute("velocity", currentSpeed);
-            glm::vec3 vel = entity->getAttribute<glm::vec3>("velocity");
+            // currentSpeed = glm::vec3(glm::cos(pitch)*glm::sin(yaw), glm::sin(pitch), glm::cos(pitch) * glm::cos(yaw)) * 0.1f;//glm::vec3(yRot * xRot * speedDir);
+            float s = 0.0001f;
+			if(onGround)
+			{
+				// printf("on grond\n");
+				s = .01f;
+			}
+			
+			currentSpeed += glm::vec3(glm::sin(yaw), 0, glm::cos(yaw)) * s;
+			float maxSpeed = .1f;
+			glm::vec2 xzSpeed = glm::vec2(currentSpeed.x, currentSpeed.z);
+			if(glm::length(xzSpeed) > maxSpeed)
+			{
+				xzSpeed = glm::normalize(xzSpeed);
+				xzSpeed *= maxSpeed;
+				currentSpeed.x = xzSpeed.x;
+				currentSpeed.z = xzSpeed.y;
+			}
+			entity->setAttribute("velocity", currentSpeed);
+            //glm::vec3 vel = entity->getAttribute<glm::vec3>("velocity");
 			throttle = 0;
         }
 
