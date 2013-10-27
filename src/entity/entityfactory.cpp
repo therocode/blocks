@@ -4,6 +4,7 @@
 #include "entityfactory.h"
 #include "defaultsetters.h"
 #include "../world/chunk.h"
+#include "controllers/moveaction.h"
 
 EntityFactory::EntityFactory(fea::EntityManager& manager) : mManager(manager)
 {
@@ -39,6 +40,7 @@ fea::WeakEntityPtr EntityFactory::spawnEntity(const std::string& scriptType)
     spawned->setAttribute<float>("walk_speed", definition.walkSpeed);
     spawned->setAttribute<float>("run_speed", definition.runSpeed);
     spawned->setAttribute<float>("jump_strength", definition.jumpStrength);
+    spawned->setAttribute<MoveAction>("move_action", MoveAction::STANDING);
 
     return spawned;
 }
