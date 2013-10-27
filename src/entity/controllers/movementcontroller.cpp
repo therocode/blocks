@@ -75,10 +75,10 @@ void MovementController::onFrame()
                 acc.y = maxAcc;
             else if(acc.y < -maxAcc)
                 acc.y = -maxAcc;
-            if(acc.z < -maxAcc)
-                acc.z = -maxAcc;
             else if(acc.z > maxAcc)
                 acc.z = maxAcc;
+            if(acc.z < -maxAcc)
+                acc.z = -maxAcc;
 
             entity->setAttribute<glm::vec3>("acceleration", acc);
         }
