@@ -30,10 +30,10 @@ void MovementController::removeEntity(fea::EntityId id)
 
 void MovementController::onFrame()
 {
-    float maxAcc = 0.01f;
     
     for(auto wEntity : mEntities)
     {
+        float maxAcc = 0.01f;
         fea::EntityPtr entity = wEntity.second.lock();
 
         MoveAction action = entity->getAttribute<MoveAction>("move_action");
