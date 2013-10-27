@@ -1,6 +1,7 @@
 #include "playercontroller.h"
 #include "../../world/worldinterface.h"
 #include "../../rendering/renderingmessages.h"
+#include "moveaction.h"
 #include <iostream>
 
 PlayerController::PlayerController(fea::MessageBus& bus, WorldInterface& worldInterface) : EntityController(bus, worldInterface), mForward(false)
@@ -29,52 +30,6 @@ void PlayerController::removeEntity(fea::EntityId id)
 
 void PlayerController::onFrame()
 {
-    for(auto& wEntity : mPlayerEntities)
-    {
-        fea::EntityPtr entity = wEntity.second.lock();
-        float throttle = entity->getAttribute<float>("throttle");
-
-        if(throttle > 0.001f)
-        {
-            float pitch = entity->getAttribute<float>("pitch");
-            float yaw = entity->getAttribute<float>("yaw");
-
-			if(pitch >= glm::pi<float>() * 0.5f)
-				pitch = glm::pi<float>() * 0.5f - 0.001f;
-			if(pitch <= -glm::pi<float>() * 0.5f)
-				pitch = -glm::pi<float>() * 0.5f + 0.001f;
-			
-			//printf("direction1:%f, %f, %f\n", pitch, yaw,0);
-           // std::cout << "pitch " << pitch << "\n";
-            //std::cout << "yaw " << yaw << "\n";
-			glm::vec3 currentSpeed = entity->getAttribute<glm::vec3>("velocity");
-            glm::vec3 speedDir(0.0f, 0.0f, 1.0f);
-			
-            glm::mat3 xRot( glm::vec3(1, 			0, 			0),
-							glm::vec3(0, glm::cos(pitch), -glm::sin(pitch)),
-							glm::vec3(0, glm::sin(pitch), glm::cos(pitch))
-                          );
-			
-            glm::mat3 yRot(glm::vec3(glm::cos(yaw), 0, glm::sin(yaw)),
-                           glm::vec3(0, 1, 0),
-                           glm::vec3(-glm::sin(yaw), 0, glm::cos(yaw))
-                          );
-			
-            currentSpeed = glm::vec3(glm::cos(pitch)*glm::sin(yaw), glm::sin(pitch), glm::cos(pitch) * glm::cos(yaw)) * 0.1f;//glm::vec3(yRot * xRot * speedDir);
-            entity->setAttribute("velocity", currentSpeed);
-            glm::vec3 vel = entity->getAttribute<glm::vec3>("velocity");
-			throttle = 0;
-        }
-
-
-        //updating current chunk
-        glm::vec3 position = entity->getAttribute<glm::vec3>("position");
-
-        if(worldToChunk(position) != entity->getAttribute<ChunkCoordinate>("current_chunk"))
-        {
-            playerEntersChunk(wEntity.first, worldToChunk(position));
-        }
-    }
 }
 
 void PlayerController::handleMessage(const PlayerJoinedMessage& received)
@@ -101,16 +56,16 @@ void PlayerController::handleMessage(const PlayerActionMessage& received)
     if(action == FORWARDS)
     {
         fea::EntityPtr player = mPlayerEntities.at(playerId).lock();
-        player->setAttribute<float>("throttle", 1.0f);
+        player->setAttribute<MoveAction>("move_action", MoveAction::WALKING);
     }
     else if(action == STOPFORWARDS)
     {
         fea::EntityPtr player = mPlayerEntities.at(playerId).lock();
-        player->setAttribute<float>("throttle", 0.0f);
+        player->setAttribute<MoveAction>("move_action", MoveAction::STANDING);
     }
 }
 
-void PlayerController::handleMessage(const PlayerPitchYawMessage& received)
+void PlayerController::handleMessage(const PlayerPitchYawMessage& received) //movement controller ni the future
 {
 	size_t playerId;
 
@@ -152,7 +107,17 @@ void PlayerController::handleMessage(const EntityMovedMessage& received)
     if(mPlayerEntities.find(id) != mPlayerEntities.end())
     {
         updateVoxelLookAt(id);
+
+        fea::EntityPtr entity = mPlayerEntities.at(id).lock();
+        //updating current chunk
+        glm::vec3 position = entity->getAttribute<glm::vec3>("position");
+
+        if(worldToChunk(position) != entity->getAttribute<ChunkCoordinate>("current_chunk"))
+        {
+            playerEntersChunk(id, worldToChunk(position));
+        }
     }
+
 }
 
 void PlayerController::playerEntersChunk(size_t playerId, const ChunkCoordinate& chunk)

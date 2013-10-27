@@ -12,6 +12,8 @@ EntityDefinition EntityDefinitionLoader::loadFromJSONFile(const std::string& pat
     definition.category = "living";
     definition.physicsType = PhysicsType::FALLING;
     definition.drag = 1.0f;
+    definition.walkSpeed = 0.0f;
+    definition.runSpeed = 0.0f;
 
     std::ifstream file(path);
 
@@ -62,6 +64,16 @@ EntityDefinition EntityDefinitionLoader::loadFromJSONFile(const std::string& pat
         else if(memberName == "drag")
         {
             definition.drag = member.value.GetFloat();
+        }
+        //reading walkspeed
+        else if(memberName == "walk_speed")
+        {
+            definition.walkSpeed = member.value.GetFloat();
+        }
+        //reading runspeed
+        else if(memberName == "run_speed")
+        {
+            definition.runSpeed = member.value.GetFloat();
         }
     }
 

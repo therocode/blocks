@@ -3,6 +3,7 @@
 #include "../entity/controllers/physicscontroller.h"
 #include "../entity/controllers/collisioncontroller.h"
 #include "../entity/controllers/gfxcontroller.h"
+#include "../entity/controllers/movementcontroller.h"
 
 	World::World(fea::MessageBus& messageBus) 
 :   bus(messageBus),
@@ -26,6 +27,7 @@ void World::initialise()
 	entitySystem.addController(std::unique_ptr<EntityController>(new PlayerController(bus, worldInterface)));
 	entitySystem.addController(std::unique_ptr<EntityController>(new PhysicsController(bus, worldInterface)));
 	entitySystem.addController(std::unique_ptr<EntityController>(new CollisionController(bus, worldInterface)));
+	entitySystem.addController(std::unique_ptr<EntityController>(new MovementController(bus, worldInterface)));
 	entitySystem.addController(std::unique_ptr<EntityController>(new GfxController(bus, worldInterface)));
 }
 

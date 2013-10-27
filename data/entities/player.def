@@ -3,6 +3,8 @@
     {
         "category":"living",
         "physics_type":"FALLING",
-        "drag":0.01
+        "drag":0.01,
+        "walk_speed":0.1,
+        "run_speed":0.2
     }
 }

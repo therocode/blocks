@@ -13,7 +13,6 @@ EntityFactory::EntityFactory(fea::EntityManager& manager) : mManager(manager)
     loader.registerType("#chunkcoordinate#",sizeof(ChunkCoordinate));
     mManager.registerAttributes(loader.loadAttributesJson("data/attributes.json"));
     mManager.registerEntityTemplates(loader.loadEntitiesJson("data/entities.json"));
-    mManager.registerDefaultSetter("mass", fea::util::floatSetter);
     mManager.registerDefaultSetter("position", vec3Setter);
     mManager.registerDefaultSetter("velocity", vec3Setter);
     mManager.registerDefaultSetter("acceleration", vec3Setter);
@@ -21,7 +20,6 @@ EntityFactory::EntityFactory(fea::EntityManager& manager) : mManager(manager)
     mManager.registerDefaultSetter("yaw", fea::util::floatSetter);
     mManager.registerDefaultSetter("hitbox", vec3Setter);
     mManager.registerDefaultSetter("on_ground", fea::util::boolSetter);
-    mManager.registerDefaultSetter("throttle", fea::util::floatSetter);
 }
 
 fea::WeakEntityPtr EntityFactory::spawnEntity(const std::string& scriptType)
@@ -38,6 +36,8 @@ fea::WeakEntityPtr EntityFactory::spawnEntity(const std::string& scriptType)
     fea::EntityPtr spawned = mManager.createEntity(category).lock();
     spawned->setAttribute<PhysicsType>("physics_type", definition.physicsType);
     spawned->setAttribute<float>("drag", definition.drag);
+    spawned->setAttribute<float>("walk_speed", definition.walkSpeed);
+    spawned->setAttribute<float>("run_speed", definition.runSpeed);
 
     return spawned;
 }

@@ -1,18 +1,23 @@
 {
     "living":
     {
-        "mass":"10.0f", 
         "position":"",
         "velocity":"0.0f,0.0f,0.0f", 
         "acceleration":"0.0f,0.0f,0.0f",
+
         "pitch":"0.0f",
         "yaw":"0.0f",
-        "hitbox":"1.0f,2.0f,1.0f", 
-        "on_ground":"false", 
         "drag":"",
         "physics_type":"",
+
+        "hitbox":"1.0f,2.0f,1.0f", 
+        "on_ground":"false", 
+
         "current_chunk":"",
         "block_facing":"",
-        "throttle":"0.0f"
+
+        "walk_speed":"",
+        "run_speed":"",
+        "move_action":""
     }
 }

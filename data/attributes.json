@@ -1,8 +1,8 @@
 {
-    "mass":"#float#",
     "position":"#vec3#",
     "velocity":"#vec3#",
     "acceleration":"#vec3#",
+
     "pitch":"#float#",
     "yaw":"#float#",
     "physics_type":"#uint32#",
@@ -11,7 +11,10 @@
     "hitbox":"#vec3#",
     "on_ground":"#bool#",
 
-    "throttle":"#float#",
     "current_chunk":"#chunkcoordinate#",
-    "block_facing":"#vec3#"
+    "block_facing":"#vec3#",
+
+    "walk_speed":"#float#",
+    "run_speed":"#float#",
+    "move_action":"#uint32#"
 }

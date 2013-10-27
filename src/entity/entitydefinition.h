@@ -7,4 +7,6 @@ struct EntityDefinition
     std::string category;
     PhysicsType physicsType;
     float drag;
+    float walkSpeed;
+    float runSpeed;
 };

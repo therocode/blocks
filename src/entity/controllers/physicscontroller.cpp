@@ -40,6 +40,9 @@ void PhysicsController::onFrame()
 	//printf("dt: %i\n", dt);
 	if(steps == 0) return;
 	if(steps > 10) steps = 10;
+
+    steps = 1; // if steps are used, it turns weird with the movementcontroller
+
     for(auto wEntity : mEntities)
     {
         glm::vec3 gravityForce;
@@ -53,7 +56,7 @@ void PhysicsController::onFrame()
         glm::vec3 currentPosition = entity->getAttribute<glm::vec3>("position");
         glm::vec3 currentVelocity = entity->getAttribute<glm::vec3>("velocity");
      
-		glm::vec3 acceleration = gravityForce;
+		glm::vec3 acceleration = gravityForce + entity->getAttribute<glm::vec3>("acceleration");
 		glm::vec3 newVelocity = currentVelocity + acceleration;
 		glm::vec3 newPosition = currentPosition + newVelocity;
 		float drag = entity->getAttribute<float>("drag");
