@@ -118,7 +118,7 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
 	if(move.y < 999)
 	{
 		approvedPosition.y += move.y;
-		velocity.y *= -0.5f;
+		velocity.y = 0;//*= -0.5f;
 	}
 	if(move.x < 999)
 	{
