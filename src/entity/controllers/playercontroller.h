@@ -26,5 +26,6 @@ class PlayerController :
         void playerEntersChunk(size_t playerId, const ChunkCoordinate& chunk);
         void updateVoxelLookAt(size_t playerId);
         std::unordered_map<size_t, fea::WeakEntityPtr> mPlayerEntities;
-        bool mForward;
+        bool mHoldingForwards;
+        bool mHoldingBackwards;
 };

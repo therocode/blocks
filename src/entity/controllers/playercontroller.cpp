@@ -4,7 +4,7 @@
 #include "moveaction.h"
 #include <iostream>
 
-PlayerController::PlayerController(fea::MessageBus& bus, WorldInterface& worldInterface) : EntityController(bus, worldInterface), mForward(false)
+PlayerController::PlayerController(fea::MessageBus& bus, WorldInterface& worldInterface) : EntityController(bus, worldInterface), mHoldingForwards(false), mHoldingBackwards(false)
 {
     mBus.addMessageSubscriber<PlayerJoinedMessage>(*this);
     mBus.addMessageSubscriber<PlayerActionMessage>(*this);
@@ -55,13 +55,63 @@ void PlayerController::handleMessage(const PlayerActionMessage& received)
 
     if(action == FORWARDS)
     {
-        fea::EntityPtr player = mPlayerEntities.at(playerId).lock();
-        player->setAttribute<MoveAction>("move_action", MoveAction::WALKING);
+        mHoldingForwards = true;
+
+        if(!mHoldingBackwards)
+        {
+            fea::EntityPtr player = mPlayerEntities.at(playerId).lock();
+            player->setAttribute<MoveAction>("move_action", MoveAction::WALKING);
+        }
+        else
+        {
+            fea::EntityPtr player = mPlayerEntities.at(playerId).lock();
+            player->setAttribute<MoveAction>("move_action", MoveAction::STANDING);
+        }
     }
     else if(action == STOPFORWARDS)
     {
-        fea::EntityPtr player = mPlayerEntities.at(playerId).lock();
-        player->setAttribute<MoveAction>("move_action", MoveAction::STANDING);
+        mHoldingForwards = false;
+
+        if(!mHoldingBackwards)
+        {
+            fea::EntityPtr player = mPlayerEntities.at(playerId).lock();
+            player->setAttribute<MoveAction>("move_action", MoveAction::STANDING);
+        }
+        else
+        {
+            fea::EntityPtr player = mPlayerEntities.at(playerId).lock();
+            player->setAttribute<MoveAction>("move_action", MoveAction::BACKING);
+        }
+    }
+    else if(action == BACKWARDS)
+    {
+        mHoldingBackwards = true;
+
+        if(!mHoldingForwards)
+        {
+            fea::EntityPtr player = mPlayerEntities.at(playerId).lock();
+            player->setAttribute<MoveAction>("move_action", MoveAction::BACKING);
+        }
+        else
+        {
+            fea::EntityPtr player = mPlayerEntities.at(playerId).lock();
+            player->setAttribute<MoveAction>("move_action", MoveAction::STANDING);
+        }
+    }
+    else if(action == STOPBACKWARDS)
+    {
+        mHoldingBackwards = false;
+
+        if(!mHoldingForwards)
+        {
+            fea::EntityPtr player = mPlayerEntities.at(playerId).lock();
+            player->setAttribute<MoveAction>("move_action", MoveAction::STANDING);
+        }
+        else
+        {
+            fea::EntityPtr player = mPlayerEntities.at(playerId).lock();
+            player->setAttribute<MoveAction>("move_action", MoveAction::WALKING);
+        }
     }
     else if(action == JUMP)
     {
