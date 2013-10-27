@@ -142,8 +142,9 @@ void CollisionController::removeEntity(fea::EntityId id)
 void CollisionController::checkIfOnGround(fea::EntityPtr entity)
 {
     glm::vec3 currentVelocity = entity->getAttribute<glm::vec3>("velocity");
+    bool isOnGround = entity->getAttribute<bool>("on_ground");
    
-    if(fabs(currentVelocity.y) < 0.04)
+    if(fabs(currentVelocity.y) < 0.06 && !isOnGround)
     {
         entity->setAttribute<bool>("on_ground", true);
         mBus.sendMessage<EntityOnGroundMessage>(EntityOnGroundMessage(entity->getId(), true));
