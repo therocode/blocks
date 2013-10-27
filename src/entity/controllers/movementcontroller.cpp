@@ -30,7 +30,7 @@ void MovementController::removeEntity(fea::EntityId id)
 
 void MovementController::onFrame()
 {
-    const float maxAcc = 0.01f;
+    float maxAcc = 0.01f;
     
     for(auto wEntity : mEntities)
     {
@@ -48,7 +48,10 @@ void MovementController::onFrame()
             else if(action == MoveAction::RUNNING)
                 propellSpeed = entity->getAttribute<float>("run_speed");
             else if(action == MoveAction::STANDING)
+            {
                 propellSpeed = 0.0f;
+                maxAcc = 0.0001f;
+            }
 
             float pitch = entity->getAttribute<float>("pitch");
             float yaw = entity->getAttribute<float>("yaw");
