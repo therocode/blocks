@@ -89,7 +89,7 @@ void MovementController::onFrame()
         {
             if(action != MoveAction::STANDING)
             {
-                //hax a bit of air control for the player
+                //hax aircontrol
             }
             entity->setAttribute<glm::vec3>("acceleration", glm::vec3());
         }
