@@ -77,6 +77,9 @@ void MovementController::onFrame()
                 targetVel = glm::normalize(direction) * propellSpeed;
             }
 
+            if(backwards)
+                targetVel *= -1.0f;
+
             glm::vec3 currentVel = entity->getAttribute<glm::vec3>("velocity");
             currentVel.y = 0.0f;     //this handler does not do gravity or up/down things
 
@@ -113,6 +116,7 @@ void MovementController::handleMessage(const EntityJumpMessage& received)
     if(mEntities.at(id).lock()->getAttribute<bool>("on_ground"))
     {
         mBus.sendMessage<PhysicsImpulseMessage>(PhysicsImpulseMessage(id, glm::vec3(0.0f, jumpStrength / 8.0f, 0.0f)));
+        mBus.sendMessage<EntityOnGroundMessage>(EntityOnGroundMessage(id, false));
 		mEntities.at(id).lock()->setAttribute<bool>("on_ground", false);
     }
 }

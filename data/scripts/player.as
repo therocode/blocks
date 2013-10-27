@@ -23,7 +23,6 @@ class Player : Entity
         else
         {
             consolePrint("player has taken off", WARNING);
-            consolePrint(toString(getPosition()));
         }
     }
 }
