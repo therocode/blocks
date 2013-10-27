@@ -28,11 +28,18 @@ void CollisionController::onFrame()
 
         if(entity->getAttribute<bool>("on_ground"))
         {
+            if(entity->getId() == 17)
+                std::cout << "player is on ground\n";
+
             glm::vec3 position = entity->getAttribute<glm::vec3>("position");
 
             if(mWorldInterface.getVoxelType(position + glm::vec3(0.f, -0.8f, 0.f)) == 0)
             {
                 entity->setAttribute<bool>("on_ground", false);
+            }
+            else
+            {
+                entity->setAttribute<glm::vec3>("velocity", entity->getAttribute<glm::vec3>("velocity") * 0.7f);
             }
         }
     }
