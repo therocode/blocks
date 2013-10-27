@@ -8,6 +8,7 @@
         "pitch":"0.0f",
         "yaw":"0.0f",
         "hitbox":"1.0f,2.0f,1.0f", 
+        "on_ground":"false", 
         "drag":"",
         "physics_type":"",
         "current_chunk":"",

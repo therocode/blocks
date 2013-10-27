@@ -5,9 +5,11 @@
     "acceleration":"#vec3#",
     "pitch":"#float#",
     "yaw":"#float#",
-    "hitbox":"#vec3#",
     "physics_type":"#uint32#",
     "drag":"#float#",
+
+    "hitbox":"#vec3#",
+    "on_ground":"#bool#",
 
     "throttle":"#float#",
     "current_chunk":"#chunkcoordinate#",

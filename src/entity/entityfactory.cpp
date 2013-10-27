@@ -20,6 +20,7 @@ EntityFactory::EntityFactory(fea::EntityManager& manager) : mManager(manager)
     mManager.registerDefaultSetter("pitch", fea::util::floatSetter);
     mManager.registerDefaultSetter("yaw", fea::util::floatSetter);
     mManager.registerDefaultSetter("hitbox", vec3Setter);
+    mManager.registerDefaultSetter("on_ground", fea::util::boolSetter);
     mManager.registerDefaultSetter("throttle", fea::util::floatSetter);
 }
 

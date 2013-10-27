@@ -33,7 +33,12 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
 	float moveZ = 999;
 
     fea::EntityPtr entity =  mEntities.at(id).lock();
+    glm::vec3 oldPosition = entity->getAttribute<glm::vec3>("position");
 
+    if(entity->getAttribute<bool>("on_ground"))
+    {
+        approvedPosition.y = oldPosition.y;
+    }
 	
 	if(mWorldInterface.getVoxelType(approvedPosition + glm::vec3(0.f, -0.5f, 0.f)) != 0)
     {
@@ -49,15 +54,11 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
 		{
 			move.y = p;
 		}
-        
-        checkIfOnGround(entity);
     }
 	
 	if(mWorldInterface.getVoxelType(approvedPosition + glm::vec3(-0.5f, 0.f, 0.f)) != 0)
     {
 		move.x = (glm::floor(approvedPosition.x) + 0.5f) - approvedPosition.x;
-        
-        checkIfOnGround(entity);
     }
 	
 	if(mWorldInterface.getVoxelType(approvedPosition + glm::vec3(0.5f, 0.0f, 0.f)) != 0)
@@ -67,8 +68,6 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
 		{
 			move.x = p;
 		}
-        
-        checkIfOnGround(entity);
     }
 	
 	if(mWorldInterface.getVoxelType(approvedPosition + glm::vec3(0,0,-0.5f)) != 0)
@@ -85,8 +84,6 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
 		{
 			move.z = p;
 		}
-        
-        checkIfOnGround(entity);
     }
 	
 	
@@ -122,7 +119,18 @@ void CollisionController::removeEntity(fea::EntityId id)
 void CollisionController::checkIfOnGround(fea::EntityPtr entity)
 {
     glm::vec3 currentVelocity = entity->getAttribute<glm::vec3>("velocity");
-    
-        //-0.0355181
-    
+   
+    if(entity->getId() == 17)
+    {
+        std::cout << "velocity is " << currentVelocity.x << " " << currentVelocity.y << " " << currentVelocity.z << "\n";
+    }
+    else
+    {
+        return;
+    }
+         
+    if(fabs(currentVelocity.y) < 0.04)
+    {
+        entity->setAttribute<bool>("on_ground", true);
+    }
 }
