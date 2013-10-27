@@ -13,9 +13,28 @@ void CollisionController::inspectEntity(fea::WeakEntityPtr entity)
 
     if(locked->hasAttribute("position") &&
        locked->hasAttribute("velocity") &&
+       locked->hasAttribute("on_ground") &&
        locked->hasAttribute("hitbox"))
     {
         mEntities.emplace(locked->getId(), entity);
+    }
+}
+
+void CollisionController::onFrame()
+{
+    for(auto wEntity : mEntities)
+    {
+        fea::EntityPtr entity = wEntity.second.lock();
+
+        if(entity->getAttribute<bool>("on_ground"))
+        {
+            glm::vec3 position = entity->getAttribute<glm::vec3>("position");
+
+            if(mWorldInterface.getVoxelType(position + glm::vec3(0.f, -0.8f, 0.f)) == 0)
+            {
+                entity->setAttribute<bool>("on_ground", false);
+            }
+        }
     }
 }
 
@@ -37,7 +56,8 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
 
     if(entity->getAttribute<bool>("on_ground"))
     {
-        approvedPosition.y = oldPosition.y;
+        if(approvedPosition.y < oldPosition.y)
+            approvedPosition.y = oldPosition.y;
     }
 	
 	if(mWorldInterface.getVoxelType(approvedPosition + glm::vec3(0.f, -0.5f, 0.f)) != 0)
@@ -73,8 +93,6 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
 	if(mWorldInterface.getVoxelType(approvedPosition + glm::vec3(0,0,-0.5f)) != 0)
     {
 		move.z = (glm::floor(approvedPosition.z) + 0.5f) - approvedPosition.z;
-        
-        checkIfOnGround(entity);
     }
 	
 	if(mWorldInterface.getVoxelType(approvedPosition + glm::vec3(0,0,0.5f)) != 0)
