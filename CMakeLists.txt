@@ -150,7 +150,8 @@ find_package(angelscript)
 if(NOT GLEW_FOUND)
 	include_directories(${CMAKE_CURRENT_SOURCE_DIR}/extlibs/glew/include)
 	link_directories(${CMAKE_CURRENT_SOURCE_DIR}/extlibs/glew/lib)
-	# set(source_files ${CMAKE_CURRENT_SOURCE_DIR}/extlibs/glew/glew.c ${source_files})
+	set(source_files ${CMAKE_CURRENT_SOURCE_DIR}/extlibs/glew/glew.c ${source_files})
+	add_definitions(-DGLEW_STATIC)
 endif()
 
 
@@ -218,7 +219,7 @@ if(GLEW_FOUND)
 	include_directories(${GLEW_INCLUDE_DIR})
 	target_link_libraries(${project_name} ${GLEW_LIBRARIES})
 else(GLEW_FOUND)
-	target_link_libraries(${project_name} glew32)
+	# target_link_libraries(${project_name} glew32)
 endif(GLEW_FOUND)
 
 
