@@ -1,3 +1,4 @@
+#pragma once
 //For often used headers.
 //GL
 #ifndef GLEW_STATIC

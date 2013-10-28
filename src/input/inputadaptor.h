@@ -2,6 +2,7 @@
 #include <featherkit/userinterface.h>
 #include <featherkit/messaging.h>
 #include "../entity/entitymessages.h"
+#include "../entity/controllers/movedirection.h"
 
 class InputAdaptor : public fea::MessageReceiver<PlayerIdMessage>
 {
@@ -12,6 +13,7 @@ class InputAdaptor : public fea::MessageReceiver<PlayerIdMessage>
         void handleMessage(const PlayerIdMessage& received) override;
 
     private:
+        void sendMovementData();
         fea::MessageBus& mBus;
         fea::InputHandler inputHandler;
         fea::ActionHandler<std::string> actionHandler;
@@ -24,4 +26,11 @@ class InputAdaptor : public fea::MessageReceiver<PlayerIdMessage>
         bool first;
 
         bool mouseDown;
+
+        bool mHoldingForwards;
+        bool mHoldingBackwards;
+        bool mHoldingLeft;
+        bool mHoldingRight;
+
+        MoveDirection direction;
 };

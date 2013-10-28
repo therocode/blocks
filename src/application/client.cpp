@@ -21,6 +21,8 @@ Client::Client() :
 	mBridge(nullptr)
 {
 	mBus.addMessageSubscriber<PlayerActionMessage>(*this);
+	mBus.addMessageSubscriber<PlayerMoveDirectionMessage>(*this);
+	mBus.addMessageSubscriber<PlayerMoveActionMessage>(*this);
 	mBus.addMessageSubscriber<PlayerPitchYawMessage>(*this);
 	mBus.addMessageSubscriber<RebuildScriptsRequestedMessage>(*this);
 }
@@ -28,6 +30,8 @@ Client::Client() :
 Client::~Client()
 {
 	mBus.removeMessageSubscriber<PlayerActionMessage>(*this);
+	mBus.removeMessageSubscriber<PlayerMoveDirectionMessage>(*this);
+	mBus.removeMessageSubscriber<PlayerMoveActionMessage>(*this);
 	mBus.removeMessageSubscriber<PlayerPitchYawMessage>(*this);
 	mBus.removeMessageSubscriber<RebuildScriptsRequestedMessage>(*this);
 }
@@ -88,6 +92,21 @@ void Client::handleMessage(const PlayerActionMessage& received)
 	{
 		mBridge->enqueuePackage(std::shared_ptr<BasePackage>(new PlayerActionPackage(playerId, action)));
 	}
+}
+
+void Client::handleMessage(const PlayerMoveDirectionMessage& received)
+{
+    size_t id;
+    MoveDirection dir;
+
+    std::tie(id, dir) = received.data;
+
+    mBridge->enqueuePackage(std::shared_ptr<BasePackage>(new PlayerMoveDirectionPackage(id, dir.getForwardBack(), dir.getLeftRight())));
+}
+
+void Client::handleMessage(const PlayerMoveActionMessage& received)
+{
+    mBridge->enqueuePackage(std::shared_ptr<BasePackage>(new PlayerMoveActionPackage(received.data)));
 }
 
 void Client::handleMessage(const PlayerPitchYawMessage& received)

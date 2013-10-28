@@ -8,7 +8,11 @@
 	InputAdaptor::InputAdaptor(fea::MessageBus& b)
 :   inputHandler(new fea::util::SDL2InputBackend),
     mPlayerId(-1),
-	mBus(b)
+	mBus(b),
+    mHoldingForwards(false),
+    mHoldingBackwards(false),
+    mHoldingLeft(false),
+    mHoldingRight(false)
 {
 	fea::util::JsonActionIOHandler<std::string> jsonHandler;
 	jsonHandler.loadBindingsFile("data/bindings.json");
@@ -92,13 +96,25 @@ void InputAdaptor::update()
 		if(action == "quit")
 			mBus.sendMessage<PlayerActionMessage>(PlayerActionMessage(mPlayerId, InputAction::QUIT));
 		else if(action == "forwards")
-			mBus.sendMessage<PlayerActionMessage>(PlayerActionMessage(mPlayerId, InputAction::FORWARDS));
+        {
+            mHoldingForwards = true;
+            sendMovementData();
+        }
 		else if(action == "backwards")
-			mBus.sendMessage<PlayerActionMessage>(PlayerActionMessage(mPlayerId, InputAction::BACKWARDS));
+        {
+            mHoldingBackwards = true;
+            sendMovementData();
+        }
 		else if(action == "left")
-			mBus.sendMessage<PlayerActionMessage>(PlayerActionMessage(mPlayerId, InputAction::LEFT));
+        {
+            mHoldingLeft = true;
+            sendMovementData();
+        }
 		else if(action == "right")
-			mBus.sendMessage<PlayerActionMessage>(PlayerActionMessage(mPlayerId, InputAction::RIGHT));
+        {
+            mHoldingRight = true;
+            sendMovementData();
+        }
 		else if(action == "jump")
 			mBus.sendMessage<PlayerActionMessage>(PlayerActionMessage(mPlayerId, InputAction::JUMP));
 		else if(action == "crouch")
@@ -107,13 +123,25 @@ void InputAdaptor::update()
 			mBus.sendMessage<RebuildScriptsRequestedMessage>(RebuildScriptsRequestedMessage('0'));
 
 		else if(action == "stopforwards")
-			mBus.sendMessage<PlayerActionMessage>(PlayerActionMessage(mPlayerId, InputAction::STOPFORWARDS));
+        {
+            mHoldingForwards = false;
+            sendMovementData();
+        }
 		else if(action == "stopbackwards")
-			mBus.sendMessage<PlayerActionMessage>(PlayerActionMessage(mPlayerId, InputAction::STOPBACKWARDS));
+        {
+            mHoldingBackwards = false;
+            sendMovementData();
+        }
 		else if(action == "stopleft")
-			mBus.sendMessage<PlayerActionMessage>(PlayerActionMessage(mPlayerId, InputAction::STOPLEFT));
+        {
+            mHoldingLeft = false;
+            sendMovementData();
+        }
 		else if(action == "stopright")
-			mBus.sendMessage<PlayerActionMessage>(PlayerActionMessage(mPlayerId, InputAction::STOPRIGHT));
+        {
+            mHoldingRight = false;
+            sendMovementData();
+        }
 		else if(action == "stopjump")
 			mBus.sendMessage<PlayerActionMessage>(PlayerActionMessage(mPlayerId, InputAction::STOPJUMP));
 		else if(action == "stopcrouch")
@@ -124,4 +152,16 @@ void InputAdaptor::update()
 void InputAdaptor::handleMessage(const PlayerIdMessage& received)
 {
     std::tie(mPlayerId) = received.data;
+}
+
+void InputAdaptor::sendMovementData()
+{
+    direction.setDirection(mHoldingForwards, mHoldingBackwards, mHoldingLeft, mHoldingRight);
+
+    mBus.sendMessage<PlayerMoveDirectionMessage>(PlayerMoveDirectionMessage(mPlayerId, direction));
+
+    if(direction.isStill())
+        mBus.sendMessage<PlayerMoveActionMessage>(PlayerMoveActionMessage(mPlayerId, MoveAction::STANDING));
+    else
+        mBus.sendMessage<PlayerMoveActionMessage>(PlayerMoveActionMessage(mPlayerId, MoveAction::WALKING));
 }

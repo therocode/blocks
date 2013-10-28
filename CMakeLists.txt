@@ -24,6 +24,7 @@ set(source_files
     src/entity/controllers/entitycontroller.cpp
     src/entity/controllers/gfxcontroller.cpp
     src/entity/controllers/movementcontroller.cpp
+    src/entity/controllers/movedirection.cpp
     src/entity/controllers/physicscontroller.cpp
     src/entity/controllers/playercontroller.cpp
     src/input/inputadaptor.cpp

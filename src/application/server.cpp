@@ -237,6 +237,23 @@ void Server::fetchClientData(std::weak_ptr<ClientConnection> client)
                 PlayerActionPackage* playerActionPackage = (PlayerActionPackage*) package.get();
                 mBus.sendMessage<PlayerActionMessage>(PlayerActionMessage(playerActionPackage->getData()));
             }
+            else if(package->mType == typeid(PlayerMoveDirectionPackage))
+            {
+                PlayerMoveDirectionPackage* playerMoveDirectionPackage = (PlayerMoveDirectionPackage*) package.get();
+                size_t id;
+                int8_t forwardsBack;
+                int8_t leftRight;
+                std::tie(id, forwardsBack, leftRight) = playerMoveDirectionPackage->getData();
+
+                MoveDirection dir(forwardsBack, leftRight);
+
+                mBus.sendMessage<PlayerMoveDirectionMessage>(PlayerMoveDirectionMessage(id, dir));
+            }
+            else if(package->mType == typeid(PlayerMoveActionPackage))
+            {
+                PlayerMoveActionPackage* playerMoveActionPackage = (PlayerMoveActionPackage*) package.get();
+                mBus.sendMessage<PlayerMoveActionMessage>(PlayerMoveActionMessage(playerMoveActionPackage->getData()));
+            }
             else if(package->mType == typeid(PlayerPitchYawPackage))
             {
                 PlayerPitchYawPackage* playerPitchYawPackage = (PlayerPitchYawPackage*) package.get();

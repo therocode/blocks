@@ -4,10 +4,12 @@
 #include "moveaction.h"
 #include <iostream>
 
-PlayerController::PlayerController(fea::MessageBus& bus, WorldInterface& worldInterface) : EntityController(bus, worldInterface), mHoldingForwards(false), mHoldingBackwards(false)
+PlayerController::PlayerController(fea::MessageBus& bus, WorldInterface& worldInterface) : EntityController(bus, worldInterface)
 {
     mBus.addMessageSubscriber<PlayerJoinedMessage>(*this);
     mBus.addMessageSubscriber<PlayerActionMessage>(*this);
+    mBus.addMessageSubscriber<PlayerMoveDirectionMessage>(*this);
+    mBus.addMessageSubscriber<PlayerMoveActionMessage>(*this);
     mBus.addMessageSubscriber<PlayerPitchYawMessage>(*this);
     mBus.addMessageSubscriber<EntityMovedMessage>(*this);
 }
@@ -16,6 +18,8 @@ PlayerController::~PlayerController()
 {
     mBus.removeMessageSubscriber<PlayerJoinedMessage>(*this);
     mBus.removeMessageSubscriber<PlayerActionMessage>(*this);
+    mBus.removeMessageSubscriber<PlayerMoveDirectionMessage>(*this);
+    mBus.removeMessageSubscriber<PlayerMoveActionMessage>(*this);
     mBus.removeMessageSubscriber<PlayerPitchYawMessage>(*this);
     mBus.removeMessageSubscriber<EntityMovedMessage>(*this);
 }
@@ -55,68 +59,33 @@ void PlayerController::handleMessage(const PlayerActionMessage& received)
 
     if(action == FORWARDS)
     {
-        mHoldingForwards = true;
-
-        if(!mHoldingBackwards)
-        {
-            fea::EntityPtr player = mPlayerEntities.at(playerId).lock();
-            player->setAttribute<MoveAction>("move_action", MoveAction::WALKING);
-        }
-        else
-        {
-            fea::EntityPtr player = mPlayerEntities.at(playerId).lock();
-            player->setAttribute<MoveAction>("move_action", MoveAction::STANDING);
-        }
-    }
-    else if(action == STOPFORWARDS)
-    {
-        mHoldingForwards = false;
-
-        if(!mHoldingBackwards)
-        {
-            fea::EntityPtr player = mPlayerEntities.at(playerId).lock();
-            player->setAttribute<MoveAction>("move_action", MoveAction::STANDING);
-        }
-        else
-        {
-            fea::EntityPtr player = mPlayerEntities.at(playerId).lock();
-            player->setAttribute<MoveAction>("move_action", MoveAction::WALKING);
-        }
-    }
-    else if(action == BACKWARDS)
-    {
-        mHoldingBackwards = true;
-
-        if(!mHoldingForwards)
-        {
-            fea::EntityPtr player = mPlayerEntities.at(playerId).lock();
-            player->setAttribute<MoveAction>("move_action", MoveAction::WALKING);
-        }
-        else
-        {
-            fea::EntityPtr player = mPlayerEntities.at(playerId).lock();
-            player->setAttribute<MoveAction>("move_action", MoveAction::STANDING);
-        }
-    }
-    else if(action == STOPBACKWARDS)
-    {
-        mHoldingBackwards = false;
-
-        if(!mHoldingForwards)
-        {
-            fea::EntityPtr player = mPlayerEntities.at(playerId).lock();
-            player->setAttribute<MoveAction>("move_action", MoveAction::STANDING);
-        }
-        else
-        {
-            fea::EntityPtr player = mPlayerEntities.at(playerId).lock();
-            player->setAttribute<MoveAction>("move_action", MoveAction::WALKING);
-        }
+            //fea::EntityPtr player = mPlayerEntities.at(playerId).lock();
+            //player->setAttribute<MoveAction>("move_action", MoveAction::STANDING);
     }
     else if(action == JUMP)
     {
         mBus.sendMessage<EntityJumpMessage>(EntityJumpMessage(mPlayerEntities.at(playerId).lock()->getId()));
     }
+}
+
+void PlayerController::handleMessage(const PlayerMoveDirectionMessage& received)
+{
+    size_t playerId;
+    MoveDirection direction;
+
+    std::tie(playerId, direction) = received.data;
+
+    mPlayerEntities.at(playerId).lock()->setAttribute<MoveDirection>("move_direction", direction);
+}
+
+void PlayerController::handleMessage(const PlayerMoveActionMessage& received)
+{
+    size_t playerId;
+    MoveAction moveAction;
+
+    std::tie(playerId, moveAction) = received.data;
+
+    mPlayerEntities.at(playerId).lock()->setAttribute<MoveAction>("move_action", moveAction);
 }
 
 void PlayerController::handleMessage(const PlayerPitchYawMessage& received) //movement controller ni the future

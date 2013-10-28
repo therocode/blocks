@@ -43,6 +43,7 @@ void MovementController::onFrame()
         fea::EntityPtr entity = wEntity.second.lock();
 
         MoveAction action = entity->getAttribute<MoveAction>("move_action");
+        MoveDirection moveDirection = entity->getAttribute<MoveDirection>("move_direction");
         bool onGround = entity->getAttribute<bool>("on_ground");
 
         float propellSpeed = 0.0f;
@@ -68,7 +69,15 @@ void MovementController::onFrame()
             float pitch = entity->getAttribute<float>("pitch");
             float yaw = entity->getAttribute<float>("yaw");
 
-            glm::vec3 direction = glm::vec3(glm::sin(yaw), 0.0f,glm::cos(yaw));
+            glm::vec3 forwardDirection = glm::vec3(glm::sin(yaw), 0.0f, glm::cos(yaw)) * (float) moveDirection.getForwardBack();
+            glm::vec3 sideDirection = glm::vec3(glm::sin(yaw + glm::radians(90.0f * (float)moveDirection.getLeftRight())), 0.0f,glm::cos(yaw + glm::radians(90.0f * (float)moveDirection.getLeftRight())));
+
+            if(moveDirection.getLeftRight() == 0)
+            {
+                sideDirection = glm::vec3(0.0f, 0.0f, 0.0f);
+            }
+
+            glm::vec3 direction = glm::normalize(forwardDirection + sideDirection);
 			
             glm::vec3 targetVel;
 

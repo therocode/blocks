@@ -1,6 +1,8 @@
 #pragma once
 #include "../blockstd.h"
 #include "../world/chunk.h"
+#include "controllers/movedirection.h"
+#include "controllers/moveaction.h"
 #include <featherkit/messaging.h>
 #include <featherkit/entitysystem.h>
 
@@ -52,6 +54,12 @@ using PlayerEntersChunkMessage = fea::Message<PlayerEntersChunk_tag, size_t, con
 
 struct PlayerId_tag{};//                           id
 using PlayerIdMessage = fea::Message<PlayerId_tag, size_t>;
+
+struct PlayerMoveDirection_tag;//                                       id       direction
+using PlayerMoveDirectionMessage = fea::Message<PlayerMoveDirection_tag, size_t, const MoveDirection&>;
+
+struct PlayerMoveAction_tag;//                                      id       action
+using PlayerMoveActionMessage = fea::Message<PlayerMoveAction_tag, size_t, MoveAction>;
 
 struct PhysicsImpulse_tag{};//                                entity id    force
 using PhysicsImpulseMessage = fea::Message<PhysicsImpulse_tag, size_t, const glm::vec3&>;

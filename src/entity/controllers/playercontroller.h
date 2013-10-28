@@ -9,6 +9,8 @@ class PlayerController :
     public EntityController,
     public fea::MessageReceiver<PlayerJoinedMessage>,
     public fea::MessageReceiver<PlayerActionMessage>,
+    public fea::MessageReceiver<PlayerMoveDirectionMessage>,
+    public fea::MessageReceiver<PlayerMoveActionMessage>,
     public fea::MessageReceiver<PlayerPitchYawMessage>,
     public fea::MessageReceiver<EntityMovedMessage>
 {
@@ -20,14 +22,12 @@ class PlayerController :
         virtual void onFrame() override;
         void handleMessage(const PlayerJoinedMessage& received);
         void handleMessage(const PlayerActionMessage& received);
+        void handleMessage(const PlayerMoveDirectionMessage& received);
+        void handleMessage(const PlayerMoveActionMessage& received);
         void handleMessage(const PlayerPitchYawMessage& received);
         void handleMessage(const EntityMovedMessage& received);
     private:
         void playerEntersChunk(size_t playerId, const ChunkCoordinate& chunk);
         void updateVoxelLookAt(size_t playerId);
         std::unordered_map<size_t, fea::WeakEntityPtr> mPlayerEntities;
-        bool mHoldingForwards;
-        bool mHoldingBackwards;
-        bool mHoldingLeft;
-        bool mHoldingRight;
 };
