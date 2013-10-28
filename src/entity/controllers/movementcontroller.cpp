@@ -48,8 +48,8 @@ void MovementController::onFrame()
         float propellSpeed = 0.0f;
         bool backwards = false;
 
-        if(onGround)
-        {
+        //if(onGround)
+       // {
             if(action == MoveAction::WALKING)
                 propellSpeed = entity->getAttribute<float>("walk_speed");
             else if(action == MoveAction::WALKING)
@@ -69,7 +69,7 @@ void MovementController::onFrame()
             float yaw = entity->getAttribute<float>("yaw");
 
             glm::vec3 direction = glm::vec3(glm::sin(yaw), 0.0f,glm::cos(yaw));
-
+			
             glm::vec3 targetVel;
 
             if(propellSpeed > 0.0f)
@@ -91,17 +91,25 @@ void MovementController::onFrame()
 				acc.x = horizontalAcc.x;
 				acc.z = horizontalAcc.y;
 			}
-
-            entity->setAttribute<glm::vec3>("acceleration", acc);
-        }
-        else
-        {
-            if(action != MoveAction::STANDING)
-            {
-                //hax aircontrol
+			if(!onGround)
+			{
+				glm::vec2 dir = glm::vec2((glm::length2(dir)!= 0)?glm::normalize(direction):direction);
+				glm::vec2 vel = glm::vec2((glm::length2(currentVel) != 0)?glm::normalize(currentVel):currentVel);
+				
+				float d = glm::dot(dir, vel);
+				d =  1.f - (d+1.f)/2.f;
+				acc *= d * 0.08f;
             }
-            entity->setAttribute<glm::vec3>("acceleration", glm::vec3());
-        }
+			entity->setAttribute<glm::vec3>("acceleration", acc);
+        // }
+        // else
+        // {
+            // if(action != MoveAction::STANDING)
+            // {
+                //hax aircontrol
+            // }
+           // entity->setAttribute<glm::vec3>("acceleration", glm::vec3());
+        // }
     }
 }
 
