@@ -93,12 +93,25 @@ void MovementController::onFrame()
 			}
 			if(!onGround)
 			{
-				glm::vec2 dir = glm::vec2((glm::length2(dir)!= 0)?glm::normalize(direction):direction);
-				glm::vec2 vel = glm::vec2((glm::length2(currentVel) != 0)?glm::normalize(currentVel):currentVel);
-				
+				glm::vec2 dir;
+				if(glm::length2(dir)!= 0)
+				{
+					dir = glm::normalize(glm::vec2(direction));
+				}else
+				{
+					dir = glm::vec2();
+				}
+				glm::vec2 vel;
+				if(glm::length2(currentVel)!= 0)
+				{
+					vel = glm::normalize(glm::vec2(currentVel));
+				}else
+				{
+					vel = glm::vec2();
+				}
 				float d = glm::dot(dir, vel);
-				d =  1.f - (d+1.f)/2.f;
-				acc *= d * 0.08f;
+				d =  1.01f - (d+1.f)/2.f;
+				acc *= d * 0.2f;
             }
 			entity->setAttribute<glm::vec3>("acceleration", acc);
         // }
