@@ -5,12 +5,14 @@
 #include "defaultsetters.h"
 #include "../world/chunk.h"
 #include "controllers/moveaction.h"
+#include "controllers/movedirection.h"
 
 EntityFactory::EntityFactory(fea::EntityManager& manager) : mManager(manager)
 {
     //register templates
     fea::util::JsonEntityLoader loader;
     loader.registerType("#vec3#",sizeof(glm::vec3));
+    loader.registerType("#int16#",sizeof(int16_t));
     loader.registerType("#chunkcoordinate#",sizeof(ChunkCoordinate));
     mManager.registerAttributes(loader.loadAttributesJson("data/attributes.json"));
     mManager.registerEntityTemplates(loader.loadEntitiesJson("data/entities.json"));
@@ -41,6 +43,7 @@ fea::WeakEntityPtr EntityFactory::spawnEntity(const std::string& scriptType)
     spawned->setAttribute<float>("run_speed", definition.runSpeed);
     spawned->setAttribute<float>("jump_strength", definition.jumpStrength);
     spawned->setAttribute<MoveAction>("move_action", MoveAction::STANDING);
+    spawned->setAttribute<MoveDirection>("move_direction", MoveDirection(false, false, false, false));
 
     return spawned;
 }

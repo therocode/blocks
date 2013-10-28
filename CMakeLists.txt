@@ -24,6 +24,7 @@ set(source_files
     src/entity/controllers/entitycontroller.cpp
     src/entity/controllers/gfxcontroller.cpp
     src/entity/controllers/movementcontroller.cpp
+    src/entity/controllers/movedirection.cpp
     src/entity/controllers/physicscontroller.cpp
     src/entity/controllers/playercontroller.cpp
     src/input/inputadaptor.cpp
@@ -86,6 +87,7 @@ set(header_files
     src/entity/controllers/entitycontroller.h
     src/entity/controllers/gfxcontroller.h
     src/entity/controllers/moveaction.h
+    src/entity/controllers/movedirection.h
     src/entity/controllers/movementcontroller.h
     src/entity/controllers/physicscontroller.h
     src/entity/controllers/physicstype.h

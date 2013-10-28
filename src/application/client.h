@@ -9,6 +9,8 @@
 
 class Client : 
     public fea::MessageReceiver<PlayerActionMessage>,
+    public fea::MessageReceiver<PlayerMoveDirectionMessage>,
+    public fea::MessageReceiver<PlayerMoveActionMessage>,
     public fea::MessageReceiver<PlayerPitchYawMessage>,
     public fea::MessageReceiver<RebuildScriptsRequestedMessage>
 {
@@ -20,6 +22,8 @@ class Client :
         void render();
         void destroy();
         virtual void handleMessage(const PlayerActionMessage& received);
+        virtual void handleMessage(const PlayerMoveDirectionMessage& received);
+        virtual void handleMessage(const PlayerMoveActionMessage& received);
         virtual void handleMessage(const PlayerPitchYawMessage& received);
         virtual void handleMessage(const RebuildScriptsRequestedMessage& received);
         bool requestedQuit();

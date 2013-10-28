@@ -19,6 +19,7 @@
         "walk_speed":"",
         "run_speed":"",
         "jump_strength":"",
-        "move_action":""
+        "move_action":"",
+        "move_direction":""
     }
 }
