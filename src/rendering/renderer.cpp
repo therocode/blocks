@@ -69,8 +69,7 @@ void Renderer::setup()
 	{
 		fprintf(stdout, "Status: Using GLEW %s\n", glewGetString(GLEW_VERSION));
 	}
-	glClearColor((float)0x00 / 255.f, (float)0xb2 / 255.f, (float)0xff / 255.f, 0.0f);
-
+	
 	//glEnable(GL_LIGHTING);
 	//glEnable(GL_LIGHT0);
 	//GLfloat lightpos[] = {100.f, 100.f, 100.f};
@@ -176,6 +175,12 @@ void Renderer::handleMessage(const PlayerConnectedToEntityMessage& received)
 
 void Renderer::render()
 {
+	glm::vec3 fullColor = glm::vec3((float)0x00 / 255.f, (float)0xb2 / 255.f, (float)0xff / 255.f);
+	float y = cam.GetPosition().y;
+	glm::vec3 color = glm::mix(fullColor, glm::vec3(0.f), 1.f - glm::clamp((y - 15) * 0.05f, 0.f, 1.f));
+	// printf("color: %f, %f, %f\n", color.x, color.y, color.z);
+	glClearColor(color.x, color.y, color.z, 1.0f);
+
 	float dT_f = mTimer.getDeltaTime();
 	bus.sendMessage<CameraUpdatedMessage>(CameraUpdatedMessage(cam.GetPosition(), cam.GetDirection()));
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);

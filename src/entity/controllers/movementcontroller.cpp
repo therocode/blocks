@@ -119,8 +119,8 @@ void MovementController::onFrame()
 					vel = glm::vec2();
 				}
 				float d = glm::dot(dir, vel);
-				d =  1.01f - (d+1.f)/2.f;
-				acc *= d * 0.2f;
+				d =  1.1f - (d+1.f)/2.f;
+				acc *= d * 0.08f;
             }
 			entity->setAttribute<glm::vec3>("acceleration", acc);
         // }

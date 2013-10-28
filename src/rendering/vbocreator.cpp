@@ -81,8 +81,11 @@ VBO VBOCreator::generateChunkVBO(const Chunk& chunk) const
 					float worldX = x + chunkOffset.x;
 					float worldY = y + chunkOffset.y;
 					float worldZ = z + chunkOffset.z;
-
+					glm::vec3 color = glm::vec3(1.0f, 1.f, 1.f);
+					color -= glm::clamp((chunkOffset.y + y) * -0.05f, 0.f, 1.f);
 					Rectangle r;
+					r.setColor(color.x, color.y, color.z);
+					// r.setColor(1.f, 1.f, 1.f);
 					if(!frontObscured)
 					{
 						setRectData(r, worldX, worldY, worldZ, FRONT, (float)textureLocation.x, (float)textureLocation.y);
