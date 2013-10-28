@@ -78,14 +78,14 @@ void MovementController::onFrame()
             }
 
             glm::vec3 direction = (forwardDirection + sideDirection);
-			if(glm::length2(direction) !=0)
-				direction = glm::normalize(direction);
+			//if(glm::length2(direction) !=0)
+			//	direction = glm::normalize(direction);
 			
             glm::vec3 targetVel;
 
             if(propellSpeed > 0.0f)
             {
-                targetVel = glm::normalize(direction) * propellSpeed;
+                targetVel = direction * propellSpeed;
             }
 
             if(backwards)
@@ -105,18 +105,18 @@ void MovementController::onFrame()
 			}
 			if(!onGround)
 			{
-				glm::vec2 dir;
+				glm::vec2 dir = glm::vec2(direction);
 				if(glm::length2(dir)!= 0)
 				{
-					dir = glm::normalize(glm::vec2(direction));
+					dir = glm::normalize(dir);
 				}else
 				{
 					dir = glm::vec2(0.f, 0.f);
 				}
-				glm::vec2 vel;
-				if(glm::length2(currentVel)!= 0)
+				glm::vec2 vel = glm::vec2(currentVel);
+				if(glm::length2(vel)!= 0)
 				{
-					vel = glm::normalize(glm::vec2(currentVel));
+					vel = glm::normalize(vel);
 				}else
 				{
 					vel = glm::vec2(0.f, 0.f);
