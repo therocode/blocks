@@ -28,4 +28,6 @@ class PlayerController :
         std::unordered_map<size_t, fea::WeakEntityPtr> mPlayerEntities;
         bool mHoldingForwards;
         bool mHoldingBackwards;
+        bool mHoldingLeft;
+        bool mHoldingRight;
 };

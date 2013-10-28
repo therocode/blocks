@@ -80,7 +80,7 @@ void PlayerController::handleMessage(const PlayerActionMessage& received)
         else
         {
             fea::EntityPtr player = mPlayerEntities.at(playerId).lock();
-            player->setAttribute<MoveAction>("move_action", MoveAction::BACKING);
+            player->setAttribute<MoveAction>("move_action", MoveAction::WALKING);
         }
     }
     else if(action == BACKWARDS)
@@ -90,7 +90,7 @@ void PlayerController::handleMessage(const PlayerActionMessage& received)
         if(!mHoldingForwards)
         {
             fea::EntityPtr player = mPlayerEntities.at(playerId).lock();
-            player->setAttribute<MoveAction>("move_action", MoveAction::BACKING);
+            player->setAttribute<MoveAction>("move_action", MoveAction::WALKING);
         }
         else
         {
