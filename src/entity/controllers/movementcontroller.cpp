@@ -77,7 +77,9 @@ void MovementController::onFrame()
                 sideDirection = glm::vec3(0.0f, 0.0f, 0.0f);
             }
 
-            glm::vec3 direction = glm::normalize(forwardDirection + sideDirection);
+            glm::vec3 direction = (forwardDirection + sideDirection);
+			if(glm::length2(direction) !=0)
+				direction = glm::normalize(direction);
 			
             glm::vec3 targetVel;
 
@@ -96,7 +98,8 @@ void MovementController::onFrame()
 			glm::vec2 horizontalAcc = glm::vec2(acc.x, acc.z);
 			if(glm::length(horizontalAcc) > maxAcc)
 			{
-				horizontalAcc = glm::normalize(horizontalAcc) * maxAcc;
+				if(glm::length2(horizontalAcc) != 0)
+					horizontalAcc = glm::normalize(horizontalAcc) * maxAcc;
 				acc.x = horizontalAcc.x;
 				acc.z = horizontalAcc.y;
 			}
@@ -108,7 +111,7 @@ void MovementController::onFrame()
 					dir = glm::normalize(glm::vec2(direction));
 				}else
 				{
-					dir = glm::vec2();
+					dir = glm::vec2(0.f, 0.f);
 				}
 				glm::vec2 vel;
 				if(glm::length2(currentVel)!= 0)
@@ -116,14 +119,14 @@ void MovementController::onFrame()
 					vel = glm::normalize(glm::vec2(currentVel));
 				}else
 				{
-					vel = glm::vec2();
+					vel = glm::vec2(0.f, 0.f);
 				}
 				float d = glm::dot(dir, vel);
 				d =  1.1f - (d+1.f)/2.f;
 				acc *= d * 0.08f;
             }
 			entity->setAttribute<glm::vec3>("acceleration", acc);
-        // }
+       // }
         // else
         // {
             // if(action != MoveAction::STANDING)
