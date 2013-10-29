@@ -128,7 +128,7 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
 	glm::vec3 velocity = mEntities.at(id).lock()->getAttribute<glm::vec3>("velocity");
 	
 	//velocity is either 0 or 1, depending if it collided or not. when all is working it should use the normal to do stuff.
-	velocity *= (n !=  1.0) ? 0: 1;
+	velocity *= n;
 	
     entity->setAttribute<glm::vec3>("velocity", velocity);
     entity->setAttribute<glm::vec3>("position", approvedPosition);
@@ -281,7 +281,8 @@ float CollisionController::sweepAABB(const AABB a, const AABB b, const glm::vec3
 	if(ye < exit)  exit = ye;
 	if(ze < exit)  exit = ze;
 	// printf("entries: %f, %f, %f\n", xs, ys, zs);
-	if(entry > exit || xs < 0 && ys < 0 && zs < 0 || xe > 1.0f && ye > 1.0f && ze > 1.0f)
+	float epsilon = 0.1f;
+	if(entry > exit || (xs < -epsilon && ys < -epsilon && zs < -epsilon) || (xe > 1.0f && ye > 1.0f && ze > 1.0f))
 	{
 		n.x = n.y = n.z = 0.0f;
 		return 1.f;
