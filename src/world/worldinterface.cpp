@@ -38,8 +38,8 @@ glm::vec3 WorldInterface::getVoxelAtRay(float ox, float oy, float oz, float dx, 
 {
 	glm::vec3 d = glm::vec3(dx, dy, dz);
 	if(glm::length2(d) != 0)
-	d = glm::normalize(d);
-	d*= 0.1f;
+		d = glm::normalize(d);
+	//d*= 0.1f;
 	glm::vec3 p = glm::vec3(ox, oy, oz);
 	
 	float l = glm::sqrt(dx * dx + dy * dy + dz * dz);
@@ -49,18 +49,34 @@ glm::vec3 WorldInterface::getVoxelAtRay(float ox, float oy, float oz, float dx, 
 	dz *= l;
 	int steps = 0;
 	uint16_t vtype = 0;
-	while(steps < 900){
+	glm::vec3 bounds = glm::vec3(0,0,0);
+	if(dx > 0)bounds.x = 1.0f;
+	if(dy > 0)bounds.y = 1.0f;
+	if(dz > 0)bounds.z = 1.0f;
+	
+	while(steps < 256){//Able to look 256 blocks away!
 		
 		glm::vec3 lp = glm::fract(p);
 		float nd = 10.f;
-		float ddot = glm::dot(glm::vec3(1.f, 0.f, 0.f), d);
-		if(ddot>0){
-			
+		glm::vec3 distInBlock = bounds - lp;
+
+		glm::vec3 poop = distInBlock / d;
+		
+		float mind = poop.x;
+		
+		if(mind > poop.y){
+			mind = poop.y;
 		}
+		if(mind > poop.z){
+			mind = poop.z;
+		}
+		
+		float lengthToNextBlock = 0.1f;
+		lengthToNextBlock = mind + 0.001f;
 		
 		vtype = getVoxelType(p.x, p.y, p.z);
 		if(vtype != (uint16_t)0 ) break;
-		p += d;
+		p += d * lengthToNextBlock;
 		
 		steps ++;
 	}
