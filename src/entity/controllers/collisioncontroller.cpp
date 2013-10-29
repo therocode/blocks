@@ -51,14 +51,13 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
 
     std::tie(id, requestedPosition) = message.data;
 
-    approvedPosition = requestedPosition;
 	glm::vec3 move = glm::vec3(999, 999, 999);
 	float moveY = 999;
 	float moveZ = 999;
 
     fea::EntityPtr entity =  mEntities.at(id).lock();
     glm::vec3 oldPosition = entity->getAttribute<glm::vec3>("position");
-	glm::vec3 size = entity->getAttribute<glm::vec3>("hitbox");
+	glm::vec3 size = glm::vec3(1.f);//entity->getAttribute<glm::vec3>("hitbox");
 	AABB a, b;
 	
 	a.x = oldPosition.x - size.x * 0.5f;
@@ -69,7 +68,7 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
 	a.height = size.y;
 	a.depth = size.z;
 	glm::vec3 v = requestedPosition - oldPosition;
-
+	v *= 10.f;
 	b.width =  1.f;
 	b.height = 1.f;
 	b.depth =  1.f;
@@ -77,27 +76,37 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
 	int sx = 3, sy = 3, sz = 3;
 	float n = 1.0f;
 	glm::vec3 normal = glm::vec3(0.f);
-	for(int x = -sx; x <= sx; x++)
+	//Loop througha cube of blocks and check if they are passableor not
+	for(float x = -sx; x < sx; x++)
 	{
-		for(int y = -sy; y <= sy; y++)
+		for(float y = -sy; y < sy; y++)
 		{
-			for(int z = -sz; z <= sz; z++)
+			for(float z = -sz; z < sz; z++)
 			{
-				glm::vec3 cubePos = glm::floor(oldPosition) + glm::vec3(x, y, z);
+				// float x = 0, y = 0, z =0;
+				glm::vec3 cubePos = glm::floor(glm::vec3(requestedPosition.x, requestedPosition.y, requestedPosition.z)) + glm::vec3(x, y, z);
+				// for(int i = 0; i < 3; i++)
+					// if(oldPosition[i] < 0)cubePos[i] --;
+					
 				if(mWorldInterface.getVoxelType(cubePos) != 0)
 				{
 					
 					glm::vec3 norm;
 					// v.x = 0; 
 					// v.y = -100; v.z = 0;
+					//set position of aabb B
+					//Might be something wrong here.
 					b.x = cubePos.x;
 					b.y = cubePos.y;
 					b.z = cubePos.z;
+					// printf("d: %f, %f, %f\n", cubePos.x - oldPosition.x, cubePos.y - oldPosition.y, cubePos.z - oldPosition.z);
+					//A is the entity, B is block in world, v is newPosition - oldPosition. Function should set norm to a normal on which face it collided. returns depth, which is between 0 and 1.
 					float nn = sweepAABB(a, b, v, norm);
 					 // printf("nn:%f\n", nn);
+					//If depth is shallower than before, set the new depth to the new value.
 					n = glm::min(nn, n);
+					//change normal if depth changed
 					if(n != nn)normal = norm;
-					
 				}
 			}
 		}
@@ -118,7 +127,8 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
 	approvedPosition = oldPosition + v * n;
 	glm::vec3 velocity = mEntities.at(id).lock()->getAttribute<glm::vec3>("velocity");
 	
-	// velocity *= (n !=  1.0) ? 0: 1;
+	//velocity is either 0 or 1, depending if it collided or not. when all is working it should use the normal to do stuff.
+	velocity *= (n !=  1.0) ? 0: 1;
 	
     entity->setAttribute<glm::vec3>("velocity", velocity);
     entity->setAttribute<glm::vec3>("position", approvedPosition);
@@ -271,12 +281,13 @@ float CollisionController::sweepAABB(const AABB a, const AABB b, const glm::vec3
 	if(ye < exit)  exit = ye;
 	if(ze < exit)  exit = ze;
 	// printf("entries: %f, %f, %f\n", xs, ys, zs);
-	if(entry > exit || xs < 0.f && ys < 0 && zs < 0 || xe > 1.0f && ye > 1.0f && ze > 1.0f)
+	if(entry > exit || xs < 0 && ys < 0 && zs < 0 || xe > 1.0f && ye > 1.0f && ze > 1.0f)
 	{
 		n.x = n.y = n.z = 0.0f;
 		return 1.f;
 	}else
 	{
+		// printf("coollllllll\n");
 		int axis = 0;
 		float maxL = xs;
 		if(ys > maxL)
