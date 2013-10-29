@@ -148,6 +148,8 @@ find_package(OpenGL REQUIRED)
 find_package(ENet)
 find_package(angelscript)
 
+include_directories(src)
+
 #This has to be done before add_executable. I'm adding source files.
 if(NOT GLEW_FOUND)
 	include_directories(${CMAKE_CURRENT_SOURCE_DIR}/extlibs/glew/include)
