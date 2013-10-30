@@ -162,7 +162,7 @@ endif()
 if(NOT SDL2_FOUND)
 	link_directories(${CMAKE_CURRENT_SOURCE_DIR}/extlibs/SDL-2.0/lib)
 endif(NOT SDL2_FOUND)
-
+add_definitions(-O4)
 add_executable(${project_name} ${header_files} ${source_files})
 
 
