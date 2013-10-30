@@ -8,6 +8,8 @@ using ChunkCoordinate = glm::ivec3;
 using VoxelCoordinate = glm::uvec3;
 
 const int32_t chunkWidth = 16;
+const int32_t chunkShift = 4;
+const int32_t chunkShiftx2 = chunkShift * 2;
 const int32_t chunkWidthx2 = chunkWidth * chunkWidth;
 const int32_t chunkWidthx3 = chunkWidth * chunkWidth * chunkWidth;
 const int32_t voxelAmount = chunkWidthx3;
