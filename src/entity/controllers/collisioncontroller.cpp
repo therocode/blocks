@@ -30,16 +30,7 @@ void CollisionController::onFrame()
         if(entity->getAttribute<bool>("on_ground"))
         {
             glm::vec3 position = entity->getAttribute<glm::vec3>("position");
-
-            if(mWorldInterface.getVoxelType(position + glm::vec3(0.f, -0.8f, 0.f)) == 0)
-            {
-                entity->setAttribute<bool>("on_ground", false);
-                mBus.sendMessage<EntityOnGroundMessage>(EntityOnGroundMessage(entity->getId(), false));
-            }
-            else
-            {
-                entity->setAttribute<glm::vec3>("velocity", entity->getAttribute<glm::vec3>("velocity") * 0.8f);
-            }
+            entity->setAttribute<glm::vec3>("velocity", entity->getAttribute<glm::vec3>("velocity") * 0.8f);
         }
     }
 }
@@ -88,7 +79,7 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
             for(float z = -sz; z <= sz; z++)
             {
                 // float x = 0, y = 0, z =0;
-                glm::vec3 cubePos = glm::floor(glm::vec3(oldPosition.x, oldPosition.y, oldPosition.z)) + glm::vec3(x, y, z);
+                glm::vec3 cubePos = glm::vec3(oldPosition.x, oldPosition.y, oldPosition.z) + glm::vec3(x, y, z);
 
                 if(mWorldInterface.getVoxelType(cubePos) != 0)
                 {
@@ -97,15 +88,17 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
                     // v.y = -100; v.z = 0;
                     //set position of aabb B
                     //Might be something wrong here.
-				
                     b.x = cubePos.x;                 
 					b.y = cubePos.y;
                     b.z = cubePos.z;
 					
-					if(b.x <= 0) b.x --;
-					if(b.y <= 0) b.y --;
-					if(b.z <= 0) b.z --;
+					if(b.x < 0) b.x --;
+					if(b.y < 0) b.y --;
+					if(b.z < 0) b.z --;
 					
+					b.x = (int)b.x;
+					b.y = (int)b.y;
+					b.z = (int)b.z;
 					
 					Renderer::sDebugRenderer.drawCube(b.x + 0.5f, b.y + 0.5f, b.z + 0.5f, 1.02f, DebugRenderer::RED);
                     // printf("d: %f, %f, %f\n", cubePos.x - oldPosition.x, cubePos.y - oldPosition.y, cubePos.z - oldPosition.z);
@@ -113,7 +106,7 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
                     float nn = sweepAABB(a, b, v, norm);
                     // printf("nn:%f\n", nn);
                     //If depth is shallower than before, set the new depth to the new value.
-                    if(nn < n && glm::abs(norm.y) > 0.001f){
+                    if(nn < n ){
                         n = nn;
                         normal = norm;
                     }
@@ -159,7 +152,12 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
         //entity->setAttribute<glm::vec3>("acceleration", acceleration);
 
         if(glm::abs(normal.y) > 0)
-            checkIfOnGround(entity);
+		{
+            if(!checkIfOnGround(entity)){
+				entity->setAttribute<bool>("on_ground", false);
+                mBus.sendMessage<EntityOnGroundMessage>(EntityOnGroundMessage(entity->getId(), false));
+            }
+        }
     }
     entity->setAttribute<glm::vec3>("position", approvedPosition);
     mBus.sendMessage<EntityMovedMessage>(EntityMovedMessage(id, requestedPosition, approvedPosition));
@@ -337,7 +335,7 @@ void CollisionController::removeEntity(fea::EntityId id)
     mEntities.erase(id);
 }
 
-void CollisionController::checkIfOnGround(fea::EntityPtr entity)
+bool CollisionController::checkIfOnGround(fea::EntityPtr entity)
 {
     glm::vec3 currentVelocity = entity->getAttribute<glm::vec3>("velocity");
     bool isOnGround = entity->getAttribute<bool>("on_ground");
@@ -346,5 +344,7 @@ void CollisionController::checkIfOnGround(fea::EntityPtr entity)
     {
         entity->setAttribute<bool>("on_ground", true);
         mBus.sendMessage<EntityOnGroundMessage>(EntityOnGroundMessage(entity->getId(), true));
+		return true;
     }
+	return false;
 }
