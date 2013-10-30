@@ -20,4 +20,5 @@ class CollisionController : public EntityController,
     private:
         void checkIfOnGround(fea::EntityPtr entity);
 		float sweepAABB(const AABB a, const AABB b, const glm::vec3 v, glm::vec3& n);
+        bool AABBAABB(const AABB a, const AABB b);
 };

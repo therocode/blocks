@@ -10,7 +10,7 @@
         "drag":"",
         "physics_type":"",
 
-        "hitbox":"1.0f,2.0f,1.0f", 
+        "hitbox":"0.5f,1.6f,0.5f", 
         "on_ground":"false", 
 
         "current_chunk":"",
