@@ -75,16 +75,16 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
     b.height = 1.f;
     b.depth =  1.f;
 
-    int sx = 3, sy = 2, sz = 3;
+    int sx = 1, sy = 2, sz = 1;
     float n = 1.0f;
     glm::vec3 normal = glm::vec3(0.f);
     //Loop througha cube of blocks and check if they are passableor not
-    for(float x = -sx; x < sx; x++)
+    for(float x = -sx; x <= sx; x++)
     {
         //float x = 0, z = 0;
-        for(float y = -sy; y < sy; y++)
+        for(float y = -sy; y <= sy; y++)
         {
-            for(float z = -sz; z < sz; z++)
+            for(float z = -sz; z <= sz; z++)
             {
                 // float x = 0, y = 0, z =0;
                 glm::vec3 cubePos = glm::floor(glm::vec3(oldPosition.x, oldPosition.y, oldPosition.z)) + glm::vec3(x, y, z);
@@ -106,7 +106,7 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
                     float nn = sweepAABB(a, b, v, norm);
                     // printf("nn:%f\n", nn);
                     //If depth is shallower than before, set the new depth to the new value.
-                    if(nn < n){
+                    if(nn < n && glm::abs(norm).y > 0.001f){
                         n = nn;
                         normal = norm;
                     }
