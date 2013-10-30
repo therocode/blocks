@@ -14,6 +14,8 @@
 
 #include "shaderprogram.h"
 
+#include "debugrenderer.h"
+
 class Renderer
     :   public fea::MessageReceiver<ChunkCreatedMessage>,
         public fea::MessageReceiver<ChunkDeletedMessage>,
@@ -28,6 +30,7 @@ class Renderer
                 
 {
     public:
+		static DebugRenderer sDebugRenderer;
         Renderer(fea::MessageBus& messageBus);
         ~Renderer();
         void makeTexture(std::string path, uint32_t width, uint32_t height, GLuint& textureId);

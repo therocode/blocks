@@ -35,6 +35,7 @@ set(source_files
     src/networking/package.cpp
 	src/networking/remoteserverclientbridge.cpp
     src/networking/serverclientbridge.cpp
+	src/rendering/debugrenderer.cpp
 	src/rendering/billboard.cpp
 	src/rendering/camera.cpp
 	src/rendering/renderer.cpp
@@ -102,6 +103,7 @@ set(header_files
     src/networking/package.h
 	src/networking/remoteserverclientbridge.h
     src/networking/serverclientbridge.h
+	src/rendering/debugrenderer.h
 	src/rendering/renderingmessages.h
 	src/rendering/billboard.h
 	src/rendering/camera.h

@@ -4,6 +4,8 @@
 #include <iostream>
 #include "../utilities/lodepng.h"
 
+
+DebugRenderer Renderer::sDebugRenderer;
 Renderer::Renderer(fea::MessageBus& messageBus) : bus(messageBus), mPlayerId(-1)
 {
 	mTimer.start();
@@ -265,6 +267,7 @@ void Renderer::render()
 	}
 	mShaderProgram.unbind();
 	
+	sDebugRenderer.performDrawing();
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 	glBlendEquation(GL_FUNC_ADD);
@@ -366,7 +369,10 @@ void Renderer::render()
 	
 	glEnd();
 	glDisable(GL_BLEND);
+	
 	glEnable(GL_DEPTH_TEST);
+	
+	
 
 }
 

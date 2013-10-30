@@ -1,6 +1,7 @@
 #include "collisioncontroller.h"
 #include "../../world/worldinterface.h"
 #include <iostream>
+#include "rendering/renderer.h"
 
 CollisionController::CollisionController(fea::MessageBus& bus, WorldInterface& worldInterface) : EntityController(bus, worldInterface)
 {
@@ -75,7 +76,7 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
     b.height = 1.f;
     b.depth =  1.f;
 
-    int sx = 1, sy = 2, sz = 1;
+    int sx = 2, sy = 2, sz = 2;
     float n = 1.0f;
     glm::vec3 normal = glm::vec3(0.f);
     //Loop througha cube of blocks and check if they are passableor not
@@ -91,22 +92,28 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
 
                 if(mWorldInterface.getVoxelType(cubePos) != 0)
                 {
-
                     glm::vec3 norm;
                     // v.x = 0; 
                     // v.y = -100; v.z = 0;
                     //set position of aabb B
                     //Might be something wrong here.
-
-                    b.x = cubePos.x; 
-                    b.y = cubePos.y;
+				
+                    b.x = cubePos.x;                 
+					b.y = cubePos.y;
                     b.z = cubePos.z;
+					
+					if(b.x <= 0) b.x --;
+					if(b.y <= 0) b.y --;
+					if(b.z <= 0) b.z --;
+					
+					
+					Renderer::sDebugRenderer.drawCube(b.x + 0.5f, b.y + 0.5f, b.z + 0.5f, 1.02f, DebugRenderer::RED);
                     // printf("d: %f, %f, %f\n", cubePos.x - oldPosition.x, cubePos.y - oldPosition.y, cubePos.z - oldPosition.z);
                     //A is the entity, B is block in world, v is newPosition - oldPosition. Function should set norm to a normal on which face it collided. returns depth, which is between 0 and 1.
                     float nn = sweepAABB(a, b, v, norm);
                     // printf("nn:%f\n", nn);
                     //If depth is shallower than before, set the new depth to the new value.
-                    if(nn < n && glm::abs(norm).y > 0.001f){
+                    if(nn < n && glm::abs(norm.y) > 0.001f){
                         n = nn;
                         normal = norm;
                     }
@@ -260,7 +267,7 @@ float CollisionController::sweepAABB(const AABB a, const AABB b, const glm::vec3
         n.x = n.y = n.z = 0.0f;
         //		printf("what\n");
         return 1.0f;
-    }else if(xs < 0 && ys < 0 && zs < 0)
+    }else if(xs < -epsilon && ys < -epsilon && zs < -epsilon)
     {
         n.x = n.y = n.z = 0.0f;
         //		printf("inside\n");
@@ -273,7 +280,7 @@ float CollisionController::sweepAABB(const AABB a, const AABB b, const glm::vec3
     }
     else
     {
-        printf("entries: %f, %f, %f\n", b.x + b.width - a.x,b.y + b.height - a.y, b.z + b.depth - a.z);
+        // printf("entries: %f, %f, %f\n", b.x + b.width - a.x,b.y + b.height - a.y, b.z + b.depth - a.z);
         int axis = 0;
         float maxL = xs;
         if(ys > maxL)
