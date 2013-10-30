@@ -2,7 +2,7 @@
     "Player":
     {
         "category":"living",
-        "physics_type":"FLOATING",
+        "physics_type":"FALLING",
         "drag":0.01,
         "walk_speed":0.1,
         "run_speed":0.2,

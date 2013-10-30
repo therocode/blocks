@@ -73,16 +73,16 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
 	b.height = 1.f;
 	b.depth =  1.f;
 
-	int sx = 3, sy = 1, sz = 3;
+	int sx = 3, sy = 2, sz = 3;
 	float n = 1.0f;
 	glm::vec3 normal = glm::vec3(0.f);
 	//Loop througha cube of blocks and check if they are passableor not
-	// for(float x = -sx; x < sx; x++)
+	for(float x = -sx; x < sx; x++)
 	{
-	float x = 0, z = 0;
+	//float x = 0, z = 0;
 		for(float y = -sy; y < sy; y++)
 		{
-			// for(float z = -sz; z < sz; z++)
+			for(float z = -sz; z < sz; z++)
 			{
 				// float x = 0, y = 0, z =0;
 				glm::vec3 cubePos = glm::floor(glm::vec3(requestedPosition.x, requestedPosition.y, requestedPosition.z)) + glm::vec3(x, y, z);
@@ -105,9 +105,10 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
 					float nn = sweepAABB(a, b, v, norm);
 					 // printf("nn:%f\n", nn);
 					//If depth is shallower than before, set the new depth to the new value.
-					n = glm::min(nn, n);
-					//change normal if depth changed
-					if(n != nn)normal = norm;
+                    if(nn < n){
+                        n = nn;
+                        normal = norm;
+                    }
 				}
 			}
 		}
@@ -129,8 +130,8 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
 	glm::vec3 velocity = mEntities.at(id).lock()->getAttribute<glm::vec3>("velocity");
 	glm::vec3 acceleration = mEntities.at(id).lock()->getAttribute<glm::vec3>("acceleration");
 	//velocity is either 0 or 1, depending if it collided or not. when all is working it should use the normal to do stuff.
-	velocity *= n;
-	acceleration *= n;
+	velocity *= glm::vec3(1.0) - normal *n;
+    acceleration *= glm::vec3(1.0) - normal * n;
 	
     entity->setAttribute<glm::vec3>("velocity", velocity);
 	entity->setAttribute<glm::vec3>("acceleration", acceleration);
@@ -353,7 +354,7 @@ float CollisionController::sweepAABB(const AABB a, const AABB b, const glm::vec3
 		}
 	}
 
-	return entry / l;
+	return entry;
 }
 void CollisionController::removeEntity(fea::EntityId id)
 {

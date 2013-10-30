@@ -156,6 +156,7 @@ if(NOT GLEW_FOUND)
 	link_directories(${CMAKE_CURRENT_SOURCE_DIR}/extlibs/glew/lib)
 	set(source_files ${CMAKE_CURRENT_SOURCE_DIR}/extlibs/glew/glew.c ${source_files})
 	add_definitions(-DGLEW_STATIC)
+	message("GLEW NOT FOUND SO WE ADDED IT")
 endif()
 
 
@@ -177,6 +178,8 @@ endif()
 
 #instead of setting compiler flags globally. SFML doesn't like building with this flag on.
 set_target_properties(${project_name} PROPERTIES COMPILE_FLAGS "-std=c++11 -pthread")
+
+#But that doesn't work in windows.
 if(WIN32)
     add_definitions(-std=c++11 -pthread)
 endif(WIN32)
