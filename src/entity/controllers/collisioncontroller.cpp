@@ -129,9 +129,20 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
 	approvedPosition = oldPosition + v * n;
 	glm::vec3 velocity = mEntities.at(id).lock()->getAttribute<glm::vec3>("velocity");
 	glm::vec3 acceleration = mEntities.at(id).lock()->getAttribute<glm::vec3>("acceleration");
+    
+
+    float remainingTime = 1.f - n;
+    float magn = glm::length(velocity) * remainingTime;
+    float collDot = glm::dot(normal, velocity);
+    collDot = glm::clamp(collDot, -1.f, 1.f);
+    glm::vec3 c = (glm::vec3(1.f) - glm::abs(normal))*v;
+    glm::vec3 additionalVelocity = c * remainingTime;
+    approvedPosition += additionalVelocity;
+    //velocity += additionalVelocity;
 	//velocity is either 0 or 1, depending if it collided or not. when all is working it should use the normal to do stuff.
-	velocity *= glm::vec3(1.0) - normal *n;
-    acceleration *= glm::vec3(1.0) - normal * n;
+    //printf("noral: %f, %f, %f\n", normal.x, normal.y, normal.z);
+	velocity *= glm::vec3(1.0) - glm::abs(normal);
+    acceleration *= glm::vec3(1.0) -glm::abs(normal);
 	
     entity->setAttribute<glm::vec3>("velocity", velocity);
 	entity->setAttribute<glm::vec3>("acceleration", acceleration);
@@ -242,7 +253,7 @@ float CollisionController::sweepAABB(const AABB a, const AABB b, const glm::vec3
 		zEntry = (b.z + b.depth) - a.z;
 		zExit  = b.z - (a.z + a.depth);
 	}
-	printf("entry: %f, %f,%f\n", xEntry, yEntry, zEntry);
+//	printf("entry: %f, %f,%f\n", xEntry, yEntry, zEntry);
 	float xs, ys, zs;
 	float xe, ye, ze;
 	float infinity = std::numeric_limits<float>::infinity();
@@ -266,8 +277,8 @@ float CollisionController::sweepAABB(const AABB a, const AABB b, const glm::vec3
 		ys = yEntry / v.y;
 		ye = yExit  / v.y;
 	}
-	printf("v.y :%f\n", v.y);
-	printf("ys:%f\n" , ys);
+//	printf("v.y :%f\n", v.y);
+//	printf("ys:%f\n" , ys);
 	if(v.z == 0.0f)
 	{
 		zs = -infinity;
@@ -296,22 +307,22 @@ float CollisionController::sweepAABB(const AABB a, const AABB b, const glm::vec3
 	if(entry > exit)
 	{
 		n.x = n.y = n.z = 0.0f;
-		printf("what\n");
+//		printf("what\n");
 		return 1.f;
 	}else if(xs < -epsilon && ys < -epsilon && zs < -epsilon)
 	{
 		n.x = n.y = n.z = 0.0f;
-		printf("inside\n");
+//		printf("inside\n");
 		return 1.f;
 	}else if(xe > 1.0f + epsilon && ye > 1.0f + epsilon && ze > 1.0f + epsilon)
 	{
 		n.x = n.y = n.z = 0.0f;
-		printf("longer\n");
+//		printf("longer\n");
 		return 1.f;
 	}
 	else
 	{
-		printf("coollllllll\n");
+//		printf("coollllllll\n");
 		int axis = 0;
 		float maxL = xs;
 		if(ys > maxL)
