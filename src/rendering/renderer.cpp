@@ -231,6 +231,9 @@ void Renderer::render()
 	};
 	for(auto& billboard : billboards)
 	{
+        if(billboard.first == mCameraEntity)
+            continue;
+
 		glm::vec3 cameraDir = billboard.second.mPosition - cam.GetPosition();
 		cameraDir.y = 0;
         if(glm::length2(cameraDir) != 0)
