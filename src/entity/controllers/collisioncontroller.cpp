@@ -57,7 +57,7 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
 
     fea::EntityPtr entity =  mEntities.at(id).lock();
     glm::vec3 oldPosition = entity->getAttribute<glm::vec3>("position");
-	glm::vec3 size = glm::vec3(1.f);//entity->getAttribute<glm::vec3>("hitbox");
+	glm::vec3 size = entity->getAttribute<glm::vec3>("hitbox");
 	AABB a, b;
 	
 	a.x = oldPosition.x - size.x * 0.5f;
@@ -86,8 +86,8 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
 			{
 				// float x = 0, y = 0, z =0;
 				glm::vec3 cubePos = glm::floor(glm::vec3(requestedPosition.x, requestedPosition.y, requestedPosition.z)) + glm::vec3(x, y, z);
-				// for(int i = 0; i < 3; i++)
-					// if(oldPosition[i] < 0)cubePos[i] --;
+				for(int i = 0; i < 3; i++)
+				    if(oldPosition[i] < 0)cubePos[i] --;
 					
 				if(mWorldInterface.getVoxelType(cubePos) != 0)
 				{
@@ -126,6 +126,7 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
 	// glm::vec3 norm;
 	// float f = sweepAABB(a, b, v, norm);
 	// printf("f: %f\n", f);
+
 	approvedPosition = oldPosition + v * n;
 	glm::vec3 velocity = mEntities.at(id).lock()->getAttribute<glm::vec3>("velocity");
 	glm::vec3 acceleration = mEntities.at(id).lock()->getAttribute<glm::vec3>("acceleration");
@@ -135,14 +136,14 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
     float magn = glm::length(velocity) * remainingTime;
     float collDot = glm::dot(normal, velocity);
     collDot = glm::clamp(collDot, -1.f, 1.f);
-    glm::vec3 c = (glm::vec3(1.f) - glm::abs(normal))*v;
+    glm::vec3 c = (glm::vec3(1.f) - glm::abs(normal)) * v;
     glm::vec3 additionalVelocity = c * remainingTime;
     approvedPosition += additionalVelocity;
     //velocity += additionalVelocity;
 	//velocity is either 0 or 1, depending if it collided or not. when all is working it should use the normal to do stuff.
     //printf("noral: %f, %f, %f\n", normal.x, normal.y, normal.z);
-	velocity *= glm::vec3(1.0) - glm::abs(normal);
-    acceleration *= glm::vec3(1.0) -glm::abs(normal);
+	velocity     *= glm::vec3(1.0) - glm::abs(normal);
+    acceleration *= glm::vec3(1.0) - glm::abs(normal);
 	
     entity->setAttribute<glm::vec3>("velocity", velocity);
 	entity->setAttribute<glm::vec3>("acceleration", acceleration);
@@ -309,7 +310,7 @@ float CollisionController::sweepAABB(const AABB a, const AABB b, const glm::vec3
 		n.x = n.y = n.z = 0.0f;
 //		printf("what\n");
 		return 1.f;
-	}else if(xs < -epsilon && ys < -epsilon && zs < -epsilon)
+	}else if(xs < 0 && ys < 0 && zs < 0)
 	{
 		n.x = n.y = n.z = 0.0f;
 //		printf("inside\n");
