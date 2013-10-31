@@ -88,7 +88,7 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
     for(float x = -sx; x <= sx; x++)
     {
         //float x = 0, z = 0;
-        for(float y = -sy; y <= sy + 3; y++)
+        for(float y = -sy; y <= sy ; y++)
         {
             for(float z = -sz; z <= sz; z++)
             {
@@ -97,8 +97,7 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
 
                 if(mWorldInterface.getVoxelType(cubePos) != 0)
                 {
-					Renderer::sDebugRenderer.drawBox(b.x + b.width*0.5f, b.y + b.height*0.5f, b.z + b.depth*0.5f, b.width  + 0.001f, b.height + 0.001f, b.depth + 0.001f, DebugRenderer::GREEN);
-     
+					// 
                     glm::vec3 norm;
                     // v.x = 0; 
                     // v.y = -100; v.z = 0;
@@ -115,7 +114,8 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
 					b.x = (int)b.x;
 					b.y = (int)b.y;
 					b.z = (int)b.z;
-					
+					Renderer::sDebugRenderer.drawBox(b.x + b.width*0.5f, b.y + b.height*0.5f, b.z + b.depth*0.5f, b.width  + 0.001f, b.height + 0.001f, b.depth + 0.001f, DebugRenderer::GREEN);
+     
 					 // printf("d: %f, %f, %f\n", cubePos.x - oldPosition.x, cubePos.y - oldPosition.y, cubePos.z - oldPosition.z);
                     //A is the entity, B is block in world, v is newPosition - oldPosition. Function should set norm to a normal on which face it collided. returns depth, which is between 0 and 1.
                     float nn = sweepAABB(a, b, v, norm);
@@ -140,9 +140,10 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
 
         float remainingTime = 1.f - n;
         float magn = glm::length(velocity) * remainingTime;
-        float collDot = glm::dot(normal, velocity);
+        float collDot = glm::dot(normal, v);
         collDot = glm::clamp(collDot, -1.f, 1.f);
         glm::vec3 c = (glm::vec3(1.f) - glm::abs(normal)) * v;
+
         glm::vec3 additionalVelocity = c * remainingTime;
         approvedPosition += additionalVelocity;
         //velocity += additionalVelocity;
@@ -367,7 +368,8 @@ float CollisionController::sweepAABB(const AABB a, const AABB b, const glm::vec3
             return 1.0f; 
         }
     }
-
+//Renderer::sDebugRenderer.drawBox(b.x + b.width*0.5f, b.y + b.height*0.5f, b.z + b.depth*0.5f, b.width  + 0.001f, b.height + 0.001f, b.depth + 0.001f, DebugRenderer::GREEN);
+     
     return entry;
 }
 void CollisionController::removeEntity(fea::EntityId id)
