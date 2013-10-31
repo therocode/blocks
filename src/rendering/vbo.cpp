@@ -6,14 +6,15 @@ VBO::VBO():mCurrentVBOByteSize(0),mVBOCreated(false){
 	mVBOCreated = false;
 
 }
+
 VBO::~VBO(){
 }
-void VBO::PushTriangle(Triangle t){
+void VBO::PushTriangle(const Triangle& t){
 	for(Vertex i : t.vs){
 		PushVertex(i);
 	}
 }
-void VBO::PushVertex(Vertex v){
+void VBO::PushVertex(const Vertex& v){
 	mvVertices.push_back(v);	
 	mvIndices.push_back(mvVertices.size() - 1);
 }
@@ -22,7 +23,7 @@ void VBO::Clear(){
 	mvIndices.clear();
 }
 
-void VBO::PushRectangle(Rectangle r){
+void VBO::PushRectangle(const Rectangle& r){
 	int si = mvVertices.size() ;
 	for(Vertex v : r.vs){
 		mvVertices.push_back(v);

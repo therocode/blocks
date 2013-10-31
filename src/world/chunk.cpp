@@ -72,6 +72,11 @@ const VoxelTypeArray& Chunk::getVoxelTypes() const
     return voxelTypes;
 }
 
+const std::vector<uint16_t> Chunk::getCompressedData() const
+{
+    return compressedData;
+}
+
 uint32_t Chunk::getWidth() const
 {
     return chunkWidth;

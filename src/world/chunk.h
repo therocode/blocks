@@ -35,6 +35,7 @@ class Chunk
         VoxelType getVoxelType(const VoxelCoordinate& voxel) const;
         VoxelTypeArray& getVoxelTypes();
         const VoxelTypeArray& getVoxelTypes() const;
+        const std::vector<uint16_t> getCompressedData() const;
         uint32_t getWidth() const;
         const ChunkCoordinate& getLocation() const;
         void compress();

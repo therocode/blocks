@@ -66,9 +66,9 @@ class VBO {
 	public:
 		VBO();
 		~VBO();
-		void PushTriangle(Triangle t);
-		void PushRectangle(Rectangle r);
-		void PushVertex(Vertex v);
+		void PushTriangle(const Triangle& t);
+		void PushRectangle(const Rectangle& r);
+		void PushVertex(const Vertex& v);
 		void Clear();
 		void UpdateVBO();
 		void DrawVBO();
