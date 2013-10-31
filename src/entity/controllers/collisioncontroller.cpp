@@ -87,12 +87,10 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
     //Loop througha cube of blocks and check if they are passableor not
     for(float x = -sx; x <= sx; x++)
     {
-        //float x = 0, z = 0;
-        for(float y = -sy; y <= sy ; y++)
+        for(float y = -sy; y <= sy + 1; y++)
         {
             for(float z = -sz; z <= sz; z++)
             {
-                // float x = 0, y = 0, z =0;
                 glm::vec3 cubePos = glm::vec3(oldPosition.x, oldPosition.y, oldPosition.z) + glm::vec3(x, y, z);
 
                 if(mWorldInterface.getVoxelType(cubePos) != 0)
@@ -358,10 +356,7 @@ float CollisionController::sweepAABB(const AABB a, const AABB b, const glm::vec3
                 n.z = -1.0f;
             }
         }
-		printf("n:%f\n", yEntry);
-		
-                   
-        //printf("coollllllll %f, %f, %f, v: %f, %f, %f. n:%f, %f, %f\n", b.x - a.x, b.y - a.y, b.z - a.z, v.x, v.y, v.z, n.x, n.y, n.z);
+		//printf("coollllllll %f, %f, %f, v: %f, %f, %f. n:%f, %f, %f\n", b.x - a.x, b.y - a.y, b.z - a.z, v.x, v.y, v.z, n.x, n.y, n.z);
         if(maxL > 1.0f)
         {
             n.x = n.y = n.z =0.f;
