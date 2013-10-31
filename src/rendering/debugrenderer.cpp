@@ -46,6 +46,7 @@ void DebugRenderer::performDrawing()
 	
 	for(DebugCube c : mCubes)
 	{
+		setColor(c.color);
 		glBegin(GL_LINE_STRIP);
 		float sx = c.sx * 0.5f;
 		float sy = c.sy * 0.5f;

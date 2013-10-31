@@ -30,7 +30,21 @@ void CollisionController::onFrame()
         if(entity->getAttribute<bool>("on_ground"))
         {
             glm::vec3 position = entity->getAttribute<glm::vec3>("position");
+			glm::vec3 size = entity->getAttribute<glm::vec3>("hitbox");
             entity->setAttribute<glm::vec3>("velocity", entity->getAttribute<glm::vec3>("velocity") * 0.8f);
+			AABB a;
+
+			a.x = position.x - size.x * 0.5f;
+			a.y = position.y - size.y * 0.5f;
+			a.z = position.z - size.z * 0.5f;
+
+			a.width = size.x;
+			a.height = size.y;
+			a.depth = size.z;
+			if(!AABBOnGround(a)){
+				entity->setAttribute<bool>("on_ground", false);
+				mBus.sendMessage<EntityOnGroundMessage>(EntityOnGroundMessage(entity->getId(), false));
+			}
         }
     }
 }
@@ -100,7 +114,7 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
 					b.y = (int)b.y;
 					b.z = (int)b.z;
 					
-					Renderer::sDebugRenderer.drawCube(b.x + 0.5f, b.y + 0.5f, b.z + 0.5f, 1.02f, DebugRenderer::RED);
+					// Renderer::sDebugRenderer.drawCube(b.x + 0.5f, b.y + 0.5f, b.z + 0.5f, 1.02f, DebugRenderer::RED);
                     // printf("d: %f, %f, %f\n", cubePos.x - oldPosition.x, cubePos.y - oldPosition.y, cubePos.z - oldPosition.z);
                     //A is the entity, B is block in world, v is newPosition - oldPosition. Function should set norm to a normal on which face it collided. returns depth, which is between 0 and 1.
                     float nn = sweepAABB(a, b, v, norm);
@@ -116,20 +130,6 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
     }
     if(n < 1.f)
     { 
-        // printf("fucking shit:%f\n", n);
-        //glm::floor(glm::vec3(oldPosition) ) + glm::vec3((float)x, (float)y, (float)z);
-        // printf("a: %f, %f, %f\n", a.x, a.y, a.z);
-        // printf("b: %f, %f, %f\n", cubePos.x, cubePos.y, cubePos.z);
-
-        // if(cubePos.y < 50)
-
-        // a.x = 0.f; a.y = 0.f; a.z = 0.f;
-        // v.x = 100; v.z = 100;v.y = 100;
-        // b.x = 50; b.z = 50; b.y = 50;
-        // glm::vec3 norm;
-        // float f = sweepAABB(a, b, v, norm);
-        // printf("f: %f\n", f);
-
         approvedPosition = oldPosition + v * n;
         glm::vec3 velocity = mEntities.at(id).lock()->getAttribute<glm::vec3>("velocity");
         glm::vec3 acceleration = mEntities.at(id).lock()->getAttribute<glm::vec3>("acceleration");
@@ -150,26 +150,55 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
 
         entity->setAttribute<glm::vec3>("velocity", velocity);
         //entity->setAttribute<glm::vec3>("acceleration", acceleration);
-
-        if(glm::abs(normal.y) > 0)
-		{
-            if(!checkIfOnGround(entity)){
-				entity->setAttribute<bool>("on_ground", false);
-                mBus.sendMessage<EntityOnGroundMessage>(EntityOnGroundMessage(entity->getId(), false));
-            }
-        }
     }
+	bool isOnGround = entity->getAttribute<bool>("on_ground");
+	if(!isOnGround)
+	if(AABBOnGround(a)){
+		entity->setAttribute<bool>("on_ground", true);
+		mBus.sendMessage<EntityOnGroundMessage>(EntityOnGroundMessage(entity->getId(), true));
+	}
     entity->setAttribute<glm::vec3>("position", approvedPosition);
     mBus.sendMessage<EntityMovedMessage>(EntityMovedMessage(id, requestedPosition, approvedPosition));
 }
-
-bool CollisionController::AABBAABB(const AABB a, const AABB b)
+bool CollisionController::AABBOnGround(AABB a)
 {
-
+	AABB b;
+	a.y -= 0.01f;
+	float y = a.y;
+	glm::vec3 pos;
+	pos.y = y;
+	for(float x = 0; x <= a.width; x += a.width / 4.f)
+	for(float z = 0; z <= a.depth; z += a.depth / 4.f)
+	{
+		pos.x = x + a.x;
+		pos.z = z + a.z;
+		if(mWorldInterface.getVoxelType(pos) != 0)
+		{
+			b.x = pos.x;                 
+			b.y = pos.y;
+			b.z = pos.z;
+			
+			if(b.x < 0) b.x --;
+			if(b.y < 0) b.y --;
+			if(b.z < 0) b.z --;
+			
+			b.x = (int)b.x;
+			b.y = (int)b.y;
+			b.z = (int)b.z;
+			if(AABBAABB(a, b))
+			{
+				return true;
+			}
+		}
+	}
+	return false;
+	
+}
+bool CollisionController::AABBAABB(const AABB a, const AABB b) const
+{
     if(a.x <= b.x + b.width && a.y <= b.y + b.height && a.z <= b.z + b.depth)
         if(a.x + a.width >= b.x && a.y + a.depth >= b.y && a.z + a.depth >= b.z)
             return true;
-
     return false;
 }
 float CollisionController::sweepAABB(const AABB a, const AABB b, const glm::vec3 v, glm::vec3& n)

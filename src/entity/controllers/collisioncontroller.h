@@ -17,8 +17,9 @@ class CollisionController : public EntityController,
         void onFrame() override;
         void handleMessage(const EntityMoveRequestedMessage& message) override;
         virtual void removeEntity(fea::EntityId id);
+		bool AABBOnGround(AABB a);
     private:
         bool checkIfOnGround(fea::EntityPtr entity);
 		float sweepAABB(const AABB a, const AABB b, const glm::vec3 v, glm::vec3& n);
-        bool AABBAABB(const AABB a, const AABB b);
+        bool AABBAABB(const AABB a, const AABB b) const;
 };
