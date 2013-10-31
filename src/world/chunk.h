@@ -100,8 +100,6 @@ namespace std
                     z = (z | (z << 4))  & 0x30C30C30C30C30C3;
                     z = (z | (z << 2))  & 0x9249249249249249;
 
-
-                    //std::cout << "hashed coordinate " << coord.x << " " << coord.y << " " << coord.z << " into " << std::to_string(x | (y << 1) | (z << 2)) << "\n";
                     return x | (y << 1) | (z << 2);
                 }
         };

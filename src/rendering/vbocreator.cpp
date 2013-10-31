@@ -1,9 +1,14 @@
 #include "vbocreator.h"
 #include <vector>
+#include <chrono>
+
+using std::chrono::duration_cast;
+using std::chrono::microseconds;
+using std::chrono::high_resolution_clock;
 
 VBO VBOCreator::generateChunkVBO(const Chunk& chunk) const
 {
-
+    high_resolution_clock::time_point start = high_resolution_clock::now();
 //int texture1X = rand() % 8;
 //int texture2X = rand() % 8;
 //int texture1Y = rand() % 2;
@@ -134,6 +139,9 @@ VBO VBOCreator::generateChunkVBO(const Chunk& chunk) const
 
 	//After stuff has been added, you have to update the gpu vbo data.
 	vbo.UpdateVBO();
+
+    high_resolution_clock::time_point end = high_resolution_clock::now();
+    std::cout << "the mesh creation of the chunk took " << duration_cast<microseconds>(end - start).count() << "\n";
 
 	return vbo;
 }
