@@ -81,14 +81,14 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
     b.height = 1.f;
     b.depth =  1.f;
 
-    int sx = 2, sy = 2, sz = 2;
+    int sx = 1, sy = 2, sz = 1;
     float n = 1.0f;
     glm::vec3 normal = glm::vec3(0.f);
     //Loop througha cube of blocks and check if they are passableor not
     for(float x = -sx; x <= sx; x++)
     {
         //float x = 0, z = 0;
-        for(float y = -sy; y <= sy; y++)
+        for(float y = -sy; y <= sy + 3; y++)
         {
             for(float z = -sz; z <= sz; z++)
             {
@@ -97,6 +97,8 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
 
                 if(mWorldInterface.getVoxelType(cubePos) != 0)
                 {
+					Renderer::sDebugRenderer.drawBox(b.x + b.width*0.5f, b.y + b.height*0.5f, b.z + b.depth*0.5f, b.width  + 0.001f, b.height + 0.001f, b.depth + 0.001f, DebugRenderer::GREEN);
+     
                     glm::vec3 norm;
                     // v.x = 0; 
                     // v.y = -100; v.z = 0;
@@ -114,13 +116,12 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
 					b.y = (int)b.y;
 					b.z = (int)b.z;
 					
-					// Renderer::sDebugRenderer.drawCube(b.x + 0.5f, b.y + 0.5f, b.z + 0.5f, 1.02f, DebugRenderer::RED);
-                    // printf("d: %f, %f, %f\n", cubePos.x - oldPosition.x, cubePos.y - oldPosition.y, cubePos.z - oldPosition.z);
+					 // printf("d: %f, %f, %f\n", cubePos.x - oldPosition.x, cubePos.y - oldPosition.y, cubePos.z - oldPosition.z);
                     //A is the entity, B is block in world, v is newPosition - oldPosition. Function should set norm to a normal on which face it collided. returns depth, which is between 0 and 1.
                     float nn = sweepAABB(a, b, v, norm);
                     // printf("nn:%f\n", nn);
                     //If depth is shallower than before, set the new depth to the new value.
-                    if(nn < n ){
+                    if(nn < n){
                         n = nn;
                         normal = norm;
                     }
@@ -128,6 +129,8 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
             }
         }
     }
+	Renderer::sDebugRenderer.drawBox(a.x + a.width*0.5f, a.y + a.height*0.5f, a.z + a.depth*0.5f, a.width  + 0.001f, a.height + 0.001f, a.depth + 0.001f, DebugRenderer::ORANGE);
+	
     if(n < 1.f)
     { 
         approvedPosition = oldPosition + v * n;
@@ -164,6 +167,7 @@ bool CollisionController::AABBOnGround(AABB a)
 {
 	AABB b;
 	a.y -= 0.01f;
+	a.height = 0;
 	float y = a.y;
 	glm::vec3 pos;
 	pos.y = y;
@@ -196,10 +200,14 @@ bool CollisionController::AABBOnGround(AABB a)
 }
 bool CollisionController::AABBAABB(const AABB a, const AABB b) const
 {
-    if(a.x <= b.x + b.width && a.y <= b.y + b.height && a.z <= b.z + b.depth)
-        if(a.x + a.width >= b.x && a.y + a.depth >= b.y && a.z + a.depth >= b.z)
-            return true;
-    return false;
+	glm::vec3 aSize = glm::vec3(a.width * 0.5f, a.height * 0.5f, a.depth * 0.5f);
+	glm::vec3 bSize = glm::vec3(b.width * 0.5f, b.height * 0.5f, b.depth * 0.5f);
+	glm::vec3 v = glm::abs(glm::vec3(b.x + bSize.x, b.y + bSize.y, b.z + bSize.z) - glm::vec3(a.x + aSize.x, a.y + aSize.y, a.z + aSize.z));
+	return (v.x <= (aSize.x + bSize.x)) && (v.y <= aSize.y + bSize.y) && (v.z <= aSize.z + bSize.z);
+    //if(a.x <= b.x + b.width && a.y <= b.y + b.height && a.z <= b.z + b.depth)
+      ///////7  if(a.x + a.width >= b.x && a.y + a.depth >= b.y && a.z + a.depth >= b.z)
+           // return true;
+    //return false;
 }
 float CollisionController::sweepAABB(const AABB a, const AABB b, const glm::vec3 v, glm::vec3& n)
 {
@@ -207,13 +215,13 @@ float CollisionController::sweepAABB(const AABB a, const AABB b, const glm::vec3
     newAABB.x += v.x;
     newAABB.y += v.y;
     newAABB.z += v.z;
-
+	n.x = n.y = n.z = 0;
     if(!AABBAABB(newAABB, b))
     {
-        n.x = n.y = n.z = 0;
-        return 1.0;
+		 return 1.0;
     }
-    
+	
+	  
     float epsilon = 0.001f;
     float xEntry, yEntry, zEntry;
     float xExit,  yExit,  zExit;
@@ -236,7 +244,7 @@ float CollisionController::sweepAABB(const AABB a, const AABB b, const glm::vec3
         yEntry = (b.y + b.height) - a.y;
         yExit  = b.y - (a.y + a.height);
     }
-
+	
     if(v.z > 0.0f)
     {
         zEntry = b.z - (a.z + a.depth);
@@ -349,6 +357,9 @@ float CollisionController::sweepAABB(const AABB a, const AABB b, const glm::vec3
                 n.z = -1.0f;
             }
         }
+		printf("n:%f\n", yEntry);
+		
+                   
         //printf("coollllllll %f, %f, %f, v: %f, %f, %f. n:%f, %f, %f\n", b.x - a.x, b.y - a.y, b.z - a.z, v.x, v.y, v.z, n.x, n.y, n.z);
         if(maxL > 1.0f)
         {

@@ -56,7 +56,7 @@ Chunk LocalChunkProvider::fetchChunk(const ChunkCoordinate& location) const
 					
 					
 				}
-				float poo =glm::sin(noiseYPos);
+				float poo = glm::sin(glm::pow(noiseYPos, 2.f));
 				if(glm::length(glm::vec2(0, 2) - glm::vec2(noiseXPos * 14 , noiseZPos * 14 )) + poo < 2)
 					types[currentBlock] = 0;
             }
