@@ -2,6 +2,10 @@
 #include <iostream>
 #include <chrono>
 
+uint32_t Chunk::totalTime = 0;
+uint32_t Chunk::totalSize = 0;
+uint32_t Chunk::timesGenerated = 0;
+
 ChunkCoordinate worldToChunk(float x, float y, float z)
 {
     return ChunkCoordinate(	floor(x / (float)chunkWidth), 
@@ -40,7 +44,7 @@ Chunk::Chunk(const ChunkCoordinate& loc, const VoxelTypeArray& types) : location
 
 void Chunk::setVoxelType(uint32_t x, uint32_t y, uint32_t z, VoxelType type)
 {
-    voxelTypes[x + y * chunkWidth + z * chunkWidthx2] = type;
+    voxelTypes[x + z * chunkWidth + y * chunkWidthx2] = type;
 }
 
 void Chunk::setVoxelType(const VoxelCoordinate& voxel, VoxelType type)
@@ -50,7 +54,7 @@ void Chunk::setVoxelType(const VoxelCoordinate& voxel, VoxelType type)
 
 VoxelType Chunk::getVoxelType(uint32_t x, uint32_t y, uint32_t z) const
 {
-    return voxelTypes[x + y * chunkWidth + z * chunkWidthx2];
+    return voxelTypes[x + z * chunkWidth + y * chunkWidthx2];
 }
 
 VoxelType Chunk::getVoxelType(const VoxelCoordinate& voxel) const
@@ -117,6 +121,11 @@ void Chunk::compress()
 
     high_resolution_clock::time_point then = high_resolution_clock::now();
 
+    totalTime += duration_cast<microseconds>(then - now).count();
+    timesGenerated++;
+    totalSize += compressedData.size() * sizeof(uint16_t);
+
     std::cout << "size after compression: " << compressedData.size() * sizeof(uint16_t) << "\n";
-    std::cout << "the compression process took " << duration_cast<microseconds>(then - now).count() << " microseconds\n\n";
+    std::cout << "the compression process took " << duration_cast<microseconds>(then - now).count() << " microseconds\n";
+    std::cout << "average compression is " << totalTime / timesGenerated << " microseconds and average size is " << totalSize / timesGenerated << "\n\n";
 }

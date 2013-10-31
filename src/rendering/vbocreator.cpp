@@ -6,7 +6,14 @@ using std::chrono::duration_cast;
 using std::chrono::microseconds;
 using std::chrono::high_resolution_clock;
 
-VBO VBOCreator::generateChunkVBO(const Chunk& chunk) const
+uint32_t VBOCreator::totalTime = 0;
+uint32_t VBOCreator::timesGenerated = 0;
+
+VBOCreator::VBOCreator()
+{
+}
+
+VBO VBOCreator::generateChunkVBO(Chunk& chunk)
 {
     high_resolution_clock::time_point start = high_resolution_clock::now();
 //int texture1X = rand() % 8;
@@ -18,6 +25,8 @@ VBO VBOCreator::generateChunkVBO(const Chunk& chunk) const
 
 	const ChunkCoordinate location = chunk.getLocation();
 
+    chunk.compress();
+
 	glm::vec3 chunkOffset(location.x * (float)chunkWidth, location.y * (float)chunkWidth, location.z * (float)chunkWidth);
 
 	const VoxelTypeArray& voxelTypes = chunk.getVoxelTypes();
@@ -25,17 +34,17 @@ VBO VBOCreator::generateChunkVBO(const Chunk& chunk) const
 	glm::uvec2 textureLocation;
 
 	uint32_t xStep = 1;
-	uint32_t yStep = chunkWidth;
-	uint32_t zStep = chunkWidthx2;
+	uint32_t yStep = chunkWidthx2;
+	uint32_t zStep = chunkWidth;
 	uint32_t currentIndex = 0;
 
-	for(int z = 0; z < chunkWidth; z++)
+	for(int y = 0; y < chunkWidth; y++)
 	{
-		for(int y = 0; y < chunkWidth; y++)
+		for(int z = 0; z < chunkWidth; z++)
 		{
 			for(int x = 0; x < chunkWidth; x++)
 			{
-				currentIndex = x + y * chunkWidth + z * chunkWidthx2;
+				currentIndex = x + z * chunkWidth + y * chunkWidthx2;
 				VoxelType type = voxelTypes[currentIndex];
 				if(type != 0)
 				{
@@ -141,7 +150,9 @@ VBO VBOCreator::generateChunkVBO(const Chunk& chunk) const
 	vbo.UpdateVBO();
 
     high_resolution_clock::time_point end = high_resolution_clock::now();
-    std::cout << "the mesh creation of the chunk took " << duration_cast<microseconds>(end - start).count() << "\n";
+    totalTime += duration_cast<microseconds>(end - start).count();
+    timesGenerated++;
+    std::cout << "the mesh creation of the chunk took " << duration_cast<microseconds>(end - start).count() << " and the average is " << totalTime/ timesGenerated << "\n";
 
 	return vbo;
 }

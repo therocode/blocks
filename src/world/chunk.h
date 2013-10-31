@@ -44,6 +44,10 @@ class Chunk
 
         bool compressed;
         std::vector<uint16_t> compressedData;
+
+    static uint32_t totalTime;
+    static uint32_t totalSize;
+    static uint32_t timesGenerated;
 };
 
 namespace std

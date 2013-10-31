@@ -13,7 +13,7 @@ Chunk LocalChunkProvider::fetchChunk(const ChunkCoordinate& location) const
         {
             for(int32_t x = 0; x < chunkWidth; x++)
             {
-				int currentBlock = x + y * chunkWidth + z * chunkWidthx2;
+				int currentBlock = x + z * chunkWidth + y * chunkWidthx2;
                 float noiseXPos = ((float)(x + location.x * (int32_t)chunkWidth)) / 14.0f;
                 float noiseYPos = ((float)(y + location.y * (int32_t)chunkWidth)) / 14.0f;
                 float noiseZPos = ((float)(z + location.z * (int32_t)chunkWidth)) / 14.0f;
