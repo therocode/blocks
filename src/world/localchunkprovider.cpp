@@ -42,7 +42,9 @@ Chunk LocalChunkProvider::fetchChunk(const ChunkCoordinate& location) const
 					types[currentBlock] = 6;
 				}
 				if(types[currentBlock] != 0)
-				{
+				{	
+				
+					
 					float s = 0.5f;
 					noiseYPos *= s;
 					noiseXPos *= s;
@@ -51,7 +53,12 @@ Chunk LocalChunkProvider::fetchChunk(const ChunkCoordinate& location) const
 					{
 						types[currentBlock] = 5;
 					}
+					
+					
 				}
+				float poo =glm::sin(noiseYPos);
+				if(glm::length(glm::vec2(0, 2) - glm::vec2(noiseXPos * 14 , noiseZPos * 14 )) + poo < 2)
+					types[currentBlock] = 0;
             }
         }
     }
