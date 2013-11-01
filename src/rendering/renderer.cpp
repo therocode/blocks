@@ -37,7 +37,7 @@ Renderer::~Renderer()
 	bus.removeMessageSubscriber<PlayerConnectedToEntityMessage>(*this);
 }
 
-void Renderer::makeTexture(std::string path, uint32_t width, uint32_t height, GLuint& textureId)
+void Renderer::makeTexture(const std::string& path, uint32_t width, uint32_t height, GLuint& textureId)
 {
 	std::vector<unsigned char> image; //the raw pixels
 
@@ -94,7 +94,7 @@ void Renderer::setup()
 	cam.SetPosition(glm::vec3(0.0f, 50.0f, -50.0f));
 	mShaderProgram.setShaderPaths("data/vert", "data/frag");
 }
-void Renderer::setCameraMatrix(glm::mat4 m){
+void Renderer::setCameraMatrix(const glm::mat4& m){
 
 	//glMatrixMode(GL_MODELVIEW);
 	//glLoadIdentity();

@@ -33,7 +33,7 @@ class Renderer
 		static DebugRenderer sDebugRenderer;
         Renderer(fea::MessageBus& messageBus);
         ~Renderer();
-        void makeTexture(std::string path, uint32_t width, uint32_t height, GLuint& textureId);
+        void makeTexture(const std::string& path, uint32_t width, uint32_t height, GLuint& textureId);
         void setup();
         virtual void handleMessage(const ChunkCreatedMessage& received);
         virtual void handleMessage(const ChunkDeletedMessage& received);
@@ -47,7 +47,7 @@ class Renderer
         virtual void handleMessage(const PlayerConnectedToEntityMessage& received);
         void render();
         void cameraUpdate();    // camera function
-		void setCameraMatrix(glm::mat4 m);
+		void setCameraMatrix(const glm::mat4& m);
     private:
 		ShaderProgram mShaderProgram;
 		Camera cam;
