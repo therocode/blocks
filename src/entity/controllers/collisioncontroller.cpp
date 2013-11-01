@@ -73,17 +73,19 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
     a.width = size.x;
     a.height = size.y;
     a.depth = size.z;
-    glm::vec3 v = requestedPosition - oldPosition;
+    glm::vec3 v = approvedPosition - oldPosition;
 	
 	glm::vec3 ignoreAxis = glm::vec3(0);
 	float n = 0.0;
+	int steps = 0;
 	while(n < 1.0f){
+		steps++;
 		glm::vec3 normal = glm::vec3(0);
 		a.x = oldPosition.x - size.x * 0.5f;
 		a.y = oldPosition.y - size.y * 0.5f;
 		a.z = oldPosition.z - size.z * 0.5f;
  
-		n = sweepAroundAABB(a, approvedPosition - oldPosition, normal, ignoreAxis);
+		n = sweepAroundAABB(a, v, normal, ignoreAxis);
 		// Renderer::sDebugRenderer.drawBox(a.x + a.width*0.5f, a.y + a.height*0.5f, a.z + a.depth*0.5f, a.width  + 0.001f, a.height + 0.001f, a.depth + 0.001f, DebugRenderer::ORANGE);
 		if(n < 1.f)
 		{ 
@@ -93,8 +95,7 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
 					break;
 				}
 			}
-			approvedPosition = oldPosition + v * (n - 0.5f);
-			
+			approvedPosition = oldPosition + v * (n);
 			oldPosition = approvedPosition;
 			
 			glm::vec3 velocity = mEntities.at(id).lock()->getAttribute<glm::vec3>("velocity");
@@ -114,7 +115,7 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
 			//printf("noral: %f, %f, %f\n", normal.x, normal.y, normal.z);
 			velocity     *= glm::vec3(1.0) - glm::abs(normal);
 			acceleration *= glm::vec3(1.0) - glm::abs(normal);
-
+			v = approvedPosition - oldPosition;
 			entity->setAttribute<glm::vec3>("velocity", velocity);
 			entity->setAttribute<glm::vec3>("acceleration", acceleration);
 		}else
@@ -194,7 +195,11 @@ float CollisionController::sweepAroundAABB(const AABB a, glm::vec3 velocity, glm
 bool CollisionController::AABBOnGround(AABB a)
 {
 	AABB b;
-	a.y -= 0.01f;
+	a.x += a.width * 0.1f;
+	a.z += a.depth * 0.1f;
+	a.width *= 0.8f;
+	a.depth *= 0.8f;
+	a.y -= 0.1f;
 	a.height = 0;
 	float y = a.y;
 	glm::vec3 pos;
