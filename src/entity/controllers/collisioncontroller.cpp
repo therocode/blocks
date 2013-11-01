@@ -95,7 +95,7 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
 					break;
 				}
 			}
-			approvedPosition = oldPosition + v * (n);
+			approvedPosition = oldPosition + v * (n - 0.01f);
 			oldPosition = approvedPosition;
 			
 			glm::vec3 velocity = mEntities.at(id).lock()->getAttribute<glm::vec3>("velocity");
