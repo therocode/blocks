@@ -9,12 +9,15 @@ class Player : Entity
     {
         if(isOnGround())
         {
-            //consolePrint("lalalaaaa i am on the ground");
         }
         //consolePrint("entity id is " + mId);
     }
 
     void onGround(bool landed)
     {
+        if(landed)
+            consolePrint("lalalaaaa i am on the ground");
+        else
+            consolePrint("lalalaaaa i am on the air");
     }
 }

@@ -37,11 +37,14 @@ void ShaderProgram::unbind()
 
 GLint ShaderProgram::getAttribLocation(const std::string& name)
 {
-    if(parameterCache.find(name) == parameterCache.end())
+    auto attribIterator = parameterCache.find(name);
+
+    if(attribIterator == parameterCache.end())
     {
         parameterCache.emplace(name, glGetAttribLocation(mProgramID, name.c_str()));
+        attribIterator = parameterCache.find(name);
     }
-	return parameterCache.at(name);
+	return attribIterator->second;
 }	
 void ShaderProgram::setTexture(const std::string& name, GLint texture)
 {
@@ -118,10 +121,14 @@ GLint ShaderProgram::getUniformLocation(const std::string& name)
 	{
 		return 0;
 	}
-    if(parameterCache.find(name) == parameterCache.end())
+
+    auto uniformIterator = parameterCache.find(name);
+
+    if(uniformIterator == parameterCache.end())
     {
         parameterCache.emplace(name, glGetUniformLocation(mProgramID, name.c_str()));
+        uniformIterator = parameterCache.find(name);
 //		printf("Cached shader uniform location %s\n", name.c_str());
     }
-	return parameterCache.at(name);
+	return uniformIterator->second;
 }
