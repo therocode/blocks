@@ -66,22 +66,77 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
     fea::EntityPtr entity =  mEntities.at(id).lock();
     glm::vec3 oldPosition = entity->getAttribute<glm::vec3>("position");
     glm::vec3 size = entity->getAttribute<glm::vec3>("hitbox");
-    AABB a, b;
+    AABB a;
 
-    a.x = oldPosition.x - size.x * 0.5f;
-    a.y = oldPosition.y - size.y * 0.5f;
-    a.z = oldPosition.z - size.z * 0.5f;
+   
 
     a.width = size.x;
     a.height = size.y;
     a.depth = size.z;
     glm::vec3 v = requestedPosition - oldPosition;
+	
+	glm::vec3 ignoreAxis = glm::vec3(0);
+	float n = 0.0;
+	while(n < 1.0f){
+		glm::vec3 normal = glm::vec3(0);
+		a.x = oldPosition.x - size.x * 0.5f;
+		a.y = oldPosition.y - size.y * 0.5f;
+		a.z = oldPosition.z - size.z * 0.5f;
+ 
+		n = sweepAroundAABB(a, approvedPosition - oldPosition, normal, ignoreAxis);
+		// Renderer::sDebugRenderer.drawBox(a.x + a.width*0.5f, a.y + a.height*0.5f, a.z + a.depth*0.5f, a.width  + 0.001f, a.height + 0.001f, a.depth + 0.001f, DebugRenderer::ORANGE);
+		if(n < 1.f)
+		{ 
+			for(int i = 0; i < 3; i++){
+				if(normal[i] != 0){
+					ignoreAxis[i] = 1.0;
+					break;
+				}
+			}
+			approvedPosition = oldPosition + v * (n - 0.5f);
+			
+			oldPosition = approvedPosition;
+			
+			glm::vec3 velocity = mEntities.at(id).lock()->getAttribute<glm::vec3>("velocity");
+			glm::vec3 acceleration = mEntities.at(id).lock()->getAttribute<glm::vec3>("acceleration");
 
-    b.width =  1.f;
-    b.height = 1.f;
-    b.depth =  1.f;
+			float remainingTime = 1.0f - n;
+			float magn = glm::length(velocity) * remainingTime;
+			float collDot = glm::dot(normal, v);
+			collDot = glm::clamp(collDot, -1.f, 1.f);
+			glm::vec3 c = (glm::vec3(1.f) - glm::abs(normal)) * v;
 
-    int sx = 1, sy = 2, sz = 1;
+			glm::vec3 additionalVelocity = c * remainingTime;
+			approvedPosition += additionalVelocity;
+			
+			//velocity += additionalVelocity;
+			//velocity is either 0 or 1, depending if it collided or not. when all is working it should use the normal to do stuff.
+			//printf("noral: %f, %f, %f\n", normal.x, normal.y, normal.z);
+			velocity     *= glm::vec3(1.0) - glm::abs(normal);
+			acceleration *= glm::vec3(1.0) - glm::abs(normal);
+
+			entity->setAttribute<glm::vec3>("velocity", velocity);
+			entity->setAttribute<glm::vec3>("acceleration", acceleration);
+		}else
+		{
+			
+		}
+		
+	}
+	bool isOnGround = entity->getAttribute<bool>("on_ground");
+	if(!isOnGround)
+	if(AABBOnGround(a)){
+		entity->setAttribute<bool>("on_ground", true);
+		mBus.sendMessage<EntityOnGroundMessage>(EntityOnGroundMessage(entity->getId(), true));
+	}
+    entity->setAttribute<glm::vec3>("position", approvedPosition);
+    mBus.sendMessage<EntityMovedMessage>(EntityMovedMessage(id, requestedPosition, approvedPosition));
+}
+
+float CollisionController::sweepAroundAABB(const AABB a, glm::vec3 velocity, glm::vec3& outNormal, const glm::vec3 ignoreAxis)
+{
+	AABB b;
+	int sx = 1, sy = 2, sz = 1;
     float n = 1.0f;
     glm::vec3 normal = glm::vec3(0.f);
     //Loop througha cube of blocks and check if they are passableor not
@@ -91,35 +146,37 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
         {
             for(float z = -sz; z <= sz; z++)
             {
-                glm::vec3 cubePos = glm::vec3(oldPosition.x, oldPosition.y, oldPosition.z) + glm::vec3(x, y, z);
-
+                glm::vec3 cubePos = glm::vec3(a.x + velocity.x, a.y + velocity.y, a.z + velocity.z) + glm::vec3(x, y, z);
                 if(mWorldInterface.getVoxelType(cubePos) != 0)
                 {
-					// 
-                    glm::vec3 norm;
-                    // v.x = 0; 
-                    // v.y = -100; v.z = 0;
+				    glm::vec3 norm;
+
                     //set position of aabb B
-                    //Might be something wrong here.
                     b.x = cubePos.x;                 
 					b.y = cubePos.y;
                     b.z = cubePos.z;
 					
 					if(b.x < 0) b.x --;
 					if(b.y < 0) b.y --;
-					if(b.z < 0) b.z --;
+					if(b.z < 0) b.z --;	
 					
 					b.x = (int)b.x;
 					b.y = (int)b.y;
 					b.z = (int)b.z;
-					Renderer::sDebugRenderer.drawBox(b.x + b.width*0.5f, b.y + b.height*0.5f, b.z + b.depth*0.5f, b.width  + 0.001f, b.height + 0.001f, b.depth + 0.001f, DebugRenderer::GREEN);
-     
-					 // printf("d: %f, %f, %f\n", cubePos.x - oldPosition.x, cubePos.y - oldPosition.y, cubePos.z - oldPosition.z);
+
                     //A is the entity, B is block in world, v is newPosition - oldPosition. Function should set norm to a normal on which face it collided. returns depth, which is between 0 and 1.
-                    float nn = sweepAABB(a, b, v, norm);
-                    // printf("nn:%f\n", nn);
+                    float nn = sweepAABB(a, b, velocity, norm);
+                 
                     //If depth is shallower than before, set the new depth to the new value.
-                    if(nn < n){
+					int axis = 0;
+					for(int i = 0; i < 3; i++)
+					{
+						if(norm[i] != 0){
+							axis = i;
+							break;
+						}
+					}
+                    if(nn < n && ignoreAxis[axis] != 1){
                         n = nn;
                         normal = norm;
                     }
@@ -127,40 +184,12 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
             }
         }
     }
-	Renderer::sDebugRenderer.drawBox(a.x + a.width*0.5f, a.y + a.height*0.5f, a.z + a.depth*0.5f, a.width  + 0.001f, a.height + 0.001f, a.depth + 0.001f, DebugRenderer::ORANGE);
-	
-    if(n < 1.f)
-    { 
-        approvedPosition = oldPosition + v * n;
-        glm::vec3 velocity = mEntities.at(id).lock()->getAttribute<glm::vec3>("velocity");
-        glm::vec3 acceleration = mEntities.at(id).lock()->getAttribute<glm::vec3>("acceleration");
-
-
-        float remainingTime = 1.f - n;
-        float magn = glm::length(velocity) * remainingTime;
-        float collDot = glm::dot(normal, v);
-        collDot = glm::clamp(collDot, -1.f, 1.f);
-        glm::vec3 c = (glm::vec3(1.f) - glm::abs(normal)) * v;
-
-        glm::vec3 additionalVelocity = c * remainingTime;
-        approvedPosition += additionalVelocity;
-        //velocity += additionalVelocity;
-        //velocity is either 0 or 1, depending if it collided or not. when all is working it should use the normal to do stuff.
-        //printf("noral: %f, %f, %f\n", normal.x, normal.y, normal.z);
-        velocity     *= glm::vec3(1.0) - glm::abs(normal);
-        //acceleration *= glm::vec3(1.0) - glm::abs(normal);
-
-        entity->setAttribute<glm::vec3>("velocity", velocity);
-        //entity->setAttribute<glm::vec3>("acceleration", acceleration);
-    }
-	bool isOnGround = entity->getAttribute<bool>("on_ground");
-	if(!isOnGround)
-	if(AABBOnGround(a)){
-		entity->setAttribute<bool>("on_ground", true);
-		mBus.sendMessage<EntityOnGroundMessage>(EntityOnGroundMessage(entity->getId(), true));
+	if(n < 1.0)
+	{
+		outNormal = normal;
+		return n;
 	}
-    entity->setAttribute<glm::vec3>("position", approvedPosition);
-    mBus.sendMessage<EntityMovedMessage>(EntityMovedMessage(id, requestedPosition, approvedPosition));
+	return 1.0;
 }
 bool CollisionController::AABBOnGround(AABB a)
 {
@@ -257,8 +286,8 @@ float CollisionController::sweepAABB(const AABB a, const AABB b, const glm::vec3
     float xs, ys, zs;
     float xe, ye, ze;
     float infinity = std::numeric_limits<float>::infinity();
-
-    if(glm::abs(v.x) < epsilon)
+	
+    if(glm::abs(v.x) == 0)
     {
         xs = -infinity;
         xe =  infinity;
@@ -268,7 +297,7 @@ float CollisionController::sweepAABB(const AABB a, const AABB b, const glm::vec3
         xe = xExit  / v.x;
     }
 
-    if(glm::abs(v.y) < epsilon)
+    if(glm::abs(v.y) == 0)
     {
         ys = -infinity;
         ye =  infinity;
@@ -277,7 +306,7 @@ float CollisionController::sweepAABB(const AABB a, const AABB b, const glm::vec3
         ys = yEntry / v.y;
         ye = yExit  / v.y;
     }
-    if(glm::abs(v.z) < epsilon)
+    if(glm::abs(v.z)  == 0)
     {
         zs = -infinity;
         ze =  infinity;
