@@ -178,11 +178,13 @@ void Renderer::handleMessage(const PlayerConnectedToEntityMessage& received)
 void Renderer::render()
 {
 	glm::vec3 fullColor = glm::vec3((float)0x00 / 255.f, (float)0xb2 / 255.f, (float)0xff / 255.f);
+	glm::vec3 cameraOffset;
+	cam.SetPosition(originalCameraPos + cameraOffset);
 	float y = cam.GetPosition().y;
 	glm::vec3 color = glm::mix(fullColor, glm::vec3(0.f), 1.f - glm::clamp((y - 15) * 0.05f, 0.f, 1.f));
 	// printf("color: %f, %f, %f\n", color.x, color.y, color.z);
 	glClearColor(color.x, color.y, color.z, 1.0f);
-
+	
 	float dT_f = mTimer.getDeltaTime();
 	bus.sendMessage<CameraUpdatedMessage>(CameraUpdatedMessage(cam.GetPosition(), cam.GetDirection()));
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
@@ -382,8 +384,8 @@ void Renderer::cameraUpdate()
    // cam.SetPosition(mCameraPosition);
 	cam.SetPitchYaw(mCameraPitch, mCameraYaw);
     //camera must be updated from mPitch and mYaw
-    cam.SetPosition(mCameraPosition);
-
+    originalCameraPos = mCameraPosition;
+	
    // std::cout << "i am camera and i will update pitch and yaw: " << mCameraPitch << " " << mCameraYaw << "\n";
 
 

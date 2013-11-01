@@ -52,6 +52,7 @@ class Renderer
 		ShaderProgram mShaderProgram;
 		Camera cam;
 		Timer mTimer;
+		glm::vec3 originalCameraPos;
 		glm::vec3 mCurrentlyFacingBlock;
 		glm::vec3 mLastFacingBlock;
 		float fadeIn = 0.f;

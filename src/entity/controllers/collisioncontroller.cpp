@@ -26,26 +26,34 @@ void CollisionController::onFrame()
     for(auto wEntity : mEntities)
     {
         fea::EntityPtr entity = wEntity.second.lock();
+		bool isOnGround = entity->getAttribute<bool>("on_ground");
+		glm::vec3 position = entity->getAttribute<glm::vec3>("position");
+		glm::vec3 size = entity->getAttribute<glm::vec3>("hitbox");
+		glm::vec3 velocity = entity->getAttribute<glm::vec3>("velocity");
+		
+		AABB a;
+		
+		a.x = position.x - size.x * 0.5f;
+		a.y = position.y - size.y * 0.5f;
+		a.z = position.z - size.z * 0.5f;
 
-        if(entity->getAttribute<bool>("on_ground"))
-        {
-            glm::vec3 position = entity->getAttribute<glm::vec3>("position");
-			glm::vec3 size = entity->getAttribute<glm::vec3>("hitbox");
-            entity->setAttribute<glm::vec3>("velocity", entity->getAttribute<glm::vec3>("velocity") * 0.8f);
-			AABB a;
-
-			a.x = position.x - size.x * 0.5f;
-			a.y = position.y - size.y * 0.5f;
-			a.z = position.z - size.z * 0.5f;
-
-			a.width = size.x;
-			a.height = size.y;
-			a.depth = size.z;
+		a.width = size.x;
+		a.height = size.y;
+		a.depth = size.z;
+		
+		if(isOnGround){
 			if(!AABBOnGround(a)){
 				entity->setAttribute<bool>("on_ground", false);
 				mBus.sendMessage<EntityOnGroundMessage>(EntityOnGroundMessage(entity->getId(), false));
+			}else{
+				entity->setAttribute<glm::vec3>("velocity", velocity * 0.8f);
 			}
-        }
+        }else{
+			if(AABBOnGround(a) && velocity.y <= 0.001f){
+				entity->setAttribute<bool>("on_ground", true);
+				mBus.sendMessage<EntityOnGroundMessage>(EntityOnGroundMessage(entity->getId(), true));
+			}
+		}
     }
 }
 
@@ -68,11 +76,11 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
     glm::vec3 size = entity->getAttribute<glm::vec3>("hitbox");
     AABB a;
 
-   
+   glm::vec3 velocity;
 
-    a.width = size.x;
+    a.width  = size.x;
     a.height = size.y;
-    a.depth = size.z;
+    a.depth  = size.z;
     glm::vec3 v = approvedPosition - oldPosition;
 	
 	glm::vec3 ignoreAxis = glm::vec3(0);
@@ -95,10 +103,10 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
 					break;
 				}
 			}
-			approvedPosition = oldPosition + v * (n - 0.01f);
+			approvedPosition = oldPosition + v * glm::max(n - 0.02f, 0.0f);
 			oldPosition = approvedPosition;
 			
-			glm::vec3 velocity = mEntities.at(id).lock()->getAttribute<glm::vec3>("velocity");
+			velocity = mEntities.at(id).lock()->getAttribute<glm::vec3>("velocity");
 			glm::vec3 acceleration = mEntities.at(id).lock()->getAttribute<glm::vec3>("acceleration");
 
 			float remainingTime = 1.0f - n;
@@ -118,17 +126,7 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
 			v = approvedPosition - oldPosition;
 			entity->setAttribute<glm::vec3>("velocity", velocity);
 			entity->setAttribute<glm::vec3>("acceleration", acceleration);
-		}else
-		{
-			
 		}
-		
-	}
-	bool isOnGround = entity->getAttribute<bool>("on_ground");
-	if(!isOnGround)
-	if(AABBOnGround(a)){
-		entity->setAttribute<bool>("on_ground", true);
-		mBus.sendMessage<EntityOnGroundMessage>(EntityOnGroundMessage(entity->getId(), true));
 	}
     entity->setAttribute<glm::vec3>("position", approvedPosition);
     mBus.sendMessage<EntityMovedMessage>(EntityMovedMessage(id, requestedPosition, approvedPosition));
@@ -194,12 +192,13 @@ float CollisionController::sweepAroundAABB(const AABB a, glm::vec3 velocity, glm
 }
 bool CollisionController::AABBOnGround(AABB a)
 {
+	float s = 0.05f;
 	AABB b;
-	a.x += a.width * 0.1f;
-	a.z += a.depth * 0.1f;
-	a.width *= 0.8f;
-	a.depth *= 0.8f;
-	a.y -= 0.1f;
+	a.x += a.width * s;
+	a.z += a.depth * s;
+	a.width *= 1.0f - s*2.0f;
+	a.depth *= 1.0f - s*2.0f;
+	a.y -= 0.01f;
 	a.height = 0;
 	float y = a.y;
 	glm::vec3 pos;
@@ -236,7 +235,7 @@ bool CollisionController::AABBAABB(const AABB a, const AABB b) const
 	glm::vec3 aSize = glm::vec3(a.width * 0.5f, a.height * 0.5f, a.depth * 0.5f);
 	glm::vec3 bSize = glm::vec3(b.width * 0.5f, b.height * 0.5f, b.depth * 0.5f);
 	glm::vec3 v = glm::abs(glm::vec3(b.x + bSize.x, b.y + bSize.y, b.z + bSize.z) - glm::vec3(a.x + aSize.x, a.y + aSize.y, a.z + aSize.z));
-	return (v.x <= (aSize.x + bSize.x)) && (v.y <= aSize.y + bSize.y) && (v.z <= aSize.z + bSize.z);
+	return (v.x < (aSize.x + bSize.x)) && (v.y < aSize.y + bSize.y) && (v.z < aSize.z + bSize.z);
     //if(a.x <= b.x + b.width && a.y <= b.y + b.height && a.z <= b.z + b.depth)
       ///////7  if(a.x + a.width >= b.x && a.y + a.depth >= b.y && a.z + a.depth >= b.z)
            // return true;
