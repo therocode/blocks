@@ -288,7 +288,6 @@ void Renderer::render()
 	glColor4f(1.f, 1.f, 1.f, fadeIn);
 	glm::vec3 v = mCurrentlyFacingBlock;//glm::floor(cam.GetPosition()) + glm::vec3(0.5);
 	float s =  (0.2f - fadeIn) * 2.f + 0.51f ;
-	
 	//top
 	glm::vec3 p = v + glm::vec3(s);
 	glVertex3f(p.x, p.y, p.z);
@@ -373,9 +372,6 @@ void Renderer::render()
 	glDisable(GL_BLEND);
 	
 	glEnable(GL_DEPTH_TEST);
-	
-	
-
 }
 
 void Renderer::cameraUpdate()
