@@ -158,8 +158,8 @@ void MovementController::handleMessage(const EntityJumpMessage& received)
     std::tie(id) = received.data;
 
     float jumpStrength = mEntities.at(id).lock()->getAttribute<float>("jump_strength");
-
-    if(mEntities.at(id).lock()->getAttribute<bool>("on_ground"))
+	float ySpeed = mEntities.at(id).lock()->getAttribute<glm::vec3>("velocity").y;
+    if(mEntities.at(id).lock()->getAttribute<bool>("on_ground") && ySpeed <= 0.f)
     {
         mBus.sendMessage<PhysicsImpulseMessage>(PhysicsImpulseMessage(id, glm::vec3(0.0f, jumpStrength / 8.0f, 0.0f)));
         mBus.sendMessage<EntityOnGroundMessage>(EntityOnGroundMessage(id, false));
