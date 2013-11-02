@@ -178,7 +178,7 @@ void Renderer::handleMessage(const PlayerConnectedToEntityMessage& received)
 void Renderer::render()
 {
 	glm::vec3 fullColor = glm::vec3((float)0x00 / 255.f, (float)0xb2 / 255.f, (float)0xff / 255.f);
-	glm::vec3 cameraOffset;
+	glm::vec3 cameraOffset = glm::vec3(0, 0.6f, 0);
 	cam.SetPosition(originalCameraPos + cameraOffset);
 	float y = cam.GetPosition().y;
 	glm::vec3 color = glm::mix(fullColor, glm::vec3(0.f), 1.f - glm::clamp((y - 15) * 0.05f, 0.f, 1.f));

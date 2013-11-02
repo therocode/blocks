@@ -162,7 +162,7 @@ void PlayerController::updateVoxelLookAt(size_t playerId)
 	if(glm::length2(direction) != 0)
 		direction = glm::normalize(direction) * 10.0f;
 
-	glm::vec3 block = mWorldInterface.getVoxelAtRay(position, direction);
+	glm::vec3 block = mWorldInterface.getVoxelAtRay(position + glm::vec3(0, 0.6f, 0), direction);
 
     if(block != entity->getAttribute<glm::vec3>("block_facing"))
     {

@@ -14,7 +14,7 @@ void gameStarted()
 	{
 		for(int y = 0; y < 4; y++)
 		{
-           // createEntity("Elephant", 1.0f * x + 0.5f, 100.0f + randomFloatRange(0.f, 80.f), 1.0f * y + 0.5f);
+            createEntity("Elephant", 1.0f * x + 0.5f, 100.0f + randomFloatRange(0.f, 80.f), 1.0f * y + 0.5f);
 		}
 	}
 }
@@ -42,7 +42,7 @@ void onFrame(int frameNumber)
     
     if(frameNumber % 10 == 0)
     {
-       // @created = createEntity("Elephant", randomFloatRange(-30.0f, 30.0f), 70.0f, randomFloatRange(-30.0f, 30.0f));
+       //@created = createEntity("Elephant", randomFloatRange(-30.0f, 30.0f), 70.0f, randomFloatRange(-30.0f, 30.0f));
     }
     else if(frameNumber % 10 == 1)
     {

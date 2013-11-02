@@ -138,6 +138,7 @@ float CollisionController::sweepAroundAABB(const AABB a, glm::vec3 velocity, glm
 	int sx = 1, sy = 2, sz = 1;
     float n = 1.0f;
     glm::vec3 normal = glm::vec3(0.f);
+	float longest = 99999.f;
     //Loop througha cube of blocks and check if they are passableor not
     for(float x = -sx; x <= sx; x++)
     {
@@ -175,10 +176,17 @@ float CollisionController::sweepAroundAABB(const AABB a, glm::vec3 velocity, glm
 							break;
 						}
 					}
-                    if(nn < n && ignoreAxis[axis] != 1){
-                        n = nn;
-                        normal = norm;
-                    }
+                    if(nn < n && ignoreAxis[axis] <= 0.9f){
+						// glm::vec3 aa = glm::vec3(a.x + a.width * 0.5f, a.y + a.height * 0.5f, a.z + a.depth * 0.5f);
+						// glm::vec3 bb = glm::vec3(b.x + b.width * 0.5f, b.y + b.height * 0.5f, b.z + b.depth * 0.5f);
+						// float l2 = glm::length2(aa - bb);
+						// if(l2 < longest){
+							// longest = l2;
+							n = nn;
+							normal = norm;
+							// Renderer::sDebugRenderer.drawBox(b.x + b.width*0.5f, b.y + b.height*0.5f, b.z + b.depth*0.5f, b.width  + 0.01f, b.height + 0.01f, b.depth + 0.01f, DebugRenderer::GREEN);
+						// }
+					}
                 }
             }
         }
