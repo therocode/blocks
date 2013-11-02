@@ -388,8 +388,6 @@ void Renderer::cameraUpdate()
    // std::cout << "i am camera and i will update pitch and yaw: " << mCameraPitch << " " << mCameraYaw << "\n";
 
 
-	cam.Update();
-
 	setCameraMatrix(cam.GetMatrix());
 }
 
