@@ -33,9 +33,20 @@ VBO VBOCreator::generateChunkVBO(const ChunkCoordinate& coord, const VoxelTypeDa
     {
         for(uint32_t y = 0; y < chunkWidth; y++)
         {
-            for(uint32_t z = 0; z < chunkWidth; z++)
+            uint32_t walked = 0;
+            size_t zyIndex = z * chunkWidth + y * chunkWidthx2;
+            size_t runIterator = voxelTypeData.mRleSegmentIndices[z + y * chunkWidth].mSegmentStart;
+            while(walked < chunkWidth)
             {
+                uint16_t runLength = voxelTypeData.mRleSegments[runIterator];
+                uint16_t runType = voxelTypeData.mRleSegments[runIterator + 1];
 
+                for(uint16_t i = 0; i < runLength; i++)
+                {
+                    voxelTypes[walked + zyIndex] = runType;
+                    walked++;
+                }
+                runIterator += 2;
             }
         }
     }
