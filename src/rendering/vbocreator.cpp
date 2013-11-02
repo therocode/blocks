@@ -172,7 +172,7 @@ VBO VBOCreator::generateChunkVBO(const ChunkCoordinate& coord, const VoxelTypeDa
     high_resolution_clock::time_point end = high_resolution_clock::now();
     totalTime += duration_cast<microseconds>(end - start).count();
     timesGenerated++;
-    std::cout << "the mesh creation of the chunk took " << duration_cast<microseconds>(end - start).count() << " and the average is " << totalTime/ timesGenerated << "\n";
+    //std::cout << "the mesh creation of the chunk took " << duration_cast<microseconds>(end - start).count() << " and the average is " << totalTime/ timesGenerated << "\n";
 
 	return vbo;
 }

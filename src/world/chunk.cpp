@@ -62,7 +62,7 @@ void Chunk::setVoxelData(const VoxelTypeArray& types)
 {
     using namespace std::chrono;
 
-    std::cout << "size before compression: " << sizeof(VoxelTypeArray) << "\n";
+    //std::cout << "size before compression: " << sizeof(VoxelTypeArray) << "\n";
     high_resolution_clock::time_point now = high_resolution_clock::now();
 
     mRleSegmentIndices.fill(RleSegmentInfo({0, 0}));
@@ -115,9 +115,9 @@ void Chunk::setVoxelData(const VoxelTypeArray& types)
     timesGenerated++;
     totalSize += mRleSegments.size() * sizeof(uint16_t);
 
-    std::cout << "size after compression: " << mRleSegments.size() * sizeof(uint16_t) << "\n";
-    std::cout << "the compression process took " << duration_cast<microseconds>(then - now).count() << " microseconds\n";
-    std::cout << "average compression is " << totalTime / timesGenerated << " microseconds and average size is " << totalSize / timesGenerated << "\n\n";
+    //std::cout << "size after compression: " << mRleSegments.size() * sizeof(uint16_t) << "\n";
+    //std::cout << "the compression process took " << duration_cast<microseconds>(then - now).count() << " microseconds\n";
+    //std::cout << "average compression is " << totalTime / timesGenerated << " microseconds and average size is " << totalSize / timesGenerated << "\n\n";
 }
 
 //these should be optimised in the future using binary trees
