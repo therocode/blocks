@@ -92,7 +92,6 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
 		a.x = oldPosition.x - size.x * 0.5f;
 		a.y = oldPosition.y - size.y * 0.5f;
 		a.z = oldPosition.z - size.z * 0.5f;
- 
 		n = sweepAroundAABB(a, v, normal, ignoreAxis);
 		// Renderer::sDebugRenderer.drawBox(a.x + a.width*0.5f, a.y + a.height*0.5f, a.z + a.depth*0.5f, a.width  + 0.001f, a.height + 0.001f, a.depth + 0.001f, DebugRenderer::ORANGE);
 		if(n < 1.f)
@@ -103,7 +102,7 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
 					break;
 				}
 			}
-			approvedPosition = oldPosition + v * glm::max(n - 0.02f, 0.0f);
+			approvedPosition = oldPosition + v * glm::max(n - 0.08f, 0.0f);
 			oldPosition = approvedPosition;
 			
 			velocity = mEntities.at(id).lock()->getAttribute<glm::vec3>("velocity");
