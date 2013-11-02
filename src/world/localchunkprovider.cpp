@@ -5,7 +5,7 @@ Chunk LocalChunkProvider::fetchChunk(const ChunkCoordinate& location) const
 {
     Chunk newChunk(location);
 
-    VoxelTypeArray& types = newChunk.getVoxelTypes();
+    VoxelTypeArray types;
 
     for(int32_t z = 0; z < chunkWidth; z++)
     {
@@ -63,5 +63,6 @@ Chunk LocalChunkProvider::fetchChunk(const ChunkCoordinate& location) const
         }
     }
 
+    newChunk.setVoxelData(types);
     return newChunk;
 }

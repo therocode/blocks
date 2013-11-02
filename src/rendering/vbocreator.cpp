@@ -13,8 +13,8 @@ VBOCreator::VBOCreator()
 {
 }
 
-VBO VBOCreator::generateChunkVBO(Chunk& chunk)
-{
+VBO VBOCreator::generateChunkVBO(const VoxelTypeData& voxelTypeData)
+{/*
     high_resolution_clock::time_point start = high_resolution_clock::now();
 //int texture1X = rand() % 8;
 //int texture2X = rand() % 8;
@@ -24,8 +24,6 @@ VBO VBOCreator::generateChunkVBO(Chunk& chunk)
 	VBO vbo;
 
 	const ChunkCoordinate location = chunk.getLocation();
-
-    chunk.compress();
 
 	glm::vec3 chunkOffset(location.x * (float)chunkWidth, location.y * (float)chunkWidth, location.z * (float)chunkWidth);
 
@@ -154,7 +152,7 @@ VBO VBOCreator::generateChunkVBO(Chunk& chunk)
     timesGenerated++;
     std::cout << "the mesh creation of the chunk took " << duration_cast<microseconds>(end - start).count() << " and the average is " << totalTime/ timesGenerated << "\n";
 
-	return vbo;
+	return vbo;*/
 }
 
 inline void VBOCreator::setRectData(Rectangle& r, float x, float y, float z, int face, float u, float v) const

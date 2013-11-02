@@ -34,47 +34,102 @@ VoxelCoordinate worldToVoxel(const glm::vec3& position)
     return worldToVoxel(position.x, position.y, position.z);
 }
 
-Chunk::Chunk(const ChunkCoordinate& loc) : location(loc), compressed(false)
+VoxelTypeData::VoxelTypeData(const std::array<uint32_t, chunkWidthx2>& rleSegmentIndices, const std::vector<uint16_t>& rleSegments) : mRleSegmentIndices(rleSegmentIndices), mRleSegments(rleSegments)
+{
+
+}
+
+Chunk::Chunk(const ChunkCoordinate& loc) : mLocation(loc)
 {
 }
 
-Chunk::Chunk(const ChunkCoordinate& loc, const VoxelTypeArray& types) : location(loc), voxelTypes(types), compressed(false)
+Chunk::Chunk(const ChunkCoordinate& loc, const VoxelTypeArray& types) : mLocation(loc)
 {
+    setVoxelData(types);
 }
 
 void Chunk::setVoxelType(uint32_t x, uint32_t y, uint32_t z, VoxelType type)
 {
-    voxelTypes[x + z * chunkWidth + y * chunkWidthx2] = type;
+    //voxelTypes[x + z * chunkWidth + y * chunkWidthx2] = type;
 }
 
 void Chunk::setVoxelType(const VoxelCoordinate& voxel, VoxelType type)
 {
-    setVoxelType(voxel.x, voxel.y, voxel.z, type);
+    //setVoxelType(voxel.x, voxel.y, voxel.z, type);
+}
+
+void Chunk::setVoxelData(const VoxelTypeArray& types)
+{
+    using namespace std::chrono;
+
+    std::cout << "size before compression: " << sizeof(VoxelTypeArray) << "\n";
+    high_resolution_clock::time_point now = high_resolution_clock::now();
+
+    mRleSegmentIndices.fill(0);
+    mRleSegments.clear();
+
+    uint16_t currentType;
+    uint16_t currentAmount;
+    size_t zyIndex = 0;
+    for(uint32_t z = 0; z < chunkWidth; z++)
+    {
+        for(uint32_t y = 0; y < chunkWidth; y++)
+        {
+            //store the start of this whole segment
+            mRleSegmentIndices[z + y * chunkWidth] = mRleSegments.size();
+
+            zyIndex = z * chunkWidth + y * chunkWidthx2;
+            currentType = types[zyIndex];
+            currentAmount = 1;
+            for(uint32_t x = 1; x < chunkWidth; x++)
+            {
+                //check if the new voxel is still the same
+                if(currentType == types[zyIndex + x])
+                {
+                    //keep collecting
+                    currentAmount++;
+                }
+                else
+                {
+                    //push the finished run and reinitialise for a new one
+                    mRleSegments.push_back(currentAmount);
+                    mRleSegments.push_back(currentType);
+
+                    currentType = types[zyIndex + x];
+                    currentAmount = 1;
+                }
+            }
+
+            //if it reached the end of the segment, it should add what it collected so far
+            mRleSegments.push_back(currentAmount);
+            mRleSegments.push_back(currentType);
+        }
+    }
+
+    high_resolution_clock::time_point then = high_resolution_clock::now();
+
+    totalTime += duration_cast<microseconds>(then - now).count();
+    timesGenerated++;
+    totalSize += mRleSegments.size() * sizeof(uint16_t);
+
+    std::cout << "size after compression: " << mRleSegments.size() * sizeof(uint16_t) << "\n";
+    std::cout << "the compression process took " << duration_cast<microseconds>(then - now).count() << " microseconds\n";
+    std::cout << "average compression is " << totalTime / timesGenerated << " microseconds and average size is " << totalSize / timesGenerated << "\n\n";
 }
 
 VoxelType Chunk::getVoxelType(uint32_t x, uint32_t y, uint32_t z) const
 {
-    return voxelTypes[x + z * chunkWidth + y * chunkWidthx2];
+    return 0;//voxelTypes[x + z * chunkWidth + y * chunkWidthx2];
 }
 
 VoxelType Chunk::getVoxelType(const VoxelCoordinate& voxel) const
 {
-    return getVoxelType(voxel.x, voxel.y, voxel.z);
+    return 0;//getVoxelType(voxel.x, voxel.y, voxel.z);
 }
 
-VoxelTypeArray& Chunk::getVoxelTypes()
+VoxelTypeData Chunk::getVoxelTypeData() const
 {
-    return voxelTypes;
-}
-
-const VoxelTypeArray& Chunk::getVoxelTypes() const
-{
-    return voxelTypes;
-}
-
-const std::vector<uint16_t> Chunk::getCompressedData() const
-{
-    return compressedData;
+    return VoxelTypeData(mRleSegmentIndices, mRleSegments);
 }
 
 uint32_t Chunk::getWidth() const
@@ -84,53 +139,5 @@ uint32_t Chunk::getWidth() const
 
 const ChunkCoordinate& Chunk::getLocation() const
 {
-    return location;
-}
-
-void Chunk::compress()
-{
-    uint16_t currentType = voxelTypes[0];
-    size_t index = 0;
-    size_t voxelAmount = voxelTypes.size();
-    uint16_t counter = 1;
-
-    using namespace std::chrono;
-
-    std::cout << "size before compression: " << sizeof(VoxelTypeArray) << "\n";
-    high_resolution_clock::time_point now = high_resolution_clock::now();
-
-    while(index < voxelAmount)
-    {
-        index++;
-
-        uint16_t voxel;
-
-        if(index != voxelAmount)
-            voxel = voxelTypes[index];
-        else
-            voxel = -1;
-
-        if(voxel == currentType)
-        {
-            counter++;
-        }
-        else
-        {
-            compressedData.push_back(currentType);
-            compressedData.push_back(counter);
-
-            counter = 1;
-            currentType = voxel;
-        }
-    }
-
-    high_resolution_clock::time_point then = high_resolution_clock::now();
-
-    totalTime += duration_cast<microseconds>(then - now).count();
-    timesGenerated++;
-    totalSize += compressedData.size() * sizeof(uint16_t);
-
-    std::cout << "size after compression: " << compressedData.size() * sizeof(uint16_t) << "\n";
-    std::cout << "the compression process took " << duration_cast<microseconds>(then - now).count() << " microseconds\n";
-    std::cout << "average compression is " << totalTime / timesGenerated << " microseconds and average size is " << totalSize / timesGenerated << "\n\n";
+    return mLocation;
 }

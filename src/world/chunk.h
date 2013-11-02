@@ -15,6 +15,8 @@ const int32_t voxelAmount = chunkWidthx3;
 
 using VoxelType = uint16_t;
 using VoxelTypeArray = std::array<VoxelType, voxelAmount>;
+using RleIndexArray = std::array<uint32_t, chunkWidthx2>;
+using RleSegmentArray = std::vector<uint16_t>;
 
 ChunkCoordinate worldToChunk(float x, float y, float z);
 
@@ -24,6 +26,13 @@ VoxelCoordinate worldToVoxel(float x, float y, float z);
 
 VoxelCoordinate worldToVoxel(const glm::vec3& position);
 
+struct VoxelTypeData
+{
+    VoxelTypeData(const std::array<uint32_t, chunkWidthx2>& rleSegmentIndices, const std::vector<uint16_t>& rleSegments);
+    const std::array<uint32_t, chunkWidthx2>& mRleSegmentIndices;
+    const std::vector<uint16_t>& mRleSegments;    
+};
+
 class Chunk
 {
     public:
@@ -31,24 +40,21 @@ class Chunk
         Chunk(const ChunkCoordinate& loc, const VoxelTypeArray& types);
         void setVoxelType(uint32_t x, uint32_t y, uint32_t z, VoxelType type);
         void setVoxelType(const VoxelCoordinate& voxel, VoxelType type);
+        void setVoxelData(const VoxelTypeArray& types);
         VoxelType getVoxelType(uint32_t x, uint32_t y, uint32_t z) const;
         VoxelType getVoxelType(const VoxelCoordinate& voxel) const;
-        VoxelTypeArray& getVoxelTypes();
-        const VoxelTypeArray& getVoxelTypes() const;
-        const std::vector<uint16_t> getCompressedData() const;
+        VoxelTypeData getVoxelTypeData() const;
         uint32_t getWidth() const;
         const ChunkCoordinate& getLocation() const;
-        void compress();
     private:
-        VoxelTypeArray voxelTypes;
-        ChunkCoordinate location;
+        ChunkCoordinate mLocation;
 
-        bool compressed;
-        std::vector<uint16_t> compressedData;
+        RleIndexArray mRleSegmentIndices;
+        RleSegmentArray mRleSegments;
 
-    static uint32_t totalTime;
-    static uint32_t totalSize;
-    static uint32_t timesGenerated;
+        static uint32_t totalTime;
+        static uint32_t totalSize;
+        static uint32_t timesGenerated;
 };
 
 namespace std

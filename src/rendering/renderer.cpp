@@ -106,12 +106,15 @@ void Renderer::handleMessage(const ChunkCreatedMessage& received)
 	ChunkCoordinate coordinate;
 	VoxelTypeArray types;
 
-	std::tie(coordinate, types) = received.data;
+    RleIndexArray indexArray;
+    RleSegmentArray segmentArray;
 
-    Chunk chunk(coordinate, types);
+	std::tie(coordinate, indexArray, segmentArray) = received.data;
+
+    VoxelTypeData voxelTypeData(indexArray, segmentArray);
 
 	VBOCreator vboCreator;
-	vbos.emplace(coordinate, vboCreator.generateChunkVBO(chunk));
+	vbos.emplace(coordinate, vboCreator.generateChunkVBO(voxelTypeData));
 }
 
 void Renderer::handleMessage(const ChunkDeletedMessage& received)

@@ -17,7 +17,7 @@ Chunk& Landscape::loadChunk(const ChunkCoordinate& location)
     if(chunk == chunks.end())
     {
         chunks.emplace(location, chunkDeliverer->fetchChunk(location));
-        mBus.sendMessage<ChunkCreatedMessage>(ChunkCreatedMessage(location, chunks.at(location).getVoxelTypes()));
+        mBus.sendMessage<ChunkCreatedMessage>(ChunkCreatedMessage(location, chunks.at(location).getVoxelTypeData().mRleSegmentIndices, chunks.at(location).getVoxelTypeData().mRleSegments));
     }
 
     return chunks.at(location);
