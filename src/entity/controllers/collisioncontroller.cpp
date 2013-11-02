@@ -147,22 +147,23 @@ float CollisionController::sweepAroundAABB(const AABB a, glm::vec3 velocity, glm
             for(float z = -sz; z <= sz; z++)
             {
                 glm::vec3 cubePos = glm::vec3(a.x + velocity.x, a.y + velocity.y, a.z + velocity.z) + glm::vec3(x, y, z);
-                if(mWorldInterface.getVoxelType(cubePos) != 0)
+				//set position of aabb B
+				b.x = cubePos.x;                 
+				b.y = cubePos.y;
+				b.z = cubePos.z;
+				
+				if(b.x < 0) b.x --;
+				if(b.y < 0) b.y --;
+				if(b.z < 0) b.z --;	
+				
+				b.x = (int)b.x;
+				b.y = (int)b.y;
+				b.z = (int)b.z;
+				if(mWorldInterface.getVoxelType(cubePos) != 0)
                 {
 				    glm::vec3 norm;
-
-                    //set position of aabb B
-                    b.x = cubePos.x;                 
-					b.y = cubePos.y;
-                    b.z = cubePos.z;
-					
-					if(b.x < 0) b.x --;
-					if(b.y < 0) b.y --;
-					if(b.z < 0) b.z --;	
-					
-					b.x = (int)b.x;
-					b.y = (int)b.y;
-					b.z = (int)b.z;
+					renderDebugAABB(b, DebugRenderer::GREEN);
+                   
 
                     //A is the entity, B is block in world, v is newPosition - oldPosition. Function should set norm to a normal on which face it collided. returns depth, which is between 0 and 1.
                     float nn = sweepAABB(a, b, velocity, norm);
@@ -176,7 +177,7 @@ float CollisionController::sweepAroundAABB(const AABB a, glm::vec3 velocity, glm
 							break;
 						}
 					}
-                    if(nn < n && ignoreAxis[axis] <= 0.9f){
+                    if(nn < n){
 						// glm::vec3 aa = glm::vec3(a.x + a.width * 0.5f, a.y + a.height * 0.5f, a.z + a.depth * 0.5f);
 						// glm::vec3 bb = glm::vec3(b.x + b.width * 0.5f, b.y + b.height * 0.5f, b.z + b.depth * 0.5f);
 						// float l2 = glm::length2(aa - bb);
@@ -187,7 +188,8 @@ float CollisionController::sweepAroundAABB(const AABB a, glm::vec3 velocity, glm
 							// Renderer::sDebugRenderer.drawBox(b.x + b.width*0.5f, b.y + b.height*0.5f, b.z + b.depth*0.5f, b.width  + 0.01f, b.height + 0.01f, b.depth + 0.01f, DebugRenderer::GREEN);
 						// }
 					}
-                }
+                }else
+					renderDebugAABB(b, DebugRenderer::RED);
             }
         }
     }
@@ -197,6 +199,10 @@ float CollisionController::sweepAroundAABB(const AABB a, glm::vec3 velocity, glm
 		return n;
 	}
 	return 1.0;
+}
+void CollisionController::renderDebugAABB(const AABB a, const int color)
+{
+	Renderer::sDebugRenderer.drawBox(a.x + a.width*0.5f, a.y + a.height*0.5f, a.z + a.depth*0.5f, a.width  + 0.01f, a.height + 0.01f, a.depth + 0.01f, color);
 }
 bool CollisionController::AABBOnGround(AABB a)
 {
@@ -216,8 +222,9 @@ bool CollisionController::AABBOnGround(AABB a)
 	{
 		pos.x = x + a.x;
 		pos.z = z + a.z;
-		if(mWorldInterface.getVoxelType(pos) != 0)
-		{
+		
+	
+		if(mWorldInterface.getVoxelType(pos) != 0){
 			b.x = pos.x;                 
 			b.y = pos.y;
 			b.z = pos.z;
@@ -229,8 +236,7 @@ bool CollisionController::AABBOnGround(AABB a)
 			b.x = (int)b.x;
 			b.y = (int)b.y;
 			b.z = (int)b.z;
-			if(AABBAABB(a, b))
-			{
+			if(AABBAABB(a, b)){
 				return true;
 			}
 		}

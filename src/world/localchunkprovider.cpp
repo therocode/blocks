@@ -56,10 +56,17 @@ Chunk LocalChunkProvider::fetchChunk(const ChunkCoordinate& location) const
 					
 					
 				}
-				float poo = glm::sin(glm::pow(noiseYPos, 2.f));
-				if(glm::length(glm::vec2(0, 2) - glm::vec2(noiseXPos * 14 , noiseZPos * 14 )) + poo < 2)
+				float poo = 0;//glm::sin(glm::pow(noiseYPos, 2.f));
+				float len = glm::length(glm::vec2(0, 2) - glm::vec2(noiseXPos * 14 , noiseZPos * 14 )) + poo;
+				if(len < 3 && noiseYPos < 0)
+				{
+					types[currentBlock] = 8;
+				}
+				if(len<2)
+				{
 					types[currentBlock] = 0;
-            }
+				}
+			}
         }
     }
 
