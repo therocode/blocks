@@ -120,14 +120,26 @@ void Chunk::setVoxelData(const VoxelTypeArray& types)
     std::cout << "average compression is " << totalTime / timesGenerated << " microseconds and average size is " << totalSize / timesGenerated << "\n\n";
 }
 
+//these should be optimised in the future using binary trees
 VoxelType Chunk::getVoxelType(uint32_t x, uint32_t y, uint32_t z) const
 {
-    return 0;//voxelTypes[x + z * chunkWidth + y * chunkWidthx2];
+    size_t segmentIterator = mRleSegmentIndices[z + y * chunkWidth].mSegmentStart;
+    size_t walked = 0;
+
+    while(walked < x)
+    {
+        walked += mRleSegments[segmentIterator];
+
+        if(walked < x)
+            segmentIterator += 2;
+    }
+    
+    return mRleSegments[segmentIterator + 1];
 }
 
 VoxelType Chunk::getVoxelType(const VoxelCoordinate& voxel) const
 {
-    return 0;//getVoxelType(voxel.x, voxel.y, voxel.z);
+    return getVoxelType(voxel.x, voxel.y, voxel.z);
 }
 
 VoxelTypeData Chunk::getVoxelTypeData() const
