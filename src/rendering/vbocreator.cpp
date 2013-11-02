@@ -168,6 +168,7 @@ VBO VBOCreator::generateChunkVBO(const ChunkCoordinate& coord, const VoxelTypeDa
 
 	//After stuff has been added, you have to update the gpu vbo data.
 	vbo.UpdateVBO();
+	vbo.Clear();
 
     high_resolution_clock::time_point end = high_resolution_clock::now();
     totalTime += duration_cast<microseconds>(end - start).count();

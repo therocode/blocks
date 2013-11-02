@@ -88,4 +88,5 @@ class VBO {
 		void UnbindBuffer();
 		void DeleteBuffer();
 		GLint mDrawType;
+        GLuint mDrawSize;
 };

@@ -42,9 +42,11 @@ void VBO::UpdateVBO(){
 	mCurrentVBOByteSize = sizeof(Vertex) * mvVertices.size();
 	int idSize = sizeof(int) * mvIndices.size();
 	BindBuffer();
-	glBufferData(GL_ARRAY_BUFFER, mCurrentVBOByteSize, mvVertices.data(), GL_DYNAMIC_DRAW); 
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER,idSize, mvIndices.data(), GL_DYNAMIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, mCurrentVBOByteSize, mvVertices.data(), GL_STATIC_DRAW); 
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER,idSize, mvIndices.data(), GL_STATIC_DRAW);
 	UnbindBuffer();
+    mDrawSize = mvIndices.size();
+    Clear();
 }
 void VBO::DestroyVBO()
 {
@@ -120,7 +122,7 @@ void VBO::DrawVBO(ShaderProgram& program)
 	glEnableVertexAttribArray(i);
 	glVertexAttribPointer(i, 2, GL_FLOAT, GL_FALSE, stride , BUFFER_OFFSET(9 * sizeof(float)));
 
-	glDrawElements(mDrawType, mvIndices.size(), GL_UNSIGNED_INT, 0);
+	glDrawElements(mDrawType, mDrawSize, GL_UNSIGNED_INT, 0);
 
 	UnbindBuffer();
 }
