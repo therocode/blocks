@@ -34,7 +34,7 @@ VoxelCoordinate worldToVoxel(const glm::vec3& position)
     return worldToVoxel(position.x, position.y, position.z);
 }
 
-VoxelTypeData::VoxelTypeData(const std::array<uint32_t, chunkWidthx2>& rleSegmentIndices, const std::vector<uint16_t>& rleSegments) : mRleSegmentIndices(rleSegmentIndices), mRleSegments(rleSegments)
+VoxelTypeData::VoxelTypeData(const RleIndexArray& rleSegmentIndices, const RleSegmentArray& rleSegments) : mRleSegmentIndices(rleSegmentIndices), mRleSegments(rleSegments)
 {
 
 }
@@ -65,7 +65,7 @@ void Chunk::setVoxelData(const VoxelTypeArray& types)
     std::cout << "size before compression: " << sizeof(VoxelTypeArray) << "\n";
     high_resolution_clock::time_point now = high_resolution_clock::now();
 
-    mRleSegmentIndices.fill(0);
+    mRleSegmentIndices.fill(RleSegmentInfo({0, 0}));
     mRleSegments.clear();
 
     uint16_t currentType;
@@ -76,7 +76,8 @@ void Chunk::setVoxelData(const VoxelTypeArray& types)
         for(uint32_t y = 0; y < chunkWidth; y++)
         {
             //store the start of this whole segment
-            mRleSegmentIndices[z + y * chunkWidth] = mRleSegments.size();
+            size_t segmentIndex = z + y * chunkWidth;
+            mRleSegmentIndices[segmentIndex].mSegmentStart = mRleSegments.size();
 
             zyIndex = z * chunkWidth + y * chunkWidthx2;
             currentType = types[zyIndex];
@@ -103,6 +104,8 @@ void Chunk::setVoxelData(const VoxelTypeArray& types)
             //if it reached the end of the segment, it should add what it collected so far
             mRleSegments.push_back(currentAmount);
             mRleSegments.push_back(currentType);
+
+            mRleSegmentIndices[segmentIndex].mSegmentSize = mRleSegments.size() - mRleSegmentIndices[segmentIndex].mSegmentStart;
         }
     }
 

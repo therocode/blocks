@@ -13,9 +13,15 @@ const int32_t chunkWidthx2 = chunkWidth * chunkWidth;
 const int32_t chunkWidthx3 = chunkWidth * chunkWidth * chunkWidth;
 const int32_t voxelAmount = chunkWidthx3;
 
+struct RleSegmentInfo
+{
+    uint32_t mSegmentStart;
+    uint32_t mSegmentSize;
+};
+
 using VoxelType = uint16_t;
 using VoxelTypeArray = std::array<VoxelType, voxelAmount>;
-using RleIndexArray = std::array<uint32_t, chunkWidthx2>;
+using RleIndexArray = std::array<RleSegmentInfo, chunkWidthx2>;
 using RleSegmentArray = std::vector<uint16_t>;
 
 ChunkCoordinate worldToChunk(float x, float y, float z);
@@ -28,9 +34,9 @@ VoxelCoordinate worldToVoxel(const glm::vec3& position);
 
 struct VoxelTypeData
 {
-    VoxelTypeData(const std::array<uint32_t, chunkWidthx2>& rleSegmentIndices, const std::vector<uint16_t>& rleSegments);
-    const std::array<uint32_t, chunkWidthx2>& mRleSegmentIndices;
-    const std::vector<uint16_t>& mRleSegments;    
+    VoxelTypeData(const RleIndexArray& rleSegmentIndices, const RleSegmentArray& rleSegments);
+    const RleIndexArray& mRleSegmentIndices;
+    const RleSegmentArray& mRleSegments;    
 };
 
 class Chunk

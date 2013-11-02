@@ -114,7 +114,7 @@ void Renderer::handleMessage(const ChunkCreatedMessage& received)
     VoxelTypeData voxelTypeData(indexArray, segmentArray);
 
 	VBOCreator vboCreator;
-	vbos.emplace(coordinate, vboCreator.generateChunkVBO(voxelTypeData));
+	vbos.emplace(coordinate, vboCreator.generateChunkVBO(coordinate, voxelTypeData));
 }
 
 void Renderer::handleMessage(const ChunkDeletedMessage& received)

@@ -16,7 +16,7 @@ class VBOCreator
 	};
     public:
     VBOCreator();
-    VBO generateChunkVBO(const VoxelTypeData& voxelTypeData);
+    VBO generateChunkVBO(const ChunkCoordinate& coord, const VoxelTypeData& voxelTypeData);
     VBO generateBoardVBO(const glm::vec2& dimensions) const;
 private:
 	///Helper function for vbo creation.

@@ -147,8 +147,8 @@ void Client::fetchServerData()
 			ChunkLoadedPackage* chunkPackage = (ChunkLoadedPackage*)package.get();
 			ChunkCoordinate coordinate;
 
-            std::array<uint32_t, chunkWidthx2> rleSegmentIndices;
-            std::vector<uint16_t> rleSegments;
+            RleIndexArray rleSegmentIndices;
+            RleSegmentArray rleSegments;
 
 			std::tie(coordinate, rleSegmentIndices, rleSegments) = chunkPackage->getData();
 			mBus.sendMessage<ChunkCreatedMessage>(ChunkCreatedMessage(coordinate, rleSegmentIndices, rleSegments));

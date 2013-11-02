@@ -6,7 +6,7 @@
 
 using RebuildScriptsRequestedPackage = Package<RebuildScriptsRequested_tag, char>;
 
-using ChunkLoadedPackage = Package<ChunkCreated_tag, ChunkCoordinate, std::array<uint32_t, chunkWidthx2>, std::vector<uint16_t> >;
+using ChunkLoadedPackage = Package<ChunkCreated_tag, ChunkCoordinate, RleIndexArray, RleSegmentArray>;
 using ChunkDeletedPackage = Package<ChunkDeleted_tag, ChunkCoordinate>;
 
 using GfxEntityAddedPackage = Package<AddGfxEntity_tag, size_t, glm::vec3>;
