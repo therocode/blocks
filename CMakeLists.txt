@@ -41,6 +41,7 @@ set(source_files
 	src/rendering/renderer.cpp
 	src/rendering/shader.cpp
 	src/rendering/shaderprogram.cpp
+    src/rendering/surfacemerger.cpp
 	src/rendering/vbo.cpp
 	src/rendering/vbocreator.cpp
     src/script/scriptcallback.cpp
@@ -110,6 +111,7 @@ set(header_files
 	src/rendering/renderer.h
 	src/rendering/shader.h
 	src/rendering/shaderprogram.h
+    src/rendering/surfacemerger.h
 	src/rendering/vbo.h
 	src/rendering/vbocreator.h
 	src/script/scriptmessages.h
