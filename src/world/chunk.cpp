@@ -130,7 +130,7 @@ VoxelType Chunk::getVoxelType(uint32_t x, uint32_t y, uint32_t z) const
     {
         walked += mRleSegments[segmentIterator];
 
-        if(walked < x)
+        if(walked <= x)
             segmentIterator += 2;
     }
     
