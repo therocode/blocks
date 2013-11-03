@@ -46,7 +46,7 @@ void CollisionController::onFrame()
 				entity->setAttribute<bool>("on_ground", false);
 				mBus.sendMessage<EntityOnGroundMessage>(EntityOnGroundMessage(entity->getId(), false));
 			}else{
-				entity->setAttribute<glm::vec3>("velocity", velocity * 0.8f);
+				entity->setAttribute<glm::vec3>("velocity", velocity * 0.9f);
 			}
         }else{
 			if(AABBOnGround(a) && velocity.y <= 0.001f){
@@ -121,10 +121,13 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
 			//velocity is either 0 or 1, depending if it collided or not. when all is working it should use the normal to do stuff.
 			//printf("noral: %f, %f, %f\n", normal.x, normal.y, normal.z);
 			velocity     *= glm::vec3(1.0) - glm::abs(normal);
-			acceleration *= glm::vec3(1.0) - glm::abs(normal);
+			// acceleration *= glm::vec3(1.0) - glm::abs(normal);
 			v = approvedPosition - oldPosition;
 			entity->setAttribute<glm::vec3>("velocity", velocity);
 			entity->setAttribute<glm::vec3>("acceleration", acceleration);
+		}else
+		{
+			approvedPosition = oldPosition + v;
 		}
 	}
     entity->setAttribute<glm::vec3>("position", approvedPosition);
@@ -161,7 +164,7 @@ float CollisionController::sweepAroundAABB(const AABB a, glm::vec3 velocity, glm
 				if(mWorldInterface.getVoxelType(cubePos) != 0)
                 {
 				    glm::vec3 norm;
-					renderDebugAABB(b, DebugRenderer::GREEN);
+					// renderDebugAABB(b, DebugRenderer::GREEN);
                    
 
                     //A is the entity, B is block in world, v is newPosition - oldPosition. Function should set norm to a normal on which face it collided. returns depth, which is between 0 and 1.
@@ -187,8 +190,8 @@ float CollisionController::sweepAroundAABB(const AABB a, glm::vec3 velocity, glm
 							// Renderer::sDebugRenderer.drawBox(b.x + b.width*0.5f, b.y + b.height*0.5f, b.z + b.depth*0.5f, b.width  + 0.01f, b.height + 0.01f, b.depth + 0.01f, DebugRenderer::GREEN);
 						// }
 					}
-                }else
-					renderDebugAABB(b, DebugRenderer::RED);
+                }//else
+					//renderDebugAABB(b, DebugRenderer::RED);
             }
         }
     }
@@ -304,7 +307,7 @@ float CollisionController::sweepAABB(const AABB a, const AABB b, const glm::vec3
     float xe, ye, ze;
     float infinity = std::numeric_limits<float>::infinity();
 	
-    if(glm::abs(v.x) == 0)
+    if(v.x == 0)
     {
         xs = -infinity;
         xe =  infinity;
@@ -314,7 +317,7 @@ float CollisionController::sweepAABB(const AABB a, const AABB b, const glm::vec3
         xe = xExit  / v.x;
     }
 
-    if(glm::abs(v.y) == 0)
+    if(v.y == 0)
     {
         ys = -infinity;
         ye =  infinity;
@@ -323,7 +326,7 @@ float CollisionController::sweepAABB(const AABB a, const AABB b, const glm::vec3
         ys = yEntry / v.y;
         ye = yExit  / v.y;
     }
-    if(glm::abs(v.z)  == 0)
+    if(v.z  == 0)
     {
         zs = -infinity;
         ze =  infinity;
@@ -352,7 +355,7 @@ float CollisionController::sweepAABB(const AABB a, const AABB b, const glm::vec3
         n.x = n.y = n.z = 0.0f;
         //		printf("inside\n");
         return 1.0f;
-    }else if(xs > 1.0f + epsilon && ys > 1.0f + epsilon && zs > 1.0f + epsilon)
+    }else if(xs > 1.0f && ys > 1.0f && zs > 1.0f)
     {
         n.x = n.y = n.z = 0.0f;
         //		printf("longer\n");

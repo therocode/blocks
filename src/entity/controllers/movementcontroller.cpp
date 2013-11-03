@@ -48,121 +48,113 @@ void MovementController::onFrame()
 
         float propellSpeed = 0.0f;
         bool backwards = false;
+		
+		if(action == MoveAction::WALKING)
+			propellSpeed = entity->getAttribute<float>("walk_speed");
+		else if(action == MoveAction::WALKING)
+		{
+			propellSpeed = entity->getAttribute<float>("walk_speed");
+			backwards = true;
+		}
+		else if(action == MoveAction::RUNNING)
+			propellSpeed = entity->getAttribute<float>("run_speed");
+		else if(action == MoveAction::STANDING)
+		{
+			propellSpeed = 0.0f;
+			maxAcc = 0.0001f;
+		}
 
-        //if(onGround)
-       // {
-            if(action == MoveAction::WALKING)
-                propellSpeed = entity->getAttribute<float>("walk_speed");
-            else if(action == MoveAction::WALKING)
-            {
-                propellSpeed = entity->getAttribute<float>("walk_speed");
-                backwards = true;
-            }
-            else if(action == MoveAction::RUNNING)
-                propellSpeed = entity->getAttribute<float>("run_speed");
-            else if(action == MoveAction::STANDING)
-            {
-                propellSpeed = 0.0f;
-                maxAcc = 0.0001f;
-            }
+		float pitch = entity->getAttribute<float>("pitch");
+		float yaw = entity->getAttribute<float>("yaw");
+		glm::vec3 forwardDirection;
+		if(entity->getAttribute<PhysicsType>("physics_type") == PhysicsType::FALLING)
+		{
+			forwardDirection = glm::vec3(glm::sin(yaw), 0.0f, glm::cos(yaw)) * (float) moveDirection.getForwardBack();
+		}else
+		{
+			forwardDirection = glm::vec3(glm::cos(pitch) * glm::sin(yaw), glm::sin(pitch), glm::cos(pitch) * glm::cos(yaw)) * (float) moveDirection.getForwardBack();
+		}
+   
+		glm::vec3 sideDirection = glm::vec3(glm::sin(yaw + glm::radians(90.0f * (float)moveDirection.getLeftRight())), 0.0f,glm::cos(yaw + glm::radians(90.0f * (float)moveDirection.getLeftRight())));
 
-            float pitch = entity->getAttribute<float>("pitch");
-            float yaw = entity->getAttribute<float>("yaw");
-			glm::vec3 forwardDirection;
-			if(entity->getAttribute<PhysicsType>("physics_type") == PhysicsType::FALLING)
+		if(moveDirection.getLeftRight() == 0)
+		{
+			sideDirection = glm::vec3(0.0f, 0.0f, 0.0f);
+		}
+
+		glm::vec3 direction = (forwardDirection + sideDirection);
+		if(glm::length2(direction) !=0)
+			direction = glm::normalize(direction);
+		
+		glm::vec3 targetVel;
+
+		if(propellSpeed > 0.0f)
+		{
+			targetVel = direction * propellSpeed;
+		}
+
+		if(backwards)
+			targetVel *= -1.0f;
+
+		glm::vec3 currentVel = entity->getAttribute<glm::vec3>("velocity");
+		currentVel.y = 0.0f;     //this handler does not do gravity or up/down things
+
+		glm::vec3 acc = (targetVel - currentVel);// / timestep;
+		if(entity->getAttribute<PhysicsType>("physics_type") == PhysicsType::FALLING)
+		{
+			glm::vec2 horizontalAcc = glm::vec2(acc.x, acc.z);
+			if(glm::length(horizontalAcc) > maxAcc)
 			{
-				forwardDirection = glm::vec3(glm::sin(yaw), 0.0f, glm::cos(yaw)) * (float) moveDirection.getForwardBack();
-			}else
-			{
-				forwardDirection = glm::vec3(glm::cos(pitch) * glm::sin(yaw), glm::sin(pitch), glm::cos(pitch) * glm::cos(yaw)) * (float) moveDirection.getForwardBack();
+				if(glm::length2(horizontalAcc) != 0)
+					horizontalAcc = glm::normalize(horizontalAcc) * maxAcc;
+				acc.x = horizontalAcc.x;
+				acc.z = horizontalAcc.y;
 			}
-       
-			glm::vec3 sideDirection = glm::vec3(glm::sin(yaw + glm::radians(90.0f * (float)moveDirection.getLeftRight())), 0.0f,glm::cos(yaw + glm::radians(90.0f * (float)moveDirection.getLeftRight())));
-
-            if(moveDirection.getLeftRight() == 0)
-            {
-                sideDirection = glm::vec3(0.0f, 0.0f, 0.0f);
-            }
-
-            glm::vec3 direction = (forwardDirection + sideDirection);
-			if(glm::length2(direction) !=0)
-				direction = glm::normalize(direction);
-			
-            glm::vec3 targetVel;
-
-            if(propellSpeed > 0.0f)
-            {
-                targetVel = direction * propellSpeed;
-            }
-
-            if(backwards)
-                targetVel *= -1.0f;
-
-            glm::vec3 currentVel = entity->getAttribute<glm::vec3>("velocity");
-            currentVel.y = 0.0f;     //this handler does not do gravity or up/down things
-
-            glm::vec3 acc = (targetVel - currentVel);// / timestep;
-			if(entity->getAttribute<PhysicsType>("physics_type") == PhysicsType::FALLING)
+			if(!onGround)
 			{
-				glm::vec2 horizontalAcc = glm::vec2(acc.x, acc.z);
-				if(glm::length(horizontalAcc) > maxAcc)
+				glm::vec2 dir = glm::vec2(direction);
+				if(glm::length2(dir)!= 0)
 				{
-					if(glm::length2(horizontalAcc) != 0)
-						horizontalAcc = glm::normalize(horizontalAcc) * maxAcc;
-					acc.x = horizontalAcc.x;
-					acc.z = horizontalAcc.y;
-				}
-				if(!onGround)
+					dir = glm::normalize(dir);
+				}else
 				{
-					glm::vec2 dir = glm::vec2(direction);
-					if(glm::length2(dir)!= 0)
-					{
-						dir = glm::normalize(dir);
-					}else
-					{
-						dir = glm::vec2(0.f, 0.f);
-					}
-					glm::vec2 vel = glm::vec2(currentVel);
-					if(glm::length2(vel)!= 0)
-					{
-						vel = glm::normalize(vel);
-					}else
-					{
-						vel = glm::vec2(0.f, 0.f);
-					}
-					float d = glm::dot(dir, vel);
-					d =  1.5f - (d+1.f)/2.f;
-					acc *= d * 0.08f;
+					dir = glm::vec2(0.f, 0.f);
 				}
-			}else
+				glm::vec2 vel = glm::vec2(currentVel);
+				if(glm::length2(vel)!= 0)
+				{
+					vel = glm::normalize(vel);
+				}else
+				{
+					vel = glm::vec2(0.f, 0.f);
+				}
+				float d = glm::dot(dir, vel);
+				d =  1.5f - (d+1.f)/2.f;
+				acc *= d * 0.08f;
+			}
+		}else
+		{
+			acc *= 0.01f;
+		}	
+		entity->setAttribute<glm::vec3>("acceleration", acc);
+		
+		if(entity->getAttribute<bool>("jumping")){
+			float jumpStrength = entity->getAttribute<float>("jump_strength");
+			float ySpeed = entity->getAttribute<glm::vec3>("velocity").y;
+			if(onGround && ySpeed <= 0.f)
 			{
-				acc *= 0.01f;
-			}	
-			entity->setAttribute<glm::vec3>("acceleration", acc);
-       // }
-        // else
-        // {
-            // if(action != MoveAction::STANDING)
-            // {
-                //hax aircontrol
-            // }
-           // entity->setAttribute<glm::vec3>("acceleration", glm::vec3());
-        // }
+				mBus.sendMessage<PhysicsImpulseMessage>(PhysicsImpulseMessage(entity->getId(), glm::vec3(0.0f, jumpStrength / 8.0f, 0.0f)));
+				mBus.sendMessage<EntityOnGroundMessage>(EntityOnGroundMessage(entity->getId(), false));
+				entity->setAttribute<bool>("on_ground", false);
+			}
+		}
     }
 }
 
 void MovementController::handleMessage(const EntityJumpMessage& received)
 {
     size_t id;
-
-    std::tie(id) = received.data;
-
-    float jumpStrength = mEntities.at(id).lock()->getAttribute<float>("jump_strength");
-	float ySpeed = mEntities.at(id).lock()->getAttribute<glm::vec3>("velocity").y;
-    if(mEntities.at(id).lock()->getAttribute<bool>("on_ground") && ySpeed <= 0.f)
-    {
-        mBus.sendMessage<PhysicsImpulseMessage>(PhysicsImpulseMessage(id, glm::vec3(0.0f, jumpStrength / 8.0f, 0.0f)));
-        mBus.sendMessage<EntityOnGroundMessage>(EntityOnGroundMessage(id, false));
-		mEntities.at(id).lock()->setAttribute<bool>("on_ground", false);
-    }
+	bool jumping;
+    std::tie(id, jumping) = received.data;
+	mEntities.at(id).lock()->setAttribute<bool>("jumping", jumping);
 }
