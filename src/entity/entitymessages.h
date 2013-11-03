@@ -24,8 +24,8 @@ using EntityNeedsScriptMessage = fea::Message<EntityNeedsScript_tag, fea::WeakEn
 struct EntitySpawned_tag{};//                                entity              //script type
 using EntitySpawnedMessage = fea::Message<EntitySpawned_tag, fea::WeakEntityPtr, const std::string&>;
 
-struct EntityJump_tag{};//                             id
-using EntityJumpMessage = fea::Message<EntityJump_tag, size_t>;
+struct EntityJump_tag{};//                             id      jump or not
+using EntityJumpMessage = fea::Message<EntityJump_tag, size_t, const bool>;
 
 struct EntityOnGround_tag{};//                                  id             landed=true, lift off=false
 using EntityOnGroundMessage = fea::Message<EntityOnGround_tag, fea::EntityId, bool>;
