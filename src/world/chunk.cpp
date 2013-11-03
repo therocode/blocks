@@ -8,9 +8,13 @@ uint32_t Chunk::timesGenerated = 0;
 
 ChunkCoordinate worldToChunk(float x, float y, float z)
 {
-    return ChunkCoordinate(	floor(x / (float)chunkWidth), 
-							floor(y / (float)chunkWidth), 
-							floor(z / (float)chunkWidth));
+	int xNegative = (x < 0.0f)?1:0;
+    int yNegative = (y < 0.0f)?1:0;
+    int zNegative = (z < 0.0f)?1:0;
+
+    return ChunkCoordinate(	((int)(x) / chunkWidth) - xNegative, 
+							((int)(y) / chunkWidth) - yNegative, 
+							((int)(z) / chunkWidth) - zNegative);
 }
 
 ChunkCoordinate worldToChunk(const glm::vec3& position)
