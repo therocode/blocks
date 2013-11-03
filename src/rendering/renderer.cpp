@@ -182,6 +182,13 @@ void Renderer::render()
 {
 	glm::vec3 fullColor = glm::vec3((float)0x00 / 255.f, (float)0xb2 / 255.f, (float)0xff / 255.f);
 	glm::vec3 cameraOffset = glm::vec3(0, 0.6f, 0);
+	float time = mTimer.getTime() * 1.2f;
+	glm::vec3 mV = glm::cross(cam.GetDirection(), glm::vec3(0, 1, 0));
+	if(speed > 0){
+		cameraOffset.y += glm::sin(time*0.01f)*speed;
+		cameraOffset.x += glm::cos(time*0.005f)*speed;
+		cameraOffset.z += glm::sin(time*0.005f)*speed;
+	}
 	interpDuck += (duck - interpDuck) * 0.1f;
 	cameraOffset.y -= interpDuck;
 	duck *= 0.9f;
@@ -422,6 +429,8 @@ void Renderer::handleMessage(const MoveGfxEntityMessage& received)
 		if(lastVel.y < -0.0f && newVel.y >= 0.f){
 			duck = glm::min(-lastVel.y * 200.f, 0.8f);
 		}
+		speedVec = glm::vec2(newVel.x, newVel.z);
+		speed = glm::length(speedVec);
 		lastVel = newVel;
         mCameraPosition = position;
     }
