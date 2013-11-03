@@ -10,7 +10,7 @@
 VoxelType WorldInterface::getVoxelType(float x, float y, float z) const
 {
 	ChunkCoordinate chunkCoordinate = worldToChunk(x, y, z);
-	VoxelCoordinate voxelCoordinate = worldToVoxel(x, y, z);
+	VoxelCoordinate voxelCoordinate = worldToChunkVoxel(x, y, z);
 
 	const Landscape& landscape = mDimension.getLandscape();
 

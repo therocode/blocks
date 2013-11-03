@@ -10,14 +10,17 @@ class Player : Entity
         if(isOnGround())
         {
         }
+		if(frameNumber == 10)
+			setPosition(81920, 30, 0);
         //consolePrint("entity id is " + mId);
     }
 
     void onGround(bool landed)
     {
-        if(landed)
+        if(landed){
+			consolePrint(toString(getPosition()), VERBOSE);
             consolePrint("lalalaaaa i am on the ground");
-        else
+        }else
             consolePrint("lalalaaaa i am on the air");
     }
 }

@@ -430,7 +430,7 @@ void Renderer::handleMessage(const MoveGfxEntityMessage& received)
     {
 		glm::vec3 newVel = position - mCameraPosition;
 		if(lastVel.y < -0.0f && newVel.y >= 0.f){
-			duck = glm::min(-lastVel.y * 200.f, 0.8f);
+			duck = glm::min(-lastVel.y * 400.f, 1.0f);
 		}
 		speedVec = glm::vec2(newVel.x, newVel.z);
 		speed = glm::length(speedVec);

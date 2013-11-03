@@ -18,9 +18,30 @@ ChunkCoordinate worldToChunk(const glm::vec3& position)
     return worldToChunk(position.x, position.y, position.z);
 }
 
-VoxelCoordinate worldToVoxel(float x, float y, float z)
+VoxelWorldCoordinate worldToVoxel(float x, float y, float z)
 {
-    bool xNegative = x < 0.0f;
+	bool xNegative = x < 0.0f;
+    bool yNegative = y < 0.0f;
+    bool zNegative = z < 0.0f;
+
+    return VoxelWorldCoordinate((int)x + (xNegative?-1:0),
+								(int)y + (yNegative?-1:0),
+								(int)z + (zNegative?-1:0));
+}
+
+VoxelWorldCoordinate worldToVoxel(const glm::vec3& position)
+{
+    return worldToVoxel(position.x, position.y, position.z);
+}
+
+VoxelCoordinate worldToChunkVoxel(const glm::vec3& position)
+{
+	return worldToChunkVoxel(position.x, position.y, position.z);
+}
+
+VoxelCoordinate worldToChunkVoxel(float x, float y, float z)
+{
+	bool xNegative = x < 0.0f;
     bool yNegative = y < 0.0f;
     bool zNegative = z < 0.0f;
 
@@ -29,10 +50,7 @@ VoxelCoordinate worldToVoxel(float x, float y, float z)
                            (((int)z) % chunkWidth) + (zNegative?chunkWidth-1:0));
 }
 
-VoxelCoordinate worldToVoxel(const glm::vec3& position)
-{
-    return worldToVoxel(position.x, position.y, position.z);
-}
+
 
 VoxelTypeData::VoxelTypeData(const RleIndexArray& rleSegmentIndices, const RleSegmentArray& rleSegments) : mRleSegmentIndices(rleSegmentIndices), mRleSegments(rleSegments)
 {
