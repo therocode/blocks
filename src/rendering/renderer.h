@@ -49,6 +49,9 @@ class Renderer
         void cameraUpdate();    // camera function
 		void setCameraMatrix(const glm::mat4& m);
     private:
+		float interpDuck = 0.0f;
+		float duck = 0.f;
+		glm::vec3 lastVel;
 		ShaderProgram mShaderProgram;
 		Camera cam;
 		Timer mTimer;
