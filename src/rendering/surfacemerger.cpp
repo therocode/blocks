@@ -53,6 +53,7 @@ void SurfaceMerger::doFirstMerge()
 
             if((quadA.mX + quadA.mWidth == quadB.mX) && 
                     (quadA.mY == quadB.mY) && 
+                    (quadA.mHeight == quadB.mHeight) && 
                     (quadA.mDepth == quadB.mDepth) &&
                     (quadA.mType == quadB.mType))
             {
@@ -103,6 +104,7 @@ void SurfaceMerger::doSecondMerge()
 
             if((quadA.mY + quadA.mHeight == quadB.mY) && 
                     (quadA.mX == quadB.mX) && 
+                    (quadA.mWidth == quadB.mWidth) && 
                     (quadA.mDepth == quadB.mDepth) &&
                     (quadA.mType == quadB.mType))
             {
