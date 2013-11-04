@@ -8,17 +8,19 @@ MeshWalker::MeshWalker()
     mBottomSegment = nullptr;
     mFrontSegment = nullptr;
     mBackSegment = nullptr;
-    mDepth = 0;
+    mY = 0;
+    mZ = 0;
 }
 
-void MeshWalker::setIterators(RleIterator centreSegment, RleIterator topSegment, RleIterator bottomSegment, RleIterator frontSegment, RleIterator backSegment, uint32_t depth)
+void MeshWalker::setIterators(RleIterator centreSegment, RleIterator topSegment, RleIterator bottomSegment, RleIterator frontSegment, RleIterator backSegment, uint32_t y, uint32_t z)
 {
     mCentreSegment = centreSegment;
     mTopSegment = topSegment;
     mBottomSegment = bottomSegment;
     mFrontSegment = frontSegment;
     mBackSegment = backSegment;
-    mDepth = depth;
+    mY = y;
+    mZ = z;
 }
         
 const std::vector<SurfaceQuad>& MeshWalker::getTopQuads() const
@@ -100,6 +102,6 @@ void MeshWalker::walkBuildTop(uint16_t targetCoord, uint16_t targetType)
             continue;
 
         std::cout << "walked and created a length of " << targetCoord - quadStart << "\n";
-        mTopQuads.push_back(SurfaceQuad(quadStart, mTopWalked, targetCoord - quadStart, 1, mDepth, targetType));
+        mTopQuads.push_back(SurfaceQuad(quadStart, mZ, (mTopWalked > targetCoord ? targetCoord : mTopWalked) - quadStart, 1, mY, targetType));
     }
 }

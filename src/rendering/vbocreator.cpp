@@ -52,7 +52,7 @@ VBO VBOCreator::generateChunkVBO(const ChunkCoordinate& coord, const VoxelTypeDa
             if(z < chunkWidth - 1)
                 frontIterator = &voxelTypeData.mRleSegments[voxelTypeData.mRleSegmentIndices[zyIndex + 1].mSegmentStart];
 
-            walker.setIterators(centreIterator, topIterator, bottomIterator, frontIterator, backIterator, y);
+            walker.setIterators(centreIterator, topIterator, bottomIterator, frontIterator, backIterator, y, z);
             walker.walk();
         }
     }
@@ -70,7 +70,7 @@ VBO VBOCreator::generateChunkVBO(const ChunkCoordinate& coord, const VoxelTypeDa
     for(auto& quad : merger.getQuads())
     {
         float worldX = quad.mX + chunkOffset.x;
-        float worldY = quad.mDepth + chunkOffset.y;
+        float worldY = quad.mDepth + chunkOffset.y + 1.0f;
         float worldZ = quad.mY + chunkOffset.z;
 
         textureLocation = glm::uvec2(quad.mType - 1, 0);
@@ -93,8 +93,8 @@ VBO VBOCreator::generateChunkVBO(const ChunkCoordinate& coord, const VoxelTypeDa
 #endif
         r.setUV(3, e+      (float)u * uo,  e+      (float)v * vo);
         r.setUV(2, e+      (float)u * uo, -e+ vo + (float)v * vo);
-        r.setUV(1,(-e+ uo + (float)u * uo) * (float)quad.mWidth, -e+ vo + (float)v * vo);
-        r.setUV(0,(-e+ uo + (float)u * uo) * (float)quad.mWidth,  e+      (float)v * vo);
+        r.setUV(1,(-e+ uo + (float)u * uo), -e+ vo + (float)v * vo);
+        r.setUV(0,(-e+ uo + (float)u * uo),  e+      (float)v * vo);
 
         r.calculateNormal();
         vbo.PushRectangle(r);
