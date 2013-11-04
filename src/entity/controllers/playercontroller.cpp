@@ -161,10 +161,7 @@ void PlayerController::updateVoxelLookAt(size_t playerId)
     float yaw = entity->getAttribute<float>("yaw");
     glm::vec3 position = entity->getAttribute<glm::vec3>("position");
   
-	glm::vec3 direction = glm::vec3(glm::cos(pitch)*glm::sin(yaw), glm::sin(pitch), glm::cos(pitch) * glm::cos(yaw));
-	if(glm::length2(direction) != 0)
-		direction = glm::normalize(direction) * 10.0f;
-
+	glm::vec3 direction = glm::vec3(glm::cos(pitch) * glm::sin(yaw), glm::sin(pitch), glm::cos(pitch) * glm::cos(yaw));
 	glm::vec3 block = mWorldInterface.getVoxelAtRay(position + glm::vec3(0, 0.6f, 0), direction);
 
     if(block != entity->getAttribute<glm::vec3>("block_facing"))

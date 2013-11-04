@@ -1,5 +1,5 @@
 #include "worldinterface.h"
-
+#include "rendering/renderer.h"
 	WorldInterface::WorldInterface(Dimension& dimension, EntitySystem& entitySystem)
 :   mDimension(dimension),
 	mEntitySystem(entitySystem)
@@ -10,7 +10,7 @@
 VoxelType WorldInterface::getVoxelType(float x, float y, float z) const
 {
 	ChunkCoordinate chunkCoordinate = worldToChunk(x, y, z);
-	VoxelCoordinate voxelCoordinate = worldToVoxel(x, y, z);
+	VoxelCoordinate voxelCoordinate = worldToChunkVoxel(x, y, z);
 
 	const Landscape& landscape = mDimension.getLandscape();
 
@@ -36,51 +36,92 @@ glm::vec3 WorldInterface::getVoxelAtRay(const glm::vec3& position, const glm::ve
 
 glm::vec3 WorldInterface::getVoxelAtRay(float ox, float oy, float oz, float dx, float dy, float dz) const
 {
+	int ip[3] = {(int)ox -(ox<0), (int)oy -(oy<0), (int)oz -(oz<0)};
+	glm::vec3 bp = glm::fract(glm::vec3(ox, oy, oz));
+	VoxelCoordinate chunkCoordinate = worldToChunkVoxel(ip[0], ip[1], ip[2]);
+	// printf("ip:%i, %i, %i\n", ip[0], ip[1], ip[2]);
+	// printf("ip:%i, %i, %i\n", chunkCoordinate[0], chunkCoordinate[1], chunkCoordinate[2]);
+	// printf("rp:%f, %f, %f\n", ox, oy, oz);
+	//glm::vec3 ip = glm::vec3((int), (int)oy, (int)oz);
+	
 	glm::vec3 d = glm::vec3(dx, dy, dz);
 	if(glm::length2(d) != 0)
 		d = glm::normalize(d);
-	//d*= 0.1f;
+	else
+		return glm::vec3(0, 9999, 0);
+	
 	glm::vec3 p = glm::vec3(ox, oy, oz);
 	
-	float l = glm::sqrt(dx * dx + dy * dy + dz * dz);
-	l *= 0.01;
-	dx *= l;
-	dy *= l;
-	dz *= l;
 	int steps = 0;
 	uint16_t vtype = 0;
 	glm::vec3 bounds = glm::vec3(0,0,0);
 	if(dx > 0)bounds.x = 1.0f;
 	if(dy > 0)bounds.y = 1.0f;
 	if(dz > 0)bounds.z = 1.0f;
-	
+	float ix, iy, iz;
+	// printf("o: %i, %i, %i\n", ip[0], ip[1], ip[2]);
 	while(steps < 256){//Able to look 256 blocks away!
-		
-		glm::vec3 lp = glm::fract(p);
-		float nd = 10.f;
-		glm::vec3 distInBlock = bounds - lp;
+		//glm::vec3 lp = glm::fract(p);
+		glm::vec3 distInBlock = bounds - bp;
 
 		glm::vec3 poop = distInBlock / d;
 		
+		int mini = 0;
 		float mind = poop.x;
 		
 		if(mind > poop.y){
 			mind = poop.y;
+			mini = 1;
 		}
 		if(mind > poop.z){
 			mind = poop.z;
+			mini = 2;
 		}
 		
 		float lengthToNextBlock = 0.1f;
-		lengthToNextBlock = mind + 0.001f;
+		lengthToNextBlock = mind + 0.01f;
 		
-		vtype = getVoxelType(p.x, p.y, p.z);
-		if(vtype != (uint16_t)0 ) break;
-		p += d * lengthToNextBlock;
+		vtype = getVoxelType(
+		ip[0], 
+		ip[1], 
+		ip[2]);
+		// if(vtype != getVoxelType((float)ip[0] + 0.1f, (float)ip[1] + 0.1f, (float)ip[2] + 0.1f))
+		// {
+			// printf("not the same. this is wrong.\n");
+			// VoxelCoordinate voxelCoordinate = worldToChunkVoxel(ip[0], ip[1], ip[2]);
+			// VoxelCoordinate voxelCoordinate2 = worldToChunkVoxel((float)ip[0] + 0.1f, (float)ip[1] + 0.1f, (float)ip[2] + 0.1f);
+			// voxelCoordinate -= voxelCoordinate2;
+			// printf("diffaerecne chunk: %i, %i, %i\n", voxelCoordinate.x, voxelCoordinate.y, voxelCoordinate.z);
+		// }
+		// Renderer::sDebugRenderer.drawPoint(ip[0] + 0.5f, ip[1] + 0.5f, ip[2] + 0.5f, DebugRenderer::ORANGE);
 		
+		if(vtype != (uint16_t)0) 
+			break;
+		
+		bp += d * lengthToNextBlock;
+		if(bp[mini] >= 1.f){
+			ip[mini] ++;
+			bp[mini] = 0.f;
+		}else{
+			ip[mini] --;
+			bp[mini] = 1.f;
+		}
 		steps ++;
 	}
-	return glm::floor(p) + glm::vec3(0.5f);
+//	printf("steps:%i\n", steps);
+
+	//printf("not the same. this is wrong.\n");
+	// VoxelCoordinate voxelCoordinate = worldToChunkVoxel((int) -1, (int) -1, (int) -1);
+	//VoxelCoordinate voxelCoordinate2 = worldToChunkVoxel(1, 0, -1);
+	// voxelCoordinate -= voxelCoordinate2;
+	 //printf("diffaerecne chunk: %i, %i, %i\n", voxelCoordinate2.x, voxelCoordinate2.y, voxelCoordinate2.z);
+
+	glm::vec3 block = glm::vec3(ip[0] , ip[1] , ip[2] );
+	// printf("lookat block = %f, %f, %f\n",block.x, block.y, block.z);
+	if(steps == 256){ return glm::vec3(0, 9999, 0); }
+	return block + glm::vec3(0.5f);
+	// return glm::vec3(ip[0] - (ip[0] < 0), ip[1] - (ip[1] < 0), ip[2] - (ip[2] < 0)) + glm::vec3(0.5f);
+	// return glm::vec3((int)p.x - (p.x<0),(int)p.y - (p.y<0),(int)p.z - (p.z<0)) + glm::vec3(0.5f);
 }
 
 fea::WeakEntityPtr WorldInterface::spawnEntity(const std::string& scriptType, const glm::vec3& position)

@@ -76,7 +76,7 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
     glm::vec3 size = entity->getAttribute<glm::vec3>("hitbox");
     AABB a;
 
-   glm::vec3 velocity;
+	glm::vec3 velocity;
 
     a.width  = size.x;
     a.height = size.y;
@@ -86,6 +86,7 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
 	glm::vec3 ignoreAxis = glm::vec3(0);
 	float n = 0.0;
 	int steps = 0;
+	
 	while(n < 1.0f){
 		steps++;
 		glm::vec3 normal = glm::vec3(0);

@@ -8,9 +8,13 @@ uint32_t Chunk::timesGenerated = 0;
 
 ChunkCoordinate worldToChunk(float x, float y, float z)
 {
-    return ChunkCoordinate(	floor(x / (float)chunkWidth), 
-							floor(y / (float)chunkWidth), 
-							floor(z / (float)chunkWidth));
+	int xNegative = (x < 0.0f)?1:0;
+    int yNegative = (y < 0.0f)?1:0;
+    int zNegative = (z < 0.0f)?1:0;
+
+    return ChunkCoordinate(	((int)(x) / chunkWidth) - xNegative, 
+							((int)(y) / chunkWidth) - yNegative, 
+							((int)(z) / chunkWidth) - zNegative);
 }
 
 ChunkCoordinate worldToChunk(const glm::vec3& position)
@@ -18,21 +22,39 @@ ChunkCoordinate worldToChunk(const glm::vec3& position)
     return worldToChunk(position.x, position.y, position.z);
 }
 
-VoxelCoordinate worldToVoxel(float x, float y, float z)
+VoxelWorldCoordinate worldToVoxel(float x, float y, float z)
 {
-    bool xNegative = x < 0.0f;
-    bool yNegative = y < 0.0f;
-    bool zNegative = z < 0.0f;
-
-    return VoxelCoordinate((((int)x) % chunkWidth) + (xNegative?chunkWidth-1:0),
-                           (((int)y) % chunkWidth) + (yNegative?chunkWidth-1:0),
-                           (((int)z) % chunkWidth) + (zNegative?chunkWidth-1:0));
+    return VoxelWorldCoordinate((int)x - (x<0),
+								(int)y - (y<0),
+								(int)z - (z<0));
 }
 
-VoxelCoordinate worldToVoxel(const glm::vec3& position)
+VoxelWorldCoordinate worldToVoxel(const glm::vec3& position)
 {
     return worldToVoxel(position.x, position.y, position.z);
 }
+
+VoxelCoordinate worldToChunkVoxel(const glm::vec3& position)
+{
+	return worldToChunkVoxel(position.x, position.y, position.z);
+}
+
+VoxelCoordinate worldToChunkVoxel(float x, float y, float z)
+{
+	int xNegative = (int)(x - chunkWidth) / chunkWidth;
+	int yNegative = (int)(y - chunkWidth) / chunkWidth;
+	int zNegative = (int)(z - chunkWidth) / chunkWidth;
+	
+	if(xNegative < 0) x += (-xNegative + 1) * chunkWidth;
+	if(yNegative < 0) y += (-yNegative + 1) * chunkWidth;
+	if(zNegative < 0) z += (-zNegative + 1) * chunkWidth;
+
+    return VoxelCoordinate((((int)x) % chunkWidth),
+                           (((int)y) % chunkWidth),
+                           (((int)z) % chunkWidth));
+}
+
+
 
 VoxelTypeData::VoxelTypeData(const RleIndexArray& rleSegmentIndices, const RleSegmentArray& rleSegments) : mRleSegmentIndices(rleSegmentIndices), mRleSegments(rleSegments)
 {
@@ -123,6 +145,7 @@ void Chunk::setVoxelData(const VoxelTypeArray& types)
 //these should be optimised in the future using binary trees
 VoxelType Chunk::getVoxelType(uint32_t x, uint32_t y, uint32_t z) const
 {
+	if(x >= chunkWidth || y >= chunkWidth || z >= chunkWidth)return 0;
     size_t segmentIterator = mRleSegmentIndices[z + y * chunkWidth].mSegmentStart;
     size_t walked = 0;
 

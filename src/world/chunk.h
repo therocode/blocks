@@ -7,6 +7,7 @@
 
 using ChunkCoordinate = glm::ivec3;
 using VoxelCoordinate = glm::uvec3;
+using VoxelWorldCoordinate = glm::ivec3;
 
 const int32_t chunkWidth = 16;
 const int32_t chunkWidthx2 = chunkWidth * chunkWidth;
@@ -25,12 +26,13 @@ using RleIndexArray = std::array<RleSegmentInfo, chunkWidthx2>;
 using RleSegmentArray = std::vector<uint16_t>;
 
 ChunkCoordinate worldToChunk(float x, float y, float z);
-
 ChunkCoordinate worldToChunk(const glm::vec3& position);
 
-VoxelCoordinate worldToVoxel(float x, float y, float z);
+VoxelCoordinate worldToChunkVoxel(const glm::vec3& position);
+VoxelCoordinate worldToChunkVoxel(float x, float y, float z);
 
-VoxelCoordinate worldToVoxel(const glm::vec3& position);
+VoxelWorldCoordinate worldToVoxel(float x, float y, float z);
+VoxelWorldCoordinate worldToVoxel(const glm::vec3& position);
 
 struct VoxelTypeData
 {
