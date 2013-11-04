@@ -81,8 +81,8 @@ void MeshWalker::walk()
             //let others catch up and build quads
             if(mTopSegment)
                 walkBuildTop(targetCoord, currentType, quadStart);
-            //else
-            //    mTopQuads.push_back(SurfaceQuad(quadStart, mZ, targetCoord - quadStart, 1, mY + 1, currentType));
+            else
+                mTopQuads.push_back(SurfaceQuad(quadStart, mZ, targetCoord - quadStart, 1, mY, currentType));
         }
     }
 }
@@ -105,7 +105,9 @@ void MeshWalker::walkBuildTop(uint16_t targetCoord, uint16_t targetType, uint16_
         if(currentType != 0)
             continue;
 
-        std::cout << "walked and created a length of " << targetCoord - quadStart << "\n";
-        mTopQuads.push_back(SurfaceQuad(quadStart, mZ, (mTopWalked > targetCoord ? targetCoord : mTopWalked) - quadStart, 1, mY, targetType));
+        uint16_t quadLength = (mTopWalked > targetCoord ? targetCoord : mTopWalked) - quadStart;
+
+        std::cout << "walked and created a length of " << quadLength << "\n";
+        mTopQuads.push_back(SurfaceQuad(quadStart, mZ, quadLength, 1, mY, targetType));
     }
 }
