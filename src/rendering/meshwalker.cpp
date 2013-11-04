@@ -64,9 +64,11 @@ void MeshWalker::walk()
 
         uint16_t targetCoord = 0;
         uint16_t currentType = 0;
+        uint16_t quadStart = 0;
 
         while(targetCoord < chunkWidth)
         {
+            quadStart = targetCoord;
             targetCoord += *mCentreSegment;
             mCentreSegment++;
             currentType = *mCentreSegment;
@@ -78,19 +80,21 @@ void MeshWalker::walk()
 
             //let others catch up and build quads
             if(mTopSegment)
-                walkBuildTop(targetCoord, currentType);
+                walkBuildTop(targetCoord, currentType, quadStart);
+            //else
+            //    mTopQuads.push_back(SurfaceQuad(quadStart, mZ, targetCoord - quadStart, 1, mY + 1, currentType));
         }
     }
 }
 
-void MeshWalker::walkBuildTop(uint16_t targetCoord, uint16_t targetType)
+void MeshWalker::walkBuildTop(uint16_t targetCoord, uint16_t targetType, uint16_t earliestStart)
 {
     uint16_t currentType = 0;
     uint16_t quadStart = 0;
 
     while(mTopWalked < targetCoord)
     {
-        quadStart = mTopWalked;
+        quadStart = mTopWalked > earliestStart ? mTopWalked : earliestStart;
 
         mTopWalked += *mTopSegment;
         mTopSegment++;

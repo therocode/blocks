@@ -17,7 +17,7 @@ class MeshWalker
         const std::vector<SurfaceQuad>& getRightQuads() const;
         void walk();
     private:
-        void walkBuildTop(uint16_t targetCoord, uint16_t currentType);
+        void walkBuildTop(uint16_t targetCoord, uint16_t currentType, uint16_t earliestStart);
         RleIterator mCentreSegment;
         RleIterator mTopSegment;
         RleIterator mBottomSegment;
