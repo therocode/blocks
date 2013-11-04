@@ -99,7 +99,7 @@ void MeshWalker::walkBuildTop(uint16_t targetCoord, uint16_t targetType)
         if(currentType != 0)
             continue;
 
-        std::cout << "walked and created a length of " << mTopWalked - quadStart << "\n";
-        mTopQuads.push_back(SurfaceQuad(quadStart, mTopWalked, mTopWalked - quadStart, 1, mDepth + 1, targetType));
+        std::cout << "walked and created a length of " << targetCoord - quadStart << "\n";
+        mTopQuads.push_back(SurfaceQuad(quadStart, mTopWalked, targetCoord - quadStart, 1, mDepth, targetType));
     }
 }

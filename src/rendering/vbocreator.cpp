@@ -70,7 +70,7 @@ VBO VBOCreator::generateChunkVBO(const ChunkCoordinate& coord, const VoxelTypeDa
     for(auto& quad : merger.getQuads())
     {
         float worldX = quad.mX + chunkOffset.x;
-        float worldY = quad.mDepth + chunkOffset.y - 1.0f;
+        float worldY = quad.mDepth + chunkOffset.y;
         float worldZ = quad.mY + chunkOffset.z;
 
         textureLocation = glm::uvec2(quad.mType - 1, 0);
@@ -79,7 +79,7 @@ VBO VBOCreator::generateChunkVBO(const ChunkCoordinate& coord, const VoxelTypeDa
         r.setPosition(1, worldX + quad.mWidth, worldY, worldZ               );
         r.setPosition(0, worldX + quad.mWidth, worldY, worldZ + quad.mHeight);
 
-        //std::cout << "adding rectangle: " << quad.mX << " " << quad.mY << " " << quad.mWidth << " " << quad.mHeight << " depth: " << quad.mDepth << " type: " << quad.mType << "\n";
+        std::cout << "adding rectangle: " << quad.mX << " " << quad.mY << " " << quad.mWidth << " " << quad.mHeight << " depth: " << quad.mDepth << " type: " << quad.mType << "\n";
 
         float u = textureLocation.x;
         float v = textureLocation.y;
