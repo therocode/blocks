@@ -38,6 +38,7 @@ set(source_files
 	src/rendering/debugrenderer.cpp
 	src/rendering/billboard.cpp
 	src/rendering/camera.cpp
+	src/rendering/meshwalker.cpp
 	src/rendering/renderer.cpp
 	src/rendering/shader.cpp
 	src/rendering/shaderprogram.cpp
@@ -108,6 +109,7 @@ set(header_files
 	src/rendering/renderingmessages.h
 	src/rendering/billboard.h
 	src/rendering/camera.h
+	src/rendering/meshwalker.h
 	src/rendering/renderer.h
 	src/rendering/shader.h
 	src/rendering/shaderprogram.h

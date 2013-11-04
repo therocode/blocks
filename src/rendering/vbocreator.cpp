@@ -1,6 +1,7 @@
 #include "vbocreator.h"
 #include <vector>
 #include <chrono>
+#include "meshwalker.h"
 
 using std::chrono::duration_cast;
 using std::chrono::microseconds;
@@ -28,147 +29,81 @@ VBO VBOCreator::generateChunkVBO(const ChunkCoordinate& coord, const VoxelTypeDa
 	glm::vec3 chunkOffset(location.x * (float)chunkWidth, location.y * (float)chunkWidth, location.z * (float)chunkWidth);
 
 	VoxelTypeArray voxelTypes;
+    MeshWalker walker;
 
     for(uint32_t z = 0; z < chunkWidth; z++)
     {
         for(uint32_t y = 0; y < chunkWidth; y++)
         {
-            uint32_t walked = 0;
-            size_t zyIndex = z * chunkWidth + y * chunkWidthx2;
-            size_t runIterator = voxelTypeData.mRleSegmentIndices[z + y * chunkWidth].mSegmentStart;
-            while(walked < chunkWidth)
-            {
-                uint16_t runLength = voxelTypeData.mRleSegments[runIterator];
-                uint16_t runType = voxelTypeData.mRleSegments[runIterator + 1];
+            size_t zyIndex = z + y * chunkWidth;
 
-                for(uint16_t i = 0; i < runLength; i++)
-                {
-                    voxelTypes[walked + zyIndex] = runType;
-                    walked++;
-                }
-                runIterator += 2;
-            }
+            RleIterator centreIterator = &voxelTypeData.mRleSegments[voxelTypeData.mRleSegmentIndices[zyIndex].mSegmentStart];
+            RleIterator topIterator = nullptr;
+            RleIterator bottomIterator = nullptr;
+            RleIterator frontIterator = nullptr;
+            RleIterator backIterator = nullptr;
+
+            if(y > 0)
+                bottomIterator = &voxelTypeData.mRleSegments[voxelTypeData.mRleSegmentIndices[zyIndex - chunkWidth].mSegmentStart];
+            if(y < chunkWidth - 1)
+                topIterator = &voxelTypeData.mRleSegments[voxelTypeData.mRleSegmentIndices[zyIndex + chunkWidth].mSegmentStart];
+            if(z > 0)
+                backIterator = &voxelTypeData.mRleSegments[voxelTypeData.mRleSegmentIndices[zyIndex - 1].mSegmentStart];
+            if(z < chunkWidth - 1)
+                frontIterator = &voxelTypeData.mRleSegments[voxelTypeData.mRleSegmentIndices[zyIndex + 1].mSegmentStart];
+
+            walker.setIterators(centreIterator, topIterator, bottomIterator, frontIterator, backIterator, y);
+            walker.walk();
         }
     }
 
+    SurfaceMerger merger;
+    std::cout << "walker giving " << walker.getTopQuads().size() << " quads to merger\n";
+    merger.setQuads(walker.getTopQuads());
+
+    merger.doSecondMerge();
+
+    
 	glm::uvec2 textureLocation;
+    Rectangle r;
 
-	uint32_t xStep = 1;
-	uint32_t yStep = chunkWidthx2;
-	uint32_t zStep = chunkWidth;
-	uint32_t currentIndex = 0;
+    for(auto& quad : merger.getQuads())
+    {
+        float worldX = quad.mX + chunkOffset.x;
+        float worldY = quad.mDepth + chunkOffset.y - 1.0f;
+        float worldZ = quad.mY + chunkOffset.z;
 
-	for(int y = 0; y < chunkWidth; y++)
-	{
-		for(int z = 0; z < chunkWidth; z++)
-		{
-			for(int x = 0; x < chunkWidth; x++)
-			{
-				currentIndex = x + z * chunkWidth + y * chunkWidthx2;
-				VoxelType type = voxelTypes[currentIndex];
-				if(type != 0)
-				{
+        textureLocation = glm::uvec2(quad.mType - 1, 0);
+        r.setPosition(3, worldX,               worldY, worldZ + quad.mHeight);
+        r.setPosition(2, worldX,               worldY, worldZ               );
+        r.setPosition(1, worldX + quad.mWidth, worldY, worldZ               );
+        r.setPosition(0, worldX + quad.mWidth, worldY, worldZ + quad.mHeight);
 
-					//if(type == 1)
-						textureLocation = glm::uvec2(type - 1, 0);
-					//if(type == 2)
-					//	textureLocation = glm::uvec2(texture2X, texture2Y);
+        //std::cout << "adding rectangle: " << quad.mX << " " << quad.mY << " " << quad.mWidth << " " << quad.mHeight << " depth: " << quad.mDepth << " type: " << quad.mType << "\n";
 
-					bool frontObscured = false;
-					bool backObscured = false;
-					bool leftObscured = false;
-					bool rightObscured = false;
-					bool topObscured = false;
-					bool bottomObscured = false;
+        float u = textureLocation.x;
+        float v = textureLocation.y;
 
-					if(x > 0)
-					{
-						if(voxelTypes[currentIndex - xStep] != 0)
-							leftObscured = true;
-					}
-					if(x < chunkWidth - 1)
-					{
-						if(voxelTypes[currentIndex + xStep] != 0)
-							rightObscured = true;
-					}
-					if(y > 0)
-					{
-						if(voxelTypes[currentIndex - yStep] != 0)
-							bottomObscured = true;
-					}
-					if(y < chunkWidth - 1)
-					{
-						if(voxelTypes[currentIndex + yStep] != 0)
-							topObscured = true;
-					}
-					if(z > 0)
-					{
-						if(voxelTypes[currentIndex - zStep] != 0)
-							backObscured = true;
-					}
-					if(z < chunkWidth - 1)
-					{
-						if(voxelTypes[currentIndex + zStep] != 0)
-							frontObscured = true;
-					}
+        float uo = 0.125f;
+        float vo = 0.125f;
+#ifdef EMSCRIPTEN
+        float e = 0.006f;
+#else
+        float e = 0.0006f;
+#endif
+        r.setUV(3, e+      (float)u * uo,  e+      (float)v * vo);
+        r.setUV(2, e+      (float)u * uo, -e+ vo + (float)v * vo);
+        r.setUV(1,(-e+ uo + (float)u * uo) * (float)quad.mWidth, -e+ vo + (float)v * vo);
+        r.setUV(0,(-e+ uo + (float)u * uo) * (float)quad.mWidth,  e+      (float)v * vo);
 
-					float worldX = x + chunkOffset.x;
-					float worldY = y + chunkOffset.y;
-					float worldZ = z + chunkOffset.z;
-					glm::vec3 color = glm::vec3(1.0f, 1.f, 1.f);
-					color -= glm::clamp((chunkOffset.y + y) * -0.05f, 0.f, 1.f);
-					Rectangle r;
-					r.setColor(color.x, color.y, color.z);
-					// r.setColor(1.f, 1.f, 1.f);
-					if(!frontObscured)
-					{
-						setRectData(r, worldX, worldY, worldZ, FRONT, (float)textureLocation.x, (float)textureLocation.y);
-						r.calculateNormal();
-						vbo.PushRectangle(r);
-					}
-
-					if(!backObscured)
-					{
-						setRectData(r, worldX, worldY, worldZ, BACK, (float)textureLocation.x, (float)textureLocation.y);
-						r.calculateNormal();
-						vbo.PushRectangle(r);
-					}
-
-					if(!leftObscured)
-					{
-						setRectData(r, worldX, worldY, worldZ, LEFT, (float)textureLocation.x, (float)textureLocation.y);
-						r.calculateNormal();
-						vbo.PushRectangle(r);
-					}
-
-					if(!rightObscured)
-					{
-						setRectData(r, worldX, worldY, worldZ, RIGHT, (float)textureLocation.x, (float)textureLocation.y);
-						r.calculateNormal();
-						vbo.PushRectangle(r);
-					}
-
-					if(!topObscured)
-					{
-						setRectData(r, worldX, worldY, worldZ, TOP, (float)textureLocation.x, (float)textureLocation.y);
-						r.calculateNormal();
-						vbo.PushRectangle(r);
-					}
-
-					if(!bottomObscured)
-					{
-						setRectData(r, worldX, worldY, worldZ, BOTTOM, (float)textureLocation.x, (float)textureLocation.y);
-						r.calculateNormal();
-						vbo.PushRectangle(r);
-					}
-				}
-			}
-		}
-	}
+        r.calculateNormal();
+        vbo.PushRectangle(r);
+    }
 
 	//After stuff has been added, you have to update the gpu vbo data.
 	vbo.UpdateVBO();
 	vbo.Clear();
+    
 
     high_resolution_clock::time_point end = high_resolution_clock::now();
     totalTime += duration_cast<microseconds>(end - start).count();
