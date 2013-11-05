@@ -114,7 +114,7 @@ const std::vector<SurfaceQuad>& MeshWalker::getLeftQuads() const
 
 const std::vector<SurfaceQuad>& MeshWalker::getRightQuads() const
 {
-    return mRigthQuads;
+    return mRightQuads;
 }
 
 void MeshWalker::walk()
@@ -130,6 +130,8 @@ void MeshWalker::walk()
         uint16_t currentType = 0;
         uint16_t quadStart = 0;
 
+        bool isInAir = false;
+
         while(targetCoord < chunkWidth)
         {
             quadStart = targetCoord;
@@ -140,7 +142,22 @@ void MeshWalker::walk()
 
             //skip if it is air
             if(currentType == 0)
+            {
+                if(!isInAir && quadStart > 0)
+                {
+                    //create quad
+                    mRightQuads.push_back(SurfaceQuad(mZ, mY, 1, 1, quadStart, *(mCentreSegment - 3)));
+                }
+                isInAir = true;
                 continue;
+            }
+
+            if(isInAir)
+            {
+                //create quad
+                mLeftQuads.push_back(SurfaceQuad(mZ, mY, 1, 1, quadStart, currentType));
+                isInAir = false;
+            }
 
             std::vector<uint16_t> topQuads = mTop.requestQuadCoords(quadStart, targetCoord);
 

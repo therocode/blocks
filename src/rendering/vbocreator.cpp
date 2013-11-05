@@ -125,6 +125,40 @@ VBO VBOCreator::generateChunkVBO(const ChunkCoordinate& coord, const VoxelTypeDa
         vbo.PushRectangle(r);
     }
 
+    //extract left quads
+    merger.setQuads(walker.getLeftQuads());
+    merger.doFirstMerge();
+    merger.doSecondMerge();
+    for(auto& quad : merger.getQuads())
+    {
+        float worldX = quad.mDepth + chunkOffset.x;
+        float worldY = quad.mY + chunkOffset.y;
+        float worldZ = quad.mX + chunkOffset.z;
+
+        textureLocation = glm::uvec2(quad.mType - 1, 0);
+        setRectData(r, worldX, worldY, worldZ, LEFT, textureLocation.x, textureLocation.y, quad.mWidth, quad.mHeight);
+
+        r.calculateNormal();
+        vbo.PushRectangle(r);
+    }
+
+    //extract right quads
+    merger.setQuads(walker.getRightQuads());
+    merger.doFirstMerge();
+    merger.doSecondMerge();
+    for(auto& quad : merger.getQuads())
+    {
+        float worldX = quad.mDepth + chunkOffset.x - 1.0f;
+        float worldY = quad.mY + chunkOffset.y;
+        float worldZ = quad.mX + chunkOffset.z;
+
+        textureLocation = glm::uvec2(quad.mType - 1, 0);
+        setRectData(r, worldX, worldY, worldZ, RIGHT, textureLocation.x, textureLocation.y, quad.mWidth, quad.mHeight);
+
+        r.calculateNormal();
+        vbo.PushRectangle(r);
+    }
+
 	//After stuff has been added, you have to update the gpu vbo data.
 	vbo.UpdateVBO();
 	vbo.Clear();
@@ -151,10 +185,10 @@ inline void VBOCreator::setRectData(Rectangle& r, float x, float y, float z, int
 			break;
 		case RIGHT:
 			x += 1.0f;
-			r.setPosition(0, x, y + width, z + height);
-			r.setPosition(1, x, y + nhs, z + height);
+			r.setPosition(0, x, y + height, z + width);
+			r.setPosition(1, x, y + nhs, z + width);
 			r.setPosition(2, x, y + nhs, z + nhs);
-			r.setPosition(3, x, y + width, z + nhs);
+			r.setPosition(3, x, y + height, z + nhs);
 			break;
 		case BACK:
 			//z -= hs;
@@ -165,10 +199,10 @@ inline void VBOCreator::setRectData(Rectangle& r, float x, float y, float z, int
 			break;
 		case LEFT:
 			//x -= hs;
-			r.setPosition(0, x, y + width, z + nhs);
+			r.setPosition(0, x, y + height, z + nhs);
 			r.setPosition(1, x, y + nhs, z + nhs);
-			r.setPosition(2, x, y + nhs, z + height);
-			r.setPosition(3, x, y + width, z + height);
+			r.setPosition(2, x, y + nhs, z + width);
+			r.setPosition(3, x, y + height, z + width);
 			break;
 		case TOP:
 			y += 1.0f;

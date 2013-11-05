@@ -42,7 +42,7 @@ class MeshWalker
         std::vector<SurfaceQuad> mFrontQuads;
         std::vector<SurfaceQuad> mBackQuads;
         std::vector<SurfaceQuad> mLeftQuads;
-        std::vector<SurfaceQuad> mRigthQuads;
+        std::vector<SurfaceQuad> mRightQuads;
 
         uint32_t mY;
         uint32_t mZ;
