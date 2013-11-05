@@ -114,7 +114,19 @@ void Renderer::handleMessage(const UpdateChunkVboMessage& received)
     std::tie(mainChunk, topChunk, bottomChunk, frontChunk, backChunk, leftChunk, rightChunk) = received.data;
 
     VBOCreator vboCreator;
-    vbos.emplace(mainChunk->getLocation(), vboCreator.generateChunkVBO(mainChunk, topChunk, bottomChunk, frontChunk, backChunk, leftChunk, rightChunk));
+
+    auto vboEntry = vbos.find(mainChunk->getLocation());
+
+    if(vboEntry == vbos.end())
+    {
+        vbos.emplace(mainChunk->getLocation(), vboCreator.generateChunkVBO(mainChunk, topChunk, bottomChunk, frontChunk, backChunk, leftChunk, rightChunk));
+    }
+    else
+    {
+        vbos.at(mainChunk->getLocation()).DestroyVBO();
+        vbos.erase(mainChunk->getLocation());
+        vbos.emplace(mainChunk->getLocation(), vboCreator.generateChunkVBO(mainChunk, topChunk, bottomChunk, frontChunk, backChunk, leftChunk, rightChunk));
+    }
 }
 
 void Renderer::handleMessage(const ChunkDeletedMessage& received)
