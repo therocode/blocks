@@ -78,6 +78,7 @@ class VBO {
 		void DestroyVBO();
 		void CreateVBO();
 		int	 GetID(int which) const {if(which == VERTICES) return mID[0]; else return mID[1];}
+        int GetDrawAmount();
 	private:
 		GLuint mID[2];
 		int mCurrentVBOByteSize;

@@ -177,14 +177,14 @@ void MeshWalker::walk()
 
             for(uint32_t i = 0; i < frontQuads.size(); i += 2)
             {
-                mFrontQuads.push_back(SurfaceQuad(frontQuads[i], mZ, frontQuads[i + 1] - frontQuads[i], 1, mY, currentType));
+                mFrontQuads.push_back(SurfaceQuad(frontQuads[i], mY, frontQuads[i + 1] - frontQuads[i], 1, mZ, currentType));
             }
 
             std::vector<uint16_t> backQuads = mBack.requestQuadCoords(quadStart, targetCoord);
 
             for(uint32_t i = 0; i < backQuads.size(); i += 2)
             {
-                mBackQuads.push_back(SurfaceQuad(backQuads[i], mZ, backQuads[i + 1] - backQuads[i], 1, mY, currentType));
+                mBackQuads.push_back(SurfaceQuad(backQuads[i], mY, backQuads[i + 1] - backQuads[i], 1, mZ, currentType));
             }
         }
     }

@@ -8,6 +8,7 @@ using std::chrono::microseconds;
 using std::chrono::high_resolution_clock;
 
 uint32_t VBOCreator::totalTime = 0;
+uint32_t VBOCreator::totalAmount = 0;
 uint32_t VBOCreator::timesGenerated = 0;
 
 VBOCreator::VBOCreator()
@@ -99,8 +100,8 @@ VBO VBOCreator::generateChunkVBO(const ChunkCoordinate& coord, const VoxelTypeDa
     for(auto& quad : merger.getQuads())
     {
         float worldX = quad.mX + chunkOffset.x;
-        float worldY = quad.mDepth + chunkOffset.y;
-        float worldZ = quad.mY + chunkOffset.z;
+        float worldY = quad.mY + chunkOffset.y;
+        float worldZ = quad.mDepth + chunkOffset.z;
 
         textureLocation = glm::uvec2(quad.mType - 1, 0);
         setRectData(r, worldX, worldY, worldZ, FRONT, textureLocation.x, textureLocation.y, quad.mWidth, quad.mHeight);
@@ -115,8 +116,8 @@ VBO VBOCreator::generateChunkVBO(const ChunkCoordinate& coord, const VoxelTypeDa
     for(auto& quad : merger.getQuads())
     {
         float worldX = quad.mX + chunkOffset.x;
-        float worldY = quad.mDepth + chunkOffset.y;
-        float worldZ = quad.mY + chunkOffset.z;
+        float worldY = quad.mY + chunkOffset.y;
+        float worldZ = quad.mDepth + chunkOffset.z;
 
         textureLocation = glm::uvec2(quad.mType - 1, 0);
         setRectData(r, worldX, worldY, worldZ, BACK, textureLocation.x, textureLocation.y, quad.mWidth, quad.mHeight);
@@ -161,13 +162,15 @@ VBO VBOCreator::generateChunkVBO(const ChunkCoordinate& coord, const VoxelTypeDa
 
 	//After stuff has been added, you have to update the gpu vbo data.
 	vbo.UpdateVBO();
+    uint32_t amount = vbo.GetDrawAmount();
 	vbo.Clear();
     
 
+    totalAmount += amount / 2;
     high_resolution_clock::time_point end = high_resolution_clock::now();
     totalTime += duration_cast<microseconds>(end - start).count();
     timesGenerated++;
-    //std::cout << "the mesh creation of the chunk took " << duration_cast<microseconds>(end - start).count() << " and the average is " << totalTime/ timesGenerated << "\n";
+    //std::cout << "the mesh creation of the chunk took " << duration_cast<microseconds>(end - start).count() << " and the average is " << totalTime/ timesGenerated << ". it had " << amount << " faces and the average is " << totalAmount / timesGenerated<< "\n";
 
 	return vbo;
 }

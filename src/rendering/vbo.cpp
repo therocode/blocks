@@ -151,3 +151,8 @@ void VBO::SetDrawType(GLint type){
 GLint VBO::GetDrawType(){
 	return mDrawType;
 }
+
+int VBO::GetDrawAmount()
+{
+    return mDrawSize;
+}
