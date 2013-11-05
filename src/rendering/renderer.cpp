@@ -551,8 +551,7 @@ void Renderer::awaitChunks()
         mChunkQueueMutex.lock();
         if(mChunkQueue.size())
         {
-            queue = mChunkQueue;
-            mChunkQueue.clear();
+            std::swap(queue, mChunkQueue);
         }
         mChunkQueueMutex.unlock();
 
