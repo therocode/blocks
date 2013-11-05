@@ -69,14 +69,19 @@ VBOAttribute& VBO::getAttribute(std::string attribName){
 }
 
 VBOAttribute& VBO::getAttribute(GLuint attribID){
-    
+
 }
 
 void VBO::registerAttribute(std::string name, int id, int type){
     VBOAttribute newAttrib(name, id, type);
     mAttributes.emplace(name, newAttrib);
 }
+void VBO::setMainAttribute(const std::string name){
 
+}
+void VBO::pushToAttribute(const std::string name, AttribValue v){
+
+}
 void VBO::DrawVBO(){
     BindBuffer();
     int stride = sizeof(Vertex);

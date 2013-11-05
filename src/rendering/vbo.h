@@ -59,6 +59,35 @@ struct Rectangle{
     };
 };
 
+struct AttribValue{
+    union{
+        float floats[4];
+        int  ints[4];
+        char chars[4];
+    };
+    float& floatAtIndex(int i){
+        return floats[i];
+    }
+    int&  intAtIndex(int i){
+        return ints[i];
+    }
+    AttribValue(){
+        for(int i = 0; i < 4; i ++)
+            ints[i] = 0;
+    }
+    AttribValue(int x, int y = 0, int z = 0, int w = 0){
+        ints[0] = x;
+        ints[1] = y;
+        ints[2] = z;
+        ints[3] = w;
+    }
+    AttribValue(float x, float y = 0.f, float z = 0.f, float w = 0.f){
+        floats[0] = x;
+        floats[1] = y;
+        floats[2] = z;
+        floats[3] = w;
+    }
+};
 class VBOAttribute{
     public:
         enum ATTRIBUTE_TYPES{
@@ -70,35 +99,6 @@ class VBOAttribute{
             ATTRIBUTE_INT2,
             ATTRIBUTE_INT3,
             ATTRIBUTE_INT4
-        };
-        struct AttribValue{
-            union{
-                float floats[4];
-                int  ints[4];
-                char chars[4];
-            };
-            float& floatAtIndex(int i){
-                return floats[i];
-            }
-            int&  intAtIndex(int i){
-                return ints[i];
-            }
-            AttribValue(){
-                for(int i = 0; i < 4; i ++)
-                    ints[i] = 0;
-            }
-            AttribValue(int x, int y = 0, int z = 0, int w = 0){
-                ints[0] = x;
-                ints[1] = y;
-                ints[2] = z;
-                ints[3] = w;
-            }
-            AttribValue(float x, float y = 0.f, float z = 0.f, float w = 0.f){
-                floats[0] = x;
-                floats[1] = y;
-                floats[2] = z;
-                floats[3] = w;
-            }
         };
     protected:
         std::vector<AttribValue> mData;
@@ -148,7 +148,7 @@ class VBOAttribute{
                 return mData[index];
             return AttribValue();
         }
-        
+
         GLenum getType()    const {
             return mType;    
         }
@@ -181,7 +181,9 @@ class VBO {
         int GetDrawAmount();
         VBOAttribute& getAttribute(std::string attribName);
         VBOAttribute& getAttribute(GLuint attribID);
-        void registerAttribute(std::string name, int id, int type);
+        void registerAttribute(const std::string name, int id, int type);
+        void setMainAttribute(const std::string name);
+        void pushToAttribute(const std::string name, AttribValue v);
     private:
         std::map<std::string, VBOAttribute> mAttributes;
         GLuint mID[2];
