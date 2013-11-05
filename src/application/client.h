@@ -37,5 +37,7 @@ class Client :
         bool mQuit;
         std::string mLogName;
 
+        ChunkMap mLocalChunks;
+
         std::unique_ptr<ServerClientBridge> mBridge;
 };

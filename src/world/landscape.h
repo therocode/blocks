@@ -5,8 +5,6 @@
 #include <memory>
 #include <featherkit/messaging.h>
 
-using ChunkMap = std::unordered_map<ChunkCoordinate, Chunk>;
-
 class Landscape
 {
     public:

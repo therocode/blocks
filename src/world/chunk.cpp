@@ -70,6 +70,10 @@ Chunk::Chunk(const ChunkCoordinate& loc, const VoxelTypeArray& types) : mLocatio
     setVoxelData(types);
 }
 
+Chunk::Chunk(const ChunkCoordinate& loc, const RleIndexArray& indices, const RleSegmentArray& rleData) : mLocation(loc), mRleSegmentIndices(indices), mRleSegments(rleData)
+{
+}
+
 void Chunk::setVoxelType(uint32_t x, uint32_t y, uint32_t z, VoxelType type)
 {
     //voxelTypes[x + z * chunkWidth + y * chunkWidthx2] = type;

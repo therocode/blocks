@@ -4,6 +4,7 @@
 #include <vector>
 #include "../blockstd.h"
 #include <iostream>
+#include <unordered_map>
 
 using ChunkCoordinate = glm::ivec3;
 using VoxelCoordinate = glm::uvec3;
@@ -46,6 +47,7 @@ class Chunk
     public:
         Chunk(const ChunkCoordinate& loc);
         Chunk(const ChunkCoordinate& loc, const VoxelTypeArray& types);
+        Chunk(const ChunkCoordinate& loc, const RleIndexArray& indices, const RleSegmentArray& rleData);
         void setVoxelType(uint32_t x, uint32_t y, uint32_t z, VoxelType type);
         void setVoxelType(const VoxelCoordinate& voxel, VoxelType type);
         void setVoxelData(const VoxelTypeArray& types);
@@ -64,6 +66,8 @@ class Chunk
         static uint32_t totalSize;
         static uint32_t timesGenerated;
 };
+
+using ChunkMap = std::unordered_map<ChunkCoordinate, Chunk>;
 
 namespace std
 {

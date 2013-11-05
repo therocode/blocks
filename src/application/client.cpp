@@ -152,11 +152,20 @@ void Client::fetchServerData()
 
 			std::tie(coordinate, rleSegmentIndices, rleSegments) = chunkPackage->getData();
 			mBus.sendMessage<ChunkCreatedMessage>(ChunkCreatedMessage(coordinate, rleSegmentIndices, rleSegments));
+
+            mLocalChunks.emplace(coordinate, Chunk(coordinate, rleSegmentIndices, rleSegments));
 		}
 		else if(package->mType == typeid(ChunkDeletedPackage))
 		{
 			ChunkDeletedPackage* chunkPackage = (ChunkDeletedPackage*)package.get();
+
+            ChunkCoordinate coordinate;
+
+            std::tie(coordinate) = chunkPackage->getData();
+
 			mBus.sendMessage<ChunkDeletedMessage>(ChunkDeletedMessage(chunkPackage->getData()));
+
+            mLocalChunks.erase(coordinate);
 		}
 		else if(package->mType == typeid(GfxEntityAddedPackage))
 		{
