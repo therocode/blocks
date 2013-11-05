@@ -17,7 +17,7 @@
 #include "debugrenderer.h"
 
 class Renderer
-    :   public fea::MessageReceiver<ChunkCreatedMessage>,
+    :   public fea::MessageReceiver<UpdateChunkVboMessage>,
         public fea::MessageReceiver<ChunkDeletedMessage>,
         public fea::MessageReceiver<WindowResizeMessage>,
         public fea::MessageReceiver<AddGfxEntityMessage>,
@@ -35,7 +35,7 @@ class Renderer
         ~Renderer();
         void makeTexture(const std::string& path, uint32_t width, uint32_t height, GLuint& textureId);
         void setup();
-        virtual void handleMessage(const ChunkCreatedMessage& received);
+        virtual void handleMessage(const UpdateChunkVboMessage& received);
         virtual void handleMessage(const ChunkDeletedMessage& received);
         virtual void handleMessage(const WindowResizeMessage& received);
         virtual void handleMessage(const AddGfxEntityMessage& received);

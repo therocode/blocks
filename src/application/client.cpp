@@ -151,9 +151,38 @@ void Client::fetchServerData()
             RleSegmentArray rleSegments;
 
 			std::tie(coordinate, rleSegmentIndices, rleSegments) = chunkPackage->getData();
-			mBus.sendMessage<ChunkCreatedMessage>(ChunkCreatedMessage(coordinate, rleSegmentIndices, rleSegments));
 
             mLocalChunks.emplace(coordinate, Chunk(coordinate, rleSegmentIndices, rleSegments));
+
+            Chunk* mainChunk = &mLocalChunks.at(coordinate);
+            Chunk* topChunk = nullptr;
+            Chunk* bottomChunk = nullptr;
+            Chunk* frontChunk = nullptr;
+            Chunk* backChunk = nullptr;
+            Chunk* leftChunk = nullptr;
+            Chunk* rightChunk = nullptr;
+
+            auto top = mLocalChunks.find(ChunkCoordinate(coordinate.x, coordinate.y + 1, coordinate.z));
+            auto bottom = mLocalChunks.find(ChunkCoordinate(coordinate.x, coordinate.y - 1, coordinate.z));
+            auto front = mLocalChunks.find(ChunkCoordinate(coordinate.x, coordinate.y, coordinate.z + 1));
+            auto back = mLocalChunks.find(ChunkCoordinate(coordinate.x, coordinate.y, coordinate.z - 1));
+            auto left = mLocalChunks.find(ChunkCoordinate(coordinate.x - 1, coordinate.y, coordinate.z));
+            auto right = mLocalChunks.find(ChunkCoordinate(coordinate.x + 1, coordinate.y, coordinate.z));
+
+            if(top != mLocalChunks.end())
+                topChunk = &top->second;
+            if(bottom != mLocalChunks.end())
+                bottomChunk = &bottom->second;
+            if(front != mLocalChunks.end())
+                frontChunk = &front->second;
+            if(back != mLocalChunks.end())
+                backChunk = &back->second;
+            if(left != mLocalChunks.end())
+                leftChunk = &left->second;
+            if(right != mLocalChunks.end())
+                rightChunk = &right->second;
+
+            mBus.sendMessage<UpdateChunkVboMessage>(UpdateChunkVboMessage(mainChunk, topChunk, bottomChunk, frontChunk, backChunk, leftChunk, rightChunk));
 		}
 		else if(package->mType == typeid(ChunkDeletedPackage))
 		{

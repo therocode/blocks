@@ -9,7 +9,7 @@ DebugRenderer Renderer::sDebugRenderer;
 Renderer::Renderer(fea::MessageBus& messageBus) : bus(messageBus), mPlayerId(-1)
 {
 	mTimer.start();
-	bus.addMessageSubscriber<ChunkCreatedMessage>(*this);
+	bus.addMessageSubscriber<UpdateChunkVboMessage>(*this);
 	bus.addMessageSubscriber<ChunkDeletedMessage>(*this);
 	bus.addMessageSubscriber<WindowResizeMessage>(*this);
 	bus.addMessageSubscriber<AddGfxEntityMessage>(*this);
@@ -25,7 +25,7 @@ Renderer::Renderer(fea::MessageBus& messageBus) : bus(messageBus), mPlayerId(-1)
 
 Renderer::~Renderer()
 {
-	bus.removeMessageSubscriber<ChunkCreatedMessage>(*this);
+	bus.removeMessageSubscriber<UpdateChunkVboMessage>(*this);
 	bus.removeMessageSubscriber<ChunkDeletedMessage>(*this);
 	bus.removeMessageSubscriber<WindowResizeMessage>(*this);
 	bus.removeMessageSubscriber<AddGfxEntityMessage>(*this);
@@ -101,20 +101,20 @@ void Renderer::setCameraMatrix(const glm::mat4& m){
 	//glMultMatrixf(glm::value_ptr(m));
 }
 
-void Renderer::handleMessage(const ChunkCreatedMessage& received)
+void Renderer::handleMessage(const UpdateChunkVboMessage& received)
 {
-	ChunkCoordinate coordinate;
-	VoxelTypeArray types;
+    Chunk* mainChunk;
+    Chunk* topChunk;
+    Chunk* bottomChunk;
+    Chunk* frontChunk;
+    Chunk* backChunk;
+    Chunk* leftChunk;
+    Chunk* rightChunk;
 
-    RleIndexArray indexArray;
-    RleSegmentArray segmentArray;
+    std::tie(mainChunk, topChunk, bottomChunk, frontChunk, backChunk, leftChunk, rightChunk) = received.data;
 
-	std::tie(coordinate, indexArray, segmentArray) = received.data;
-
-    VoxelTypeData voxelTypeData(indexArray, segmentArray);
-
-	VBOCreator vboCreator;
-	vbos.emplace(coordinate, vboCreator.generateChunkVBO(coordinate, voxelTypeData));
+    VBOCreator vboCreator;
+    vbos.emplace(mainChunk->getLocation(), vboCreator.generateChunkVBO(mainChunk, topChunk, bottomChunk, frontChunk, backChunk, leftChunk, rightChunk));
 }
 
 void Renderer::handleMessage(const ChunkDeletedMessage& received)

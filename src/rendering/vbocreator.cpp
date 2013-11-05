@@ -15,7 +15,7 @@ VBOCreator::VBOCreator()
 {
 }
 
-VBO VBOCreator::generateChunkVBO(const ChunkCoordinate& coord, const VoxelTypeData& voxelTypeData)
+VBO VBOCreator::generateChunkVBO(Chunk* mainChunk, Chunk* topChunk, Chunk* bottomChunk, Chunk* frontChunk, Chunk* backChunk, Chunk* leftChunk, Chunk* rightChunk)
 {
     high_resolution_clock::time_point start = high_resolution_clock::now();
 //int texture1X = rand() % 8;
@@ -25,11 +25,11 @@ VBO VBOCreator::generateChunkVBO(const ChunkCoordinate& coord, const VoxelTypeDa
 
 	VBO vbo;
 
-	const ChunkCoordinate location = coord;
+	const ChunkCoordinate location = mainChunk->getLocation();
 
 	glm::vec3 chunkOffset(location.x * (float)chunkWidth, location.y * (float)chunkWidth, location.z * (float)chunkWidth);
 
-	VoxelTypeArray voxelTypes;
+    const VoxelTypeData& voxelTypeData = mainChunk->getVoxelTypeData();
     MeshWalker walker;
 
     for(uint32_t z = 0; z < chunkWidth; z++)
