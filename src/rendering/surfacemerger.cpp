@@ -100,7 +100,7 @@ void SurfaceMerger::doSecondMerge()
         {
             SurfaceQuad& quadA = mQuads[i];
             SurfaceQuad& quadB = mQuads[i + 1];
-            std::cout << "hej total amount of quads is " << mQuads.size() << "\n";
+            //std::cout << "hej total amount of quads is " << mQuads.size() << "\n";
 
             if((quadA.mY + quadA.mHeight == quadB.mY) && 
                     (quadA.mX == quadB.mX) && 
@@ -108,7 +108,7 @@ void SurfaceMerger::doSecondMerge()
                     (quadA.mDepth == quadB.mDepth) &&
                     (quadA.mType == quadB.mType))
             {
-                std::cout << "merging quad(" << quadA.mX << "," << quadA.mY << "," << quadA.mHeight << ") with quad(" << quadB.mX << "," << quadB.mY << "," << quadB.mHeight << "\n";
+                //std::cout << "merging quad(" << quadA.mX << "," << quadA.mY << "," << quadA.mHeight << ") with quad(" << quadB.mX << "," << quadB.mY << "," << quadB.mHeight << "\n";
                 quadA.mHeight += quadB.mHeight;
                 mQuads.erase(mQuads.begin() + i + 1);
                 i--;

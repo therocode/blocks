@@ -79,7 +79,7 @@ VBO VBOCreator::generateChunkVBO(const ChunkCoordinate& coord, const VoxelTypeDa
         r.setPosition(1, worldX + quad.mWidth, worldY, worldZ               );
         r.setPosition(0, worldX + quad.mWidth, worldY, worldZ + quad.mHeight);
 
-        std::cout << "adding rectangle: " << quad.mX << " " << quad.mY << " " << quad.mWidth << " " << quad.mHeight << " depth: " << quad.mDepth << " type: " << quad.mType << "\n";
+        //std::cout << "adding rectangle: " << quad.mX << " " << quad.mY << " " << quad.mWidth << " " << quad.mHeight << " depth: " << quad.mDepth << " type: " << quad.mType << "\n";
 
         float u = textureLocation.x;
         float v = textureLocation.y;

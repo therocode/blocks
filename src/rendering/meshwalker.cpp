@@ -122,11 +122,9 @@ void MeshWalker::walk()
     if(mCentreSegment)
     {
         mTop.walk();
-
-        mTopWalked = 0;
-        mBottomWalked = 0;
-        mFrontWalked = 0;
-        mBackWalked = 0;
+        mBottom.walk();
+        mFront.walk();
+        mBack.walk();
 
         uint16_t targetCoord = 0;
         uint16_t currentType = 0;
@@ -149,6 +147,27 @@ void MeshWalker::walk()
             for(uint32_t i = 0; i < topQuads.size(); i += 2)
             {
                 mTopQuads.push_back(SurfaceQuad(topQuads[i], mZ, topQuads[i + 1] - topQuads[i], 1, mY, currentType));
+            }
+
+            std::vector<uint16_t> bottomQuads = mBottom.requestQuadCoords(quadStart, targetCoord);
+
+            for(uint32_t i = 0; i < bottomQuads.size(); i += 2)
+            {
+                mBottomQuads.push_back(SurfaceQuad(bottomQuads[i], mZ, bottomQuads[i + 1] - bottomQuads[i], 1, mY, currentType));
+            }
+
+            std::vector<uint16_t> frontQuads = mFront.requestQuadCoords(quadStart, targetCoord);
+
+            for(uint32_t i = 0; i < frontQuads.size(); i += 2)
+            {
+                mFrontQuads.push_back(SurfaceQuad(frontQuads[i], mZ, frontQuads[i + 1] - frontQuads[i], 1, mY, currentType));
+            }
+
+            std::vector<uint16_t> backQuads = mBack.requestQuadCoords(quadStart, targetCoord);
+
+            for(uint32_t i = 0; i < backQuads.size(); i += 2)
+            {
+                mBackQuads.push_back(SurfaceQuad(backQuads[i], mZ, backQuads[i + 1] - backQuads[i], 1, mY, currentType));
             }
         }
     }

@@ -44,13 +44,6 @@ class MeshWalker
         std::vector<SurfaceQuad> mLeftQuads;
         std::vector<SurfaceQuad> mRigthQuads;
 
-        uint16_t mTopWalked;
-        uint16_t mBottomWalked;
-        uint16_t mFrontWalked;
-        uint16_t mBackWalked;
-
-        uint16_t mTopCurrentType = 0;
-
         uint32_t mY;
         uint32_t mZ;
 };
