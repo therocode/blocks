@@ -13,7 +13,6 @@ void MeshWalker::NeighbourWalker::walk()
 
     if(mSegment == nullptr)
     {
-        airField.set();
         return;
     }
 
@@ -74,6 +73,8 @@ MeshWalker::MeshWalker()
 {
     mY = 0;
     mZ = 0;
+    mLeftType = 1;
+    mRightType = 1;
 }
 
 void MeshWalker::setIterators(RleIterator centreSegment, RleIterator topSegment, RleIterator bottomSegment, RleIterator frontSegment, RleIterator backSegment, uint32_t y, uint32_t z)
@@ -85,6 +86,16 @@ void MeshWalker::setIterators(RleIterator centreSegment, RleIterator topSegment,
     mBack.setIterator(backSegment);
     mY = y;
     mZ = z;
+}
+
+void MeshWalker::setLeftType(uint16_t type)
+{
+    mLeftType = type;
+}
+
+void MeshWalker::setRightType(uint16_t type)
+{
+    mRightType = type;
 }
         
 const std::vector<SurfaceQuad>& MeshWalker::getTopQuads() const
@@ -129,8 +140,8 @@ void MeshWalker::walk()
         uint16_t targetCoord = 0;
         uint16_t currentType = 0;
         uint16_t quadStart = 0;
-
-        bool isInAir = false;
+    
+        bool isInAir = mLeftType == 0;
 
         while(targetCoord < chunkWidth)
         {
@@ -150,6 +161,12 @@ void MeshWalker::walk()
                 }
                 isInAir = true;
                 continue;
+            }
+            
+            //if it is on the last quad, it might need to make a quad if the neighbouring chunk is air
+            if(targetCoord == chunkWidth && mRightType == 0)
+            {
+                mRightQuads.push_back(SurfaceQuad(mZ, mY, 1, 1, chunkWidth, currentType));
             }
 
             if(isInAir)

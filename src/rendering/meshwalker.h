@@ -23,6 +23,8 @@ class MeshWalker
     public:
         MeshWalker();
         void setIterators(RleIterator centreSegment, RleIterator topSegment, RleIterator bottomSegment, RleIterator frontSegment, RleIterator backSegment, uint32_t y, uint32_t z);
+        void setLeftType(uint16_t type);
+        void setRightType(uint16_t type);
         const std::vector<SurfaceQuad>& getTopQuads() const;
         const std::vector<SurfaceQuad>& getBottomQuads() const;
         const std::vector<SurfaceQuad>& getFrontQuads() const;
@@ -47,4 +49,7 @@ class MeshWalker
 
         uint32_t mY;
         uint32_t mZ;
+
+        uint16_t mLeftType;
+        uint16_t mRightType;
 };

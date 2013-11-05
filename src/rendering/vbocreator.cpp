@@ -47,14 +47,55 @@ VBO VBOCreator::generateChunkVBO(Chunk* mainChunk, Chunk* topChunk, Chunk* botto
 
             if(y > 0)
                 bottomIterator = &voxelTypeData.mRleSegments[voxelTypeData.mRleSegmentIndices[zyIndex - chunkWidth].mSegmentStart];
+            else
+            {
+                if(bottomChunk)
+                {
+                    bottomIterator = &bottomChunk->getVoxelTypeData().mRleSegments[bottomChunk->getVoxelTypeData().mRleSegmentIndices[z + (chunkWidth - 1) * chunkWidth].mSegmentStart];
+                }
+            }
             if(y < chunkWidth - 1)
                 topIterator = &voxelTypeData.mRleSegments[voxelTypeData.mRleSegmentIndices[zyIndex + chunkWidth].mSegmentStart];
+            else
+            {
+                if(topChunk)
+                {
+                    topIterator = &topChunk->getVoxelTypeData().mRleSegments[topChunk->getVoxelTypeData().mRleSegmentIndices[z].mSegmentStart];
+                }
+            }
             if(z > 0)
                 backIterator = &voxelTypeData.mRleSegments[voxelTypeData.mRleSegmentIndices[zyIndex - 1].mSegmentStart];
+            else
+            {
+                if(backChunk)
+                {
+                    backIterator = &backChunk->getVoxelTypeData().mRleSegments[backChunk->getVoxelTypeData().mRleSegmentIndices[y * chunkWidth + (chunkWidth - 1)].mSegmentStart];
+                }
+            }
             if(z < chunkWidth - 1)
                 frontIterator = &voxelTypeData.mRleSegments[voxelTypeData.mRleSegmentIndices[zyIndex + 1].mSegmentStart];
+            else
+            {
+                if(frontChunk)
+                {
+                    frontIterator = &frontChunk->getVoxelTypeData().mRleSegments[frontChunk->getVoxelTypeData().mRleSegmentIndices[y * chunkWidth].mSegmentStart];
+                }
+            }
 
             walker.setIterators(centreIterator, topIterator, bottomIterator, frontIterator, backIterator, y, z);
+
+            walker.setLeftType(1);
+            walker.setRightType(1);
+
+            if(leftChunk)
+            {
+                walker.setLeftType(leftChunk->getVoxelType(chunkWidth - 1, y, z));
+            }
+            if(rightChunk)
+            {
+                walker.setRightType(rightChunk->getVoxelType(0, y, z));
+            }
+
             walker.walk();
         }
     }
