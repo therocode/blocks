@@ -183,13 +183,15 @@ void Renderer::render()
 	glm::vec3 fullColor = glm::vec3((float)0x00 / 255.f, (float)0xb2 / 255.f, (float)0xff / 255.f);
 	glm::vec3 cameraOffset = glm::vec3(0, 0.6f, 0);
 	float time = mTimer.getTime() * 1.2f;
+	float dT_f = mTimer.getDeltaTime();
 	glm::vec3 mV = glm::cross(cam.GetDirection(), glm::vec3(0, 1, 0));
 	if(speed > 0){
 		cameraOffset.y += glm::sin(time*0.01f)*speed;
 		cameraOffset.x += glm::cos(time*0.005f)*speed;
 		cameraOffset.z += glm::sin(time*0.005f)*speed;
 	}
-	interpDuck += (duck - interpDuck) * 0.1f;
+    for(float t = 0; t < dT_f; t += 1000.f/60.f)
+	interpDuck += (duck - interpDuck) * 0.2f;
 	cameraOffset.y -= interpDuck;
 	duck *= 0.9f;
 	cam.SetPosition(originalCameraPos + cameraOffset);
@@ -198,7 +200,6 @@ void Renderer::render()
 	// printf("color: %f, %f, %f\n", color.x, color.y, color.z);
 	glClearColor(color.x, color.y, color.z, 1.0f);
 	
-	float dT_f = mTimer.getDeltaTime();
 	bus.sendMessage<CameraUpdatedMessage>(CameraUpdatedMessage(cam.GetPosition(), cam.GetDirection()));
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	mShaderProgram.bind();

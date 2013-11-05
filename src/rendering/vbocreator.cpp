@@ -18,12 +18,13 @@ VBOCreator::VBOCreator()
 VBO VBOCreator::generateChunkVBO(const ChunkCoordinate& coord, const VoxelTypeData& voxelTypeData)
 {
     high_resolution_clock::time_point start = high_resolution_clock::now();
-//int texture1X = rand() % 8;
-//int texture2X = rand() % 8;
-//int texture1Y = rand() % 2;
-//int texture2Y = rand() % 2;
 
 	VBO vbo;
+    vbo.registerAttribute("vert",   0, VBOAttribute::ATTRIBUTE_FLOAT3);
+    vbo.registerAttribute("normal", 1, VBOAttribute::ATTRIBUTE_FLOAT3);
+    vbo.registerAttribute("color",  2, VBOAttribute::ATTRIBUTE_FLOAT3);
+    vbo.registerAttribute("uv",     3, VBOAttribute::ATTRIBUTE_FLOAT2);
+    vbo.registerAttribute("bounds", 4, VBOAttribute::ATTRIBUTE_FLOAT4);
 
 	const ChunkCoordinate location = coord;
 
