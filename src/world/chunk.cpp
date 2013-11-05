@@ -61,6 +61,10 @@ VoxelTypeData::VoxelTypeData(const RleIndexArray& rleSegmentIndices, const RleSe
 
 }
 
+Chunk::Chunk()
+{
+}
+
 Chunk::Chunk(const ChunkCoordinate& loc) : mLocation(loc)
 {
 }

@@ -45,6 +45,7 @@ struct VoxelTypeData
 class Chunk
 {
     public:
+        Chunk();
         Chunk(const ChunkCoordinate& loc);
         Chunk(const ChunkCoordinate& loc, const VoxelTypeArray& types);
         Chunk(const ChunkCoordinate& loc, const RleIndexArray& indices, const RleSegmentArray& rleData);

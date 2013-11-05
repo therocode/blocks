@@ -152,38 +152,34 @@ void Client::fetchServerData()
 
 			std::tie(coordinate, rleSegmentIndices, rleSegments) = chunkPackage->getData();
 
-            mLocalChunks.emplace(coordinate, Chunk(coordinate, rleSegmentIndices, rleSegments));
+            mLocalChunks[coordinate] = Chunk(coordinate, rleSegmentIndices, rleSegments);
 
-            Chunk* mainChunk = &mLocalChunks.at(coordinate);
-            Chunk* topChunk = nullptr;
-            Chunk* bottomChunk = nullptr;
-            Chunk* frontChunk = nullptr;
-            Chunk* backChunk = nullptr;
-            Chunk* leftChunk = nullptr;
-            Chunk* rightChunk = nullptr;
+            updateChunk(coordinate);
 
-            auto top = mLocalChunks.find(ChunkCoordinate(coordinate.x, coordinate.y + 1, coordinate.z));
-            auto bottom = mLocalChunks.find(ChunkCoordinate(coordinate.x, coordinate.y - 1, coordinate.z));
-            auto front = mLocalChunks.find(ChunkCoordinate(coordinate.x, coordinate.y, coordinate.z + 1));
-            auto back = mLocalChunks.find(ChunkCoordinate(coordinate.x, coordinate.y, coordinate.z - 1));
-            auto left = mLocalChunks.find(ChunkCoordinate(coordinate.x - 1, coordinate.y, coordinate.z));
-            auto right = mLocalChunks.find(ChunkCoordinate(coordinate.x + 1, coordinate.y, coordinate.z));
-
-            if(top != mLocalChunks.end())
-                topChunk = &top->second;
-            if(bottom != mLocalChunks.end())
-                bottomChunk = &bottom->second;
-            if(front != mLocalChunks.end())
-                frontChunk = &front->second;
-            if(back != mLocalChunks.end())
-                backChunk = &back->second;
-            if(left != mLocalChunks.end())
-                leftChunk = &left->second;
-            if(right != mLocalChunks.end())
-                rightChunk = &right->second;
-
-            mBus.sendMessage<UpdateChunkVboMessage>(UpdateChunkVboMessage(mainChunk, topChunk, bottomChunk, frontChunk, backChunk, leftChunk, rightChunk));
-            mBus.sendMessage<UpdateChunkVboMessage>(UpdateChunkVboMessage(mainChunk, topChunk, bottomChunk, frontChunk, backChunk, leftChunk, rightChunk));
+            if(mLocalChunks.find(ChunkCoordinate(coordinate.x + 1, coordinate.y, coordinate.z)) != mLocalChunks.end())
+            {
+                updateChunk(ChunkCoordinate(coordinate.x + 1, coordinate.y, coordinate.z));
+            }
+            if(mLocalChunks.find(ChunkCoordinate(coordinate.x - 1, coordinate.y, coordinate.z)) != mLocalChunks.end())
+            {
+                updateChunk(ChunkCoordinate(coordinate.x - 1, coordinate.y, coordinate.z));
+            }
+            if(mLocalChunks.find(ChunkCoordinate(coordinate.x, coordinate.y + 1, coordinate.z)) != mLocalChunks.end())
+            {
+                updateChunk(ChunkCoordinate(coordinate.x, coordinate.y + 1, coordinate.z));
+            }
+            if(mLocalChunks.find(ChunkCoordinate(coordinate.x, coordinate.y - 1, coordinate.z)) != mLocalChunks.end())
+            {
+                updateChunk(ChunkCoordinate(coordinate.x, coordinate.y - 1, coordinate.z));
+            }
+            if(mLocalChunks.find(ChunkCoordinate(coordinate.x, coordinate.y, coordinate.z + 1)) != mLocalChunks.end())
+            {
+                updateChunk(ChunkCoordinate(coordinate.x, coordinate.y, coordinate.z + 1));
+            }
+            if(mLocalChunks.find(ChunkCoordinate(coordinate.x, coordinate.y, coordinate.z - 1)) != mLocalChunks.end())
+            {
+                updateChunk(ChunkCoordinate(coordinate.x, coordinate.y, coordinate.z - 1));
+            }
 		}
 		else if(package->mType == typeid(ChunkDeletedPackage))
 		{
@@ -244,3 +240,36 @@ void Client::fetchServerData()
 	}
 }
 
+void Client::updateChunk(const ChunkCoordinate& coordinate)
+{
+    Chunk* mainChunk = &mLocalChunks.at(coordinate);
+    Chunk* topChunk = nullptr;
+    Chunk* bottomChunk = nullptr;
+    Chunk* frontChunk = nullptr;
+    Chunk* backChunk = nullptr;
+    Chunk* leftChunk = nullptr;
+    Chunk* rightChunk = nullptr;
+
+    auto top = mLocalChunks.find(ChunkCoordinate(coordinate.x, coordinate.y + 1, coordinate.z));
+    auto bottom = mLocalChunks.find(ChunkCoordinate(coordinate.x, coordinate.y - 1, coordinate.z));
+    auto front = mLocalChunks.find(ChunkCoordinate(coordinate.x, coordinate.y, coordinate.z + 1));
+    auto back = mLocalChunks.find(ChunkCoordinate(coordinate.x, coordinate.y, coordinate.z - 1));
+    auto left = mLocalChunks.find(ChunkCoordinate(coordinate.x - 1, coordinate.y, coordinate.z));
+    auto right = mLocalChunks.find(ChunkCoordinate(coordinate.x + 1, coordinate.y, coordinate.z));
+
+    if(top != mLocalChunks.end())
+        topChunk = &top->second;
+    if(bottom != mLocalChunks.end())
+        bottomChunk = &bottom->second;
+    if(front != mLocalChunks.end())
+        frontChunk = &front->second;
+    if(back != mLocalChunks.end())
+        backChunk = &back->second;
+    if(left != mLocalChunks.end())
+        leftChunk = &left->second;
+    if(right != mLocalChunks.end())
+        rightChunk = &right->second;
+
+    mBus.sendMessage<UpdateChunkVboMessage>(UpdateChunkVboMessage(mainChunk, topChunk, bottomChunk, frontChunk, backChunk, leftChunk, rightChunk));
+    mBus.sendMessage<UpdateChunkVboMessage>(UpdateChunkVboMessage(mainChunk, topChunk, bottomChunk, frontChunk, backChunk, leftChunk, rightChunk));
+}

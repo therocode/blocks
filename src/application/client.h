@@ -30,6 +30,7 @@ class Client :
         void setServerBridge(std::unique_ptr<ServerClientBridge> bridge);
     private:
         void fetchServerData();
+        void updateChunk(const ChunkCoordinate& coordinate);
         fea::MessageBus mBus;
         fea::Window mWindow;
         Renderer mRenderer;
