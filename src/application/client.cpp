@@ -271,5 +271,4 @@ void Client::updateChunk(const ChunkCoordinate& coordinate)
         rightChunk = &right->second;
 
     mBus.sendMessage<UpdateChunkVboMessage>(UpdateChunkVboMessage(mainChunk, topChunk, bottomChunk, frontChunk, backChunk, leftChunk, rightChunk));
-    mBus.sendMessage<UpdateChunkVboMessage>(UpdateChunkVboMessage(mainChunk, topChunk, bottomChunk, frontChunk, backChunk, leftChunk, rightChunk));
 }
