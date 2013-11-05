@@ -37,9 +37,9 @@ void MeshWalker::NeighbourWalker::walk()
     }
 }
 
-std::vector<uint16_t> MeshWalker::NeighbourWalker::requestQuadCoords(uint16_t start, uint16_t stop)
+const std::vector<uint16_t>& MeshWalker::NeighbourWalker::requestQuadCoords(uint16_t start, uint16_t stop)
 {
-    std::vector<uint16_t> resultingQuads;
+    resultingQuads.clear();
     quadField.reset();
 
     for(uint16_t i = start; i < stop; i++)
@@ -159,28 +159,28 @@ void MeshWalker::walk()
                 isInAir = false;
             }
 
-            std::vector<uint16_t> topQuads = mTop.requestQuadCoords(quadStart, targetCoord);
+            const std::vector<uint16_t>& topQuads = mTop.requestQuadCoords(quadStart, targetCoord);
 
             for(uint32_t i = 0; i < topQuads.size(); i += 2)
             {
                 mTopQuads.push_back(SurfaceQuad(topQuads[i], mZ, topQuads[i + 1] - topQuads[i], 1, mY, currentType));
             }
 
-            std::vector<uint16_t> bottomQuads = mBottom.requestQuadCoords(quadStart, targetCoord);
+            const std::vector<uint16_t>& bottomQuads = mBottom.requestQuadCoords(quadStart, targetCoord);
 
             for(uint32_t i = 0; i < bottomQuads.size(); i += 2)
             {
                 mBottomQuads.push_back(SurfaceQuad(bottomQuads[i], mZ, bottomQuads[i + 1] - bottomQuads[i], 1, mY, currentType));
             }
 
-            std::vector<uint16_t> frontQuads = mFront.requestQuadCoords(quadStart, targetCoord);
+            const std::vector<uint16_t>& frontQuads = mFront.requestQuadCoords(quadStart, targetCoord);
 
             for(uint32_t i = 0; i < frontQuads.size(); i += 2)
             {
                 mFrontQuads.push_back(SurfaceQuad(frontQuads[i], mY, frontQuads[i + 1] - frontQuads[i], 1, mZ, currentType));
             }
 
-            std::vector<uint16_t> backQuads = mBack.requestQuadCoords(quadStart, targetCoord);
+            const std::vector<uint16_t>& backQuads = mBack.requestQuadCoords(quadStart, targetCoord);
 
             for(uint32_t i = 0; i < backQuads.size(); i += 2)
             {

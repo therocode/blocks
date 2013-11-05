@@ -12,11 +12,12 @@ class MeshWalker
         public:
             void setIterator(RleIterator iterator);
             void walk();
-            std::vector<uint16_t> requestQuadCoords(uint16_t start, uint16_t stop);
+            const std::vector<uint16_t>& requestQuadCoords(uint16_t start, uint16_t stop);
         private:
             RleIterator mSegment;
             std::bitset<chunkWidth> quadField;
             std::bitset<chunkWidth> airField;
+            std::vector<uint16_t> resultingQuads;
     };
 
     public:
