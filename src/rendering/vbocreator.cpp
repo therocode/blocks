@@ -58,43 +58,68 @@ VBO VBOCreator::generateChunkVBO(const ChunkCoordinate& coord, const VoxelTypeDa
     }
 
     SurfaceMerger merger;
-    std::cout << "walker giving " << walker.getTopQuads().size() << " quads to merger\n";
-    merger.setQuads(walker.getTopQuads());
-
-    merger.doSecondMerge();
-
-    
 	glm::uvec2 textureLocation;
     Rectangle r;
 
+    //extract top quads
+    merger.setQuads(walker.getTopQuads());
+    merger.doSecondMerge();
     for(auto& quad : merger.getQuads())
     {
         float worldX = quad.mX + chunkOffset.x;
-        float worldY = quad.mDepth + chunkOffset.y + 1.0f;
+        float worldY = quad.mDepth + chunkOffset.y;
         float worldZ = quad.mY + chunkOffset.z;
 
         textureLocation = glm::uvec2(quad.mType - 1, 0);
-        r.setPosition(3, worldX,               worldY, worldZ + quad.mHeight);
-        r.setPosition(2, worldX,               worldY, worldZ               );
-        r.setPosition(1, worldX + quad.mWidth, worldY, worldZ               );
-        r.setPosition(0, worldX + quad.mWidth, worldY, worldZ + quad.mHeight);
+        setRectData(r, worldX, worldY, worldZ, TOP, textureLocation.x, textureLocation.y, quad.mWidth, quad.mHeight);
 
-        //std::cout << "adding rectangle: " << quad.mX << " " << quad.mY << " " << quad.mWidth << " " << quad.mHeight << " depth: " << quad.mDepth << " type: " << quad.mType << "\n";
+        r.calculateNormal();
+        vbo.PushRectangle(r);
+    }
 
-        float u = textureLocation.x;
-        float v = textureLocation.y;
+    //extract bottom quads
+    merger.setQuads(walker.getBottomQuads());
+    merger.doSecondMerge();
+    for(auto& quad : merger.getQuads())
+    {
+        float worldX = quad.mX + chunkOffset.x;
+        float worldY = quad.mDepth + chunkOffset.y;
+        float worldZ = quad.mY + chunkOffset.z;
 
-        float uo = 0.125f;
-        float vo = 0.125f;
-#ifdef EMSCRIPTEN
-        float e = 0.006f;
-#else
-        float e = 0.0006f;
-#endif
-        r.setUV(3, e+      (float)u * uo,  e+      (float)v * vo);
-        r.setUV(2, e+      (float)u * uo, -e+ vo + (float)v * vo);
-        r.setUV(1,(-e+ uo + (float)u * uo), -e+ vo + (float)v * vo);
-        r.setUV(0,(-e+ uo + (float)u * uo),  e+      (float)v * vo);
+        textureLocation = glm::uvec2(quad.mType - 1, 0);
+        setRectData(r, worldX, worldY, worldZ, BOTTOM, textureLocation.x, textureLocation.y, quad.mWidth, quad.mHeight);
+
+        r.calculateNormal();
+        vbo.PushRectangle(r);
+    }
+
+    //extract front quads
+    merger.setQuads(walker.getFrontQuads());
+    merger.doSecondMerge();
+    for(auto& quad : merger.getQuads())
+    {
+        float worldX = quad.mX + chunkOffset.x;
+        float worldY = quad.mDepth + chunkOffset.y;
+        float worldZ = quad.mY + chunkOffset.z;
+
+        textureLocation = glm::uvec2(quad.mType - 1, 0);
+        setRectData(r, worldX, worldY, worldZ, FRONT, textureLocation.x, textureLocation.y, quad.mWidth, quad.mHeight);
+
+        r.calculateNormal();
+        vbo.PushRectangle(r);
+    }
+
+    //extract back quads
+    merger.setQuads(walker.getBackQuads());
+    merger.doSecondMerge();
+    for(auto& quad : merger.getQuads())
+    {
+        float worldX = quad.mX + chunkOffset.x;
+        float worldY = quad.mDepth + chunkOffset.y;
+        float worldZ = quad.mY + chunkOffset.z;
+
+        textureLocation = glm::uvec2(quad.mType - 1, 0);
+        setRectData(r, worldX, worldY, worldZ, BACK, textureLocation.x, textureLocation.y, quad.mWidth, quad.mHeight);
 
         r.calculateNormal();
         vbo.PushRectangle(r);
@@ -113,61 +138,60 @@ VBO VBOCreator::generateChunkVBO(const ChunkCoordinate& coord, const VoxelTypeDa
 	return vbo;
 }
 
-inline void VBOCreator::setRectData(Rectangle& r, float x, float y, float z, int face, float u, float v) const
+inline void VBOCreator::setRectData(Rectangle& r, float x, float y, float z, int face, float u, float v, float width, float height) const
 {
-	float boxSize = 1.f;
-	float hs      = boxSize;
 	float nhs = 0.f;
 	switch(face){
 		case FRONT:
-			z += hs;
-			r.setPosition(0, x + nhs,  y + hs, z);
+			z += 1.0f;
+			r.setPosition(0, x + nhs,  y + height, z);
 			r.setPosition(1, x + nhs,  y + nhs, z);
-			r.setPosition(2, x + hs,  y + nhs, z);
-			r.setPosition(3, x + hs,  y + hs, z);
+			r.setPosition(2, x + width,  y + nhs, z);
+			r.setPosition(3, x + width,  y + height, z);
 			break;
 		case RIGHT:
-			x += hs;
-			r.setPosition(0, x, y + hs, z + hs);
-			r.setPosition(1, x, y + nhs, z + hs);
+			x += 1.0f;
+			r.setPosition(0, x, y + width, z + height);
+			r.setPosition(1, x, y + nhs, z + height);
 			r.setPosition(2, x, y + nhs, z + nhs);
-			r.setPosition(3, x, y + hs, z + nhs);
+			r.setPosition(3, x, y + width, z + nhs);
 			break;
 		case BACK:
 			//z -= hs;
-			r.setPosition(0, x + hs,  y + hs, z);
-			r.setPosition(1, x + hs,  y + nhs, z);
+			r.setPosition(0, x + width,  y + height, z);
+			r.setPosition(1, x + width,  y + nhs, z);
 			r.setPosition(2, x + nhs,  y + nhs, z);
-			r.setPosition(3, x + nhs,  y + hs, z);
+			r.setPosition(3, x + nhs,  y + height, z);
 			break;
 		case LEFT:
 			//x -= hs;
-			r.setPosition(0, x, y + hs, z + nhs);
+			r.setPosition(0, x, y + width, z + nhs);
 			r.setPosition(1, x, y + nhs, z + nhs);
-			r.setPosition(2, x, y + nhs, z + hs);
-			r.setPosition(3, x, y + hs, z + hs);
+			r.setPosition(2, x, y + nhs, z + height);
+			r.setPosition(3, x, y + width, z + height);
 			break;
 		case TOP:
-			y += hs;
+			y += 1.0f;
 			r.setPosition(0, x + nhs, y, z + nhs);
-			r.setPosition(1, x + nhs, y, z + hs);
-			r.setPosition(2, x + hs, y, z + hs);
-			r.setPosition(3, x + hs, y, z + nhs);
+			r.setPosition(1, x + nhs, y, z + height);
+			r.setPosition(2, x + width, y, z + height);
+			r.setPosition(3, x + width, y, z + nhs);
 			break;
 		case BOTTOM:
 			//y -= hs;
-			r.setPosition(0, x + hs, y, z + nhs);
-			r.setPosition(1, x + hs, y, z + hs);
-			r.setPosition(2, x + nhs, y, z + hs);
+			r.setPosition(0, x + width, y, z + nhs);
+			r.setPosition(1, x + width, y, z + height);
+			r.setPosition(2, x + nhs, y, z + height);
 			r.setPosition(3, x + nhs, y, z + nhs);
 			break;
 		case CENTER:
-			hs *= 0.5f;
-			nhs = -hs;
-			r.setPosition(0, x + nhs,  y + hs, z);
+            width *= 0.5f;
+            height *= 0.5f;
+			nhs = -width;
+			r.setPosition(0, x + nhs,  y + height, z);
 			r.setPosition(1, x + nhs,  y + nhs, z);
-			r.setPosition(2, x + hs,  y + nhs, z);
-			r.setPosition(3, x + hs,  y + hs, z);
+			r.setPosition(2, x + width,  y + nhs, z);
+			r.setPosition(3, x + width,  y + height, z);
 			break;
 	}
 
@@ -191,7 +215,7 @@ VBO VBOCreator::generateBoardVBO(const glm::vec2& dimensions) const
     glm::uvec2 textureLocation(0, 2);
 
     Rectangle r;
-    setRectData(r, 0.0f, 0.0f, 0.0f, CENTER, (float)textureLocation.x, (float)textureLocation.y);
+    setRectData(r, 0.0f, 0.0f, 0.0f, CENTER, (float)textureLocation.x, (float)textureLocation.y, 1.0f, 1.0f);
     r.calculateNormal();
     vbo.PushRectangle(r);
 

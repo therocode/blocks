@@ -20,7 +20,7 @@ class VBOCreator
     VBO generateBoardVBO(const glm::vec2& dimensions) const;
 private:
 	///Helper function for vbo creation.
-	inline void setRectData(Rectangle& r, float x, float y, float z, int face, float u, float v) const;
+	inline void setRectData(Rectangle& r, float x, float y, float z, int face, float u, float v, float width, float height) const;
     static uint32_t totalTime;
     static uint32_t timesGenerated;
 };
