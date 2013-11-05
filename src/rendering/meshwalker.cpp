@@ -27,7 +27,7 @@ void MeshWalker::NeighbourWalker::walk()
 
         if(type == 0)
         {
-            uint16_t airStop = walked - airStart;
+            uint16_t airStop = walked;
 
             for(uint16_t i = airStart; i < airStop; i++)
             {
@@ -65,7 +65,7 @@ std::vector<uint16_t> MeshWalker::NeighbourWalker::requestQuadCoords(uint16_t st
     }
 
     if(inQuad)
-        resultingQuads.push_back(chunkWidth - 1);
+        resultingQuads.push_back(chunkWidth);
 
     return resultingQuads;
 }
