@@ -1,13 +1,77 @@
 #include "meshwalker.h"
 #include <iostream>
 
+void MeshWalker::NeighbourWalker::setIterator(RleIterator iterator)
+{
+    mSegment = iterator;
+}
+
+void MeshWalker::NeighbourWalker::walk()
+{
+    airField.reset();
+    uint16_t walked = 0;
+
+    if(mSegment == nullptr)
+    {
+        airField.set();
+        return;
+    }
+
+    while(walked < chunkWidth)
+    {
+        uint16_t airStart = walked;
+        walked += *mSegment;
+        mSegment++;
+        uint16_t type = *mSegment;
+        mSegment++;
+
+        if(type == 0)
+        {
+            uint16_t airStop = walked - airStart;
+
+            for(uint16_t i = airStart; i < airStop; i++)
+            {
+                airField.set(i);
+            }
+        }
+    }
+}
+
+std::vector<uint16_t> MeshWalker::NeighbourWalker::requestQuadCoords(uint16_t start, uint16_t stop)
+{
+    std::vector<uint16_t> resultingQuads;
+    quadField.reset();
+
+    for(uint16_t i = start; i < stop; i++)
+    {
+        quadField.set(i);
+    }
+
+    quadField = quadField & airField;
+
+    bool inQuad = false;
+    for(uint16_t i = 0; i < chunkWidth; i++)
+    {
+        if(quadField[i] && !inQuad)
+        {
+            resultingQuads.push_back(i);
+            inQuad = true;
+        }
+        else if(!quadField[i] && inQuad)
+        {
+            resultingQuads.push_back(i);
+            inQuad = false;
+        }
+    }
+
+    if(inQuad)
+        resultingQuads.push_back(chunkWidth - 1);
+
+    return resultingQuads;
+}
+
 MeshWalker::MeshWalker()
 {
-    mCentreSegment = nullptr;
-    mTopSegment = nullptr;
-    mBottomSegment = nullptr;
-    mFrontSegment = nullptr;
-    mBackSegment = nullptr;
     mY = 0;
     mZ = 0;
 }
@@ -15,10 +79,10 @@ MeshWalker::MeshWalker()
 void MeshWalker::setIterators(RleIterator centreSegment, RleIterator topSegment, RleIterator bottomSegment, RleIterator frontSegment, RleIterator backSegment, uint32_t y, uint32_t z)
 {
     mCentreSegment = centreSegment;
-    mTopSegment = topSegment;
-    mBottomSegment = bottomSegment;
-    mFrontSegment = frontSegment;
-    mBackSegment = backSegment;
+    mTop.setIterator(topSegment);
+    mBottom.setIterator(bottomSegment);
+    mFront.setIterator(frontSegment);
+    mBack.setIterator(backSegment);
     mY = y;
     mZ = z;
 }
@@ -57,6 +121,8 @@ void MeshWalker::walk()
 {
     if(mCentreSegment)
     {
+        mTop.walk();
+
         mTopWalked = 0;
         mBottomWalked = 0;
         mFrontWalked = 0;
@@ -78,36 +144,12 @@ void MeshWalker::walk()
             if(currentType == 0)
                 continue;
 
-            //let others catch up and build quads
-            if(mTopSegment)
-                walkBuildTop(targetCoord, currentType, quadStart);
-            else
-                mTopQuads.push_back(SurfaceQuad(quadStart, mZ, targetCoord - quadStart, 1, mY, currentType));
+            std::vector<uint16_t> topQuads = mTop.requestQuadCoords(quadStart, targetCoord);
+
+            for(uint32_t i = 0; i < topQuads.size(); i += 2)
+            {
+                mTopQuads.push_back(SurfaceQuad(topQuads[i], mZ, topQuads[i + 1] - topQuads[i], 1, mY, currentType));
+            }
         }
-    }
-}
-
-void MeshWalker::walkBuildTop(uint16_t targetCoord, uint16_t targetType, uint16_t earliestStart)
-{
-    uint16_t currentType = 0;
-    uint16_t quadStart = 0;
-
-    while(mTopWalked < targetCoord)
-    {
-        quadStart = mTopWalked > earliestStart ? mTopWalked : earliestStart;
-
-        mTopWalked += *mTopSegment;
-        mTopSegment++;
-        currentType = *mTopSegment;
-        mTopSegment++;
-
-        //don't build quad if it isn't air
-        if(currentType != 0)
-            continue;
-
-        uint16_t quadLength = (mTopWalked > targetCoord ? targetCoord : mTopWalked) - quadStart;
-
-        std::cout << "walked and created a length of " << quadLength << "\n";
-        mTopQuads.push_back(SurfaceQuad(quadStart, mZ, quadLength, 1, mY, targetType));
     }
 }

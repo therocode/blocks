@@ -1,11 +1,24 @@
 #pragma once
 #include "world/chunk.h"
 #include "surfacemerger.h"
+#include <bitset>
 
 using RleIterator = const uint16_t*;
 
 class MeshWalker
 {
+    class NeighbourWalker
+    {
+        public:
+            void setIterator(RleIterator iterator);
+            void walk();
+            std::vector<uint16_t> requestQuadCoords(uint16_t start, uint16_t stop);
+        private:
+            RleIterator mSegment;
+            std::bitset<chunkWidth> quadField;
+            std::bitset<chunkWidth> airField;
+    };
+
     public:
         MeshWalker();
         void setIterators(RleIterator centreSegment, RleIterator topSegment, RleIterator bottomSegment, RleIterator frontSegment, RleIterator backSegment, uint32_t y, uint32_t z);
@@ -19,10 +32,10 @@ class MeshWalker
     private:
         void walkBuildTop(uint16_t targetCoord, uint16_t currentType, uint16_t earliestStart);
         RleIterator mCentreSegment;
-        RleIterator mTopSegment;
-        RleIterator mBottomSegment;
-        RleIterator mFrontSegment;
-        RleIterator mBackSegment;
+        NeighbourWalker mTop;
+        NeighbourWalker mBottom;
+        NeighbourWalker mFront;
+        NeighbourWalker mBack;
 
         std::vector<SurfaceQuad> mTopQuads;
         std::vector<SurfaceQuad> mBottomQuads;
@@ -35,6 +48,8 @@ class MeshWalker
         uint16_t mBottomWalked;
         uint16_t mFrontWalked;
         uint16_t mBackWalked;
+
+        uint16_t mTopCurrentType = 0;
 
         uint32_t mY;
         uint32_t mZ;
