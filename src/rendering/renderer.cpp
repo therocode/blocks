@@ -555,6 +555,8 @@ void Renderer::awaitChunks()
         }
         mChunkQueueMutex.unlock();
 
+        //between this area, it might miss chunk removal messages
+
         for(auto& chunkLump : queue)
         {
             VBOCreator vboCreator;
