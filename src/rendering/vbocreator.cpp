@@ -203,7 +203,9 @@ VBO VBOCreator::generateChunkVBO(Chunk* mainChunk, Chunk* topChunk, Chunk* botto
     }
 
 	//After stuff has been added, you have to update the gpu vbo data.
+    vbo.UpdateVBO();
     uint32_t amount = vbo.GetDrawAmount();
+    vbo.Clear();
 
     totalAmount += amount / 2;
     high_resolution_clock::time_point end = high_resolution_clock::now();

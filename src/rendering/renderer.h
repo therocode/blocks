@@ -9,25 +9,12 @@
 #include "../world/worldmessages.h"
 #include "camera.h"
 #include <vector>
-#include <thread>
-#include <mutex>
 #include <map>
 #include "../utilities/timer.h"
 
 #include "shaderprogram.h"
 
 #include "debugrenderer.h"
-
-struct ChunkLump
-{
-    std::shared_ptr<Chunk> mainChunk;
-    std::shared_ptr<Chunk> topChunk;
-    std::shared_ptr<Chunk> bottomChunk;
-    std::shared_ptr<Chunk> frontChunk;
-    std::shared_ptr<Chunk> backChunk;
-    std::shared_ptr<Chunk> leftChunk;
-    std::shared_ptr<Chunk> rightChunk;
-};
 
 class Renderer
     :   public fea::MessageReceiver<UpdateChunkVboMessage>,
@@ -62,7 +49,6 @@ class Renderer
         void cameraUpdate();    // camera function
 		void setCameraMatrix(const glm::mat4& m);
     private:
-        void awaitChunks();
 		//for camera animation
 		float interpDuck = 0.0f;
 		float duck = 0.f;
@@ -91,11 +77,4 @@ class Renderer
         size_t mCameraEntity;
         float mCameraPitch;
         float mCameraYaw;
-
-        std::thread mChunkMesher;
-        std::vector<ChunkLump> mChunkQueue;
-        std::mutex mChunkQueueMutex;
-        std::unordered_map<ChunkCoordinate, VBO> mVbosToAdd;
-        std::mutex mVbosToAddMutex;
-        bool mAwaitChunks;
 };

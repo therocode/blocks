@@ -6,11 +6,7 @@
 
 
 DebugRenderer Renderer::sDebugRenderer;
-Renderer::Renderer(fea::MessageBus& messageBus) : 
-    bus(messageBus), 
-    mPlayerId(-1),
-    mChunkMesher(&Renderer::awaitChunks, this),
-    mAwaitChunks(true)
+Renderer::Renderer(fea::MessageBus& messageBus) : bus(messageBus), mPlayerId(-1)
 {
 	mTimer.start();
 	bus.addMessageSubscriber<UpdateChunkVboMessage>(*this);
@@ -39,8 +35,6 @@ Renderer::~Renderer()
 	bus.removeMessageSubscriber<PlayerFacingBlockMessage>(*this);
 	bus.removeMessageSubscriber<PlayerIdMessage>(*this);
 	bus.removeMessageSubscriber<PlayerConnectedToEntityMessage>(*this);
-    mAwaitChunks = false;
-    mChunkMesher.join();
 }
 
 void Renderer::makeTexture(const std::string& path, uint32_t width, uint32_t height, GLuint& textureId)
@@ -109,59 +103,30 @@ void Renderer::setCameraMatrix(const glm::mat4& m){
 
 void Renderer::handleMessage(const UpdateChunkVboMessage& received)
 {
-    mChunkQueueMutex.lock();
-
-    Chunk* mainChunk;   
-    Chunk* topChunk;   
-    Chunk* bottomChunk;   
-    Chunk* frontChunk;   
-    Chunk* backChunk;   
-    Chunk* leftChunk;   
+    Chunk* mainChunk;
+    Chunk* topChunk;
+    Chunk* bottomChunk;
+    Chunk* frontChunk;
+    Chunk* backChunk;
+    Chunk* leftChunk;
     Chunk* rightChunk;
 
     std::tie(mainChunk, topChunk, bottomChunk, frontChunk, backChunk, leftChunk, rightChunk) = received.data;
 
-    mChunkQueue.push_back(ChunkLump());
+    VBOCreator vboCreator;
 
-    ChunkLump& newLump = mChunkQueue[mChunkQueue.size() - 1];
+    auto vboEntry = vbos.find(mainChunk->getLocation());
 
-    if(mainChunk)
+    if(vboEntry == vbos.end())
     {
-        newLump.mainChunk = std::unique_ptr<Chunk>(new Chunk());
-        *newLump.mainChunk = *mainChunk;
+        vbos.emplace(mainChunk->getLocation(), vboCreator.generateChunkVBO(mainChunk, topChunk, bottomChunk, frontChunk, backChunk, leftChunk, rightChunk));
     }
-    if(topChunk)
+    else
     {
-        newLump.topChunk = std::unique_ptr<Chunk>(new Chunk());
-        *newLump.topChunk = *topChunk;
+        vbos.at(mainChunk->getLocation()).DestroyVBO();
+        vbos.erase(mainChunk->getLocation());
+        vbos.emplace(mainChunk->getLocation(), vboCreator.generateChunkVBO(mainChunk, topChunk, bottomChunk, frontChunk, backChunk, leftChunk, rightChunk));
     }
-    if(bottomChunk)
-    {
-        newLump.bottomChunk = std::unique_ptr<Chunk>(new Chunk());
-        *newLump.bottomChunk = *bottomChunk;
-    }
-    if(frontChunk)
-    {
-        newLump.frontChunk = std::unique_ptr<Chunk>(new Chunk());
-        *newLump.frontChunk = *frontChunk;
-    }
-    if(backChunk)
-    {
-        newLump.backChunk = std::unique_ptr<Chunk>(new Chunk());
-        *newLump.backChunk = *backChunk;
-    }
-    if(leftChunk)
-    {
-        newLump.leftChunk = std::unique_ptr<Chunk>(new Chunk());
-        *newLump.leftChunk = *leftChunk;
-    }
-    if(rightChunk)
-    {
-        newLump.rightChunk = std::unique_ptr<Chunk>(new Chunk());
-        *newLump.rightChunk = *rightChunk;
-    }
-
-    mChunkQueueMutex.unlock();
 }
 
 void Renderer::handleMessage(const ChunkDeletedMessage& received)
@@ -170,19 +135,8 @@ void Renderer::handleMessage(const ChunkDeletedMessage& received)
 
     std::tie(coordinate) = received.data;
 
-    mVbosToAddMutex.lock();
-    if(mVbosToAdd.find(coordinate) != mVbosToAdd.end())
-    {
-        mVbosToAdd.at(coordinate).DestroyVBO();
-        mVbosToAdd.erase(coordinate);
-    }
-    mVbosToAddMutex.unlock();
-
-    if(vbos.find(coordinate) != vbos.end())
-    {
-        vbos.at(coordinate).DestroyVBO();
-        vbos.erase(coordinate);
-    }
+    vbos.at(coordinate).DestroyVBO();
+    vbos.erase(coordinate);
 }
 
 void Renderer::handleMessage(const PlayerFacingBlockMessage& received)
@@ -239,21 +193,6 @@ void Renderer::handleMessage(const PlayerConnectedToEntityMessage& received)
 void Renderer::render()
 {
     //glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
-    mVbosToAddMutex.lock();
-    if(mVbosToAdd.size() > 0)
-    {
-        for(auto newVbo : mVbosToAdd)
-        {
-            if(vbos.find(newVbo.first) != vbos.end())
-                vbos.erase(newVbo.first);
-
-            newVbo.second.UpdateVBO();
-            newVbo.second.Clear();
-            vbos.emplace(newVbo.first, newVbo.second);
-        }
-        mVbosToAdd.clear();
-    }
-    mVbosToAddMutex.unlock();
 
 	glm::vec3 fullColor = glm::vec3((float)0x00 / 255.f, (float)0xb2 / 255.f, (float)0xff / 255.f);
 	glm::vec3 cameraOffset = glm::vec3(0, 0.6f, 0);
@@ -538,35 +477,4 @@ void Renderer::handleMessage(const RemoveGfxEntityMessage& received)
 
 	billboards.at(id).mVbo.DestroyVBO();
 	billboards.erase(id);
-}
-
-void Renderer::awaitChunks()
-{
-    while(mAwaitChunks)
-    {
-        std::chrono::milliseconds dura(1);
-        std::this_thread::sleep_for(dura);
-        std::vector<ChunkLump> queue;
-
-        mChunkQueueMutex.lock();
-        if(mChunkQueue.size())
-        {
-            std::swap(queue, mChunkQueue);
-        }
-        mChunkQueueMutex.unlock();
-
-        //between this area, it might miss chunk removal messages
-
-        for(auto& chunkLump : queue)
-        {
-            VBOCreator vboCreator;
-
-            VBO created = vboCreator.generateChunkVBO(chunkLump.mainChunk.get(), chunkLump.topChunk.get(), chunkLump.bottomChunk.get(), chunkLump.frontChunk.get(), chunkLump.backChunk.get(), chunkLump.leftChunk.get(), chunkLump.rightChunk.get());
-
-            mVbosToAddMutex.lock();
-            mVbosToAdd.emplace(chunkLump.mainChunk->getLocation(), created);
-            mVbosToAddMutex.unlock();
-        }
-
-    }
 }
