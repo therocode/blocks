@@ -4,6 +4,11 @@
 VBO::VBO():mCurrentVBOByteSize(0),mVBOCreated(false){
     mDrawType = GL_TRIANGLES;
     mVBOCreated = false;
+    //Registering standard attributes.
+    registerAttribute("vert",   0, VBOAttribute::ATTRIBUTE_FLOAT3);
+    registerAttribute("normal", 1, VBOAttribute::ATTRIBUTE_FLOAT3);
+    registerAttribute("color",  2, VBOAttribute::ATTRIBUTE_FLOAT3);
+    registerAttribute("uv",     3, VBOAttribute::ATTRIBUTE_FLOAT2);
 }
 
 VBO::~VBO(){
@@ -18,6 +23,9 @@ void VBO::PushVertex(const Vertex& v){
     mvIndices.push_back(mvVertices.size() - 1);
 }
 void VBO::Clear(){
+    for(auto t = mAttributes.begin(); t != mAttributes.end(); t++){
+        t->second.clear();
+    }
     mvVertices.clear();
     mvIndices.clear();
 }
@@ -26,6 +34,23 @@ void VBO::PushRectangle(const Rectangle& r){
     int si = mvVertices.size() ;
     for(Vertex v : r.vs){
         mvVertices.push_back(v);
+        AttribValue val;
+        
+        for(int i = 0; i <3; i++)
+            val.floats[i] = v.normal[i];
+        pushToAttribute("normal", val);
+        
+        for(int i = 0; i <3; i++)
+            val.floats[i] = v.color[i];
+        pushToAttribute("color", val);
+        
+        for(int i = 0; i <2; i++)
+            val.floats[i] = v.uv[i];
+        pushToAttribute("uv", val);
+
+        for(int i = 0; i <3; i++)
+            val.floats[i] = v.position[i];
+        pushToAttribute("vert", val);
     }
     mvIndices.push_back(si);
     mvIndices.push_back(si + 1);
@@ -33,18 +58,41 @@ void VBO::PushRectangle(const Rectangle& r){
 
     mvIndices.push_back(si + 2);
     mvIndices.push_back(si + 3);
-    mvIndices.push_back(si );
+    mvIndices.push_back(si);
+}
+void VBO::createDataArray(std::vector<float>& data){
+    if(mAttributes.size() == 0) return;
+    mStride = 0;
+    for(auto t = mAttributes.begin(); t != mAttributes.end(); t++){
+        mStride += t->second.getElementSize();
+    }
+
+    unsigned int elementCount = mAttributes.at("vert").getElementCount();
+
+    for(unsigned int i = 0; i < elementCount; i ++){
+        for(auto t = mAttributes.begin(); t != mAttributes.end(); t++){
+            AttribValue v = t->second.getAttribElement(i);
+            for(int val = 0; val < v.usedValues; val ++)
+                data.push_back(v.floats[val]);
+        }
+    }   
 }
 
 void VBO::UpdateVBO(){
+    std::vector<float> wow;
     CreateVBO();	
-    mCurrentVBOByteSize = sizeof(Vertex) * mvVertices.size();
+    createDataArray(wow);
+
+    int oo = sizeof(Vertex) * mvVertices.size();
+
+    mCurrentVBOByteSize = sizeof(float) * wow.size();
+
     int idSize = sizeof(int) * mvIndices.size();
     BindBuffer();
-    glBufferData(GL_ARRAY_BUFFER, mCurrentVBOByteSize, mvVertices.data(), GL_STATIC_DRAW); 
+    glBufferData(GL_ARRAY_BUFFER, mCurrentVBOByteSize, wow.data(), GL_STATIC_DRAW); 
     glBufferData(GL_ELEMENT_ARRAY_BUFFER,idSize, mvIndices.data(), GL_STATIC_DRAW);
     UnbindBuffer();
-    mDrawSize = mvIndices.size();
+    mDrawSize = idSize;
     Clear();
 }
 void VBO::DestroyVBO()
@@ -65,22 +113,37 @@ void VBO::CreateVBO()
 }
 
 VBOAttribute& VBO::getAttribute(std::string attribName){
-
+    if(mAttributes.find(attribName) != mAttributes.end()){
+        return mAttributes.at(attribName);
+    }
 }
 
 VBOAttribute& VBO::getAttribute(GLuint attribID){
 
 }
 
-void VBO::registerAttribute(std::string name, int id, int type){
+void VBO::registerAttribute(const std::string name, const int id, const int type ){
     VBOAttribute newAttrib(name, id, type);
     mAttributes.emplace(name, newAttrib);
 }
 void VBO::setMainAttribute(const std::string name){
-
+    if(mAttributes.find(name) != mAttributes.end()){
+        mMainAttrib = mAttributes.at(name).getAttributeID();
+    }
 }
 void VBO::pushToAttribute(const std::string name, AttribValue v){
-
+    if(mAttributes.find(name) != mAttributes.end()){
+        if(mAttributes.at(name).getAttributeID() == mMainAttrib){
+            for(auto t = mAttributes.begin(); t != mAttributes.end(); t++){
+                if(t->second.getAttributeID() == mMainAttrib) continue;
+                if(!t->second.mIsUpdated){
+                    t->second.addElement(t->second.mLastValue);
+                }
+                t->second.mIsUpdated = false;
+            }
+        }
+        mAttributes.at(name).addElement(v);
+    }
 }
 void VBO::DrawVBO(){
     BindBuffer();
@@ -115,6 +178,11 @@ void VBO::DrawVBO(){
     for(int i = 0; i< 4; i++){
         glDisableVertexAttribArray(i);
     }
+/*    for(auto t = mAttributes.begin(); t != mAttributes.end(); t++){
+        glEnableVertexAttribArray(t->second.getAttributeID());
+        glVertexAttribPointer(t->second.getAttributeID(), t->second.getElementValueCount(), t->second.getType(), GL_FALSE, 
+    }
+*/
 #endif
     UnbindBuffer();
 }
@@ -122,7 +190,7 @@ void VBO::DrawVBO(ShaderProgram& program)
 {
     if(!mVBOCreated)return;
     BindBuffer();
-    int stride = sizeof(Vertex);
+    /*int stride = sizeof(Vertex);
 
     GLint i = program.getAttribLocation("vert");
     glEnableVertexAttribArray(i);
@@ -141,6 +209,22 @@ void VBO::DrawVBO(ShaderProgram& program)
     glVertexAttribPointer(i, 2, GL_FLOAT, GL_FALSE, stride , BUFFER_OFFSET(9 * sizeof(float)));
 
     glDrawElements(mDrawType, mDrawSize, GL_UNSIGNED_INT, 0);
+*/
+    unsigned int offset = 0;
+    int idd = 0;
+
+    for(auto t = mAttributes.begin(); t != mAttributes.end(); t++){
+        idd++;
+        GLint id = program.getAttribLocation(t->second.getName());
+        glEnableVertexAttribArray(id);
+        glVertexAttribPointer(id, t->second.getElementValueCount(), t->second.getType(), GL_FALSE, mStride, BUFFER_OFFSET(offset * sizeof(float)));
+        offset += t->second.getElementValueCount();
+    }
+
+    glDrawElements(mDrawType, mDrawSize, GL_UNSIGNED_INT, 0);
+
+    for(auto t = mAttributes.begin(); t != mAttributes.end(); t++)
+        glDisableVertexAttribArray(program.getAttribLocation(t->second.getName()));
 
     UnbindBuffer();
 }

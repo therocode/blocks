@@ -65,6 +65,7 @@ struct AttribValue{
         int  ints[4];
         char chars[4];
     };
+    unsigned int usedValues = 0;
     float& floatAtIndex(int i){
         return floats[i];
     }
@@ -103,9 +104,9 @@ class VBOAttribute{
     protected:
         std::vector<AttribValue> mData;
         GLenum mType = GL_FLOAT;
-        GLuint mLayoutID = 0;
+        GLuint mAttributeID = 0;
         int    mLayoutType;
-        std::string mLayoutName = "";
+        std::string mAttributeName = "";
         ///Size of one value in one element
         size_t mValueSize;
         ///Amount of values in one element.
@@ -113,9 +114,11 @@ class VBOAttribute{
         int    mAttributeType;
 
     public:
-        VBOAttribute(std::string layoutName, GLuint layoutID, int attributeType){
-            mLayoutName = layoutName;
-            mLayoutID = layoutID;
+        AttribValue mLastValue;
+        bool mIsUpdated = false;
+        VBOAttribute(std::string layoutName = "null", GLuint layoutID = 0, int attributeType = ATTRIBUTE_FLOAT3){
+            mAttributeName = layoutName;
+            mAttributeID = layoutID;
             mAttributeType = attributeType;
             switch(mAttributeType){
                 case ATTRIBUTE_FLOAT:
@@ -137,23 +140,54 @@ class VBOAttribute{
                 default:
                     mElementSize = 0;
             }
+            if(mAttributeType < ATTRIBUTE_INT){
+                mValueSize = sizeof(float);
+                mType = GL_FLOAT;
+            }else{
+                mType = GL_INT;
+                mValueSize = sizeof(int);
+            }    
+        }
+
+        void clear() {
+            mData.clear();
+        }
+
+        std::string getName() const{
+            return mAttributeName;
+        }
+        size_t getElementSize() const{
+            return mValueSize * mElementSize;
+        }
+
+        int getElementValueCount() const{
+            return mElementSize;
         }
 
         void addElement(AttribValue values){
+            values.usedValues = mElementSize;
             mData.push_back(values);
+            mLastValue = values;
+            mIsUpdated = true;
         }
 
         AttribValue getAttribElement(int index){
             if(index < mData.size())
                 return mData[index];
+
+            if(mData.size() != 0)
+            return mData[mData.size() -1];
             return AttribValue();
         }
 
         GLenum getType()    const {
             return mType;    
         }
-        GLuint getLayoutID()   const {
-            return mLayoutID;   
+        GLuint getAttributeID()   const {
+            return mAttributeID;   
+        }
+        unsigned int getElementCount()const {
+            return mData.size();
         }
 };
 
@@ -181,11 +215,14 @@ class VBO {
         int GetDrawAmount();
         VBOAttribute& getAttribute(std::string attribName);
         VBOAttribute& getAttribute(GLuint attribID);
-        void registerAttribute(const std::string name, int id, int type);
+        void registerAttribute(const std::string name, const int id, const int type);
         void setMainAttribute(const std::string name);
         void pushToAttribute(const std::string name, AttribValue v);
     private:
-        std::map<std::string, VBOAttribute> mAttributes;
+        GLuint mMainAttrib = 0;
+        GLuint mStride;
+        void createDataArray(std::vector<float>& data);
+        std::unordered_map<std::string, VBOAttribute> mAttributes;
         GLuint mID[2];
         int mCurrentVBOByteSize;
         bool mVBOCreated;
