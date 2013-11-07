@@ -222,7 +222,7 @@ class VBO {
         GLuint mMainAttrib = 0;
         GLuint mStride;
         void createDataArray(std::vector<float>& data);
-        std::map<std::string, VBOAttribute> mAttributes;
+        std::unordered_map<std::string, VBOAttribute> mAttributes;
         GLuint mID[2];
         int mCurrentVBOByteSize;
         bool mVBOCreated;
