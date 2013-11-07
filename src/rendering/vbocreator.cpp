@@ -20,7 +20,6 @@ VBO VBOCreator::generateChunkVBO(Chunk* mainChunk, Chunk* topChunk, Chunk* botto
     high_resolution_clock::time_point start = high_resolution_clock::now();
 
     VBO vbo;
-    vbo.registerAttribute("bounds", 4, VBOAttribute::ATTRIBUTE_FLOAT4);
 
     const ChunkCoordinate location = mainChunk->getLocation();
 
