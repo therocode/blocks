@@ -186,6 +186,7 @@ void VBO::DrawVBO(){
 void VBO::DrawVBO(ShaderProgram& program)
 {
     if(!mVBOCreated)return;
+    if(mDrawSize == 0) return;
     BindBuffer();
     /*int stride = sizeof(Vertex);
 
@@ -217,6 +218,7 @@ void VBO::DrawVBO(ShaderProgram& program)
         glVertexAttribPointer(id, t->second.getElementValueCount(), t->second.getType(), GL_FALSE, mStride, BUFFER_OFFSET(offset * sizeof(float)));
         offset += t->second.getElementValueCount();
     }
+    printf("idd:%i, drawSize:%i\n", idd, mDrawSize);
 
     glDrawElements(mDrawType, mDrawSize, GL_UNSIGNED_INT, 0);
 
