@@ -37,21 +37,21 @@ void VBO::PushRectangle(const Rectangle& r){
         mvVertices.push_back(v);
         AttribValue val;
         
-        for(int i = 0; i <3; i++)
-            val.floats[i] = v.normal[i];
-        pushToAttribute("normal", val);
+        // for(int i = 0; i <3; i++)
+            // val.floats[i] = v.normal[i];
+        // pushToAttribute("normal", val);
         
-        for(int i = 0; i <3; i++)
-            val.floats[i] = v.color[i];
-        pushToAttribute("color", val);
+        // for(int i = 0; i <3; i++)
+            // val.floats[i] = v.color[i];
+        // pushToAttribute("color", val);
         
-        for(int i = 0; i <2; i++)
-            val.floats[i] = v.uv[i];
-        pushToAttribute("uv", val);
+        // for(int i = 0; i <2; i++)
+            // val.floats[i] = v.uv[i];
+        // pushToAttribute("uv", val);
 
-        for(int i = 0; i <3; i++)
-            val.floats[i] = v.position[i];
-        pushToAttribute("vert", val);
+        // for(int i = 0; i <3; i++)
+            // val.floats[i] = v.position[i];
+        // pushToAttribute("vert", val);
     }
     mvIndices.push_back(si);
     mvIndices.push_back(si + 1);
@@ -82,8 +82,8 @@ void VBO::createDataArray(std::vector<float>& data){
 void VBO::UpdateVBO(){
     std::vector<float> wow;
     CreateVBO();	
-    createDataArray(wow);
-    mCurrentVBOByteSize = sizeof(float) * wow.size();
+    // createDataArray(wow);
+    mCurrentVBOByteSize = sizeof(Vertex)*mvVertices.size();//sizeof(float) * wow.size();
 
     int idSize = sizeof(int) * mvIndices.size();
     BindBuffer();
