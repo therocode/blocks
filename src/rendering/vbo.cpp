@@ -87,7 +87,7 @@ void VBO::UpdateVBO(){
 
     int idSize = sizeof(int) * mvIndices.size();
     BindBuffer();
-    glBufferData(GL_ARRAY_BUFFER, mCurrentVBOByteSize, wow.data(), GL_STATIC_DRAW); 
+    glBufferData(GL_ARRAY_BUFFER, mCurrentVBOByteSize, mvVertices.data(), GL_STATIC_DRAW); 
     glBufferData(GL_ELEMENT_ARRAY_BUFFER,idSize, mvIndices.data(), GL_STATIC_DRAW);
     UnbindBuffer();
     mDrawSize = idSize;
@@ -189,7 +189,8 @@ void VBO::DrawVBO(ShaderProgram& program)
     if(!mVBOCreated)return;
     if(mDrawSize == 0) return;
     BindBuffer();
-    /*int stride = sizeof(Vertex);
+	
+    int stride = sizeof(Vertex);
 
     GLint i = program.getAttribLocation("vert");
     glEnableVertexAttribArray(i);
@@ -208,22 +209,22 @@ void VBO::DrawVBO(ShaderProgram& program)
     glVertexAttribPointer(i, 2, GL_FLOAT, GL_FALSE, stride , BUFFER_OFFSET(9 * sizeof(float)));
 
     glDrawElements(mDrawType, mDrawSize, GL_UNSIGNED_INT, 0);
-*/
-    unsigned int offset = 0;
-    int idd = 0;
 
-    for(auto t = mAttributes.begin(); t != mAttributes.end(); t++){
-        idd++;
-        GLint id = program.getAttribLocation(t->second.getName());
-        glEnableVertexAttribArray(id);
-        glVertexAttribPointer(id, t->second.getElementValueCount(), t->second.getType(), GL_FALSE, mStride, BUFFER_OFFSET(offset * sizeof(float)));
-        offset += t->second.getElementValueCount();
-    }
+    // unsigned int offset = 0;
+    // int idd = 0;
 
-    glDrawElements(mDrawType, mDrawSize, GL_UNSIGNED_INT, 0);
+    // for(auto t = mAttributes.begin(); t != mAttributes.end(); t++){
+        // idd++;
+        // GLint id = program.getAttribLocation(t->second.getName());
+        // glEnableVertexAttribArray(id);
+        // glVertexAttribPointer(id, t->second.getElementValueCount(), t->second.getType(), GL_FALSE, mStride, BUFFER_OFFSET(offset * sizeof(float)));
+        // offset += t->second.getElementValueCount();
+    // }
 
-    for(auto t = mAttributes.begin(); t != mAttributes.end(); t++)
-        glDisableVertexAttribArray(program.getAttribLocation(t->second.getName()));
+    // glDrawElements(mDrawType, mDrawSize, GL_UNSIGNED_INT, 0);
+
+    // for(auto t = mAttributes.begin(); t != mAttributes.end(); t++)
+        // glDisableVertexAttribArray(program.getAttribLocation(t->second.getName()));
 
     UnbindBuffer();
 }
