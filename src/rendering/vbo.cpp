@@ -186,6 +186,7 @@ void VBO::DrawVBO(){
 }
 void VBO::DrawVBO(ShaderProgram& program)
 {
+	printf("Draw size: %i\n", mDrawSize);
     if(!mVBOCreated)return;
     if(mDrawSize == 0) return;
     BindBuffer();
