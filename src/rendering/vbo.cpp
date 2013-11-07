@@ -87,7 +87,7 @@ void VBO::UpdateVBO(){
 
     int idSize = sizeof(int) * mvIndices.size();
     BindBuffer();
-    glBufferData(GL_ARRAY_BUFFER, mCurrentVBOByteSize, mvVertices.data(), GL_STATIC_DRAW); 
+    glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * mvVertices.size(), mvVertices.data(), GL_STATIC_DRAW); 
     glBufferData(GL_ELEMENT_ARRAY_BUFFER,idSize, mvIndices.data(), GL_STATIC_DRAW);
     UnbindBuffer();
     mDrawSize = idSize;
