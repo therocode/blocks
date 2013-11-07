@@ -68,7 +68,7 @@ vec4 fragColor;
 	fragColor = vec4(vColor, 1.0);
 	fragColor -= 0.1*pow(length(vec2(0.5)-texCoord), 1.8);// + 0.03 * length(voronoi(texCoord.xy * 10.0));
 
-	vec4 texColor = texture2D(tex0, texCoord);
+	vec4 texColor = texture2D(tex0, vec2(0.5));
 	fragColor *= texColor;
 	//Crosshair
 		vec2 d = vec2(gl_FragCoord.xy);
