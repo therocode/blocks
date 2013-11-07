@@ -44,7 +44,7 @@ void Shader::compileShader()
 { 
 	glCompileShader(mShaderID);
 	GLint error = GL_TRUE;
-	glGetShaderiv(mShaderType, GL_COMPILE_STATUS, &error);
+	glGetShaderiv(mShaderID, GL_COMPILE_STATUS, &error);
 	if(error == GL_FALSE){
 		GLint infoLogLength;
 		glGetShaderiv(mShaderID, GL_INFO_LOG_LENGTH, &infoLogLength);

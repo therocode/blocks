@@ -93,6 +93,7 @@ void Renderer::setup()
 	//Setting it to this because haha.
 	cam.SetPosition(glm::vec3(0.0f, 50.0f, -50.0f));
 	mShaderProgram.setShaderPaths("data/vert", "data/frag");
+	
 }
 void Renderer::setCameraMatrix(const glm::mat4& m){
 

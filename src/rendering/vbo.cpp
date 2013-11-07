@@ -89,6 +89,7 @@ void VBO::UpdateVBO(){
     BindBuffer();
     glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * mvVertices.size(), mvVertices.data(), GL_STATIC_DRAW); 
     glBufferData(GL_ELEMENT_ARRAY_BUFFER,idSize, mvIndices.data(), GL_STATIC_DRAW);
+
     UnbindBuffer();
     mDrawSize = idSize;
     Clear();
@@ -144,6 +145,8 @@ void VBO::pushToAttribute(const std::string name, AttribValue v){
     }
 }
 void VBO::DrawVBO(){
+	GLenum err= glGetError();
+	if(err != GL_NO_ERROR) printf("something wrong here %i\n", err);
     BindBuffer();
     int stride = sizeof(Vertex);
 #if 0 
@@ -186,7 +189,6 @@ void VBO::DrawVBO(){
 }
 void VBO::DrawVBO(ShaderProgram& program)
 {
-	printf("Draw size: %i\n", mDrawSize);
     if(!mVBOCreated)return;
     if(mDrawSize == 0) return;
     BindBuffer();
