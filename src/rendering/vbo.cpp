@@ -82,9 +82,6 @@ void VBO::UpdateVBO(){
     std::vector<float> wow;
     CreateVBO();	
     createDataArray(wow);
-
-    int oo = sizeof(Vertex) * mvVertices.size();
-
     mCurrentVBOByteSize = sizeof(float) * wow.size();
 
     int idSize = sizeof(int) * mvIndices.size();

@@ -34,7 +34,10 @@ varying vec3 posCamSpace;
 varying vec3 normalWorldSpace;
 uniform vec2 screenSize;
 
+varying vec4 textureBounds;
+
 void main(){
+    textureBounds = bounds;
 	texCoord = uv;
 	modelSpace = vert;
 
