@@ -222,8 +222,8 @@ void VBO::DrawVBO(ShaderProgram& program)
 
     glDrawElements(mDrawType, mDrawSize, GL_UNSIGNED_INT, 0);
 
-    //for(auto t = mAttributes.begin(); t != mAttributes.end(); t++)
-    //    glDisableVertexAttribArray(program.getAttribLocation(t->second.getName()));
+    for(auto t = mAttributes.begin(); t != mAttributes.end(); t++)
+        glDisableVertexAttribArray(program.getAttribLocation(t->second.getName()));
 
     UnbindBuffer();
 }
