@@ -9,7 +9,7 @@ VBO::VBO():mCurrentVBOByteSize(0),mVBOCreated(false){
     registerAttribute("normal", 1, VBOAttribute::ATTRIBUTE_FLOAT3);
     registerAttribute("color",  2, VBOAttribute::ATTRIBUTE_FLOAT3);
     registerAttribute("uv",     3, VBOAttribute::ATTRIBUTE_FLOAT2);
-    //registerAttribute("bounds", 4, VBOAttribute::ATTRIBUTE_FLOAT4);
+    registerAttribute("bounds", 4, VBOAttribute::ATTRIBUTE_FLOAT4);
 }
 
 VBO::~VBO(){
@@ -222,8 +222,8 @@ void VBO::DrawVBO(ShaderProgram& program)
 
     glDrawElements(mDrawType, mDrawSize, GL_UNSIGNED_INT, 0);
 
-    for(auto t = mAttributes.begin(); t != mAttributes.end(); t++)
-        glDisableVertexAttribArray(program.getAttribLocation(t->second.getName()));
+    //for(auto t = mAttributes.begin(); t != mAttributes.end(); t++)
+    //    glDisableVertexAttribArray(program.getAttribLocation(t->second.getName()));
 
     UnbindBuffer();
 }
