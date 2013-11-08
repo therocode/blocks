@@ -2,6 +2,7 @@
 #include <vector>
 #include <chrono>
 #include "meshwalker.h"
+#include "newvbo.h"
 
 using std::chrono::duration_cast;
 using std::chrono::microseconds;
@@ -14,13 +15,35 @@ uint32_t VBOCreator::timesGenerated = 0;
 VBOCreator::VBOCreator()
 {
 }
+struct ChunkVertex{
+    float vert[3];
+    float color[3];
+    float normal[3];
+    float uv[2];
+    float bounds[4];
+};
 
 VBO VBOCreator::generateChunkVBO(Chunk* mainChunk, Chunk* topChunk, Chunk* bottomChunk, Chunk* frontChunk, Chunk* backChunk, Chunk* leftChunk, Chunk* rightChunk)
 {
     high_resolution_clock::time_point start = high_resolution_clock::now();
 
     VBO vbo;
+    NewVBO nvbo;
+
+    nvbo.getVertexDeclaration().addElement(VertexElement::ELEMENT_FLOAT3, 0, "vert");
+    nvbo.getVertexDeclaration().addElement(VertexElement::ELEMENT_FLOAT3, 1, "color");
+    nvbo.getVertexDeclaration().addElement(VertexElement::ELEMENT_FLOAT3, 2, "normal");
+    nvbo.getVertexDeclaration().addElement(VertexElement::ELEMENT_FLOAT2, 3, "uv");
+    nvbo.getVertexDeclaration().addElement(VertexElement::ELEMENT_FLOAT4, 4, "bounds");
+    
+    nvbo.setMaxSize(3000, 6000);
+    nvbo.allocateBuffers();
+    ChunkVertex* v = (ChunkVertex*)nvbo.getNextVertexPtr();
+
     vbo.registerAttribute("bounds", 4, VBOAttribute::ATTRIBUTE_FLOAT4);
+
+    nvbo.deallocateBuffers();
+
 
     const ChunkCoordinate location = mainChunk->getLocation();
 

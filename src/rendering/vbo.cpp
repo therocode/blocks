@@ -219,8 +219,7 @@ void VBO::DrawVBO(ShaderProgram& program)
 
     for(auto t = mAttributes.begin(); t != mAttributes.end(); t++){
         idd++;
-        GLuint id = program.getAttribLocation(t->second.getName());
-		//if(id > 3)printf("%s id:%u\n", t->second.getName().c_str(), id);
+        GLint id = program.getAttribLocation(t->second.getName());
         glEnableVertexAttribArray(id);
         glVertexAttribPointer(id, t->second.getElementValueCount(), t->second.getType(), GL_FALSE, mStride, BUFFER_OFFSET(offset * sizeof(float)));
         offset += t->second.getElementValueCount();
