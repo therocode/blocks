@@ -75,7 +75,7 @@ vec4 fragColor;
         mTexCoord = textureBounds.xy + fract(vec2(texCoord)) * texD;
     else
         mTexCoord = texCoord;
-	fragColor -= 0.5*pow(length(vec2(0.5)- fract(texCoord)), 1.8);// + 0.03 * length(voronoi(texCoord.xy * 10.0));
+	//fragColor -= 0.5*pow(length(vec2(0.5)- fract(texCoord)), 1.8);// + 0.03 * length(voronoi(texCoord.xy * 10.0));
 
 	vec4 texColor = texture2D(tex0, mTexCoord);
 
