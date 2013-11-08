@@ -145,8 +145,7 @@ void VBO::pushToAttribute(const std::string name, AttribValue v){
     }
 }
 void VBO::DrawVBO(){
-	GLenum err= glGetError();
-	if(err != GL_NO_ERROR) printf("something wrong here %i\n", err);
+	
     BindBuffer();
     int stride = sizeof(Vertex);
 #if 0 
@@ -189,6 +188,8 @@ void VBO::DrawVBO(){
 }
 void VBO::DrawVBO(ShaderProgram& program)
 {
+	GLenum err= glGetError();
+	if(err != GL_NO_ERROR) printf("something wrong here %i\n", err);
     if(!mVBOCreated)return;
     if(mDrawSize == 0) return;
     BindBuffer();
