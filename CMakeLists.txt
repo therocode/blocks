@@ -45,6 +45,7 @@ set(source_files
     src/rendering/surfacemerger.cpp
 	src/rendering/vbo.cpp
 	src/rendering/vbocreator.cpp
+    src/rendering/newvbo.cpp
     src/script/scriptcallback.cpp
     src/script/scriptengine.cpp
     src/script/scriptentity.cpp
@@ -116,6 +117,7 @@ set(header_files
     src/rendering/surfacemerger.h
 	src/rendering/vbo.h
 	src/rendering/vbocreator.h
+    src/rendering/newvbo.h
 	src/script/scriptmessages.h
     src/script/scriptcallback.h
     src/script/scriptengine.h
