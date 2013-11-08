@@ -10,9 +10,10 @@ class Player : Entity
         if(isOnGround())
         {
         }
-		//if(frameNumber == 1)
+		if(frameNumber == 1)
 			//setPosition(800, 60, 800);
 			//setPosition(10, 60, 0);
+            setPosition(-11.548175f, 16.806120f, -8.115272f);
         //consolePrint("entity id is " + mId);
     }
 

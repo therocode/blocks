@@ -18,7 +18,12 @@ void Dimension::highlightChunk(size_t id, const ChunkCoordinate& chunk)
     landscape.highlightChunk(id, chunk);
 }
 
-const Landscape& Dimension::getLandscape()
+const Landscape& Dimension::getLandscape() const
+{
+    return landscape;
+}
+
+Landscape& Dimension::getLandscape()
 {
     return landscape;
 }

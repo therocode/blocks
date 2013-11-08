@@ -15,5 +15,6 @@ enum InputAction
     CROUCH,
     STOPCROUCH,
     MOUSELEFT,
-    STOPMOUSELEFT
+    STOPMOUSELEFT,
+    DIG
 };

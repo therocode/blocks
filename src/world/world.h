@@ -5,9 +5,11 @@
 #include "../entity/entitysystem.h"
 #include <featherkit/messaging.h>
 #include "../rendering/renderingmessages.h"
+#include "worldmessages.h"
 
 class World : 
-        public fea::MessageReceiver<PlayerEntersChunkMessage>
+        public fea::MessageReceiver<PlayerEntersChunkMessage>,
+        public fea::MessageReceiver<SetVoxelMessage>
 {
     public:
         World(fea::MessageBus& messageBus);
@@ -15,6 +17,7 @@ class World :
         void initialise();
         void update();
         virtual void handleMessage(const PlayerEntersChunkMessage& received);
+        virtual void handleMessage(const SetVoxelMessage& received);
         WorldInterface& getWorldInterface();
     private:
 		glm::vec3 mCamPos, mCamDir;

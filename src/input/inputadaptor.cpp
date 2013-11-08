@@ -76,15 +76,15 @@ void InputAdaptor::update()
 		}
 		else if(event.type == fea::Event::MOUSEBUTTONPRESSED){
 			mouseDown = true;
-			//if(event.mouseButton.button == fea::Mouse::Button::LEFT){
-			//    mBus.sendMessage<PlayerActionMessage>(PlayerActionMessage(mPlayerId, InputAction::MOUSELEFT));
-			//}
+			if(event.mouseButton.button == fea::Mouse::Button::LEFT){
+			    mBus.sendMessage<PlayerActionMessage>(PlayerActionMessage(mPlayerId, InputAction::DIG));
+			}
 		}
 		else if(event.type == fea::Event::MOUSEBUTTONRELEASED){
 			mouseDown = false;
-			//if(event.mouseButton.button == fea::Mouse::Button::LEFT){
-			//    mBus.sendMessage<PlayerActionMessage>(PlayerActionMessage(mPlayerId, InputAction::STOPMOUSELEFT));
-			//}
+			if(event.mouseButton.button == fea::Mouse::Button::LEFT){
+			    mBus.sendMessage<PlayerActionMessage>(PlayerActionMessage(mPlayerId, InputAction::STOPMOUSELEFT));
+			}
 		}
 		else if(event.type == fea::Event::RESIZED){
 			mBus.sendMessage<WindowResizeMessage>(WindowResizeMessage(event.size.width, event.size.height));

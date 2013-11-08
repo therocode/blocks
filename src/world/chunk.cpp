@@ -78,14 +78,51 @@ Chunk::Chunk(const ChunkCoordinate& loc, const RleIndexArray& indices, const Rle
 {
 }
 
+//changing the fourth letter to b:
+
+//(the ones in caps belong to a group that needed to change)
+//AAAABBBB -> AAABBBBB = 4A4B -> 3A5B
+//BBBABBBB -> BBBBBBBB = 3B1A4B -> 8B
+//BBBAAAAA -> BBBBAAAA = 3B5A -> 4B4A
+//AAAAAAAA -> AAABAAAA = 8A -> 3A1B4A
+//CCCCaaaa -> CCCBaaaa = 4C4a -> 3C1B4a
+//cacAcaca -> cacBcaca = 1c1a1c1A1c1a1c1a -> 1c1a1c1B1c1a1c1a
+//baBAcaba -> baBBcaba = 1b1a1B1A1c1a1b1a -> 1b1a2B1c1a1b1a
+
+
+//which groups need to change?
+//-always the ones _at_ the coordinate of change
+//-the neighbour groups of the coordinate which have the same type as the one you set the coordinate to
+
+//algorithm:
+//find group belonging to the target coordinate and set that to group X
+//check neighbouring groups of group X. if these carries the target type, extract these as well, as groups XL and XR (X Left and X Right)
+//
+
+
+
 void Chunk::setVoxelType(uint32_t x, uint32_t y, uint32_t z, VoxelType type)
 {
-    //voxelTypes[x + z * chunkWidth + y * chunkWidthx2] = type;
+	if(x >= chunkWidth || y >= chunkWidth || z >= chunkWidth)
+        return;
+
+    size_t segmentIterator = mRleSegmentIndices[z + y * chunkWidth].mSegmentStart;
+    size_t walked = 0;
+
+    while(walked < x)
+    {
+        walked += mRleSegments[segmentIterator];
+
+        if(walked <= x)
+            segmentIterator += 2;
+    }
+    
+    std::cout << "the type of the one you wish to set it " << mRleSegments[segmentIterator + 1] << " isn't that so? voxel: " << x << " " << y << " " << z << "\n";
 }
 
 void Chunk::setVoxelType(const VoxelCoordinate& voxel, VoxelType type)
 {
-    //setVoxelType(voxel.x, voxel.y, voxel.z, type);
+    setVoxelType(voxel.x, voxel.y, voxel.z, type);
 }
 
 void Chunk::setVoxelData(const VoxelTypeArray& types)

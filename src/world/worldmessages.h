@@ -7,3 +7,6 @@ using ChunkCreatedMessage = fea::Message<ChunkCreated_tag, const ChunkCoordinate
 
 struct ChunkDeleted_tag{};//                               coordinate              chunk
 using ChunkDeletedMessage = fea::Message<ChunkDeleted_tag, const ChunkCoordinate&>;
+
+struct SetVoxel_tag{};//
+using SetVoxelMessage = fea::Message<SetVoxel_tag, const VoxelWorldCoordinate&, VoxelType>;

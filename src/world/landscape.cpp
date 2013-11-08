@@ -33,6 +33,11 @@ const Chunk& Landscape::getChunk(const ChunkCoordinate& location) const
     return chunks.at(location);
 }
 
+Chunk& Landscape::getChunk(const ChunkCoordinate& location)
+{
+    return chunks.at(location);
+}
+
 const ChunkMap& Landscape::getChunkList() const
 {
     return chunks;

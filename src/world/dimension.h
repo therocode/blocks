@@ -9,7 +9,8 @@ class Dimension
         Dimension(fea::MessageBus& messageBus);
         void initialise(); 
         void highlightChunk(size_t id, const ChunkCoordinate& chunk);
-        const Landscape& getLandscape();
+        const Landscape& getLandscape() const;
+        Landscape& getLandscape();
     private:
         fea::MessageBus& bus;
         Landscape landscape;

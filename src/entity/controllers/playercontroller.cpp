@@ -1,6 +1,7 @@
 #include "playercontroller.h"
 #include "../../world/worldinterface.h"
 #include "../../rendering/renderingmessages.h"
+#include "world/worldmessages.h"
 #include "moveaction.h"
 #include <iostream>
 
@@ -65,10 +66,17 @@ void PlayerController::handleMessage(const PlayerActionMessage& received)
     else if(action == JUMP)
     {
         mBus.sendMessage<EntityJumpMessage>(EntityJumpMessage(mPlayerEntities.at(playerId).lock()->getId(), true));
-    }else if(action == STOPJUMP)
+    }
+    else if(action == STOPJUMP)
 	{
 		mBus.sendMessage<EntityJumpMessage>(EntityJumpMessage(mPlayerEntities.at(playerId).lock()->getId(), false));
 	}
+    else if(action == DIG)
+    {
+        glm::vec3 worldPos = mPlayerEntities.at(playerId).lock()->getAttribute<glm::vec3>("block_facing");
+        VoxelWorldCoordinate voxel = VoxelWorldCoordinate(worldPos.x, worldPos.y, worldPos.z);
+        mBus.sendMessage<SetVoxelMessage>(SetVoxelMessage(voxel, 0));
+    }
 }
 
 void PlayerController::handleMessage(const PlayerMoveDirectionMessage& received)

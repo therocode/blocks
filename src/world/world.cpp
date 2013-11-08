@@ -12,11 +12,13 @@
 	worldInterface(standardDimension, entitySystem)
 {
 	bus.addMessageSubscriber<PlayerEntersChunkMessage>(*this);
+	bus.addMessageSubscriber<SetVoxelMessage>(*this);
 }
 
 World::~World()
 {
 	bus.removeMessageSubscriber<PlayerEntersChunkMessage>(*this);
+	bus.removeMessageSubscriber<SetVoxelMessage>(*this);
 }
 
 void World::initialise()
@@ -44,6 +46,19 @@ void World::handleMessage(const PlayerEntersChunkMessage& received)
 	std::tie(playerId, chunkCoordinate) = received.data;
 
     standardDimension.highlightChunk(playerId, chunkCoordinate);
+}
+
+void World::handleMessage(const SetVoxelMessage& received)
+{
+    VoxelWorldCoordinate coordinate;
+    VoxelType type;
+
+    std::tie(coordinate, type) = received.data;
+
+    ChunkCoordinate chunkCoord = worldToChunk(coordinate.x, coordinate.y, coordinate.z);
+    VoxelCoordinate voxelCoord = worldToChunkVoxel(coordinate.x, coordinate.y, coordinate.z);
+    
+    standardDimension.getLandscape().getChunk(chunkCoord).setVoxelType(voxelCoord.x, voxelCoord.y, voxelCoord.z, type);
 }
 
 WorldInterface& World::getWorldInterface()

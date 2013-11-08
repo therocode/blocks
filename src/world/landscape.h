@@ -13,6 +13,7 @@ class Landscape
         Chunk& loadChunk(const ChunkCoordinate& location);
         bool chunkIsLoaded(const ChunkCoordinate& location) const;
         const Chunk& getChunk(const ChunkCoordinate& location) const;
+        Chunk& getChunk(const ChunkCoordinate& location);
         const ChunkMap& getChunkList() const;
         void highlightChunk(size_t id, const ChunkCoordinate& chunk);
     private:
