@@ -66,6 +66,7 @@ class VBO{
         bool mCreatedBuffers;
 
     public:
+		char* getRawData(){return mpVertexData;}
         size_t getElementSize(){return mVertexDeclaration.getVertexSize();}
         VBO();
 
@@ -83,14 +84,15 @@ class VBO{
         void uploadVBO();
 
         void clear();
-    
-        //Gets pointer to new vertex that can be modified.
-        char* getNextVertexPtr(unsigned int vertexAmount = 1);
-
+		
         void  pushIndex(int i);
 
+        //Gets pointer to new vertex that can be modified.
+        char* getNextVertexPtr(int vertexAmount = 1);
+
+
         //Gets pointer to vertex at this position.
-        char* getVertexPtr(unsigned int i);
+        char* getVertexPtr(int i);
 
         void createBuffers();
         void destroyBuffers();

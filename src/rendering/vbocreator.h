@@ -74,7 +74,7 @@ struct ChunkRect{
         }
     }
     void pushIndicesIntoVBO(VBO& target){
-        int startID = target.getVertexCount() - 4;
+        int startID = target.getVertexCount();
         target.pushIndex(startID);
         target.pushIndex(startID + 1);
         target.pushIndex(startID + 2);
