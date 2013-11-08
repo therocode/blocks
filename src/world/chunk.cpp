@@ -116,8 +116,24 @@ void Chunk::setVoxelType(uint32_t x, uint32_t y, uint32_t z, VoxelType type)
         if(walked <= x)
             segmentIterator += 2;
     }
+
+    uint16_t* leftNeighbour = nullptr;
+    uint16_t* rightNeighbour = nullptr;
+
+    if(walked > 0)
+        leftNeighbour = &mRleSegments[segmentIterator - 2];
+    if(walked < chunkWidth)
+        rightNeighbour = &mRleSegments[segmentIterator + 2];
     
     std::cout << "the type of the one you wish to set it " << mRleSegments[segmentIterator + 1] << " isn't that so? voxel: " << x << " " << y << " " << z << "\n";
+    if(leftNeighbour)
+    {
+        std::cout << "the left neighbour is " << *(leftNeighbour + 1) << "\n";
+    }
+    if(rightNeighbour)
+    {
+        std::cout << "the right neighbour is " << *(rightNeighbour + 1) << "\n";
+    }
 }
 
 void Chunk::setVoxelType(const VoxelCoordinate& voxel, VoxelType type)

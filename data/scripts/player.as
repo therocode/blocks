@@ -19,10 +19,12 @@ class Player : Entity
 
     void onGround(bool landed)
     {
-        if(landed){
+        if(landed)
+        {
 			consolePrint(toString(getPosition()), VERBOSE);
             consolePrint("lalalaaaa i am on the ground");
-        }else
+        }
+        else
             consolePrint("lalalaaaa i am on the air");
     }
 }
