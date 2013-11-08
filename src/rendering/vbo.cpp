@@ -1,5 +1,5 @@
 #include "vbo.h"
-
+#ifdef oldvbo
 #define BUFFER_OFFSET(i) ((char*)NULL + (i))
 VBO::VBO():mCurrentVBOByteSize(0),mVBOCreated(false){
     mDrawType = GL_TRIANGLES;
@@ -262,3 +262,4 @@ int VBO::GetDrawAmount()
 {
     return mDrawSize;
 }
+#endif

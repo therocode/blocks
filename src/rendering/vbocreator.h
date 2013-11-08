@@ -1,16 +1,22 @@
 #pragma once
 #include "blockstd.h"
-#include "vbo.h"
+//#include "vbo.h"
 #include "../world/chunk.h"
 #include <chrono>
 #include "newvbo.h"
 
 struct ChunkVertex{
-    float vert[3];
+    float vert[3] ;
     float color[3];
     float normal[3];
     float uv[2];
     float bounds[4];
+    void reset(){
+        vert[0] = vert[1] = vert[2] = 0;
+        color[0] = color[1] = color[2] = 1.f;
+        normal[0] = normal[1] = normal[2] = 1.f;
+        uv[0] = uv[1] = 0.f;
+    }
 };
 
 struct ChunkRect{
@@ -49,23 +55,26 @@ struct ChunkRect{
             vs[i].normal[2] = v1.z;
         }	
     }
+    void reset(){
+        for(auto &v : vs)v.reset();
+    }
     void setColor(float r, float g, float b){
-        for(auto &v : vs){
+        for(ChunkVertex &v : vs){
             v.color[0] = r;
             v.color[1] = g;
             v.color[2] = b;
         }	
     }
     void setBounds(float sx, float sy, float ex, float ey){
-        for(auto &v : vs){
+        for(ChunkVertex &v : vs){
             v.bounds[0] = sx;
             v.bounds[1] = sy;
             v.bounds[2] = ex;
             v.bounds[3] = ey;
         }
     }
-    void pushIndicesIntoVBO(NewVBO& target){
-        unsigned int startID = target.getIndexCount();
+    void pushIndicesIntoVBO(VBO& target){
+        int startID = target.getVertexCount() - 4;
         target.pushIndex(startID);
         target.pushIndex(startID + 1);
         target.pushIndex(startID + 2);
@@ -94,7 +103,7 @@ class VBOCreator
     VBO generateBoardVBO(const glm::vec2& dimensions) const;
 private:
 	///Helper function for vbo creation.
-	inline void setRectData(Rectangle& r, float x, float y, float z, int face, float u, float v, float width, float height) const;
+	//inline void setRectData(Rectangle& r, float x, float y, float z, int face, float u, float v, float width, float height) const;
     inline void setChunkRectData(ChunkRect& r,float x, float y, float z, int face, float u, float v, float width, float height) const;
     static uint32_t totalTime;
     static uint32_t totalAmount;

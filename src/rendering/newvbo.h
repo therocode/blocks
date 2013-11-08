@@ -22,7 +22,7 @@ struct VertexElement{
     unsigned int layoutID;
     std::string  attributeName;
 
-    unsigned int offset;
+    unsigned int offset = 0;
 };
 
 class VertexDeclaration{
@@ -45,7 +45,7 @@ enum VBOType{
     INDEX_BUFFER
 };
 
-class NewVBO{
+class VBO{
     protected:
         bool  mAllocated;
         char* mpVertexData;
@@ -59,21 +59,25 @@ class NewVBO{
         unsigned int mMaxIndices;
         VertexDeclaration mVertexDeclaration;
 
-        GLenum mDrawType;
+        GLenum mDrawType = GL_TRIANGLES;
         GLsizei mDrawCount;
 
-        GLuint mID[2];
+        GLuint mID[2] = {0,0};
         bool mCreatedBuffers;
 
     public:
-        NewVBO();
+        size_t getElementSize(){return mVertexDeclaration.getVertexSize();}
+        VBO();
 
         VertexDeclaration& getVertexDeclaration();
         unsigned int getIndexCount();
+        unsigned int getVertexCount();
         void setMaxSize(unsigned int vertexCount, unsigned int indexCount);
 
         void allocateBuffers();
         void deallocateBuffers();
+
+        void reset();
 
         ///uploads to gpu. will clear the local stuff.
         void uploadVBO();
@@ -83,7 +87,7 @@ class NewVBO{
         //Gets pointer to new vertex that can be modified.
         char* getNextVertexPtr(unsigned int vertexAmount = 1);
 
-        void  pushIndex(unsigned int i);
+        void  pushIndex(int i);
 
         //Gets pointer to vertex at this position.
         char* getVertexPtr(unsigned int i);

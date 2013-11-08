@@ -11,7 +11,7 @@ size_t VertexElement::getElementByteSize(unsigned int element){
         case ELEMENT_FLOAT4:
             return sizeof(float) * 4;
         default:
-            return sizeof(float);
+            return sizeof(float) * 3;
     }
 }
 
@@ -26,7 +26,7 @@ GLint VertexElement::getElementSize(unsigned int element){
         case ELEMENT_FLOAT4:
             return 4;
         default:
-            return 1;
+            return 3;
     }
 }
 
@@ -58,7 +58,7 @@ void VertexDeclaration::addElement(unsigned int elementType, unsigned int shader
 
     e.offset = mCurrentSize;
     mCurrentSize += VertexElement::getElementByteSize(elementType);
-
+    mVertexElements.push_back(e);
 }
 
 void VertexDeclaration::clear(){
@@ -85,6 +85,7 @@ void VertexDeclaration::bind(ShaderProgram& program){
                 VertexElement::getElementSize(v.elementType), 
                 VertexElement::getElementType(v.elementType), 
                 GL_FALSE, mCurrentSize, BUFFER_OFFSET(v.offset));
+       //printf("bound element %s to %i. offset %i, stride: %i\n", v.attributeName.c_str(), id, v.offset, mCurrentSize);
     }
 }
 
@@ -102,86 +103,99 @@ void VertexDeclaration::unbind(ShaderProgram& program){
 
 //start VBO
 
-NewVBO::NewVBO(){
+VBO::VBO(){
     mMaxVertices = 0;
     mMaxIndices = 0;
     mCurrentVertex = 0;
     mCurrentIndex = 0;
     mAllocated = false;
     mVertexSize = 0;
+    mCreatedBuffers = false;
 }
 
-void NewVBO::setMaxSize(unsigned int vertexCount, unsigned int indexCount){
+void VBO::setMaxSize(unsigned int vertexCount, unsigned int indexCount){
     mMaxVertices = vertexCount;
     mMaxIndices = indexCount;
 }
 
-void NewVBO::allocateBuffers(){
+void VBO::allocateBuffers(){
     if(!mAllocated){
         mVertexSize = mVertexDeclaration.getVertexSize();
-        mpVertexData = (char*)malloc(mMaxVertices * mVertexSize);
+        mpVertexData = new char[mMaxVertices * mVertexSize];
         mpIndexData  = new int[mMaxIndices];
         mAllocated = true;
     }
 }
 
-void NewVBO::deallocateBuffers(){
+void VBO::deallocateBuffers(){
     if(mAllocated){
-        free(mpVertexData);
+        delete[] mpVertexData;
         delete[] mpIndexData;
         mAllocated = false;
     }
 }
 
-VertexDeclaration& NewVBO::getVertexDeclaration(){
+VertexDeclaration& VBO::getVertexDeclaration(){
     return mVertexDeclaration;
 }
 
-unsigned int NewVBO::getIndexCount(){
+unsigned int VBO::getIndexCount(){
     return mCurrentIndex; 
 }
+unsigned int VBO::getVertexCount(){
+    return mCurrentVertex;
+}
 
-void NewVBO::createBuffers(){
+void VBO::createBuffers(){
     if(!mCreatedBuffers){
         glGenBuffers(2, mID);
         mCreatedBuffers = true;
     }
 }
 
-void NewVBO::destroyBuffers(){
+void VBO::destroyBuffers(){
     if(mCreatedBuffers){
         glDeleteBuffers(2, mID);
         mCreatedBuffers = false;
     }
 }
 
-void NewVBO::uploadVBO(){
+void VBO::uploadVBO(){
     createBuffers();
     bind();
 
     glBufferData(GL_ARRAY_BUFFER, mCurrentVertex, mpVertexData, GL_STATIC_DRAW); 
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, mCurrentIndex, mpIndexData, GL_STATIC_DRAW);
+    //int max = (mCurrentIndex < 40)?mCurrentIndex:40;
+    //for(int i = 0; i < max; i ++) printf("%i, ", mpIndexData[i]);
+    //printf("\n");
 
     mDrawCount = mCurrentIndex;
 
     clear();
     unbind();
 }
+void VBO::reset(){
+    mCurrentVertex = 0;
+    mCurrentIndex = 0;
+    mDrawCount = 0;
+}
 
-void NewVBO::clear(){
+void VBO::clear(){
     deallocateBuffers(); 
     mCurrentVertex = 0;
     mCurrentIndex = 0;
 }
 
-void NewVBO::pushIndex(unsigned int i){
+void VBO::pushIndex(int i){
     if(mCurrentIndex < mMaxIndices){
+        //printf("pushed index %u\n", i);
         mpIndexData[mCurrentIndex] = i;
         mCurrentIndex ++;
-    }
+    }else printf("indices full\n");
 }
 
-char* NewVBO::getNextVertexPtr(unsigned int vertexAmount){
+char* VBO::getNextVertexPtr(unsigned int vertexAmount){
     if(mAllocated && mCurrentVertex + (vertexAmount - 1) < mMaxVertices){
         char* v = getVertexPtr(mCurrentVertex);
         mCurrentVertex += vertexAmount;
@@ -190,7 +204,7 @@ char* NewVBO::getNextVertexPtr(unsigned int vertexAmount){
     return nullptr;
 }
 
-char* NewVBO::getVertexPtr(unsigned int i){
+char* VBO::getVertexPtr(unsigned int i){
     if(mAllocated && i < mMaxVertices){
         char* v = mpVertexData;
         v += i * mVertexSize;
@@ -199,17 +213,17 @@ char* NewVBO::getVertexPtr(unsigned int i){
     return nullptr;
 }
 
-void NewVBO::bind(){
+void VBO::bind(){
     glBindBuffer(GL_ARRAY_BUFFER, mID[VERTEX_BUFFER]);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mID[INDEX_BUFFER]);
 }
 
-void NewVBO::unbind(){
+void VBO::unbind(){
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
-void NewVBO::draw(){
+void VBO::draw(){
     bind();
     mVertexDeclaration.bind();
     glDrawElements(mDrawType, mDrawCount, GL_UNSIGNED_INT, 0);
@@ -217,7 +231,7 @@ void NewVBO::draw(){
     unbind();
 }
 
-void NewVBO::draw(ShaderProgram& program){
+void VBO::draw(ShaderProgram& program){
     bind();
     mVertexDeclaration.bind(program);
     glDrawElements(mDrawType, mDrawCount, GL_UNSIGNED_INT, 0);
@@ -225,11 +239,11 @@ void NewVBO::draw(ShaderProgram& program){
     unbind();
 }
 
-void NewVBO::setDrawType(GLenum type){
+void VBO::setDrawType(GLenum type){
     mDrawType = type;
 }
 
-GLenum NewVBO::getDrawType(){
+GLenum VBO::getDrawType(){
     return mDrawType;
 }
 

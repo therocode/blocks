@@ -124,7 +124,7 @@ void Renderer::handleMessage(const UpdateChunkVboMessage& received)
     }
     else
     {
-        vbos.at(mainChunk->getLocation()).DestroyVBO();
+        vbos.at(mainChunk->getLocation()).destroyBuffers();
         vbos.erase(mainChunk->getLocation());
         vbos.emplace(mainChunk->getLocation(), vboCreator.generateChunkVBO(mainChunk, topChunk, bottomChunk, frontChunk, backChunk, leftChunk, rightChunk));
     }
@@ -136,7 +136,7 @@ void Renderer::handleMessage(const ChunkDeletedMessage& received)
 
     std::tie(coordinate) = received.data;
 
-    vbos.at(coordinate).DestroyVBO();
+    vbos.at(coordinate).destroyBuffers();
     vbos.erase(coordinate);
 }
 
@@ -249,7 +249,8 @@ void Renderer::render()
         std::unordered_map<ChunkCoordinate, VBO>::const_iterator got= vbos.find(p);
 		if(got != vbos.end())
 		{
-			vbos[p].DrawVBO(mShaderProgram);
+			//vbos[p].DrawVBO(mShaderProgram);
+			vbos[p].draw(mShaderProgram);
 		}
 	}
 //	for(auto& vbo : vbos)
@@ -294,7 +295,7 @@ void Renderer::render()
 		mShaderProgram.setUniform("modelToWorld",  modelToWorld);
 #endif
 
-		billboard.second.mVbo.DrawVBO(mShaderProgram);
+		//billboard.second.mVbo.draw(mShaderProgram);
 	}
 	mShaderProgram.unbind();
 	
@@ -476,6 +477,6 @@ void Renderer::handleMessage(const RemoveGfxEntityMessage& received)
 
 	std::tie(id) = received.data;
 
-	billboards.at(id).mVbo.DestroyVBO();
+	billboards.at(id).mVbo.destroyBuffers();
 	billboards.erase(id);
 }

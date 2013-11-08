@@ -4,7 +4,8 @@
 #include "../blockstd.h"
 #include "shaderprogram.h"
 #include <map>
-
+#include "newvbo.h"
+#ifdef oldvbo
 struct Vertex{
     float position[3] = {1,1,1};
     float color[3] = {1,1,1};
@@ -234,3 +235,4 @@ class VBO {
         GLint mDrawType;
         GLuint mDrawSize;
 };
+#endif
