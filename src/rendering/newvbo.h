@@ -36,7 +36,7 @@ class VertexDeclaration{
         void   unbind();
         void   unbind(ShaderProgram& program);
     private:
-        size_t mCurrentSize;
+        size_t mCurrentSize = 0;
         std::vector<VertexElement> mVertexElements;
 };
 
@@ -66,9 +66,10 @@ class NewVBO{
         bool mCreatedBuffers;
 
     public:
-        VertexDeclaration& getVertexDeclaration();
         NewVBO();
 
+        VertexDeclaration& getVertexDeclaration();
+        unsigned int getIndexCount();
         void setMaxSize(unsigned int vertexCount, unsigned int indexCount);
 
         void allocateBuffers();

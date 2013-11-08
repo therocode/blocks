@@ -105,6 +105,8 @@ void VertexDeclaration::unbind(ShaderProgram& program){
 NewVBO::NewVBO(){
     mMaxVertices = 0;
     mMaxIndices = 0;
+    mCurrentVertex = 0;
+    mCurrentIndex = 0;
     mAllocated = false;
     mVertexSize = 0;
 }
@@ -133,6 +135,10 @@ void NewVBO::deallocateBuffers(){
 
 VertexDeclaration& NewVBO::getVertexDeclaration(){
     return mVertexDeclaration;
+}
+
+unsigned int NewVBO::getIndexCount(){
+    return mCurrentIndex; 
 }
 
 void NewVBO::createBuffers(){
@@ -186,7 +192,7 @@ char* NewVBO::getNextVertexPtr(unsigned int vertexAmount){
 
 char* NewVBO::getVertexPtr(unsigned int i){
     if(mAllocated && i < mMaxVertices){
-        char* v = (char*)mpVertexData;
+        char* v = mpVertexData;
         v += i * mVertexSize;
         return v;
     }

@@ -2,7 +2,6 @@
 #include <vector>
 #include <chrono>
 #include "meshwalker.h"
-#include "newvbo.h"
 
 using std::chrono::duration_cast;
 using std::chrono::microseconds;
@@ -15,13 +14,6 @@ uint32_t VBOCreator::timesGenerated = 0;
 VBOCreator::VBOCreator()
 {
 }
-struct ChunkVertex{
-    float vert[3];
-    float color[3];
-    float normal[3];
-    float uv[2];
-    float bounds[4];
-};
 
 VBO VBOCreator::generateChunkVBO(Chunk* mainChunk, Chunk* topChunk, Chunk* bottomChunk, Chunk* frontChunk, Chunk* backChunk, Chunk* leftChunk, Chunk* rightChunk)
 {
@@ -36,14 +28,10 @@ VBO VBOCreator::generateChunkVBO(Chunk* mainChunk, Chunk* topChunk, Chunk* botto
     nvbo.getVertexDeclaration().addElement(VertexElement::ELEMENT_FLOAT2, 3, "uv");
     nvbo.getVertexDeclaration().addElement(VertexElement::ELEMENT_FLOAT4, 4, "bounds");
     
-    nvbo.setMaxSize(3000, 6000);
+    nvbo.setMaxSize(4000, 6000);
     nvbo.allocateBuffers();
-    ChunkVertex* v = (ChunkVertex*)nvbo.getNextVertexPtr();
 
     vbo.registerAttribute("bounds", 4, VBOAttribute::ATTRIBUTE_FLOAT4);
-
-    nvbo.deallocateBuffers();
-
 
     const ChunkCoordinate location = mainChunk->getLocation();
 
@@ -119,9 +107,11 @@ VBO VBOCreator::generateChunkVBO(Chunk* mainChunk, Chunk* topChunk, Chunk* botto
         }
     }
 
+unsigned int verts = 0, indices = 0;
     SurfaceMerger merger;
     glm::uvec2 textureLocation;
     Rectangle r;
+    ChunkRect* rect;
 
     //extract top quads
     merger.setQuads(walker.getTopQuads());
@@ -135,9 +125,19 @@ VBO VBOCreator::generateChunkVBO(Chunk* mainChunk, Chunk* topChunk, Chunk* botto
         textureLocation = glm::uvec2(quad.mType - 1, 0);
         setRectData(r, worldX, worldY, worldZ, TOP, textureLocation.x, textureLocation.y, quad.mWidth, quad.mHeight);
 
+
+        rect = (ChunkRect*)nvbo.getNextVertexPtr(4);
+        setChunkRectData(*rect, worldX, worldY, worldZ, TOP, textureLocation.x, textureLocation.y, quad.mWidth, quad.mHeight);
+        rect->setBounds(rect->vs[0].uv[0], rect->vs[0].uv[1], rect->vs[2].uv[0], rect->vs[2].uv[1]);
+        rect->setUV(0, 0, 0);
+        rect->setUV(1, 0, quad.mHeight);
+        rect->setUV(2, quad.mWidth, quad.mHeight);
+        rect->setUV(3, quad.mWidth, 0);
+        rect->pushIndicesIntoVBO(nvbo);
+
+
         AttribValue bounds(r.vs[0].uv[0], r.vs[0].uv[1], r.vs[2].uv[0], r.vs[2].uv[1]); 
         vbo.pushToAttribute("bounds", bounds);
-
         r.setUV(0, 0, 0);
         r.setUV(1, 0, quad.mHeight);
         r.setUV(2, quad.mWidth, quad.mHeight);
@@ -145,6 +145,7 @@ VBO VBOCreator::generateChunkVBO(Chunk* mainChunk, Chunk* topChunk, Chunk* botto
 
         r.calculateNormal();
         vbo.PushRectangle(r);
+        verts +=4;indices+=6;
     }
 
     //extract bottom quads
@@ -168,6 +169,7 @@ VBO VBOCreator::generateChunkVBO(Chunk* mainChunk, Chunk* topChunk, Chunk* botto
 
         r.calculateNormal();
         vbo.PushRectangle(r);
+        verts +=4;indices+=6;
     }
 
     //extract front quads
@@ -191,6 +193,7 @@ VBO VBOCreator::generateChunkVBO(Chunk* mainChunk, Chunk* topChunk, Chunk* botto
 
         r.calculateNormal();
         vbo.PushRectangle(r);
+        verts +=4;indices+=6;
     }
 
     //extract back quads
@@ -214,6 +217,7 @@ VBO VBOCreator::generateChunkVBO(Chunk* mainChunk, Chunk* topChunk, Chunk* botto
 
         r.calculateNormal();
         vbo.PushRectangle(r);
+        verts +=4;indices+=6;
     }
 
     //extract left quads
@@ -238,6 +242,7 @@ VBO VBOCreator::generateChunkVBO(Chunk* mainChunk, Chunk* topChunk, Chunk* botto
 
         r.calculateNormal();
         vbo.PushRectangle(r);
+        verts +=4;indices+=6;
     }
 
     //extract right quads
@@ -262,9 +267,14 @@ VBO VBOCreator::generateChunkVBO(Chunk* mainChunk, Chunk* topChunk, Chunk* botto
 
         r.calculateNormal();
         vbo.PushRectangle(r);
+        verts +=4;indices+=6;
     }
 
+
+    //printf("Generated %u vertices and %u indices\n", verts, indices);
     //After stuff has been added, you have to update the gpu vbo data.
+    nvbo.uploadVBO();
+    nvbo.clear();
     vbo.UpdateVBO();
     uint32_t amount = vbo.GetDrawAmount();
     vbo.Clear();
@@ -279,6 +289,76 @@ VBO VBOCreator::generateChunkVBO(Chunk* mainChunk, Chunk* topChunk, Chunk* botto
 }
 
 inline void VBOCreator::setRectData(Rectangle& r, float x, float y, float z, int face, float u, float v, float width, float height) const
+{
+    float nhs = 0.f;
+    switch(face){
+        case FRONT:
+            z += 1.0f;
+            r.setPosition(0, x + nhs,  y + height, z);
+            r.setPosition(1, x + nhs,  y + nhs, z);
+            r.setPosition(2, x + width,  y + nhs, z);
+            r.setPosition(3, x + width,  y + height, z);
+            break;
+        case RIGHT:
+            x += 1.0f;
+            r.setPosition(0, x, y + height, z + width);
+            r.setPosition(1, x, y + nhs, z + width);
+            r.setPosition(2, x, y + nhs, z + nhs);
+            r.setPosition(3, x, y + height, z + nhs);
+            break;
+        case BACK:
+            //z -= hs;
+            r.setPosition(0, x + width,  y + height, z);
+            r.setPosition(1, x + width,  y + nhs, z);
+            r.setPosition(2, x + nhs,  y + nhs, z);
+            r.setPosition(3, x + nhs,  y + height, z);
+            break;
+        case LEFT:
+            //x -= hs;
+            r.setPosition(0, x, y + height, z + nhs);
+            r.setPosition(1, x, y + nhs, z + nhs);
+            r.setPosition(2, x, y + nhs, z + width);
+            r.setPosition(3, x, y + height, z + width);
+            break;
+        case TOP:
+            y += 1.0f;
+            r.setPosition(0, x + nhs, y, z + nhs);
+            r.setPosition(1, x + nhs, y, z + height);
+            r.setPosition(2, x + width, y, z + height);
+            r.setPosition(3, x + width, y, z + nhs);
+            break;
+        case BOTTOM:
+            //y -= hs;
+            r.setPosition(0, x + width, y, z + nhs);
+            r.setPosition(1, x + width, y, z + height);
+            r.setPosition(2, x + nhs, y, z + height);
+            r.setPosition(3, x + nhs, y, z + nhs);
+            break;
+        case CENTER:
+            width *= 0.5f;
+            height *= 0.5f;
+            nhs = -width;
+            r.setPosition(0, x + nhs,  y + height, z);
+            r.setPosition(1, x + nhs,  y + nhs, z);
+            r.setPosition(2, x + width,  y + nhs, z);
+            r.setPosition(3, x + width,  y + height, z);
+            break;
+    }
+
+    float uo, vo;
+    uo = vo	= 0.125f;
+#ifdef EMSCRIPTEN
+    float e = 0.006f;
+#else
+    float e = 0.0006f;
+#endif
+    r.setUV(0, e+      (float)u * uo,  e+      (float)v * vo);
+    r.setUV(1, e+      (float)u * uo, -e+ vo + (float)v * vo);
+    r.setUV(2,-e+ uo + (float)u * uo, -e+ vo + (float)v * vo);
+    r.setUV(3,-e+ uo + (float)u * uo,  e+      (float)v * vo);
+
+}
+inline void VBOCreator::setChunkRectData(ChunkRect& r, float x, float y, float z, int face, float u, float v, float width, float height) const
 {
     float nhs = 0.f;
     switch(face){

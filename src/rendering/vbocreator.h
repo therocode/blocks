@@ -1,7 +1,80 @@
 #pragma once
+#include "blockstd.h"
 #include "vbo.h"
 #include "../world/chunk.h"
 #include <chrono>
+#include "newvbo.h"
+
+struct ChunkVertex{
+    float vert[3];
+    float color[3];
+    float normal[3];
+    float uv[2];
+    float bounds[4];
+};
+
+struct ChunkRect{
+    ChunkVertex vs[4];
+    void setPosition(int i, float x, float y, float z){
+        vs[i].vert[0] = x;
+        vs[i].vert[1] = y;
+        vs[i].vert[2] = z;
+    }
+    void setAxisPosition(int axis, float x)
+    {
+        vs[0].vert[axis] = x;
+        vs[1].vert[axis] = x;
+        vs[2].vert[axis] = x;
+    }
+    void setUV(int i, float u, float v){
+        vs[i].uv[0] = u;
+        vs[i].uv[1] = v;
+    }
+    void calculateNormal(){
+        float* tPos = vs[0].vert;
+        glm::vec3 v0(tPos[0], tPos[1], tPos[2]);		
+
+        tPos = vs[1].vert;
+        glm::vec3 v1(tPos[0], tPos[1], tPos[2]);
+
+        tPos = vs[3].vert;
+        glm::vec3 v2(tPos[0], tPos[1], tPos[2]);
+
+        v2 = v2 - v0;
+        v1 = glm::cross(v2, v0 - v1);
+
+        for(int i = 0; i < 4; i++){
+            vs[i].normal[0] = v1.x;
+            vs[i].normal[1] = v1.y;
+            vs[i].normal[2] = v1.z;
+        }	
+    }
+    void setColor(float r, float g, float b){
+        for(auto &v : vs){
+            v.color[0] = r;
+            v.color[1] = g;
+            v.color[2] = b;
+        }	
+    }
+    void setBounds(float sx, float sy, float ex, float ey){
+        for(auto &v : vs){
+            v.bounds[0] = sx;
+            v.bounds[1] = sy;
+            v.bounds[2] = ex;
+            v.bounds[3] = ey;
+        }
+    }
+    void pushIndicesIntoVBO(NewVBO& target){
+        unsigned int startID = target.getIndexCount();
+        target.pushIndex(startID);
+        target.pushIndex(startID + 1);
+        target.pushIndex(startID + 2);
+
+        target.pushIndex(startID + 2);
+        target.pushIndex(startID + 3);
+        target.pushIndex(startID);
+    }
+};
 
 class VBOCreator
 {
@@ -22,6 +95,7 @@ class VBOCreator
 private:
 	///Helper function for vbo creation.
 	inline void setRectData(Rectangle& r, float x, float y, float z, int face, float u, float v, float width, float height) const;
+    inline void setChunkRectData(ChunkRect& r,float x, float y, float z, int face, float u, float v, float width, float height) const;
     static uint32_t totalTime;
     static uint32_t totalAmount;
     static uint32_t timesGenerated;
