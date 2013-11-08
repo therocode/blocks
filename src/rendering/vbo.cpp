@@ -5,10 +5,10 @@ VBO::VBO():mCurrentVBOByteSize(0),mVBOCreated(false){
     mDrawType = GL_TRIANGLES;
     mVBOCreated = false;
     //Registering standard attributes.
-    //registerAttribute("vert",   0, VBOAttribute::ATTRIBUTE_FLOAT3);
-    //registerAttribute("normal", 1, VBOAttribute::ATTRIBUTE_FLOAT3);
-    //registerAttribute("color",  2, VBOAttribute::ATTRIBUTE_FLOAT3);
-    //registerAttribute("uv",     3, VBOAttribute::ATTRIBUTE_FLOAT2);
+    registerAttribute("vert",   0, VBOAttribute::ATTRIBUTE_FLOAT3);
+    registerAttribute("normal", 1, VBOAttribute::ATTRIBUTE_FLOAT3);
+    registerAttribute("color",  2, VBOAttribute::ATTRIBUTE_FLOAT3);
+    registerAttribute("uv",     3, VBOAttribute::ATTRIBUTE_FLOAT2);
     //registerAttribute("bounds", 4, VBOAttribute::ATTRIBUTE_FLOAT4);
 }
 
@@ -37,21 +37,21 @@ void VBO::PushRectangle(const Rectangle& r){
         mvVertices.push_back(v);
         AttribValue val;
         
-        // for(int i = 0; i <3; i++)
-            // val.floats[i] = v.normal[i];
-        // pushToAttribute("normal", val);
+        for(int i = 0; i <3; i++)
+            val.floats[i] = v.normal[i];
+        pushToAttribute("normal", val);
         
-        // for(int i = 0; i <3; i++)
-            // val.floats[i] = v.color[i];
-        // pushToAttribute("color", val);
+        for(int i = 0; i <3; i++)
+            val.floats[i] = v.color[i];
+        pushToAttribute("color", val);
         
-        // for(int i = 0; i <2; i++)
-            // val.floats[i] = v.uv[i];
-        // pushToAttribute("uv", val);
+        for(int i = 0; i <2; i++)
+            val.floats[i] = v.uv[i];
+        pushToAttribute("uv", val);
 
-        // for(int i = 0; i <3; i++)
-            // val.floats[i] = v.position[i];
-        // pushToAttribute("vert", val);
+        for(int i = 0; i <3; i++)
+            val.floats[i] = v.position[i];
+        pushToAttribute("vert", val);
     }
     mvIndices.push_back(si);
     mvIndices.push_back(si + 1);
@@ -80,15 +80,17 @@ void VBO::createDataArray(std::vector<float>& data){
 }
 
 void VBO::UpdateVBO(){
-    //std::vector<float> wow;
+    std::vector<float> wow;
     CreateVBO();	
-    // createDataArray(wow);
-    mCurrentVBOByteSize = sizeof(Vertex)*mvVertices.size();//sizeof(float) * wow.size();
+    createDataArray(wow);
+    //mCurrentVBOByteSize = sizeof(Vertex)*mvVertices.size();;
+    mCurrentVBOByteSize = sizeof(float) * wow.size();
 
     int idSize = sizeof(int) * mvIndices.size();
     BindBuffer();
-    glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * mvVertices.size(), mvVertices.data(), GL_STATIC_DRAW); 
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER,idSize, mvIndices.data(), GL_STATIC_DRAW);
+    //glBufferData(GL_ARRAY_BUFFER, mCurrentVBOByteSize, mvVertices.data(), GL_STATIC_DRAW); 
+    glBufferData(GL_ARRAY_BUFFER, mCurrentVBOByteSize, wow.data(), GL_STATIC_DRAW); 
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, idSize, mvIndices.data(), GL_STATIC_DRAW);
 
     UnbindBuffer();
     mDrawSize = mvIndices.size();
@@ -188,12 +190,10 @@ void VBO::DrawVBO(){
 }
 void VBO::DrawVBO(ShaderProgram& program)
 {
-	GLenum err= glGetError();
-	if(err != GL_NO_ERROR) printf("something wrong here %i\n", err);
     if(!mVBOCreated)return;
     if(mDrawSize == 0) return;
     BindBuffer();
-	
+/*	
     int stride = sizeof(Vertex);
 
     GLint i = program.getAttribLocation("vert");
@@ -213,22 +213,23 @@ void VBO::DrawVBO(ShaderProgram& program)
     glVertexAttribPointer(i, 2, GL_FLOAT, GL_FALSE, stride , BUFFER_OFFSET(9 * sizeof(float)));
 
     glDrawElements(mDrawType, mDrawSize, GL_UNSIGNED_INT, 0);
+*/
+    unsigned int offset = 0;
+    int idd = 0;
 
-    // unsigned int offset = 0;
-    // int idd = 0;
+    for(auto t = mAttributes.begin(); t != mAttributes.end(); t++){
+        idd++;
+        GLuint id = program.getAttribLocation(t->second.getName());
+		//if(id > 3)printf("%s id:%u\n", t->second.getName().c_str(), id);
+        glEnableVertexAttribArray(id);
+        glVertexAttribPointer(id, t->second.getElementValueCount(), t->second.getType(), GL_FALSE, mStride, BUFFER_OFFSET(offset * sizeof(float)));
+        offset += t->second.getElementValueCount();
+    }
 
-    // for(auto t = mAttributes.begin(); t != mAttributes.end(); t++){
-        // idd++;
-        // GLint id = program.getAttribLocation(t->second.getName());
-        // glEnableVertexAttribArray(id);
-        // glVertexAttribPointer(id, t->second.getElementValueCount(), t->second.getType(), GL_FALSE, mStride, BUFFER_OFFSET(offset * sizeof(float)));
-        // offset += t->second.getElementValueCount();
-    // }
+    glDrawElements(mDrawType, mDrawSize, GL_UNSIGNED_INT, 0);
 
-    // glDrawElements(mDrawType, mDrawSize, GL_UNSIGNED_INT, 0);
-
-    // for(auto t = mAttributes.begin(); t != mAttributes.end(); t++)
-        // glDisableVertexAttribArray(program.getAttribLocation(t->second.getName()));
+    for(auto t = mAttributes.begin(); t != mAttributes.end(); t++)
+        glDisableVertexAttribArray(program.getAttribLocation(t->second.getName()));
 
     UnbindBuffer();
 }

@@ -43,6 +43,7 @@ GLint ShaderProgram::getAttribLocation(const std::string& name)
     {
         parameterCache.emplace(name, glGetAttribLocation(mProgramID, name.c_str()));
         attribIterator = parameterCache.find(name);
+		//printf("Cached shader attribute %s: %i\n", name.c_str(), attribIterator->second);
     }
 	return attribIterator->second;
 }	

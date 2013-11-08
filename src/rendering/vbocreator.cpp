@@ -20,7 +20,7 @@ VBO VBOCreator::generateChunkVBO(Chunk* mainChunk, Chunk* topChunk, Chunk* botto
     high_resolution_clock::time_point start = high_resolution_clock::now();
 
     VBO vbo;
-    //vbo.registerAttribute("bounds", 4, VBOAttribute::ATTRIBUTE_FLOAT4);
+    vbo.registerAttribute("bounds", 4, VBOAttribute::ATTRIBUTE_FLOAT4);
 
     const ChunkCoordinate location = mainChunk->getLocation();
 
@@ -112,13 +112,13 @@ VBO VBOCreator::generateChunkVBO(Chunk* mainChunk, Chunk* topChunk, Chunk* botto
         textureLocation = glm::uvec2(quad.mType - 1, 0);
         setRectData(r, worldX, worldY, worldZ, TOP, textureLocation.x, textureLocation.y, quad.mWidth, quad.mHeight);
 
-        // AttribValue bounds(r.vs[0].uv[0], r.vs[0].uv[1], r.vs[2].uv[0], r.vs[2].uv[1]); 
-        // vbo.pushToAttribute("bounds", bounds);
+        AttribValue bounds(r.vs[0].uv[0], r.vs[0].uv[1], r.vs[2].uv[0], r.vs[2].uv[1]); 
+        vbo.pushToAttribute("bounds", bounds);
 
-        // r.setUV(0, 0, 0);
-        // r.setUV(1, 0, quad.mHeight);
-        // r.setUV(2, quad.mWidth, quad.mHeight);
-        // r.setUV(3, quad.mWidth, 0);
+        r.setUV(0, 0, 0);
+        r.setUV(1, 0, quad.mHeight);
+        r.setUV(2, quad.mWidth, quad.mHeight);
+        r.setUV(3, quad.mWidth, 0);
 
         r.calculateNormal();
         vbo.PushRectangle(r);
@@ -135,13 +135,13 @@ VBO VBOCreator::generateChunkVBO(Chunk* mainChunk, Chunk* topChunk, Chunk* botto
 
         textureLocation = glm::uvec2(quad.mType - 1, 0);
         setRectData(r, worldX, worldY, worldZ, BOTTOM, textureLocation.x, textureLocation.y, quad.mWidth, quad.mHeight);
-        // AttribValue bounds(r.vs[0].uv[0], r.vs[0].uv[1], r.vs[2].uv[0], r.vs[2].uv[1]); 
-        // vbo.pushToAttribute("bounds", bounds);
+        AttribValue bounds(r.vs[0].uv[0], r.vs[0].uv[1], r.vs[2].uv[0], r.vs[2].uv[1]); 
+        vbo.pushToAttribute("bounds", bounds);
 
-        // r.setUV(0, 0, 0);
-        // r.setUV(1, 0, quad.mHeight);
-        // r.setUV(2, quad.mWidth, quad.mHeight);
-        // r.setUV(3, quad.mWidth, 0);
+        r.setUV(0, 0, 0);
+        r.setUV(1, 0, quad.mHeight);
+        r.setUV(2, quad.mWidth, quad.mHeight);
+        r.setUV(3, quad.mWidth, 0);
 
         r.calculateNormal();
         vbo.PushRectangle(r);
@@ -158,13 +158,13 @@ VBO VBOCreator::generateChunkVBO(Chunk* mainChunk, Chunk* topChunk, Chunk* botto
 
         textureLocation = glm::uvec2(quad.mType - 1, 0);
         setRectData(r, worldX, worldY, worldZ, FRONT, textureLocation.x, textureLocation.y, quad.mWidth, quad.mHeight);
-        // AttribValue bounds(r.vs[0].uv[0], r.vs[0].uv[1], r.vs[2].uv[0], r.vs[2].uv[1]); 
-        // vbo.pushToAttribute("bounds", bounds);
+        AttribValue bounds(r.vs[0].uv[0], r.vs[0].uv[1], r.vs[2].uv[0], r.vs[2].uv[1]); 
+        vbo.pushToAttribute("bounds", bounds);
 
-        // r.setUV(0, 0, 0);
-        // r.setUV(1, 0, quad.mHeight);
-        // r.setUV(2, quad.mWidth, quad.mHeight);
-        // r.setUV(3, quad.mWidth, 0);
+        r.setUV(0, 0, 0);
+        r.setUV(1, 0, quad.mHeight);
+        r.setUV(2, quad.mWidth, quad.mHeight);
+        r.setUV(3, quad.mWidth, 0);
 
         r.calculateNormal();
         vbo.PushRectangle(r);
@@ -181,13 +181,13 @@ VBO VBOCreator::generateChunkVBO(Chunk* mainChunk, Chunk* topChunk, Chunk* botto
 
         textureLocation = glm::uvec2(quad.mType - 1, 0);
         setRectData(r, worldX, worldY, worldZ, BACK, textureLocation.x, textureLocation.y, quad.mWidth, quad.mHeight);
-        // AttribValue bounds(r.vs[0].uv[0], r.vs[0].uv[1], r.vs[2].uv[0], r.vs[2].uv[1]); 
-        // vbo.pushToAttribute("bounds", bounds);
+        AttribValue bounds(r.vs[0].uv[0], r.vs[0].uv[1], r.vs[2].uv[0], r.vs[2].uv[1]); 
+        vbo.pushToAttribute("bounds", bounds);
 
-        // r.setUV(0, 0, 0);
-        // r.setUV(1, 0, quad.mHeight);
-        // r.setUV(2, quad.mWidth, quad.mHeight);
-        // r.setUV(3, quad.mWidth, 0);
+        r.setUV(0, 0, 0);
+        r.setUV(1, 0, quad.mHeight);
+        r.setUV(2, quad.mWidth, quad.mHeight);
+        r.setUV(3, quad.mWidth, 0);
 
         r.calculateNormal();
         vbo.PushRectangle(r);
@@ -205,13 +205,13 @@ VBO VBOCreator::generateChunkVBO(Chunk* mainChunk, Chunk* topChunk, Chunk* botto
 
         textureLocation = glm::uvec2(quad.mType - 1, 0);
         setRectData(r, worldX, worldY, worldZ, LEFT, textureLocation.x, textureLocation.y, quad.mWidth, quad.mHeight);
-        // AttribValue bounds(r.vs[0].uv[0], r.vs[0].uv[1], r.vs[2].uv[0], r.vs[2].uv[1]); 
-        // vbo.pushToAttribute("bounds", bounds);
+        AttribValue bounds(r.vs[0].uv[0], r.vs[0].uv[1], r.vs[2].uv[0], r.vs[2].uv[1]); 
+        vbo.pushToAttribute("bounds", bounds);
 
-        // r.setUV(0, 0, 0);
-        // r.setUV(1, 0,           quad.mHeight);
-        // r.setUV(2, quad.mWidth, quad.mHeight);
-        // r.setUV(3, quad.mWidth, 0);
+        r.setUV(0, 0, 0);
+        r.setUV(1, 0,           quad.mHeight);
+        r.setUV(2, quad.mWidth, quad.mHeight);
+        r.setUV(3, quad.mWidth, 0);
 
         r.calculateNormal();
         vbo.PushRectangle(r);
@@ -229,13 +229,13 @@ VBO VBOCreator::generateChunkVBO(Chunk* mainChunk, Chunk* topChunk, Chunk* botto
 
         textureLocation = glm::uvec2(quad.mType - 1, 0);
         setRectData(r, worldX, worldY, worldZ, RIGHT, textureLocation.x, textureLocation.y, quad.mWidth, quad.mHeight);
-        // AttribValue bounds(r.vs[0].uv[0], r.vs[0].uv[1], r.vs[2].uv[0], r.vs[2].uv[1]); 
-        // vbo.pushToAttribute("bounds", bounds);
+        AttribValue bounds(r.vs[0].uv[0], r.vs[0].uv[1], r.vs[2].uv[0], r.vs[2].uv[1]); 
+        vbo.pushToAttribute("bounds", bounds);
 
-        // r.setUV(0, 0, 0);
-        // r.setUV(1, 0, quad.mHeight);
-        // r.setUV(2, quad.mWidth, quad.mHeight);
-        // r.setUV(3, quad.mWidth, 0);
+        r.setUV(0, 0, 0);
+        r.setUV(1, 0, quad.mHeight);
+        r.setUV(2, quad.mWidth, quad.mHeight);
+        r.setUV(3, quad.mWidth, 0);
 
         r.calculateNormal();
         vbo.PushRectangle(r);
