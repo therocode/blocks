@@ -5,11 +5,11 @@ VBO::VBO():mCurrentVBOByteSize(0),mVBOCreated(false){
     mDrawType = GL_TRIANGLES;
     mVBOCreated = false;
     //Registering standard attributes.
-    registerAttribute("vert",   0, VBOAttribute::ATTRIBUTE_FLOAT3);
-    registerAttribute("normal", 1, VBOAttribute::ATTRIBUTE_FLOAT3);
-    registerAttribute("color",  2, VBOAttribute::ATTRIBUTE_FLOAT3);
-    registerAttribute("uv",     3, VBOAttribute::ATTRIBUTE_FLOAT2);
-    registerAttribute("bounds", 4, VBOAttribute::ATTRIBUTE_FLOAT4);
+    //registerAttribute("vert",   0, VBOAttribute::ATTRIBUTE_FLOAT3);
+    //registerAttribute("normal", 1, VBOAttribute::ATTRIBUTE_FLOAT3);
+    //registerAttribute("color",  2, VBOAttribute::ATTRIBUTE_FLOAT3);
+    //registerAttribute("uv",     3, VBOAttribute::ATTRIBUTE_FLOAT2);
+    //registerAttribute("bounds", 4, VBOAttribute::ATTRIBUTE_FLOAT4);
 }
 
 VBO::~VBO(){
@@ -80,7 +80,7 @@ void VBO::createDataArray(std::vector<float>& data){
 }
 
 void VBO::UpdateVBO(){
-    std::vector<float> wow;
+    //std::vector<float> wow;
     CreateVBO();	
     // createDataArray(wow);
     mCurrentVBOByteSize = sizeof(Vertex)*mvVertices.size();//sizeof(float) * wow.size();
@@ -91,7 +91,7 @@ void VBO::UpdateVBO(){
     glBufferData(GL_ELEMENT_ARRAY_BUFFER,idSize, mvIndices.data(), GL_STATIC_DRAW);
 
     UnbindBuffer();
-    mDrawSize = idSize;
+    mDrawSize = mvIndices.size();
     Clear();
 }
 void VBO::DestroyVBO()
