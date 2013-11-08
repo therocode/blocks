@@ -34,8 +34,10 @@ varying vec3 posCamSpace;
 varying vec3 normalWorldSpace;
 uniform vec2 screenSize;
 
+varying vec4 textureBounds;
+
 void main(){
-	vec4 b = bounds;
+    textureBounds = bounds;
 	texCoord = uv;
 	modelSpace = vert;
 
@@ -44,7 +46,7 @@ void main(){
 	mat3 normalModelToCamera = normalWorldToCamera * normalModelToWorld ;
 	
 
-    vec4 lightPos =  vec4(0.0, 100.0, 0.0, 1.0) + b;
+    vec4 lightPos =  vec4(0.0, 100.0, 0.0, 1.0);
 	lightPos = worldToCamera * lightPos;
 
 	vec4 v =  modelToWorld * vec4(vert, 1.0);
