@@ -198,6 +198,42 @@ void Client::fetchServerData()
                 chunk->second.setVoxelType(voxelCoordinate, type);
                 updateChunk(chunkCoordinate);
             }
+
+            ChunkCoordinate leftNeighbour = ChunkCoordinate(chunkCoordinate.x - 1, chunkCoordinate.y, chunkCoordinate.z);
+            if(voxelCoordinate.x == 0 && mLocalChunks.find(leftNeighbour) != mLocalChunks.end())
+            {
+                updateChunk(leftNeighbour);
+            }
+
+            ChunkCoordinate rightNeighbour = ChunkCoordinate(chunkCoordinate.x + 1, chunkCoordinate.y, chunkCoordinate.z);
+            if(voxelCoordinate.x == chunkWidth - 1 && mLocalChunks.find(rightNeighbour) != mLocalChunks.end())
+            {
+                updateChunk(rightNeighbour);
+            }
+
+            ChunkCoordinate topNeighbour = ChunkCoordinate(chunkCoordinate.x, chunkCoordinate.y + 1, chunkCoordinate.z);
+            if(voxelCoordinate.y == chunkWidth - 1 && mLocalChunks.find(topNeighbour) != mLocalChunks.end())
+            {
+                updateChunk(topNeighbour);
+            }
+
+            ChunkCoordinate bottomNeighbour = ChunkCoordinate(chunkCoordinate.x, chunkCoordinate.y - 1, chunkCoordinate.z);
+            if(voxelCoordinate.y == 0 && mLocalChunks.find(bottomNeighbour) != mLocalChunks.end())
+            {
+                updateChunk(bottomNeighbour);
+            }
+
+            ChunkCoordinate frontNeighbour = ChunkCoordinate(chunkCoordinate.x, chunkCoordinate.y, chunkCoordinate.z + 1);
+            if(voxelCoordinate.z == chunkWidth - 1 && mLocalChunks.find(frontNeighbour) != mLocalChunks.end())
+            {
+                updateChunk(frontNeighbour);
+            }
+
+            ChunkCoordinate backNeighbour = ChunkCoordinate(chunkCoordinate.x, chunkCoordinate.y, chunkCoordinate.z - 1);
+            if(voxelCoordinate.z == 0 && mLocalChunks.find(backNeighbour) != mLocalChunks.end())
+            {
+                updateChunk(backNeighbour);
+            }
         }
 		else if(package->mType == typeid(ChunkDeletedPackage))
 		{
