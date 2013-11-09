@@ -100,6 +100,23 @@ Chunk::Chunk(const ChunkCoordinate& loc, const RleIndexArray& indices, const Rle
 //
 
 
+//16 = 3 + 6 + 5 + 2
+//
+//aaabbbbbbcccccdd
+//              ^
+//x=14
+//steps = 2
+//
+//walked = 14
+//3a6b5c2d
+//      ^
+
+//baa
+//aba
+//aab
+//ba
+//ab
+//b
 
 void Chunk::setVoxelType(uint32_t x, uint32_t y, uint32_t z, VoxelType type)
 {
@@ -107,33 +124,36 @@ void Chunk::setVoxelType(uint32_t x, uint32_t y, uint32_t z, VoxelType type)
         return;
 
     size_t segmentIterator = mRleSegmentIndices[z + y * chunkWidth].mSegmentStart;
+    uint32_t steps = 0;
     size_t walked = 0;
 
     while(walked < x)
     {
         walked += mRleSegments[segmentIterator];
+        steps++;
 
         if(walked <= x)
             segmentIterator += 2;
     }
 
+    uint16_t* centre = &mRleSegments[segmentIterator];
     uint16_t* leftNeighbour = nullptr;
     uint16_t* rightNeighbour = nullptr;
 
-    if(walked > 0)
+    if(steps > 1)
         leftNeighbour = &mRleSegments[segmentIterator - 2];
     if(walked < chunkWidth)
         rightNeighbour = &mRleSegments[segmentIterator + 2];
+
+    bool changedRightNeighbour = false;
+    bool changedLeftNeighbour = false;
     
-    std::cout << "the type of the one you wish to set it " << mRleSegments[segmentIterator + 1] << " isn't that so? voxel: " << x << " " << y << " " << z << "\n";
-    if(leftNeighbour)
-    {
-        std::cout << "the left neighbour is " << *(leftNeighbour + 1) << "\n";
-    }
-    if(rightNeighbour)
-    {
-        std::cout << "the right neighbour is " << *(rightNeighbour + 1) << "\n";
-    }
+    //if the group containing the change is of length 1, we can simply change the type
+    //if(*centre == 1)
+    //{
+        *(centre + 1) = type;
+    //}
+
 }
 
 void Chunk::setVoxelType(const VoxelCoordinate& voxel, VoxelType type)

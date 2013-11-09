@@ -71,5 +71,6 @@ Chunk LocalChunkProvider::fetchChunk(const ChunkCoordinate& location) const
     }
 
     newChunk.setVoxelData(types);
+    newChunk.setVoxelType(0,15,0,8);
     return newChunk;
 }
