@@ -8,6 +8,7 @@ class WorldInterface
 {
     public:
         WorldInterface(Dimension& dimension, EntitySystem& entitySystem);
+		VoxelType getVoxelTypeInt(int x, int y, int z) const;
         VoxelType getVoxelType(float x, float y, float z) const; 
         VoxelType getVoxelType(const glm::vec3& position) const; 
 		glm::vec3 getVoxelAtRay(const glm::vec3& position, const glm::vec3& direction) const;

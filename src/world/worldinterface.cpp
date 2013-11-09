@@ -7,6 +7,33 @@
 
 }
 
+VoxelType WorldInterface::getVoxelTypeInt(int x, int y, int z) const
+{
+	int chunkWidth = 16;
+	ChunkCoordinate chunkCoordinate = worldToChunk(x, y, z);
+	
+	int xNegative = (int)(x - chunkWidth) / chunkWidth;
+	int yNegative = (int)(y - chunkWidth) / chunkWidth;
+	int zNegative = (int)(z - chunkWidth) / chunkWidth;
+	
+	if(xNegative < 0) x += (-xNegative + 1) * chunkWidth;
+	if(yNegative < 0) y += (-yNegative + 1) * chunkWidth;
+	if(zNegative < 0) z += (-zNegative + 1) * chunkWidth;
+	VoxelCoordinate voxelCoordinate = VoxelCoordinate((x) % 16,(y) % 16,(z) % 16);
+
+	const Landscape& landscape = mDimension.getLandscape();
+
+	if(landscape.chunkIsLoaded(chunkCoordinate))
+	{
+		return landscape.getChunk(chunkCoordinate).getVoxelType(voxelCoordinate);
+	}
+	else
+	{
+		return 0;
+	}
+}
+
+
 VoxelType WorldInterface::getVoxelType(float x, float y, float z) const
 {
 	ChunkCoordinate chunkCoordinate = worldToChunk(x, y, z);
@@ -81,7 +108,7 @@ glm::vec3 WorldInterface::getVoxelAtRay(float ox, float oy, float oz, float dx, 
 		float lengthToNextBlock = 0.1f;
 		lengthToNextBlock = mind + 0.01f;
 		
-		vtype = getVoxelType(
+		vtype = getVoxelTypeInt(
 		ip[0], 
 		ip[1], 
 		ip[2]);
