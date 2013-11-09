@@ -120,41 +120,28 @@ Chunk::Chunk(const ChunkCoordinate& loc, const RleIndexArray& indices, const Rle
 
 void Chunk::setVoxelType(uint32_t x, uint32_t y, uint32_t z, VoxelType type)
 {
-	if(x >= chunkWidth || y >= chunkWidth || z >= chunkWidth)
+    if(x >= chunkWidth || y >= chunkWidth || z >= chunkWidth)
         return;
 
     size_t segmentIterator = mRleSegmentIndices[z + y * chunkWidth].mSegmentStart;
-    uint32_t steps = 0;
     size_t walked = 0;
 
-    while(walked < x)
+    std::cout << "in this segment: ";
+    while(walked < chunkWidth)
     {
         walked += mRleSegments[segmentIterator];
-        steps++;
 
-        if(walked <= x)
-            segmentIterator += 2;
+
+        uint16_t typeToAdd = mRleSegments[segmentIterator + 1];
+        for(uint32_t i = 0; i < mRleSegments[segmentIterator]; i++)
+        {
+            std::cout << typeToAdd;
+        }
+
+
+        segmentIterator += 2;
     }
-
-    uint16_t* centre = &mRleSegments[segmentIterator];
-    uint16_t* leftNeighbour = nullptr;
-    uint16_t* rightNeighbour = nullptr;
-
-    if(steps > 1)
-        leftNeighbour = &mRleSegments[segmentIterator - 2];
-    if(walked < chunkWidth)
-        rightNeighbour = &mRleSegments[segmentIterator + 2];
-
-    bool changedRightNeighbour = false;
-    bool changedLeftNeighbour = false;
-    
-    //if the group containing the change is of length 1, we can simply change the type
-    //if(*centre == 1)
-    //{
-        *(centre + 1) = type;
-    //}
-    //exit(3);
-
+    std::cout << "\n";
 }
 
 void Chunk::setVoxelType(const VoxelCoordinate& voxel, VoxelType type)
