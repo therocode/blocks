@@ -181,6 +181,24 @@ void Client::fetchServerData()
                 updateChunk(ChunkCoordinate(coordinate.x, coordinate.y, coordinate.z - 1));
             }
 		}
+		else if(package->mType == typeid(VoxelSetPackage))
+		{	
+			VoxelSetPackage* voxelSetPackage = (VoxelSetPackage*)package.get();
+            
+            ChunkCoordinate chunkCoordinate;
+            VoxelCoordinate voxelCoordinate;
+            VoxelType type;
+
+			std::tie(chunkCoordinate, voxelCoordinate, type) = voxelSetPackage->getData();
+
+            auto chunk = mLocalChunks.find(chunkCoordinate);
+
+            if(chunk != mLocalChunks.end())
+            {
+                chunk->second.setVoxelType(voxelCoordinate, type);
+                updateChunk(chunkCoordinate);
+            }
+        }
 		else if(package->mType == typeid(ChunkDeletedPackage))
 		{
 			ChunkDeletedPackage* chunkPackage = (ChunkDeletedPackage*)package.get();

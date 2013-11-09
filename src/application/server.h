@@ -17,7 +17,8 @@ class Server : public fea::MessageReceiver<FatalMessage>,
                public fea::MessageReceiver<RotateGfxEntityMessage>,
                public fea::MessageReceiver<RemoveGfxEntityMessage>,
                public fea::MessageReceiver<PlayerConnectedToEntityMessage>,
-               public fea::MessageReceiver<PlayerFacingBlockMessage>
+               public fea::MessageReceiver<PlayerFacingBlockMessage>,
+               public fea::MessageReceiver<VoxelSetMessage>
 {
     public:
         Server();
@@ -34,6 +35,7 @@ class Server : public fea::MessageReceiver<FatalMessage>,
         void handleMessage(const RemoveGfxEntityMessage& received);
         void handleMessage(const PlayerConnectedToEntityMessage& received);
         void handleMessage(const PlayerFacingBlockMessage& received);
+        void handleMessage(const VoxelSetMessage& received);
         void setClientListener(std::unique_ptr<ClientConnectionListener> clientListener);
 		fea::MessageBus& getBus();
     private:

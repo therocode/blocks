@@ -8,6 +8,7 @@ using RebuildScriptsRequestedPackage = Package<RebuildScriptsRequested_tag, char
 
 using ChunkLoadedPackage = Package<ChunkCreated_tag, ChunkCoordinate, RleIndexArray, RleSegmentArray>;
 using ChunkDeletedPackage = Package<ChunkDeleted_tag, ChunkCoordinate>;
+using VoxelSetPackage = Package<VoxelSet_tag, ChunkCoordinate, VoxelCoordinate, VoxelType>;
 
 using GfxEntityAddedPackage = Package<AddGfxEntity_tag, size_t, glm::vec3>;
 using GfxEntityMovedPackage = Package<MoveGfxEntity_tag, size_t, glm::vec3>;

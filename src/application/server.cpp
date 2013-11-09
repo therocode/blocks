@@ -15,6 +15,7 @@ Server::Server() : mWorld(mBus),
     mBus.addMessageSubscriber<RemoveGfxEntityMessage>(*this);
     mBus.addMessageSubscriber<PlayerConnectedToEntityMessage>(*this);
     mBus.addMessageSubscriber<PlayerFacingBlockMessage>(*this);
+    mBus.addMessageSubscriber<VoxelSetMessage>(*this);
 }
 
 Server::~Server()
@@ -28,6 +29,7 @@ Server::~Server()
     mBus.removeMessageSubscriber<RemoveGfxEntityMessage>(*this);
     mBus.removeMessageSubscriber<PlayerConnectedToEntityMessage>(*this);
     mBus.removeMessageSubscriber<PlayerFacingBlockMessage>(*this);
+    mBus.removeMessageSubscriber<VoxelSetMessage>(*this);
 }
 
 void Server::setup()
@@ -172,6 +174,15 @@ void Server::handleMessage(const PlayerFacingBlockMessage& received)
     std::shared_ptr<BasePackage> playerFacingBlockPackage(new PlayerFacingBlockPackage(id, x, y, z));
     mClients.at(id)->enqueuePackage(playerFacingBlockPackage);
 
+}
+
+void Server::handleMessage(const VoxelSetMessage& received)
+{
+    std::shared_ptr<BasePackage> voxelSetPackage(new VoxelSetPackage(received.data));
+    for(auto& client : mClients)
+    {
+        client.second->enqueuePackage(voxelSetPackage);
+    }
 }
 
 void Server::setClientListener(std::unique_ptr<ClientConnectionListener> clientListener)

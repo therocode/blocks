@@ -153,6 +153,7 @@ void Chunk::setVoxelType(uint32_t x, uint32_t y, uint32_t z, VoxelType type)
     //{
         *(centre + 1) = type;
     //}
+    //exit(3);
 
 }
 
