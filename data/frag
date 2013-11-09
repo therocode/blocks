@@ -4,6 +4,8 @@
 
 uniform sampler2D tex0;
 uniform vec2 screenSize;
+uniform int  enableBoundsTexture;
+
 //out vec4 fragColor;
 
 
@@ -71,7 +73,7 @@ vec4 fragColor;
 
     vec2 texD = vec2(textureBounds.zw) - vec2(textureBounds.xy);
     vec2 mTexCoord; 
-    if(length(texD) != 0.0)
+    if(enableBoundsTexture == 1)
         mTexCoord = textureBounds.xy + fract(vec2(texCoord)) * texD;
     else
         mTexCoord = texCoord;

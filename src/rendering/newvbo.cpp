@@ -121,7 +121,7 @@ void VBO::setMaxSize(unsigned int vertexCount, unsigned int indexCount){
 void VBO::allocateBuffers(){
     if(!mAllocated){
         mVertexSize = mVertexDeclaration.getVertexSize();
-        mpVertexData = new char[mMaxVertices * mVertexSize];
+        mpVertexData = new char[mMaxVertices * mVertexSize + 1];//not sure why I have to add one extra char. let's say it's padding.
         mpIndexData  = new int[mMaxIndices];
         mAllocated = true;
     }

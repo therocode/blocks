@@ -5,6 +5,7 @@
 #include <chrono>
 #include "newvbo.h"
 
+/* Vertex with bounds.*/
 struct ChunkVertex{
     float vert[3] ;
     float color[3];
@@ -19,6 +20,7 @@ struct ChunkVertex{
     }
 };
 
+/*chunk rectangle*/
 struct ChunkRect{
     ChunkVertex vs[4];
     void setPosition(int i, float x, float y, float z){
@@ -84,6 +86,79 @@ struct ChunkRect{
         target.pushIndex(startID);
     }
 };
+
+/*Billboard vertex and rect*/
+struct BillboardVertex{
+	float vert[3] ;
+    float color[3];
+    float normal[3];
+    float uv[2];
+    void reset(){
+        vert[0] = vert[1] = vert[2] = 0;
+        color[0] = color[1] = color[2] = 1.f;
+        normal[0] = normal[1] = normal[2] = 1.f;
+        uv[0] = uv[1] = 0.f;
+    }
+};
+struct BillboardRect{
+    BillboardVertex vs[4];
+    void setPosition(int i, float x, float y, float z){
+        vs[i].vert[0] = x;
+        vs[i].vert[1] = y;
+        vs[i].vert[2] = z;
+    }
+    void setAxisPosition(int axis, float x)
+    {
+        vs[0].vert[axis] = x;
+        vs[1].vert[axis] = x;
+        vs[2].vert[axis] = x;
+    }
+    void setUV(int i, float u, float v){
+        vs[i].uv[0] = u;
+        vs[i].uv[1] = v;
+    }
+    void calculateNormal(){
+        float* tPos = vs[0].vert;
+        glm::vec3 v0(tPos[0], tPos[1], tPos[2]);		
+
+        tPos = vs[1].vert;
+        glm::vec3 v1(tPos[0], tPos[1], tPos[2]);
+
+        tPos = vs[3].vert;
+        glm::vec3 v2(tPos[0], tPos[1], tPos[2]);
+
+        v2 = v2 - v0;
+        v1 = glm::cross(v2, v0 - v1);
+
+        for(int i = 0; i < 4; i++){
+            vs[i].normal[0] = v1.x;
+            vs[i].normal[1] = v1.y;
+            vs[i].normal[2] = v1.z;
+        }	
+    }
+    void reset(){
+        for(auto &v : vs)v.reset();
+    }
+    void setColor(float r, float g, float b){
+        for(auto &v : vs){
+            v.color[0] = r;
+            v.color[1] = g;
+            v.color[2] = b;
+        }	
+    }
+
+    void pushIndicesIntoVBO(VBO& target){
+        int startID = target.getVertexCount();
+        target.pushIndex(startID);
+        target.pushIndex(startID + 1);
+        target.pushIndex(startID + 2);
+
+        target.pushIndex(startID + 2);
+        target.pushIndex(startID + 3);
+        target.pushIndex(startID);
+    }
+};
+
 
 class VBOCreator
 {

@@ -230,6 +230,7 @@ void Renderer::render()
 	mShaderProgram.setUniform("modelToWorld",  glm::mat4(1.f));
 	mShaderProgram.setTexture("tex0", blockTexture);
 	mShaderProgram.setUniform("screenSize", mScreenSize);
+	
 	//I set these because easier to debug.
 	#ifndef EMSCRIPTEN
 		glMatrixMode(GL_PROJECTION);
@@ -245,6 +246,9 @@ void Renderer::render()
 	ChunkCoordinate currentChunk = worldToChunk(cam.GetPosition());
 	int size = 3;
 
+	//For looping texture atlas textures, used in chunks.
+	mShaderProgram.setUniform("enableBoundsTexture", 1);
+	
 	for(int x = -size; x < size+1; x++)
 	for(int y = -size; y < size+1; y++)
 	for(int z = -size; z < size+1; z++)
@@ -268,6 +272,8 @@ void Renderer::render()
 		0.f, 0.f, 1.f, 0.f,
 		0.f, 0.f, 0.f, 1.f
 	};
+	
+	mShaderProgram.setUniform("enableBoundsTexture", 0);
 	for(auto& billboard : billboards)
 	{
         if(billboard.first == mCameraEntity)
@@ -300,7 +306,7 @@ void Renderer::render()
 		mShaderProgram.setUniform("modelToWorld",  modelToWorld);
 #endif
 
-		//billboard.second.mVbo.draw(mShaderProgram);
+		billboard.second.mVbo.draw(mShaderProgram);
 	}
 	mShaderProgram.unbind();
 	

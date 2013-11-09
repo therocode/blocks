@@ -506,14 +506,49 @@ inline void VBOCreator::setChunkRectData(ChunkRect& r, float x, float y, float z
 VBO VBOCreator::generateBoardVBO(const glm::vec2& dimensions) const
 {
     VBO vbo;
-   /* glm::uvec2 textureLocation(0, 2);
+	vbo.getVertexDeclaration().addElement(VertexElement::ELEMENT_FLOAT3, 0, "vert");
+    vbo.getVertexDeclaration().addElement(VertexElement::ELEMENT_FLOAT3, 1, "color");
+    vbo.getVertexDeclaration().addElement(VertexElement::ELEMENT_FLOAT3, 2, "normal");
+    vbo.getVertexDeclaration().addElement(VertexElement::ELEMENT_FLOAT2, 3, "uv");
+	vbo.setMaxSize(4, 6);
+	vbo.allocateBuffers();
+	
+	glm::uvec2 textureLocation(0, 2);
+	BillboardRect* billRect;
+	billRect->pushIndicesIntoVBO(vbo);
+	billRect = (BillboardRect*)vbo.getNextVertexPtr(4);
+	if(billRect != NULL){
+		billRect->reset();
+		// setChunkRectData(*(ChunkRect*)billRect, 0.0f, 0.0f, 0.0f, CENTER, (float)textureLocation.x, (float)textureLocation.y, 1.0f, 1.0f);
+		billRect->setColor(1.f, 1.f, 1.f);
+		float scaleX = 0.5f;
+		float scaleY = 0.8f;
+		billRect->setPosition(0, -1 * scaleX, 1 * scaleY, 0);
+		billRect->setPosition(1, -1 * scaleX,-1 * scaleY, 0);
+		billRect->setPosition(2,  1 * scaleX,-1 * scaleY, 0);
+		billRect->setPosition(3,  1 * scaleX, 1 * scaleY, 0);
+		
+		float u = textureLocation.x;
+		float v = textureLocation.y;
+		float uo, vo;
+		uo = vo	= 0.125f;
+		
+		#ifdef EMSCRIPTEN
+			float e = 0.006f;
+		#else
+			float e = 0.0006f;
+		#endif
+		
+		billRect->setUV(0, e+      (float)u * uo,  e+      (float)v * vo);
+		billRect->setUV(1, e+      (float)u * uo, -e+ vo + (float)v * vo);
+		billRect->setUV(2,-e+ uo + (float)u * uo, -e+ vo + (float)v * vo);
+		billRect->setUV(3,-e+ uo + (float)u * uo,  e+      (float)v * vo);
+				
+		billRect->calculateNormal();
+		// printf("Generated billboard.\n");
+	}
+	vbo.uploadVBO();
+	vbo.clear();
 
-    Rectangle r;
-    setRectData(r, 0.0f, 0.0f, 0.0f, CENTER, (float)textureLocation.x, (float)textureLocation.y, 1.0f, 1.0f);
-    r.calculateNormal();
-    vbo.PushRectangle(r);
-
-    vbo.UpdateVBO();
-*/
     return vbo;
 }
