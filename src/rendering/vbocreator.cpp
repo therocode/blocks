@@ -28,10 +28,8 @@ VBO VBOCreator::generateChunkVBO(Chunk* mainChunk, Chunk* topChunk, Chunk* botto
     nvbo.getVertexDeclaration().addElement(VertexElement::ELEMENT_FLOAT2, 3, "uv");
     nvbo.getVertexDeclaration().addElement(VertexElement::ELEMENT_FLOAT4, 4, "bounds");
     
-    nvbo.setMaxSize(4000, 6000);
+    nvbo.setMaxSize(5000, 6000);
     nvbo.allocateBuffers();
-
-    //vbo.registerAttribute("bounds", 4, VBOAttribute::ATTRIBUTE_FLOAT4);
 
     const ChunkCoordinate location = mainChunk->getLocation();
 
@@ -113,7 +111,6 @@ VBO VBOCreator::generateChunkVBO(Chunk* mainChunk, Chunk* topChunk, Chunk* botto
  //   Rectangle r;
     ChunkRect* rect;
     nvbo.reset();
-
     //extract top quads
     merger.setQuads(walker.getTopQuads());
     merger.doSecondMerge();
@@ -134,7 +131,12 @@ VBO VBOCreator::generateChunkVBO(Chunk* mainChunk, Chunk* topChunk, Chunk* botto
         rect->setUV(1, 0, quad.mHeight);
         rect->setUV(2, quad.mWidth, quad.mHeight);
         rect->setUV(3, quad.mWidth, 0);
-     
+		
+		float y = worldY * 0.001f;
+		y = 1.0f - y;
+		y = glm::clamp(y, 0.f, 1.f);
+		
+		rect->setColor(y,y,y);
 
 /*
         setRectData(r, worldX, worldY, worldZ, TOP, textureLocation.x, textureLocation.y, quad.mWidth, quad.mHeight);
@@ -158,11 +160,13 @@ VBO VBOCreator::generateChunkVBO(Chunk* mainChunk, Chunk* topChunk, Chunk* botto
         float worldX = quad.mX + chunkOffset.x;
         float worldY = quad.mDepth + chunkOffset.y;
         float worldZ = quad.mY + chunkOffset.z;
-
-        textureLocation = glm::uvec2(quad.mType - 1, 0);
+		int resId = quad.mType;
+		if(quad.mType == 1)resId = 2;
+        textureLocation = glm::uvec2(resId - 1, 0);
 		rect->pushIndicesIntoVBO(nvbo);
         rect = (ChunkRect*)nvbo.getNextVertexPtr(4);
         rect->reset();
+		
         setChunkRectData(*rect, worldX, worldY, worldZ, BOTTOM, textureLocation.x, textureLocation.y, quad.mWidth, quad.mHeight);
         rect->setBounds(rect->vs[0].uv[0], rect->vs[0].uv[1], rect->vs[2].uv[0], rect->vs[2].uv[1]);
         rect->calculateNormal();
@@ -194,8 +198,10 @@ VBO VBOCreator::generateChunkVBO(Chunk* mainChunk, Chunk* topChunk, Chunk* botto
         float worldX = quad.mX + chunkOffset.x;
         float worldY = quad.mY + chunkOffset.y;
         float worldZ = quad.mDepth + chunkOffset.z;
-
-        textureLocation = glm::uvec2(quad.mType - 1, 0);
+		
+		int resId = quad.mType;
+		if(quad.mType == 1)resId = 3;
+        textureLocation = glm::uvec2(resId - 1, 0);
 		
 		rect->pushIndicesIntoVBO(nvbo);
         rect = (ChunkRect*)nvbo.getNextVertexPtr(4);
@@ -231,8 +237,9 @@ VBO VBOCreator::generateChunkVBO(Chunk* mainChunk, Chunk* topChunk, Chunk* botto
         float worldX = quad.mX + chunkOffset.x;
         float worldY = quad.mY + chunkOffset.y;
         float worldZ = quad.mDepth + chunkOffset.z;
-
-        textureLocation = glm::uvec2(quad.mType - 1, 0);
+		int resId = quad.mType;
+		if(quad.mType == 1)resId = 3;
+        textureLocation = glm::uvec2(resId - 1, 0);
 		
 		rect->pushIndicesIntoVBO(nvbo);
         rect = (ChunkRect*)nvbo.getNextVertexPtr(4);
@@ -268,8 +275,11 @@ VBO VBOCreator::generateChunkVBO(Chunk* mainChunk, Chunk* topChunk, Chunk* botto
         float worldX = quad.mDepth + chunkOffset.x;
         float worldY = quad.mY + chunkOffset.y;
         float worldZ = quad.mX + chunkOffset.z;
-
-        textureLocation = glm::uvec2(quad.mType - 1, 0);
+		
+		int resId = quad.mType;
+		if(quad.mType == 1)resId = 3;
+        textureLocation = glm::uvec2(resId - 1, 0);
+		
 		rect->pushIndicesIntoVBO(nvbo);
         rect = (ChunkRect*)nvbo.getNextVertexPtr(4);
         rect->reset();
@@ -305,7 +315,10 @@ VBO VBOCreator::generateChunkVBO(Chunk* mainChunk, Chunk* topChunk, Chunk* botto
         float worldY = quad.mY + chunkOffset.y;
         float worldZ = quad.mX + chunkOffset.z;
 
-        textureLocation = glm::uvec2(quad.mType - 1, 0);
+		int resId = quad.mType;
+		if(quad.mType == 1)resId = 3;
+        textureLocation = glm::uvec2(resId - 1, 0);
+		
 		rect->pushIndicesIntoVBO(nvbo);
         rect = (ChunkRect*)nvbo.getNextVertexPtr(4);
         rect->reset();
