@@ -23,6 +23,7 @@ struct RleSegmentInfo
 
 using VoxelType = uint16_t;
 using VoxelTypeArray = std::array<VoxelType, voxelAmount>;
+using VoxelSegmentTypeArray = std::array<VoxelType, chunkWidth>;
 using RleIndexArray = std::array<RleSegmentInfo, chunkWidthx2>;
 using RleSegmentArray = std::vector<uint16_t>;
 
@@ -58,6 +59,8 @@ class Chunk
         uint32_t getWidth() const;
         const ChunkCoordinate& getLocation() const;
     private:
+        VoxelSegmentTypeArray getUncompressedTypeSegment(uint32_t y, uint32_t z) const;
+        void setSegmentTypeFromArray(uint16_t y, uint16_t z, const VoxelSegmentTypeArray& typeArray);
         ChunkCoordinate mLocation;
 
         RleIndexArray mRleSegmentIndices;

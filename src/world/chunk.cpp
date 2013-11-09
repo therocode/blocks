@@ -1,6 +1,7 @@
 #include "chunk.h"
 #include <iostream>
 #include <chrono>
+#include <algorithm>
 
 uint32_t Chunk::totalTime = 0;
 uint32_t Chunk::totalSize = 0;
@@ -123,25 +124,11 @@ void Chunk::setVoxelType(uint32_t x, uint32_t y, uint32_t z, VoxelType type)
     if(x >= chunkWidth || y >= chunkWidth || z >= chunkWidth)
         return;
 
-    size_t segmentIterator = mRleSegmentIndices[z + y * chunkWidth].mSegmentStart;
-    size_t walked = 0;
+    VoxelSegmentTypeArray uncompressed = getUncompressedTypeSegment(y, z);
 
-    std::cout << "in this segment: ";
-    while(walked < chunkWidth)
-    {
-        walked += mRleSegments[segmentIterator];
+    uncompressed[x] = type;
 
-
-        uint16_t typeToAdd = mRleSegments[segmentIterator + 1];
-        for(uint32_t i = 0; i < mRleSegments[segmentIterator]; i++)
-        {
-            std::cout << typeToAdd;
-        }
-
-
-        segmentIterator += 2;
-    }
-    std::cout << "\n";
+    setSegmentTypeFromArray(y, z, uncompressed);
 }
 
 void Chunk::setVoxelType(const VoxelCoordinate& voxel, VoxelType type)
@@ -247,4 +234,95 @@ uint32_t Chunk::getWidth() const
 const ChunkCoordinate& Chunk::getLocation() const
 {
     return mLocation;
+}
+
+VoxelSegmentTypeArray Chunk::getUncompressedTypeSegment(uint32_t y, uint32_t z) const
+{
+    size_t segmentIterator = mRleSegmentIndices[z + y * chunkWidth].mSegmentStart;
+    size_t walked = 0;
+    VoxelSegmentTypeArray result;
+
+    while(walked < chunkWidth)
+    {
+        size_t thisOne = walked;
+        walked += mRleSegments[segmentIterator];
+
+
+        uint16_t typeToAdd = mRleSegments[segmentIterator + 1];
+        for(uint32_t i = 0; i < mRleSegments[segmentIterator]; i++)
+        {
+            result[thisOne + i] = typeToAdd;
+        }
+
+        segmentIterator += 2;
+    }
+        
+    return result;
+}
+
+void Chunk::setSegmentTypeFromArray(uint16_t y, uint16_t z, const VoxelSegmentTypeArray& typeArray)
+{
+    uint32_t zyIndex = z + y * chunkWidth;
+
+    std::vector<uint16_t> compressed;
+
+    uint16_t currentType = typeArray[0];
+    uint16_t currentAmount = 1;
+    for(uint32_t x = 1; x < chunkWidth; x++)
+    {
+        //check if the new voxel is still the same
+        if(currentType == typeArray[x])
+        {
+            //keep collecting
+            currentAmount++;
+        }
+        else
+        {
+            //push the finished run and reinitialise for a new one
+            compressed.push_back(currentAmount);
+            compressed.push_back(currentType);
+
+            currentType = typeArray[x];
+            currentAmount = 1;
+        }
+    }
+    compressed.push_back(currentAmount);
+    compressed.push_back(currentType);
+
+    uint16_t segmentStart = mRleSegmentIndices[zyIndex].mSegmentStart;
+    uint16_t newSegmentLength = compressed.size();
+    uint16_t oldSegmentLength = mRleSegmentIndices[zyIndex].mSegmentSize;
+    int16_t overlap = newSegmentLength - oldSegmentLength;
+
+    mRleSegmentIndices[zyIndex].mSegmentSize = newSegmentLength;
+
+    //let rle array overwrite current segment, leaving the overlap amount (negative or positive)
+    for(uint16_t i = 0; i < newSegmentLength && i < oldSegmentLength; i++)
+    {
+        mRleSegments[segmentStart + i] = compressed[i];
+    }
+
+
+    if(overlap < 0)
+    {
+        //if overlap is negative, then erase the rest
+        mRleSegments.erase(mRleSegments.begin() + segmentStart + newSegmentLength - overlap, mRleSegments.begin() + segmentStart + newSegmentLength);
+    }
+    else if(overlap > 0)
+    {
+        //if overlap is positive, then move the rest
+        mRleSegments.insert(mRleSegments.begin() + segmentStart + newSegmentLength - overlap, compressed.begin() + oldSegmentLength, compressed.end());
+    }
+
+    if(overlap != 0)
+    {
+        for(uint32_t zi = z; z < chunkWidth; z++)
+        {
+            for(uint32_t yi = y+1; y < chunkWidth; y++)
+            {
+                mRleSegmentIndices[zi + yi * chunkWidth].mSegmentStart += overlap;
+            }
+        }
+    }
+    //std::cout << "size of new: " << newSegmentLength << " size of old: " << oldSegmentLength << " overlap: " << overlap << "\n";
 }
