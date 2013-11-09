@@ -193,7 +193,12 @@ void Renderer::handleMessage(const PlayerConnectedToEntityMessage& received)
 
 void Renderer::render()
 {
-    //glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+	GLenum err = glGetError();
+	if(err != GL_NO_ERROR){
+		printf("Some GL error here: %x\n.", err);
+	}
+
+    // glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 
 	glm::vec3 fullColor = glm::vec3((float)0x00 / 255.f, (float)0xb2 / 255.f, (float)0xff / 255.f);
 	glm::vec3 cameraOffset = glm::vec3(0, 0.6f, 0);
