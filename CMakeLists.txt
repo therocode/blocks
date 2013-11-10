@@ -104,6 +104,7 @@ set(header_files
     src/networking/localclientconnectionlistener.h
     src/networking/localserverclientbridge.h
     src/networking/package.h
+    src/networking/packagetype.h
 	src/networking/remoteserverclientbridge.h
     src/networking/serverclientbridge.h
 	src/rendering/debugrenderer.h

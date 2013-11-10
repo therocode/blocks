@@ -142,7 +142,7 @@ void Client::fetchServerData()
 	std::shared_ptr<BasePackage> package;
 	while(mBridge->pollPackage(package))
 	{
-		if(package->mType == typeid(ChunkLoadedPackage))
+		if(package->mType == PackageType::CHUNK_LOADED)
 		{	
 			ChunkLoadedPackage* chunkPackage = (ChunkLoadedPackage*)package.get();
 			ChunkCoordinate coordinate;
@@ -181,7 +181,7 @@ void Client::fetchServerData()
                 updateChunk(ChunkCoordinate(coordinate.x, coordinate.y, coordinate.z - 1));
             }
 		}
-		else if(package->mType == typeid(VoxelSetPackage))
+		else if(package->mType == PackageType::VOXEL_SET)
 		{	
 			VoxelSetPackage* voxelSetPackage = (VoxelSetPackage*)package.get();
             
@@ -235,7 +235,7 @@ void Client::fetchServerData()
                 updateChunk(backNeighbour);
             }
         }
-		else if(package->mType == typeid(ChunkDeletedPackage))
+		else if(package->mType == PackageType::CHUNK_DELETED)
 		{
 			ChunkDeletedPackage* chunkPackage = (ChunkDeletedPackage*)package.get();
 
@@ -247,37 +247,37 @@ void Client::fetchServerData()
 
             mLocalChunks.erase(coordinate);
 		}
-		else if(package->mType == typeid(GfxEntityAddedPackage))
+		else if(package->mType == PackageType::GFX_ENTITY_ADDED)
 		{
 			GfxEntityAddedPackage* gfxAddedPackage = (GfxEntityAddedPackage*)package.get();
 			mBus.sendMessage<AddGfxEntityMessage>(AddGfxEntityMessage(gfxAddedPackage->getData()));
 		}
-		else if(package->mType == typeid(GfxEntityMovedPackage))
+		else if(package->mType == PackageType::GFX_ENTITY_MOVED)
 		{
 			GfxEntityMovedPackage* gfxMovedPackage = (GfxEntityMovedPackage*)package.get();
 			mBus.sendMessage<MoveGfxEntityMessage>(MoveGfxEntityMessage(gfxMovedPackage->getData()));
 		}
-		else if(package->mType == typeid(GfxEntityRotatedPackage))
+		else if(package->mType == PackageType::GFX_ENTITY_ROTATED)
 		{
 			GfxEntityRotatedPackage* gfxEntityRotatedPackage = (GfxEntityRotatedPackage*)package.get();
 			mBus.sendMessage<RotateGfxEntityMessage>(RotateGfxEntityMessage(gfxEntityRotatedPackage->getData()));
 		}
-		else if(package->mType == typeid(GfxEntityRemovedPackage))
+		else if(package->mType == PackageType::GFX_ENTITY_REMOVED)
 		{
 			GfxEntityRemovedPackage* gfxRemovedPackage = (GfxEntityRemovedPackage*)package.get();
 			mBus.sendMessage<RemoveGfxEntityMessage>(RemoveGfxEntityMessage(gfxRemovedPackage->getData()));
 		}
-		else if(package->mType == typeid(PlayerIdPackage))
+		else if(package->mType == PackageType::PLAYER_ID)
 		{
 			PlayerIdPackage* playerIdPackage = (PlayerIdPackage*)package.get();
 			mBus.sendMessage<PlayerIdMessage>(PlayerIdMessage(playerIdPackage->getData()));
 		}
-		else if(package->mType == typeid(PlayerConnectedToEntityPackage))
+		else if(package->mType == PackageType::PLAYER_CONNECTED_TO_ENTITY)
 		{
 			PlayerConnectedToEntityPackage* playerConnectedToEntityPackage = (PlayerConnectedToEntityPackage*)package.get();
 			mBus.sendMessage<PlayerConnectedToEntityMessage>(PlayerConnectedToEntityMessage(playerConnectedToEntityPackage->getData()));
 		}
-		else if(package->mType == typeid(PlayerFacingBlockPackage))
+		else if(package->mType == PackageType::PLAYER_FACING_BLOCK)
 		{
 			PlayerFacingBlockPackage* playerFacingBlockPackage = (PlayerFacingBlockPackage*)package.get();
 

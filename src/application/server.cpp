@@ -239,16 +239,16 @@ void Server::fetchClientData(std::weak_ptr<ClientConnection> client)
     {
         while(client.second->pollPackage(package))
         {
-            if(package->mType == typeid(RebuildScriptsRequestedPackage))
+            if(package->mType == PackageType::REBUILD_SCRIPTS_REQUESTED)
             {
                 mBus.sendMessage<RebuildScriptsRequestedMessage>(RebuildScriptsRequestedMessage('0'));
             }
-            else if(package->mType == typeid(PlayerActionPackage))
+            else if(package->mType == PackageType::PLAYER_ACTION)
             {
                 PlayerActionPackage* playerActionPackage = (PlayerActionPackage*) package.get();
                 mBus.sendMessage<PlayerActionMessage>(PlayerActionMessage(playerActionPackage->getData()));
             }
-            else if(package->mType == typeid(PlayerMoveDirectionPackage))
+            else if(package->mType == PackageType::PLAYER_MOVE_DIRECTION)
             {
                 PlayerMoveDirectionPackage* playerMoveDirectionPackage = (PlayerMoveDirectionPackage*) package.get();
                 size_t id;
@@ -260,12 +260,12 @@ void Server::fetchClientData(std::weak_ptr<ClientConnection> client)
 
                 mBus.sendMessage<PlayerMoveDirectionMessage>(PlayerMoveDirectionMessage(id, dir));
             }
-            else if(package->mType == typeid(PlayerMoveActionPackage))
+            else if(package->mType == PackageType::PLAYER_MOVE_ACTION)
             {
                 PlayerMoveActionPackage* playerMoveActionPackage = (PlayerMoveActionPackage*) package.get();
                 mBus.sendMessage<PlayerMoveActionMessage>(PlayerMoveActionMessage(playerMoveActionPackage->getData()));
             }
-            else if(package->mType == typeid(PlayerPitchYawPackage))
+            else if(package->mType == PackageType::PLAYER_PITCH_YAW)
             {
                 PlayerPitchYawPackage* playerPitchYawPackage = (PlayerPitchYawPackage*) package.get();
                 mBus.sendMessage<PlayerPitchYawMessage>(PlayerPitchYawMessage(playerPitchYawPackage->getData()));

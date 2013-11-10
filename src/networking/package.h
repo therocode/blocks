@@ -4,25 +4,26 @@
 #include <typeindex>
 #include <tuple>
 #include "../utilities/serialize.h"
+#include "packagetype.h"
 
 class BasePackage
 {
     public:
         BasePackage();
-        BasePackage(std::type_index type);
+        BasePackage(PackageType type);
         virtual std::vector<uint8_t> serialise() const = 0;
         virtual void deserialise(const std::vector<uint8_t>& bytes) = 0;
-        std::type_index mType;
+        PackageType mType;
 };
 
-template<typename Tag, typename... Types>
+template<typename Tag, PackageType TypeId, typename... Types>
 class Package : public BasePackage
 {
     public:
-        Package(Types... values) : BasePackage(typeid(Package)), data(values...)
+        Package(Types... values) : BasePackage(TypeId), data(values...)
         {
         }
-        Package(std::tuple<Types...> value) : BasePackage(typeid(Package)), data(value)
+        Package(std::tuple<Types...> value) : BasePackage(TypeId), data(value)
         {
         }
         virtual std::vector<uint8_t> serialise() const override
