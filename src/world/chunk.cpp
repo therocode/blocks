@@ -265,54 +265,6 @@ VoxelSegmentTypeArray Chunk::getUncompressedTypeSegment(uint32_t y, uint32_t z) 
 void Chunk::setSegmentTypeFromArray(uint16_t y, uint16_t z, const VoxelSegmentTypeArray& typeArray)
 {
     uint32_t zyIndex = z + y * chunkWidth;
-
-    //std::cout << "before the whole deal, the target segment and the following one looks like this:\n";
-    //std::cout << "target segment position: " << mRleSegmentIndices[zyIndex].mSegmentStart << " and size " << mRleSegmentIndices[zyIndex].mSegmentSize << "\ncontent:\n";
-    //int looped = 0;
-    //for(uint16_t i = mRleSegmentIndices[zyIndex].mSegmentStart; i < mRleSegmentIndices[zyIndex].mSegmentStart + mRleSegmentIndices[zyIndex].mSegmentSize; i++)
-    //{
-    //    std::cout << mRleSegments[i];
-
-    //    if(i % 2)
-    //    {
-    //        std::cout << "\n";
-    //    }
-    //    else
-    //    {
-    //        std::cout << ":";
-    //    }
-
-    //    looped++;
-    //    if(looped > 100)
-    //    {
-    //        std::cout << "looped got big\n";
-    //        exit(3);
-    //    }
-    //}
-    //std::cout << "next segment position: " << mRleSegmentIndices[zyIndex + chunkWidth].mSegmentStart << " and size " << mRleSegmentIndices[zyIndex + chunkWidth].mSegmentSize << "\ncontent:\n";
-    //looped = 0;
-    //for(uint16_t i = mRleSegmentIndices[zyIndex + chunkWidth].mSegmentStart; i < mRleSegmentIndices[zyIndex + chunkWidth].mSegmentStart + mRleSegmentIndices[zyIndex + chunkWidth].mSegmentSize; i++)
-    //{
-    //    std::cout << mRleSegments[i];
-
-    //    if(i % 2)
-    //    {
-    //        std::cout << "\n";
-    //    }
-    //    else
-    //    {
-    //        std::cout << ":";
-    //    }
-
-    //    looped++;
-    //    if(looped > 100)
-    //    {
-    //        std::cout << "looped got big\n";
-    //        exit(3);
-    //    }
-    //}
-    //std::cout <<"----------------\n";
-
     std::vector<uint16_t> compressed;
 
     uint16_t currentType = typeArray[0];
@@ -352,32 +304,14 @@ void Chunk::setSegmentTypeFromArray(uint16_t y, uint16_t z, const VoxelSegmentTy
     }
 
 
-    //std::cout << "before it changes size with overlap " << overlap << ": " << mRleSegments.size() << "\n";
     if(overlap < 0)
     {
-        //if overlap is negative, then erase the rest
-        //for(auto iter = mRleSegments.begin() + segmentStart + newSegmentLength; iter != mRleSegments.begin() + segmentStart + oldSegmentLength; iter++)
-        //{
-        //    std::cout << "will erase: " << *iter << "\n";
-        //}
         mRleSegments.erase(mRleSegments.begin() + segmentStart + newSegmentLength, mRleSegments.begin() + segmentStart + oldSegmentLength);
     }
     else if(overlap > 0)
     {
-        //if overlap is positive, then move the rest
         mRleSegments.insert(mRleSegments.begin() + segmentStart + oldSegmentLength, compressed.begin() + oldSegmentLength, compressed.end());
     }
-
-    //std::cout << "after it changes size: " << mRleSegments.size() << "\n";
-    //std::cout << "before increasement:\n";
-
-    //for(uint32_t zi = 0; zi < chunkWidth; zi++)
-    //{
-    //    for(uint32_t yi = 0; yi < chunkWidth; yi++)
-    //    {
-    //        std::cout << "segment y:" << yi << " z:" << zi << " starts at: " << mRleSegmentIndices[zi + yi * chunkWidth].mSegmentStart << " and the size is " << mRleSegmentIndices[zi + yi * chunkWidth].mSegmentSize << "\n";
-    //    }
-    //}
 
     if(overlap != 0)
     {
@@ -388,57 +322,8 @@ void Chunk::setSegmentTypeFromArray(uint16_t y, uint16_t z, const VoxelSegmentTy
                 if(mRleSegmentIndices[zyIndex].mSegmentStart >= mRleSegmentIndices[zi + yi * chunkWidth].mSegmentStart)
                     continue;
 
-                //std::cout << "changing " << mRleSegmentIndices[zi + yi * chunkWidth].mSegmentStart << " to " << mRleSegmentIndices[zi + yi * chunkWidth].mSegmentStart + overlap << "\n";
                 mRleSegmentIndices[zi + yi * chunkWidth].mSegmentStart += overlap;
             }
         }
     }
-
-    //std::cout << "after increasement:\n";
-
-    //for(uint32_t zi = 0; zi < chunkWidth; zi++)
-    //{
-    //    for(uint32_t yi = 0; yi < chunkWidth; yi++)
-    //    {
-    //        std::cout << "segment y:" << yi << " z:" << zi << " starts at: " << mRleSegmentIndices[zi + yi * chunkWidth].mSegmentStart << " and the size is " << mRleSegmentIndices[zi + yi * chunkWidth].mSegmentSize << "\n";
-    //    }
-    //}
-
-    //std::cout << "final segment: ";
-    //for(int i = segmentStart; i < segmentStart + newSegmentLength; i++)
-    //{
-    //    std::cout << mRleSegments[i] << ",";
-    //}
-    //std::cout << "\noverlap was " << overlap << "\n";
-    ////std::cout << "size of new: " << newSegmentLength << " size of old: " << oldSegmentLength << " overlap: " << overlap << "\n";
-    //std::cout << "after the whole deal, the target segment and the following one looks like this:\n";
-    //std::cout << "target segment position: " << mRleSegmentIndices[zyIndex].mSegmentStart << " and size " << mRleSegmentIndices[zyIndex].mSegmentSize << "\ncontent:\n";
-    //for(uint16_t i = mRleSegmentIndices[zyIndex].mSegmentStart; i < mRleSegmentIndices[zyIndex].mSegmentStart + mRleSegmentIndices[zyIndex].mSegmentSize; i++)
-    //{
-    //    std::cout << mRleSegments[i];
-
-    //    if(i % 2)
-    //    {
-    //        std::cout << "\n";
-    //    }
-    //    else
-    //    {
-    //        std::cout << ":";
-    //    }
-    //}
-    //std::cout << "next segment position: " << mRleSegmentIndices[zyIndex + chunkWidth].mSegmentStart << " and size " << mRleSegmentIndices[zyIndex + chunkWidth].mSegmentSize << "\ncontent:\n";
-    for(uint16_t i = mRleSegmentIndices[zyIndex + chunkWidth].mSegmentStart; i < mRleSegmentIndices[zyIndex + chunkWidth].mSegmentStart + mRleSegmentIndices[zyIndex + chunkWidth].mSegmentSize; i++)
-    {
-        std::cout << mRleSegments[i];
-
-        if(i % 2)
-        {
-            std::cout << "\n";
-        }
-        else
-        {
-            std::cout << ":";
-        }
-    }
-    //std::cout <<"----------------\n";
 }
