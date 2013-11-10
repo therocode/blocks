@@ -79,6 +79,9 @@ void InputAdaptor::update()
 			if(event.mouseButton.button == fea::Mouse::Button::LEFT){
 			    mBus.sendMessage<PlayerActionMessage>(PlayerActionMessage(mPlayerId, InputAction::DIG));
 			}
+			else if(event.mouseButton.button == fea::Mouse::Button::RIGHT){
+			    mBus.sendMessage<PlayerActionMessage>(PlayerActionMessage(mPlayerId, InputAction::BUILD));
+			}
 		}
 		else if(event.type == fea::Event::MOUSEBUTTONRELEASED){
 			mouseDown = false;

@@ -79,6 +79,15 @@ void PlayerController::handleMessage(const PlayerActionMessage& received)
 			mBus.sendMessage<SetVoxelMessage>(SetVoxelMessage(voxel, 0));
 		}
     }
+    else if(action == BUILD)
+    {
+        // glm::vec3 worldPos = mPlayerEntities.at(playerId).lock()->getAttribute<VoxelWorldCoordinate>("block_facing");
+		if(mPlayerEntities.at(playerId).lock()->getAttribute<bool>("is_facing_block")){
+			VoxelWorldCoordinate voxel = mPlayerEntities.at(playerId).lock()->getAttribute<VoxelWorldCoordinate>("block_facing");
+            voxel.y += 1;
+			mBus.sendMessage<SetVoxelMessage>(SetVoxelMessage(voxel, 8));
+		}
+    }
 }
 
 void PlayerController::handleMessage(const PlayerMoveDirectionMessage& received)

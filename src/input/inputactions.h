@@ -16,5 +16,6 @@ enum InputAction
     STOPCROUCH,
     MOUSELEFT,
     STOPMOUSELEFT,
-    DIG
+    DIG,
+    BUILD
 };
