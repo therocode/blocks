@@ -41,6 +41,7 @@ using RleSegmentArray = std::vector<uint16_t>;
 
 ChunkCoordinate worldToChunk(float x, float y, float z);
 ChunkCoordinate worldToChunk(const glm::vec3& position);
+ChunkCoordinate worldToChunkInt(int x, int y, int z);
 
 VoxelCoordinate worldToChunkVoxel(const glm::vec3& position);
 VoxelCoordinate worldToChunkVoxel(float x, float y, float z);

@@ -9,17 +9,18 @@
 
 VoxelType WorldInterface::getVoxelTypeInt(int x, int y, int z) const
 {
-	int chunkWidth = 16;
-	ChunkCoordinate chunkCoordinate = worldToChunk(x, y, z);
+	// int chunkWidth = 16;
+	ChunkCoordinate chunkCoordinate = worldToChunkInt(x, y, z);
 	
-	int xNegative = (int)(x - chunkWidth) / chunkWidth;
-	int yNegative = (int)(y - chunkWidth) / chunkWidth;
-	int zNegative = (int)(z - chunkWidth) / chunkWidth;
+	// int xNegative = (int)(x - chunkWidth) / chunkWidth;
+	// int yNegative = (int)(y - chunkWidth) / chunkWidth;
+	// int zNegative = (int)(z - chunkWidth) / chunkWidth;
 	
-	if(xNegative < 0) x += (-xNegative + 1) * chunkWidth;
-	if(yNegative < 0) y += (-yNegative + 1) * chunkWidth;
-	if(zNegative < 0) z += (-zNegative + 1) * chunkWidth;
-	VoxelCoordinate voxelCoordinate = VoxelCoordinate((x) % 16,(y) % 16,(z) % 16);
+	// if(xNegative < 0) x += (-xNegative + 1) * chunkWidth;
+	// if(yNegative < 0) y += (-yNegative + 1) * chunkWidth;
+	// if(zNegative < 0) z += (-zNegative + 1) * chunkWidth;
+	
+	VoxelCoordinate voxelCoordinate = worldToChunkVoxel(x, y, z);//VoxelCoordinate((x + (x) % 16,(y) % 16,(z) % 16);
 
 	const Landscape& landscape = mDimension.getLandscape();
 

@@ -7,11 +7,28 @@ uint32_t Chunk::totalTime = 0;
 uint32_t Chunk::totalSize = 0;
 uint32_t Chunk::timesGenerated = 0;
 
+ChunkCoordinate worldToChunkInt(int x, int y, int z){
+	int xNeg = x < 0;
+	int yNeg = y < 0;
+	int zNeg = z < 0;
+	ChunkCoordinate c;
+	
+	c.x =(((xNeg)?1:0) + x) / chunkWidth;
+	c.y =(((yNeg)?1:0) + y)  / chunkWidth;
+	c.z =(((zNeg)?1:0) + z)  / chunkWidth;
+	
+	if(xNeg) c.x -= 1;
+	if(yNeg) c.y -= 1;
+	if(zNeg) c.z -= 1;
+	
+	return c;
+}
+
 ChunkCoordinate worldToChunk(float x, float y, float z)
 {
-	int xNegative = (x < 0.0f)?1:0;
-    int yNegative = (y < 0.0f)?1:0;
-    int zNegative = (z < 0.0f)?1:0;
+	int xNegative = (glm::floor(x) < 0.0f)?1:0;
+    int yNegative = (glm::floor(y) < 0.0f)?1:0;
+    int zNegative = (glm::floor(z) < 0.0f)?1:0;
 
     return ChunkCoordinate(	((int)(x) / chunkWidth) - xNegative, 
 							((int)(y) / chunkWidth) - yNegative, 
@@ -25,9 +42,9 @@ ChunkCoordinate worldToChunk(const glm::vec3& position)
 
 VoxelWorldCoordinate worldToVoxel(float x, float y, float z)
 {
-    return VoxelWorldCoordinate((int)x - (x<0),
-								(int)y - (y<0),
-								(int)z - (z<0));
+    return VoxelWorldCoordinate(glm::floor(x),
+								glm::floor(y),
+								glm::floor(z));
 }
 
 VoxelWorldCoordinate worldToVoxel(const glm::vec3& position)

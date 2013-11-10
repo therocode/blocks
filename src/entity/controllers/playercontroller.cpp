@@ -85,33 +85,37 @@ void PlayerController::handleMessage(const PlayerActionMessage& received)
 		if(mPlayerEntities.at(playerId).lock()->getAttribute<bool>("is_facing_block")){
 			VoxelWorldCoordinate voxel = mPlayerEntities.at(playerId).lock()->getAttribute<VoxelWorldCoordinate>("block_facing");
 			int face = mPlayerEntities.at(playerId).lock()->getAttribute<int>("block_facing_face");
-			printf("Face: %i\n", face);
+			ChunkCoordinate cc = worldToChunkInt(voxel.x, voxel.y, voxel.z);
+			VoxelCoordinate vc = worldToChunkVoxel(voxel.x, voxel.y, voxel.z);
+			// printf("ChunkCoord: %i, %i, %i. VoxelCoord: %i, %i, %i. World: %i, %i, %i\n", cc.x, cc.y, cc.z, vc.x, vc.y, vc.z, voxel.x, voxel.y, voxel.z);
+			// printf("Face: %i\n", face);
 			switch(face){
 				case FACE_TOP:
 					voxel.y++;
-					printf("Top face\n");
+					// printf("Top face\n");
 					break;
 				case FACE_BOTTOM:
 					voxel.y--;
-					printf("Bottom face\n");
+					// printf("Bottom face\n");
 					break;
 				case FACE_LEFT:
 					voxel.x--;
-					printf("left face\n");
+					// printf("left face\n");
 					break;
 				case FACE_RIGHT:
 					voxel.x++;
-					printf("right face\n");
+					// printf("right face\n");
 					break;
 				case FACE_FRONT:
 					voxel.z--;
-					printf("front face\n");
+					// printf("front face\n");
 					break;
 				case FACE_BACK:
 					voxel.z++;
-					printf("back face\n");
+					// printf("back face\n");
 					break;
 			}
+			
 			mBus.sendMessage<SetVoxelMessage>(SetVoxelMessage(voxel, 8));
 		}
     }
@@ -213,8 +217,9 @@ void PlayerController::updateVoxelLookAt(size_t playerId)
 	if(entity->getAttribute<int>("block_facing_face") != face){
 		entity->setAttribute<int>("block_facing_face", face);
 	}
-    if(f && block != entity->getAttribute<VoxelWorldCoordinate>("block_facing"))
+    if(block != entity->getAttribute<VoxelWorldCoordinate>("block_facing"))
 	{
+		entity->setAttribute<bool>("is_facing_block", f);
 		entity->setAttribute<bool>("is_facing_block", f);
         entity->setAttribute<VoxelWorldCoordinate>("block_facing", block);
         mBus.sendMessage<PlayerFacingBlockMessage>(PlayerFacingBlockMessage(playerId, block));

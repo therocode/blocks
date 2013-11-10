@@ -88,20 +88,22 @@ void main(){
 	d -= screenSize * 0.5;
 	d = floor(d);
 
-	float chW = 2;
+	float chW = 1;
 	float chS = 12.0;
 	
 	vec4 ff = vec4(1.0, 1.0, 1.0, 1.0);
 	ff.w = 1.0;
 	fragColor += texColor;// * ff * max( 1.0 - length(posCamSpace) * 0.05, 0.0);
 	//gamme correction kinda 
-	//if (fragColor.x<0.50)
+	if (fragColor.x<0.50)
 		fragColor.rgb = pow(fragColor.rgb, vec3(1.0 / 0.8));
 
+	
+	fragColor.a = 1.0;
+	fragColor =(texColor+ fragColor) * 0.5;
 	if(abs(d.x)  < chW || abs(d.y) < chW  ){
 		if(abs(d.x) < chS && abs(d.y) < chS)
 			fragColor = vec4(1.0) - fragColor;	
 	}
-	fragColor.a = 1.0;
-	gl_FragColor = (texColor+ fragColor) * 0.5;
+	gl_FragColor = fragColor;
 }

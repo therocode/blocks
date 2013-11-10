@@ -55,7 +55,7 @@ void World::handleMessage(const SetVoxelMessage& received)
 
     std::tie(coordinate, type) = received.data;
 
-    ChunkCoordinate chunkCoord = worldToChunk(coordinate.x, coordinate.y, coordinate.z);
+    ChunkCoordinate chunkCoord = worldToChunkInt(coordinate.x, coordinate.y, coordinate.z);
     VoxelCoordinate voxelCoord = worldToChunkVoxel(coordinate.x, coordinate.y, coordinate.z);
     
     standardDimension.getLandscape().getChunk(chunkCoord).setVoxelType(voxelCoord.x, voxelCoord.y, voxelCoord.z, type);
