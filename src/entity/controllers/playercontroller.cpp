@@ -84,7 +84,34 @@ void PlayerController::handleMessage(const PlayerActionMessage& received)
         // glm::vec3 worldPos = mPlayerEntities.at(playerId).lock()->getAttribute<VoxelWorldCoordinate>("block_facing");
 		if(mPlayerEntities.at(playerId).lock()->getAttribute<bool>("is_facing_block")){
 			VoxelWorldCoordinate voxel = mPlayerEntities.at(playerId).lock()->getAttribute<VoxelWorldCoordinate>("block_facing");
-            voxel.y += 1;
+			int face = mPlayerEntities.at(playerId).lock()->getAttribute<int>("block_facing_face");
+			printf("Face: %i\n", face);
+			switch(face){
+				case FACE_TOP:
+					voxel.y++;
+					printf("Top face\n");
+					break;
+				case FACE_BOTTOM:
+					voxel.y--;
+					printf("Bottom face\n");
+					break;
+				case FACE_LEFT:
+					voxel.x--;
+					printf("left face\n");
+					break;
+				case FACE_RIGHT:
+					voxel.x++;
+					printf("right face\n");
+					break;
+				case FACE_FRONT:
+					voxel.z--;
+					printf("front face\n");
+					break;
+				case FACE_BACK:
+					voxel.z++;
+					printf("back face\n");
+					break;
+			}
 			mBus.sendMessage<SetVoxelMessage>(SetVoxelMessage(voxel, 8));
 		}
     }
@@ -183,7 +210,10 @@ void PlayerController::updateVoxelLookAt(size_t playerId)
 	int face;
 	bool f = mWorldInterface.getVoxelAtRay(position + glm::vec3(0, 0.6f, 0), direction, 20.f, face, block);
 	
-    if(block != entity->getAttribute<VoxelWorldCoordinate>("block_facing"))
+	if(entity->getAttribute<int>("block_facing_face") != face){
+		entity->setAttribute<int>("block_facing_face", face);
+	}
+    if(f && block != entity->getAttribute<VoxelWorldCoordinate>("block_facing"))
 	{
 		entity->setAttribute<bool>("is_facing_block", f);
         entity->setAttribute<VoxelWorldCoordinate>("block_facing", block);

@@ -151,6 +151,7 @@ bool WorldInterface::getVoxelAtRay(float ox, float oy, float oz, float dx, float
 			ip[mini] --;
 			bp[mini] = 1.f;
 		}
+		
 		hitFace = enterFaces[mini];
 		steps ++;
 		

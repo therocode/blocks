@@ -15,6 +15,7 @@
     "current_chunk":"#chunkcoordinate#",
     "block_facing":"#voxelworldcoordinate#",
 	"is_facing_block":"#bool#",
+	"block_facing_face":"#uint32#",
 
     "walk_speed":"#float#",
     "run_speed":"#float#",
