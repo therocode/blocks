@@ -74,8 +74,10 @@ void PlayerController::handleMessage(const PlayerActionMessage& received)
     else if(action == DIG)
     {
         // glm::vec3 worldPos = mPlayerEntities.at(playerId).lock()->getAttribute<VoxelWorldCoordinate>("block_facing");
-        VoxelWorldCoordinate voxel = mPlayerEntities.at(playerId).lock()->getAttribute<VoxelWorldCoordinate>("block_facing");
-        mBus.sendMessage<SetVoxelMessage>(SetVoxelMessage(voxel, 0));
+		if(mPlayerEntities.at(playerId).lock()->getAttribute<bool>("is_facing_block")){
+			VoxelWorldCoordinate voxel = mPlayerEntities.at(playerId).lock()->getAttribute<VoxelWorldCoordinate>("block_facing");
+			mBus.sendMessage<SetVoxelMessage>(SetVoxelMessage(voxel, 0));
+		}
     }
 }
 
@@ -171,9 +173,10 @@ void PlayerController::updateVoxelLookAt(size_t playerId)
 	VoxelWorldCoordinate block;
 	int face;
 	bool f = mWorldInterface.getVoxelAtRay(position + glm::vec3(0, 0.6f, 0), direction, 20.f, face, block);
-
+	
     if(block != entity->getAttribute<VoxelWorldCoordinate>("block_facing"))
-    {
+	{
+		entity->setAttribute<bool>("is_facing_block", f);
         entity->setAttribute<VoxelWorldCoordinate>("block_facing", block);
         mBus.sendMessage<PlayerFacingBlockMessage>(PlayerFacingBlockMessage(playerId, block));
     }

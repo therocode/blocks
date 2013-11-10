@@ -15,6 +15,7 @@
 		"jumping":"",
         "current_chunk":"",
         "block_facing":"",
+		"is_facing_block":"",
         "walk_speed":"",
         "run_speed":"",
         "jump_strength":"",
