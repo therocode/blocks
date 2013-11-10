@@ -18,7 +18,7 @@ struct CameraUpdated_tag{};//
 using CameraUpdatedMessage = fea::Message<CameraUpdated_tag, const glm::vec3&, const glm::vec3&>;
 
 struct PlayerFacingBlock_tag{};//                                playerid    voxelposition
-using PlayerFacingBlockMessage = fea::Message<PlayerFacingBlock_tag, size_t, const glm::vec3&>;
+using PlayerFacingBlockMessage = fea::Message<PlayerFacingBlock_tag, size_t, const VoxelWorldCoordinate&>;
 
 struct UpdateChunkVbo_tag{};//                                 main    top     bottom  front   back    left    right
 using UpdateChunkVboMessage = fea::Message<UpdateChunkVbo_tag, Chunk*, Chunk*, Chunk*, Chunk*, Chunk*, Chunk*, Chunk*>;

@@ -283,13 +283,13 @@ void Client::fetchServerData()
 
             size_t playerId;
 
-            float x;
-            float y;
-            float z;
+            int x;
+            int y;
+            int z;
 
             std::tie(playerId, x, y, z) = playerFacingBlockPackage->getData();
 
-			mBus.sendMessage<PlayerFacingBlockMessage>(PlayerFacingBlockMessage(playerId, glm::vec3(x, y, z)));
+			mBus.sendMessage<PlayerFacingBlockMessage>(PlayerFacingBlockMessage(playerId, VoxelWorldCoordinate(x, y, z)));
 		}
 	}
 }

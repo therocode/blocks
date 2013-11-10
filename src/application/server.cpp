@@ -160,10 +160,10 @@ void Server::handleMessage(const PlayerConnectedToEntityMessage& received)
 void Server::handleMessage(const PlayerFacingBlockMessage& received)
 {
     size_t id;
-    glm::vec3 vector;
-    float x;
-    float y;
-    float z;
+    VoxelWorldCoordinate vector;
+    int x;
+    int y;
+    int z;
 
     std::tie(id, vector) = received.data;
 

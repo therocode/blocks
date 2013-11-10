@@ -14,6 +14,7 @@ EntityFactory::EntityFactory(fea::EntityManager& manager) : mManager(manager)
     loader.registerType("#vec3#",sizeof(glm::vec3));
     loader.registerType("#int16#",sizeof(int16_t));
     loader.registerType("#chunkcoordinate#",sizeof(ChunkCoordinate));
+	loader.registerType("#voxelworldcoordinate#", sizeof(VoxelWorldCoordinate));
     mManager.registerAttributes(loader.loadAttributesJson("data/attributes.json"));
     mManager.registerEntityTemplates(loader.loadEntitiesJson("data/entities.json"));
     mManager.registerDefaultSetter("position", vec3Setter);

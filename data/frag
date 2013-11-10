@@ -95,7 +95,7 @@ void main(){
 	ff.w = 1.0;
 	fragColor += texColor;// * ff * max( 1.0 - length(posCamSpace) * 0.05, 0.0);
 	//gamme correction kinda 
-	if (fragColor.x<0.50)
+	//if (fragColor.x<0.50)
 		fragColor.rgb = pow(fragColor.rgb, vec3(1.0 / 0.8));
 
 	if(abs(d.x)  < chW || abs(d.y) < chW  ){

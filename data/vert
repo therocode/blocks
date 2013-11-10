@@ -46,7 +46,7 @@ void main(){
 	mat3 normalModelToCamera = normalWorldToCamera * normalModelToWorld ;
 	
 
-    vec4 lightPos =  vec4(0.0, 100.0, 0.0, 1.0);
+    vec4 lightPos =  vec4(0.0, 100.0, 0.0, 1.0) + vec4(vert, 0);
 	lightPos = worldToCamera * lightPos;
 
 	vec4 v =  modelToWorld * vec4(vert, 1.0);

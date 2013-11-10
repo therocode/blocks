@@ -56,12 +56,12 @@ VoxelType WorldInterface::getVoxelType(const glm::vec3& position) const
 	return getVoxelType(position.x, position.y, position.z);
 }
 
-glm::vec3 WorldInterface::getVoxelAtRay(const glm::vec3& position, const glm::vec3& direction) const
+bool WorldInterface::getVoxelAtRay(const glm::vec3& position, const glm::vec3& direction, const float maxDistance, int& hitFace, VoxelWorldCoordinate& hitBlock ) const
 {
-	return getVoxelAtRay(position.x, position.y, position.z, direction.x, direction.y, direction.z);
+	return getVoxelAtRay(position.x, position.y, position.z, direction.x, direction.y, direction.z, maxDistance, hitFace, hitBlock);
 }
 
-glm::vec3 WorldInterface::getVoxelAtRay(float ox, float oy, float oz, float dx, float dy, float dz) const
+bool WorldInterface::getVoxelAtRay(float ox, float oy, float oz, float dx, float dy, float dz, const float maxDistance, int& hitFace, VoxelWorldCoordinate& hitBlock)  const
 {
 	int ip[3] = {(int)ox -(ox<0), (int)oy -(oy<0), (int)oz -(oz<0)};
 	glm::vec3 bp = glm::fract(glm::vec3(ox, oy, oz));
@@ -75,10 +75,11 @@ glm::vec3 WorldInterface::getVoxelAtRay(float ox, float oy, float oz, float dx, 
 	if(glm::length2(d) != 0)
 		d = glm::normalize(d);
 	else
-		return glm::vec3(0, 9999, 0);
+		return false;
 	
 	glm::vec3 p = glm::vec3(ox, oy, oz);
 	
+	float distanceTravelled = 0.f;
 	int steps = 0;
 	uint16_t vtype = 0;
 	glm::vec3 bounds = glm::vec3(0,0,0);
@@ -126,6 +127,7 @@ glm::vec3 WorldInterface::getVoxelAtRay(float ox, float oy, float oz, float dx, 
 			break;
 		
 		bp += d * lengthToNextBlock;
+		distanceTravelled += lengthToNextBlock;
 		if(bp[mini] >= 1.f){
 			ip[mini] ++;
 			bp[mini] = 0.f;
@@ -134,6 +136,10 @@ glm::vec3 WorldInterface::getVoxelAtRay(float ox, float oy, float oz, float dx, 
 			bp[mini] = 1.f;
 		}
 		steps ++;
+		
+		if(distanceTravelled > maxDistance){
+			return false;
+		}
 	}
 //	printf("steps:%i\n", steps);
 
@@ -143,10 +149,11 @@ glm::vec3 WorldInterface::getVoxelAtRay(float ox, float oy, float oz, float dx, 
 	// voxelCoordinate -= voxelCoordinate2;
 	 //printf("diffaerecne chunk: %i, %i, %i\n", voxelCoordinate2.x, voxelCoordinate2.y, voxelCoordinate2.z);
 
-	glm::vec3 block = glm::vec3(ip[0] , ip[1] , ip[2] );
+	glm::vec3 block = glm::vec3(ip[0] , ip[1] , ip[2]);
 	// printf("lookat block = %f, %f, %f\n",block.x, block.y, block.z);
-	if(steps == 256){ return glm::vec3(0, 9999, 0); }
-	return block + glm::vec3(0.5f);
+	if(steps == 256){ return false; }
+	hitBlock = VoxelWorldCoordinate(ip[0], ip[1],  ip[2]);
+	return true;
 	// return glm::vec3(ip[0] - (ip[0] < 0), ip[1] - (ip[1] < 0), ip[2] - (ip[2] < 0)) + glm::vec3(0.5f);
 	// return glm::vec3((int)p.x - (p.x<0),(int)p.y - (p.y<0),(int)p.z - (p.z<0)) + glm::vec3(0.5f);
 }

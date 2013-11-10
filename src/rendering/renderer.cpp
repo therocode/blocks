@@ -327,7 +327,7 @@ void Renderer::render()
 		fadeIn +=  dT_f * 0.002f;
 	}else fadeIn = 0.2f;
 	glColor4f(1.f, 1.f, 1.f, fadeIn);
-	glm::vec3 v = mCurrentlyFacingBlock;//glm::floor(cam.GetPosition()) + glm::vec3(0.5);
+	glm::vec3 v = mCurrentlyFacingBlock + glm::vec3(0.5f);//glm::floor(cam.GetPosition()) + glm::vec3(0.5);
 	float s =  (0.2f - fadeIn) * 2.f + 0.51f ;
 	//top
 	glm::vec3 p = v + glm::vec3(s);
