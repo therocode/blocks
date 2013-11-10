@@ -11,7 +11,7 @@ class Player : Entity
         {
         }
 		if(frameNumber == 1)
-			setPosition(0, 60, 0);
+			setPosition(0.75, 60, -1.75);
 			//setPosition(10, 60, 0);
             //setPosition(-11.548175f, 16.806120f, -8.115272f);
         //consolePrint("entity id is " + mId);

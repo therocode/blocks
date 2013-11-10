@@ -15,6 +15,18 @@ const int32_t chunkWidthx2 = chunkWidth * chunkWidth;
 const int32_t chunkWidthx3 = chunkWidth * chunkWidth * chunkWidth;
 const int32_t voxelAmount = chunkWidthx3;
 
+//top/bottom: y, -y
+//left/right:-x,  x
+//front/back:-z,  z
+enum BLOCK_FACES{
+	FACE_TOP = 0,
+	FACE_BOTTOM,
+	FACE_LEFT,
+	FACE_RIGHT, 
+	FACE_FRONT,
+	FACE_BACK
+};
+
 struct RleSegmentInfo
 {
     uint32_t mSegmentStart;

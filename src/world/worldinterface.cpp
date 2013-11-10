@@ -83,9 +83,25 @@ bool WorldInterface::getVoxelAtRay(float ox, float oy, float oz, float dx, float
 	int steps = 0;
 	uint16_t vtype = 0;
 	glm::vec3 bounds = glm::vec3(0,0,0);
-	if(dx > 0)bounds.x = 1.0f;
-	if(dy > 0)bounds.y = 1.0f;
-	if(dz > 0)bounds.z = 1.0f;
+	int enterFaces[3];
+	if(dx > 0){
+		bounds.x = 1.0f;
+		enterFaces[0] = FACE_LEFT;
+	}else{
+		enterFaces[0] = FACE_RIGHT;
+	}
+	if(dy > 0){
+		bounds.y = 1.0f;
+		enterFaces[1] = FACE_BOTTOM;
+	}else{
+		enterFaces[1] = FACE_TOP;
+	}
+	if(dz > 0){
+		bounds.z = 1.0f;
+		enterFaces[2] = FACE_FRONT;
+	}else{
+		enterFaces[2] = FACE_BACK;
+	}
 	float ix, iy, iz;
 	// printf("o: %i, %i, %i\n", ip[0], ip[1], ip[2]);
 	while(steps < 256){//Able to look 256 blocks away!
@@ -135,6 +151,7 @@ bool WorldInterface::getVoxelAtRay(float ox, float oy, float oz, float dx, float
 			ip[mini] --;
 			bp[mini] = 1.f;
 		}
+		hitFace = enterFaces[mini];
 		steps ++;
 		
 		if(distanceTravelled > maxDistance){
