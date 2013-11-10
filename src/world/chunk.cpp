@@ -128,8 +128,6 @@ void Chunk::setVoxelType(uint32_t x, uint32_t y, uint32_t z, VoxelType type)
 
     uncompressed[x] = type;
 
-    std::cout << "setting voxel " << x << " " << y << " " << z << "\n";
-
     setSegmentTypeFromArray(y, z, uncompressed);
 }
 
