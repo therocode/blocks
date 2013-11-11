@@ -87,7 +87,7 @@ void PhysicsController::handleMessage(const PhysicsImpulseMessage& received)
 
     if(entity != mEntities.end())
     {
-        entity->second.lock()->addToAttribute<glm::vec3>("velocity", force);
+        entity->second.lock()->addToAttribute<glm::vec3>("velocity", force / 10.0f);
     }
 }
 

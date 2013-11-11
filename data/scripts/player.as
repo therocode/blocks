@@ -25,7 +25,14 @@ class Player : Entity
             consolePrint("lalalaaaa i am on the ground");
             Vec3 position = getPosition();
             position.y -= 1.0f;
-            consolePrint("stepped on a " + getVoxelType(position));
+            uint16 type = getVoxelType(position);
+            consolePrint("stepped on a " + type);
+
+            if(type == 7)
+            {
+                setVoxelType(position, 0);
+                applyImpulse(0.0f, 5.0f, 0.0f);
+            }
         }
         else
             consolePrint("lalalaaaa i am on the air");

@@ -6,6 +6,6 @@
         "drag":0.01,
         "walk_speed":0.1,
         "run_speed":0.2,
-        "jump_strength":1.2,
+        "jump_strength":12.0,
     }
 }
