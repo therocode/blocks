@@ -1,6 +1,10 @@
 #include "localchunkprovider.h"
 #include "utilities/simplexnoise.h"
 
+#ifdef NOISE_ASM
+#include "utilities/asmnoise.h"
+#endif
+
 Chunk LocalChunkProvider::fetchChunk(const ChunkCoordinate& location) const
 {
     Chunk newChunk(location);
@@ -18,7 +22,11 @@ Chunk LocalChunkProvider::fetchChunk(const ChunkCoordinate& location) const
                 float noiseYPos = ((float)(y + location.y * (int32_t)chunkWidth)) / 14.0f;
                 float noiseZPos = ((float)(z + location.z * (int32_t)chunkWidth)) / 14.0f;
 
-                float noise = raw_noise_3d(noiseXPos, noiseYPos, noiseZPos);
+#ifndef NOISE_ASM
+				float noise = raw_noise_3d(noiseXPos, noiseYPos, noiseZPos);
+#else
+                float noise = asm_raw_noise_3d(noiseXPos, noiseYPos, noiseZPos);
+#endif
 				float noiseHeight = ((raw_noise_2d(noiseXPos * 0.5f, noiseZPos * 0.5f) +1.f) * 5.f ); 
 				if(noiseHeight > (40 - (location.y * (int32_t)chunkWidth + y)) )
 				{
