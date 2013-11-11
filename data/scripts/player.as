@@ -23,6 +23,9 @@ class Player : Entity
         {
 			consolePrint(toString(getPosition()), VERBOSE);
             consolePrint("lalalaaaa i am on the ground");
+            Vec3 position = getPosition();
+            position.y -= 1.0f;
+            consolePrint("stepped on a " + getVoxelType(position));
         }
         else
             consolePrint("lalalaaaa i am on the air");
