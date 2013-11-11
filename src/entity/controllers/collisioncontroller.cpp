@@ -180,7 +180,7 @@ float CollisionController::sweepAroundAABB(const AABB a, glm::vec3 velocity, glm
 							break;
 						}
 					}
-                    if(nn < n){
+                    if(nn < n && nn > 0.001f){
 						// glm::vec3 aa = glm::vec3(a.x + a.width * 0.5f, a.y + a.height * 0.5f, a.z + a.depth * 0.5f);
 						// glm::vec3 bb = glm::vec3(b.x + b.width * 0.5f, b.y + b.height * 0.5f, b.z + b.depth * 0.5f);
 						// float l2 = glm::length2(aa - bb);
