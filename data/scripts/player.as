@@ -23,16 +23,61 @@ class Player : Entity
         {
 			consolePrint(toString(getPosition()), VERBOSE);
             consolePrint("lalalaaaa i am on the ground");
-            Vec3 position = getPosition();
+            Vec3 originalPos = getPosition();
+            Vec3 position = originalPos;
             position.y -= 1.0f;
+            position.x = originalPos.x + 0.25;
+            position.z = originalPos.z + 0.25;
             uint16 type = getVoxelType(position);
-            consolePrint("stepped on a " + type);
 
+            //consolePrint("stepped on a " + type);
+            bool bounce = false;
             if(type == 7)
             {
                 setVoxelType(position, 0);
+                bounce = true;
+                //applyImpulse(0.0f, 5.0f, 0.0f);
+            }
+
+            position.x = originalPos.x - 0.25;
+            position.z = originalPos.z + 0.25;
+            type = getVoxelType(position);
+            if(type == 7)
+            {
+                setVoxelType(position, 0);
+              //  applyImpulse(0.0f, 5.0f, 0.0f);
+              bounce = true;
+            }
+
+            position.x = originalPos.x - 0.25;
+            position.z = originalPos.z - 0.25;
+            type = getVoxelType(position);
+            if(type == 7)
+            {
+                setVoxelType(position, 0);
+              //  applyImpulse(0.0f, 5.0f, 0.0f);
+               bounce = true;
+            }
+
+            position.x = originalPos.x + 0.25;
+            position.z = originalPos.z - 0.25;
+            type = getVoxelType(position);
+            if(type == 7)
+            {
+                setVoxelType(position, 0);
+              //  
+               bounce = true;
+            }
+            if(bounce){
                 applyImpulse(0.0f, 5.0f, 0.0f);
             }
+
+            
+
+
+
+
+
         }
         else
             consolePrint("lalalaaaa i am on the air");

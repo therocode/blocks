@@ -62,8 +62,8 @@ void Client::setup()
 
 
 	std::vector<unsigned char> icon;
-	loadTexture("data/textures/icon.png", 64, 64, icon);
-	mWindow.setIcon(64, 64, icon.data());
+	loadTexture("data/textures/icon16x16.png", 16, 16, icon);
+	mWindow.setIcon(16, 16, icon.data());
 
 	//if there's an error, display it
 	
