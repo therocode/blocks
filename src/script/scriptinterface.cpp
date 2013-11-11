@@ -77,7 +77,8 @@ void ScriptInterface::registerInterface()
     //landscape
     r = mEngine.getEngine()->RegisterGlobalFunction("void setVoxelType(float x, float y, float z, uint16 type)", asMETHODPR(ScriptInterface, setVoxelType, (float x, float y, float z, uint16_t type), void), asCALL_THISCALL_ASGLOBAL, this); assert(r >= 0);
     r = mEngine.getEngine()->RegisterGlobalFunction("void setVoxelType(const Vec3& in, uint16 type)", asMETHODPR(ScriptInterface, setVoxelType, (const glm::vec3&, uint16_t type), void), asCALL_THISCALL_ASGLOBAL, this); assert(r >= 0);
-    r = mEngine.getEngine()->RegisterObjectMethod("EntityCore", "Vec3 getPosition()", asMETHOD(ScriptEntityCore, getPosition), asCALL_THISCALL); assert(r >= 0);
+    r = mEngine.getEngine()->RegisterGlobalFunction("uint16 getVoxelType(float x, float y, float z)", asMETHODPR(ScriptInterface, getVoxelType, (float x, float y, float z), VoxelType), asCALL_THISCALL_ASGLOBAL, this); assert(r >= 0);
+    r = mEngine.getEngine()->RegisterGlobalFunction("uint16 getVoxelType(const Vec3& in)", asMETHODPR(ScriptInterface, getVoxelType, (const glm::vec3&), VoxelType), asCALL_THISCALL_ASGLOBAL, this); assert(r >= 0);
 }
 
 void ScriptInterface::registerCallbacks(const std::map<size_t, ScriptEntity>& scriptEntities)
@@ -269,4 +270,14 @@ void ScriptInterface::setVoxelType(float x, float y, float z, uint16_t type)
 void ScriptInterface::setVoxelType(const glm::vec3& coordinate, uint16_t type)
 {
     setVoxelType(coordinate.x, coordinate.y, coordinate.z, type);
+}
+
+VoxelType ScriptInterface::getVoxelType(float x, float y, float z)
+{
+    return mWorldInterface.getVoxelType(x, y, z);
+}
+
+VoxelType ScriptInterface::getVoxelType(const glm::vec3& coordinate)
+{
+    return mWorldInterface.getVoxelType(coordinate);
 }

@@ -43,4 +43,6 @@ class ScriptInterface :
 
         void setVoxelType(float x, float y, float z, uint16_t type);
         void setVoxelType(const glm::vec3& coordinate, uint16_t type);
+        VoxelType getVoxelType(float x, float y, float z);
+        VoxelType getVoxelType(const glm::vec3& coordinate);
 };
