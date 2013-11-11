@@ -5,9 +5,9 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)   #for executables
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_LIST_DIR}/cmake/modules/")
 
-set(ASM_OPTIMISATIONS TRUE CACHE BOOL "use assembler optimisation for noise generation")
+set(ASM_OPTIMISATIONS FALSE CACHE BOOL "use assembler optimisation for noise generation")
 
-if(ASM_OPTIMISATIONS)
+if(ASM_OPTIMISATIONS) #if this option is chosen, then it #ifdef NOISE_ASM in the code will be run
     add_definitions(-DNOISE_ASM)
 
     set(64_BIT_ASM TRUE CACHE BOOL "Generate 64 or 32 bit asm.")
@@ -17,8 +17,6 @@ if(ASM_OPTIMISATIONS)
 	    set(YASM_PATH "${CMAKE_SOURCE_DIR}/yasm/yasm-linux64")
     endif()
     enable_language(ASM-NASM)
-
-    #if this option is chosen, then it #ifdef NOISE_ASM in th code will be run
 endif(ASM_OPTIMISATIONS)
 
 #project name
