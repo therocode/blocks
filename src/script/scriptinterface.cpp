@@ -3,6 +3,7 @@
 #include "asaddons/scriptmath.h"
 #include "asaddons/scriptvectors.h"
 #include <iostream>
+#include "world/worldmessages.h"
 
 ScriptInterface::ScriptInterface(fea::MessageBus& bus, ScriptEngine& engine, ScriptModule& module, WorldInterface& worldInterface, std::unordered_map<asIScriptObject*, size_t>& uglyReference) : 
     mBus(bus),
@@ -72,6 +73,10 @@ void ScriptInterface::registerInterface()
     //physics
     r = mEngine.getEngine()->RegisterGlobalFunction("void setGravity(float constant)", asMETHOD(ScriptInterface, setGravity), asCALL_THISCALL_ASGLOBAL, this); assert(r >= 0);
     r = mEngine.getEngine()->RegisterGlobalFunction("void applyImpulseOnEntity(uint id, const Vec3& in)", asMETHOD(ScriptInterface, applyImpulse), asCALL_THISCALL_ASGLOBAL, this); assert(r >= 0);
+
+    //landscape
+    r = mEngine.getEngine()->RegisterGlobalFunction("void setVoxelType(float x, float y, float z, uint16 type)", asMETHODPR(ScriptInterface, setVoxelType, (float x, float y, float z, uint16_t type), void), asCALL_THISCALL_ASGLOBAL, this); assert(r >= 0);
+    r = mEngine.getEngine()->RegisterGlobalFunction("void setVoxelType(const Vec3& in, uint16 type)", asMETHODPR(ScriptInterface, setVoxelType, (const glm::vec3&, uint16_t type), void), asCALL_THISCALL_ASGLOBAL, this); assert(r >= 0);
 }
 
 void ScriptInterface::registerCallbacks(const std::map<size_t, ScriptEntity>& scriptEntities)
@@ -253,4 +258,14 @@ void ScriptInterface::removeEntity(asIScriptObject* entity)
 void ScriptInterface::applyImpulse(size_t id, const glm::vec3& force)
 {
     mBus.sendMessage<PhysicsImpulseMessage>(PhysicsImpulseMessage(id, force));
+}
+
+void ScriptInterface::setVoxelType(float x, float y, float z, uint16_t type)
+{
+    mBus.sendMessage<SetVoxelMessage>(SetVoxelMessage(VoxelWorldCoordinate(floor(x), floor(y), floor(z)), type));
+}
+
+void ScriptInterface::setVoxelType(const glm::vec3& coordinate, uint16_t type)
+{
+    setVoxelType(coordinate.x, coordinate.y, coordinate.z, type);
 }

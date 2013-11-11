@@ -22,7 +22,6 @@ class ScriptInterface :
         asIScriptObject* createEntity(const std::string& type, float x, float y, float z);
         asIScriptObject* instanciateScriptEntity(const std::string& type, size_t id);
         void removeEntity(asIScriptObject* entity);
-        void applyImpulse(size_t id, const glm::vec3& force);
     private:
         fea::MessageBus& mBus;
         ScriptEngine& mEngine;
@@ -40,4 +39,8 @@ class ScriptInterface :
         void scriptPrint(const std::string& text);
         void scriptPrint(const std::string& text, uint32_t level);
         void setGravity(float constant);
+        void applyImpulse(size_t id, const glm::vec3& force);
+
+        void setVoxelType(float x, float y, float z, uint16_t type);
+        void setVoxelType(const glm::vec3& coordinate, uint16_t type);
 };

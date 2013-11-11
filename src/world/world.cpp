@@ -58,9 +58,12 @@ void World::handleMessage(const SetVoxelMessage& received)
     ChunkCoordinate chunkCoord = worldToChunkInt(coordinate.x, coordinate.y, coordinate.z);
     VoxelCoordinate voxelCoord = worldToChunkVoxel(coordinate.x, coordinate.y, coordinate.z);
     
-    standardDimension.getLandscape().getChunk(chunkCoord).setVoxelType(voxelCoord.x, voxelCoord.y, voxelCoord.z, type);
+    if(standardDimension.getLandscape().chunkIsLoaded(chunkCoord))
+    {
+        standardDimension.getLandscape().getChunk(chunkCoord).setVoxelType(voxelCoord.x, voxelCoord.y, voxelCoord.z, type);
 
-    bus.sendMessage<VoxelSetMessage>(VoxelSetMessage(chunkCoord, voxelCoord, type));
+        bus.sendMessage<VoxelSetMessage>(VoxelSetMessage(chunkCoord, voxelCoord, type));
+    }
 }
 
 WorldInterface& World::getWorldInterface()

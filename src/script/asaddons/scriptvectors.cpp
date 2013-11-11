@@ -23,6 +23,7 @@ void registerGlmVectors(asIScriptEngine* engine)
     r = engine->RegisterObjectMethod("Vec3", "Vec3 opDiv(const Vec3& in) const", asFUNCTIONPR(vec3Div, (const glm::vec3&, const glm::vec3&), glm::vec3), asCALL_CDECL_OBJLAST); assert(r >= 0);
     r = engine->RegisterObjectMethod("Vec3", "Vec3 opMul(float val) const", asFUNCTIONPR(vec3Mul, (const glm::vec3&, float), glm::vec3), asCALL_CDECL_OBJLAST); assert(r >= 0);
     r = engine->RegisterObjectMethod("Vec3", "Vec3 opDiv(float val) const", asFUNCTIONPR(vec3Div, (const glm::vec3&, float), glm::vec3), asCALL_CDECL_OBJLAST); assert(r >= 0);
+    r = engine->RegisterObjectMethod("Vec3", "Vec3 &opAssign(const Vec3 &in)", asMETHODPR(glm::vec3, operator=, (const glm::vec3&), glm::vec3&), asCALL_THISCALL); assert( r >= 0 );
     r = engine->RegisterGlobalFunction("float distance(const Vec3& in, const Vec3& in)", asFUNCTION(vec3Distance), asCALL_CDECL); assert(r >= 0);
     r = engine->RegisterGlobalFunction("float length(const Vec3& in)", asFUNCTION(vec3Length), asCALL_CDECL); assert(r >= 0);
     r = engine->RegisterGlobalFunction("float dot(const Vec3& in, const Vec3& in)", asFUNCTION(vec3Dot), asCALL_CDECL); assert(r >= 0);
