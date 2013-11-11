@@ -214,11 +214,11 @@ class VBO {
         void CreateVBO();
         int	GetID(int which) const {if(which == VERTICES) return mID[0]; else return mID[1];}
         int GetDrawAmount();
-        VBOAttribute& getAttribute(std::string attribName);
+        VBOAttribute& getAttribute(const std::string& attribName);
         VBOAttribute& getAttribute(GLuint attribID);
-        void registerAttribute(const std::string name, const int id, const int type);
-        void setMainAttribute(const std::string name);
-        void pushToAttribute(const std::string name, AttribValue v);
+        void registerAttribute(const std::string& name, const int id, const int type);
+        void setMainAttribute(const std::string& name);
+        void pushToAttribute(const std::string& name, AttribValue v);
     private:
         GLuint mMainAttrib = 0;
         GLuint mStride;

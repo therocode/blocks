@@ -47,6 +47,7 @@ void PlayerController::handleMessage(const PlayerJoinedMessage& received)
     fea::WeakEntityPtr playerEntity = mWorldInterface.spawnEntity("Player", position);
     mPlayerEntities.emplace(playerId, playerEntity);
     playerEntity.lock()->setAttribute<ChunkCoordinate>("current_chunk", worldToChunk(position));
+    mBus.sendMessage<PlayerEntersChunkMessage>(PlayerEntersChunkMessage(playerId, worldToChunk(position)));
 
     mBus.sendMessage<PlayerConnectedToEntityMessage>(PlayerConnectedToEntityMessage(playerId, playerEntity.lock()->getId()));
 }

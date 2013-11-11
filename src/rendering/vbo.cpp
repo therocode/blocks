@@ -113,28 +113,33 @@ void VBO::CreateVBO()
     }
 }
 
-VBOAttribute& VBO::getAttribute(std::string attribName){
-    if(mAttributes.find(attribName) != mAttributes.end()){
-        return mAttributes.at(attribName);
+VBOAttribute& VBO::getAttribute(const std::string& attribName){
+    auto attributeIterator = mAttributes.find(attribName);
+
+    if(attributeIterator == mAttributes.end())
+        return attributeIterator->second;
     }
+    assert(false); //because returning nothing is undefined behaviour
 }
 
 VBOAttribute& VBO::getAttribute(GLuint attribID){
-
+    assert(false); //because returning nothing is undefined behaviour
 }
 
-void VBO::registerAttribute(const std::string name, const int id, const int type ){
+void VBO::registerAttribute(const std::string& name, const int id, const int type ){
     VBOAttribute newAttrib(name, id, type);
     mAttributes.emplace(name, newAttrib);
 }
-void VBO::setMainAttribute(const std::string name){
-    if(mAttributes.find(name) != mAttributes.end()){
-        mMainAttrib = mAttributes.at(name).getAttributeID();
+void VBO::setMainAttribute(const std::string& name){
+    auto attributeIterator = mAttributes.find(name);
+    if(attributeIterator != mAttributes.end()){
+        mMainAttrib = attributeIterator->second.getAttributeID();
     }
 }
-void VBO::pushToAttribute(const std::string name, AttribValue v){
-    if(mAttributes.find(name) != mAttributes.end()){
-        if(mAttributes.at(name).getAttributeID() == mMainAttrib){
+void VBO::pushToAttribute(const std::string& name, AttribValue v){
+    auto attributeIterator = mAttributes.find(name);
+    if(attributeIterator != mAttributes.end()){
+        if(attributeIterator->second.getAttributeID() == mMainAttrib){
             for(auto t = mAttributes.begin(); t != mAttributes.end(); t++){
                 if(t->second.getAttributeID() == mMainAttrib) continue;
                 if(!t->second.mIsUpdated){
@@ -143,7 +148,7 @@ void VBO::pushToAttribute(const std::string name, AttribValue v){
                 t->second.mIsUpdated = false;
             }
         }
-        mAttributes.at(name).addElement(v);
+        attributeIterator->second.addElement(v);
     }
 }
 void VBO::DrawVBO(){

@@ -46,7 +46,7 @@ const ChunkMap& Landscape::getChunkList() const
 void Landscape::highlightChunk(size_t id, const ChunkCoordinate& chunk)
 {
 
-    int32_t halfCheatBoxWidth = 4;
+    int32_t halfCheatBoxWidth = 8;
 
     int32_t centerX = chunk.x;
     int32_t centerY = chunk.y;
@@ -54,7 +54,7 @@ void Landscape::highlightChunk(size_t id, const ChunkCoordinate& chunk)
     
     for(int32_t x = centerX - halfCheatBoxWidth; x <= centerX + halfCheatBoxWidth; x++)
     {
-        for(int32_t y = centerY - halfCheatBoxWidth / 2; y <= centerY + halfCheatBoxWidth / 2; y++)
+        for(int32_t y = centerY - halfCheatBoxWidth / 4; y <= centerY + halfCheatBoxWidth / 4; y++)
         {
             for(int32_t z = centerZ - halfCheatBoxWidth; z <= centerZ + halfCheatBoxWidth; z++)
             {
