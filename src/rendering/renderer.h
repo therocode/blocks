@@ -35,8 +35,7 @@ class Renderer
         ~Renderer();
         
         //temporary thingy
-        bool loadTexture(const std::string& path, uint32_t width, uint32_t height, std::vector<unsigned char>& result);
-
+      
         void makeTexture(const std::string& path, uint32_t width, uint32_t height, GLuint& textureId);
         void setup();
         virtual void handleMessage(const UpdateChunkVboMessage& received);
