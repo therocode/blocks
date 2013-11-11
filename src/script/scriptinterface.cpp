@@ -77,6 +77,7 @@ void ScriptInterface::registerInterface()
     //landscape
     r = mEngine.getEngine()->RegisterGlobalFunction("void setVoxelType(float x, float y, float z, uint16 type)", asMETHODPR(ScriptInterface, setVoxelType, (float x, float y, float z, uint16_t type), void), asCALL_THISCALL_ASGLOBAL, this); assert(r >= 0);
     r = mEngine.getEngine()->RegisterGlobalFunction("void setVoxelType(const Vec3& in, uint16 type)", asMETHODPR(ScriptInterface, setVoxelType, (const glm::vec3&, uint16_t type), void), asCALL_THISCALL_ASGLOBAL, this); assert(r >= 0);
+    r = mEngine.getEngine()->RegisterObjectMethod("EntityCore", "Vec3 getPosition()", asMETHOD(ScriptEntityCore, getPosition), asCALL_THISCALL); assert(r >= 0);
 }
 
 void ScriptInterface::registerCallbacks(const std::map<size_t, ScriptEntity>& scriptEntities)
