@@ -20,8 +20,8 @@ class SurfaceMerger
 
     public:
         void setQuads(const std::vector<SurfaceQuad>& quads);
-        void doFirstMerge();
-        void doSecondMerge();
+        void doFirstMerge(std::vector<SurfaceQuad>& quads);
+        void doSecondMerge(std::vector<SurfaceQuad>& quads);
         const std::vector<SurfaceQuad>& getQuads();
     private:
         Orientation mOrientation;

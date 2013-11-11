@@ -17,11 +17,11 @@ void SurfaceMerger::setQuads(const std::vector<SurfaceQuad>& quads)
     mQuads = quads;
 }
 
-void SurfaceMerger::doFirstMerge()
+void SurfaceMerger::doFirstMerge(std::vector<SurfaceQuad>& quads)
 {
-    if(mQuads.size() > 1)
+    if(quads.size() > 1)
     {
-        std::sort(mQuads.begin(), mQuads.end(), []( const SurfaceQuad& quadA, const SurfaceQuad& quadB)
+        std::sort(quads.begin(), quads.end(), []( const SurfaceQuad& quadA, const SurfaceQuad& quadB)
                 {
                     if(quadA.mType < quadB.mType)
                         return true;
@@ -46,10 +46,10 @@ void SurfaceMerger::doFirstMerge()
                     return false;
                 });
 
-        for(uint32_t i = 0; i < mQuads.size() - 1; i++)
+        for(uint32_t i = 0; i < quads.size() - 1; i++)
         {
-            SurfaceQuad& quadA = mQuads[i];
-            SurfaceQuad& quadB = mQuads[i + 1];
+            SurfaceQuad& quadA = quads[i];
+            SurfaceQuad& quadB = quads[i + 1];
 
             if((quadA.mX + quadA.mWidth == quadB.mX) && 
                     (quadA.mY == quadB.mY) && 
@@ -58,20 +58,20 @@ void SurfaceMerger::doFirstMerge()
                     (quadA.mType == quadB.mType))
             {
                 quadA.mWidth += quadB.mWidth;
-                mQuads.erase(mQuads.begin() + i + 1);
+                quads.erase(quads.begin() + i + 1);
                 i--;
             }
         }
     }
 }
 
-void SurfaceMerger::doSecondMerge()
+void SurfaceMerger::doSecondMerge(std::vector<SurfaceQuad>& quads)
 {
-    if(mQuads.size() > 1)
+    if(quads.size() > 1)
     {
-        //std::cout << "preparing merge and size is " << mQuads.size() << "!\n";
+        //std::cout << "preparing merge and size is " << quad.size() << "!\n";
 
-        std::sort(mQuads.begin(), mQuads.end(), []( const SurfaceQuad& quadA, const SurfaceQuad& quadB)
+        std::sort(quads.begin(), quads.end(), []( const SurfaceQuad& quadA, const SurfaceQuad& quadB)
                 {
                     if(quadA.mType < quadB.mType)
                         return true;
@@ -96,11 +96,11 @@ void SurfaceMerger::doSecondMerge()
                     return false;
                 });
 
-        for(uint32_t i = 0; i < mQuads.size() - 1; i++)
+        for(uint32_t i = 0; i < quads.size() - 1; i++)
         {
-            SurfaceQuad& quadA = mQuads[i];
-            SurfaceQuad& quadB = mQuads[i + 1];
-            //std::cout << "hej total amount of quads is " << mQuads.size() << "\n";
+            SurfaceQuad& quadA = quads[i];
+            SurfaceQuad& quadB = quads[i + 1];
+            //std::cout << "hej total amount of quads is " << quad.size() << "\n";
 
             if((quadA.mY + quadA.mHeight == quadB.mY) && 
                     (quadA.mX == quadB.mX) && 
@@ -109,7 +109,7 @@ void SurfaceMerger::doSecondMerge()
                     (quadA.mType == quadB.mType))
             {
                 quadA.mHeight += quadB.mHeight;
-                mQuads.erase(mQuads.begin() + i + 1);
+                quads.erase(quads.begin() + i + 1);
                 i--;
             }
         }
