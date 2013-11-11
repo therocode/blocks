@@ -7,6 +7,8 @@
 #include "../input/inputadaptor.h"
 #include "../networking/serverclientbridge.h"
 
+#include "utilities/lodepng.h"
+
 class Client : 
     public fea::MessageReceiver<PlayerActionMessage>,
     public fea::MessageReceiver<PlayerMoveDirectionMessage>,
@@ -17,6 +19,7 @@ class Client :
     public:
         Client();
         ~Client();
+        bool loadTexture(const std::string& path, uint32_t width, uint32_t height, std::vector<unsigned char>& result);
         void setup();
         void handleInput();
         void render();

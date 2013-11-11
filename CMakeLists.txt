@@ -190,7 +190,7 @@ set_target_properties(${project_name} PROPERTIES COMPILE_FLAGS "-std=c++11 -pthr
 #But that doesn't work in windows.
 if(WIN32)
     add_definitions(-std=c++11 -pthread)
-	add_definitions(-O4)
+	# add_definitions(-O4)
 endif(WIN32)
 
 if(ENET_FOUND)

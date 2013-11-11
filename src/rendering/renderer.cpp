@@ -36,7 +36,18 @@ Renderer::~Renderer()
 	bus.removeMessageSubscriber<PlayerIdMessage>(*this);
 	bus.removeMessageSubscriber<PlayerConnectedToEntityMessage>(*this);
 }
+bool Renderer::loadTexture(const std::string& path, uint32_t width, uint32_t height, std::vector<unsigned char>& result)
+{
 
+	//decode
+	unsigned error = lodepng::decode(result, width, height, path);
+
+	//if there's an error, display it
+	if(error) std::cout << "decoder error " << error << ": " << lodepng_error_text(error) << std::endl;
+
+	return true;
+	//the pixels are now in the vector "image", 4 bytes per pixel, ordered RGBARGBA..., use it as texture, draw it, ...
+}
 void Renderer::makeTexture(const std::string& path, uint32_t width, uint32_t height, GLuint& textureId)
 {
 	std::vector<unsigned char> image; //the raw pixels
@@ -92,8 +103,7 @@ void Renderer::setup()
 	makeTexture("data/textures/blocks.png", 256, 256, blockTexture);
 	//Setting it to this because haha.
 	cam.SetPosition(glm::vec3(0.0f, 50.0f, -50.0f));
-	mShaderProgram.setShaderPaths("data/vert", "data/frag");
-	
+	mShaderProgram.setShaderPaths("data/vert", "data/frag");	
 }
 void Renderer::setCameraMatrix(const glm::mat4& m){
 
@@ -205,10 +215,11 @@ void Renderer::render()
 	float time = mTimer.getTime() * 1.2f;
 	float dT_f = mTimer.getDeltaTime();
 	glm::vec3 mV = glm::cross(cam.GetDirection(), glm::vec3(0, 1, 0));
+	float sc = 0.4f;
 	if(speed > 0){
-		cameraOffset.y += glm::sin(time*0.01f)*speed;
-		cameraOffset.x += glm::cos(time*0.005f)*speed;
-		cameraOffset.z += glm::sin(time*0.005f)*speed;
+		cameraOffset.y += glm::sin(time*0.01f)*speed * sc;
+		cameraOffset.x += glm::cos(time*0.005f)*speed * sc;
+		cameraOffset.z += glm::sin(time*0.005f)*speed * sc;
 	}
     for(float t = 0; t < dT_f; t += 1000.f/60.f)
 	interpDuck += (duck - interpDuck) * 0.2f;

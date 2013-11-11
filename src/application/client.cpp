@@ -12,6 +12,7 @@
 #include "../networking/packages.h"
 #include "../application/applicationmessages.h"
 
+
 Client::Client() : 
 	mWindow(new fea::util::SDL2WindowBackend()),
 	mRenderer(mBus),
@@ -36,6 +37,18 @@ Client::~Client()
 	mBus.removeMessageSubscriber<RebuildScriptsRequestedMessage>(*this);
 }
 
+bool Client::loadTexture(const std::string& path, uint32_t width, uint32_t height, std::vector<unsigned char>& result)
+{
+
+	//decode
+	unsigned error = lodepng::decode(result, width, height, path);
+
+	//if there's an error, display it
+	if(error) std::cout << "decoder error " << error << ": " << lodepng_error_text(error) << std::endl;
+
+	return true;
+	//the pixels are now in the vector "image", 4 bytes per pixel, ordered RGBARGBA..., use it as texture, draw it, ...
+}
 void Client::setup()
 {
 	
@@ -46,6 +59,16 @@ void Client::setup()
 	//	mWindow.setFramerateLimit(30);
 
 	mBus.sendMessage<WindowResizeMessage>(WindowResizeMessage(800, 600));
+
+
+	std::vector<unsigned char> icon;
+	loadTexture("data/textures/icon.png", 64, 64, icon);
+	mWindow.setIcon(64, 64, icon.data());
+
+	//if there's an error, display it
+	
+
+
 	// mWindow.lockCursor(true);
 	//    std::cout << "client setup\n";
 }
