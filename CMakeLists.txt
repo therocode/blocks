@@ -9,7 +9,15 @@ set(ASM_OPTIMISATIONS TRUE CACHE BOOL "use assembler optimisation for noise gene
 
 if(ASM_OPTIMISATIONS)
     add_definitions(-DNOISE_ASM)
-    #add yasm as compiler here, pointed to the yasm executables automatically, depending on platform
+
+    set(64_BIT_ASM TRUE CACHE BOOL "Generate 64 or 32 bit asm.")
+    if(WIN32)
+        set(YASM_PATH "${CMAKE_SOURCE_DIR}/yasm/yasm-1.2.0-win64.exe")
+    else()
+	    set(YASM_PATH "${CMAKE_SOURCE_DIR}/yasm/yasm-linux64")
+    endif()
+    enable_language(ASM-NASM)
+
     #if this option is chosen, then it #ifdef NOISE_ASM in th code will be run
 endif(ASM_OPTIMISATIONS)
 
@@ -79,6 +87,7 @@ set(source_files
     src/world/localchunkprovider.cpp
 	src/world/world.cpp
     src/world/worldinterface.cpp
+	src/utilities/asmnoise.asm
 )
 set(header_files
 	src/blockstd.h
