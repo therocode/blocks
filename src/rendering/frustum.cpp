@@ -90,8 +90,8 @@ void Plane::set3Points( const glm::vec3&v1,  const glm::vec3&v2,  const glm::vec
     aux2 = v3 - v2;
 
     normal = aux2 * aux1;
-
-    normal = glm::normalize(normal); 
+    if(glm::length2(normal) != 0)
+        normal = glm::normalize(normal); 
     point = v2;
     d = -(glm::dot(normal, point));
 }
@@ -99,7 +99,8 @@ void Plane::set3Points( const glm::vec3&v1,  const glm::vec3&v2,  const glm::vec
 void Plane::setNormalAndPoint(const glm::vec3&normal, const glm::vec3&point)
 {
     this->normal = normal;
-    this->normal = glm::normalize(this->normal);
+    if(glm::length2(normal) != 0)
+        this->normal = glm::normalize(this->normal);
     d = -(glm::dot(this->normal, point));
 }
 
@@ -110,7 +111,8 @@ void Plane::setCoefficients(float a, float b, float c, float d)
     //compute the lenght of the vector
     float l = glm::length(normal.length());
     // normalize the vector
-    normal = glm::normalize(normal);
+    if(glm::length2(normal) != 0)
+        normal = glm::normalize(normal);
     // and divide d by th length as well
     this->d = d/l;
 }
@@ -151,11 +153,13 @@ void Frustum::setCamDef(const glm::vec3& p, const glm::vec3& l, const glm::vec3&
     // this axis points in the opposite direction from
     // the looking direction
     Z = p - l;
+    if(glm::length2(Z) != 0)
     Z = glm::normalize(Z);
 
     // X axis of camera with given "up" vector and Z axis
     X = u * Z;
-    X = glm::normalize(X);
+    if(glm::length2(X) != 0)
+        X = glm::normalize(X);
 
     // the real "up" vector is the cross product of Z and X
     Y = Z * X;
@@ -192,7 +196,7 @@ int Frustum::pointInFrustum(const glm::vec3& p)
     int result = INSIDE;
     for(int i=0; i < 6; i++)
     {
-        std::cout << "distance for plane " << i << " is " << mPl[i].distance(p) << " regarding point " << p.x << " " << p.y << " " << p.z << "\n";
+      //  std::cout << "distance for plane " << i << " is " << mPl[i].distance(p) << " regarding point " << p.x << " " << p.y << " " << p.z << "\n";
         if (mPl[i].distance(p) < 0)
             return OUTSIDE;
     }
