@@ -227,9 +227,9 @@ void Renderer::render()
 	mShaderProgram.bind();
 	cam.Update();
 
-    const glm::vec3& position = glm::normalize(cam.GetPosition());
-    const glm::vec3& lookat = glm::normalize(cam.GetDirection());
-    const glm::vec3 up(0.0f, 1.0f, 0.0f);
+    const glm::vec3& position = cam.GetPosition();
+    glm::vec3 lookat = position + glm::normalize(cam.GetDirection());
+    glm::vec3 up(0.0f, 1.0f, 0.0f);
     mFrustum.setCamDef(position, lookat, up);
 
 	mShaderProgram.setUniform("worldToCamera", cam.GetMatrix());
@@ -261,14 +261,14 @@ void Renderer::render()
 		const ChunkCoordinate& p = chunk.first;
         glm::vec3 worldPos = (glm::vec3)(p * chunkWidth);
 
-        //if(mFrustum.pointInFrustum(worldPos) == Frustum::INSIDE)
-        //{
-            chunk.second.draw(mShaderProgram);
-        //}
-        //else
-        //{
-        //    std::cout << "culled\n";
-        //}
+        if(mFrustum.pointInFrustum(worldPos) == Frustum::INSIDE)
+        {
+          chunk.second.draw(mShaderProgram);
+        }
+        else
+        {
+            std::cout << "culled\n";
+        }
 	}
 //	for(auto& vbo : vbos)
 //	{

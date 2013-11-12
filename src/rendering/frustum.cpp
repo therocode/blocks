@@ -120,6 +120,7 @@ void Plane::setCoefficients(float a, float b, float c, float d)
 
 float Plane::distance(const glm::vec3&p)
 {
+    std::cout << "d is " << d << " normal is " << normal.x << " " << normal.y << " " << normal.z << " p is " << p.x << " " << p.y << " " << p.z << "\n";
     return (d + glm::dot(normal, p));
 }
 
