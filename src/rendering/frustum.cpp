@@ -89,7 +89,7 @@ void Plane::set3Points( const glm::vec3&v1,  const glm::vec3&v2,  const glm::vec
     aux1 = v1 - v2;
     aux2 = v3 - v2;
 
-    normal = aux2 * aux1;
+    normal = glm::cross(aux2, aux1);
     if(glm::length2(normal) != 0)
         normal = glm::normalize(normal); 
     point = v2;
@@ -122,7 +122,7 @@ void Plane::setCoefficients(float a, float b, float c, float d)
 
 float Plane::distance(const glm::vec3&p)
 {
-    std::cout << "d is " << d << " normal is " << normal.x << " " << normal.y << " " << normal.z << " p is " << p.x << " " << p.y << " " << p.z << "\n";
+    //std::cout << "d is " << d << " normal is " << normal.x << " " << normal.y << " " << normal.z << " p is " << p.x << " " << p.y << " " << p.z << "\n";
     return (d + glm::dot(normal, p));
 }
 
@@ -158,12 +158,12 @@ void Frustum::setCamDef(const glm::vec3& p, const glm::vec3& l, const glm::vec3&
     Z = glm::normalize(Z);
 
     // X axis of camera with given "up" vector and Z axis
-    X = u * Z;
+    X = glm::cross(u , Z);
     if(glm::length2(X) != 0)
         X = glm::normalize(X);
 
     // the real "up" vector is the cross product of Z and X
-    Y = Z * X;
+    Y = glm::cross(Z, X);
 
     // compute the centers of the near and far planes
     nc = p - Z * mNearD;
@@ -184,6 +184,7 @@ void Frustum::setCamDef(const glm::vec3& p, const glm::vec3& l, const glm::vec3&
     // compute the six planes
     // the function set3Points assumes that the points
     // are given in counter clockwise order
+    //std::cout << mNtr.x << " " << mNtr.y << " " << mNtr.z << " " << mNtl.x << " " << mNtl.y << " " << mNtl.z << " "<< mFtl.x << " " << mFtl.y << " " << mFtl.z << "\n";
     mPl[TOP].set3Points(mNtr,mNtl,mFtl);
     mPl[BOTTOM].set3Points(mNbl,mNbr,mFbr);
     mPl[LEFT].set3Points(mNtl,mNbl,mFbl);

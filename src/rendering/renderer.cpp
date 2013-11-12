@@ -267,7 +267,7 @@ void Renderer::render()
         }
         else
         {
-            std::cout << "culled\n";
+            //std::cout << "culled\n";
         }
 	}
 //	for(auto& vbo : vbos)
