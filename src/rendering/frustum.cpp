@@ -122,8 +122,11 @@ void Plane::setCoefficients(float a, float b, float c, float d)
 
 float Plane::distance(const glm::vec3&p)
 {
-    std::cout << "d is " << d << " normal is " << normal.x << " " << normal.y << " " << normal.z << " p is " << p.x << " " << p.y << " " << p.z << "\n";
-    return (d + glm::dot(normal, p));
+    //std::cout << "d is " << d << " normal is " << normal.x << " " << normal.y << " " << normal.z << " p is " << p.x << " " << p.y << " " << p.z << "\n";
+    //if(glm::length2(normal) != 0)printf("normal: %f, %f, %f\n", normal.x, normal.y, normal.z);
+    float dd = d + glm::dot(normal, p);
+  
+    return dd;
 }
 
 
@@ -198,7 +201,7 @@ int Frustum::pointInFrustum(const glm::vec3& p)
     for(int i=0; i < 6; i++)
     {
       //  std::cout << "distance for plane " << i << " is " << mPl[i].distance(p) << " regarding point " << p.x << " " << p.y << " " << p.z << "\n";
-        if (mPl[i].distance(p) < 0)
+        if (mPl[i].distance(p) < -8)
             return OUTSIDE;
     }
     return result;
