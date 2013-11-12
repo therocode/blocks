@@ -259,7 +259,7 @@ void Renderer::render()
 	for(auto chunk : vbos)
 	{	
 		const ChunkCoordinate& p = chunk.first;
-        glm::vec3 worldPos = (glm::vec3)(p * chunkWidth);
+        glm::vec3 worldPos = (glm::vec3)(p * chunkWidth) + chunkWidth * 0.5f;
 
         if(mFrustum.pointInFrustum(worldPos) == Frustum::INSIDE)
         {

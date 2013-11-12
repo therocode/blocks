@@ -185,9 +185,19 @@ if(NOT GLEW_FOUND)
 	add_definitions(-DGLEW_STATIC)
 	message("GLEW NOT FOUND SO WE ADDED IT")
 endif()
+
 if(WIN32)
-    set(source_files ${source_files} windowsresource.rc)
+    message("Added windows resource.")
+    set(source_files ${source_files} ${CMAKE_CURRENT_SOURCE_DIR}/windowsresource.rc)
+    if(MINGW)
+        message("Enabled rc compiler")
+        set(CMAKE_RC_COMPILER_INIT windres)
+        ENABLE_LANGUAGE(RC)
+        SET(CMAKE_RC_COMPILE_OBJECT
+            "<CMAKE_RC_COMPILER> -i <SOURCE> -o <OBJECT>")
+    endif(MINGW)
 endif(WIN32)
+
 if(NOT SDL2_FOUND)
 	link_directories(${CMAKE_CURRENT_SOURCE_DIR}/extlibs/SDL-2.0/lib)
 endif(NOT SDL2_FOUND)
@@ -208,12 +218,7 @@ set_target_properties(${project_name} PROPERTIES COMPILE_FLAGS "-std=c++11 -pthr
 
 #But that doesn't work in windows.
 if(WIN32)
-    if(MINGW)
-      set(CMAKE_RC_COMPILER_INIT windres)
-      ENABLE_LANGUAGE(RC)
-      SET(CMAKE_RC_COMPILE_OBJECT
-        "<CMAKE_RC_COMPILER> -i <SOURCE> -o <OBJECT>")
-    endif(MINGW)
+
     add_definitions(-std=c++11 -pthread)
 	add_definitions(-O4)
 endif(WIN32)
