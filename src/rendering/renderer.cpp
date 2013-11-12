@@ -84,7 +84,8 @@ void Renderer::setup()
 	//glMatrixMode(GL_PROJECTION);
 	//glLoadIdentity();
 	//I create a projection matrix, instead of gluproejction.
-	projectionMatrix = glm::perspective(80.f, 1.f, 0.1f, 100.f);
+	projectionMatrix = glm::perspective(80.f, 1.f, 0.1f, 1000.f);
+    mFrustum.setCamInternals(80.f, 1.f, 0.1f, 1000.f);
 	//glMultMatrixf(glm::value_ptr(projectionMatrix));
 	//glMatrixMode(GL_MODELVIEW);
 	//glLoadIdentity();
@@ -155,7 +156,8 @@ void Renderer::handleMessage(const WindowResizeMessage& received)
 	uint32_t height;
 	std::tie(width, height) = received.data;
 	//I create a projection matrix, instead of gluproejction.
-	projectionMatrix = glm::perspective(80.f, ((float)width)/((float)height), 0.1f, 150.f);
+	projectionMatrix = glm::perspective(80.f, ((float)width)/((float)height), 0.1f, 1000.f);
+    mFrustum.setCamInternals(80.f, ((float)width)/((float)height), 0.1f, 1000.f);
 
 	mScreenSize = glm::vec2((float)width, (float)height);
 
@@ -424,6 +426,11 @@ void Renderer::cameraUpdate()
     originalCameraPos = mCameraPosition;
 	
    // std::cout << "i am camera and i will update pitch and yaw: " << mCameraPitch << " " << mCameraYaw << "\n";
+
+    const glm::vec3& position = cam.GetPosition();
+    const glm::vec3& lookat = cam.GetDirection();
+    const glm::vec3 up(0.0f, 1.0f, 0.0f);
+    mFrustum.setCamDef(position, lookat, up);
 
 	setCameraMatrix(cam.GetMatrix());
 }

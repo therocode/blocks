@@ -45,27 +45,31 @@ const ChunkMap& Landscape::getChunkList() const
 
 void Landscape::highlightChunk(size_t id, const ChunkCoordinate& chunk)
 {
-
-    int32_t halfCheatBoxWidth = 8;
-
-    int32_t centerX = chunk.x;
-    int32_t centerY = chunk.y;
-    int32_t centerZ = chunk.z;
-    
-    for(int32_t x = centerX - halfCheatBoxWidth; x <= centerX + halfCheatBoxWidth; x++)
+    if(!tempful)
     {
-        for(int32_t y = centerY - halfCheatBoxWidth / 4; y <= centerY + halfCheatBoxWidth / 4; y++)
+        tempful = true;
+
+        int32_t halfCheatBoxWidth = 12;
+
+        int32_t centerX = chunk.x;
+        int32_t centerY = chunk.y;
+        int32_t centerZ = chunk.z;
+
+        for(int32_t x = centerX - halfCheatBoxWidth; x <= centerX + halfCheatBoxWidth; x++)
         {
-            for(int32_t z = centerZ - halfCheatBoxWidth; z <= centerZ + halfCheatBoxWidth; z++)
+            for(int32_t y = centerY - halfCheatBoxWidth / 3; y <= centerY + halfCheatBoxWidth / 3; y++)
             {
-                ChunkCoordinate coordinate(x, y, z);
-                loadChunk(coordinate);
+                for(int32_t z = centerZ - halfCheatBoxWidth; z <= centerZ + halfCheatBoxWidth; z++)
+                {
+                    ChunkCoordinate coordinate(x, y, z);
+                    loadChunk(coordinate);
+                }
             }
         }
-    }
 
-    highlightedChunks[id] = chunk;
-    checkUnloads(id);
+        highlightedChunks[id] = chunk;
+        checkUnloads(id);
+    }
 }
 
 void Landscape::checkUnloads(size_t id)
@@ -87,7 +91,7 @@ void Landscape::checkUnloads(size_t id)
 
         for(auto& chunk : chunksToUnload)
         {
-            unloadChunk(chunk);
+            //unloadChunk(chunk);
         }
     }
 }

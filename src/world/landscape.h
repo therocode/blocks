@@ -23,4 +23,7 @@ class Landscape
         ChunkMap chunks;
         std::unique_ptr<ChunkProvider> chunkDeliverer;
         std::unordered_map<size_t, ChunkCoordinate> highlightedChunks;
+
+
+        bool tempful = false; //away scumbag
 };

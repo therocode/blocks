@@ -52,6 +52,7 @@ set(source_files
 	src/rendering/debugrenderer.cpp
 	src/rendering/billboard.cpp
 	src/rendering/camera.cpp
+    src/rendering/frustum.cpp
 	src/rendering/meshwalker.cpp
 	src/rendering/renderer.cpp
 	src/rendering/shader.cpp
@@ -73,6 +74,7 @@ set(source_files
     src/script/asaddons/scriptbuilder.cpp
     src/script/asaddons/scriptstdstring.cpp
     src/script/asaddons/scriptstdstring_utils.cpp
+	src/utilities/asmnoise.asm
     src/utilities/folderexploder.cpp
     src/utilities/lodepng.cpp
     src/utilities/logger.cpp
@@ -85,7 +87,6 @@ set(source_files
     src/world/localchunkprovider.cpp
 	src/world/world.cpp
     src/world/worldinterface.cpp
-	src/utilities/asmnoise.asm
 )
 set(header_files
 	src/blockstd.h
@@ -126,6 +127,7 @@ set(header_files
 	src/rendering/renderingmessages.h
 	src/rendering/billboard.h
 	src/rendering/camera.h
+    src/rendering/frustum.h
 	src/rendering/meshwalker.h
 	src/rendering/renderer.h
 	src/rendering/shader.h
@@ -147,6 +149,7 @@ set(header_files
     src/script/asaddons/scriptvectors.h
     src/script/asaddons/scriptbuilder.h
     src/script/asaddons/scriptstdstring.h
+    src/utilities/asmnoise.h
     src/utilities/folderexploder.h
     src/utilities/lodepng.h
     src/utilities/logger.h

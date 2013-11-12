@@ -15,6 +15,7 @@
 #include "shaderprogram.h"
 
 #include "debugrenderer.h"
+#include "frustum.h"
 
 class Renderer
     :   public fea::MessageReceiver<UpdateChunkVboMessage>,
@@ -80,4 +81,6 @@ class Renderer
         size_t mCameraEntity;
         float mCameraPitch;
         float mCameraYaw;
+
+        Frustum mFrustum;
 };
