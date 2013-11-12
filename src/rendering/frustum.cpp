@@ -1,4 +1,5 @@
 #include "frustum.h"
+#include <iostream>
 
 #define ANG2RAD 3.14159265358979323846/180.0
 
@@ -191,6 +192,7 @@ int Frustum::pointInFrustum(const glm::vec3& p)
     int result = INSIDE;
     for(int i=0; i < 6; i++)
     {
+        std::cout << "distance for plane " << i << " is " << mPl[i].distance(p) << " regarding point " << p.x << " " << p.y << " " << p.z << "\n";
         if (mPl[i].distance(p) < 0)
             return OUTSIDE;
     }

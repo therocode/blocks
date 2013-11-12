@@ -226,6 +226,12 @@ void Renderer::render()
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	mShaderProgram.bind();
 	cam.Update();
+
+    const glm::vec3& position = glm::normalize(cam.GetPosition());
+    const glm::vec3& lookat = glm::normalize(cam.GetDirection());
+    const glm::vec3 up(0.0f, 1.0f, 0.0f);
+    mFrustum.setCamDef(position, lookat, up);
+
 	mShaderProgram.setUniform("worldToCamera", cam.GetMatrix());
 
 	mShaderProgram.setUniform("cameraToClip",  projectionMatrix);
@@ -246,23 +252,23 @@ void Renderer::render()
 	glBindTexture(GL_TEXTURE_2D, blockTexture);
 
 	ChunkCoordinate currentChunk = worldToChunk(cam.GetPosition());
-	int size = 16;
 
 	//For looping texture atlas textures, used in chunks.
 	mShaderProgram.setUniform("enableBoundsTexture", 1);
 	
-	for(int x = -size; x < size+1; x++)
-	for(int y = -size; y < size+1; y++)
-	for(int z = -size; z < size+1; z++)
+	for(auto chunk : vbos)
 	{	
-		ChunkCoordinate p = ChunkCoordinate(x,y,z);
-		p += currentChunk;
-        std::unordered_map<ChunkCoordinate, VBO>::const_iterator got= vbos.find(p);
-		if(got != vbos.end())
-		{
-			//vbos[p].DrawVBO(mShaderProgram);
-			vbos[p].draw(mShaderProgram);
-		}
+		const ChunkCoordinate& p = chunk.first;
+        glm::vec3 worldPos = (glm::vec3)(p * chunkWidth);
+
+        //if(mFrustum.pointInFrustum(worldPos) == Frustum::INSIDE)
+        //{
+            chunk.second.draw(mShaderProgram);
+        //}
+        //else
+        //{
+        //    std::cout << "culled\n";
+        //}
 	}
 //	for(auto& vbo : vbos)
 //	{
@@ -419,7 +425,6 @@ void Renderer::render()
 
 void Renderer::cameraUpdate()
 {
-
    // cam.SetPosition(mCameraPosition);
 	cam.SetPitchYaw(mCameraPitch, mCameraYaw);
     //camera must be updated from mPitch and mYaw
@@ -427,10 +432,6 @@ void Renderer::cameraUpdate()
 	
    // std::cout << "i am camera and i will update pitch and yaw: " << mCameraPitch << " " << mCameraYaw << "\n";
 
-    const glm::vec3& position = cam.GetPosition();
-    const glm::vec3& lookat = cam.GetDirection();
-    const glm::vec3 up(0.0f, 1.0f, 0.0f);
-    mFrustum.setCamDef(position, lookat, up);
 
 	setCameraMatrix(cam.GetMatrix());
 }
