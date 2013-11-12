@@ -255,13 +255,12 @@ void Renderer::render()
 
 	//For looping texture atlas textures, used in chunks.
 	mShaderProgram.setUniform("enableBoundsTexture", 1);
-	
+	float chunkSize = glm::sqrt(((chunkWidth / 2)*(chunkWidth / 2))* 3);
 	for(auto chunk : vbos)
 	{	
 		const ChunkCoordinate& p = chunk.first;
-        glm::vec3 worldPos = (glm::vec3)(p * chunkWidth) + chunkWidth * 0.5f;
-
-        if(mFrustum.pointInFrustum(worldPos) == Frustum::INSIDE)
+        glm::vec3 worldPos = (glm::vec3)(p * chunkWidth) + glm::vec3(chunkWidth / 2, chunkWidth / 2, chunkWidth / 2);
+        if(mFrustum.sphereInFrustum(worldPos, chunkSize) != Frustum::OUTSIDE)
         {
           chunk.second.draw(mShaderProgram);
         }
