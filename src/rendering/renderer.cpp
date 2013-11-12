@@ -259,9 +259,9 @@ void Renderer::render()
 	for(auto chunk : vbos)
 	{	
 		const ChunkCoordinate& p = chunk.first;
-        glm::vec3 worldPos = (glm::vec3)(p * chunkWidth);
+        glm::vec3 worldPos = (glm::vec3)(p * chunkWidth) + glm::vec3(chunkWidth / 2, chunkWidth / 2, chunkWidth / 2);
 
-        if(mFrustum.pointInFrustum(worldPos) == Frustum::INSIDE)
+        if(mFrustum.sphereInFrustum(worldPos, chunkWidth / 2) != Frustum::OUTSIDE)
         {
           chunk.second.draw(mShaderProgram);
         }
