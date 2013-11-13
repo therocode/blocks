@@ -2,22 +2,22 @@
     "living":
     {
         "position":"",
-        "velocity":"0.0f,0.0f,0.0f", 
+        "velocity":"0.0f,0.0f,0.0f",
         "acceleration":"0.0f,0.0f,0.0f",
-		
+
         "pitch":"0.0f",
         "yaw":"0.0f",
         "drag":"",
         "physics_type":"",
 
-        "hitbox":"0.5f,1.6f,0.5f", 
-        "on_ground":"false", 
+        "hitbox":"0.5f,1.6f,0.5f",
+        "on_ground":"false",
 		"jumping":"",
         "current_chunk":"",
         "block_facing":"",
 		"block_facing_face":"",
 		"is_facing_block":"",
-		
+
         "walk_speed":"",
         "run_speed":"",
         "jump_strength":"",

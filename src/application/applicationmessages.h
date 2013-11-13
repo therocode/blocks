@@ -20,3 +20,15 @@ using PlayerJoinedMessage = fea::Message<PlayerJoined_tag, size_t, const::glm::v
 
 struct GameStart_tag{};//
 using GameStartMessage = fea::Message<GameStart_tag>;
+
+//Focus lost, yep.
+struct FocusLost_tag{};
+using WindowFocusLostMessage = fea::Message<FocusLost_tag>;
+
+//probably focus gained. I'm not sure so I made a comment lol. need that 40% comment ratio.
+struct FocusGained_tag{};
+using FocusGainedMessage = fea::Message<FocusGained_tag>;
+
+//once input is gotten, mouse will be locked maybe.
+struct WindowInput_tag{};
+using WindowInputMessage = fea::Message<WindowInput_tag>;

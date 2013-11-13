@@ -26,6 +26,8 @@ Client::Client() :
 	mBus.addMessageSubscriber<PlayerMoveActionMessage>(*this);
 	mBus.addMessageSubscriber<PlayerPitchYawMessage>(*this);
 	mBus.addMessageSubscriber<RebuildScriptsRequestedMessage>(*this);
+    mBus.addMessageSubscriber<WindowFocusLostMessage>(*this);
+    mBus.addMessageSubscriber<WindowInputMessage>(*this);
 }
 
 Client::~Client()
@@ -35,6 +37,8 @@ Client::~Client()
 	mBus.removeMessageSubscriber<PlayerMoveActionMessage>(*this);
 	mBus.removeMessageSubscriber<PlayerPitchYawMessage>(*this);
 	mBus.removeMessageSubscriber<RebuildScriptsRequestedMessage>(*this);
+    mBus.removeMessageSubscriber<WindowFocusLostMessage>(*this);
+    mBus.removeMessageSubscriber<WindowInputMessage>(*this);
 }
 
 bool Client::loadTexture(const std::string& path, uint32_t width, uint32_t height, std::vector<unsigned char>& result)
@@ -51,8 +55,8 @@ bool Client::loadTexture(const std::string& path, uint32_t width, uint32_t heigh
 }
 void Client::setup()
 {
-
 	mWindow.create(fea::VideoMode(800, 600, 32), "Blocky", fea::Style::Default, fea::ContextSettings(32));
+    mLockedMouse = true;
 	mWindow.lockCursor(true);
 	// mWindow.setVSyncEnabled(false);
 	mRenderer.setup();
@@ -60,17 +64,11 @@ void Client::setup()
 
 	mBus.sendMessage<WindowResizeMessage>(WindowResizeMessage(800, 600));
 
-
 	std::vector<unsigned char> icon;
 	loadTexture("data/textures/icon16x16.png", 16, 16, icon);
 	mWindow.setIcon(16, 16, icon.data());
 
 	//if there's an error, display it
-
-
-
-	// mWindow.lockCursor(true);
-	//    std::cout << "client setup\n";
 }
 
 void Client::handleInput()
@@ -103,6 +101,7 @@ void Client::destroy()
 
 void Client::handleMessage(const PlayerActionMessage& received)
 {
+    if(!mLockedMouse)return;
 	size_t playerId;
 	InputAction action;
 	std::tie(playerId, action) = received.data;
@@ -119,6 +118,7 @@ void Client::handleMessage(const PlayerActionMessage& received)
 
 void Client::handleMessage(const PlayerMoveDirectionMessage& received)
 {
+    if(!mLockedMouse)return;
     size_t id;
     MoveDirection dir;
 
@@ -129,11 +129,13 @@ void Client::handleMessage(const PlayerMoveDirectionMessage& received)
 
 void Client::handleMessage(const PlayerMoveActionMessage& received)
 {
+    if(!mLockedMouse)return;
     mBridge->enqueuePackage(std::shared_ptr<BasePackage>(new PlayerMoveActionPackage(received.data)));
 }
 
 void Client::handleMessage(const PlayerPitchYawMessage& received)
 {
+    if(!mLockedMouse)return;
 	size_t playerId;
 	float pitch;
 	float yaw;
@@ -147,6 +149,18 @@ void Client::handleMessage(const PlayerPitchYawMessage& received)
 void Client::handleMessage(const RebuildScriptsRequestedMessage& received)
 {
 	mBridge->enqueuePackage(std::shared_ptr<BasePackage>(new RebuildScriptsRequestedPackage('0')));
+}
+
+void Client::handleMessage(const WindowFocusLostMessage& received){
+    mWindow.lockCursor(false);
+    mLockedMouse = false;
+}
+
+void Client::handleMessage(const WindowInputMessage& received){
+    if(!mLockedMouse){
+        mLockedMouse = true;
+        mWindow.lockCursor(true);
+    }
 }
 
 bool Client::requestedQuit()
