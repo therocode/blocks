@@ -16,7 +16,7 @@ class RemoteClientConnectionListener : public ClientConnectionListener
 
     public:
         RemoteClientConnectionListener(fea::MessageBus& bus);
-        void startListening();
+        void startListening(int32_t port);
         void listenerFunction();
         void stopListening();
     private:

@@ -19,7 +19,7 @@ void BlocksApplication::setup(const std::vector<std::string>& args)
     }
     else if(args[1] == "--dedicated" || args[1] == "dedicated")
     {
-        setupDedicatedServer();  //do not create a client and only initialise a server and give it a NetworkServerClientBridge
+        setupDedicatedServer(56566);  //do not create a client and only initialise a server and give it a NetworkServerClientBridge
     }
     else if(args[1] == "--join" || args[1] == "join")
     {
@@ -121,13 +121,13 @@ void BlocksApplication::setupMultiPlayer()
 	//clientToServer->connectToAddress("localhost");
 }
 
-void BlocksApplication::setupDedicatedServer()
+void BlocksApplication::setupDedicatedServer(int32_t port)
 {
     server = std::unique_ptr<Server>(new Server());
 
     server->setup();
     RemoteClientConnectionListener* remoteListener = new RemoteClientConnectionListener(server->getBus());
-    remoteListener->startListening();
+    remoteListener->startListening(port);
     server->setClientListener(std::unique_ptr<RemoteClientConnectionListener>(remoteListener));
 }
 

@@ -5,8 +5,9 @@ RemoteClientConnectionListener::RemoteClientConnectionListener(fea::MessageBus& 
 {
 }
 
-void RemoteClientConnectionListener::startListening()
+void RemoteClientConnectionListener::startListening(int32_t port)
 {
+    mPort = port;
     mStop = false;
     createHost();
 	mListenerThread = std::thread(&RemoteClientConnectionListener::listenerFunction, this);
