@@ -116,7 +116,7 @@ void PlayerController::handleMessage(const PlayerActionMessage& received)
 					// printf("back face\n");
 					break;
 			}
-			
+
 			mBus.sendMessage<SetVoxelMessage>(SetVoxelMessage(voxel, 8));
 		}
     }
@@ -157,12 +157,12 @@ void PlayerController::handleMessage(const PlayerPitchYawMessage& received) //mo
         fea::EntityPtr entity = playerEntry->second.lock();
 		float newPitch = entity->getAttribute<float>("pitch");
 		newPitch += glm::radians(pitch);
-		
+
 		if(newPitch >= glm::pi<float>() * 0.5f)
 			newPitch = glm::pi<float>() * 0.5f - 0.001f;
 		if(newPitch <= -glm::pi<float>() * 0.5f)
 			newPitch = -glm::pi<float>() * 0.5f + 0.001f;
-			
+
         entity->setAttribute<float>("pitch", newPitch);
         entity->addToAttribute<float>("yaw", glm::radians(yaw));
 
@@ -209,12 +209,12 @@ void PlayerController::updateVoxelLookAt(size_t playerId)
     float pitch = entity->getAttribute<float>("pitch");
     float yaw = entity->getAttribute<float>("yaw");
     glm::vec3 position = entity->getAttribute<glm::vec3>("position");
-  
+
 	glm::vec3 direction = glm::vec3(glm::cos(pitch) * glm::sin(yaw), glm::sin(pitch), glm::cos(pitch) * glm::cos(yaw));
 	VoxelWorldCoordinate block;
 	int face;
-	bool f = mWorldInterface.getVoxelAtRay(position + glm::vec3(0, 0.6f, 0), direction, 20.f, face, block);
-	
+	bool f = mWorldInterface.getVoxelAtRay(position + glm::vec3(0, 0.6f, 0), direction, 200.f, face, block);
+
 	if(entity->getAttribute<int>("block_facing_face") != face){
 		entity->setAttribute<int>("block_facing_face", face);
 	}

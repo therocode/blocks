@@ -41,7 +41,7 @@ class VertexDeclaration{
 };
 
 enum VBOType{
-    VERTEX_BUFFER = 0, 
+    VERTEX_BUFFER = 0,
     INDEX_BUFFER
 };
 
@@ -84,7 +84,7 @@ class VBO{
         void uploadVBO();
 
         void clear();
-		
+
         void  pushIndex(int i);
 
         //Gets pointer to new vertex that can be modified.

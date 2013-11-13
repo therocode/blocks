@@ -65,18 +65,11 @@ class Player : Entity
             if(type == 7)
             {
                 setVoxelType(position, 0);
-              //  
                bounce = true;
             }
             if(bounce){
                 applyImpulse(0.0f, 5.0f, 0.0f);
             }
-
-            
-
-
-
-
 
         }
         else

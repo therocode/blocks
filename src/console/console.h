@@ -57,7 +57,7 @@ class Console{
         #endif
         static void SetColor();
     public:
-        
+
         static void Initialise();
         static void Clear();
         static void Write(string str);
