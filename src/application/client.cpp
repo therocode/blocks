@@ -7,13 +7,13 @@
 #include <featherkit/util/window/sdl2/sdl2windowbackend.h>
 #include <featherkit/util/input/sdl2/sdl2inputbackend.h>
 #endif
-	
+
 #include <typeinfo>
 #include "../networking/packages.h"
 #include "../application/applicationmessages.h"
 
 
-Client::Client() : 
+Client::Client() :
 	mWindow(new fea::util::SDL2WindowBackend()),
 	mRenderer(mBus),
 	mInputAdaptor(mBus),
@@ -51,7 +51,7 @@ bool Client::loadTexture(const std::string& path, uint32_t width, uint32_t heigh
 }
 void Client::setup()
 {
-	
+
 	mWindow.create(fea::VideoMode(800, 600, 32), "Blocky", fea::Style::Default, fea::ContextSettings(32));
 	mWindow.lockCursor(true);
 	// mWindow.setVSyncEnabled(false);
@@ -66,7 +66,7 @@ void Client::setup()
 	mWindow.setIcon(16, 16, icon.data());
 
 	//if there's an error, display it
-	
+
 
 
 	// mWindow.lockCursor(true);
@@ -166,7 +166,7 @@ void Client::fetchServerData()
 	while(mBridge->pollPackage(package))
 	{
 		if(package->mType == PackageType::CHUNK_LOADED)
-		{	
+		{
 			ChunkLoadedPackage* chunkPackage = (ChunkLoadedPackage*)package.get();
 			ChunkCoordinate coordinate;
 
@@ -205,9 +205,9 @@ void Client::fetchServerData()
             }
 		}
 		else if(package->mType == PackageType::VOXEL_SET)
-		{	
+		{
 			VoxelSetPackage* voxelSetPackage = (VoxelSetPackage*)package.get();
-            
+
             ChunkCoordinate chunkCoordinate;
             VoxelCoordinate voxelCoordinate;
             VoxelType type;
