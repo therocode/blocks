@@ -1,23 +1,23 @@
-#include "remoteserverclientbridge.h"
+#include "remoteserverbridge.h"
 #include <iostream>
 
-bool RemoteServerClientBridge::sEnetInitialized = false;
-
-RemoteServerClientBridge::RemoteServerClientBridge(bool isServer)
+RemoteServerBridge::RemoteServerBridge()
 {
-	mIsHost = isServer;
 	mConnected = false;
-	if(!RemoteServerClientBridge::sEnetInitialized)
-	{
-		if(enet_initialize() < 0)
-		{
-			printf("ENet failed to initialize\n");
-		}
-		RemoteServerClientBridge::sEnetInitialized = true;
-	}
+
+	//if(!RemoteServerBridge::sEnetInitialized)
+	//{
+	//	if(enet_initialize() < 0)
+	//	{
+	//		printf("ENet failed to initialize\n");
+	//	}
+	//	RemoteServerBridge::sEnetInitialized = true;
+	//}
+
 	mPort = 35940;
 }
-void RemoteServerClientBridge::connectToAddress(std::string address, int port)
+
+void RemoteServerBridge::connectToAddress(std::string address, int port)
 {
 	printf("Going to try to connect to %s\n", address.c_str());
 	if(!mIsHost && !mConnected)
@@ -56,21 +56,21 @@ void RemoteServerClientBridge::connectToAddress(std::string address, int port)
 	}
 }
 
-void RemoteServerClientBridge::startListening()
+void RemoteServerBridge::startListening()
 {
 	mStop = false;
 	if(mIsHost)
 	{
 		createHost();
 	}
-	mThread = std::thread(&RemoteServerClientBridge::mListenerFunction, this);
+	mThread = std::thread(&RemoteServerBridge::mListenerFunction, this);
 }
-void RemoteServerClientBridge::stopListening()
+void RemoteServerBridge::stopListening()
 {
 	mStop = true;
 	mThread.join();
 }
-void RemoteServerClientBridge::mListenerFunction()
+void RemoteServerBridge::mListenerFunction()
 {
 	ENetEvent event;
 	while(!mStop){
@@ -107,7 +107,7 @@ void RemoteServerClientBridge::mListenerFunction()
 	}
 }
 
-void RemoteServerClientBridge::createHost()
+void RemoteServerBridge::createHost()
 {
 	//	enet_address_set_host(&mAddress, "localhost");
 	mAddress.host = ENET_HOST_ANY;
@@ -128,7 +128,7 @@ void RemoteServerClientBridge::createHost()
 	}
 }
 
-void RemoteServerClientBridge::createClient()
+void RemoteServerBridge::createClient()
 {
 	mHost = enet_host_create(NULL, //This isn't going to host anything. noone can connect to this.
 			1,//one outgoing connection.
@@ -140,13 +140,13 @@ void RemoteServerClientBridge::createClient()
 		printf("enet client created!\n");
 	}
 }
-void RemoteServerClientBridge::flush()
+void RemoteServerBridge::flush()
 {
 
 	enet_host_flush(mHost);
 }
 
-void RemoteServerClientBridge::receivePackage(std::weak_ptr<BasePackage> incoming)
+void RemoteServerBridge::receivePackage(std::weak_ptr<BasePackage> incoming)
 {
 	mIncoming.push_back(incoming.lock());
 }

@@ -47,7 +47,9 @@ set(source_files
     src/networking/localclientconnectionlistener.cpp
     src/networking/localserverclientbridge.cpp
     src/networking/package.cpp
-	src/networking/remoteserverclientbridge.cpp
+	src/networking/remoteclientbridge.cpp
+	src/networking/remoteserverbridge.cpp
+    src/networking/remoteclientconnectionlistener.cpp
     src/networking/serverclientbridge.cpp
 	src/rendering/debugrenderer.cpp
 	src/rendering/billboard.cpp
@@ -121,7 +123,9 @@ set(header_files
     src/networking/localserverclientbridge.h
     src/networking/package.h
     src/networking/packagetype.h
-	src/networking/remoteserverclientbridge.h
+	src/networking/remoteclientbridge.h
+	src/networking/remoteserverbridge.h
+    src/networking/remoteclientconnectionlistener.h
     src/networking/serverclientbridge.h
 	src/rendering/debugrenderer.h
 	src/rendering/renderingmessages.h

@@ -5,12 +5,12 @@
 #include <thread>
 #include <atomic>
 
-class RemoteServerClientBridge : public ServerClientBridge
+class RemoteServerBridge : public ServerClientBridge
 {
     public:
-		RemoteServerClientBridge(bool isServer);
+		RemoteServerBridge();
         virtual void flush() override;
-        //void connect(RemoteServerClientBridge* other); 
+        //void connect(RemoteServerBridge* other); 
         void receivePackage(std::weak_ptr<BasePackage> incoming);
 
 		void connectToAddress(std::string address, int port = -1);
@@ -20,7 +20,6 @@ class RemoteServerClientBridge : public ServerClientBridge
     private:
 		bool mIsHost;
 		bool mConnected;
-		static bool sEnetInitialized;
 		void createHost();
 		void createClient();
 		ENetAddress mAddress;
