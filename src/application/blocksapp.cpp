@@ -1,9 +1,9 @@
 #include "blocksapp.h"
 #include "../input/inputactions.h"
 #include "../networking/localserverclientbridge.h"
-#include "../networking/remoteclientbridge.h"
 #include "../networking/remoteserverbridge.h"
 #include "../networking/localclientconnectionlistener.h"
+#include "../networking/remoteclientconnectionlistener.h"
 #include <iostream>
 #include <thread>
 
@@ -123,18 +123,21 @@ void BlocksApplication::setupMultiPlayer()
 
 void BlocksApplication::setupDedicatedServer()
 {
-    //server = std::unique_ptr<Server>(new Server());
-	//RemoteServerClientBridge *serverToClient = new RemoteServerClientBridge(true);
-	//serverToClient->startListening();
-    //server->setup();
+    server = std::unique_ptr<Server>(new Server());
+
+    server->setup();
+    RemoteClientConnectionListener* remoteListener = new RemoteClientConnectionListener(server->getBus());
+    remoteListener->startListening();
+    server->setClientListener(std::unique_ptr<RemoteClientConnectionListener>(remoteListener));
 }
 
 void BlocksApplication::joinServer(const std::string& address, int32_t port)
 {
-	//client = std::unique_ptr<Client>(new Client());
-  	//RemoteServerClientBridge* clientToServer = new RemoteServerClientBridge(false);
-    //client->setServerBridge(std::unique_ptr<RemoteServerClientBridge>(clientToServer));
-	//clientToServer->connectToAddress(address, port);
-	//client->setup();
-	//clientToServer->startListening();
+	client = std::unique_ptr<Client>(new Client());
+  	RemoteServerBridge* serverBidge = new RemoteServerBridge();
+
+    client->setServerBridge(std::unique_ptr<RemoteServerBridge>(serverBidge));
+	serverBidge->connectToAddress(address, port);
+	client->setup();
+	serverBidge->startListening();
 }

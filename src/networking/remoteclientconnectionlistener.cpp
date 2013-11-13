@@ -1,6 +1,7 @@
 #include "remoteclientconnectionlistener.h"
+#include "application/applicationmessages.h"
 
-RemoteClientConnectionListener::RemoteClientConnectionListener() : mNextClientId(0)
+RemoteClientConnectionListener::RemoteClientConnectionListener(fea::MessageBus& bus) : mBus(bus), mLogName("network"), mNextClientId(0)
 {
 }
 
@@ -22,9 +23,7 @@ void RemoteClientConnectionListener::listenerFunction()
             {
                 case ENET_EVENT_TYPE_CONNECT:
                     {
-                        printf ("A new client connected from %x:%u.\n", 
-                                event.peer->address.host,
-                                event.peer->address.port);
+                        mBus.sendMessage<LogMessage>(LogMessage("A new client connected from " + std::to_string(event.peer->address.host) + ":" + std::to_string(event.peer->address.port), mLogName, LogLevel::INFO));
                         /* Store any relevant client information here. */
                         RemoteClientBridge* newClientBridge = new RemoteClientBridge(event.peer);
                         size_t newClientId = mNextClientId;
@@ -60,6 +59,10 @@ void RemoteClientConnectionListener::listenerFunction()
                         event.peer->data = nullptr;
                         break;
                     }
+                case ENET_EVENT_TYPE_NONE:
+                {
+                    break;
+                }
             }
 		}
 		enet_host_flush(mHost);
@@ -85,10 +88,11 @@ void RemoteClientConnectionListener::createHost()
 	if(mHost == NULL)
 	{
 		printf("Server couldn't create, port already in use.\n");
+        mBus.sendMessage<LogMessage>(LogMessage("Cannot listen on port " + std::to_string(mPort) + ", port already in use!", mLogName, LogLevel::ERR));
 		exit(1);
 	}
     else
 	{
-		printf("ENet host created!\n");
+        mBus.sendMessage<LogMessage>(LogMessage("Now listening on port " + std::to_string(mPort) + " for incoming connections.", mLogName, LogLevel::INFO));
 	}
 }

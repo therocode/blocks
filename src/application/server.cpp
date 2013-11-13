@@ -222,7 +222,7 @@ void Server::pollNewClients()
 {
     std::shared_ptr<ClientConnection> client;
     
-    if(mListener)
+    if(mListener != nullptr)
     {
         while((client = mListener->fetchIncomingConnection()))
         {

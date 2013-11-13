@@ -4,6 +4,7 @@
 #include "enet/enet.h"
 #include <thread>
 #include <atomic>
+#include <featherkit/messaging.h>
 
 class RemoteClientConnectionListener : public ClientConnectionListener
 {
@@ -14,12 +15,14 @@ class RemoteClientConnectionListener : public ClientConnectionListener
     };
 
     public:
-        RemoteClientConnectionListener();
+        RemoteClientConnectionListener(fea::MessageBus& bus);
         void startListening();
         void listenerFunction();
         void stopListening();
     private:
         void createHost();
+        fea::MessageBus& mBus;
+        std::string mLogName;
 		std::thread mListenerThread;
 		ENetAddress mAddress;
 		ENetHost* mHost;
