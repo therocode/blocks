@@ -8,13 +8,16 @@
 #include "../networking/serverclientbridge.h"
 
 #include "utilities/lodepng.h"
+#include "application/applicationmessages.h"
 
-class Client : 
+class Client :
     public fea::MessageReceiver<PlayerActionMessage>,
     public fea::MessageReceiver<PlayerMoveDirectionMessage>,
     public fea::MessageReceiver<PlayerMoveActionMessage>,
     public fea::MessageReceiver<PlayerPitchYawMessage>,
-    public fea::MessageReceiver<RebuildScriptsRequestedMessage>
+    public fea::MessageReceiver<RebuildScriptsRequestedMessage>,
+    public fea::MessageReceiver<WindowFocusLostMessage>,
+    public fea::MessageReceiver<WindowInputMessage>
 {
     public:
         Client();
@@ -29,11 +32,14 @@ class Client :
         virtual void handleMessage(const PlayerMoveActionMessage& received);
         virtual void handleMessage(const PlayerPitchYawMessage& received);
         virtual void handleMessage(const RebuildScriptsRequestedMessage& received);
+        virtual void handleMessage(const WindowFocusLostMessage& received);
+        virtual void handleMessage(const WindowInputMessage& received);
         bool requestedQuit();
         void setServerBridge(std::unique_ptr<ServerClientBridge> bridge);
     private:
         void fetchServerData();
         void updateChunk(const ChunkCoordinate& coordinate);
+        bool mLockedMouse;
         fea::MessageBus mBus;
         fea::Window mWindow;
         Renderer mRenderer;

@@ -41,7 +41,7 @@ void BlocksApplication::setup(const std::vector<std::string>& args)
 	}
 	else if(args[1] == "--host" || args[1] == "host")
 	{
-		setupMultiPlayer();	
+		setupMultiPlayer();
 	}
     else
     {
@@ -98,7 +98,7 @@ void BlocksApplication::setupSinglePlayer()
     //setup client and server local connection
     LocalServerClientBridge* clientToServer = new LocalServerClientBridge();
     LocalClientConnectionListener* localListener = new LocalClientConnectionListener();
-    
+
     server->setClientListener(std::unique_ptr<LocalClientConnectionListener>(localListener));
     client->setServerBridge(std::unique_ptr<LocalServerClientBridge>(clientToServer));
     localListener->createClientConnection(clientToServer);

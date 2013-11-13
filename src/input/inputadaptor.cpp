@@ -24,12 +24,12 @@
 	first = true;
 	mouseDown = false;
 	windowFocus = true;
-    mBus.addMessageSubscriber<PlayerIdMessage>(*this);   
+    mBus.addMessageSubscriber<PlayerIdMessage>(*this);
 }
 
 InputAdaptor::~InputAdaptor()
 {
-    mBus.removeMessageSubscriber<PlayerIdMessage>(*this);   
+    mBus.removeMessageSubscriber<PlayerIdMessage>(*this);
 }
 
 void InputAdaptor::update()
@@ -42,12 +42,14 @@ void InputAdaptor::update()
 
 	while(inputHandler.pollEvent(event))
 	{
-		if(event.type == fea::Event::GAINEDFOCUS)
+		if(event.type == fea::Event::GAINEDFOCUS){
 			windowFocus = true;
-		else if(event.type == fea::Event::LOSTFOCUS)
+        }
+		else if(event.type == fea::Event::LOSTFOCUS){
 			windowFocus = false;
-		else
-		if(event.type == fea::Event::CLOSED)
+            mBus.sendMessage<WindowFocusLostMessage>(WindowFocusLostMessage());
+        }
+		else if(event.type == fea::Event::CLOSED)
 		{
 			mBus.sendMessage<PlayerActionMessage>(PlayerActionMessage(mPlayerId, InputAction::QUIT));
 		}
@@ -76,6 +78,10 @@ void InputAdaptor::update()
 		}
 		else if(event.type == fea::Event::MOUSEBUTTONPRESSED){
 			mouseDown = true;
+            //printf("clicked at psition %i, %i\n", event.mouseButton.x, event.mouseButton.y);
+            if(event.mouseButton.y > 1 && event.mouseButton.x > 10){
+                mBus.sendMessage<WindowInputMessage>(WindowInputMessage());
+            }
 			if(event.mouseButton.button == fea::Mouse::Button::LEFT){
 			    mBus.sendMessage<PlayerActionMessage>(PlayerActionMessage(mPlayerId, InputAction::DIG));
 			}

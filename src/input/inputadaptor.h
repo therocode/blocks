@@ -3,6 +3,7 @@
 #include <featherkit/messaging.h>
 #include "../entity/entitymessages.h"
 #include "../entity/controllers/movedirection.h"
+#include "application/applicationmessages.h"
 
 class InputAdaptor : public fea::MessageReceiver<PlayerIdMessage>
 {

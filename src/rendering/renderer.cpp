@@ -53,9 +53,12 @@ void Renderer::makeTexture(const std::string& path, uint32_t width, uint32_t hei
 	glBindTexture(GL_TEXTURE_2D, textureId);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, (GLsizei)width, (GLsizei)height, 0, GL_RGBA, GL_UNSIGNED_BYTE, &image[0]);
 
+  //  glGenerateMipmap(GL_TEXTURE_2D);
+
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 	glBindTexture(GL_TEXTURE_2D, 0);
@@ -71,7 +74,6 @@ void Renderer::setup()
 	{
 		fprintf(stdout, "Status: Using GLEW %s\n", glewGetString(GLEW_VERSION));
 	}
-	
 	//glEnable(GL_LIGHTING);
 	//glEnable(GL_LIGHT0);
 	//GLfloat lightpos[] = {100.f, 100.f, 100.f};
