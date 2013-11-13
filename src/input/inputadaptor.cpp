@@ -79,16 +79,21 @@ void InputAdaptor::update()
 		else if(event.type == fea::Event::MOUSEBUTTONPRESSED){
 			mouseDown = true;
             //printf("clicked at psition %i, %i\n", event.mouseButton.x, event.mouseButton.y);
-            if(event.mouseButton.y > 1 && event.mouseButton.x > 10){
-                mBus.sendMessage<WindowInputMessage>(WindowInputMessage());
-            }
 			if(event.mouseButton.button == fea::Mouse::Button::LEFT){
 			    mBus.sendMessage<PlayerActionMessage>(PlayerActionMessage(mPlayerId, InputAction::DIG));
 			}
 			else if(event.mouseButton.button == fea::Mouse::Button::RIGHT){
 			    mBus.sendMessage<PlayerActionMessage>(PlayerActionMessage(mPlayerId, InputAction::BUILD));
 			}
-		}
+            if(event.mouseButton.y > 1 && event.mouseButton.x > 10){
+                mBus.sendMessage<WindowInputMessage>(WindowInputMessage());
+            }
+		}else if(event.type == fea::Event::MOUSEWHEELMOVED){
+            if(event.mouseWheel.delta > 0)
+                mBus.sendMessage<PlayerActionMessage>(PlayerActionMessage(mPlayerId, InputAction::DIG));
+            else
+                mBus.sendMessage<PlayerActionMessage>(PlayerActionMessage(mPlayerId, InputAction::BUILD));
+        }
 		else if(event.type == fea::Event::MOUSEBUTTONRELEASED){
 			mouseDown = false;
 			if(event.mouseButton.button == fea::Mouse::Button::LEFT){
