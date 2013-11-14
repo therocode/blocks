@@ -11,7 +11,7 @@ class RemoteServerBridge : public ServerClientBridge
     public:
 		RemoteServerBridge(fea::MessageBus& bus);
         virtual void flush() override;
-        //void connect(RemoteServerBridge* other); 
+        //void connect(RemoteServerBridge* other);
         void receivePackage(std::weak_ptr<BasePackage> incoming);
 
 		void connectToAddress(std::string address, int port = -1);
@@ -29,6 +29,7 @@ class RemoteServerBridge : public ServerClientBridge
 		//At the moment the host is putinto here for clients.
 		ENetPeer*	mHostPeer;
 		std::thread mThread;
+        void deserialiseAndReceive(const std::vector<uint8_t>& data, BasePackage* package);
 	protected:
 		void mListenerFunction();
 		std::atomic<bool> mStop;

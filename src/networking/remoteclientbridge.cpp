@@ -9,6 +9,15 @@ RemoteClientBridge::RemoteClientBridge(ENetPeer* peer) : mPeer(peer)
 void RemoteClientBridge::flush()
 {
     //grab packages from the outgoing queue, serialise and pack them up and send them to the enet peer
+    for(auto package : mOutgoing)
+    {
+        std::vector<uint8_t> data = package->serialise();
+
+        ENetPacket* packet = enet_packet_create(&data[0], data.size(), ENET_PACKET_FLAG_RELIABLE);
+        enet_peer_send(mPeer, 0, packet);
+    }
+    //enet_host_flush(mPeer);
+    mOutgoing.clear();
 }
 
 void RemoteClientBridge::acceptEnetPacket(ENetPacket* packet)
@@ -24,7 +33,7 @@ void RemoteClientBridge::acceptEnetPacket(ENetPacket* packet)
         *typePointer = packet->data[i];
         typePointer++;
     }
-    
+
     std::vector<uint8_t> dataVector;
     dataVector.resize(packet->dataLength);
     std::copy(packet->data, packet->data + packet->dataLength, dataVector.begin());
