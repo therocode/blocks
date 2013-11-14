@@ -65,7 +65,8 @@ void RemoteServerBridge::stopListening()
 void RemoteServerBridge::mListenerFunction()
 {
 	ENetEvent event;
-	while(!mStop){
+	while(!mStop)
+    {
 		while(enet_host_service(mHost, &event, 10) > 0)
 		{
 			switch(event.type)
@@ -81,48 +82,8 @@ void RemoteServerBridge::mListenerFunction()
 				{
 					ENetPacket* packet = event.packet;
 					int pp = ((int*)event.packet->data)[0];
-					PackageType type;
-					printf("Data length %u\n", packet->dataLength);
-					uint8_t* typePointer = (uint8_t*)&type;
-					for(uint32_t i = 0; i < sizeof(PackageType); i++)
-					{
-						*typePointer = packet->data[i];
-						typePointer++;
-					}
 
-					std::vector<uint8_t> dataVector;
-					dataVector.resize(packet->dataLength);
-					std::copy(packet->data, packet->data + packet->dataLength, dataVector.begin());
-
-
-					switch(type)
-					{
-						case PackageType::REBUILD_SCRIPTS_REQUESTED:
-						{
-							deserialiseAndReceive(dataVector, new RebuildScriptsRequestedPackage());
-							break;
-						}
-						case PackageType::PLAYER_ACTION:
-						{
-							deserialiseAndReceive(dataVector, new PlayerActionPackage());
-							break;
-						}
-						case PackageType::PLAYER_PITCH_YAW:
-						{
-							deserialiseAndReceive(dataVector, new PlayerPitchYawPackage());
-							break;
-						}
-						case PackageType::PLAYER_MOVE_ACTION:
-						{
-							deserialiseAndReceive(dataVector, new PlayerMoveActionPackage());
-							break;
-						}
-						case PackageType::PLAYER_MOVE_DIRECTION:
-						{
-							deserialiseAndReceive(dataVector, new PlayerMoveDirectionPackage());
-							break;
-						}
-					}
+                    acceptEnetPacket(packet);
 					//	printf ("A packet of length %u containing %i was received from %s on channel %u.\n",
 					//			event.packet -> dataLength,
 					//			pp,
@@ -140,6 +101,81 @@ void RemoteServerBridge::mListenerFunction()
 		}
 		enet_host_flush(mHost);
 	}
+}
+
+void RemoteServerBridge::acceptEnetPacket(ENetPacket* packet)
+{
+    //parse ENet packet and deserialise to put into receivePackage();
+    //(uint32_t)packet->dataLength,
+
+    PackageType type;
+
+    uint8_t* typePointer = (uint8_t*)&type;
+    for(uint32_t i = 0; i < sizeof(PackageType); i++)
+    {
+        *typePointer = packet->data[i];
+        typePointer++;
+    }
+
+    std::vector<uint8_t> dataVector;
+    dataVector.resize(packet->dataLength);
+    std::copy(packet->data, packet->data + packet->dataLength, dataVector.begin());
+
+    std::cout << "type " << (int32_t)type <<" \n";
+    switch(type)
+    {
+        case PackageType::CHUNK_LOADED:
+            {
+                deserialiseAndReceive(dataVector, new ChunkLoadedPackage());
+                break;
+            }
+        case PackageType::CHUNK_DELETED:
+            {
+                deserialiseAndReceive(dataVector, new ChunkDeletedPackage());
+                break;
+            }
+        case PackageType::VOXEL_SET:
+            {
+                deserialiseAndReceive(dataVector, new VoxelSetPackage());
+                break;
+            }
+        case PackageType::GFX_ENTITY_ADDED:
+            {
+                deserialiseAndReceive(dataVector, new GfxEntityAddedPackage());
+                break;
+            }
+        case PackageType::GFX_ENTITY_MOVED:
+            {
+                deserialiseAndReceive(dataVector, new GfxEntityMovedPackage());
+                break;
+            }
+        case PackageType::GFX_ENTITY_ROTATED:
+            {
+                deserialiseAndReceive(dataVector, new GfxEntityRotatedPackage());
+                break;
+            }
+        case PackageType::GFX_ENTITY_REMOVED:
+            {
+                deserialiseAndReceive(dataVector, new GfxEntityRemovedPackage());
+                break;
+            }
+        case PackageType::PLAYER_CONNECTED_TO_ENTITY:
+            {
+                deserialiseAndReceive(dataVector, new PlayerConnectedToEntityPackage());
+                break;
+            }
+        case PackageType::PLAYER_FACING_BLOCK:
+            {
+                deserialiseAndReceive(dataVector, new PlayerFacingBlockPackage());
+                break;
+            }
+        case PackageType::PLAYER_ID:
+            {
+                deserialiseAndReceive(dataVector, new PlayerIdPackage());
+                break;
+            }
+    }
+
 }
 
 void RemoteServerBridge::createClient()

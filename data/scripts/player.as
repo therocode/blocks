@@ -14,7 +14,6 @@ class Player : Entity
 			setPosition(0.75, 30, -1.75);
 			//setPosition(10, 60, 0);
             //setPosition(-11.548175f, 16.806120f, -8.115272f);
-        consolePrint("position: " + toString(getPosition()));
     }
 
     void onGround(bool landed)

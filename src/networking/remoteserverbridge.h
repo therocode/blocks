@@ -29,6 +29,7 @@ class RemoteServerBridge : public ServerClientBridge
 		//At the moment the host is putinto here for clients.
 		ENetPeer*	mHostPeer;
 		std::thread mThread;
+        void acceptEnetPacket(ENetPacket* packet);
         void deserialiseAndReceive(const std::vector<uint8_t>& data, BasePackage* package);
 	protected:
 		void mListenerFunction();
