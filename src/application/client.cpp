@@ -14,6 +14,7 @@
 
 
 Client::Client() :
+    mLogger(mBus, LogLevel::VERB),
 	mWindow(new fea::util::SDL2WindowBackend()),
 	mRenderer(mBus),
 	mInputAdaptor(mBus),

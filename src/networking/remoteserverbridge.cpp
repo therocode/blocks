@@ -20,7 +20,7 @@ RemoteServerBridge::RemoteServerBridge(fea::MessageBus& bus) : mBus(bus), mLogNa
 
 void RemoteServerBridge::connectToAddress(std::string address, int port)
 {
-    mBus.sendMessage<LogMessage>(LogMessage("Connecting to " + std::string(address.c_str()), mLogName, LogLevel::INFO));
+    mBus.sendMessage<LogMessage>(LogMessage("Connecting to " + address, mLogName, LogLevel::INFO));
 	if(!mIsHost && !mConnected)
 	{
 		createClient();
@@ -35,14 +35,14 @@ void RemoteServerBridge::connectToAddress(std::string address, int port)
 
 		if(mHostPeer == NULL)
 		{
-			printf("couldn't create connection peer\n");
+            mBus.sendMessage<LogMessage>(LogMessage("Couldn't create connection peer", mLogName, LogLevel::ERR));
 		}
 
 		ENetEvent event;
 		if(enet_host_service(mHost, &event, 5000) > 0 &&
 				event.type == ENET_EVENT_TYPE_CONNECT)
 		{
-			printf("Wow, we really connected to %s.\n", address.c_str());
+            mBus.sendMessage<LogMessage>(LogMessage("Successfully connected to " + address, mLogName, LogLevel::INFO));
 			//When connected, greet the server!
 			int i[4];
 			for(int o = 1; o < 4; o++)i[o] = (int)(64 + rand()%26);
@@ -51,7 +51,7 @@ void RemoteServerBridge::connectToAddress(std::string address, int port)
 			enet_peer_send(mHostPeer, 0, packet);
 		}else
 		{
-			printf("Enet client couldn't connect to host\n");
+            mBus.sendMessage<LogMessage>(LogMessage("Couldn't connect to host", mLogName, LogLevel::ERR));
 			enet_peer_reset(mHostPeer);
 		}
 	}

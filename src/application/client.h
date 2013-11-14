@@ -8,6 +8,7 @@
 #include "../networking/serverclientbridge.h"
 
 #include "utilities/lodepng.h"
+#include "utilities/logger.h"
 #include "application/applicationmessages.h"
 
 class Client :
@@ -42,6 +43,7 @@ class Client :
         void updateChunk(const ChunkCoordinate& coordinate);
         bool mLockedMouse;
         fea::MessageBus mBus;
+        Logger mLogger;
         fea::Window mWindow;
         Renderer mRenderer;
         InputAdaptor mInputAdaptor;
