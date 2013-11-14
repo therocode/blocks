@@ -279,3 +279,9 @@ if(OPENGL_FOUND)
 else(OPENGL_FOUND)
 	target_link_libraries(${project_name} opengl32)
 endif(OPENGL_FOUND)
+
+#tests
+
+if(ASM_OPTIMISATIONS)
+    add_executable(noise_test "test/noise/asmnoise.cpp" "src/utilities/asmnoise.asm" "src/utilities/simplexnoise.cpp")
+endif()
