@@ -87,7 +87,7 @@ void RemoteClientConnectionListener::createHost()
 			0,		//Estimated incoming traffic.
 			0);		//Estimated outcoming traffic.
 	if(mHost == NULL)
-	{
+{
 		printf("Server couldn't create, port already in use.\n");
         mBus.sendMessage<LogMessage>(LogMessage("Cannot listen on port " + std::to_string(mPort) + ", port already in use!", mLogName, LogLevel::ERR));
 		exit(1);

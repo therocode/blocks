@@ -63,13 +63,16 @@ void RemoteServerBridge::startListening()
 	{
 		createHost();
 	}
+
 	mThread = std::thread(&RemoteServerBridge::mListenerFunction, this);
 }
+
 void RemoteServerBridge::stopListening()
 {
 	mStop = true;
 	mThread.join();
 }
+
 void RemoteServerBridge::mListenerFunction()
 {
 	ENetEvent event;
