@@ -5,7 +5,6 @@
 RemoteServerBridge::RemoteServerBridge(fea::MessageBus& bus) : mBus(bus), mLogName("network")
 {
 	mConnected = false;
-    mIsHost = false;
 
 	mPort = 35940;
 }
@@ -13,7 +12,7 @@ RemoteServerBridge::RemoteServerBridge(fea::MessageBus& bus) : mBus(bus), mLogNa
 void RemoteServerBridge::connectToAddress(std::string address, int port)
 {
     mBus.sendMessage<LogMessage>(LogMessage("Connecting to " + address, mLogName, LogLevel::INFO));
-	if(!mIsHost && !mConnected)
+	if(!mConnected)
 	{
 		createClient();
 		enet_address_set_host(&mAddress, address.c_str());	
@@ -39,7 +38,7 @@ void RemoteServerBridge::connectToAddress(std::string address, int port)
 			int i[4];
 			for(int o = 1; o < 4; o++)i[o] = (int)(64 + rand()%26);
 			i[0] = 12345678;
-			ENetPacket* packet = enet_packet_create(i, sizeof(int) * 4, ENET_PACKET_FLAG_UNSEQUENCED);
+			ENetPacket* packet = enet_packet_create(i, sizeof(int) * 4, ENET_PACKET_FLAG_RELIABLE);
 			enet_peer_send(mHostPeer, 0, packet);
 		}else
 		{
@@ -52,10 +51,6 @@ void RemoteServerBridge::connectToAddress(std::string address, int port)
 void RemoteServerBridge::startListening()
 {
 	mStop = false;
-	if(mIsHost)
-	{
-		createHost();
-	}
 
 	mThread = std::thread(&RemoteServerBridge::mListenerFunction, this);
 }
@@ -103,26 +98,6 @@ void RemoteServerBridge::mListenerFunction()
 	}
 }
 
-void RemoteServerBridge::createHost()
-{
-	mAddress.host = ENET_HOST_ANY;
-	mAddress.port = mPort;
-	mHost = enet_host_create(&mAddress, //What address to host on.
-			32,		//Maximum connections.
-			2,		//Maximum channels.
-			0,		//Estimated incoming traffic.
-			0);		//Estimated outcoming traffic.
-	mIsHost = true;
-	if(mHost == NULL)
-	{
-		printf("Server couldn't create, port already in use.\n");
-		exit(1);
-	}else
-	{
-		printf("ENet host created!\n");
-	}
-}
-
 void RemoteServerBridge::createClient()
 {
 	mHost = enet_host_create(NULL, //This isn't going to host anything. noone can connect to this.
@@ -135,10 +110,18 @@ void RemoteServerBridge::createClient()
 		printf("enet client created!\n");
 	}
 }
+
 void RemoteServerBridge::flush()
 {
+    for(auto package : mOutgoing)
+    {
+        std::vector<uint8_t> data = package->serialise();
 
-	enet_host_flush(mHost);
+        ENetPacket* packet = enet_packet_create(&data[0], data.size(), ENET_PACKET_FLAG_RELIABLE);
+        enet_peer_send(mHostPeer, 0, packet);
+    }
+    enet_host_flush(mHost);
+    mOutgoing.clear();
 }
 
 void RemoteServerBridge::receivePackage(std::weak_ptr<BasePackage> incoming)

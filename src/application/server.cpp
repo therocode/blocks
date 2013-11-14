@@ -239,6 +239,7 @@ void Server::fetchClientData(std::weak_ptr<ClientConnection> client)
     {
         while(client.second->pollPackage(package))
         {
+            std::cout << "got a package of type " << (int32_t)package->mType << "!\n";
             if(package->mType == PackageType::REBUILD_SCRIPTS_REQUESTED)
             {
                 mBus.sendMessage<RebuildScriptsRequestedMessage>(RebuildScriptsRequestedMessage('0'));
@@ -258,11 +259,19 @@ void Server::fetchClientData(std::weak_ptr<ClientConnection> client)
 
                 MoveDirection dir(forwardsBack, leftRight);
 
+                std::cout << "got a move direction with player id " << id << " forwardback " << forwardsBack << " leftright " << leftRight << "\n";
+
                 mBus.sendMessage<PlayerMoveDirectionMessage>(PlayerMoveDirectionMessage(id, dir));
             }
             else if(package->mType == PackageType::PLAYER_MOVE_ACTION)
             {
                 PlayerMoveActionPackage* playerMoveActionPackage = (PlayerMoveActionPackage*) package.get();
+
+                size_t id;
+                std::tie(id, std::ignore) = playerMoveActionPackage->getData();
+
+                std::cout << "got a move action with player id " << id << "\n";
+
                 mBus.sendMessage<PlayerMoveActionMessage>(PlayerMoveActionMessage(playerMoveActionPackage->getData()));
             }
             else if(package->mType == PackageType::PLAYER_PITCH_YAW)

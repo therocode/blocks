@@ -21,9 +21,7 @@ class RemoteServerBridge : public ServerClientBridge
     private:
         fea::MessageBus& mBus;
         std::string mLogName;
-		bool mIsHost;
 		bool mConnected;
-		void createHost();
 		void createClient();
 		ENetAddress mAddress;
 		ENetHost*	mHost;

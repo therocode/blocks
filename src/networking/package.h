@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include <stdint.h>
-#include <typeindex>
+#include <iostream>
 #include <tuple>
 #include "../utilities/serialize.h"
 #include "packagetype.h"
@@ -20,6 +20,9 @@ template<typename Tag, PackageType TypeId, typename... Types>
 class Package : public BasePackage
 {
     public:
+        Package()
+        {
+        }
         Package(Types... values) : BasePackage(TypeId), data(values...)
         {
         }
@@ -48,7 +51,9 @@ class Package : public BasePackage
             for(uint32_t i = 0; i < sizeof(PackageType); i++)
             {
                 *typePointer = *byteIterator;
+                std::cout << "now type is " << (int32_t)mType << "\n";
                 byteIterator++;
+                typePointer++;
             }
 
             data = deserialize<std::tuple<Types...> >(byteIterator, bytes.end());

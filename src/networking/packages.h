@@ -1,8 +1,10 @@
 #pragma once
 #include "package.h"
-#include "../script/scriptmessages.h"
-#include "../input/inputmessages.h"
-#include "../entity/entitymessages.h"
+#include "script/scriptmessages.h"
+#include "input/inputmessages.h"
+#include "entity/entitymessages.h"
+#include "world/worldmessages.h"
+#include "rendering/renderingmessages.h"
 
 using RebuildScriptsRequestedPackage = Package<RebuildScriptsRequested_tag, PackageType::REBUILD_SCRIPTS_REQUESTED, char>;
 

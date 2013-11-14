@@ -41,12 +41,12 @@ void RemoteClientConnectionListener::listenerFunction()
                     }
                 case ENET_EVENT_TYPE_RECEIVE:
                     {
-                        size_t pp = ((int*)event.packet->data)[0];
-                        printf ("A packet of length %u containing %i was received from %s on channel %u.\n",
-                                (uint32_t)event.packet->dataLength,
-                                (uint32_t)pp,
-                                event.peer->data,
-                                event.channelID);
+                        //size_t pp = ((int*)event.packet->data)[0];
+                        //printf ("A packet of length %u containing %i was received from %s on channel %u.\n",
+                        //        (uint32_t)event.packet->dataLength,
+                        //        (uint32_t)pp,
+                        //        event.peer->data,
+                        //        event.channelID);
                         /* Clean up the packet now that we're done using it. */
                         ((Peer*)event.peer->data)->mBridge->acceptEnetPacket(event.packet);
                         enet_packet_destroy (event.packet);

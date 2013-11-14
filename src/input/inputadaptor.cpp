@@ -7,7 +7,7 @@
 
 	InputAdaptor::InputAdaptor(fea::MessageBus& b)
 :   inputHandler(new fea::util::SDL2InputBackend),
-    mPlayerId(-1),
+    mPlayerId(0),
 	mBus(b),
     mHoldingForwards(false),
     mHoldingBackwards(false),
