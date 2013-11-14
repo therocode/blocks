@@ -22,15 +22,15 @@ const float acceptableThreshold = 0.0001f;
 
 TEST_CASE("asm_noise", "[noise]")
 {
-    REQUIRE(differsBy(asm_raw_noise_3d(0.0f, 0.0f, 0.0f), raw_noise_3d(0.0f, 0.0f, 0.0f)) < acceptableThreshold);
-    REQUIRE(differsBy(asm_raw_noise_3d(100.0f, 0.0f, 0.0f), raw_noise_3d(100.0f, 0.0f, 0.0f)) < acceptableThreshold);
-    REQUIRE(differsBy(asm_raw_noise_3d(0.0f, 100.0f, 0.0f), raw_noise_3d(0.0f, 100.0f, 0.0f)) < acceptableThreshold);
-    REQUIRE(differsBy(asm_raw_noise_3d(0.0f, 0.0f, 100.0f), raw_noise_3d(0.0f, 0.0f, 100.0f)) < acceptableThreshold);
-    REQUIRE(differsBy(asm_raw_noise_3d(-100.0f, 0.0f, 0.0f), raw_noise_3d(-100.0f, 0.0f, 0.0f)) < acceptableThreshold);
-    REQUIRE(differsBy(asm_raw_noise_3d(0.0f, -100.0f, 0.0f), raw_noise_3d(0.0f, -100.0f, 0.0f)) < acceptableThreshold);
-    REQUIRE(differsBy(asm_raw_noise_3d(0.0f, 0.0f, -100.0f), raw_noise_3d(0.0f, 0.0f, -100.0f)) < acceptableThreshold);
-    REQUIRE(differsBy(asm_raw_noise_3d(100.0f, 100.0f, 100.0f), raw_noise_3d(100.0f, 100.0f, 100.0f)) < acceptableThreshold);
-    REQUIRE(differsBy(asm_raw_noise_3d(-100.0f, -100.0f, -100.0f), raw_noise_3d(-100.0f, -100.0f, -100.0f)) < acceptableThreshold);
+    CHECK(differsBy(asm_raw_noise_3d(0.0f, 0.0f, 0.0f), raw_noise_3d(0.0f, 0.0f, 0.0f)) < acceptableThreshold);
+    CHECK(differsBy(asm_raw_noise_3d(100.0f, 0.0f, 0.0f), raw_noise_3d(100.0f, 0.0f, 0.0f)) < acceptableThreshold);
+    CHECK(differsBy(asm_raw_noise_3d(0.0f, 100.0f, 0.0f), raw_noise_3d(0.0f, 100.0f, 0.0f)) < acceptableThreshold);
+    CHECK(differsBy(asm_raw_noise_3d(0.0f, 0.0f, 100.0f), raw_noise_3d(0.0f, 0.0f, 100.0f)) < acceptableThreshold);
+    CHECK(differsBy(asm_raw_noise_3d(-100.0f, 0.0f, 0.0f), raw_noise_3d(-100.0f, 0.0f, 0.0f)) < acceptableThreshold);
+    CHECK(differsBy(asm_raw_noise_3d(0.0f, -100.0f, 0.0f), raw_noise_3d(0.0f, -100.0f, 0.0f)) < acceptableThreshold);
+    CHECK(differsBy(asm_raw_noise_3d(0.0f, 0.0f, -100.0f), raw_noise_3d(0.0f, 0.0f, -100.0f)) < acceptableThreshold);
+    CHECK(differsBy(asm_raw_noise_3d(100.0f, 100.0f, 100.0f), raw_noise_3d(100.0f, 100.0f, 100.0f)) < acceptableThreshold);
+    CHECK(differsBy(asm_raw_noise_3d(-100.0f, -100.0f, -100.0f), raw_noise_3d(-100.0f, -100.0f, -100.0f)) < acceptableThreshold);
 
 
     bool failed = false;
@@ -52,5 +52,5 @@ TEST_CASE("asm_noise", "[noise]")
         }
     }
     
-    REQUIRE(failed == false);
+    CHECK(failed == false);
 }
