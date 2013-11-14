@@ -6,15 +6,6 @@ RemoteServerBridge::RemoteServerBridge(fea::MessageBus& bus) : mBus(bus), mLogNa
 {
 	mConnected = false;
 
-	//if(!RemoteServerBridge::sEnetInitialized)
-	//{
-	//	if(enet_initialize() < 0)
-	//	{
-	//		printf("ENet failed to initialize\n");
-	//	}
-	//	RemoteServerBridge::sEnetInitialized = true;
-	//}
-
 	mPort = 35940;
 }
 
