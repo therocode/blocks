@@ -5,6 +5,7 @@
 RemoteServerBridge::RemoteServerBridge(fea::MessageBus& bus) : mBus(bus), mLogName("network")
 {
 	mConnected = false;
+    mIsHost = false;
 
 	mPort = 35940;
 }
@@ -20,8 +21,8 @@ void RemoteServerBridge::connectToAddress(std::string address, int port)
 		{
 			mPort = port;
 		}
-		mAddress.port = mPort;
 
+		mAddress.port = mPort;
 		mHostPeer = enet_host_connect(mHost, &mAddress, 2, 0);
 
 		if(mHostPeer == NULL)
@@ -104,7 +105,6 @@ void RemoteServerBridge::mListenerFunction()
 
 void RemoteServerBridge::createHost()
 {
-	//	enet_address_set_host(&mAddress, "localhost");
 	mAddress.host = ENET_HOST_ANY;
 	mAddress.port = mPort;
 	mHost = enet_host_create(&mAddress, //What address to host on.

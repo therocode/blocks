@@ -150,7 +150,6 @@ void BlocksApplication::joinServer(const std::string& address, int32_t port)
     }
     else
     {
-
         client->setServerBridge(std::unique_ptr<RemoteServerBridge>(serverBidge));
         serverBidge->connectToAddress(address, port);
         serverBidge->startListening();

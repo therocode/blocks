@@ -102,7 +102,6 @@ void Client::destroy()
 
 void Client::handleMessage(const PlayerActionMessage& received)
 {
-    if(!mLockedMouse)return;
 	size_t playerId;
 	InputAction action;
 	std::tie(playerId, action) = received.data;
@@ -113,6 +112,7 @@ void Client::handleMessage(const PlayerActionMessage& received)
 	}
 	else
 	{
+        if(!mLockedMouse)return;
 		mBridge->enqueuePackage(std::shared_ptr<BasePackage>(new PlayerActionPackage(playerId, action)));
 	}
 }
