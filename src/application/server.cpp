@@ -36,7 +36,7 @@ void Server::setup()
 {
     mScriptHandler.setup();
     mWorld.initialise();
-	mFrameTimer.setDesiredFPSRate(144);
+	mFrameTimer.setDesiredFPSRate(60);
     mFrameTimer.start();
     mBus.sendMessage<LogMessage>(LogMessage("Server initialised and ready to go", mLogName, LogLevel::INFO));
     mBus.sendMessage<GameStartMessage>(GameStartMessage());
@@ -63,8 +63,8 @@ void Server::doLogic()
 
     pollNewClients();
 
-   //mFrameTimer.sleepForTheRestOfTheFrame();
-   //mFrameTimer.start();
+   mFrameTimer.sleepForTheRestOfTheFrame();
+   mFrameTimer.start();
 }
 
 void Server::destroy()
