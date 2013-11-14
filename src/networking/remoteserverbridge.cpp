@@ -1,7 +1,8 @@
 #include "remoteserverbridge.h"
 #include <iostream>
+#include "application/applicationmessages.h"
 
-RemoteServerBridge::RemoteServerBridge()
+RemoteServerBridge::RemoteServerBridge(fea::MessageBus& bus) : mBus(bus), mLogName("network")
 {
 	mConnected = false;
 
@@ -19,7 +20,7 @@ RemoteServerBridge::RemoteServerBridge()
 
 void RemoteServerBridge::connectToAddress(std::string address, int port)
 {
-	printf("Going to try to connect to %s\n", address.c_str());
+    mBus.sendMessage<LogMessage>(LogMessage("Connecting to " + std::string(address.c_str()), mLogName, LogLevel::INFO));
 	if(!mIsHost && !mConnected)
 	{
 		createClient();

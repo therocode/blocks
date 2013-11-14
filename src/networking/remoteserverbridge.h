@@ -4,11 +4,12 @@
 #include "enet/enet.h"
 #include <thread>
 #include <atomic>
+#include <featherkit/messaging.h>
 
 class RemoteServerBridge : public ServerClientBridge
 {
     public:
-		RemoteServerBridge();
+		RemoteServerBridge(fea::MessageBus& bus);
         virtual void flush() override;
         //void connect(RemoteServerBridge* other); 
         void receivePackage(std::weak_ptr<BasePackage> incoming);
@@ -18,6 +19,8 @@ class RemoteServerBridge : public ServerClientBridge
 		void startListening();
 		void stopListening();
     private:
+        fea::MessageBus& mBus;
+        std::string mLogName;
 		bool mIsHost;
 		bool mConnected;
 		void createHost();

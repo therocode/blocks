@@ -174,6 +174,11 @@ void Client::setServerBridge(std::unique_ptr<ServerClientBridge> bridge)
 	mBus.sendMessage<LogMessage>(LogMessage("client connected to server", mLogName, LogLevel::INFO));
 }
 
+fea::MessageBus& Client::getBus()
+{
+    return mBus;
+}
+
 void Client::fetchServerData()
 {
 	std::shared_ptr<BasePackage> package;

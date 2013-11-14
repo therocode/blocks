@@ -134,7 +134,7 @@ void BlocksApplication::setupDedicatedServer(int32_t port)
 void BlocksApplication::joinServer(const std::string& address, int32_t port)
 {
 	client = std::unique_ptr<Client>(new Client());
-  	RemoteServerBridge* serverBidge = new RemoteServerBridge();
+  	RemoteServerBridge* serverBidge = new RemoteServerBridge(client->getBus());
 
     client->setServerBridge(std::unique_ptr<RemoteServerBridge>(serverBidge));
 	serverBidge->connectToAddress(address, port);
