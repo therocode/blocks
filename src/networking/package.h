@@ -29,12 +29,29 @@ class Package : public BasePackage
         virtual std::vector<uint8_t> serialise() const override
         {
             std::vector<uint8_t> bytes;
+            
+            uint8_t* typePointer = (uint8_t*)&mType;
+            for(uint32_t i = 0; i < sizeof(PackageType); i++)
+            {
+                bytes.push_back(*typePointer);
+                typePointer++;
+            }
+
             serialize(data, bytes);
             return bytes;
         }
         virtual void deserialise(const std::vector<uint8_t>& bytes) override
         {
-            data = deserialize<std::tuple<Types...> >(bytes);
+            auto byteIterator = bytes.begin();
+
+            uint8_t* typePointer = (uint8_t*)&mType;
+            for(uint32_t i = 0; i < sizeof(PackageType); i++)
+            {
+                *typePointer = *byteIterator;
+                byteIterator++;
+            }
+
+            data = deserialize<std::tuple<Types...> >(byteIterator, bytes.end());
         }
         std::tuple<Types...> getData()
         {
