@@ -13,7 +13,6 @@ void RemoteClientBridge::flush()
 
 void RemoteClientBridge::acceptEnetPacket(ENetPacket* packet)
 {
-    std::cout << "will do stuff\n";
     //parse ENet packet and deserialise to put into receivePackage();
             //(uint32_t)packet->dataLength,
 
@@ -26,29 +25,36 @@ void RemoteClientBridge::acceptEnetPacket(ENetPacket* packet)
         typePointer++;
     }
     
-    std::cout << "type is " << (int32_t)type << "\n";
     std::vector<uint8_t> dataVector;
     dataVector.resize(packet->dataLength);
     std::copy(packet->data, packet->data + packet->dataLength, dataVector.begin());
 
-    std::shared_ptr<BasePackage> packagePtr;
 
     switch(type)
     {
+        case PackageType::REBUILD_SCRIPTS_REQUESTED:
+        {
+            deserialiseAndReceive(dataVector, new RebuildScriptsRequestedPackage());
+            break;
+        }
+        case PackageType::PLAYER_ACTION:
+        {
+            deserialiseAndReceive(dataVector, new PlayerActionPackage());
+            break;
+        }
+        case PackageType::PLAYER_PITCH_YAW:
+        {
+            deserialiseAndReceive(dataVector, new PlayerPitchYawPackage());
+            break;
+        }
         case PackageType::PLAYER_MOVE_ACTION:
         {
-            PlayerMoveActionPackage* package = new PlayerMoveActionPackage();
-            package->deserialise(dataVector);
-            packagePtr = std::shared_ptr<BasePackage>(package);
-            receivePackage(packagePtr);
+            deserialiseAndReceive(dataVector, new PlayerMoveActionPackage());
             break;
         }
         case PackageType::PLAYER_MOVE_DIRECTION:
         {
-            PlayerMoveDirectionPackage* package = new PlayerMoveDirectionPackage();
-            package->deserialise(dataVector);
-            packagePtr = std::shared_ptr<BasePackage>(package);
-            receivePackage(packagePtr);
+            deserialiseAndReceive(dataVector, new PlayerMoveDirectionPackage());
             break;
         }
     }
@@ -57,4 +63,11 @@ void RemoteClientBridge::acceptEnetPacket(ENetPacket* packet)
 void RemoteClientBridge::receivePackage(std::weak_ptr<BasePackage> incoming)
 {
 	mIncoming.push_back(incoming.lock());
+}
+
+void RemoteClientBridge::deserialiseAndReceive(const std::vector<uint8_t>& data, BasePackage* package)
+{
+    package->deserialise(data);
+    std::shared_ptr<BasePackage> packagePtr = std::shared_ptr<BasePackage>(package);
+    receivePackage(packagePtr);
 }

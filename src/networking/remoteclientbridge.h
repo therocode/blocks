@@ -11,5 +11,6 @@ class RemoteClientBridge : public ServerClientBridge
         void receivePackage(std::weak_ptr<BasePackage> incoming);
         void acceptEnetPacket(ENetPacket* packet);
     private:
+        void deserialiseAndReceive(const std::vector<uint8_t>& data, BasePackage* package);
 		ENetPeer* mPeer;
 };

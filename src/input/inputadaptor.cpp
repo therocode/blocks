@@ -19,6 +19,8 @@
 	actionHandler.setPrimaryBindings(jsonHandler.getPrimaryBindings());
 	actionHandler.setSecondaryBindings(jsonHandler.getSecondaryBindings());
 
+    inputHandler.setKeyRepeatEnabled(false);
+
 	lastMouseX = 0;
 	lastMouseY = 0;
 	first = true;

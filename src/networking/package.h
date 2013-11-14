@@ -51,7 +51,6 @@ class Package : public BasePackage
             for(uint32_t i = 0; i < sizeof(PackageType); i++)
             {
                 *typePointer = *byteIterator;
-                std::cout << "now type is " << (int32_t)mType << "\n";
                 byteIterator++;
                 typePointer++;
             }
