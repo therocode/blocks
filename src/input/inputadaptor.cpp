@@ -89,10 +89,16 @@ void InputAdaptor::update()
                 mBus.sendMessage<WindowInputMessage>(WindowInputMessage());
             }
 		}else if(event.type == fea::Event::MOUSEWHEELMOVED){
-            if(event.mouseWheel.delta > 0)
+            if(event.mouseWheel.delta > 0){
                 mBus.sendMessage<PlayerActionMessage>(PlayerActionMessage(mPlayerId, InputAction::DIG));
-            else
+            }else if(event.mouseWheel.delta < 0){
                 mBus.sendMessage<PlayerActionMessage>(PlayerActionMessage(mPlayerId, InputAction::BUILD));
+            }
+            if(event.mouseWheel.x > 0){
+				mBus.sendMessage<PlayerPitchYawMessage>(PlayerPitchYawMessage(mPlayerId, 0, -1.0f));
+            }else if(event.mouseWheel.x < 0){
+				mBus.sendMessage<PlayerPitchYawMessage>(PlayerPitchYawMessage(mPlayerId, 0, 1.0f));
+            }
         }
 		else if(event.type == fea::Event::MOUSEBUTTONRELEASED){
 			mouseDown = false;
