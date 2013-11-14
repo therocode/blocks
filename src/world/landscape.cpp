@@ -47,9 +47,9 @@ void Landscape::highlightChunk(size_t id, const ChunkCoordinate& chunk)
 {
     if(!tempful)
     {
-        tempful = true;
+       // tempful = true;
 
-        int32_t halfCheatBoxWidth = 12;
+        int32_t halfCheatBoxWidth = 6;
 
         int32_t centerX = chunk.x;
         int32_t centerY = chunk.y;
