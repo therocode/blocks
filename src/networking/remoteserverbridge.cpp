@@ -199,7 +199,7 @@ void RemoteServerBridge::flush()
 		ENetPacket* packet = enet_packet_create(&data[0], data.size(), ENET_PACKET_FLAG_RELIABLE);
 		enet_peer_send(mHostPeer, 0, packet);
 	}
-	enet_host_flush(mHost);
+	//enet_host_flush(mHost);
 	mOutgoing.clear();
 }
 
