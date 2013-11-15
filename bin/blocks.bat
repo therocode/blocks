@@ -20,8 +20,9 @@ IF "%poop%" == "1" (
 
 	set /p addre="Server Address:"
 	echo(!addre!
+	set /p porte="Server Port:"
 	IF NOT "!addre!" == "" (
-		start blocks join !addre!
+		start blocks join !addre! !porte!
 		exit
 	)
 	echo pasdfasdf

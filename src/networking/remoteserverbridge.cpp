@@ -121,7 +121,7 @@ void RemoteServerBridge::acceptEnetPacket(ENetPacket* packet)
     dataVector.resize(packet->dataLength);
     std::copy(packet->data, packet->data + packet->dataLength, dataVector.begin());
 
-    std::cout << "type " << (int32_t)type <<" \n";
+   // std::cout << "type " << (int32_t)type <<" \n";
     switch(type)
     {
         case PackageType::CHUNK_LOADED:
