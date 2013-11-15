@@ -66,7 +66,10 @@ void Renderer::makeTexture(const std::string& path, uint32_t width, uint32_t hei
 
 void Renderer::setup()
 {
+    std::cout << "hoj: " << glGetError() << "\n";
+    glewExperimental = GL_FALSE;
 	GLenum err = glewInit();
+    std::cout << "hej: " << glGetError() << "\n";
 	if(GLEW_OK != err)
 	{
 		fprintf(stderr, "Error: %s\n", glewGetErrorString(err));

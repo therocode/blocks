@@ -15,7 +15,7 @@ TEST_CASE("Differs by", "[differs]")
     REQUIRE(differsBy(1.0f, -0.0f) == 1.0f);
     REQUIRE(differsBy(5.0f, -5.0f) == 10.0f);
     REQUIRE(differsBy(5.0f, 5.0f) == 0.0f);
-    REQUIRE(differsBy(0.0f, 0.5f) == 0.5f);
+    REQUIRE(differsBy(0.0f, 0.5f) == 0.f);
 }
 
 const float acceptableThreshold = 0.0001f;

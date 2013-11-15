@@ -99,7 +99,7 @@ void RemoteServerBridge::mListenerFunction()
 				event.peer -> data = NULL;
 			}
 		}
-		enet_host_flush(mHost);
+		//enet_host_flush(mHost);
 	}
 }
 
@@ -121,7 +121,6 @@ void RemoteServerBridge::acceptEnetPacket(ENetPacket* packet)
     dataVector.resize(packet->dataLength);
     std::copy(packet->data, packet->data + packet->dataLength, dataVector.begin());
 
-    std::cout << "type " << (int32_t)type <<" \n";
     switch(type)
     {
         case PackageType::CHUNK_LOADED:
