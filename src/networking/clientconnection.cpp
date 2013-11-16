@@ -32,3 +32,8 @@ void ClientConnection::setBridge(std::unique_ptr<ServerClientBridge> bridge)
 {
     mBridge = std::move(bridge);
 }
+
+bool ClientConnection::isDisconnected()
+{
+    return mBridge->isDisconnected();
+}

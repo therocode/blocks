@@ -20,3 +20,17 @@ void ServerClientBridge::enqueuePackage(std::weak_ptr<BasePackage> package)
     mOutgoing.push_back(package.lock());
     mOutGoingMutex.unlock();
 }
+
+ServerClientBridge::~ServerClientBridge()
+{
+}
+
+void ServerClientBridge::disconnect()
+{
+    disconnected = true;
+}
+
+bool ServerClientBridge::isDisconnected()
+{
+    return disconnected;
+}

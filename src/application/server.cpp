@@ -47,6 +47,8 @@ fea::MessageBus& Server::getBus()
 }
 void Server::doLogic()
 {
+    checkForDisconnectedClients();
+
     for(auto& client : mClients)
     {
         fetchClientData(client.second);
@@ -272,5 +274,25 @@ void Server::fetchClientData(std::weak_ptr<ClientConnection> client)
                 mBus.sendMessage<PlayerPitchYawMessage>(PlayerPitchYawMessage(playerPitchYawPackage->getData()));
             }
         }
+    }
+}
+
+void Server::checkForDisconnectedClients()
+{
+    std::vector<size_t> clientsToRemove;
+
+    for(auto& client : mClients)
+    {
+        if(client.second->isDisconnected())
+        {
+            clientsToRemove.push_back(client.first);
+        }
+    }
+
+    for(auto client : clientsToRemove)
+    {
+        mClients.erase(client);
+
+        //send playerdisconnectedmessage
     }
 }

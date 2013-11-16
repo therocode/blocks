@@ -56,8 +56,12 @@ void RemoteClientConnectionListener::listenerFunction()
                     }
                 case ENET_EVENT_TYPE_DISCONNECT:
                     {
-                        //printf("%d disconnected.\n", (uint32_t)event.peer->data);
+                        printf("%d disconnected.\n", (int)((Peer*)event.peer->data)->mId);
                         /* Reset the peer's client information. */
+                        mPeers.erase(((Peer*)event.peer->data)->mId);
+                        ((Peer*)event.peer->data)->mBridge->disconnect();
+                        //mDisconnectingmutex
+                        //mDisconnecting.push()
                         delete (Peer*)event.peer->data;
                         event.peer->data = nullptr;
                         break;
@@ -93,7 +97,7 @@ void RemoteClientConnectionListener::createHost()
 			0,		//Estimated incoming traffic.
 			0);		//Estimated outcoming traffic.
 	if(mHost == NULL)
-{
+    {
 		printf("Server couldn't create, port already in use.\n");
         mBus.sendMessage<LogMessage>(LogMessage("Cannot listen on port " + std::to_string(mPort) + ", port already in use!", mLogName, LogLevel::ERR));
 		exit(1);

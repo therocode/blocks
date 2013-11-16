@@ -10,6 +10,11 @@ RemoteServerBridge::RemoteServerBridge(fea::MessageBus& bus) : mBus(bus), mLogNa
 	mPort = 35940;
 }
 
+RemoteServerBridge::~RemoteServerBridge()
+{
+    stopListening();
+}
+
 void RemoteServerBridge::connectToAddress(std::string address, int port)
 {
 	mBus.sendMessage<LogMessage>(LogMessage("Connecting to " + address, mLogName, LogLevel::INFO));
@@ -41,6 +46,7 @@ void RemoteServerBridge::connectToAddress(std::string address, int port)
 				i[0] = 12345678;
 			ENetPacket* packet = enet_packet_create(i, sizeof(int) * 4, ENET_PACKET_FLAG_RELIABLE);
 			enet_peer_send(mHostPeer, 0, packet);
+            mConnected = true;
 		}else
 		{
 			mBus.sendMessage<LogMessage>(LogMessage("Couldn't connect to host", mLogName, LogLevel::ERR));
@@ -97,6 +103,9 @@ void RemoteServerBridge::mListenerFunction()
                     printf ("%s disconnected.\n", event.peer -> data);
                     /* Reset the peer's client information. */
                     event.peer -> data = NULL;
+                    break;
+                default:
+                    break;
             }
         }
 
@@ -117,6 +126,11 @@ void RemoteServerBridge::mListenerFunction()
             }
             mGotPackagesToSend = false;
         }
+    }
+    if(mConnected)
+    {
+        enet_peer_disconnect(mHostPeer, 0);
+        enet_host_destroy(mHost);
     }
 }
 

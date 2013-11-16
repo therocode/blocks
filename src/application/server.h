@@ -42,6 +42,7 @@ class Server : public fea::MessageReceiver<FatalMessage>,
         void acceptClientConnection(const std::shared_ptr<ClientConnection> client);
         void pollNewClients();
         void fetchClientData(std::weak_ptr<ClientConnection> client);
+        void checkForDisconnectedClients();
         fea::MessageBus mBus;
         Logger mLogger;
         World mWorld;

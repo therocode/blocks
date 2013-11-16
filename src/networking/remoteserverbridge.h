@@ -10,6 +10,7 @@ class RemoteServerBridge : public ServerClientBridge
 {
     public:
 		RemoteServerBridge(fea::MessageBus& bus);
+        ~RemoteServerBridge();
         virtual void flush() override;
         //void connect(RemoteServerBridge* other);
         void receivePackage(std::weak_ptr<BasePackage> incoming);

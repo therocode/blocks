@@ -15,6 +15,7 @@ class ClientConnection
         void enqueuePackage(std::weak_ptr<BasePackage> package);
         bool pollPackage(std::shared_ptr<BasePackage>& package);
         void setBridge(std::unique_ptr<ServerClientBridge> bridge);
+        bool isDisconnected();
     private:
         ClientId mId;
 
