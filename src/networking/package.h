@@ -17,17 +17,17 @@ class BasePackage
         bool mUnreliable;
 };
 
-template<typename Tag, PackageType TypeId, typename... Types>
+template<typename Tag, PackageType TypeId, bool Unreliable, typename... Types>
 class Package : public BasePackage
 {
     public:
         Package()
         {
         }
-        Package(Types... values) : BasePackage(TypeId), data(values...)
+        Package(Types... values) : BasePackage(TypeId, Unreliable), data(values...)
         {
         }
-        Package(std::tuple<Types...> value) : BasePackage(TypeId), data(value)
+        Package(std::tuple<Types...> value) : BasePackage(TypeId, Unreliable), data(value)
         {
         }
         virtual std::vector<uint8_t> serialise() const override
