@@ -92,6 +92,7 @@ void RemoteClientConnectionListener::createHost()
         mBus.sendMessage<LogMessage>(LogMessage("Cannot listen on port " + std::to_string(mPort) + ", port already in use!", mLogName, LogLevel::ERR));
 		exit(1);
 	}
+    
     else
 	{
         mBus.sendMessage<LogMessage>(LogMessage("Now listening on port " + std::to_string(mPort) + " for incoming connections.", mLogName, LogLevel::INFO));

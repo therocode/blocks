@@ -34,4 +34,6 @@ class RemoteServerBridge : public ServerClientBridge
 	protected:
 		void mListenerFunction();
 		std::atomic<bool> mStop;
+
+        std::atomic<bool> mGotPackagesToSend;
 };

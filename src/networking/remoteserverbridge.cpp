@@ -67,40 +67,57 @@ void RemoteServerBridge::mListenerFunction()
 	ENetEvent event;
 	while(!mStop)
     {
-		while(enet_host_service(mHost, &event, 10) > 0)
-		{
-			switch(event.type)
-			{
-				case ENET_EVENT_TYPE_CONNECT:
-				printf ("A new client connected from %x:%u.\n", 
-					event.peer -> address.host,
-					event.peer -> address.port);
-					/* Store any relevant client information here. */
-				event.peer -> data = (void*)"Client"; 
-				break;
-				case ENET_EVENT_TYPE_RECEIVE:
-				{
-					ENetPacket* packet = event.packet;
-					int pp = ((int*)event.packet->data)[0];
+        while(enet_host_service(mHost, &event, 10) > 0)
+        {
+            switch(event.type)
+            {
+                case ENET_EVENT_TYPE_CONNECT:
+                    printf ("A new client connected from %x:%u.\n", 
+                            event.peer -> address.host,
+                            event.peer -> address.port);
+                    /* Store any relevant client information here. */
+                    event.peer -> data = (void*)"Client"; 
+                    break;
+                case ENET_EVENT_TYPE_RECEIVE:
+                    {
+                        ENetPacket* packet = event.packet;
+                        int pp = ((int*)event.packet->data)[0];
 
-                    acceptEnetPacket(packet);
-					//	printf ("A packet of length %u containing %i was received from %s on channel %u.\n",
-					//			event.packet -> dataLength,
-					//			pp,
-					//			event.peer   -> data,
-					//			event.channelID);
-						/* Clean up the packet now that we're done using it. */
-					enet_packet_destroy (event.packet);
-					break;
-				}
-				case ENET_EVENT_TYPE_DISCONNECT:
-				printf ("%s disconnected.\n", event.peer -> data);
-					/* Reset the peer's client information. */
-				event.peer -> data = NULL;
-			}
-		}
-		//enet_host_flush(mHost);
-	}
+                        acceptEnetPacket(packet);
+                        //	printf ("A packet of length %u containing %i was received from %s on channel %u.\n",
+                        //			event.packet -> dataLength,
+                        //			pp,
+                        //			event.peer   -> data,
+                        //			event.channelID);
+                        /* Clean up the packet now that we're done using it. */
+                        enet_packet_destroy (event.packet);
+                        break;
+                    }
+                case ENET_EVENT_TYPE_DISCONNECT:
+                    printf ("%s disconnected.\n", event.peer -> data);
+                    /* Reset the peer's client information. */
+                    event.peer -> data = NULL;
+            }
+        }
+
+        if(mGotPackagesToSend)
+        {
+            std::deque<std::shared_ptr<BasePackage>> toSend;
+
+            mOutGoingMutex.lock();
+            std::swap(mOutgoing, toSend);
+            mOutGoingMutex.unlock();
+            //enet_host_flush(mHost);
+            for(auto package : toSend)
+            {
+                std::vector<uint8_t> data = package->serialise();
+
+                ENetPacket* packet = enet_packet_create(&data[0], data.size(), ENET_PACKET_FLAG_RELIABLE);
+                enet_peer_send(mHostPeer, 0, packet);
+            }
+            mGotPackagesToSend = false;
+        }
+    }
 }
 
 void RemoteServerBridge::acceptEnetPacket(ENetPacket* packet)
@@ -192,15 +209,8 @@ void RemoteServerBridge::createClient()
 
 void RemoteServerBridge::flush()
 {
-	for(auto package : mOutgoing)
-	{
-		std::vector<uint8_t> data = package->serialise();
 
-		ENetPacket* packet = enet_packet_create(&data[0], data.size(), ENET_PACKET_FLAG_RELIABLE);
-		enet_peer_send(mHostPeer, 0, packet);
-	}
-	//enet_host_flush(mHost);
-	mOutgoing.clear();
+    mGotPackagesToSend = true;
 }
 
 void RemoteServerBridge::receivePackage(std::weak_ptr<BasePackage> incoming)

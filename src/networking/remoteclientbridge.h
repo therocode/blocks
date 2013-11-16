@@ -13,4 +13,5 @@ class RemoteClientBridge : public ServerClientBridge
     private:
         void deserialiseAndReceive(const std::vector<uint8_t>& data, BasePackage* package);
 		ENetPeer* mPeer;
+        
 };

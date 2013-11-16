@@ -16,5 +16,7 @@ bool ServerClientBridge::pollPackage(std::shared_ptr<BasePackage>& package)
 
 void ServerClientBridge::enqueuePackage(std::weak_ptr<BasePackage> package)
 {
+    mOutGoingMutex.lock();
     mOutgoing.push_back(package.lock());
+    mOutGoingMutex.unlock();
 }

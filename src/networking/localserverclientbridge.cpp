@@ -7,6 +7,7 @@ LocalServerClientBridge::LocalServerClientBridge() : mOther(nullptr)
 
 void LocalServerClientBridge::flush()
 {
+    mOutGoingMutex.lock();
     if(mOther)
     {
         for(uint32_t i = 0; i < mOutgoing.size(); i++)
@@ -16,6 +17,7 @@ void LocalServerClientBridge::flush()
     }
 
     mOutgoing.clear();
+    mOutGoingMutex.unlock();
 }
 
 void LocalServerClientBridge::connect(LocalServerClientBridge* other)

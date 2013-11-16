@@ -2,6 +2,7 @@
 #include "package.h"
 #include <deque>
 #include <memory>
+#include <mutex>
 
 class ServerClientBridge
 {
@@ -12,4 +13,5 @@ class ServerClientBridge
     protected:
         std::deque<std::shared_ptr<BasePackage> > mIncoming;
         std::deque<std::shared_ptr<BasePackage> > mOutgoing;
+        std::mutex mOutGoingMutex;
 };
