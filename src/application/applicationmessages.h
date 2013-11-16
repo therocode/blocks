@@ -18,6 +18,9 @@ using FatalMessage = fea::Message<Fatal_tag, const std::string&>;
 struct PlayerJoined_tag{};//                               player id   position
 using PlayerJoinedMessage = fea::Message<PlayerJoined_tag, size_t, const::glm::vec3&>;
 
+struct PlayerDisconnected_tag{};//                                     player id
+using PlayerDisconnectedMessage = fea::Message<PlayerDisconnected_tag, size_t>;
+
 struct GameStart_tag{};//
 using GameStartMessage = fea::Message<GameStart_tag>;
 

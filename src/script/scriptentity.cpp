@@ -26,3 +26,8 @@ ScriptEntity::~ScriptEntity()
 {
     mScriptObject->Release();
 }
+
+asIScriptObject* ScriptEntity::getScriptObject()
+{
+    return mScriptObject;
+}

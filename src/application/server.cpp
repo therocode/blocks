@@ -293,5 +293,6 @@ void Server::checkForDisconnectedClients()
     {
         mClients.erase(client);
         //send playerdisconnectedmessage
+        mBus.sendMessage<PlayerDisconnectedMessage>(PlayerDisconnectedMessage(client));
     }
 }

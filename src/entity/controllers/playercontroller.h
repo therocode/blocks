@@ -8,6 +8,7 @@
 class PlayerController : 
     public EntityController,
     public fea::MessageReceiver<PlayerJoinedMessage>,
+    public fea::MessageReceiver<PlayerDisconnectedMessage>,
     public fea::MessageReceiver<PlayerActionMessage>,
     public fea::MessageReceiver<PlayerMoveDirectionMessage>,
     public fea::MessageReceiver<PlayerMoveActionMessage>,
@@ -21,6 +22,7 @@ class PlayerController :
         virtual void removeEntity(fea::EntityId id);
         virtual void onFrame() override;
         void handleMessage(const PlayerJoinedMessage& received);
+        void handleMessage(const PlayerDisconnectedMessage& received);
         void handleMessage(const PlayerActionMessage& received);
         void handleMessage(const PlayerMoveDirectionMessage& received);
         void handleMessage(const PlayerMoveActionMessage& received);

@@ -8,6 +8,7 @@
 PlayerController::PlayerController(fea::MessageBus& bus, WorldInterface& worldInterface) : EntityController(bus, worldInterface)
 {
     mBus.addMessageSubscriber<PlayerJoinedMessage>(*this);
+    mBus.addMessageSubscriber<PlayerDisconnectedMessage>(*this);
     mBus.addMessageSubscriber<PlayerActionMessage>(*this);
     mBus.addMessageSubscriber<PlayerMoveDirectionMessage>(*this);
     mBus.addMessageSubscriber<PlayerMoveActionMessage>(*this);
@@ -18,6 +19,7 @@ PlayerController::PlayerController(fea::MessageBus& bus, WorldInterface& worldIn
 PlayerController::~PlayerController()
 {
     mBus.removeMessageSubscriber<PlayerJoinedMessage>(*this);
+    mBus.removeMessageSubscriber<PlayerDisconnectedMessage>(*this);
     mBus.removeMessageSubscriber<PlayerActionMessage>(*this);
     mBus.removeMessageSubscriber<PlayerMoveDirectionMessage>(*this);
     mBus.removeMessageSubscriber<PlayerMoveActionMessage>(*this);
@@ -50,6 +52,16 @@ void PlayerController::handleMessage(const PlayerJoinedMessage& received)
     mBus.sendMessage<PlayerEntersChunkMessage>(PlayerEntersChunkMessage(playerId, worldToChunk(position)));
 
     mBus.sendMessage<PlayerConnectedToEntityMessage>(PlayerConnectedToEntityMessage(playerId, playerEntity.lock()->getId()));
+}
+
+void PlayerController::handleMessage(const PlayerDisconnectedMessage& received)
+{
+    size_t playerId;
+
+    std::tie(playerId) = received.data;
+
+    mBus.sendMessage<RemoveEntityMessage>(RemoveEntityMessage(mPlayerEntities.at(playerId).lock()->getId()));
+    mPlayerEntities.erase(playerId);
 }
 
 void PlayerController::handleMessage(const PlayerActionMessage& received)

@@ -8,6 +8,7 @@ class ScriptEntity
         ScriptEntity(size_t id, fea::WeakEntityPtr entity, asIScriptObject* scriptObject);
         ScriptEntity(const ScriptEntity& other);
         const ScriptEntity& operator=(const ScriptEntity& other);
+        asIScriptObject* getScriptObject();
         ~ScriptEntity();
     private:
         fea::EntityId mId;

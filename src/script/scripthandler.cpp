@@ -124,5 +124,6 @@ void ScriptHandler::handleMessage(const EntityRemovedMessage& message)
     size_t id;
     std::tie(id) = message.data;
 
+    scriptEntityIds.erase(scriptEntities.at(id).getScriptObject());
     scriptEntities.erase(id);
 }
