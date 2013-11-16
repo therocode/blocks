@@ -10,10 +10,11 @@ class BasePackage
 {
     public:
         BasePackage();
-        BasePackage(PackageType type);
+        BasePackage(PackageType type, bool unreliable = false);
         virtual std::vector<uint8_t> serialise() const = 0;
         virtual void deserialise(const std::vector<uint8_t>& bytes) = 0;
         PackageType mType;
+        bool mUnreliable;
 };
 
 template<typename Tag, PackageType TypeId, typename... Types>

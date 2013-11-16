@@ -121,7 +121,7 @@ void RemoteServerBridge::mListenerFunction()
             {
                 std::vector<uint8_t> data = package->serialise();
 
-                ENetPacket* packet = enet_packet_create(&data[0], data.size(), ENET_PACKET_FLAG_RELIABLE);
+                ENetPacket* packet = enet_packet_create(&data[0], data.size(), package->mUnreliable ? ENET_PACKET_FLAG_UNSEQUENCED : ENET_PACKET_FLAG_RELIABLE);
                 enet_peer_send(mHostPeer, 0, packet);
             }
             mGotPackagesToSend = false;
