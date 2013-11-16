@@ -150,7 +150,8 @@ VBO VBOCreator::generateChunkVBO(Chunk* mainChunk, Chunk* topChunk, Chunk* botto
         float worldY = quad.mDepth + chunkOffset.y;
         float worldZ = quad.mY + chunkOffset.z;
 
-        textureLocation = glm::uvec2(quad.mType - 1, 0);
+        textureLocation.x = (quad.mType - 1) % 8;
+        textureLocation.y = (quad.mType - 1) / 8;
 		rect->pushIndicesIntoVBO(nvbo);
         rect = (ChunkRect*)nvbo.getNextVertexPtr(4);
         rect->reset();
