@@ -223,7 +223,7 @@ void Server::acceptClientConnection(std::shared_ptr<ClientConnection> client)
 void Server::pollNewClients()
 {
     std::shared_ptr<ClientConnection> client;
-    
+
     if(mListener != nullptr)
     {
         while((client = mListener->fetchIncomingConnection()))
@@ -292,7 +292,6 @@ void Server::checkForDisconnectedClients()
     for(auto client : clientsToRemove)
     {
         mClients.erase(client);
-
         //send playerdisconnectedmessage
     }
 }

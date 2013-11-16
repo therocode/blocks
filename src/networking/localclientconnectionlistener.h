@@ -5,5 +5,5 @@
 class LocalClientConnectionListener : public ClientConnectionListener
 {
     public:
-        void createClientConnection(LocalServerClientBridge* clientBridge);   
+        void createClientConnection(LocalServerClientBridge* clientBridge);
 };
