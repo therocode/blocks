@@ -13,8 +13,8 @@ using ChunkDeletedPackage = Package<ChunkDeleted_tag, PackageType::CHUNK_DELETED
 using VoxelSetPackage = Package<VoxelSet_tag, PackageType::VOXEL_SET, false, ChunkCoordinate, VoxelCoordinate, VoxelType>;
 
 using GfxEntityAddedPackage = Package<AddGfxEntity_tag, PackageType::GFX_ENTITY_ADDED, false, size_t, glm::vec3>;
-using GfxEntityMovedPackage = Package<MoveGfxEntity_tag, PackageType::GFX_ENTITY_MOVED, true, size_t, glm::vec3>;
-using GfxEntityRotatedPackage = Package<RotateGfxEntity_tag, PackageType::GFX_ENTITY_ROTATED, true, size_t, float, float>;
+using GfxEntityMovedPackage = Package<MoveGfxEntity_tag, PackageType::GFX_ENTITY_MOVED, false, size_t, glm::vec3>;
+using GfxEntityRotatedPackage = Package<RotateGfxEntity_tag, PackageType::GFX_ENTITY_ROTATED, false, size_t, float, float>;
 using GfxEntityRemovedPackage = Package<RemoveGfxEntity_tag, PackageType::GFX_ENTITY_REMOVED, false, size_t>;
 
 using PlayerActionPackage = Package<PlayerAction_tag, PackageType::PLAYER_ACTION, false, size_t, InputAction>;
