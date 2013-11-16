@@ -3,7 +3,7 @@
 #include "packages.h"
 #include "application/applicationmessages.h"
 
-RemoteServerBridge::RemoteServerBridge(fea::MessageBus& bus) : mBus(bus), mLogName("network")
+RemoteServerBridge::RemoteServerBridge(fea::MessageBus& bus) : mBus(bus), mLogName("network"), mGotPackagesToSend(false)
 {
 	mConnected = false;
 

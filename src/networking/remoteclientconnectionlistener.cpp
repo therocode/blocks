@@ -32,6 +32,8 @@ void RemoteClientConnectionListener::listenerFunction()
 
                         event.peer->data = new Peer({newClientId, newClientBridge});
 
+                        mPeers.emplace(newClientId, (Peer*)event.peer->data);
+
                         std::shared_ptr<ClientConnection> clientConnection = std::make_shared<ClientConnection>(newClientId);
                         clientConnection->setBridge(std::unique_ptr<RemoteClientBridge>(newClientBridge));
                         mIncomingConnectionsMutex.lock();
@@ -67,6 +69,10 @@ void RemoteClientConnectionListener::listenerFunction()
             }
 		}
 		enet_host_flush(mHost);
+        for(auto peers : mPeers)
+        {
+            peers.second->mBridge->sendAwaiting();
+        }
     }
 }
 

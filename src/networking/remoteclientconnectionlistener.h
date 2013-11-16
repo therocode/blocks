@@ -29,4 +29,5 @@ class RemoteClientConnectionListener : public ClientConnectionListener
         int32_t mPort;
 		std::atomic<bool> mStop;
         std::atomic<size_t> mNextClientId;
+        std::unordered_map<size_t, Peer*> mPeers;
 };

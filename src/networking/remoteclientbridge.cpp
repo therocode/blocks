@@ -2,22 +2,13 @@
 #include "packages.h"
 #include <iostream>
 
-RemoteClientBridge::RemoteClientBridge(ENetPeer* peer) : mPeer(peer)
+RemoteClientBridge::RemoteClientBridge(ENetPeer* peer) : mPeer(peer), mGotPackagesToSend(false)
 {
 }
 
 void RemoteClientBridge::flush()
 {
-    //grab packages from the outgoing queue, serialise and pack them up and send them to the enet peer
-    for(auto package : mOutgoing)
-    {
-        std::vector<uint8_t> data = package->serialise();
-
-        ENetPacket* packet = enet_packet_create(&data[0], data.size(), ENET_PACKET_FLAG_RELIABLE);
-        enet_peer_send(mPeer, 0, packet);
-    }
-    //enet_host_flush(mPeer);
-    mOutgoing.clear();
+    mGotPackagesToSend = true;
 }
 
 void RemoteClientBridge::acceptEnetPacket(ENetPacket* packet)
@@ -79,4 +70,22 @@ void RemoteClientBridge::deserialiseAndReceive(const std::vector<uint8_t>& data,
     package->deserialise(data);
     std::shared_ptr<BasePackage> packagePtr = std::shared_ptr<BasePackage>(package);
     receivePackage(packagePtr);
+}
+
+void RemoteClientBridge::sendAwaiting()
+{
+    std::deque<std::shared_ptr<BasePackage>> toSend;
+    mOutGoingMutex.lock();
+    std::swap(toSend, mOutgoing);
+    mOutGoingMutex.unlock();
+
+    //grab packages from the outgoing queue, serialise and pack them up and send them to the enet peer
+    for(auto package : toSend)
+    {
+        std::vector<uint8_t> data = package->serialise();
+
+        ENetPacket* packet = enet_packet_create(&data[0], data.size(), ENET_PACKET_FLAG_RELIABLE);
+        enet_peer_send(mPeer, 0, packet);
+    }
+    //enet_host_flush(mPeer);
 }
