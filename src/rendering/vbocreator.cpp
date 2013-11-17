@@ -149,9 +149,9 @@ VBO VBOCreator::generateChunkVBO(Chunk* mainChunk, Chunk* topChunk, Chunk* botto
         float worldX = quad.mX + chunkOffset.x;
         float worldY = quad.mDepth + chunkOffset.y;
         float worldZ = quad.mY + chunkOffset.z;
-
-        textureLocation.x = (quad.mType - 1) % 8;
-        textureLocation.y = (quad.mType - 1) / 8;
+        int resId = quad.mType;
+        textureLocation.x = (resId - 1) % 8;
+        textureLocation.y = (resId - 1) / 8;
 		rect->pushIndicesIntoVBO(nvbo);
         rect = (ChunkRect*)nvbo.getNextVertexPtr(4);
         rect->reset();
@@ -162,11 +162,11 @@ VBO VBOCreator::generateChunkVBO(Chunk* mainChunk, Chunk* topChunk, Chunk* botto
         rect->setUV(1, 0, quad.mHeight);
         rect->setUV(2, quad.mWidth, quad.mHeight);
         rect->setUV(3, quad.mWidth, 0);
-		
+
 		float y = worldY * 0.001f;
 		y = 1.0f - y;
 		y = glm::clamp(y, 0.f, 1.f);
-		
+
 		rect->setColor(y,y,y);
 
         verts +=4;indices+=6;
@@ -179,11 +179,12 @@ VBO VBOCreator::generateChunkVBO(Chunk* mainChunk, Chunk* topChunk, Chunk* botto
         float worldZ = quad.mY + chunkOffset.z;
 		int resId = quad.mType;
 		if(quad.mType == 1)resId = 2;
-        textureLocation = glm::uvec2(resId - 1, 0);
+        textureLocation.x = (resId - 1) % 8;
+        textureLocation.y = (resId - 1) / 8;
 		rect->pushIndicesIntoVBO(nvbo);
         rect = (ChunkRect*)nvbo.getNextVertexPtr(4);
         rect->reset();
-		
+
         setChunkRectData(*rect, worldX, worldY, worldZ, BOTTOM, textureLocation.x, textureLocation.y, quad.mWidth, quad.mHeight);
         rect->setBounds(rect->vs[0].uv[0], rect->vs[0].uv[1], rect->vs[2].uv[0], rect->vs[2].uv[1]);
         rect->calculateNormal();
@@ -191,7 +192,7 @@ VBO VBOCreator::generateChunkVBO(Chunk* mainChunk, Chunk* topChunk, Chunk* botto
         rect->setUV(1, 0, quad.mHeight);
         rect->setUV(2, quad.mWidth, quad.mHeight);
         rect->setUV(3, quad.mWidth, 0);
-     
+
         verts +=4;indices+=6;
     }
 
@@ -200,11 +201,12 @@ VBO VBOCreator::generateChunkVBO(Chunk* mainChunk, Chunk* topChunk, Chunk* botto
         float worldX = quad.mX + chunkOffset.x;
         float worldY = quad.mY + chunkOffset.y;
         float worldZ = quad.mDepth + chunkOffset.z;
-		
+
 		int resId = quad.mType;
 		if(quad.mType == 1)resId = 3;
-        textureLocation = glm::uvec2(resId - 1, 0);
-		
+        textureLocation.x = (resId - 1) % 8;
+        textureLocation.y = (resId - 1) / 8;
+
 		rect->pushIndicesIntoVBO(nvbo);
         rect = (ChunkRect*)nvbo.getNextVertexPtr(4);
         rect->reset();
@@ -215,7 +217,7 @@ VBO VBOCreator::generateChunkVBO(Chunk* mainChunk, Chunk* topChunk, Chunk* botto
         rect->setUV(1, 0, quad.mHeight);
         rect->setUV(2, quad.mWidth, quad.mHeight);
         rect->setUV(3, quad.mWidth, 0);
-     
+
         verts +=4;indices+=6;
     }
 
@@ -226,8 +228,9 @@ VBO VBOCreator::generateChunkVBO(Chunk* mainChunk, Chunk* topChunk, Chunk* botto
         float worldZ = quad.mDepth + chunkOffset.z;
 		int resId = quad.mType;
 		if(quad.mType == 1)resId = 3;
-        textureLocation = glm::uvec2(resId - 1, 0);
-		
+        textureLocation.x = (resId - 1) % 8;
+        textureLocation.y = (resId - 1) / 8;
+
 		rect->pushIndicesIntoVBO(nvbo);
         rect = (ChunkRect*)nvbo.getNextVertexPtr(4);
         rect->reset();
@@ -238,7 +241,7 @@ VBO VBOCreator::generateChunkVBO(Chunk* mainChunk, Chunk* topChunk, Chunk* botto
         rect->setUV(1, 0, quad.mHeight);
         rect->setUV(2, quad.mWidth, quad.mHeight);
         rect->setUV(3, quad.mWidth, 0);
-     
+
         verts +=4;indices+=6;
     }
 
@@ -247,11 +250,12 @@ VBO VBOCreator::generateChunkVBO(Chunk* mainChunk, Chunk* topChunk, Chunk* botto
         float worldX = quad.mDepth + chunkOffset.x;
         float worldY = quad.mY + chunkOffset.y;
         float worldZ = quad.mX + chunkOffset.z;
-		
+
 		int resId = quad.mType;
 		if(quad.mType == 1)resId = 3;
-        textureLocation = glm::uvec2(resId - 1, 0);
-		
+        textureLocation.x = (resId - 1) % 8;
+        textureLocation.y = (resId - 1) / 8;
+
 		rect->pushIndicesIntoVBO(nvbo);
         rect = (ChunkRect*)nvbo.getNextVertexPtr(4);
         rect->reset();
@@ -262,7 +266,7 @@ VBO VBOCreator::generateChunkVBO(Chunk* mainChunk, Chunk* topChunk, Chunk* botto
         rect->setUV(1, 0, quad.mHeight);
         rect->setUV(2, quad.mWidth, quad.mHeight);
         rect->setUV(3, quad.mWidth, 0);
-     
+
         verts +=4;indices+=6;
     }
 
@@ -274,8 +278,9 @@ VBO VBOCreator::generateChunkVBO(Chunk* mainChunk, Chunk* topChunk, Chunk* botto
 
 		int resId = quad.mType;
 		if(quad.mType == 1)resId = 3;
-        textureLocation = glm::uvec2(resId - 1, 0);
-		
+        textureLocation.x = (resId - 1) % 8;
+        textureLocation.y = (resId - 1) / 8;
+        
 		rect->pushIndicesIntoVBO(nvbo);
         rect = (ChunkRect*)nvbo.getNextVertexPtr(4);
         rect->reset();
@@ -286,176 +291,9 @@ VBO VBOCreator::generateChunkVBO(Chunk* mainChunk, Chunk* topChunk, Chunk* botto
         rect->setUV(1, 0, quad.mHeight);
         rect->setUV(2, quad.mWidth, quad.mHeight);
         rect->setUV(3, quad.mWidth, 0);
-     
-        verts +=4;indices+=6;
-    }
-
-    //extract top quads
- /*   merger.setQuads(walker.getTopQuads());
-    merger.doSecondMerge();
-    for(auto& quad : merger.getQuads())
-    {
-        float worldX = quad.mX + chunkOffset.x;
-        float worldY = quad.mDepth + chunkOffset.y;
-        float worldZ = quad.mY + chunkOffset.z;
-
-        textureLocation = glm::uvec2(quad.mType - 1, 0);
-		rect->pushIndicesIntoVBO(nvbo);
-        rect = (ChunkRect*)nvbo.getNextVertexPtr(4);
-        rect->reset();
-        setChunkRectData(*rect, worldX, worldY, worldZ, TOP, textureLocation.x, textureLocation.y, quad.mWidth, quad.mHeight);
-        rect->setBounds(rect->vs[0].uv[0], rect->vs[0].uv[1], rect->vs[2].uv[0], rect->vs[2].uv[1]);
-        rect->calculateNormal();
-		rect->setUV(0, 0, 0);
-        rect->setUV(1, 0, quad.mHeight);
-        rect->setUV(2, quad.mWidth, quad.mHeight);
-        rect->setUV(3, quad.mWidth, 0);
-		
-		float y = worldY * 0.001f;
-		y = 1.0f - y;
-		y = glm::clamp(y, 0.f, 1.f);
-		
-		rect->setColor(y,y,y);
 
         verts +=4;indices+=6;
     }
-
-    //extract bottom quads
-    merger.setQuads(walker.getBottomQuads());
-    merger.doSecondMerge();
-    for(auto& quad : merger.getQuads())
-    {
-        float worldX = quad.mX + chunkOffset.x;
-        float worldY = quad.mDepth + chunkOffset.y;
-        float worldZ = quad.mY + chunkOffset.z;
-		int resId = quad.mType;
-		if(quad.mType == 1)resId = 2;
-        textureLocation = glm::uvec2(resId - 1, 0);
-		rect->pushIndicesIntoVBO(nvbo);
-        rect = (ChunkRect*)nvbo.getNextVertexPtr(4);
-        rect->reset();
-		
-        setChunkRectData(*rect, worldX, worldY, worldZ, BOTTOM, textureLocation.x, textureLocation.y, quad.mWidth, quad.mHeight);
-        rect->setBounds(rect->vs[0].uv[0], rect->vs[0].uv[1], rect->vs[2].uv[0], rect->vs[2].uv[1]);
-        rect->calculateNormal();
-		rect->setUV(0, 0, 0);
-        rect->setUV(1, 0, quad.mHeight);
-        rect->setUV(2, quad.mWidth, quad.mHeight);
-        rect->setUV(3, quad.mWidth, 0);
-     
-        verts +=4;indices+=6;
-    }
-
-    //extract front quads
-    merger.setQuads(walker.getFrontQuads());
-    merger.doSecondMerge();
-    for(auto& quad : merger.getQuads())
-    {
-        float worldX = quad.mX + chunkOffset.x;
-        float worldY = quad.mY + chunkOffset.y;
-        float worldZ = quad.mDepth + chunkOffset.z;
-		
-		int resId = quad.mType;
-		if(quad.mType == 1)resId = 3;
-        textureLocation = glm::uvec2(resId - 1, 0);
-		
-		rect->pushIndicesIntoVBO(nvbo);
-        rect = (ChunkRect*)nvbo.getNextVertexPtr(4);
-        rect->reset();
-        setChunkRectData(*rect, worldX, worldY, worldZ, FRONT, textureLocation.x, textureLocation.y, quad.mWidth, quad.mHeight);
-        rect->setBounds(rect->vs[0].uv[0], rect->vs[0].uv[1], rect->vs[2].uv[0], rect->vs[2].uv[1]);
-        rect->calculateNormal();
-		rect->setUV(0, 0, 0);
-        rect->setUV(1, 0, quad.mHeight);
-        rect->setUV(2, quad.mWidth, quad.mHeight);
-        rect->setUV(3, quad.mWidth, 0);
-     
-		
-        verts +=4;indices+=6;
-    }
-
-    //extract back quads
-    merger.setQuads(walker.getBackQuads());
-    merger.doSecondMerge();
-    for(auto& quad : merger.getQuads())
-    {
-        float worldX = quad.mX + chunkOffset.x;
-        float worldY = quad.mY + chunkOffset.y;
-        float worldZ = quad.mDepth + chunkOffset.z;
-		int resId = quad.mType;
-		if(quad.mType == 1)resId = 3;
-        textureLocation = glm::uvec2(resId - 1, 0);
-		
-		rect->pushIndicesIntoVBO(nvbo);
-        rect = (ChunkRect*)nvbo.getNextVertexPtr(4);
-        rect->reset();
-        setChunkRectData(*rect, worldX, worldY, worldZ, BACK, textureLocation.x, textureLocation.y, quad.mWidth, quad.mHeight);
-        rect->setBounds(rect->vs[0].uv[0], rect->vs[0].uv[1], rect->vs[2].uv[0], rect->vs[2].uv[1]);
-        rect->calculateNormal();
-		rect->setUV(0, 0, 0);
-        rect->setUV(1, 0, quad.mHeight);
-        rect->setUV(2, quad.mWidth, quad.mHeight);
-        rect->setUV(3, quad.mWidth, 0);
-     
-        verts +=4;indices+=6;
-    }
-
-    //extract left quads
-    merger.setQuads(walker.getLeftQuads());
-    merger.doFirstMerge();
-    merger.doSecondMerge();
-    for(auto& quad : merger.getQuads())
-    {
-        float worldX = quad.mDepth + chunkOffset.x;
-        float worldY = quad.mY + chunkOffset.y;
-        float worldZ = quad.mX + chunkOffset.z;
-		
-		int resId = quad.mType;
-		if(quad.mType == 1)resId = 3;
-        textureLocation = glm::uvec2(resId - 1, 0);
-		
-		rect->pushIndicesIntoVBO(nvbo);
-        rect = (ChunkRect*)nvbo.getNextVertexPtr(4);
-        rect->reset();
-        setChunkRectData(*rect, worldX, worldY, worldZ, LEFT, textureLocation.x, textureLocation.y, quad.mWidth, quad.mHeight);
-        rect->setBounds(rect->vs[0].uv[0], rect->vs[0].uv[1], rect->vs[2].uv[0], rect->vs[2].uv[1]);
-        rect->calculateNormal();
-		rect->setUV(0, 0, 0);
-        rect->setUV(1, 0, quad.mHeight);
-        rect->setUV(2, quad.mWidth, quad.mHeight);
-        rect->setUV(3, quad.mWidth, 0);
-     
-        verts +=4;indices+=6;
-    }
-
-    //extract right quads
-    merger.setQuads(walker.getRightQuads());
-    merger.doFirstMerge();
-    merger.doSecondMerge();
-    for(auto& quad : merger.getQuads())
-    {
-        float worldX = quad.mDepth + chunkOffset.x - 1.0f;
-        float worldY = quad.mY + chunkOffset.y;
-        float worldZ = quad.mX + chunkOffset.z;
-
-		int resId = quad.mType;
-		if(quad.mType == 1)resId = 3;
-        textureLocation = glm::uvec2(resId - 1, 0);
-		
-		rect->pushIndicesIntoVBO(nvbo);
-        rect = (ChunkRect*)nvbo.getNextVertexPtr(4);
-        rect->reset();
-        setChunkRectData(*rect, worldX, worldY, worldZ, RIGHT, textureLocation.x, textureLocation.y, quad.mWidth, quad.mHeight);
-        rect->setBounds(rect->vs[0].uv[0], rect->vs[0].uv[1], rect->vs[2].uv[0], rect->vs[2].uv[1]);
-        rect->calculateNormal();
-		rect->setUV(0, 0, 0);
-        rect->setUV(1, 0, quad.mHeight);
-        rect->setUV(2, quad.mWidth, quad.mHeight);
-        rect->setUV(3, quad.mWidth, 0);
-     
-        verts +=4;indices+=6;
-    }
-*/
 
     //printf("Generated %u vertices and %u indices\n", verts, indices);
     //After stuff has been added, you have to update the gpu vbo data.
@@ -621,7 +459,7 @@ VBO VBOCreator::generateBoardVBO(const glm::vec2& dimensions) const
     vbo.getVertexDeclaration().addElement(VertexElement::ELEMENT_FLOAT2, 3, "uv");
 	vbo.setMaxSize(4, 6);
 	vbo.allocateBuffers();
-	
+
 	glm::uvec2 textureLocation(0, 2);
 	BillboardRect* billRect;
 	billRect->pushIndicesIntoVBO(vbo);
@@ -636,23 +474,23 @@ VBO VBOCreator::generateBoardVBO(const glm::vec2& dimensions) const
 		billRect->setPosition(1, -1 * scaleX,-1 * scaleY, 0);
 		billRect->setPosition(2,  1 * scaleX,-1 * scaleY, 0);
 		billRect->setPosition(3,  1 * scaleX, 1 * scaleY, 0);
-		
+
 		float u = textureLocation.x;
 		float v = textureLocation.y;
 		float uo, vo;
 		uo = vo	= 0.125f;
-		
+
 		#ifdef EMSCRIPTEN
 			float e = 0.006f;
 		#else
 			float e = 0.0006f;
 		#endif
-		
+
 		billRect->setUV(0, e+      (float)u * uo,  e+      (float)v * vo);
 		billRect->setUV(1, e+      (float)u * uo, -e+ vo + (float)v * vo);
 		billRect->setUV(2,-e+ uo + (float)u * uo, -e+ vo + (float)v * vo);
 		billRect->setUV(3,-e+ uo + (float)u * uo,  e+      (float)v * vo);
-				
+
 		billRect->calculateNormal();
 		// printf("Generated billboard.\n");
 	}
