@@ -222,7 +222,6 @@ set_target_properties(${project_name} PROPERTIES COMPILE_FLAGS "-std=c++11 -pthr
 
 #But that doesn't work in windows.
 if(WIN32)
-
     add_definitions(-std=c++11 -pthread)
 	add_definitions(-O4)
 endif(WIN32)
@@ -243,6 +242,14 @@ else(ENET_FOUND)
     ENDIF(WIN32)
 	target_link_libraries(${project_name} ${ELIBS})
 endif(ENET_FOUND)
+if(ZLIB_FOUND)
+    include_directories(${ZLib_INCLUDE_DIRS})
+    target_link_libraries(${project_name} ${ZLib_LIBRARIES})
+else(ZLIB_FOUND)
+    subdirs(${CMAKE_CURRENT_SOURCE_DIR}/extlibs/zlib-1.2.8)
+    include_directories(${CMAKE_CURRENT_SOURCE_DIR}/extlibs/zlib-1.2.8)
+    target_link_libraries(${project_name} zlibstatic)
+endif(ZLIB_FOUND)
 
 if(ANGELSCRIPT_FOUND)
     include_directories(${ANGELSCRIPT_INCLUDE_DIRECTORY})

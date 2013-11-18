@@ -21,3 +21,4 @@ remake.sh
 *.7z
 o2
 32bit
+zlib-1.2.8/*

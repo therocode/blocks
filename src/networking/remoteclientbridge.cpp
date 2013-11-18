@@ -85,7 +85,7 @@ void RemoteClientBridge::sendAwaiting()
         std::vector<uint8_t> data = package->serialise();
 
         ENetPacket* packet = enet_packet_create(&data[0], data.size(), package->mUnreliable ? ENET_PACKET_FLAG_UNSEQUENCED : ENET_PACKET_FLAG_RELIABLE);
-        enet_peer_send(mPeer, 0, packet);
+        enet_peer_send(mPeer, package->mChannel, packet);
     }
     //enet_host_flush(mPeer);
 }

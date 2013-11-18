@@ -33,6 +33,7 @@ class RemoteServerBridge : public ServerClientBridge
         void acceptEnetPacket(ENetPacket* packet);
         void deserialiseAndReceive(const std::vector<uint8_t>& data, BasePackage* package);
 	protected:
+        int  mChannelCount;
 		void mListenerFunction();
 		std::atomic<bool> mStop;
 
