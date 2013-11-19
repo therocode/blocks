@@ -10,24 +10,25 @@ class BasePackage
 {
     public:
         BasePackage();
-        BasePackage(PackageType type, bool unreliable = false);
+        BasePackage(PackageType type, bool unreliable = false, int channel = 0);
         virtual std::vector<uint8_t> serialise() const = 0;
         virtual void deserialise(const std::vector<uint8_t>& bytes) = 0;
         PackageType mType;
         bool mUnreliable;
+        int  mChannel = 0;
 };
 
-template<typename Tag, PackageType TypeId, bool Unreliable, typename... Types>
+template<typename Tag, PackageType TypeId, bool Unreliable, int Channel, typename... Types>
 class Package : public BasePackage
 {
     public:
         Package()
         {
         }
-        Package(Types... values) : BasePackage(TypeId, Unreliable), data(values...)
+        Package(Types... values) : BasePackage(TypeId, Unreliable, Channel), data(values...)
         {
         }
-        Package(std::tuple<Types...> value) : BasePackage(TypeId, Unreliable), data(value)
+        Package(std::tuple<Types...> value) : BasePackage(TypeId, Unreliable, Channel), data(value)
         {
         }
         virtual std::vector<uint8_t> serialise() const override

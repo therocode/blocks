@@ -129,7 +129,7 @@ void PlayerController::handleMessage(const PlayerActionMessage& received)
 					break;
 			}
 
-			mBus.sendMessage<SetVoxelMessage>(SetVoxelMessage(voxel, (playerId + 1) % 18));
+			mBus.sendMessage<SetVoxelMessage>(SetVoxelMessage(voxel,rand()%4 + 17));// (playerId + 1) % 20));
 		}
     }
 }

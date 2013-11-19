@@ -93,7 +93,7 @@ void RemoteClientConnectionListener::createHost()
 	mAddress.port = mPort;
 	mHost = enet_host_create(&mAddress, //What address to host on.
 			32,		//Maximum connections.
-			2,		//Maximum channels.
+			mChannelCount,		//Maximum channels.
 			0,		//Estimated incoming traffic.
 			0);		//Estimated outcoming traffic.
 	if(mHost == NULL)

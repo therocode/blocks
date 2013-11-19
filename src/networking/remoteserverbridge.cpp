@@ -6,8 +6,8 @@
 RemoteServerBridge::RemoteServerBridge(fea::MessageBus& bus) : mBus(bus), mLogName("network"), mGotPackagesToSend(false)
 {
 	mConnected = false;
-
-	mPort = 35940;
+	mPort = 56566;
+    mChannelCount = 3;
 }
 
 RemoteServerBridge::~RemoteServerBridge()
@@ -28,7 +28,7 @@ void RemoteServerBridge::connectToAddress(std::string address, int port)
 		}
 
 		mAddress.port = mPort;
-		mHostPeer = enet_host_connect(mHost, &mAddress, 2, 0);
+		mHostPeer = enet_host_connect(mHost, &mAddress, mChannelCount, 0);
 
 		if(mHostPeer == NULL)
 		{
@@ -122,7 +122,7 @@ void RemoteServerBridge::mListenerFunction()
                 std::vector<uint8_t> data = package->serialise();
 
                 ENetPacket* packet = enet_packet_create(&data[0], data.size(), package->mUnreliable ? ENET_PACKET_FLAG_UNSEQUENCED : ENET_PACKET_FLAG_RELIABLE);
-                enet_peer_send(mHostPeer, 0, packet);
+                enet_peer_send(mHostPeer, package->mChannel, packet);
             }
             mGotPackagesToSend = false;
         }
