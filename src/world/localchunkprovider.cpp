@@ -57,10 +57,17 @@ Chunk LocalChunkProvider::fetchChunk(const ChunkCoordinate& location) const
 					noiseYPos *= s;
 					noiseXPos *= s;
 					noiseZPos *= s;
+#ifndef NOISE_ASM
 					if(raw_noise_3d(noiseYPos, noiseXPos, noiseZPos) > 0.9)
 					{
 						types[currentBlock] = 5;
 					}
+#else
+					if(asm_raw_noise_3d(noiseYPos, noiseXPos, noiseZPos) > 0.9)
+					{
+						types[currentBlock] = 5;
+					}
+#endif
 					
 					
 				}
