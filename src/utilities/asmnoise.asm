@@ -80,56 +80,36 @@ section .text
 	subps    xmm0,xmm2
 ;0=x0y0z0 1=ijk 6=G3
 
-; asm_raw_noise_3d:
-; unpcklps xmm0,xmm1
-; movlhps xmm0,xmm2
-
 	vbroadcastss xmm7,[one]
-	pshufd xmm2,xmm0,000001b ;yxx
-	pshufd xmm3,xmm0,100110b ;zyz
-	movaps xmm4,xmm2
-	cmpps  xmm2,xmm3,5 ;y>=z  x>=y  x>=z
-	cmpps  xmm4,xmm3,1 ;z> y  y> x  z> x
-	movss  xmm3,xmm4
-	shufps xmm2,xmm2,010010b
+	pshufd   xmm2,xmm0,000001b ;yxx
+	pshufd   xmm3,xmm0,100110b ;zyz
+	movaps   xmm4,xmm2
+	cmpps    xmm2,xmm3,5 ;y>=z  x>=y  x>=z
+	cmpps    xmm4,xmm3,1 ;z> y  y> x  z> x
+	movss    xmm3,xmm4
+	shufps   xmm2,xmm2,010010b
 	insertps xmm4,xmm2,10001000b
-	movlhps xmm2,xmm3
-	andps   xmm2,xmm4
-	andps   xmm2,xmm7
+	movlhps  xmm2,xmm3
+	movaps   xmm3,xmm2
+	andps    xmm2,xmm4
+	orps     xmm3,xmm4
+	andps    xmm2,xmm7
+	andps    xmm3,xmm7
+;0=x0y0z0 1=ijk 2=i1j1k1 3=i2j2k2 6=G3 7=1.0f
 
-movaps xmm3,xmm1 ;temp
-
-	pshufd   xmm1,xmm0,01b
-	pshufd   xmm4,xmm0,10b
-	minss    xmm1,xmm4
-	cmpss    xmm1,xmm0,2
-	andps    xmm1,xmm7      ;i2
-	pshufd   xmm4,xmm0,01b
-	pshufd   xmm8,xmm0,10b
-	cmpss    xmm8,xmm4,2
-	andps    xmm8,xmm7
-	cmpss    xmm4,xmm0,6
-	andps    xmm4,xmm7
-	orps     xmm4,xmm8      ;j2
-	addss    xmm7,xmm7
-	subss    xmm7,xmm1
-	subss    xmm7,xmm4      ;k2
-	unpcklps xmm1,xmm4
-	movlhps  xmm1,xmm7
-; pshufd xmm0,xmm2,2
-; ret
-;0=x0y0z0 1=i2j2k2 2=i1j1k1 3=ijk 6=G3
-
-	vbroadcastss xmm8,[one]
 	vsubps   xmm4,xmm0,xmm2
 	addps    xmm4,xmm6
-	vsubps   xmm5,xmm0,xmm1
+	vsubps   xmm5,xmm0,xmm3
 	addps    xmm6,xmm6
 	addps    xmm5,xmm6
-	vsubps   xmm7,xmm0,xmm8
-	addss    xmm6,[G3] ;vbroadcastss xmm6,[F3]
+	vsubps   xmm7,xmm0,xmm7
+	addss    xmm6,[G3]
 	shufps   xmm6,xmm6,0
 	addps    xmm7,xmm6
+
+movaps xmm8,xmm1 ;temp
+movaps xmm1,xmm3 ;temp
+movaps xmm3,xmm8 ;temp
 ;0=x0y0z0 1=i2j2k2 2=i1j1k1 3=ijk 4=x1y1z1 5=x2y2z2 7=x3y3z3
 
 	cvtps2dq xmm3,xmm3
