@@ -27,6 +27,7 @@
 	mouseDown = false;
 	windowFocus = true;
     mBus.addMessageSubscriber<PlayerIdMessage>(*this);
+    mNewPitch = mNewYaw = 0;
 }
 
 InputAdaptor::~InputAdaptor()
@@ -60,12 +61,17 @@ void InputAdaptor::update()
 			{
 				if(windowFocus)
 				{
-					float pitch = -event.mouseMove.rely;
-					float yaw   = -event.mouseMove.relx;
+                    mNewYaw -= event.mouseMove.relx;
+                    mNewPitch -= event.mouseMove.rely;
+                    if(glm::abs(mNewYaw) > 10.f || glm::abs(mNewPitch) > 10.f){
+					float pitch = mNewPitch;//-event.mouseMove.rely;
+					float yaw   = mNewYaw;//-event.mouseMove.relx;
+                    mNewPitch = mNewYaw = 0;
 					float sensitivity = 0.2f;
 					pitch *= sensitivity;
 					yaw   *= sensitivity;
 					mBus.sendMessage<PlayerPitchYawMessage>(PlayerPitchYawMessage(mPlayerId, pitch, yaw));
+                    }
 				}
 				lastMouseX = event.mouseMove.x;
 				lastMouseY = event.mouseMove.y;
