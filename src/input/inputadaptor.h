@@ -33,5 +33,8 @@ class InputAdaptor : public fea::MessageReceiver<PlayerIdMessage>
         bool mHoldingLeft;
         bool mHoldingRight;
 
+        float mNewPitch;
+        float mNewYaw;
+        
         MoveDirection direction;
 };
