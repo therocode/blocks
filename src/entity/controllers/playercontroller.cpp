@@ -35,7 +35,7 @@ void PlayerController::removeEntity(fea::EntityId id)
 {
 }
 
-void PlayerController::onFrame()
+void PlayerController::onFrame(int dt)
 {
 }
 

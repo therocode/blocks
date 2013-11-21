@@ -73,9 +73,9 @@ void InputAdaptor::update()
                     pitch *= sensitivity;
                     yaw   *= sensitivity;
                     PlayerPitchYawMessage msg(mPlayerId, pitch, yaw);
-                    msg.onlyLocal = true;
+                   // msg.onlyLocal = true;
                     mBus.sendMessage<PlayerPitchYawMessage>(msg);
-                    if(glm::abs(mNewYaw) > 10.f || glm::abs(mNewPitch) > 10.f)
+                   /* if(glm::abs(mNewYaw) > 10.f || glm::abs(mNewPitch) > 10.f)
                     {
                         mNewYaw *= sensitivity;
                         mNewPitch *= sensitivity;
@@ -83,7 +83,7 @@ void InputAdaptor::update()
                         msg = PlayerPitchYawMessage(mPlayerId, mNewPitch, mNewYaw);
                         mBus.sendMessage<PlayerPitchYawMessage>(msg);
                         mNewPitch = mNewYaw = 0;
-                    }
+                    }*/
                 }
                 lastMouseX = event.mouseMove.x;
                 lastMouseY = event.mouseMove.y;

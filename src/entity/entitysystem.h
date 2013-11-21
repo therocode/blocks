@@ -5,6 +5,7 @@
 #include "controllers/entitycontroller.h"
 #include "entityfactory.h"
 #include "entitymessages.h"
+#include "utilities/timer.h"
 
 class asIScriptObject;
 
@@ -36,4 +37,5 @@ class EntitySystem :
         EntityFactory mFactory;
         std::vector<std::unique_ptr<EntityController> > mControllers;
         std::string mLogName;
+        Timer mTimer;
 };

@@ -20,7 +20,7 @@ class PlayerController :
         ~PlayerController();
         virtual void inspectEntity(fea::WeakEntityPtr entity);
         virtual void removeEntity(fea::EntityId id);
-        virtual void onFrame() override;
+        virtual void onFrame(int dt) override;
         void handleMessage(const PlayerJoinedMessage& received);
         void handleMessage(const PlayerDisconnectedMessage& received);
         void handleMessage(const PlayerActionMessage& received);

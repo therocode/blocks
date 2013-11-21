@@ -59,7 +59,7 @@ void Client::setup()
 	mWindow.create(fea::VideoMode(800, 600, 32), "Blocky", fea::Style::Default, fea::ContextSettings(32));
     mLockedMouse = true;
 	mWindow.lockCursor(true);
-	// mWindow.setVSyncEnabled(false);
+	mWindow.setVSyncEnabled(false);
 	mRenderer.setup();
 	//	mWindow.setFramerateLimit(30);
 
@@ -69,6 +69,7 @@ void Client::setup()
 	loadTexture("data/textures/icon16x16.png", 16, 16, icon);
 	mWindow.setIcon(16, 16, icon.data());
 
+    t.start();
 	//if there's an error, display it
 }
 
@@ -89,6 +90,13 @@ void Client::handleInput()
 
 void Client::render()
 {
+    if(t.getTime() >= 1000){
+        t.stop();
+        t.start();
+        mWindow.setTitle("Blocks | FPS:" + std::to_string(fps));
+        fps = 0;
+    }
+    fps ++;
 	mRenderer.cameraUpdate();
 	mRenderer.render();
 	mWindow.swapBuffers();

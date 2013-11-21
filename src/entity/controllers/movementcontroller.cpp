@@ -1,7 +1,7 @@
 #include "movementcontroller.h"
 #include "moveaction.h"
 #include <iostream>
-        
+
 MovementController::MovementController(fea::MessageBus& bus, WorldInterface& worldInterface) : EntityController(bus, worldInterface)
 {
     mBus.addMessageSubscriber<EntityJumpMessage>(*this);
@@ -28,15 +28,15 @@ void MovementController::inspectEntity(fea::WeakEntityPtr entity)
         mEntities.emplace(locked->getId(), entity);
     }
 }
- 
+
 void MovementController::removeEntity(fea::EntityId id)
 {
     mEntities.erase(id);
 }
 
-void MovementController::onFrame()
+void MovementController::onFrame(int dt)
 {
-    
+
     for(auto wEntity : mEntities)
     {
         float maxAcc = 0.01f;
@@ -48,7 +48,7 @@ void MovementController::onFrame()
 
         float propellSpeed = 0.0f;
         bool backwards = false;
-		
+
 		if(action == MoveAction::WALKING)
 			propellSpeed = entity->getAttribute<float>("walk_speed");
 		else if(action == MoveAction::WALKING)
@@ -74,7 +74,7 @@ void MovementController::onFrame()
 		{
 			forwardDirection = glm::vec3(glm::cos(pitch) * glm::sin(yaw), glm::sin(pitch), glm::cos(pitch) * glm::cos(yaw)) * (float) moveDirection.getForwardBack();
 		}
-   
+
 		glm::vec3 sideDirection = glm::vec3(glm::sin(yaw + glm::radians(90.0f * (float)moveDirection.getLeftRight())), 0.0f,glm::cos(yaw + glm::radians(90.0f * (float)moveDirection.getLeftRight())));
 
 		if(moveDirection.getLeftRight() == 0)
@@ -85,7 +85,7 @@ void MovementController::onFrame()
 		glm::vec3 direction = (forwardDirection + sideDirection);
 		if(glm::length2(direction) !=0)
 			direction = glm::normalize(direction);
-		
+
 		glm::vec3 targetVel;
 
 		if(propellSpeed > 0.0f)
@@ -135,9 +135,9 @@ void MovementController::onFrame()
 		}else
 		{
 			acc *= 0.01f;
-		}	
+		}
 		entity->setAttribute<glm::vec3>("acceleration", acc);
-		
+
 		if(entity->getAttribute<bool>("jumping")){
 			float jumpStrength = entity->getAttribute<float>("jump_strength");
 			float ySpeed = entity->getAttribute<glm::vec3>("velocity").y;

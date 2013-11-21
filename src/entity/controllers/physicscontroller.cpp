@@ -29,9 +29,9 @@ void PhysicsController::inspectEntity(fea::WeakEntityPtr entity)
     }
 }
 
-void PhysicsController::onFrame()
+void PhysicsController::onFrame(int dt)
 {
-	int dt = mTimer.getDeltaTime();
+	//int dt = mTimer.getDeltaTime();
 	if(dt > 100) return;
 	dt += accumulator;
 	int millisecondsPerStep = 1000/60;
@@ -41,7 +41,7 @@ void PhysicsController::onFrame()
 	if(steps == 0) return;
 	if(steps > 10) steps = 10;
 
-    steps = 1; // if steps are used, it turns weird with the movementcontroller
+    //steps = 1; // if steps are used, it turns weird with the movementcontroller
 
     for(auto wEntity : mEntities)
     {
@@ -60,11 +60,15 @@ void PhysicsController::onFrame()
 		glm::vec3 newVelocity = currentVelocity + acceleration;
 		glm::vec3 newPosition = currentPosition + newVelocity;
 		float drag = entity->getAttribute<float>("drag");
+        bool onGround = entity->getAttribute<bool>("on_ground");
 		for(int i = 0; i < steps; i ++)
 		{
 			newPosition = newPosition + newVelocity;
 			newVelocity += acceleration;
 			newVelocity *= (1.0f - drag);
+            if(onGround){
+               newVelocity *= 0.9f; 
+            }
 		}
         entity->setAttribute<glm::vec3>("velocity", newVelocity);
         mBus.sendMessage<EntityMoveRequestedMessage>(EntityMoveRequestedMessage(entity->getId(), newPosition));

@@ -55,14 +55,14 @@ void Timer::setDeltaThreshold(int milliseconds)
 	mDeltaThreshold = milliseconds;	
 }
 
-void Timer::setDesiredFPSRate(float rate)
+void Timer::setDesiredFPSRate(int rate)
 {
     fps = rate;   
 }
 
 void Timer::sleepForTheRestOfTheFrame()
 {
-    std::chrono::microseconds frameLength = std::chrono::microseconds(1000000) / 60;
+    std::chrono::microseconds frameLength = std::chrono::microseconds(1000000) / fps;
     std::chrono::microseconds microsecondsElapsed = duration_cast<microseconds>(mClock.now() - mLastTime);
     std::chrono::microseconds microsecondsLeft =  frameLength - microsecondsElapsed;
 

@@ -21,7 +21,7 @@ void CollisionController::inspectEntity(fea::WeakEntityPtr entity)
     }
 }
 
-void CollisionController::onFrame()
+void CollisionController::onFrame(int dt)
 {
     for(auto wEntity : mEntities)
     {
@@ -30,9 +30,9 @@ void CollisionController::onFrame()
 		glm::vec3 position = entity->getAttribute<glm::vec3>("position");
 		glm::vec3 size = entity->getAttribute<glm::vec3>("hitbox");
 		glm::vec3 velocity = entity->getAttribute<glm::vec3>("velocity");
-		
+
 		AABB a;
-		
+
 		a.x = position.x - size.x * 0.5f;
 		a.y = position.y - size.y * 0.5f;
 		a.z = position.z - size.z * 0.5f;
@@ -40,13 +40,11 @@ void CollisionController::onFrame()
 		a.width = size.x;
 		a.height = size.y;
 		a.depth = size.z;
-		
+
 		if(isOnGround){
 			if(!AABBOnGround(a)){
 				entity->setAttribute<bool>("on_ground", false);
 				mBus.sendMessage<EntityOnGroundMessage>(EntityOnGroundMessage(entity->getId(), false));
-			}else{
-				entity->setAttribute<glm::vec3>("velocity", velocity * 0.9f);
 			}
         }else{
 			if(AABBOnGround(a) && velocity.y <= 0.001f){
@@ -82,11 +80,11 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
     a.height = size.y;
     a.depth  = size.z;
     glm::vec3 v = approvedPosition - oldPosition;
-	
+
 	glm::vec3 ignoreAxis = glm::vec3(0);
 	float n = 0.0;
 	int steps = 0;
-	
+
 	while(n < 1.0f){
 		steps++;
 		glm::vec3 normal = glm::vec3(0);
@@ -96,7 +94,7 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
 		n = sweepAroundAABB(a, v, normal, ignoreAxis);
 		// Renderer::sDebugRenderer.drawBox(a.x + a.width*0.5f, a.y + a.height*0.5f, a.z + a.depth*0.5f, a.width  + 0.001f, a.height + 0.001f, a.depth + 0.001f, DebugRenderer::ORANGE);
 		if(n < 1.f)
-		{ 
+		{
 			for(int i = 0; i < 3; i++){
 				if(normal[i] != 0){
 					ignoreAxis[i] = 1.0;
@@ -105,7 +103,7 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
 			}
 			approvedPosition = oldPosition + v * glm::max(n - 0.08f, 0.0f);
 			oldPosition = approvedPosition;
-			
+
 			velocity = mEntities.at(id).lock()->getAttribute<glm::vec3>("velocity");
 			glm::vec3 acceleration = mEntities.at(id).lock()->getAttribute<glm::vec3>("acceleration");
 
@@ -117,7 +115,7 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
 
 			glm::vec3 additionalVelocity = c * remainingTime;
 			approvedPosition += additionalVelocity;
-			
+
 			//velocity += additionalVelocity;
 			//velocity is either 0 or 1, depending if it collided or not. when all is working it should use the normal to do stuff.
 			//printf("noral: %f, %f, %f\n", normal.x, normal.y, normal.z);
@@ -151,14 +149,14 @@ float CollisionController::sweepAroundAABB(const AABB a, glm::vec3 velocity, glm
             {
                 glm::vec3 cubePos = glm::vec3(a.x + velocity.x, a.y + velocity.y, a.z + velocity.z) + glm::vec3(x, y, z);
 				//set position of aabb B
-				b.x = glm::floor(cubePos.x);                 
+				b.x = glm::floor(cubePos.x);
 				b.y = glm::floor(cubePos.y);
 				b.z = glm::floor(cubePos.z);
-			
+
 				//if(b.x < 0) b.x --;
 				//if(b.y < 0) b.y --;
-				//if(b.z < 0) b.z --;	
-				
+				//if(b.z < 0) b.z --;
+
 				//b.x = (int)b.x;
 				//b.y = (int)b.y;
 				//b.z = (int)b.z;
@@ -166,11 +164,11 @@ float CollisionController::sweepAroundAABB(const AABB a, glm::vec3 velocity, glm
                 {
 				    glm::vec3 norm;
 					// renderDebugAABB(b, DebugRenderer::GREEN);
-                   
+
 
                     //A is the entity, B is block in world, v is newPosition - oldPosition. Function should set norm to a normal on which face it collided. returns depth, which is between 0 and 1.
                     float nn = sweepAABB(a, b, velocity, norm);
-                 
+
                     //If depth is shallower than before, set the new depth to the new value.
 					int axis = 0;
 					for(int i = 0; i < 3; i++)
@@ -225,17 +223,17 @@ bool CollisionController::AABBOnGround(AABB a)
 	{
 		pos.x = x + a.x;
 		pos.z = z + a.z;
-		
-	
+
+
 		if(mWorldInterface.getVoxelType(pos) != 0){
-			b.x = pos.x;                 
+			b.x = pos.x;
 			b.y = pos.y;
 			b.z = pos.z;
-			
+
 			if(b.x < 0) b.x --;
 			if(b.y < 0) b.y --;
 			if(b.z < 0) b.z --;
-			
+
 			b.x = (int)b.x;
 			b.y = (int)b.y;
 			b.z = (int)b.z;
@@ -245,7 +243,7 @@ bool CollisionController::AABBOnGround(AABB a)
 		}
 	}
 	return false;
-	
+
 }
 bool CollisionController::AABBAABB(const AABB a, const AABB b) const
 {
@@ -269,8 +267,8 @@ float CollisionController::sweepAABB(const AABB a, const AABB b, const glm::vec3
     {
 		 return 1.0;
     }
-	
-	  
+
+
     float epsilon = 0.001f;
     float xEntry, yEntry, zEntry;
     float xExit,  yExit,  zExit;
@@ -293,7 +291,7 @@ float CollisionController::sweepAABB(const AABB a, const AABB b, const glm::vec3
         yEntry = (b.y + b.height) - a.y;
         yExit  = b.y - (a.y + a.height);
     }
-	
+
     if(v.z > 0.0f)
     {
         zEntry = b.z - (a.z + a.depth);
@@ -307,7 +305,7 @@ float CollisionController::sweepAABB(const AABB a, const AABB b, const glm::vec3
     float xs, ys, zs;
     float xe, ye, ze;
     float infinity = std::numeric_limits<float>::infinity();
-	
+
     if(v.x == 0)
     {
         xs = -infinity;
@@ -410,11 +408,11 @@ float CollisionController::sweepAABB(const AABB a, const AABB b, const glm::vec3
         if(maxL > 1.0f)
         {
             n.x = n.y = n.z =0.f;
-            return 1.0f; 
+            return 1.0f;
         }
     }
 //Renderer::sDebugRenderer.drawBox(b.x + b.width*0.5f, b.y + b.height*0.5f, b.z + b.depth*0.5f, b.width  + 0.001f, b.height + 0.001f, b.depth + 0.001f, DebugRenderer::GREEN);
-     
+
     return entry;
 }
 void CollisionController::removeEntity(fea::EntityId id)

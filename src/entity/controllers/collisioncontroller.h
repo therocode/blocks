@@ -14,7 +14,7 @@ class CollisionController : public EntityController,
 		};
         CollisionController(fea::MessageBus& bus, WorldInterface& worldInterface);
         virtual void inspectEntity(fea::WeakEntityPtr entity) override;
-        void onFrame() override;
+        void onFrame(int dt) override;
         void handleMessage(const EntityMoveRequestedMessage& message) override;
         virtual void removeEntity(fea::EntityId id);
 		bool AABBOnGround(AABB a);

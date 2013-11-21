@@ -14,6 +14,7 @@ EntitySystem::EntitySystem(fea::MessageBus& bus) :
 {
     mBus.addMessageSubscriber<SpawnEntityMessage>(*this);
     mBus.addMessageSubscriber<RemoveEntityMessage>(*this);
+    mTimer.start();
 }
 
 EntitySystem::~EntitySystem()
@@ -54,9 +55,10 @@ void EntitySystem::setup()
 
 void EntitySystem::update()
 {
+    int dt = mTimer.getDeltaTime();
     for(auto& controller : mControllers)
     {
-        controller->onFrame();
+        controller->onFrame(dt);
     }
 }
 

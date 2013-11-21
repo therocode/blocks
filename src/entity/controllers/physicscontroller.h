@@ -12,7 +12,7 @@ class PhysicsController :
         PhysicsController(fea::MessageBus& bus, WorldInterface& worldInterface);
         ~PhysicsController();
         virtual void inspectEntity(fea::WeakEntityPtr entity);
-        virtual void onFrame() override;
+        virtual void onFrame(int dt) override;
         void handleMessage(const GravityRequestedMessage& received);
         void handleMessage(const PhysicsImpulseMessage& received);
         virtual void removeEntity(fea::EntityId id);

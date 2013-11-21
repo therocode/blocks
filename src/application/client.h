@@ -11,6 +11,8 @@
 #include "utilities/logger.h"
 #include "application/applicationmessages.h"
 
+#include "utilities/timer.h"
+
 class Client :
     public fea::MessageReceiver<PlayerActionMessage>,
     public fea::MessageReceiver<PlayerMoveDirectionMessage>,
@@ -39,6 +41,9 @@ class Client :
         void setServerBridge(std::unique_ptr<ServerClientBridge> bridge);
         fea::MessageBus& getBus();
     private:
+        int fps = 0;
+        Timer t;
+
         void fetchServerData();
         void updateChunk(const ChunkCoordinate& coordinate);
         bool mLockedMouse;
