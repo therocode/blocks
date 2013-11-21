@@ -20,6 +20,9 @@ void ChunkGeneratorQueue::generateSomeChunks(std::unordered_map<ChunkCoordinate,
     mTimer.start();
     while(mTimer.getTime() < mMaxGenTime){
         auto iterator = mQueue.begin(); 
+        if(iterator == mQueue.end()){
+            break;
+        }
         auto closestChunk = iterator;
         float minDist = 999999999.f;
         for(;iterator != mQueue.end(); iterator ++){
