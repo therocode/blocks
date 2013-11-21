@@ -5,6 +5,7 @@
 #include <thread>
 #include <atomic>
 #include <featherkit/messaging.h>
+#include "packages.h"
 
 class RemoteClientConnectionListener : public ClientConnectionListener
 {
@@ -30,5 +31,4 @@ class RemoteClientConnectionListener : public ClientConnectionListener
 		std::atomic<bool> mStop;
         std::atomic<size_t> mNextClientId;
         std::unordered_map<size_t, Peer*> mPeers;
-        int mChannelCount = 4;
 };

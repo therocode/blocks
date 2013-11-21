@@ -214,7 +214,7 @@ void Server::acceptClientConnection(std::shared_ptr<ClientConnection> client)
     for(const auto& chunk : mWorld.getWorldInterface().getChunkList())
     {
         std::shared_ptr<BasePackage> chunkAddedPackage(new ChunkLoadedPackage(chunk.second.getLocation(), chunk.second.getVoxelTypeData().mRleSegmentIndices, chunk.second.getVoxelTypeData().mRleSegments));
-//        client->enqueuePackage(chunkAddedPackage);
+        client->enqueuePackage(chunkAddedPackage);
     }
 
     mBus.sendMessage<PlayerJoinedMessage>(PlayerJoinedMessage(newClientId, glm::vec3(0.0f, 45.0f, 0.0f))); //position could be loaded from file or at spawn

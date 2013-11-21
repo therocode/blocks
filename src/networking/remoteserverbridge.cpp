@@ -216,7 +216,7 @@ void RemoteServerBridge::createClient()
 {
     mHost = enet_host_create(NULL, //This isn't going to host anything. noone can connect to this.
             1,//one outgoing connection.
-            5,//channels
+            CHANNEL_COUNT,//channels
             0,//out
             0);// no this is out, the one above is incoming.
     if(mHost)

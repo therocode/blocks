@@ -6,10 +6,11 @@
 #include "world/worldmessages.h"
 #include "rendering/renderingmessages.h"
 
+const int CHANNEL_COUNT = 5;
 enum PACKET_CHANNELS{
     CHANNEL_DEFAULT = 0,
-    CHANNEL_CHUNKS,
-    CHANNEL_ENTITY
+    CHANNEL_CHUNKS  = 1,
+    CHANNEL_ENTITY  = 2
 };
 using RebuildScriptsRequestedPackage = Package<RebuildScriptsRequested_tag, PackageType::REBUILD_SCRIPTS_REQUESTED, false, CHANNEL_DEFAULT, char>;
 
