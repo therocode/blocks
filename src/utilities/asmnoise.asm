@@ -57,84 +57,60 @@ section .text
 	movups [rsp-96],xmm11
 	movups [rsp-112],xmm12
 	movups [rsp-128],xmm13
-;L0  | 0=x 1=y 2=z
-
-    vaddss   xmm3,xmm0,xmm1
-	addss    xmm3,xmm2
-	mulss    xmm3,[F3]
-	shufps   xmm3,xmm3,0
+;0=x 1=y 2=z
 
 	unpcklps xmm0,xmm1
-	movlhps  xmm0,xmm2
-	addps    xmm3,xmm0
-	roundps  xmm3,xmm3,1
-;L11 | 0=xyz 3=ijk
-
-	pshufd   xmm1,xmm3,1
-	movhlps  xmm2,xmm3
-	addss    xmm1,xmm3
+	addss    xmm1,xmm0
 	addss    xmm1,xmm2
-	vbroadcastss xmm6,[G3]
-	mulss    xmm1,xmm6
+	movlhps  xmm0,xmm2
+	mulss    xmm1,[F3]
 	shufps   xmm1,xmm1,0
-	vsubps   xmm1,xmm3,xmm1
-	subps    xmm0,xmm1
-;L20 | 0=x0y0z0 3=ijk 6=G3
+	addps    xmm1,xmm0
+	roundps  xmm1,xmm1,1
+;0=xyz 1=ijk
 
-;optimize this part later...
-; asm_raw_noise_3d:
-; unpcklps xmm0,xmm1
-; movlhps xmm0,xmm2
+	pshufd   xmm2,xmm1,1
+	movhlps  xmm3,xmm1
+	addss    xmm2,xmm1
+	vbroadcastss xmm6,[G3]
+	addss    xmm2,xmm3
+	mulss    xmm2,xmm6
+	shufps   xmm2,xmm2,0
+	vsubps   xmm2,xmm1,xmm2
+	subps    xmm0,xmm2
+;0=x0y0z0 1=ijk 6=G3
+
 	vbroadcastss xmm7,[one]
-	pshufd   xmm1,xmm0,01b
-	pshufd   xmm2,xmm0,10b
-	maxss    xmm1,xmm2
-	cmpss    xmm1,xmm0,2
-	andps    xmm1,xmm7    ;i1
-	pshufd   xmm4,xmm0,01b
-	pshufd   xmm5,xmm0,10b
-	maxss    xmm4,xmm0
-	cmpss    xmm4,xmm5,1
-	andps    xmm4,xmm7    ;k1
-	subss    xmm7,xmm1
-	subss    xmm7,xmm4    ;j1
-	movss    xmm2,xmm1
-	unpcklps xmm2,xmm7
-	movlhps  xmm2,xmm4    ;i1j1k1
+	pshufd   xmm2,xmm0,000001b ;yxx
+	pshufd   xmm3,xmm0,100110b ;zyz
+	movaps   xmm4,xmm2
+	cmpps    xmm2,xmm3,5 ;y>=z  x>=y  x>=z
+	cmpps    xmm4,xmm3,1 ;z> y  y> x  z> x
+	movss    xmm3,xmm4
+	shufps   xmm2,xmm2,010010b
+	insertps xmm4,xmm2,10001000b
+	movlhps  xmm2,xmm3
+	movaps   xmm3,xmm2
+	andps    xmm2,xmm4
+	orps     xmm3,xmm4
+	andps    xmm2,xmm7
+	andps    xmm3,xmm7
+;0=x0y0z0 1=ijk 2=i1j1k1 3=i2j2k2 6=G3 7=1.0f
 
-	pshufd   xmm1,xmm0,01b
-	pshufd   xmm4,xmm0,10b
-	minss    xmm1,xmm4
-	cmpss    xmm1,xmm0,2
-	movss    xmm7,[one]
-	andps    xmm1,xmm7      ;i2
-	pshufd   xmm4,xmm0,01b
-	pshufd   xmm8,xmm0,10b
-	cmpss    xmm8,xmm4,2
-	andps    xmm8,xmm7
-	cmpss    xmm4,xmm0,6;14 not necessary?
-	andps    xmm4,xmm7
-	orps     xmm4,xmm8      ;j2
-	addss    xmm7,xmm7
-	subss    xmm7,xmm1
-	subss    xmm7,xmm4      ;k2
-	unpcklps xmm1,xmm4
-	movlhps  xmm1,xmm7
-; pshufd xmm0,xmm1,2
-; ret
-;L36 | 0=x0y0z0 1=i2j2k2 2=i1j1k1 3=ijk 6=G3
-
-	vbroadcastss xmm8,[one]
 	vsubps   xmm4,xmm0,xmm2
 	addps    xmm4,xmm6
-	vsubps   xmm5,xmm0,xmm1
+	vsubps   xmm5,xmm0,xmm3
 	addps    xmm6,xmm6
 	addps    xmm5,xmm6
-	vsubps   xmm7,xmm0,xmm8
-	addss    xmm6,[G3] ;vbroadcastss xmm6,[F3]
+	vsubps   xmm7,xmm0,xmm7
+	addss    xmm6,[G3]
 	shufps   xmm6,xmm6,0
 	addps    xmm7,xmm6
-;L50 | 0=x0y0z0 1=i2j2k2 2=i1j1k1 3=ijk 4=x1y1z1 5=x2y2z2 7=x3y3z3
+
+movaps xmm8,xmm1 ;temp
+movaps xmm1,xmm3 ;temp
+movaps xmm3,xmm8 ;temp
+;0=x0y0z0 1=i2j2k2 2=i1j1k1 3=ijk 4=x1y1z1 5=x2y2z2 7=x3y3z3
 
 	cvtps2dq xmm3,xmm3
 	cvtps2dq xmm2,xmm2
@@ -175,8 +151,6 @@ section .text
 	mov      rax,rcx
 	div      r9b
 	shr      ax,8
-; cvtsi2ss xmm0,eax
-; ret
 	pmovsxbd xmm2,[grad3+rax+rax*2]
 	mov      rax,rdx
 	div      r9b
@@ -191,17 +165,17 @@ section .text
 	cvtdq2ps xmm2,xmm2
 	cvtdq2ps xmm3,xmm3
 	cvtdq2ps xmm6,xmm6
-;L59 | 0=x0y0z0 1=grad3[gi0] 2=grad3[gi1] 3=grad3[gi2] 4=x1y1z1 5=x2y2z2 6=grad3[gi3] 7=x3y3z3
+;0=x0y0z0 1=grad3[gi0] 2=grad3[gi1] 3=grad3[gi2] 4=x1y1z1 5=x2y2z2 6=grad3[gi3] 7=x3y3z3
 
 	vmulps   xmm8,xmm0,xmm0
 	vmulps   xmm9,xmm4,xmm4
 	vmulps   xmm10,xmm5,xmm5
 	vmulps   xmm11,xmm7,xmm7
 
-	vunpcklps xmm12,xmm8,xmm10 ;0819
-	vunpcklps xmm13,xmm9,xmm11 ;4C5D
-	unpckhps  xmm8,xmm10 ;2A3B
-	unpckhps  xmm9,xmm11 ;6E7F
+	vunpcklps xmm12,xmm8,xmm10  ;0819
+	vunpcklps xmm13,xmm9,xmm11  ;4C5D
+	unpckhps  xmm8,xmm10        ;2A3B
+	unpckhps  xmm9,xmm11        ;6E7F
 
 	vunpcklps xmm10,xmm12,xmm13 ;048C
 	unpckhps  xmm12,xmm13       ;159D
@@ -227,7 +201,7 @@ section .text
 	unpcklps  xmm3,xmm6
 	movlhps   xmm1,xmm3
 	mulps     xmm8,xmm1
-;L88 | 9=n0n1n2n3
+;8=n0n1n2n3
 
 	haddps    xmm8,xmm8
 	haddps    xmm8,xmm8
