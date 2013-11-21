@@ -142,8 +142,6 @@ void Client::handleMessage(const PlayerPitchYawMessage& received)
 	float yaw;
 
 	std::tie(playerId, pitch, yaw) = received.data;
-
-
 	mBridge->enqueuePackage(std::shared_ptr<BasePackage>(new PlayerPitchYawPackage(received.data)));
 }
 
