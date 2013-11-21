@@ -29,7 +29,9 @@ set(source_files
     src/application/client.cpp
 	src/application/main.cpp
     src/application/server.cpp
+    
     src/console/console.cpp
+    
     src/entity/defaultsetters.cpp
     src/entity/entityfactory.cpp
     src/entity/entitydefinitionloader.cpp
@@ -41,7 +43,9 @@ set(source_files
     src/entity/controllers/movedirection.cpp
     src/entity/controllers/physicscontroller.cpp
     src/entity/controllers/playercontroller.cpp
+    
     src/input/inputadaptor.cpp
+
     src/networking/clientconnection.cpp
     src/networking/clientconnectionlistener.cpp
     src/networking/localclientconnectionlistener.cpp
@@ -51,6 +55,8 @@ set(source_files
 	src/networking/remoteserverbridge.cpp
     src/networking/remoteclientconnectionlistener.cpp
     src/networking/serverclientbridge.cpp
+
+    src/rendering/chunkgeneratorqueue.cpp
 	src/rendering/debugrenderer.cpp
 	src/rendering/billboard.cpp
 	src/rendering/camera.cpp
@@ -60,9 +66,11 @@ set(source_files
 	src/rendering/shader.cpp
 	src/rendering/shaderprogram.cpp
     src/rendering/surfacemerger.cpp
+    src/rendering/texture.cpp
 	src/rendering/vbo.cpp
 	src/rendering/vbocreator.cpp
     src/rendering/newvbo.cpp
+
     src/script/scriptcallback.cpp
     src/script/scriptengine.cpp
     src/script/scriptentity.cpp
@@ -76,6 +84,7 @@ set(source_files
     src/script/asaddons/scriptbuilder.cpp
     src/script/asaddons/scriptstdstring.cpp
     src/script/asaddons/scriptstdstring_utils.cpp
+
 	src/utilities/asmnoise.asm
     src/utilities/folderexploder.cpp
     src/utilities/lodepng.cpp
@@ -83,6 +92,7 @@ set(source_files
 	src/utilities/random.cpp
     src/utilities/simplexnoise.cpp
 	src/utilities/timer.cpp
+    
 	src/world/chunk.cpp
     src/world/dimension.cpp
     src/world/landscape.cpp
@@ -96,9 +106,11 @@ set(header_files
 	src/application/blocksapp.h
     src/application/client.h
     src/application/server.h
+
     src/console/consolecolor.h
     src/console/console.h
     src/console/keys.h
+
 	src/entity/entitymessages.h
     src/entity/defaultsetters.h
     src/entity/entityfactory.h
@@ -114,9 +126,11 @@ set(header_files
     src/entity/controllers/physicscontroller.h
     src/entity/controllers/physicstype.h
     src/entity/controllers/playercontroller.h
+
 	src/input/inputmessages.h
     src/input/inputactions.h
     src/input/inputadaptor.h
+
     src/networking/clientconnection.h
     src/networking/clientconnectionlistener.h
     src/networking/localclientconnectionlistener.h
@@ -127,6 +141,8 @@ set(header_files
 	src/networking/remoteserverbridge.h
     src/networking/remoteclientconnectionlistener.h
     src/networking/serverclientbridge.h
+
+    src/rendering/chunkgeneratorqueue.h
 	src/rendering/debugrenderer.h
 	src/rendering/renderingmessages.h
 	src/rendering/billboard.h
@@ -137,9 +153,11 @@ set(header_files
 	src/rendering/shader.h
 	src/rendering/shaderprogram.h
     src/rendering/surfacemerger.h
+    src/rendering/texture.h
 	src/rendering/vbo.h
 	src/rendering/vbocreator.h
     src/rendering/newvbo.h
+
 	src/script/scriptmessages.h
     src/script/scriptcallback.h
     src/script/scriptengine.h
@@ -153,6 +171,7 @@ set(header_files
     src/script/asaddons/scriptvectors.h
     src/script/asaddons/scriptbuilder.h
     src/script/asaddons/scriptstdstring.h
+
     src/utilities/asmnoise.h
     src/utilities/folderexploder.h
     src/utilities/lodepng.h
@@ -161,6 +180,7 @@ set(header_files
     src/utilities/simplexnoise.h
 	src/utilities/timer.h
 	src/utilities/tinydir.h
+
 	src/world/worldmessages.h
 	src/world/chunk.h
     src/world/chunkprovider.h

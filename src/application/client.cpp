@@ -345,12 +345,12 @@ void Client::updateChunk(const ChunkCoordinate& coordinate)
     Chunk* leftChunk = nullptr;
     Chunk* rightChunk = nullptr;
 
-    auto top = mLocalChunks.find(ChunkCoordinate(coordinate.x, coordinate.y + 1, coordinate.z));
+    auto top    = mLocalChunks.find(ChunkCoordinate(coordinate.x, coordinate.y + 1, coordinate.z));
     auto bottom = mLocalChunks.find(ChunkCoordinate(coordinate.x, coordinate.y - 1, coordinate.z));
-    auto front = mLocalChunks.find(ChunkCoordinate(coordinate.x, coordinate.y, coordinate.z + 1));
-    auto back = mLocalChunks.find(ChunkCoordinate(coordinate.x, coordinate.y, coordinate.z - 1));
-    auto left = mLocalChunks.find(ChunkCoordinate(coordinate.x - 1, coordinate.y, coordinate.z));
-    auto right = mLocalChunks.find(ChunkCoordinate(coordinate.x + 1, coordinate.y, coordinate.z));
+    auto front  = mLocalChunks.find(ChunkCoordinate(coordinate.x, coordinate.y, coordinate.z + 1));
+    auto back   = mLocalChunks.find(ChunkCoordinate(coordinate.x, coordinate.y, coordinate.z - 1));
+    auto left   = mLocalChunks.find(ChunkCoordinate(coordinate.x - 1, coordinate.y, coordinate.z));
+    auto right  = mLocalChunks.find(ChunkCoordinate(coordinate.x + 1, coordinate.y, coordinate.z));
 
     if(top != mLocalChunks.end())
         topChunk = &top->second;

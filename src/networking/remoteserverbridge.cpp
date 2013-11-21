@@ -126,6 +126,8 @@ void RemoteServerBridge::mListenerFunction()
             }
             mGotPackagesToSend = false;
         }
+        std::chrono::milliseconds sss(5);
+        std::this_thread::sleep_for(sss);
     }
     if(mConnected)
     {

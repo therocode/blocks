@@ -67,7 +67,7 @@ void InputAdaptor::update()
                 {
                     mNewYaw -= event.mouseMove.relx;
                     mNewPitch -= event.mouseMove.rely;
-                    if(glm::abs(mNewYaw) >= 1.f || glm::abs(mNewPitch) >= 1.f)
+                    if(glm::abs(mNewYaw) >= 10.f || glm::abs(mNewPitch) >= 10.f)
                     {
                         float pitch = mNewPitch;//-event.mouseMove.rely;
                         float yaw   = mNewYaw;//-event.mouseMove.relx;
@@ -141,7 +141,10 @@ void InputAdaptor::update()
     while(actionHandler.pollAction(action))
     {
         if(action == "quit")
+        {
+            printf("Hej, jag slutar nu. Hejdå.\n");
             mBus.sendMessage<PlayerActionMessage>(PlayerActionMessage(mPlayerId, InputAction::QUIT));
+        }
         else if(action == "forwards")
         {
             mHoldingForwards = true;
