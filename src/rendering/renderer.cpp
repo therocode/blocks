@@ -216,13 +216,13 @@ void Renderer::render()
 	glm::vec3 mV = glm::cross(cam.GetDirection(), glm::vec3(0, 1, 0));
 	float sc = 0.4f;
 	if(speed > 0){
-		cameraOffset.y += glm::sin(time*0.01f)*speed * sc;
-		cameraOffset.x += glm::cos(time*0.005f)*speed * sc;
-		cameraOffset.z += glm::sin(time*0.005f)*speed * sc;
+	//	cameraOffset.y += glm::sin(time*0.01f)*speed * sc;
+	//	cameraOffset.x += glm::cos(time*0.005f)*speed * sc;
+	//	cameraOffset.z += glm::sin(time*0.005f)*speed * sc;
 	}
     for(float t = 0; t < dT_f; t += 1000.f/60.f)
 	interpDuck += (duck - interpDuck) * 0.2f;
-	cameraOffset.y -= interpDuck;
+	//cameraOffset.y -= interpDuck;
 	duck *= 0.9f;
 	cam.SetPosition(originalCameraPos + cameraOffset);
 	float y = cam.GetPosition().y;
