@@ -106,43 +106,39 @@ section .text
 	addss    xmm6,[G3]
 	shufps   xmm6,xmm6,0
 	addps    xmm7,xmm6
+;0=x0y0z0 1=ijk 2=i1j1k1 3=i2j2k2 4=x1y1z1 5=x2y2z2 7=x3y3z3
 
-movaps xmm8,xmm1 ;temp
-movaps xmm1,xmm3 ;temp
-movaps xmm3,xmm8 ;temp
-;0=x0y0z0 1=i2j2k2 2=i1j1k1 3=ijk 4=x1y1z1 5=x2y2z2 7=x3y3z3
-
-	cvtps2dq xmm3,xmm3
-	cvtps2dq xmm2,xmm2
 	cvtps2dq xmm1,xmm1
+	cvtps2dq xmm2,xmm2
+	cvtps2dq xmm3,xmm3
 
-	pextrb   r9  ,xmm3,8 ;kk
+	pextrb   r9  ,xmm1,8 ;kk
 	pextrb   r10 ,xmm2,8 ;k1
-	pextrb   r11 ,xmm1,8 ;k2
+	pextrb   r11 ,xmm3,8 ;k2
 	movzx    rax ,byte [perm+r9]
-	movzx    rcx,byte [perm+r9+r10]
-	movzx    rdx,byte [perm+r9+r11]
-	movzx    r8 ,byte [perm+r9+1]
+	movzx    rcx ,byte [perm+r9+r10]
+	movzx    rdx ,byte [perm+r9+r11]
+	movzx    r8  ,byte [perm+r9+1]
 
-	pextrb   r9d ,xmm3,4 ;jj
+	pextrb   r9d ,xmm1,4 ;jj
 	pextrb   r10d,xmm2,4
-	pextrb   r11d,xmm1,4
-	mov      al ,byte [perm+r9+rax]
-	add      r10,rcx
-	mov      cl ,byte [perm+r9+r10]
-	add      r11,rdx
-	mov      dl ,byte [perm+r9+r11]
-	mov      r8b,byte [perm+r9+r8+1]
+	pextrb   r11d,xmm3,4
+	mov      al  ,byte [perm+r9+rax]
+	add      r10 ,rcx
+	mov      cl  ,byte [perm+r9+r10]
+	add      r11 ,rdx
+	mov      dl  ,byte [perm+r9+r11]
+	mov      r8b ,byte [perm+r9+r8+1]
 
-	pextrb   r9 ,xmm3,0 ;ii
-	pextrb   r10,xmm2,0
-	pextrb   r11,xmm1,0
-	mov      al ,byte [perm+r9+rax]
-	add      r10,rcx
-	mov      cl ,byte [perm+r9+r10]
-	add      r11,rdx
-	mov      dl ,byte [perm+r9+r11]
-	mov      r8b,byte [perm+r9+r8+1]
+	pextrb   r9  ,xmm1,0 ;ii
+	pextrb   r10 ,xmm2,0
+	pextrb   r11 ,xmm3,0
+	mov      al  ,byte [perm+r9+rax]
+	add      r10 ,rcx
+	mov      cl  ,byte [perm+r9+r10]
+	add      r11 ,rdx
+	mov      dl  ,byte [perm+r9+r11]
+	mov      r8b ,byte [perm+r9+r8+1]
 
 	mov      r9,12
 	div      r9b
