@@ -289,6 +289,7 @@ void Renderer::render()
 	};
 	
 	mShaderProgram.setUniform("enableBoundsTexture", 0);
+    glDisable(GL_CULL_FACE);
 	for(auto& billboard : billboards)
 	{
         if(billboard.first == mCameraEntity)
@@ -304,10 +305,17 @@ void Renderer::render()
 		matr[12] = billboard.second.mPosition.x;
 		matr[13] = billboard.second.mPosition.y;		
 		matr[14] = billboard.second.mPosition.z;
+
 		matr[0] = -cameraDir.z;
 		matr[10]= -cameraDir.z;
 		matr[2] =  cameraDir.x;		
 		matr[8] = -cameraDir.x;
+
+
+        matr[0]  = glm::cos(billboard.second.mYaw);
+        matr[10] = glm::cos(billboard.second.mYaw);
+        matr[2]  = -glm::sin(billboard.second.mYaw);
+        matr[8]  = glm::sin(billboard.second.mYaw);
 		mShaderProgram.setUniformMat4("modelToWorld",  &matr[0]);
 #else
 		glm::mat4 modelToWorld = glm::mat4(1.f);
@@ -323,6 +331,7 @@ void Renderer::render()
 
 		billboard.second.mVbo.draw(mShaderProgram);
 	}
+    glEnable(GL_CULL_FACE);
 	mShaderProgram.unbind();
 	
 	sDebugRenderer.performDrawing();

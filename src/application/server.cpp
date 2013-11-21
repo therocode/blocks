@@ -2,9 +2,9 @@
 #include "../networking/packages.h"
 
 Server::Server() : mWorld(mBus),
-                   mLogger(mBus, LogLevel::VERB),
-                   mScriptHandler(mBus, mWorld.getWorldInterface()),
-                   mLogName("server")
+    mLogger(mBus, LogLevel::VERB),
+    mScriptHandler(mBus, mWorld.getWorldInterface()),
+    mLogName("server")
 {
     mBus.addMessageSubscriber<FatalMessage>(*this);
     mBus.addMessageSubscriber<ChunkCreatedMessage>(*this);
@@ -36,14 +36,14 @@ void Server::setup()
 {
     mScriptHandler.setup();
     mWorld.initialise();
-	mFrameTimer.setDesiredFPSRate(121);
+    mFrameTimer.setDesiredFPSRate(121);
     mFrameTimer.start();
     mBus.sendMessage<LogMessage>(LogMessage("Server initialised and ready to go", mLogName, LogLevel::INFO));
     mBus.sendMessage<GameStartMessage>(GameStartMessage());
 }
 fea::MessageBus& Server::getBus()
 {
-	return mBus;
+    return mBus;
 }
 void Server::doLogic()
 {
@@ -65,8 +65,8 @@ void Server::doLogic()
 
     pollNewClients();
 
-   mFrameTimer.sleepForTheRestOfTheFrame();
-   mFrameTimer.start();
+    mFrameTimer.sleepForTheRestOfTheFrame();
+    mFrameTimer.start();
 }
 
 void Server::destroy()

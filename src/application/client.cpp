@@ -142,7 +142,9 @@ void Client::handleMessage(const PlayerPitchYawMessage& received)
 	float yaw;
 
 	std::tie(playerId, pitch, yaw) = received.data;
-	mBridge->enqueuePackage(std::shared_ptr<BasePackage>(new PlayerPitchYawPackage(received.data)));
+    std::shared_ptr<BasePackage> nPkg = std::shared_ptr<BasePackage>(new PlayerPitchYawPackage(received.data));
+    nPkg.get()->onlyLocal = received.onlyLocal;
+	mBridge->enqueuePackage(nPkg);
 }
 
 void Client::handleMessage(const RebuildScriptsRequestedMessage& received)

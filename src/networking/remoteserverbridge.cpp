@@ -5,8 +5,8 @@
 
 RemoteServerBridge::RemoteServerBridge(fea::MessageBus& bus) : mBus(bus), mLogName("network"), mGotPackagesToSend(false)
 {
-	mConnected = false;
-	mPort = 56566;
+    mConnected = false;
+    mPort = 56566;
     mChannelCount = 3;
 }
 
@@ -17,61 +17,61 @@ RemoteServerBridge::~RemoteServerBridge()
 
 void RemoteServerBridge::connectToAddress(std::string address, int port)
 {
-	mBus.sendMessage<LogMessage>(LogMessage("Connecting to " + address, mLogName, LogLevel::INFO));
-	if(!mConnected)
-	{
-		createClient();
-		enet_address_set_host(&mAddress, address.c_str());
-		if(port != -1)
-		{
-			mPort = port;
-		}
+    mBus.sendMessage<LogMessage>(LogMessage("Connecting to " + address, mLogName, LogLevel::INFO));
+    if(!mConnected)
+    {
+        createClient();
+        enet_address_set_host(&mAddress, address.c_str());
+        if(port != -1)
+        {
+            mPort = port;
+        }
 
-		mAddress.port = mPort;
-		mHostPeer = enet_host_connect(mHost, &mAddress, mChannelCount, 0);
+        mAddress.port = mPort;
+        mHostPeer = enet_host_connect(mHost, &mAddress, mChannelCount, 0);
 
-		if(mHostPeer == NULL)
-		{
-			mBus.sendMessage<LogMessage>(LogMessage("Couldn't create connection peer", mLogName, LogLevel::ERR));
-		}
+        if(mHostPeer == NULL)
+        {
+            mBus.sendMessage<LogMessage>(LogMessage("Couldn't create connection peer", mLogName, LogLevel::ERR));
+        }
 
-		ENetEvent event;
-		if(enet_host_service(mHost, &event, 5000) > 0 &&
-			event.type == ENET_EVENT_TYPE_CONNECT)
-		{
-			mBus.sendMessage<LogMessage>(LogMessage("Successfully connected to " + address, mLogName, LogLevel::INFO));
-			//When connected, greet the server!
-			int i[4];
-			for(int o = 1; o < 4; o++)i[o] = (int)(64 + rand()%26);
-				i[0] = 12345678;
-			ENetPacket* packet = enet_packet_create(i, sizeof(int) * 4, ENET_PACKET_FLAG_RELIABLE);
-			enet_peer_send(mHostPeer, 0, packet);
+        ENetEvent event;
+        if(enet_host_service(mHost, &event, 5000) > 0 &&
+                event.type == ENET_EVENT_TYPE_CONNECT)
+        {
+            mBus.sendMessage<LogMessage>(LogMessage("Successfully connected to " + address, mLogName, LogLevel::INFO));
+            //When connected, greet the server!
+            int i[4];
+            for(int o = 1; o < 4; o++)i[o] = (int)(64 + rand()%26);
+            i[0] = 12345678;
+            ENetPacket* packet = enet_packet_create(i, sizeof(int) * 4, ENET_PACKET_FLAG_RELIABLE);
+            enet_peer_send(mHostPeer, 0, packet);
             mConnected = true;
-		}else
-		{
-			mBus.sendMessage<LogMessage>(LogMessage("Couldn't connect to host", mLogName, LogLevel::ERR));
-			enet_peer_reset(mHostPeer);
-		}
-	}
+        }else
+        {
+            mBus.sendMessage<LogMessage>(LogMessage("Couldn't connect to host", mLogName, LogLevel::ERR));
+            enet_peer_reset(mHostPeer);
+        }
+    }
 }
 
 void RemoteServerBridge::startListening()
 {
-	mStop = false;
+    mStop = false;
 
-	mThread = std::thread(&RemoteServerBridge::mListenerFunction, this);
+    mThread = std::thread(&RemoteServerBridge::mListenerFunction, this);
 }
 
 void RemoteServerBridge::stopListening()
 {
-	mStop = true;
-	mThread.join();
+    mStop = true;
+    mThread.join();
 }
 
 void RemoteServerBridge::mListenerFunction()
 {
-	ENetEvent event;
-	while(!mStop)
+    ENetEvent event;
+    while(!mStop)
     {
         while(enet_host_service(mHost, &event, 10) > 0)
         {
@@ -116,18 +116,18 @@ void RemoteServerBridge::mListenerFunction()
             mOutGoingMutex.lock();
             std::swap(mOutgoing, toSend);
             mOutGoingMutex.unlock();
-            //enet_host_flush(mHost);
             for(auto package : toSend)
             {
-                std::vector<uint8_t> data = package->serialise();
-
-                ENetPacket* packet = enet_packet_create(&data[0], data.size(), package->mUnreliable ? ENET_PACKET_FLAG_UNSEQUENCED : ENET_PACKET_FLAG_RELIABLE);
-                enet_peer_send(mHostPeer, package->mChannel, packet);
+                if(!package->onlyLocal){
+                    std::vector<uint8_t> data = package->serialise();
+                    ENetPacket* packet = enet_packet_create(&data[0], data.size(), package->mUnreliable ? ENET_PACKET_FLAG_UNSEQUENCED : ENET_PACKET_FLAG_RELIABLE);
+                    enet_peer_send(mHostPeer, package->mChannel, packet);
+                }else{
+                    receivePackage(package);
+                }
             }
             mGotPackagesToSend = false;
         }
-        std::chrono::milliseconds sss(5);
-        std::this_thread::sleep_for(sss);
     }
     if(mConnected)
     {
@@ -206,21 +206,23 @@ void RemoteServerBridge::acceptEnetPacket(ENetPacket* packet)
                 deserialiseAndReceive(dataVector, new PlayerIdPackage());
                 break;
             }
+        default:
+            printf("Received unknown packet.\n");
     }
 
 }
 
 void RemoteServerBridge::createClient()
 {
-	mHost = enet_host_create(NULL, //This isn't going to host anything. noone can connect to this.
-			1,//one outgoing connection.
-			2,//channels
-			0,//out
-			0);// no this is out, the one above is incoming.
-	if(mHost)
-	{
-		printf("enet client created!\n");
-	}
+    mHost = enet_host_create(NULL, //This isn't going to host anything. noone can connect to this.
+            1,//one outgoing connection.
+            5,//channels
+            0,//out
+            0);// no this is out, the one above is incoming.
+    if(mHost)
+    {
+        printf("enet client created!\n");
+    }
 }
 
 void RemoteServerBridge::flush()
@@ -231,7 +233,7 @@ void RemoteServerBridge::flush()
 
 void RemoteServerBridge::receivePackage(std::weak_ptr<BasePackage> incoming)
 {
-	mIncoming.push_back(incoming.lock());
+    mIncoming.push_back(incoming.lock());
 }
 void RemoteServerBridge::deserialiseAndReceive(const std::vector<uint8_t>& data, BasePackage* package)
 {
