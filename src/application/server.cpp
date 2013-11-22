@@ -36,7 +36,7 @@ void Server::setup()
 {
     mScriptHandler.setup();
     mWorld.initialise();
-    mFrameTimer.setDesiredFPSRate(130);
+    mFrameTimer.setDesiredFPSRate(121);
     mFrameTimer.start();
     mBus.sendMessage<LogMessage>(LogMessage("Server initialised and ready to go", mLogName, LogLevel::INFO));
     mBus.sendMessage<GameStartMessage>(GameStartMessage());
