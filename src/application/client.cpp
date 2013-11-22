@@ -139,8 +139,7 @@ void Client::handleMessage(const PlayerPitchYawMessage& received)
 {
     if(!mLockedMouse)return;
 
-    std::shared_ptr<BasePackage> nPkg = std::shared_ptr<BasePackage>(new PlayerPitchYawPackage(received.data));
-	mBridge->enqueuePackage(nPkg);
+	mBridge->enqueuePackage(std::shared_ptr<BasePackage>(new PlayerPitchYawPackage(received.data)));
 }
 
 void Client::handleMessage(const RebuildScriptsRequestedMessage& received)
