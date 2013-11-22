@@ -4,7 +4,6 @@
 #include "enet/enet.h"
 #include <thread>
 #include <atomic>
-#include <chrono>
 #include <featherkit/messaging.h>
 
 class RemoteServerBridge : public ServerClientBridge

@@ -14,8 +14,8 @@ class ServerClientBridge
         void disconnect();
         bool isDisconnected();
     protected:
-        std::deque<std::shared_ptr<BasePackage> > mIncoming;
-        std::deque<std::shared_ptr<BasePackage> > mOutgoing;
+        std::deque<std::shared_ptr<BasePackage>> mIncoming;
+        std::deque<std::shared_ptr<BasePackage>> mOutgoing;
         std::mutex mOutGoingMutex;
         bool disconnected = false;
 };
