@@ -113,18 +113,15 @@ void RemoteServerBridge::mListenerFunction()
         {
             std::deque<std::shared_ptr<BasePackage>> toSend;
 
-            mOutGoingMutex.lock();
-            std::swap(mOutgoing, toSend);
-            mOutGoingMutex.unlock();
+            {
+                std::lock_guard<std::mutex> lock(mOutGoingMutex);
+                std::swap(mOutgoing, toSend);
+            }
             for(auto package : toSend)
             {
-                if(!package->onlyLocal){
-                    std::vector<uint8_t> data = package->serialise();
-                    ENetPacket* packet = enet_packet_create(&data[0], data.size(), package->mUnreliable ? ENET_PACKET_FLAG_UNSEQUENCED : ENET_PACKET_FLAG_RELIABLE);
-                    enet_peer_send(mHostPeer, package->mChannel, packet);
-                }else{
-                    receivePackage(package);
-                }
+                std::vector<uint8_t> data = package->serialise();
+                ENetPacket* packet = enet_packet_create(&data[0], data.size(), package->mUnreliable ? ENET_PACKET_FLAG_UNSEQUENCED : ENET_PACKET_FLAG_RELIABLE);
+                enet_peer_send(mHostPeer, package->mChannel, packet);
             }
             mGotPackagesToSend = false;
         }

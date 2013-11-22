@@ -1,5 +1,4 @@
 #include "localserverclientbridge.h"
-#include <iostream>
 
 LocalServerClientBridge::LocalServerClientBridge() : mOther(nullptr)
 {
@@ -7,7 +6,7 @@ LocalServerClientBridge::LocalServerClientBridge() : mOther(nullptr)
 
 void LocalServerClientBridge::flush()
 {
-    mOutGoingMutex.lock();
+    std::lock_guard<std::mutex> lock(mOutGoingMutex);
     if(mOther)
     {
         for(uint32_t i = 0; i < mOutgoing.size(); i++)
@@ -17,7 +16,6 @@ void LocalServerClientBridge::flush()
     }
 
     mOutgoing.clear();
-    mOutGoingMutex.unlock();
 }
 
 void LocalServerClientBridge::connect(LocalServerClientBridge* other)

@@ -16,8 +16,6 @@ class BasePackage
         PackageType mType;
         bool mUnreliable;
         int  mChannel = 0;
-        bool onlyLocal = false;
-        bool isLocal   = false;
 };
 
 template<typename Tag, PackageType TypeId, bool Unreliable, int Channel, typename... Types>

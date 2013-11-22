@@ -11,7 +11,7 @@ void LocalClientConnectionListener::createClientConnection(LocalServerClientBrid
 
     clientConnection->setBridge(std::unique_ptr<LocalServerClientBridge>(serverBridge));
 
-    mIncomingConnectionsMutex.lock();
+    std::lock_guard<std::mutex> lock(mIncomingConnectionsMutex);
     mIncomingConnections.push(clientConnection);
     mIncomingConnectionsMutex.unlock();
 }
