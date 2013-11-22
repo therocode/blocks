@@ -1,14 +1,7 @@
 #include "client.h"
 #include <iostream>
-#if 0
-#include <featherkit/util/window/sfml/sfmlwindowbackend.h>
-#include <featherkit/util/input/sfml/sfmlinputbackend.h>
-#else
 #include <featherkit/util/window/sdl2/sdl2windowbackend.h>
 #include <featherkit/util/input/sdl2/sdl2inputbackend.h>
-#endif
-
-#include <typeinfo>
 #include "../networking/packages.h"
 #include "../application/applicationmessages.h"
 
@@ -145,13 +138,8 @@ void Client::handleMessage(const PlayerMoveActionMessage& received)
 void Client::handleMessage(const PlayerPitchYawMessage& received)
 {
     if(!mLockedMouse)return;
-	size_t playerId;
-	float pitch;
-	float yaw;
 
-	std::tie(playerId, pitch, yaw) = received.data;
     std::shared_ptr<BasePackage> nPkg = std::shared_ptr<BasePackage>(new PlayerPitchYawPackage(received.data));
-    nPkg.get()->onlyLocal = received.onlyLocal;
 	mBridge->enqueuePackage(nPkg);
 }
 
