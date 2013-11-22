@@ -1,0 +1,35 @@
+in src/application/
+
+client.cpp
+-Client Should not take care of keeping local chunks and updating them. there should be some form of LocalChunkHolder which holds local copies of chunks and takes care of updating and such instead.
+-Client Should not be responsible of packing and unpacking network packages. a class which the packages are relayed to should be created
+-Client should not call cameraUpdate on the renderer. it is not its responsibility to take care of such internal details of the renderer
+-Client should not calculate the FPS. There could be a separate class with that responsibility
+-Client should not be responsible for loading the icon texture. Maybe wrap the fea::window and the icon functionality in a blocks window class?
+-Maybe move the server handling into a Network class
+
+server.cpp
+-Server should not be responsible of sending FrameMessages. Maybe create a general GameController which does this and other general things.
+-Maybe move the client handling into a Network class.
+-Server should not be responsible of packing and unpacking network packages. a class which the packages are relayed to should be created.
+--------------------------------------------------------------
+
+in src/input/
+
+inputadaptor.cpp
+-take out player ID.
+--------------------------------------------------------------
+
+in src/networking
+
+remoteclientconnectionlistener.cpp
+-RemoteClientConnectionListener should not be responsible for converting host bytes to an IP string. Create utility class for this
+
+packages.h
+-Move channel enum and channel count into separate h file and use that in places like "mChannelCount = 3" in remoteserverbridge.cpp
+--------------------------------------------------------------
+
+in src/utilities
+
+timer.cpp
+-this class should probably not do fps related stuff. maybe make a separate class that uses a timer& to do fps stuff.
