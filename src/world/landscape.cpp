@@ -83,7 +83,7 @@ void Landscape::checkUnloads(size_t id)
         {
             ChunkCoordinate distance = highlighted - chunk.first;
 
-            if(abs(distance.x + distance.z) > 6 || abs(distance.y) > 3)
+            if(abs(distance.x + distance.z) > 12 || abs(distance.y) > 6)
             {
                 chunksToUnload.push_back(chunk.first);
             }
