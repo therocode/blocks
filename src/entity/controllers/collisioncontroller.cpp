@@ -47,7 +47,7 @@ void CollisionController::onFrame(int dt)
 				mBus.sendMessage<EntityOnGroundMessage>(EntityOnGroundMessage(entity->getId(), false));
 			}
         }else{
-			if(AABBOnGround(a) && velocity.y <= 0.001f){
+			if(AABBOnGround(a) && glm::abs(velocity.y) <= 0.001f){
 				entity->setAttribute<bool>("on_ground", true);
 				mBus.sendMessage<EntityOnGroundMessage>(EntityOnGroundMessage(entity->getId(), true));
 			}
@@ -178,7 +178,7 @@ float CollisionController::sweepAroundAABB(const AABB a, glm::vec3 velocity, glm
 							break;
 						}
 					}
-                    if(nn < n ){
+                    if(nn < n && n > 0.f){
 						// glm::vec3 aa = glm::vec3(a.x + a.width * 0.5f, a.y + a.height * 0.5f, a.z + a.depth * 0.5f);
 						// glm::vec3 bb = glm::vec3(b.x + b.width * 0.5f, b.y + b.height * 0.5f, b.z + b.depth * 0.5f);
 						// float l2 = glm::length2(aa - bb);

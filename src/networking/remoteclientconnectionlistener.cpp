@@ -24,7 +24,12 @@ void RemoteClientConnectionListener::listenerFunction()
             {
                 case ENET_EVENT_TYPE_CONNECT:
                     {
-                        mBus.sendMessage<LogMessage>(LogMessage("A new client connected from " + std::to_string(event.peer->address.host) + ":" + std::to_string(event.peer->address.port), mLogName, LogLevel::INFO));
+                        mBus.sendMessage<LogMessage>(LogMessage("A new client connected from " +
+                            std::to_string((event.peer->address.host) & 0xff) + "." +
+                            std::to_string((event.peer->address.host >> 8)  & 0xff) + "." +
+                            std::to_string((event.peer->address.host >> 16) & 0xff) + "." +
+                            std::to_string((event.peer->address.host >> 24) & 0xff) + ":" +
+                            std::to_string(event.peer->address.port), mLogName, LogLevel::INFO));
                         /* Store any relevant client information here. */
                         RemoteClientBridge* newClientBridge = new RemoteClientBridge(event.peer);
                         size_t newClientId = mNextClientId;

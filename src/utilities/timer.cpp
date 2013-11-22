@@ -52,12 +52,12 @@ long Timer::getDeltaTime()
 
 void Timer::setDeltaThreshold(int milliseconds)
 {
-	mDeltaThreshold = milliseconds;	
+	mDeltaThreshold = milliseconds;
 }
 
 void Timer::setDesiredFPSRate(int rate)
 {
-    fps = rate;   
+    fps = rate;
 }
 
 void Timer::sleepForTheRestOfTheFrame()
