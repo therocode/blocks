@@ -138,21 +138,21 @@ section .text
     mov       dl  ,byte [perm+r9+r11]
     mov       r8b ,byte [perm+r9+r8+1]
 
-	mov       r9,12
+	mov       r9  ,12
 	div       r9b
-	shr       ax,8                   ;gi0
+	shr       ax  ,8                 ;gi0
 	pmovsxbd  xmm1,[grad3+rax+rax*2] ;grad3[gi0]
-	mov       rax,rcx
+	mov       rax ,rcx
 	div       r9b
-	shr       ax,8
+	shr       ax  ,8
 	pmovsxbd  xmm2,[grad3+rax+rax*2]
-	mov       rax,rdx
+	mov       rax ,rdx
 	div       r9b
-	shr       ax,8
+	shr       ax  ,8
 	pmovsxbd  xmm3,[grad3+rax+rax*2]
-	mov       rax,r8
+	mov       rax ,r8
 	div       r9b
-	shr       ax,8
+	shr       ax  ,8
 	pmovsxbd  xmm6,[grad3+rax+rax*2]
 
 	cvtdq2ps  xmm1,xmm1
@@ -171,19 +171,19 @@ section .text
 	dpps      xmm3,xmm5,01110001b
 	dpps      xmm6,xmm7,01110001b
 
-	vunpcklps xmm0,xmm8,xmm10  ;0819
-	vunpcklps xmm4,xmm9,xmm11  ;4C5D
-	unpckhps  xmm8,xmm10        ;2A3B
-	unpckhps  xmm9,xmm11        ;6E7F
+	vunpcklps xmm0,xmm8,xmm10 ;0819
+	vunpcklps xmm4,xmm9,xmm11 ;4C5D
+	unpckhps  xmm8,xmm10      ;2A3B
+	unpckhps  xmm9,xmm11      ;6E7F
 
 	vunpcklps xmm10,xmm0,xmm4 ;048C
 	unpckhps  xmm0,xmm4       ;159D
-	unpcklps  xmm8,xmm9         ;26AE
+	unpcklps  xmm8,xmm9       ;26AE
 
 	vbroadcastss xmm9,[tval]
 	subps     xmm9,xmm10
 	subps     xmm9,xmm0
-	subps     xmm9,xmm8 ;t0t1t2t3
+	subps     xmm9,xmm8       ;t0t1t2t3
 
 	pxor      xmm8,xmm8
 	cmpps     xmm8,xmm9,1
@@ -194,12 +194,14 @@ section .text
 	unpcklps  xmm1,xmm2
 	unpcklps  xmm3,xmm6
 	movlhps   xmm1,xmm3
-	mulps     xmm8,xmm1
-;8=n0n1n2n3
+	mulps     xmm8,xmm1       ;n0n1n2n3
 
-	haddps    xmm8,xmm8
-	haddps    xmm8,xmm8
-	vmulss    xmm0,xmm8,[retval]
+	movhlps   xmm0,xmm8
+	addps     xmm0,xmm8
+	pshufd    xmm1,xmm0,1
+	addss     xmm0,xmm1
+
+	mulss     xmm0,[retval]
 
 	movups    xmm6,[rsp-16]
 	movups    xmm7,[rsp-32]
