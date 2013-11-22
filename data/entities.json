@@ -12,7 +12,7 @@
 
         "hitbox":"0.5f,1.6f,0.5f",
         "on_ground":"false",
-		"jumping":"",
+		"jumping":"false",
         "current_chunk":"",
         "block_facing":"",
 		"block_facing_face":"",

@@ -24,6 +24,7 @@ EntityFactory::EntityFactory(fea::EntityManager& manager) : mManager(manager)
     mManager.registerDefaultSetter("yaw", fea::util::floatSetter);
     mManager.registerDefaultSetter("hitbox", vec3Setter);
     mManager.registerDefaultSetter("on_ground", fea::util::boolSetter);
+    mManager.registerDefaultSetter("jumping", fea::util::boolSetter);
 }
 
 fea::WeakEntityPtr EntityFactory::spawnEntity(const std::string& scriptType)
