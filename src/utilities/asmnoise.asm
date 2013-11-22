@@ -49,137 +49,140 @@ section .text
 	asm_raw_noise_3d:
 ;regs free to use: rax,rcx,rdx,r8,r9,r10,r11
 ;xmm6-15 = callee save on w64
-	movups [rsp-16],xmm6
-	movups [rsp-32],xmm7
-	movups [rsp-48],xmm8
-	movups [rsp-64],xmm9
-	movups [rsp-80],xmm10
-	movups [rsp-96],xmm11
-	movups [rsp-112],xmm12
-	movups [rsp-128],xmm13
+	movups    [rsp-16],xmm6
+	movups    [rsp-32],xmm7
+	movups    [rsp-48],xmm8
+	movups    [rsp-64],xmm9
+	movups    [rsp-80],xmm10
+	movups    [rsp-96],xmm11
 ;0=x 1=y 2=z
 
-	unpcklps xmm0,xmm1
-	addss    xmm1,xmm0
-	addss    xmm1,xmm2
-	movlhps  xmm0,xmm2
-	mulss    xmm1,[F3]
-	shufps   xmm1,xmm1,0
-	addps    xmm1,xmm0
-	roundps  xmm1,xmm1,1
+	unpcklps  xmm0,xmm1
+	addss     xmm1,xmm0
+	addss     xmm1,xmm2
+	movlhps   xmm0,xmm2
+	mulss     xmm1,[F3]
+	shufps    xmm1,xmm1,0
+	addps     xmm1,xmm0
+	roundps   xmm1,xmm1,1
 ;0=xyz 1=ijk
 
-	pshufd   xmm2,xmm1,1
-	movhlps  xmm3,xmm1
-	addss    xmm2,xmm1
+	pshufd    xmm2,xmm1,1
+	movhlps   xmm3,xmm1
+	addss     xmm2,xmm1
 	vbroadcastss xmm6,[G3]
-	addss    xmm2,xmm3
-	mulss    xmm2,xmm6
-	shufps   xmm2,xmm2,0
-	vsubps   xmm2,xmm1,xmm2
-	subps    xmm0,xmm2
+	addss     xmm2,xmm3
+	mulss     xmm2,xmm6
+	shufps    xmm2,xmm2,0
+	vsubps    xmm2,xmm1,xmm2
+	subps     xmm0,xmm2
 ;0=x0y0z0 1=ijk 6=G3
 
 	vbroadcastss xmm7,[one]
-	pshufd   xmm2,xmm0,000001b ;yxx
-	pshufd   xmm3,xmm0,100110b ;zyz
-	movaps   xmm4,xmm2
-	cmpps    xmm2,xmm3,5 ;y>=z  x>=y  x>=z
-	cmpps    xmm4,xmm3,1 ;z> y  y> x  z> x
-	movss    xmm3,xmm4
-	shufps   xmm2,xmm2,010010b
-	insertps xmm4,xmm2,10001000b
-	movlhps  xmm2,xmm3
-	movaps   xmm3,xmm2
-	andps    xmm2,xmm4
-	orps     xmm3,xmm4
-	andps    xmm2,xmm7
-	andps    xmm3,xmm7
+	pshufd    xmm2,xmm0,000001b ;yxx
+	pshufd    xmm3,xmm0,100110b ;zyz
+	movaps    xmm4,xmm2
+	cmpps     xmm2,xmm3,5 ;y>=z  x>=y  x>=z
+	cmpps     xmm4,xmm3,1 ;z> y  y> x  z> x
+	movss     xmm3,xmm4
+	shufps    xmm2,xmm2,010010b
+	insertps  xmm4,xmm2,10001000b
+	movlhps   xmm2,xmm3
+	movaps    xmm3,xmm2
+	andps     xmm2,xmm4
+	orps      xmm3,xmm4
+	andps     xmm2,xmm7
+	andps     xmm3,xmm7
 ;0=x0y0z0 1=ijk 2=i1j1k1 3=i2j2k2 6=G3 7=1.0f
 
-	vsubps   xmm4,xmm0,xmm2
-	addps    xmm4,xmm6
-	vsubps   xmm5,xmm0,xmm3
-	addps    xmm6,xmm6
-	addps    xmm5,xmm6
-	vsubps   xmm7,xmm0,xmm7
-	addss    xmm6,[G3]
-	shufps   xmm6,xmm6,0
-	addps    xmm7,xmm6
+	vsubps    xmm4,xmm0,xmm2
+	addps     xmm4,xmm6
+	vsubps    xmm5,xmm0,xmm3
+	addps     xmm6,xmm6
+	addps     xmm5,xmm6
+	vsubps    xmm7,xmm0,xmm7
+	addss     xmm6,[G3]
+	shufps    xmm6,xmm6,0
+	addps     xmm7,xmm6
 ;0=x0y0z0 1=ijk 2=i1j1k1 3=i2j2k2 4=x1y1z1 5=x2y2z2 7=x3y3z3
 
-	cvtps2dq xmm1,xmm1
-	cvtps2dq xmm2,xmm2
-	cvtps2dq xmm3,xmm3
+	cvtps2dq  xmm1,xmm1
+	cvtps2dq  xmm2,xmm2
+	cvtps2dq  xmm3,xmm3
 
-    pextrb   r9d ,xmm1,8 ;kk
-    pextrb   r10d,xmm2,8 ;k1
-    pextrb   r11d,xmm3,8 ;k2
-    movzx    rax ,byte [perm+r9]
-    movzx    rcx ,byte [perm+r9+r10]
-    movzx    rdx ,byte [perm+r9+r11]
-    movzx    r8  ,byte [perm+r9+1]
+    pextrb    r9d ,xmm1,8 ;kk
+    pextrb    r10d,xmm2,8 ;k1
+    pextrb    r11d,xmm3,8 ;k2
+    movzx     rax ,byte [perm+r9]
+    movzx     rcx ,byte [perm+r9+r10]
+    movzx     rdx ,byte [perm+r9+r11]
+    movzx     r8  ,byte [perm+r9+1]
     
-    pextrb   r9d ,xmm1,4 ;jj
-    pextrb   r10d,xmm2,4
-    pextrb   r11d,xmm3,4
-    mov      al  ,byte [perm+r9+rax]
-    add      r10 ,rcx
-    mov      cl  ,byte [perm+r9+r10]
-    add      r11 ,rdx
-    mov      dl  ,byte [perm+r9+r11]
-    mov      r8b ,byte [perm+r9+r8+1]
+    pextrb    r9d ,xmm1,4 ;jj
+    pextrb    r10d,xmm2,4
+    pextrb    r11d,xmm3,4
+    mov       al  ,byte [perm+r9+rax]
+    add       r10 ,rcx
+    mov       cl  ,byte [perm+r9+r10]
+    add       r11 ,rdx
+    mov       dl  ,byte [perm+r9+r11]
+    mov       r8b ,byte [perm+r9+r8+1]
     
-    pextrb   r9d ,xmm1,0 ;ii
-    pextrb   r10d,xmm2,0
-    pextrb   r11d,xmm3,0
-    mov      al  ,byte [perm+r9+rax]
-    add      r10 ,rcx
-    mov      cl  ,byte [perm+r9+r10]
-    add      r11 ,rdx
-    mov      dl  ,byte [perm+r9+r11]
-    mov      r8b ,byte [perm+r9+r8+1]
+    pextrb    r9d ,xmm1,0 ;ii
+    pextrb    r10d,xmm2,0
+    pextrb    r11d,xmm3,0
+    mov       al  ,byte [perm+r9+rax]
+    add       r10 ,rcx
+    mov       cl  ,byte [perm+r9+r10]
+    add       r11 ,rdx
+    mov       dl  ,byte [perm+r9+r11]
+    mov       r8b ,byte [perm+r9+r8+1]
 
-	mov      r9,12
-	div      r9b
-	shr      ax,8                   ;gi0
-	pmovsxbd xmm1,[grad3+rax+rax*2] ;grad3[gi0]
-	mov      rax,rcx
-	div      r9b
-	shr      ax,8
-	pmovsxbd xmm2,[grad3+rax+rax*2]
-	mov      rax,rdx
-	div      r9b
-	shr      ax,8
-	pmovsxbd xmm3,[grad3+rax+rax*2]
-	mov      rax,r8
-	div      r9b
-	shr      ax,8
-	pmovsxbd xmm6,[grad3+rax+rax*2]
+	mov       r9,12
+	div       r9b
+	shr       ax,8                   ;gi0
+	pmovsxbd  xmm1,[grad3+rax+rax*2] ;grad3[gi0]
+	mov       rax,rcx
+	div       r9b
+	shr       ax,8
+	pmovsxbd  xmm2,[grad3+rax+rax*2]
+	mov       rax,rdx
+	div       r9b
+	shr       ax,8
+	pmovsxbd  xmm3,[grad3+rax+rax*2]
+	mov       rax,r8
+	div       r9b
+	shr       ax,8
+	pmovsxbd  xmm6,[grad3+rax+rax*2]
 
-	cvtdq2ps xmm1,xmm1
-	cvtdq2ps xmm2,xmm2
-	cvtdq2ps xmm3,xmm3
-	cvtdq2ps xmm6,xmm6
+	cvtdq2ps  xmm1,xmm1
+	cvtdq2ps  xmm2,xmm2
+	cvtdq2ps  xmm3,xmm3
+	cvtdq2ps  xmm6,xmm6
 ;0=x0y0z0 1=grad3[gi0] 2=grad3[gi1] 3=grad3[gi2] 4=x1y1z1 5=x2y2z2 6=grad3[gi3] 7=x3y3z3
 
-	vmulps   xmm8,xmm0,xmm0
-	vmulps   xmm9,xmm4,xmm4
-	vmulps   xmm10,xmm5,xmm5
-	vmulps   xmm11,xmm7,xmm7
+	vmulps    xmm8,xmm0,xmm0
+	vmulps    xmm9,xmm4,xmm4
+	vmulps    xmm10,xmm5,xmm5
+	vmulps    xmm11,xmm7,xmm7
 
-	vunpcklps xmm12,xmm8,xmm10  ;0819
-	vunpcklps xmm13,xmm9,xmm11  ;4C5D
+	dpps      xmm1,xmm0,01110001b
+	dpps      xmm2,xmm4,01110001b
+	dpps      xmm3,xmm5,01110001b
+	dpps      xmm6,xmm7,01110001b
+
+	vunpcklps xmm0,xmm8,xmm10  ;0819
+	vunpcklps xmm4,xmm9,xmm11  ;4C5D
 	unpckhps  xmm8,xmm10        ;2A3B
 	unpckhps  xmm9,xmm11        ;6E7F
 
-	vunpcklps xmm10,xmm12,xmm13 ;048C
-	unpckhps  xmm12,xmm13       ;159D
+	vunpcklps xmm10,xmm0,xmm4 ;048C
+	unpckhps  xmm0,xmm4       ;159D
 	unpcklps  xmm8,xmm9         ;26AE
 
 	vbroadcastss xmm9,[tval]
 	subps     xmm9,xmm10
-	subps     xmm9,xmm12
+	subps     xmm9,xmm0
 	subps     xmm9,xmm8 ;t0t1t2t3
 
 	pxor      xmm8,xmm8
@@ -187,11 +190,6 @@ section .text
 	andps     xmm8,xmm9
 	mulps     xmm8,xmm8
 	mulps     xmm8,xmm8
-
-	dpps      xmm1,xmm0,01110001b
-	dpps      xmm2,xmm4,01110001b
-	dpps      xmm3,xmm5,01110001b
-	dpps      xmm6,xmm7,01110001b
 
 	unpcklps  xmm1,xmm2
 	unpcklps  xmm3,xmm6
@@ -203,12 +201,10 @@ section .text
 	haddps    xmm8,xmm8
 	vmulss    xmm0,xmm8,[retval]
 
-	movups xmm6,[rsp-16]
-	movups xmm7,[rsp-32]
-	movups xmm8,[rsp-48]
-	movups xmm9,[rsp-64]
-	movups xmm10,[rsp-80]
-	movups xmm11,[rsp-96]
-	movups xmm12,[rsp-112]
-	movups xmm13,[rsp-128]
-    ret
+	movups    xmm6,[rsp-16]
+	movups    xmm7,[rsp-32]
+	movups    xmm8,[rsp-48]
+	movups    xmm9,[rsp-64]
+	movups    xmm10,[rsp-80]
+	movups    xmm11,[rsp-96]
+	ret
