@@ -31,9 +31,9 @@ class Player : Entity
 
             //consolePrint("stepped on a " + type);
             bool bounce = false;
-            if(type == 7)
+            if(type == 12)
             {
-                setVoxelType(position, 0);
+                setVoxelType(position, 13);
                 bounce = true;
                 //applyImpulse(0.0f, 5.0f, 0.0f);
             }
@@ -41,9 +41,9 @@ class Player : Entity
             position.x = originalPos.x - 0.25;
             position.z = originalPos.z + 0.25;
             type = getVoxelType(position);
-            if(type == 7)
+            if(type == 12)
             {
-                setVoxelType(position, 0);
+                setVoxelType(position, 13);
               //  applyImpulse(0.0f, 5.0f, 0.0f);
               bounce = true;
             }
@@ -51,9 +51,9 @@ class Player : Entity
             position.x = originalPos.x - 0.25;
             position.z = originalPos.z - 0.25;
             type = getVoxelType(position);
-            if(type == 7)
+            if(type == 12)
             {
-                setVoxelType(position, 0);
+                setVoxelType(position, 13);
               //  applyImpulse(0.0f, 5.0f, 0.0f);
                bounce = true;
             }
@@ -61,9 +61,9 @@ class Player : Entity
             position.x = originalPos.x + 0.25;
             position.z = originalPos.z - 0.25;
             type = getVoxelType(position);
-            if(type == 7)
+            if(type == 12)
             {
-                setVoxelType(position, 0);
+                setVoxelType(position, 13);
                bounce = true;
             }
             if(bounce){
