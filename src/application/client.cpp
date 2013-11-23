@@ -90,7 +90,6 @@ void Client::render()
         fps = 0;
     }
     fps ++;
-	mRenderer.cameraUpdate();
 	mRenderer.render();
 	mWindow.swapBuffers();
 }
