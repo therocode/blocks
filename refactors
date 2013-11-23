@@ -33,3 +33,28 @@ in src/utilities
 
 timer.cpp
 -this class should probably not do fps related stuff. maybe make a separate class that uses a timer& to do fps stuff.
+--------------------------------------------------------------
+
+in src/world
+
+chunkprovider.h
+-no need for a base class for chunk provider. shoudl be changed into some framework for generating the world. This can be done during landscape generation write phase
+
+dimension.h
+-the whole deal with highlight chunk is bad. should implement a system which allows players to have overlapping chunk surroundings with ref counting
+
+world.cpp
+-make the world support more than one dimension
+-maybe have controllers specific to dimensions
+-nicer structure. rgiht now, setvoxel is just handled in the world. maybe it could be handled in dimension.cpp
+--------------------------------------------------------------
+
+regarding entity/script
+-figure out how the script system should be tied to an entity in a neat way that allows for mutual creations and removals.
+--------------------------------------------------------------
+
+in src/script
+-redesign the whole script system with the new gained knowledge
+--------------------------------------------------------------
+
+in entity

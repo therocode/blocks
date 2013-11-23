@@ -7,6 +7,11 @@ GfxController::GfxController(fea::MessageBus& bus, WorldInterface& worldInterfac
     bus.addMessageSubscriber<EntityMovedMessage>(*this);
 }
 
+GfxController::~GfxController()
+{
+    bus.removeMessageSubscriber<EntityMovedMessage>(*this);
+}
+
 void GfxController::inspectEntity(fea::WeakEntityPtr entity)
 {
     fea::EntityPtr locked = entity.lock();

@@ -8,6 +8,11 @@ CollisionController::CollisionController(fea::MessageBus& bus, WorldInterface& w
     bus.addMessageSubscriber<EntityMoveRequestedMessage>(*this);
 }
 
+CollisionController::~CollisionController()
+{
+    bus.removeMessageSubscriber<EntityMoveRequestedMessage>(*this);
+}
+
 void CollisionController::inspectEntity(fea::WeakEntityPtr entity)
 {
     fea::EntityPtr locked = entity.lock();
