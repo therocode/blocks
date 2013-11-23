@@ -58,3 +58,11 @@ in src/script
 --------------------------------------------------------------
 
 in entity
+
+entitysystem.cpp
+-related to script stuff, remake entity spawning and removal
+--------------------------------------------------------------
+
+in rendering
+
+pretty muhc everything needs an overhaul. this should be thought through and done when the models and animations are implemented
