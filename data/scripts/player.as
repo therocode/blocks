@@ -37,6 +37,18 @@ class Player : Entity
                 bounce = true;
                 //applyImpulse(0.0f, 5.0f, 0.0f);
             }
+            else if(type == 21)
+            {
+                setVoxelType(position, 22);
+            }
+            else if(type == 22)
+            {
+                setVoxelType(position, 23);
+            }
+            else if(type == 23)
+            {
+                setVoxelType(position, 21);
+            }
 
             position.x = originalPos.x - 0.25;
             position.z = originalPos.z + 0.25;
@@ -47,6 +59,18 @@ class Player : Entity
               //  applyImpulse(0.0f, 5.0f, 0.0f);
               bounce = true;
             }
+            else if(type == 21)
+            {
+                setVoxelType(position, 22);
+            }
+            else if(type == 22)
+            {
+                setVoxelType(position, 23);
+            }
+            else if(type == 23)
+            {
+                setVoxelType(position, 21);
+            }
 
             position.x = originalPos.x - 0.25;
             position.z = originalPos.z - 0.25;
@@ -57,6 +81,18 @@ class Player : Entity
               //  applyImpulse(0.0f, 5.0f, 0.0f);
                bounce = true;
             }
+            else if(type == 21)
+            {
+                setVoxelType(position, 22);
+            }
+            else if(type == 22)
+            {
+                setVoxelType(position, 23);
+            }
+            else if(type == 23)
+            {
+                setVoxelType(position, 21);
+            }
 
             position.x = originalPos.x + 0.25;
             position.z = originalPos.z - 0.25;
@@ -66,8 +102,21 @@ class Player : Entity
                 setVoxelType(position, 13);
                bounce = true;
             }
+            else if(type == 21)
+            {
+                setVoxelType(position, 22);
+            }
+            else if(type == 22)
+            {
+                setVoxelType(position, 23);
+            }
+            else if(type == 23)
+            {
+                setVoxelType(position, 21);
+            }
+
             if(bounce){
-                applyImpulse(0.0f, 5.0f, 0.0f);
+                applyImpulse(0.0f, 3.0f, 0.0f);
             }
 
         }
