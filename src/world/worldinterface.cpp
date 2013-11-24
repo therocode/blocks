@@ -182,11 +182,6 @@ fea::WeakEntityPtr WorldInterface::spawnEntity(const std::string& scriptType, co
     return mEntitySystem.spawnEntity(scriptType, position);
 }
 
-size_t WorldInterface::spawnEntityFromScriptHandle(const std::string& scriptType, const glm::vec3& position, asIScriptObject* obj)
-{
-    return mEntitySystem.spawnEntityFromScriptHandle(scriptType, position, obj);    
-}
-
 const ChunkMap& WorldInterface::getChunkList() const
 {
     return mDimension.getLandscape().getChunkList();

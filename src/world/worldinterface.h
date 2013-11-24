@@ -15,7 +15,6 @@ class WorldInterface
 		bool getVoxelAtRay(float ox, float oy, float oz, float dx, float dy, float dz, const float maxDistance, int& hitFace, VoxelWorldCoordinate& hitBlock) const;
 		
         fea::WeakEntityPtr spawnEntity(const std::string& scriptType, const glm::vec3& position);
-        size_t spawnEntityFromScriptHandle(const std::string& scriptType, const glm::vec3& position, asIScriptObject* obj);
         const ChunkMap& getChunkList() const;
 
         template<class Type>

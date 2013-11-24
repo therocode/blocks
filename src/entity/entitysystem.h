@@ -10,7 +10,7 @@
 class asIScriptObject;
 
 class EntitySystem : 
-    public fea::MessageReceiver<SpawnEntityMessage>,
+    public fea::MessageReceiver<CreateEntityMessage>,
     public fea::MessageReceiver<RemoveEntityMessage>
 {
     public:
@@ -20,8 +20,7 @@ class EntitySystem :
         void setup();
         void update();
         fea::WeakEntityPtr spawnEntity(const std::string& scriptType, const glm::vec3& position);
-        size_t spawnEntityFromScriptHandle(const std::string& scriptType, const glm::vec3& position, asIScriptObject* obj);
-        void handleMessage(const SpawnEntityMessage& received);
+        void handleMessage(const CreateEntityMessage& received);
         void handleMessage(const RemoveEntityMessage& received);
 
         template<class Type>

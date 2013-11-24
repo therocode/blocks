@@ -9,9 +9,7 @@
 
 class ScriptHandler :
     public fea::MessageReceiver<RebuildScriptsRequestedMessage>,
-    public fea::MessageReceiver<EntityNeedsScriptMessage>,
-    public fea::MessageReceiver<ScriptEntityFinishedMessage>,
-    public fea::MessageReceiver<RemoveScriptEntityMessage>,
+    public fea::MessageReceiver<EntityCreatedMessage>,
     public fea::MessageReceiver<EntityRemovedMessage>
 {
     public:
@@ -20,9 +18,7 @@ class ScriptHandler :
         void setup();
         void destroy();
         void handleMessage(const RebuildScriptsRequestedMessage& message);
-        void handleMessage(const EntityNeedsScriptMessage& message);
-        void handleMessage(const ScriptEntityFinishedMessage& message);
-        void handleMessage(const RemoveScriptEntityMessage& message);
+        void handleMessage(const EntityCreatedMessage& message);
         void handleMessage(const EntityRemovedMessage& message);
         void requestRemovalOfEntity(asIScriptObject* obj);
     private:

@@ -161,7 +161,7 @@ void ScriptInterface::setGravity(float constant)
 
 asIScriptObject* ScriptInterface::createEntity(const std::string& type, float x, float y, float z)
 {
-    asIObjectType* objectType = mModule.getObjectTypeByDecl(type);
+    /*asIObjectType* objectType = mModule.getObjectTypeByDecl(type);
     if(!objectType)
     {
         mBus.sendMessage<LogMessage>(LogMessage("Script runtime error: Tying to create entity of invalid type '" + type + "'", logName, LogLevel::ERR));
@@ -205,7 +205,8 @@ asIScriptObject* ScriptInterface::createEntity(const std::string& type, float x,
     else
     {
         return nullptr;
-    }
+    }*/
+    return nullptr;
 }
 
 asIScriptObject* ScriptInterface::instanciateScriptEntity(const std::string& type, size_t id)
@@ -253,8 +254,7 @@ asIScriptObject* ScriptInterface::instanciateScriptEntity(const std::string& typ
 
 void ScriptInterface::removeEntity(asIScriptObject* entity)
 {
-    mBus.sendMessage<RemoveScriptEntityMessage>(RemoveScriptEntityMessage(entity));
-    entity->Release();
+    //tbi
 }
 
 void ScriptInterface::applyImpulse(size_t id, const glm::vec3& force)
