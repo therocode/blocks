@@ -179,7 +179,7 @@ bool WorldInterface::getVoxelAtRay(float ox, float oy, float oz, float dx, float
 
 fea::WeakEntityPtr WorldInterface::spawnEntity(const std::string& scriptType, const glm::vec3& position)
 {
-    return mEntitySystem.spawnEntity(scriptType, position);
+    return mEntitySystem.createEntity(scriptType, position);
 }
 
 const ChunkMap& WorldInterface::getChunkList() const

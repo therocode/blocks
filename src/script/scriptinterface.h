@@ -20,7 +20,6 @@ class ScriptInterface :
         void handleMessage(const GameStartMessage& received);
         void handleMessage(const EntityOnGroundMessage& received);
         asIScriptObject* createEntity(const std::string& type, float x, float y, float z);
-        asIScriptObject* instanciateScriptEntity(const std::string& type, size_t id);
         void removeEntity(asIScriptObject* entity);
     private:
         fea::MessageBus& mBus;
@@ -30,6 +29,7 @@ class ScriptInterface :
         Random random;
         std::string logName;
         std::unordered_map<asIScriptObject*, size_t>& mUglyReference;
+        std::function<fea::WeakEntityPtr(const std::string&, const glm::vec3&)> entityCreator;
 
         ScriptCallback<int32_t> onFrameCallback;
         ScriptCallback<> gameStartCallback;

@@ -12,6 +12,7 @@ ScriptInterface::ScriptInterface(fea::MessageBus& bus, ScriptEngine& engine, Scr
     mWorldInterface(worldInterface),
     logName("script"),
     mUglyReference(uglyReference),
+    entityCreator([] (const std::string& type, const glm::vec3& position) { return fea::EntityPtr(nullptr); }),
     onFrameCallback(engine),
     gameStartCallback(engine),
     frameTick(0)
@@ -161,56 +162,6 @@ void ScriptInterface::setGravity(float constant)
 
 asIScriptObject* ScriptInterface::createEntity(const std::string& type, float x, float y, float z)
 {
-    /*asIObjectType* objectType = mModule.getObjectTypeByDecl(type);
-    if(!objectType)
-    {
-        mBus.sendMessage<LogMessage>(LogMessage("Script runtime error: Tying to create entity of invalid type '" + type + "'", logName, LogLevel::ERR));
-        return nullptr;
-    }
-    
-    asIScriptFunction *factory = objectType->GetFactoryByDecl(std::string(type + " @" + type +"(EntityCore@ core, uint id)").c_str());
-
-    if(factory)
-    {
-        ScriptEntityCore* entityCore = new ScriptEntityCore(0);
-
-        asIScriptContext* ctx = mEngine.requestContext();
-        // Prepare the context to call the factory function
-        ctx->Prepare(factory);
-        // Add an entity core
-        ctx->SetArgObject(0, entityCore);
-        ctx->SetArgDWord(1, 0);
-        // Execute the call
-        ctx->Execute();
-        // Get the object that was created
-        asIScriptObject *obj = *(asIScriptObject**)ctx->GetAddressOfReturnValue();
-        // If you're going to store the object you must increase the reference,
-        // otherwise it will be destroyed when the context is reused or destroyed.
-        obj->AddRef();
-        obj->AddRef();
-
-        size_t createdId = mWorldInterface.spawnEntityFromScriptHandle(type, glm::vec3(x, y, z), obj);
-        entityCore->setId(createdId);
-
-        asIScriptFunction* function = obj->GetObjectType()->GetMethodByDecl("void setId(uint id)");
-        ctx->Prepare(function);
-        ctx->SetObject(obj);
-        ctx->SetArgDWord(0, createdId);
-        ctx->Execute();
-
-        mEngine.freeContext(ctx);
-
-        return obj;
-    }
-    else
-    {
-        return nullptr;
-    }*/
-    return nullptr;
-}
-
-asIScriptObject* ScriptInterface::instanciateScriptEntity(const std::string& type, size_t id)
-{
     asIObjectType* objectType = mModule.getObjectTypeByDecl(type);
     if(!objectType)
     {
@@ -218,38 +169,49 @@ asIScriptObject* ScriptInterface::instanciateScriptEntity(const std::string& typ
         return nullptr;
     }
     
-    asIScriptFunction* factory = objectType->GetFactoryByDecl(std::string(type + " @" + type +"(EntityCore@ core, uint id)").c_str());
+    asIScriptFunction *factory = objectType->GetFactoryByDecl(std::string(type + " @" + type +"(EntityCore@ core, uint id)").c_str());
 
     if(factory)
     {
-        bool error = false;
+        fea::WeakEntityPtr createdEntity = entityCreator(type, glm::vec3(x, y, z));
+
+        if(createdEntity.expired())
+        {
+            mBus.sendMessage<LogMessage>(LogMessage("Script runtime error: Id of created entity of type '" + type + "' is invalid. Abandoning script initialisation", logName, LogLevel::ERR));
+            return nullptr;
+        }
+
+        fea::EntityId id = createdEntity.lock()->getId();
+
+        ScriptEntityCore* entityCore = new ScriptEntityCore(id);
 
         asIScriptContext* ctx = mEngine.requestContext();
         // Prepare the context to call the factory function
         ctx->Prepare(factory);
-
         // Add an entity core
-        ctx->SetArgObject(0, new ScriptEntityCore(id));
-
+        ctx->SetArgObject(0, entityCore);
         ctx->SetArgDWord(1, id);
-
         // Execute the call
         ctx->Execute();
-
         // Get the object that was created
         asIScriptObject *obj = *(asIScriptObject**)ctx->GetAddressOfReturnValue();
         // If you're going to store the object you must increase the reference,
         // otherwise it will be destroyed when the context is reused or destroyed.
         obj->AddRef();
+        obj->AddRef();
 
         mEngine.freeContext(ctx);
+
+        //add entity core to other entity cores somehow
 
         return obj;
     }
     else
     {
+        mBus.sendMessage<LogMessage>(LogMessage("Script runtime error: Entity of type '" + type + "' has no valid factory function", logName, LogLevel::ERR));
         return nullptr;
     }
+    return nullptr;
 }
 
 void ScriptInterface::removeEntity(asIScriptObject* entity)

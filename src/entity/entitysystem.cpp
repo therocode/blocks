@@ -62,7 +62,7 @@ void EntitySystem::update()
     }
 }
 
-fea::WeakEntityPtr EntitySystem::spawnEntity(const std::string& type, const glm::vec3& position)
+fea::WeakEntityPtr EntitySystem::createEntity(const std::string& type, const glm::vec3& position)
 {
     fea::WeakEntityPtr entity = mFactory.spawnEntity(type);
 
@@ -82,7 +82,7 @@ void EntitySystem::handleMessage(const CreateEntityMessage& received)
     
     std::tie(type, position) = received.data;
 
-    spawnEntity(type, position);
+    createEntity(type, position);
 }
 
 void EntitySystem::handleMessage(const RemoveEntityMessage& received)
