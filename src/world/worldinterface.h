@@ -22,6 +22,7 @@ class WorldInterface
         {
             return mEntitySystem.getEntityAttribute<Type>(id, name);
         }
+        EntityCreator getEntityCreator() const;
     private:
         Dimension& mDimension;
         EntitySystem& mEntitySystem;

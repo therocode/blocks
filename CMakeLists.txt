@@ -113,6 +113,7 @@ set(header_files
 
 	src/entity/entitymessages.h
     src/entity/defaultsetters.h
+    src/entity/entitycreator.h
     src/entity/entityfactory.h
     src/entity/entitydefinition.h
     src/entity/entitydefinitionloader.h

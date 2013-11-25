@@ -4,6 +4,7 @@
 #include "scriptcallback.h"
 #include "../utilities/random.h"
 #include "../world/worldinterface.h"
+#include "entity/entitycreator.h"
 #include "scriptentity.h"
 
 class ScriptInterface : 
@@ -21,6 +22,7 @@ class ScriptInterface :
         void handleMessage(const EntityOnGroundMessage& received);
         asIScriptObject* createEntity(const std::string& type, float x, float y, float z);
         void removeEntity(asIScriptObject* entity);
+        void setEntityCreator(EntityCreator creator);
     private:
         fea::MessageBus& mBus;
         ScriptEngine& mEngine;
@@ -29,7 +31,7 @@ class ScriptInterface :
         Random random;
         std::string logName;
         std::unordered_map<asIScriptObject*, size_t>& mUglyReference;
-        std::function<fea::WeakEntityPtr(const std::string&, const glm::vec3&)> entityCreator;
+        EntityCreator mEntityCreator;
 
         ScriptCallback<int32_t> onFrameCallback;
         ScriptCallback<> gameStartCallback;

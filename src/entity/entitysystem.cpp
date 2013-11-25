@@ -113,3 +113,8 @@ void EntitySystem::removeEntity(fea::EntityId id)
 
     mBus.sendMessage<EntityRemovedMessage>(EntityRemovedMessage(id));
 }
+
+EntityCreator EntitySystem::getEntityCreator()
+{
+    return std::bind(&EntitySystem::createEntity, this, std::placeholders::_1, std::placeholders::_2);
+}

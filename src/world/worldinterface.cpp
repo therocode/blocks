@@ -186,3 +186,8 @@ const ChunkMap& WorldInterface::getChunkList() const
 {
     return mDimension.getLandscape().getChunkList();
 }
+
+EntityCreator WorldInterface::getEntityCreator() const
+{
+    return mEntitySystem.getEntityCreator();
+}

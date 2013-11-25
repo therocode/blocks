@@ -12,7 +12,7 @@ ScriptInterface::ScriptInterface(fea::MessageBus& bus, ScriptEngine& engine, Scr
     mWorldInterface(worldInterface),
     logName("script"),
     mUglyReference(uglyReference),
-    entityCreator([] (const std::string& type, const glm::vec3& position) { return fea::EntityPtr(nullptr); }),
+    mEntityCreator([] (const std::string& type, const glm::vec3& position) { return fea::EntityPtr(nullptr); }),
     onFrameCallback(engine),
     gameStartCallback(engine),
     frameTick(0)
@@ -23,6 +23,7 @@ ScriptInterface::ScriptInterface(fea::MessageBus& bus, ScriptEngine& engine, Scr
 
     ScriptEntityCore::sWorldInterface = &worldInterface;
     ScriptEntityCore::sBus = &bus;
+    setEntityCreator(mWorldInterface.getEntityCreator());
 }
 
 ScriptInterface::~ScriptInterface()
@@ -173,7 +174,7 @@ asIScriptObject* ScriptInterface::createEntity(const std::string& type, float x,
 
     if(factory)
     {
-        fea::WeakEntityPtr createdEntity = entityCreator(type, glm::vec3(x, y, z));
+        fea::WeakEntityPtr createdEntity = mEntityCreator(type, glm::vec3(x, y, z));
 
         if(createdEntity.expired())
         {
@@ -242,4 +243,9 @@ VoxelType ScriptInterface::getVoxelType(float x, float y, float z)
 VoxelType ScriptInterface::getVoxelType(const glm::vec3& coordinate)
 {
     return mWorldInterface.getVoxelType(coordinate);
+}
+
+void ScriptInterface::setEntityCreator(EntityCreator creator)
+{
+    mEntityCreator = creator;
 }

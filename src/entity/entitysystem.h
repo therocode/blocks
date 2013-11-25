@@ -4,6 +4,7 @@
 #include <featherkit/entitysystem.h>
 #include "controllers/entitycontroller.h"
 #include "entityfactory.h"
+#include "entitycreator.h"
 #include "entitymessages.h"
 #include "utilities/timer.h"
 
@@ -28,6 +29,7 @@ class EntitySystem :
         {
             return mManager.getEntity(id).lock()->getAttribute<Type>(name);
         }
+        EntityCreator getEntityCreator();
     private:
         void attachEntity(fea::WeakEntityPtr entity);
         void removeEntity(fea::EntityId id);
