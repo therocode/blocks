@@ -177,7 +177,7 @@ bool WorldInterface::getVoxelAtRay(float ox, float oy, float oz, float dx, float
 	// return glm::vec3((int)p.x - (p.x<0),(int)p.y - (p.y<0),(int)p.z - (p.z<0)) + glm::vec3(0.5f);
 }
 
-fea::WeakEntityPtr WorldInterface::spawnEntity(const std::string& scriptType, const glm::vec3& position)
+fea::WeakEntityPtr WorldInterface::createEntity(const std::string& scriptType, const glm::vec3& position)
 {
     return mEntitySystem.createEntity(scriptType, position);
 }

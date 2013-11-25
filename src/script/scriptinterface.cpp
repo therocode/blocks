@@ -20,6 +20,7 @@ ScriptInterface::ScriptInterface(fea::MessageBus& bus, ScriptEngine& engine, Scr
     mBus.addMessageSubscriber<FrameMessage>(*this);
     mBus.addMessageSubscriber<GameStartMessage>(*this);
     mBus.addMessageSubscriber<EntityOnGroundMessage>(*this);
+    mBus.addMessageSubscriber<EntityCreatedMessage>(*this);
 
     ScriptEntityCore::sWorldInterface = &worldInterface;
     ScriptEntityCore::sBus = &bus;
@@ -31,6 +32,7 @@ ScriptInterface::~ScriptInterface()
     mBus.removeMessageSubscriber<FrameMessage>(*this);
     mBus.removeMessageSubscriber<GameStartMessage>(*this);
     mBus.removeMessageSubscriber<EntityOnGroundMessage>(*this);
+    mBus.removeMessageSubscriber<EntityCreatedMessage>(*this);
 }
 
 void ScriptInterface::registerInterface()
@@ -130,6 +132,7 @@ void ScriptInterface::handleMessage(const EntityOnGroundMessage& received)
 
     if(!mModule.hasErrors())
     {
+        std::cout << "size is: " << mUglyReference.size() << "\n";
         for(auto& object : mUglyReference)
         {
             if(id == object.second)
@@ -144,6 +147,14 @@ void ScriptInterface::handleMessage(const EntityOnGroundMessage& received)
             }
         }
     }
+}
+
+void ScriptInterface::handleMessage(const EntityCreatedMessage& received)
+{
+    fea::WeakEntityPtr wEntityPtr;
+    std::string type;
+
+    std::tie(wEntityPtr, type) = received.data;
 }
 
 void ScriptInterface::scriptPrint(const std::string& text)
@@ -163,25 +174,25 @@ void ScriptInterface::setGravity(float constant)
 
 asIScriptObject* ScriptInterface::createEntity(const std::string& type, float x, float y, float z)
 {
+    fea::WeakEntityPtr createdEntity = mEntityCreator(type, glm::vec3(x, y, z));
+
+    if(createdEntity.expired())
+    {
+        mBus.sendMessage<LogMessage>(LogMessage("Script runtime error: Id of created entity of type '" + type + "' is invalid. Abandoning script initialisation", logName, LogLevel::ERR));
+        return nullptr;
+    }
+
     asIObjectType* objectType = mModule.getObjectTypeByDecl(type);
     if(!objectType)
     {
         mBus.sendMessage<LogMessage>(LogMessage("Script runtime error: Trying to create entity of invalid type '" + type + "'", logName, LogLevel::ERR));
         return nullptr;
     }
-    
+
     asIScriptFunction *factory = objectType->GetFactoryByDecl(std::string(type + " @" + type +"(EntityCore@ core, uint id)").c_str());
 
     if(factory)
     {
-        fea::WeakEntityPtr createdEntity = mEntityCreator(type, glm::vec3(x, y, z));
-
-        if(createdEntity.expired())
-        {
-            mBus.sendMessage<LogMessage>(LogMessage("Script runtime error: Id of created entity of type '" + type + "' is invalid. Abandoning script initialisation", logName, LogLevel::ERR));
-            return nullptr;
-        }
-
         fea::EntityId id = createdEntity.lock()->getId();
 
         ScriptEntityCore* entityCore = new ScriptEntityCore(id);
@@ -201,9 +212,10 @@ asIScriptObject* ScriptInterface::createEntity(const std::string& type, float x,
         obj->AddRef();
         obj->AddRef();
 
-        mEngine.freeContext(ctx);
+        mBus.sendMessage<ScriptEntityFinishedMessage>(ScriptEntityFinishedMessage(id, obj, createdEntity));
+        mBus.sendMessage<LogMessage>(LogMessage("Created entity id " + std::to_string(id) + " of type '" + type + "'", logName, LogLevel::VERB));
 
-        //add entity core to other entity cores somehow
+        mEngine.freeContext(ctx);
 
         return obj;
     }

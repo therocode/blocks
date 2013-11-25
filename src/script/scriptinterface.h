@@ -10,7 +10,8 @@
 class ScriptInterface : 
     public fea::MessageReceiver<FrameMessage>,
     public fea::MessageReceiver<GameStartMessage>,
-    public fea::MessageReceiver<EntityOnGroundMessage>
+    public fea::MessageReceiver<EntityOnGroundMessage>,
+    public fea::MessageReceiver<EntityCreatedMessage>
 {
     public:
         ScriptInterface(fea::MessageBus& bus, ScriptEngine& engine, ScriptModule& module, WorldInterface& worldInterface, std::unordered_map<asIScriptObject*, size_t>& uglyReference);
@@ -20,6 +21,7 @@ class ScriptInterface :
         void handleMessage(const FrameMessage& received);
         void handleMessage(const GameStartMessage& received);
         void handleMessage(const EntityOnGroundMessage& received);
+        void handleMessage(const EntityCreatedMessage& received);
         asIScriptObject* createEntity(const std::string& type, float x, float y, float z);
         void removeEntity(asIScriptObject* entity);
         void setEntityCreator(EntityCreator creator);
