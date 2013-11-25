@@ -6,7 +6,7 @@
 #include "../world/worldmessages.h"
 #include "../rendering/renderingmessages.h"
 #include "../script/scripthandler.h"
-#include "../utilities/timer.h"
+#include "../utilities/fpscontroller.h"
 #include "../utilities/logger.h"
 
 class Server : public fea::MessageReceiver<FatalMessage>,
@@ -47,8 +47,8 @@ class Server : public fea::MessageReceiver<FatalMessage>,
         Logger mLogger;
         World mWorld;
         ScriptHandler mScriptHandler;
-        Timer mFrameTimer;
         std::string mLogName;
+        FPSController mFPSController;
 
         std::map<ClientId, std::shared_ptr<ClientConnection> > mClients;
         std::unique_ptr<ClientConnectionListener> mListener;

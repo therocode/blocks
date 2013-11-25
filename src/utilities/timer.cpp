@@ -32,6 +32,10 @@ long Timer::getTime()
 	return duration_cast<milliseconds>(newTime - mStartTime).count();
 }
 
+high_resolution_clock::time_point Timer::getTimePoint(){
+    return mClock.now();
+}
+
 long Timer::getDeltaTime()
 {
 	if(!mStarted)
@@ -53,21 +57,4 @@ long Timer::getDeltaTime()
 void Timer::setDeltaThreshold(int milliseconds)
 {
 	mDeltaThreshold = milliseconds;
-}
-
-void Timer::setDesiredFPSRate(int rate)
-{
-    fps = rate;
-}
-
-void Timer::sleepForTheRestOfTheFrame()
-{
-    std::chrono::microseconds frameLength = std::chrono::microseconds(1000000) / fps;
-    std::chrono::microseconds microsecondsElapsed = duration_cast<microseconds>(mClock.now() - mLastTime);
-    std::chrono::microseconds microsecondsLeft =  frameLength - microsecondsElapsed;
-
-    if(microsecondsLeft > std::chrono::microseconds(0))
-    {
-        std::this_thread::sleep_for(microsecondsLeft);
-    }
 }

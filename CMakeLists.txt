@@ -29,9 +29,9 @@ set(source_files
     src/application/client.cpp
 	src/application/main.cpp
     src/application/server.cpp
-    
+
     src/console/console.cpp
-    
+
     src/entity/defaultsetters.cpp
     src/entity/entityfactory.cpp
     src/entity/entitydefinitionloader.cpp
@@ -43,7 +43,7 @@ set(source_files
     src/entity/controllers/movedirection.cpp
     src/entity/controllers/physicscontroller.cpp
     src/entity/controllers/playercontroller.cpp
-    
+
     src/input/inputadaptor.cpp
 
     src/networking/clientconnection.cpp
@@ -87,12 +87,13 @@ set(source_files
 
 	src/utilities/asmnoise.asm
     src/utilities/folderexploder.cpp
+    src/utilities/fpscontroller.cpp
     src/utilities/lodepng.cpp
     src/utilities/logger.cpp
 	src/utilities/random.cpp
     src/utilities/simplexnoise.cpp
 	src/utilities/timer.cpp
-    
+
 	src/world/chunk.cpp
     src/world/dimension.cpp
     src/world/landscape.cpp
@@ -175,6 +176,7 @@ set(header_files
 
     src/utilities/asmnoise.h
     src/utilities/folderexploder.h
+    src/utilities/fpscontroller.h
     src/utilities/lodepng.h
     src/utilities/logger.h
 	src/utilities/random.h
