@@ -7,6 +7,7 @@
 #include "scriptentitycore.h"
 #include <iostream>
 #include "world/worldmessages.h"
+#include "interfaces/randominterface.h"
 
 ScriptHandler::ScriptHandler(fea::MessageBus& bus, WorldInterface& worldInterface) : 
     mEngine(bus),
@@ -46,6 +47,9 @@ ScriptHandler::~ScriptHandler()
 void ScriptHandler::setup()
 {
     mEngine.setup();
+
+    mInterfaces.push_back(std::unique_ptr<ScriptInterface>(new RandomInterface));
+
     registerInterface();
 
     FolderExploder exploder;
@@ -244,12 +248,6 @@ void ScriptHandler::registerInterface()
     r = mEngine.getEngine()->RegisterGlobalFunction("string toString(float num)", asFUNCTIONPR(std::to_string, (float), std::string), asCALL_CDECL); assert(r >= 0);
     r = mEngine.getEngine()->RegisterGlobalFunction("string toString(double num)", asFUNCTIONPR(std::to_string, (double), std::string), asCALL_CDECL); assert(r >= 0);
 
-    //random
-    r = mEngine.getEngine()->RegisterGlobalFunction("uint randomInt()", asMETHOD(Random, randomInt), asCALL_THISCALL_ASGLOBAL, &random); assert(r >= 0);
-    r = mEngine.getEngine()->RegisterGlobalFunction("int randomIntRange(int start, int end)", asMETHOD(Random, randomIntRange), asCALL_THISCALL_ASGLOBAL, &random); assert(r >= 0);
-    r = mEngine.getEngine()->RegisterGlobalFunction("float randomFloatRange(float start, float end)", asMETHOD(Random, randomFloatRange), asCALL_THISCALL_ASGLOBAL, &random); assert(r >= 0);
-    r = mEngine.getEngine()->RegisterGlobalFunction("bool randomChance(float chance)", asMETHOD(Random, randomChance), asCALL_THISCALL_ASGLOBAL, &random); assert(r >= 0);
-
     //physics
     r = mEngine.getEngine()->RegisterGlobalFunction("void setGravity(float constant)", asMETHOD(ScriptHandler, setGravity), asCALL_THISCALL_ASGLOBAL, this); assert(r >= 0);
     r = mEngine.getEngine()->RegisterGlobalFunction("void applyImpulseOnEntity(uint id, const Vec3& in)", asMETHOD(ScriptHandler, applyImpulse), asCALL_THISCALL_ASGLOBAL, this); assert(r >= 0);
@@ -259,9 +257,14 @@ void ScriptHandler::registerInterface()
     r = mEngine.getEngine()->RegisterGlobalFunction("void setVoxelType(const Vec3& in, uint16 type)", asMETHODPR(ScriptHandler, setVoxelType, (const glm::vec3&, uint16_t type), void), asCALL_THISCALL_ASGLOBAL, this); assert(r >= 0);
     r = mEngine.getEngine()->RegisterGlobalFunction("uint16 getVoxelType(float x, float y, float z)", asMETHODPR(ScriptHandler, getVoxelType, (float x, float y, float z), VoxelType), asCALL_THISCALL_ASGLOBAL, this); assert(r >= 0);
     r = mEngine.getEngine()->RegisterGlobalFunction("uint16 getVoxelType(const Vec3& in)", asMETHODPR(ScriptHandler, getVoxelType, (const glm::vec3&), VoxelType), asCALL_THISCALL_ASGLOBAL, this); assert(r >= 0);
+
+    for(auto& interface : mInterfaces)
+    {
+        interface->registerInterface(mEngine.getEngine());
+    }
 }
 
-void ScriptHandler::registerCallbacks(const std::map<size_t, ScriptEntity>& scriptEntities)
+void ScriptHandler::registerCallbacks(ScriptEntityMap& scriptEntities)
 {
     if(!mScripts.hasErrors())
     {

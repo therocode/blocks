@@ -3,13 +3,12 @@
 #include "scriptentity.h"
 #include "scriptcallback.h"
 #include "../world/worldinterface.h"
-#include "../utilities/random.h"
 #include "scriptmessages.h"
-#include <map>
 #include "../application/applicationmessages.h"
-#include <unordered_map>
+#include <map>
 
 using ScriptEntityMap = std::map<size_t, ScriptEntity>;
+class ScriptInterface;
 
 class ScriptHandler :
     public fea::MessageReceiver<RebuildScriptsRequestedMessage>,
@@ -35,7 +34,7 @@ class ScriptHandler :
         void setEntityCreator(EntityCreator creator);
     private:
         void registerInterface();
-        void registerCallbacks(const std::map<size_t, ScriptEntity>& scriptEntities);
+        void registerCallbacks(ScriptEntityMap& scriptEntities);
         fea::MessageBus& mBus;
         ScriptEngine mEngine;
         ScriptModule mScripts;
@@ -43,8 +42,8 @@ class ScriptHandler :
         std::vector<std::string> sourceFiles;
         ScriptEntityMap scriptEntities;
         std::string logName;
-        Random random;
 
+        std::vector<std::unique_ptr<ScriptInterface>> mInterfaces;
         //interface functions
         void scriptPrint(const std::string& text);
         void scriptPrint(const std::string& text, uint32_t level);

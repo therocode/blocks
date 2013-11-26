@@ -83,6 +83,7 @@ set(source_files
     src/script/asaddons/scriptbuilder.cpp
     src/script/asaddons/scriptstdstring.cpp
     src/script/asaddons/scriptstdstring_utils.cpp
+    src/script/interfaces/randominterface.cpp
 
 	src/utilities/asmnoise.asm
     src/utilities/folderexploder.cpp
@@ -100,6 +101,7 @@ set(source_files
 	src/world/world.cpp
     src/world/worldinterface.cpp
 )
+
 set(header_files
 	src/blockstd.h
 	src/application/applicationmessages.h
@@ -171,6 +173,8 @@ set(header_files
     src/script/asaddons/scriptvectors.h
     src/script/asaddons/scriptbuilder.h
     src/script/asaddons/scriptstdstring.h
+    src/script/interfaces/randominterface.h
+    src/script/interfaces/scriptinterface.h
 
     src/utilities/asmnoise.h
     src/utilities/folderexploder.h
