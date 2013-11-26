@@ -257,8 +257,8 @@ section .text
 	movzx     rcx ,byte [perm+r8+r9]
 	movzx     rdx ,byte [perm+r8+1]
 
-	movd      r8d ,xmm1  ;ii
-	movd      r9d ,xmm3  ;i1
+	pextrb    r8d ,xmm1,0 ;ii
+	movd      r9d ,xmm3   ;i1
 	add       r9  ,rcx
 	mov       al  ,byte [perm+r8+rax]
 	mov       cl  ,byte [perm+r8+r9]
