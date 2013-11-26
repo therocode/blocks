@@ -97,6 +97,52 @@ void ScriptHandler::handleMessage(const RebuildScriptsRequestedMessage& message)
 
 void ScriptHandler::handleMessage(const EntityCreatedMessage& message)
 {
+    fea::WeakEntityPtr wEntity;
+    std::string type;
+    
+    std::tie(wEntity, type) = message.data;
+
+    asIObjectType* objectType = mScripts.getObjectTypeByDecl(type);
+    if(!objectType)
+    {
+        mBus.sendMessage<LogMessage>(LogMessage("Script runtime error: Trying to create entity of invalid type '" + type + "'", logName, LogLevel::ERR));
+        return;
+    }
+
+    asIScriptFunction *factory = objectType->GetFactoryByDecl(std::string(type + " @" + type +"(EntityCore@ core, uint id)").c_str());
+
+    if(factory)
+    {
+        fea::EntityId id = wEntity.lock()->getId();
+
+        ScriptEntityCore* entityCore = new ScriptEntityCore(id);
+
+        asIScriptContext* ctx = mEngine.requestContext();
+        // Prepare the context to call the factory function
+        ctx->Prepare(factory);
+        // Add an entity core
+        ctx->SetArgObject(0, entityCore);
+        ctx->SetArgDWord(1, id);
+        // Execute the call
+        ctx->Execute();
+        // Get the object that was created
+        asIScriptObject *obj = *(asIScriptObject**)ctx->GetAddressOfReturnValue();
+        // If you're going to store the object you must increase the reference,
+        // otherwise it will be destroyed when the context is reused or destroyed.
+        obj->AddRef();
+        obj->AddRef();
+
+        mBus.sendMessage<LogMessage>(LogMessage("Created entity id " + std::to_string(id) + " of type '" + type + "'", logName, LogLevel::VERB));
+
+        mEngine.freeContext(ctx);
+
+        ScriptEntity scriptEntity(id, wEntity, obj);
+        scriptEntities.emplace(id, scriptEntity);
+    }
+    else
+    {
+        mBus.sendMessage<LogMessage>(LogMessage("Script runtime error: Entity of type '" + type + "' has no valid factory function", logName, LogLevel::ERR));
+    }
 }
 
 void ScriptHandler::handleMessage(const EntityRemovedMessage& message)
@@ -260,51 +306,16 @@ asIScriptObject* ScriptHandler::createEntity(const std::string& type, float x, f
         return nullptr;
     }
 
-    asIObjectType* objectType = mScripts.getObjectTypeByDecl(type);
-    if(!objectType)
+    auto scriptEntity = scriptEntities.find(createdEntity.lock()->getId());
+
+    if(scriptEntity != scriptEntities.end())
     {
-        mBus.sendMessage<LogMessage>(LogMessage("Script runtime error: Trying to create entity of invalid type '" + type + "'", logName, LogLevel::ERR));
-        return nullptr;
-    }
-
-    asIScriptFunction *factory = objectType->GetFactoryByDecl(std::string(type + " @" + type +"(EntityCore@ core, uint id)").c_str());
-
-    if(factory)
-    {
-        fea::EntityId id = createdEntity.lock()->getId();
-
-        ScriptEntityCore* entityCore = new ScriptEntityCore(id);
-
-        asIScriptContext* ctx = mEngine.requestContext();
-        // Prepare the context to call the factory function
-        ctx->Prepare(factory);
-        // Add an entity core
-        ctx->SetArgObject(0, entityCore);
-        ctx->SetArgDWord(1, id);
-        // Execute the call
-        ctx->Execute();
-        // Get the object that was created
-        asIScriptObject *obj = *(asIScriptObject**)ctx->GetAddressOfReturnValue();
-        // If you're going to store the object you must increase the reference,
-        // otherwise it will be destroyed when the context is reused or destroyed.
-        obj->AddRef();
-        obj->AddRef();
-
-        mBus.sendMessage<LogMessage>(LogMessage("Created entity id " + std::to_string(id) + " of type '" + type + "'", logName, LogLevel::VERB));
-
-        mEngine.freeContext(ctx);
-
-        ScriptEntity scriptEntity(id, createdEntity, obj);
-        scriptEntities.emplace(id, scriptEntity);
-
-        return obj;
+        return scriptEntity->second.getScriptObject();
     }
     else
     {
-        mBus.sendMessage<LogMessage>(LogMessage("Script runtime error: Entity of type '" + type + "' has no valid factory function", logName, LogLevel::ERR));
         return nullptr;
     }
-    return nullptr;
 }
 
 void ScriptHandler::removeEntity(asIScriptObject* entity)
