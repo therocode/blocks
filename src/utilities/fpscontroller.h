@@ -1,3 +1,4 @@
+#pragma once
 #include "blockstd.h"
 #include "timer.h"
 #include <chrono>
@@ -7,6 +8,8 @@ using namespace std::chrono;
 class FPSController{
 public:
     FPSController();
+    ///Set fps counter sample time
+    void setSampleTime(float seconds);
     ///Set max framerate.
     void setMaxFPS(int fps);
     ///Returns the average fps
@@ -18,8 +21,11 @@ public:
     ///Resets timer, don't know when it would be good to run it.
     void reset();
 private:
+    std::chrono::milliseconds mSampleTime;
     Timer mTimer;
-    float mFPS;
+    int   mFPS;
+    int   mFramesElapsed;
+    high_resolution_clock::time_point mSampleBegin;
     high_resolution_clock::time_point mFrameBeginTime;
     std::chrono::microseconds mFrameLength;
     int   mFrameRate = 0;

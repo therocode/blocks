@@ -1,7 +1,12 @@
 #include "fpscontroller.h"
 
 FPSController::FPSController(){
+    mSampleTime = std::chrono::milliseconds(1000);
     reset();
+}
+
+void FPSController::setSampleTime(float seconds){
+    mSampleTime = std::chrono::milliseconds((int)(seconds * 1000.f));
 }
 
 void FPSController::setMaxFPS(int fps){
@@ -11,7 +16,7 @@ void FPSController::setMaxFPS(int fps){
 }
 
 float FPSController::getAverageFPS(){
-    return mFPS;
+    return mFPS / ((float)mSampleTime.count() / 1000.0f);
 }
 
 void FPSController::frameBegin(){
@@ -19,11 +24,19 @@ void FPSController::frameBegin(){
 }
 
 void FPSController::frameEnd(){
+    high_resolution_clock::time_point currentTime = mTimer.getTimePoint();
+    std::chrono::microseconds microsecondsElapsed = duration_cast<microseconds>(currentTime - mFrameBeginTime);
+    mFramesElapsed ++;
+
+    if(currentTime - mSampleBegin > mSampleTime){
+        mSampleBegin = currentTime;
+        mFPS = mFramesElapsed;
+        mFramesElapsed = 0;
+    }
+
     if(mFrameRate == 0){
         return;
     }
-    std::chrono::microseconds microsecondsElapsed = duration_cast<microseconds>(mTimer.getTimePoint() - mFrameBeginTime);
-    mFPS = 1000000.f / (float)(microsecondsElapsed.count());
     std::chrono::microseconds microsecondsLeft =  mFrameLength - microsecondsElapsed;
     if(microsecondsLeft > std::chrono::microseconds(0)){
         std::this_thread::sleep_for(microsecondsLeft);
@@ -33,5 +46,6 @@ void FPSController::frameEnd(){
 void FPSController::reset(){
     mTimer.stop();
     mTimer.start();
+    mSampleBegin = mTimer.getTimePoint();
 }
 
