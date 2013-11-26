@@ -13,6 +13,7 @@ class CollisionController : public EntityController,
 			float width = 1.0f, height = 1.0f, depth = 1.0f;
 		};
         CollisionController(fea::MessageBus& bus, WorldInterface& worldInterface);
+        ~CollisionController();
         virtual void inspectEntity(fea::WeakEntityPtr entity) override;
         void onFrame(int dt) override;
         void handleMessage(const EntityMoveRequestedMessage& message) override;
@@ -24,4 +25,5 @@ class CollisionController : public EntityController,
         bool checkIfOnGround(fea::EntityPtr entity);
 		float sweepAABB(const AABB a, const AABB b, const glm::vec3 v, glm::vec3& n);
         bool AABBAABB(const AABB a, const AABB b) const;
+        fea::MessageBus& mBus;
 };

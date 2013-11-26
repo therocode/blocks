@@ -3,19 +3,16 @@
 #include <chrono>
 #include <algorithm>
 
-uint32_t Chunk::totalTime = 0;
-uint32_t Chunk::totalSize = 0;
-uint32_t Chunk::timesGenerated = 0;
-
-ChunkCoordinate worldToChunkInt(int x, int y, int z){
+ChunkCoordinate worldToChunkInt(int x, int y, int z)
+{
 	int xNeg = x < 0;
 	int yNeg = y < 0;
 	int zNeg = z < 0;
 	ChunkCoordinate c;
 	
 	c.x =(((xNeg)?1:0) + x) / chunkWidth;
-	c.y =(((yNeg)?1:0) + y)  / chunkWidth;
-	c.z =(((zNeg)?1:0) + z)  / chunkWidth;
+	c.y =(((yNeg)?1:0) + y) / chunkWidth;
+	c.z =(((zNeg)?1:0) + z) / chunkWidth;
 	
 	if(xNeg) c.x -= 1;
 	if(yNeg) c.y -= 1;
@@ -155,11 +152,6 @@ void Chunk::setVoxelType(const VoxelCoordinate& voxel, VoxelType type)
 
 void Chunk::setVoxelData(const VoxelTypeArray& types)
 {
-    using namespace std::chrono;
-
-    //std::cout << "size before compression: " << sizeof(VoxelTypeArray) << "\n";
-    high_resolution_clock::time_point now = high_resolution_clock::now();
-
     mRleSegmentIndices.fill(RleSegmentInfo({0, 0}));
     mRleSegments.clear();
 
@@ -203,16 +195,6 @@ void Chunk::setVoxelData(const VoxelTypeArray& types)
             mRleSegmentIndices[segmentIndex].mSegmentSize = mRleSegments.size() - mRleSegmentIndices[segmentIndex].mSegmentStart;
         }
     }
-
-    high_resolution_clock::time_point then = high_resolution_clock::now();
-
-    totalTime += duration_cast<microseconds>(then - now).count();
-    timesGenerated++;
-    totalSize += mRleSegments.size() * sizeof(uint16_t);
-
-    //std::cout << "size after compression: " << mRleSegments.size() * sizeof(uint16_t) << "\n";
-    //std::cout << "the compression process took " << duration_cast<microseconds>(then - now).count() << " microseconds\n";
-    //std::cout << "average compression is " << totalTime / timesGenerated << " microseconds and average size is " << totalSize / timesGenerated << "\n\n";
 }
 
 //these should be optimised in the future using binary trees

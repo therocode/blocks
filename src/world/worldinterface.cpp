@@ -177,17 +177,17 @@ bool WorldInterface::getVoxelAtRay(float ox, float oy, float oz, float dx, float
 	// return glm::vec3((int)p.x - (p.x<0),(int)p.y - (p.y<0),(int)p.z - (p.z<0)) + glm::vec3(0.5f);
 }
 
-fea::WeakEntityPtr WorldInterface::spawnEntity(const std::string& scriptType, const glm::vec3& position)
+fea::WeakEntityPtr WorldInterface::createEntity(const std::string& scriptType, const glm::vec3& position)
 {
-    return mEntitySystem.spawnEntity(scriptType, position);
-}
-
-size_t WorldInterface::spawnEntityFromScriptHandle(const std::string& scriptType, const glm::vec3& position, asIScriptObject* obj)
-{
-    return mEntitySystem.spawnEntityFromScriptHandle(scriptType, position, obj);    
+    return mEntitySystem.createEntity(scriptType, position);
 }
 
 const ChunkMap& WorldInterface::getChunkList() const
 {
     return mDimension.getLandscape().getChunkList();
+}
+
+EntityCreator WorldInterface::getEntityCreator() const
+{
+    return mEntitySystem.getEntityCreator();
 }

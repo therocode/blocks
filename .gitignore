@@ -22,3 +22,5 @@ remake.sh
 o2
 32bit
 zlib-1.2.8/*
+*.sublime-workspace
+*.sublime-project

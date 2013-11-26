@@ -16,11 +16,6 @@ shared class Entity : IEntity
         mId = id;
     }
 
-    void setId(uint id)
-    {
-        mId = id;
-    }
-
     EntityCore @mCore;
     uint mId;
 

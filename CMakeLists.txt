@@ -29,9 +29,9 @@ set(source_files
     src/application/client.cpp
 	src/application/main.cpp
     src/application/server.cpp
-    
+
     src/console/console.cpp
-    
+
     src/entity/defaultsetters.cpp
     src/entity/entityfactory.cpp
     src/entity/entitydefinitionloader.cpp
@@ -43,7 +43,7 @@ set(source_files
     src/entity/controllers/movedirection.cpp
     src/entity/controllers/physicscontroller.cpp
     src/entity/controllers/playercontroller.cpp
-    
+
     src/input/inputadaptor.cpp
 
     src/networking/clientconnection.cpp
@@ -76,7 +76,6 @@ set(source_files
     src/script/scriptentity.cpp
     src/script/scriptentitycore.cpp
     src/script/scripthandler.cpp
-    src/script/scriptinterface.cpp
     src/script/scriptmodule.cpp
     src/script/asaddons/scriptarray.cpp
     src/script/asaddons/scriptmath.cpp
@@ -87,12 +86,13 @@ set(source_files
 
 	src/utilities/asmnoise.asm
     src/utilities/folderexploder.cpp
+    src/utilities/fpscontroller.cpp
     src/utilities/lodepng.cpp
     src/utilities/logger.cpp
 	src/utilities/random.cpp
     src/utilities/simplexnoise.cpp
 	src/utilities/timer.cpp
-    
+
 	src/world/chunk.cpp
     src/world/dimension.cpp
     src/world/landscape.cpp
@@ -113,6 +113,7 @@ set(header_files
 
 	src/entity/entitymessages.h
     src/entity/defaultsetters.h
+    src/entity/entitycreator.h
     src/entity/entityfactory.h
     src/entity/entitydefinition.h
     src/entity/entitydefinitionloader.h
@@ -164,7 +165,6 @@ set(header_files
     src/script/scriptentity.h
     src/script/scriptentitycore.h
     src/script/scripthandler.h
-    src/script/scriptinterface.h
     src/script/scriptmodule.h
     src/script/asaddons/scriptarray.h
     src/script/asaddons/scriptmath.h
@@ -174,6 +174,7 @@ set(header_files
 
     src/utilities/asmnoise.h
     src/utilities/folderexploder.h
+    src/utilities/fpscontroller.h
     src/utilities/lodepng.h
     src/utilities/logger.h
 	src/utilities/random.h
@@ -268,6 +269,7 @@ if(ZLIB_FOUND)
 else(ZLIB_FOUND)
     subdirs(${CMAKE_CURRENT_SOURCE_DIR}/extlibs/zlib-1.2.8)
     include_directories(${CMAKE_CURRENT_SOURCE_DIR}/extlibs/zlib-1.2.8)
+    include_directories(${CMAKE_CURRENT_SOURCE_DIR}/zlib-1.2.8)
     target_link_libraries(${project_name} zlibstatic)
 endif(ZLIB_FOUND)
 

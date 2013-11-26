@@ -201,6 +201,7 @@ void Renderer::handleMessage(const PlayerConnectedToEntityMessage& received)
 
 void Renderer::render()
 {
+    cameraUpdate();
     mGeneratorQueue.generateSomeChunks(vbos, VoxelWorldCoordinate(cam.GetPosition()));
 	GLenum err = glGetError();
 	if(err != GL_NO_ERROR){

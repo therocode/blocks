@@ -3,9 +3,14 @@
 #include <iostream>
 #include "rendering/renderer.h"
 
-CollisionController::CollisionController(fea::MessageBus& bus, WorldInterface& worldInterface) : EntityController(bus, worldInterface)
+CollisionController::CollisionController(fea::MessageBus& bus, WorldInterface& worldInterface) : EntityController(bus, worldInterface), mBus(bus)
 {
-    bus.addMessageSubscriber<EntityMoveRequestedMessage>(*this);
+    mBus.addMessageSubscriber<EntityMoveRequestedMessage>(*this);
+}
+
+CollisionController::~CollisionController()
+{
+    mBus.removeMessageSubscriber<EntityMoveRequestedMessage>(*this);
 }
 
 void CollisionController::inspectEntity(fea::WeakEntityPtr entity)

@@ -52,9 +52,9 @@ class Renderer
         virtual void handleMessage(const PlayerIdMessage& received);
         virtual void handleMessage(const PlayerConnectedToEntityMessage& received);
         void render();
-        void cameraUpdate();    // camera function
 		void setCameraMatrix(const glm::mat4& m);
     private:
+        void cameraUpdate();    // camera function
 		//for camera animation
 		float interpDuck = 0.0f;
 		float duck = 0.f;

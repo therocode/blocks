@@ -12,14 +12,14 @@ EntitySystem::EntitySystem(fea::MessageBus& bus) :
     mFactory(mManager),
     mLogName("entity")
 {
-    mBus.addMessageSubscriber<SpawnEntityMessage>(*this);
+    mBus.addMessageSubscriber<CreateEntityMessage>(*this);
     mBus.addMessageSubscriber<RemoveEntityMessage>(*this);
     mTimer.start();
 }
 
 EntitySystem::~EntitySystem()
 {
-    mBus.removeMessageSubscriber<SpawnEntityMessage>(*this);
+    mBus.removeMessageSubscriber<CreateEntityMessage>(*this);
     mBus.removeMessageSubscriber<RemoveEntityMessage>(*this);
 }
 
@@ -62,42 +62,27 @@ void EntitySystem::update()
     }
 }
 
-fea::WeakEntityPtr EntitySystem::spawnEntity(const std::string& scriptType, const glm::vec3& position)
+fea::WeakEntityPtr EntitySystem::createEntity(const std::string& type, const glm::vec3& position)
 {
-    fea::WeakEntityPtr entity = mFactory.spawnEntity(scriptType);
+    fea::WeakEntityPtr entity = mFactory.spawnEntity(type);
 
     entity.lock()->setAttribute<glm::vec3>("position", position);
 
-    mBus.sendMessage<EntityNeedsScriptMessage>(EntityNeedsScriptMessage(entity, scriptType));
-    mBus.sendMessage<EntitySpawnedMessage>(EntitySpawnedMessage(entity, scriptType));
+    mBus.sendMessage<EntityCreatedMessage>(EntityCreatedMessage(entity, type));
 
     attachEntity(entity);
 
     return entity;
 }
 
-size_t EntitySystem::spawnEntityFromScriptHandle(const std::string& scriptType, const glm::vec3& position, asIScriptObject* obj)
+void EntitySystem::handleMessage(const CreateEntityMessage& received) 
 {
-    fea::WeakEntityPtr entity = mFactory.spawnEntity(scriptType);
-
-    entity.lock()->setAttribute<glm::vec3>("position", position);
-
-    mBus.sendMessage<ScriptEntityFinishedMessage>(ScriptEntityFinishedMessage(entity.lock()->getId(), obj, entity));
-    mBus.sendMessage<EntitySpawnedMessage>(EntitySpawnedMessage(entity, scriptType));
-
-    attachEntity(entity);
-
-    return entity.lock()->getId();
-}
-
-void EntitySystem::handleMessage(const SpawnEntityMessage& received) 
-{
-    std::string scriptType;
+    std::string type;
     glm::vec3 position;
     
-    std::tie(scriptType, position) = received.data;
+    std::tie(type, position) = received.data;
 
-    spawnEntity(scriptType, position);
+    createEntity(type, position);
 }
 
 void EntitySystem::handleMessage(const RemoveEntityMessage& received)
@@ -127,4 +112,9 @@ void EntitySystem::removeEntity(fea::EntityId id)
     mManager.removeEntity(id);
 
     mBus.sendMessage<EntityRemovedMessage>(EntityRemovedMessage(id));
+}
+
+EntityCreator EntitySystem::getEntityCreator()
+{
+    return std::bind(&EntitySystem::createEntity, this, std::placeholders::_1, std::placeholders::_2);
 }

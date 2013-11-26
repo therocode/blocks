@@ -61,8 +61,8 @@ void Client::setup()
 	std::vector<unsigned char> icon;
 	loadTexture("data/textures/icon16x16.png", 16, 16, icon);
 	mWindow.setIcon(16, 16, icon.data());
+    mFPSCounter.setSampleTime(0.5f);
 
-    t.start();
 	//if there's an error, display it
 }
 
@@ -83,16 +83,12 @@ void Client::handleInput()
 
 void Client::render()
 {
-    if(t.getTime() >= 1000){
-        t.stop();
-        t.start();
-        mWindow.setTitle("Blocks | FPS:" + std::to_string(fps));
-        fps = 0;
-    }
-    fps ++;
-	mRenderer.cameraUpdate();
+    mFPSCounter.frameBegin();
 	mRenderer.render();
 	mWindow.swapBuffers();
+    mFPSCounter.frameEnd();
+    if(mFrame++ % 60 == 0)
+    mWindow.setTitle("Blocks | FPS:" + std::to_string((int)mFPSCounter.getAverageFPS()));
 }
 
 void Client::destroy()

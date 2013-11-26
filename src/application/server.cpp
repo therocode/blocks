@@ -36,8 +36,7 @@ void Server::setup()
 {
     mScriptHandler.setup();
     mWorld.initialise();
-    mFrameTimer.setDesiredFPSRate(60);
-    mFrameTimer.start();
+    mFPSController.setMaxFPS(60);
     mBus.sendMessage<LogMessage>(LogMessage("Server initialised and ready to go", mLogName, LogLevel::INFO));
     mBus.sendMessage<GameStartMessage>(GameStartMessage());
 }
@@ -47,6 +46,7 @@ fea::MessageBus& Server::getBus()
 }
 void Server::doLogic()
 {
+    mFPSController.frameBegin();
     checkForDisconnectedClients();
 
     for(auto& client : mClients)
@@ -65,8 +65,7 @@ void Server::doLogic()
 
     pollNewClients();
 
-    mFrameTimer.sleepForTheRestOfTheFrame();
-    mFrameTimer.start();
+    mFPSController.frameEnd();
 }
 
 void Server::destroy()
