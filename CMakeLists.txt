@@ -76,7 +76,6 @@ set(source_files
     src/script/scriptentity.cpp
     src/script/scriptentitycore.cpp
     src/script/scripthandler.cpp
-    src/script/scriptinterface.cpp
     src/script/scriptmodule.cpp
     src/script/asaddons/scriptarray.cpp
     src/script/asaddons/scriptmath.cpp
@@ -166,7 +165,6 @@ set(header_files
     src/script/scriptentity.h
     src/script/scriptentitycore.h
     src/script/scripthandler.h
-    src/script/scriptinterface.h
     src/script/scriptmodule.h
     src/script/asaddons/scriptarray.h
     src/script/asaddons/scriptmath.h
