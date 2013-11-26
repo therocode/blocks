@@ -216,7 +216,7 @@ section .text
 	movups    [rsp-48],xmm8
 ;0=x 1=y
 
-	unpcklps xmm0,xmm1
+	unpcklps  xmm0,xmm1
 	addss     xmm1,xmm0
 	mulss     xmm1,[F2]
 	shufps    xmm1,xmm1,0
@@ -234,11 +234,13 @@ section .text
 ;0=x0y0 1=ij 2=G2
 
 	vbroadcastss xmm5,[one]
-	pshufd    xmm3,xmm0,1
-	cmpss     xmm3,xmm0,2
+	pshufd    xmm3,xmm0,0001b
+	cmpss     xmm3,xmm0,5
 	shufps    xmm3,xmm3,0001b
+	shufps    xmm0,xmm0,0001b
 	cmpss     xmm3,xmm0,6
 	andps     xmm3,xmm5
+	shufps    xmm0,xmm0,0001b ;can this be done better?
 ;0=x0y0 1=ij 2=G2 3=i1j1 5=1.0
 
 	vsubps    xmm4,xmm0,xmm3
@@ -257,7 +259,7 @@ section .text
 	movzx     rcx ,byte [perm+r8+r9]
 	movzx     rdx ,byte [perm+r8+1]
 
-	pextrb    r8d ,xmm1,0 ;ii
+	pextrb	  r8d ,xmm1,0 ;ii
 	movd      r9d ,xmm3   ;i1
 	add       r9  ,rcx
 	mov       al  ,byte [perm+r8+rax]
