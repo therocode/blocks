@@ -44,12 +44,14 @@ section .text
 ;3D simplex
 ;-------------------
 	asm_raw_noise_3d:
+%ifdef win64
 	movups    [rsp-16],xmm6
 	movups    [rsp-32],xmm7
 	movups    [rsp-48],xmm8
 	movups    [rsp-64],xmm9
 	movups    [rsp-80],xmm10
 	movups    [rsp-96],xmm11
+%endif
 ;0=x 1=y 2=z
 
 	unpcklps  xmm0,xmm1
@@ -199,21 +201,25 @@ section .text
 
 	mulss     xmm0,[retval]
 
+%ifdef win64
 	movups    xmm6,[rsp-16]
 	movups    xmm7,[rsp-32]
 	movups    xmm8,[rsp-48]
 	movups    xmm9,[rsp-64]
 	movups    xmm10,[rsp-80]
 	movups    xmm11,[rsp-96]
+%endif
 	ret
 
 ;-------------------
 ;2D simplex
 ;-------------------
 	asm_raw_noise_2d:
+%ifdef win64
 	movups    [rsp-16],xmm6
 	movups    [rsp-32],xmm7
 	movups    [rsp-48],xmm8
+%endif
 ;0=x 1=y
 
 	unpcklps  xmm0,xmm1
@@ -316,7 +322,9 @@ section .text
 	addss     xmm0,xmm1
 	mulss     xmm0,[retval2d]
 
+%ifdef win64
 	movups    xmm6,[rsp-16]
 	movups    xmm7,[rsp-32]
 	movups    xmm8,[rsp-48]
+%endif
 	ret
