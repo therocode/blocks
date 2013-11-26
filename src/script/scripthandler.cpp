@@ -22,7 +22,6 @@ ScriptHandler::ScriptHandler(fea::MessageBus& bus, WorldInterface& worldInterfac
     mBus.addMessageSubscriber<RebuildScriptsRequestedMessage>(*this);
     mBus.addMessageSubscriber<EntityCreatedMessage>(*this);
     mBus.addMessageSubscriber<EntityRemovedMessage>(*this);
-    mBus.addMessageSubscriber<ScriptEntityFinishedMessage>(*this);
 
     mBus.addMessageSubscriber<FrameMessage>(*this);
     mBus.addMessageSubscriber<GameStartMessage>(*this);
@@ -38,7 +37,6 @@ ScriptHandler::~ScriptHandler()
     mBus.removeMessageSubscriber<RebuildScriptsRequestedMessage>(*this);
     mBus.removeMessageSubscriber<EntityCreatedMessage>(*this);
     mBus.removeMessageSubscriber<EntityRemovedMessage>(*this);
-    mBus.removeMessageSubscriber<ScriptEntityFinishedMessage>(*this);
 
     mBus.removeMessageSubscriber<FrameMessage>(*this);
     mBus.removeMessageSubscriber<GameStartMessage>(*this);
@@ -130,7 +128,6 @@ void ScriptHandler::handleMessage(const EntityCreatedMessage& message)
         // If you're going to store the object you must increase the reference,
         // otherwise it will be destroyed when the context is reused or destroyed.
         obj->AddRef();
-        obj->AddRef();
 
         mBus.sendMessage<LogMessage>(LogMessage("Created entity id " + std::to_string(id) + " of type '" + type + "'", logName, LogLevel::VERB));
 
@@ -150,20 +147,12 @@ void ScriptHandler::handleMessage(const EntityRemovedMessage& message)
     size_t id;
     std::tie(id) = message.data;
 
-    scriptEntities.erase(id);
-}
+    auto entity = scriptEntities.find(id);
 
-void ScriptHandler::handleMessage(const ScriptEntityFinishedMessage& message)
-{
-    size_t id;
-    asIScriptObject* obj;
-    fea::WeakEntityPtr entity;
-
-    std::tie(id, obj, entity) = message.data;
-
-    ScriptEntity scriptEntity(id, entity, obj);
-
-    scriptEntities.emplace(id, scriptEntity);
+    if(entity != scriptEntities.end())
+    {
+        scriptEntities.erase(id);
+    }
 }
 
 void ScriptHandler::handleMessage(const FrameMessage& received)
@@ -235,7 +224,7 @@ void ScriptHandler::registerInterface()
     //entity
     r = mEngine.getEngine()->RegisterInterface("IEntity"); assert(r >= 0);
     r = mEngine.getEngine()->RegisterGlobalFunction("IEntity@ createIEntity(const string &in, float x, float y, float z)", asMETHOD(ScriptHandler, createEntity), asCALL_THISCALL_ASGLOBAL, this); assert(r >= 0);
-    r = mEngine.getEngine()->RegisterGlobalFunction("void removeEntity(IEntity@ entity)", asMETHOD(ScriptHandler, removeEntity), asCALL_THISCALL_ASGLOBAL, this); assert(r >= 0);
+    r = mEngine.getEngine()->RegisterGlobalFunction("void removeEntity(uint id)", asMETHOD(ScriptHandler, removeEntityFromId), asCALL_THISCALL_ASGLOBAL, this); assert(r >= 0);
 
     r = mEngine.getEngine()->RegisterObjectType("EntityCore", sizeof(ScriptEntityCore), asOBJ_REF); assert(r >= 0);
     r = mEngine.getEngine()->RegisterObjectBehaviour("EntityCore", asBEHAVE_ADDREF, "void f()", asMETHOD(ScriptEntityCore, addRef), asCALL_THISCALL ); assert(r >= 0);
@@ -310,7 +299,9 @@ asIScriptObject* ScriptHandler::createEntity(const std::string& type, float x, f
 
     if(scriptEntity != scriptEntities.end())
     {
-        return scriptEntity->second.getScriptObject();
+        asIScriptObject* object = scriptEntity->second.getScriptObject();
+        object->AddRef();
+        return object;
     }
     else
     {
@@ -318,9 +309,9 @@ asIScriptObject* ScriptHandler::createEntity(const std::string& type, float x, f
     }
 }
 
-void ScriptHandler::removeEntity(asIScriptObject* entity)
+void ScriptHandler::removeEntityFromId(size_t id)
 {
-    //tbi
+    mBus.sendMessage<RemoveEntityMessage>(RemoveEntityMessage(id));   
 }
 
 void ScriptHandler::applyImpulse(size_t id, const glm::vec3& force)

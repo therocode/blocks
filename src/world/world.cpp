@@ -21,7 +21,7 @@ World::~World()
 	bus.removeMessageSubscriber<SetVoxelMessage>(*this);
 }
 
-void World::initialise()
+void World::setup()
 {
     entitySystem.setup();
 	standardDimension.initialise();
@@ -36,6 +36,11 @@ void World::initialise()
 void World::update()
 {
 	entitySystem.update();
+}
+
+void World::destroy()
+{
+    entitySystem.destroy();
 }
 
 void World::handleMessage(const PlayerEntersChunkMessage& received)

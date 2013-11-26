@@ -53,7 +53,3 @@ using PlayerMoveActionMessage = fea::Message<PlayerMoveAction_tag, size_t, MoveA
 
 struct PhysicsImpulse_tag{};//                                entity id    force
 using PhysicsImpulseMessage = fea::Message<PhysicsImpulse_tag, size_t, const glm::vec3&>;
-
-class asIScriptObject;
-struct ScriptEntityFinished_tag{};//                                       id      obj
-using ScriptEntityFinishedMessage = fea::Message<ScriptEntityFinished_tag, size_t, asIScriptObject*, fea::WeakEntityPtr>;

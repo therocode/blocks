@@ -14,8 +14,9 @@ class World :
     public:
         World(fea::MessageBus& messageBus);
 		~World();
-        void initialise();
+        void setup();
         void update();
+        void destroy();
         virtual void handleMessage(const PlayerEntersChunkMessage& received);
         virtual void handleMessage(const SetVoxelMessage& received);
         WorldInterface& getWorldInterface();

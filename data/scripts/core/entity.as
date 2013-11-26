@@ -8,6 +8,11 @@ Entity@ createEntity(const string type, Vec3 position)
     return cast<Entity@>(createIEntity(type, position.x, position.y, position.z));
 }
 
+void removeEntity(Entity@ entity)
+{
+    removeEntity(entity.getId());
+}
+
 shared class Entity : IEntity
 {
     Entity(EntityCore@ core, uint id)
@@ -47,5 +52,10 @@ shared class Entity : IEntity
     void applyImpulse(const Vec3 force)
     {
         applyImpulseOnEntity(mId, force);
+    }
+
+    uint32 getId()
+    {
+        return mId;
     }
 }

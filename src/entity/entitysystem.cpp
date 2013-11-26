@@ -62,6 +62,17 @@ void EntitySystem::update()
     }
 }
 
+void EntitySystem::destroy()
+{
+    mBus.sendMessage<LogMessage>(LogMessage("Removing all entities", mLogName, LogLevel::VERB));
+    fea::EntityGroup entities = mManager.getAll();
+
+    for(auto entity : entities)
+    {
+        removeEntity(entity.lock()->getId());
+    }
+}
+
 fea::WeakEntityPtr EntitySystem::createEntity(const std::string& type, const glm::vec3& position)
 {
     fea::WeakEntityPtr entity = mFactory.spawnEntity(type);

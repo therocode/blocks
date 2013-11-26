@@ -35,7 +35,7 @@ Server::~Server()
 void Server::setup()
 {
     mScriptHandler.setup();
-    mWorld.initialise();
+    mWorld.setup();
     mFPSController.setMaxFPS(60);
     mBus.sendMessage<LogMessage>(LogMessage("Server initialised and ready to go", mLogName, LogLevel::INFO));
     mBus.sendMessage<GameStartMessage>(GameStartMessage());
@@ -70,6 +70,7 @@ void Server::doLogic()
 
 void Server::destroy()
 {
+    mWorld.destroy();
     mScriptHandler.destroy();
     mBus.sendMessage<LogMessage>(LogMessage("Server destroyed", mLogName, LogLevel::INFO));
 }

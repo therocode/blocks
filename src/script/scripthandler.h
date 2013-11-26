@@ -15,7 +15,6 @@ class ScriptHandler :
     public fea::MessageReceiver<RebuildScriptsRequestedMessage>,
     public fea::MessageReceiver<EntityCreatedMessage>,
     public fea::MessageReceiver<EntityRemovedMessage>,
-    public fea::MessageReceiver<ScriptEntityFinishedMessage>,
     public fea::MessageReceiver<FrameMessage>,
     public fea::MessageReceiver<GameStartMessage>,
     public fea::MessageReceiver<EntityOnGroundMessage>
@@ -28,13 +27,11 @@ class ScriptHandler :
         void handleMessage(const RebuildScriptsRequestedMessage& message);
         void handleMessage(const EntityCreatedMessage& message);
         void handleMessage(const EntityRemovedMessage& message);
-        void handleMessage(const ScriptEntityFinishedMessage& message);
         void handleMessage(const FrameMessage& received);
         void handleMessage(const GameStartMessage& received);
         void handleMessage(const EntityOnGroundMessage& received);
-        void requestRemovalOfEntity(asIScriptObject* obj);
         asIScriptObject* createEntity(const std::string& type, float x, float y, float z);
-        void removeEntity(asIScriptObject* entity);
+        void removeEntityFromId(size_t id);
         void setEntityCreator(EntityCreator creator);
     private:
         void registerInterface();
