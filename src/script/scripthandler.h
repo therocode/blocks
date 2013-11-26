@@ -9,6 +9,8 @@
 #include "../application/applicationmessages.h"
 #include <unordered_map>
 
+using ScriptEntityMap = std::map<size_t, ScriptEntity>;
+
 class ScriptHandler :
     public fea::MessageReceiver<RebuildScriptsRequestedMessage>,
     public fea::MessageReceiver<EntityCreatedMessage>,
@@ -42,7 +44,7 @@ class ScriptHandler :
         ScriptModule mScripts;
         WorldInterface& mWorldInterface;
         std::vector<std::string> sourceFiles;
-        std::map<size_t, ScriptEntity> scriptEntities;
+        ScriptEntityMap scriptEntities;
         std::string logName;
         Random random;
 

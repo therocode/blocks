@@ -20,7 +20,7 @@ TEST_CASE("Differs by", "[differs]")
 
 const float acceptableThreshold = 0.0001f;
 
-TEST_CASE("asm_noise", "[noise]")
+TEST_CASE("asm_noise_3d", "[noise]")
 {
     CHECK(differsBy(asm_raw_noise_3d(0.0f, 0.0f, 0.0f), raw_noise_3d(0.0f, 0.0f, 0.0f)) < acceptableThreshold);
     CHECK(differsBy(asm_raw_noise_3d(100.0f, 0.0f, 0.0f), raw_noise_3d(100.0f, 0.0f, 0.0f)) < acceptableThreshold);
@@ -69,7 +69,55 @@ TEST_CASE("asm_noise", "[noise]")
         }
     }
 
-    INFO("the success % is " << successed/counter << " and the failed % is " << failedC/counter << " of a total of " << counter << " runs");
+    INFO("3d noise: the success % is " << (successed/counter) * 100.0f << " and the failed % is " << (failedC/counter) * 100.0f << " of a total of " << counter << " runs");
+    
+    CHECK(failed == false);
+}
+
+TEST_CASE("asm_noise_2d", "[noise]")
+{
+    CHECK(differsBy(asm_raw_noise_2d(0.0f, 0.0f), raw_noise_2d(0.0f, 0.0f)) < acceptableThreshold);
+    CHECK(differsBy(asm_raw_noise_2d(100.0f, 0.0f), raw_noise_2d(100.0f, 0.0f)) < acceptableThreshold);
+    CHECK(differsBy(asm_raw_noise_2d(0.0f, 100.0f), raw_noise_2d(0.0f, 100.0f)) < acceptableThreshold);
+    CHECK(differsBy(asm_raw_noise_2d(100.0f, 100.0f), raw_noise_2d(100.0f, 100.0f)) < acceptableThreshold);
+    CHECK(differsBy(asm_raw_noise_2d(-100.0f, 0.0f), raw_noise_2d(-100.0f, 0.0f)) < acceptableThreshold);
+    CHECK(differsBy(asm_raw_noise_2d(0.0f, -100.0f), raw_noise_2d(0.0f, -100.0f)) < acceptableThreshold);
+    CHECK(differsBy(asm_raw_noise_2d(-100.0f, -100.0f), raw_noise_2d(-100.0f, -100.0f)) < acceptableThreshold);
+
+    CHECK(differsBy(asm_raw_noise_2d(0.01f, 0.0f), raw_noise_2d(0.01f, 0.0f)) < acceptableThreshold);
+    CHECK(differsBy(asm_raw_noise_2d(0.0f, 0.01f), raw_noise_2d(0.0f, 0.01f)) < acceptableThreshold);
+    CHECK(differsBy(asm_raw_noise_2d(0.01f, 0.01f), raw_noise_2d(0.01f, 0.01f)) < acceptableThreshold);
+    CHECK(differsBy(asm_raw_noise_2d(-0.01f, 0.0f), raw_noise_2d(-0.01f, 0.0f)) < acceptableThreshold);
+    CHECK(differsBy(asm_raw_noise_2d(0.0f, -0.01f), raw_noise_2d(0.0f, -0.01f)) < acceptableThreshold);
+    CHECK(differsBy(asm_raw_noise_2d(-0.01f, -0.01f), raw_noise_2d(-0.01f, -0.01f)) < acceptableThreshold);
+
+    float counter = 0.0f;
+    float failedC = 0.0f;
+    float successed = 0.0f;
+
+    bool failed = false;
+    for(int x = -10; x < 10; x++)
+    {
+        for(int y = -10; y < 10; y++)
+        {
+            counter++;
+            float xc = (float)x / 10.0f;
+            float yc = (float)y / 10.0f;
+
+            float difference = differsBy(asm_raw_noise_2d(xc, yc), raw_noise_2d(xc, yc));
+
+            if(difference > acceptableThreshold)
+            {
+                failed = true;
+                failedC++;
+            }
+            else
+                successed++;
+            CHECK(difference < acceptableThreshold);
+        }
+    }
+
+    INFO("2d noise: the success % is " << (successed/counter) * 100.0f << " and the failed % is " << (failedC/counter) * 100.0f << " of a total of " << counter << " runs");
     
     CHECK(failed == false);
 }
