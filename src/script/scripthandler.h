@@ -43,7 +43,6 @@ class ScriptHandler :
         WorldInterface& mWorldInterface;
         std::vector<std::string> sourceFiles;
         std::map<size_t, ScriptEntity> scriptEntities;
-        std::unordered_map<asIScriptObject*, size_t> scriptEntityIds;
         std::string logName;
         Random random;
 

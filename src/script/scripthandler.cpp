@@ -76,7 +76,6 @@ void ScriptHandler::setup()
 void ScriptHandler::destroy()
 {
     scriptEntities.clear();
-    scriptEntityIds.clear();
     mEngine.destroyModule(mScripts);
     mEngine.destroy();
 }
@@ -105,7 +104,6 @@ void ScriptHandler::handleMessage(const EntityRemovedMessage& message)
     size_t id;
     std::tie(id) = message.data;
 
-    scriptEntityIds.erase(scriptEntities.at(id).getScriptObject());
     scriptEntities.erase(id);
 }
 
@@ -120,7 +118,6 @@ void ScriptHandler::handleMessage(const ScriptEntityFinishedMessage& message)
     ScriptEntity scriptEntity(id, entity, obj);
 
     scriptEntities.emplace(id, scriptEntity);
-    scriptEntityIds.emplace(obj, id);
 }
 
 void ScriptHandler::handleMessage(const FrameMessage& received)
@@ -129,14 +126,15 @@ void ScriptHandler::handleMessage(const FrameMessage& received)
     {
         onFrameCallback.execute(frameTick);
 
-        for(auto& object : scriptEntityIds)
+        for(auto& entity : scriptEntities)
         {
             ScriptMemberCallback<int32_t> callback(mEngine);
-            asIScriptFunction* function = object.first->GetObjectType()->GetMethodByDecl("void onFrame(int frameNumber)");
+            asIScriptObject* object = entity.second.getScriptObject();
+            asIScriptFunction* function = object->GetObjectType()->GetMethodByDecl("void onFrame(int frameNumber)");
             if(function)
             {
                 callback.setFunction(function);
-                callback.execute(object.first, frameTick);
+                callback.execute(object, frameTick);
             }
         }
 
@@ -161,17 +159,17 @@ void ScriptHandler::handleMessage(const EntityOnGroundMessage& received)
 
     if(!mScripts.hasErrors())
     {
-        std::cout << "size is: " << scriptEntityIds.size() << "\n";
-        for(auto& object : scriptEntityIds)
+        for(auto& entity : scriptEntities)
         {
-            if(id == object.second)
+            if(id == entity.first)
             {
                 ScriptMemberCallback<bool> callback(mEngine);
-                asIScriptFunction* function = object.first->GetObjectType()->GetMethodByDecl("void onGround(bool landed)");
+                asIScriptObject* object = entity.second.getScriptObject();
+                asIScriptFunction* function = object->GetObjectType()->GetMethodByDecl("void onGround(bool landed)");
                 if(function)
                 {
                     callback.setFunction(function);
-                    callback.execute(object.first, landed);
+                    callback.execute(object, landed);
                 }
             }
         }
@@ -298,7 +296,6 @@ asIScriptObject* ScriptHandler::createEntity(const std::string& type, float x, f
 
         ScriptEntity scriptEntity(id, createdEntity, obj);
         scriptEntities.emplace(id, scriptEntity);
-        scriptEntityIds.emplace(obj, id);
 
         return obj;
     }
