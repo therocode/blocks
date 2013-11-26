@@ -2,10 +2,10 @@
 #include "scriptinterface.h"
 #include "utilities/random.h"
 
-class RandomInterface : public ScriptInterface
+class MathsInterface : public ScriptInterface
 {
     public:
-        RandomInterface(fea::MessageBus& bus, WorldInterface& worldInterface);
+        MathsInterface(fea::MessageBus& bus, WorldInterface& worldInterface);
         void registerInterface(asIScriptEngine* engine) override;
     private:
         Random random;

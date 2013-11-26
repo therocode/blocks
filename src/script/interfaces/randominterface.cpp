@@ -2,6 +2,10 @@
 #include <angelscript.h>
 #include <assert.h>
 
+RandomInterface::RandomInterface(fea::MessageBus& bus, WorldInterface& worldInterface) : ScriptInterface(bus, worldInterface)
+{
+}
+
 void RandomInterface::registerInterface(asIScriptEngine* engine)
 {
     int32_t r = engine->RegisterGlobalFunction("uint randomInt()", asMETHOD(Random, randomInt), asCALL_THISCALL_ASGLOBAL, &random); assert(r >= 0);

@@ -87,7 +87,14 @@ set(source_files
     src/script/asaddons/scriptbuilder.cpp
     src/script/asaddons/scriptstdstring.cpp
     src/script/asaddons/scriptstdstring_utils.cpp
+    src/script/interfaces/entityinterface.cpp
+    src/script/interfaces/landscapeinterface.cpp
+    src/script/interfaces/mathsinterface.cpp
+    src/script/interfaces/physicsinterface.cpp
+    src/script/interfaces/printinterface.cpp
     src/script/interfaces/randominterface.cpp
+    src/script/interfaces/scriptinterface.cpp
+    src/script/interfaces/stringinterface.cpp
 
 	src/utilities/asmnoise.asm
     src/utilities/folderexploder.cpp
@@ -177,8 +184,14 @@ set(header_files
     src/script/asaddons/scriptvectors.h
     src/script/asaddons/scriptbuilder.h
     src/script/asaddons/scriptstdstring.h
+    src/script/interfaces/entityinterface.h
+    src/script/interfaces/landscapeinterface.h
+    src/script/interfaces/mathsinterface.h
+    src/script/interfaces/physicsinterface.h
+    src/script/interfaces/printinterface.h
     src/script/interfaces/randominterface.h
     src/script/interfaces/scriptinterface.h
+    src/script/interfaces/stringinterface.h
 
     src/utilities/asmnoise.h
     src/utilities/folderexploder.h

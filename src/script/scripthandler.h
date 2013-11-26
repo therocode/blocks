@@ -29,9 +29,6 @@ class ScriptHandler :
         void handleMessage(const FrameMessage& received);
         void handleMessage(const GameStartMessage& received);
         void handleMessage(const EntityOnGroundMessage& received);
-        asIScriptObject* createEntity(const std::string& type, float x, float y, float z);
-        void removeEntityFromId(size_t id);
-        void setEntityCreator(EntityCreator creator);
     private:
         void registerInterface();
         void registerCallbacks(ScriptEntityMap& scriptEntities);
@@ -44,19 +41,8 @@ class ScriptHandler :
         std::string logName;
 
         std::vector<std::unique_ptr<ScriptInterface>> mInterfaces;
-        //interface functions
-        void scriptPrint(const std::string& text);
-        void scriptPrint(const std::string& text, uint32_t level);
-        void setGravity(float constant);
-        void applyImpulse(size_t id, const glm::vec3& force);
-
-        void setVoxelType(float x, float y, float z, uint16_t type);
-        void setVoxelType(const glm::vec3& coordinate, uint16_t type);
-        VoxelType getVoxelType(float x, float y, float z);
-        VoxelType getVoxelType(const glm::vec3& coordinate);
 
         ScriptCallback<int32_t> onFrameCallback;
         ScriptCallback<> gameStartCallback;
-        EntityCreator mEntityCreator;
         int32_t frameTick;
 };

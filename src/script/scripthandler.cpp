@@ -1,13 +1,14 @@
 #include "scripthandler.h"
 #include "scriptmessages.h"
-#include "asaddons/scriptmath.h"
-#include "asaddons/scriptvectors.h"
-#include "../entity/entitymessages.h"
 #include "../utilities/folderexploder.h"
 #include "scriptentitycore.h"
-#include <iostream>
-#include "world/worldmessages.h"
+#include "interfaces/entityinterface.h"
+#include "interfaces/landscapeinterface.h"
+#include "interfaces/mathsinterface.h"
+#include "interfaces/physicsinterface.h"
+#include "interfaces/printinterface.h"
 #include "interfaces/randominterface.h"
+#include "interfaces/stringinterface.h"
 
 ScriptHandler::ScriptHandler(fea::MessageBus& bus, WorldInterface& worldInterface) : 
     mEngine(bus),
@@ -17,7 +18,6 @@ ScriptHandler::ScriptHandler(fea::MessageBus& bus, WorldInterface& worldInterfac
     logName("script"),
     onFrameCallback(mEngine),
     gameStartCallback(mEngine),
-    mEntityCreator([] (const std::string& type, const glm::vec3& position) { return fea::EntityPtr(nullptr); }),
     frameTick(0)
 {
     mBus.addMessageSubscriber<RebuildScriptsRequestedMessage>(*this);
@@ -30,7 +30,6 @@ ScriptHandler::ScriptHandler(fea::MessageBus& bus, WorldInterface& worldInterfac
 
     ScriptEntityCore::sWorldInterface = &worldInterface;
     ScriptEntityCore::sBus = &bus;
-    setEntityCreator(mWorldInterface.getEntityCreator());
 }
 
 ScriptHandler::~ScriptHandler()
@@ -48,7 +47,13 @@ void ScriptHandler::setup()
 {
     mEngine.setup();
 
-    mInterfaces.push_back(std::unique_ptr<ScriptInterface>(new RandomInterface));
+    mInterfaces.push_back(std::unique_ptr<ScriptInterface>(new MathsInterface(mBus, mWorldInterface)));
+    mInterfaces.push_back(std::unique_ptr<ScriptInterface>(new StringInterface(mBus, mWorldInterface)));
+    mInterfaces.push_back(std::unique_ptr<ScriptInterface>(new EntityInterface(mBus, mWorldInterface, scriptEntities)));
+    mInterfaces.push_back(std::unique_ptr<ScriptInterface>(new LandscapeInterface(mBus, mWorldInterface)));
+    mInterfaces.push_back(std::unique_ptr<ScriptInterface>(new PhysicsInterface(mBus, mWorldInterface)));
+    mInterfaces.push_back(std::unique_ptr<ScriptInterface>(new PrintInterface(mBus, mWorldInterface)));
+    mInterfaces.push_back(std::unique_ptr<ScriptInterface>(new RandomInterface(mBus, mWorldInterface)));
 
     registerInterface();
 
@@ -217,47 +222,6 @@ void ScriptHandler::handleMessage(const EntityOnGroundMessage& received)
 
 void ScriptHandler::registerInterface()
 {
-    //printing
-    int r = mEngine.getEngine()->RegisterGlobalFunction("void consolePrint(string text)", asMETHODPR(ScriptHandler, scriptPrint, (const std::string&), void), asCALL_THISCALL_ASGLOBAL, this); assert(r >= 0);
-    r = mEngine.getEngine()->RegisterGlobalFunction("void consolePrint(string text, uint level)", asMETHODPR(ScriptHandler, scriptPrint, (const std::string&, uint32_t), void), asCALL_THISCALL_ASGLOBAL, this); assert(r >= 0);
-
-    //maths
-    RegisterScriptMath(mEngine.getEngine());
-    registerGlmVectors(mEngine.getEngine());
-
-    //entity
-    r = mEngine.getEngine()->RegisterInterface("IEntity"); assert(r >= 0);
-    r = mEngine.getEngine()->RegisterGlobalFunction("IEntity@ createIEntity(const string &in, float x, float y, float z)", asMETHOD(ScriptHandler, createEntity), asCALL_THISCALL_ASGLOBAL, this); assert(r >= 0);
-    r = mEngine.getEngine()->RegisterGlobalFunction("void removeEntity(uint id)", asMETHOD(ScriptHandler, removeEntityFromId), asCALL_THISCALL_ASGLOBAL, this); assert(r >= 0);
-
-    r = mEngine.getEngine()->RegisterObjectType("EntityCore", sizeof(ScriptEntityCore), asOBJ_REF); assert(r >= 0);
-    r = mEngine.getEngine()->RegisterObjectBehaviour("EntityCore", asBEHAVE_ADDREF, "void f()", asMETHOD(ScriptEntityCore, addRef), asCALL_THISCALL ); assert(r >= 0);
-    r = mEngine.getEngine()->RegisterObjectBehaviour("EntityCore", asBEHAVE_RELEASE, "void f()", asMETHOD(ScriptEntityCore, release), asCALL_THISCALL); assert(r >= 0);
-    r = mEngine.getEngine()->RegisterObjectMethod("EntityCore", "void setPosition(float x, float y, float z)", asMETHODPR(ScriptEntityCore, setPosition, (float x, float y, float z), void), asCALL_THISCALL); assert(r >= 0);
-    r = mEngine.getEngine()->RegisterObjectMethod("EntityCore", "void setPosition(const Vec3& in)", asMETHODPR(ScriptEntityCore, setPosition, (const glm::vec3&), void), asCALL_THISCALL); assert(r >= 0);
-    r = mEngine.getEngine()->RegisterObjectMethod("EntityCore", "Vec3 getPosition()", asMETHOD(ScriptEntityCore, getPosition), asCALL_THISCALL); assert(r >= 0);
-    r = mEngine.getEngine()->RegisterObjectMethod("EntityCore", "bool isOnGround()", asMETHOD(ScriptEntityCore, isOnGround), asCALL_THISCALL); assert(r >= 0);
-
-    //string conversion
-    r = mEngine.getEngine()->RegisterGlobalFunction("string toString(int num)", asFUNCTIONPR(std::to_string, (int32_t), std::string), asCALL_CDECL); assert(r >= 0);
-    r = mEngine.getEngine()->RegisterGlobalFunction("string toString(uint num)", asFUNCTIONPR(std::to_string, (uint32_t), std::string), asCALL_CDECL); assert(r >= 0);
-    r = mEngine.getEngine()->RegisterGlobalFunction("string toString(int16 num)", asFUNCTIONPR(std::to_string, (int32_t), std::string), asCALL_CDECL); assert(r >= 0);
-    r = mEngine.getEngine()->RegisterGlobalFunction("string toString(uint16 num)", asFUNCTIONPR(std::to_string, (uint32_t), std::string), asCALL_CDECL); assert(r >= 0);
-    r = mEngine.getEngine()->RegisterGlobalFunction("string toString(int64 num)", asFUNCTIONPR(std::to_string, (int64_t), std::string), asCALL_CDECL); assert(r >= 0);
-    r = mEngine.getEngine()->RegisterGlobalFunction("string toString(uint64 num)", asFUNCTIONPR(std::to_string, (uint64_t), std::string), asCALL_CDECL); assert(r >= 0);
-    r = mEngine.getEngine()->RegisterGlobalFunction("string toString(float num)", asFUNCTIONPR(std::to_string, (float), std::string), asCALL_CDECL); assert(r >= 0);
-    r = mEngine.getEngine()->RegisterGlobalFunction("string toString(double num)", asFUNCTIONPR(std::to_string, (double), std::string), asCALL_CDECL); assert(r >= 0);
-
-    //physics
-    r = mEngine.getEngine()->RegisterGlobalFunction("void setGravity(float constant)", asMETHOD(ScriptHandler, setGravity), asCALL_THISCALL_ASGLOBAL, this); assert(r >= 0);
-    r = mEngine.getEngine()->RegisterGlobalFunction("void applyImpulseOnEntity(uint id, const Vec3& in)", asMETHOD(ScriptHandler, applyImpulse), asCALL_THISCALL_ASGLOBAL, this); assert(r >= 0);
-
-    //landscape
-    r = mEngine.getEngine()->RegisterGlobalFunction("void setVoxelType(float x, float y, float z, uint16 type)", asMETHODPR(ScriptHandler, setVoxelType, (float x, float y, float z, uint16_t type), void), asCALL_THISCALL_ASGLOBAL, this); assert(r >= 0);
-    r = mEngine.getEngine()->RegisterGlobalFunction("void setVoxelType(const Vec3& in, uint16 type)", asMETHODPR(ScriptHandler, setVoxelType, (const glm::vec3&, uint16_t type), void), asCALL_THISCALL_ASGLOBAL, this); assert(r >= 0);
-    r = mEngine.getEngine()->RegisterGlobalFunction("uint16 getVoxelType(float x, float y, float z)", asMETHODPR(ScriptHandler, getVoxelType, (float x, float y, float z), VoxelType), asCALL_THISCALL_ASGLOBAL, this); assert(r >= 0);
-    r = mEngine.getEngine()->RegisterGlobalFunction("uint16 getVoxelType(const Vec3& in)", asMETHODPR(ScriptHandler, getVoxelType, (const glm::vec3&), VoxelType), asCALL_THISCALL_ASGLOBAL, this); assert(r >= 0);
-
     for(auto& interface : mInterfaces)
     {
         interface->registerInterface(mEngine.getEngine());
@@ -271,78 +235,4 @@ void ScriptHandler::registerCallbacks(ScriptEntityMap& scriptEntities)
         onFrameCallback.setFunction(mScripts.getFunctionByDecl("void onFrame(int frameNumber)"));
         gameStartCallback.setFunction(mScripts.getFunctionByDecl("void gameStarted()"));
     }
-}
-
-void ScriptHandler::scriptPrint(const std::string& text)
-{
-    mBus.sendMessage<LogMessage>(LogMessage(text, logName, LogLevel::INFO));
-}
-
-void ScriptHandler::scriptPrint(const std::string& text, uint32_t level)
-{
-    mBus.sendMessage<LogMessage>(LogMessage(text, logName, level));
-}
-
-void ScriptHandler::setGravity(float constant)
-{
-    mBus.sendMessage<GravityRequestedMessage>(GravityRequestedMessage(constant));
-}
-
-asIScriptObject* ScriptHandler::createEntity(const std::string& type, float x, float y, float z)
-{
-    fea::WeakEntityPtr createdEntity = mEntityCreator(type, glm::vec3(x, y, z));
-
-    if(createdEntity.expired())
-    {
-        mBus.sendMessage<LogMessage>(LogMessage("Script runtime error: Id of created entity of type '" + type + "' is invalid. Abandoning script initialisation", logName, LogLevel::ERR));
-        return nullptr;
-    }
-
-    auto scriptEntity = scriptEntities.find(createdEntity.lock()->getId());
-
-    if(scriptEntity != scriptEntities.end())
-    {
-        asIScriptObject* object = scriptEntity->second.getScriptObject();
-        object->AddRef();
-        return object;
-    }
-    else
-    {
-        return nullptr;
-    }
-}
-
-void ScriptHandler::removeEntityFromId(size_t id)
-{
-    mBus.sendMessage<RemoveEntityMessage>(RemoveEntityMessage(id));   
-}
-
-void ScriptHandler::applyImpulse(size_t id, const glm::vec3& force)
-{
-    mBus.sendMessage<PhysicsImpulseMessage>(PhysicsImpulseMessage(id, force));
-}
-
-void ScriptHandler::setVoxelType(float x, float y, float z, uint16_t type)
-{
-    mBus.sendMessage<SetVoxelMessage>(SetVoxelMessage(VoxelWorldCoordinate(floor(x), floor(y), floor(z)), type));
-}
-
-void ScriptHandler::setVoxelType(const glm::vec3& coordinate, uint16_t type)
-{
-    setVoxelType(coordinate.x, coordinate.y, coordinate.z, type);
-}
-
-VoxelType ScriptHandler::getVoxelType(float x, float y, float z)
-{
-    return mWorldInterface.getVoxelType(x, y, z);
-}
-
-VoxelType ScriptHandler::getVoxelType(const glm::vec3& coordinate)
-{
-    return mWorldInterface.getVoxelType(coordinate);
-}
-
-void ScriptHandler::setEntityCreator(EntityCreator creator)
-{
-    mEntityCreator = creator;
 }
