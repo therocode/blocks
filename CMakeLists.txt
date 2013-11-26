@@ -271,6 +271,7 @@ if(ZLIB_FOUND)
 else(ZLIB_FOUND)
     subdirs(${CMAKE_CURRENT_SOURCE_DIR}/extlibs/zlib-1.2.8)
     include_directories(${CMAKE_CURRENT_SOURCE_DIR}/extlibs/zlib-1.2.8)
+    include_directories(${CMAKE_CURRENT_SOURCE_DIR}/zlib-1.2.8)
     target_link_libraries(${project_name} zlibstatic)
 endif(ZLIB_FOUND)
 
