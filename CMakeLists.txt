@@ -88,6 +88,8 @@ set(source_files
     src/script/asaddons/scriptstdstring.cpp
     src/script/asaddons/scriptstdstring_utils.cpp
     src/script/callers/scriptcaller.cpp
+    src/script/callers/frametimecaller.cpp
+    src/script/callers/gameeventcaller.cpp
     src/script/callers/ongroundcaller.cpp
     src/script/interfaces/entityinterface.cpp
     src/script/interfaces/landscapeinterface.cpp
@@ -188,6 +190,8 @@ set(header_files
     src/script/asaddons/scriptbuilder.h
     src/script/asaddons/scriptstdstring.h
     src/script/callers/scriptcaller.h
+    src/script/callers/frametimecaller.h
+    src/script/callers/gameeventcaller.h
     src/script/callers/ongroundcaller.h
     src/script/interfaces/entityinterface.h
     src/script/interfaces/landscapeinterface.h

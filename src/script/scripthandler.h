@@ -12,9 +12,7 @@ class ScriptCaller;
 class ScriptHandler :
     public fea::MessageReceiver<RebuildScriptsRequestedMessage>,
     public fea::MessageReceiver<EntityCreatedMessage>,
-    public fea::MessageReceiver<EntityRemovedMessage>,
-    public fea::MessageReceiver<FrameMessage>,
-    public fea::MessageReceiver<GameStartMessage>
+    public fea::MessageReceiver<EntityRemovedMessage>
 {
     public:
         ScriptHandler(fea::MessageBus& bus, WorldInterface& worldInterface);
@@ -24,8 +22,6 @@ class ScriptHandler :
         void handleMessage(const RebuildScriptsRequestedMessage& message);
         void handleMessage(const EntityCreatedMessage& message);
         void handleMessage(const EntityRemovedMessage& message);
-        void handleMessage(const FrameMessage& received);
-        void handleMessage(const GameStartMessage& received);
     private:
         void registerInterface();
         void registerCallbacks(ScriptEntityMap& scriptEntities);
@@ -39,8 +35,4 @@ class ScriptHandler :
 
         std::vector<std::unique_ptr<ScriptInterface>> mInterfaces;
         std::vector<std::unique_ptr<ScriptCaller>> mCallers;
-
-        ScriptCallback<int32_t> onFrameCallback;
-        ScriptCallback<> gameStartCallback;
-        int32_t frameTick;
 };

@@ -10,23 +10,19 @@
 #include "interfaces/randominterface.h"
 #include "interfaces/stringinterface.h"
 #include "callers/ongroundcaller.h"
+#include "callers/gameeventcaller.h"
+#include "callers/frametimecaller.h"
 
 ScriptHandler::ScriptHandler(fea::MessageBus& bus, WorldInterface& worldInterface) : 
     mEngine(bus),
     mBus(bus),
     mScripts(mEngine.createModule("scripts")),
     mWorldInterface(worldInterface),
-    logName("script"),
-    onFrameCallback(mEngine),
-    gameStartCallback(mEngine),
-    frameTick(0)
+    logName("script")
 {
     mBus.addMessageSubscriber<RebuildScriptsRequestedMessage>(*this);
     mBus.addMessageSubscriber<EntityCreatedMessage>(*this);
     mBus.addMessageSubscriber<EntityRemovedMessage>(*this);
-
-    mBus.addMessageSubscriber<FrameMessage>(*this);
-    mBus.addMessageSubscriber<GameStartMessage>(*this);
 
     ScriptEntityCore::sWorldInterface = &worldInterface;
     ScriptEntityCore::sBus = &bus;
@@ -37,9 +33,6 @@ ScriptHandler::~ScriptHandler()
     mBus.removeMessageSubscriber<RebuildScriptsRequestedMessage>(*this);
     mBus.removeMessageSubscriber<EntityCreatedMessage>(*this);
     mBus.removeMessageSubscriber<EntityRemovedMessage>(*this);
-
-    mBus.removeMessageSubscriber<FrameMessage>(*this);
-    mBus.removeMessageSubscriber<GameStartMessage>(*this);
 }
 
 void ScriptHandler::setup()
@@ -54,6 +47,8 @@ void ScriptHandler::setup()
     mInterfaces.push_back(std::unique_ptr<ScriptInterface>(new PrintInterface(mBus, mWorldInterface)));
     mInterfaces.push_back(std::unique_ptr<ScriptInterface>(new RandomInterface(mBus, mWorldInterface)));
 
+    mCallers.push_back(std::unique_ptr<ScriptCaller>(new FrameTimeCaller(mBus, mEngine, scriptEntities)));
+    mCallers.push_back(std::unique_ptr<ScriptCaller>(new GameEventCaller(mBus, mEngine, scriptEntities)));
     mCallers.push_back(std::unique_ptr<ScriptCaller>(new OnGroundCaller(mBus, mEngine, scriptEntities)));
 
     registerInterface();
@@ -181,36 +176,6 @@ void ScriptHandler::handleMessage(const EntityRemovedMessage& message)
     }
 }
 
-void ScriptHandler::handleMessage(const FrameMessage& received)
-{
-    if(!mScripts.hasErrors())
-    {
-        onFrameCallback.execute(frameTick);
-
-        for(auto& entity : scriptEntities)
-        {
-            ScriptMemberCallback<int32_t> callback(mEngine);
-            asIScriptObject* object = entity.second.getScriptObject();
-            asIScriptFunction* function = object->GetObjectType()->GetMethodByDecl("void onFrame(int frameNumber)");
-            if(function)
-            {
-                callback.setFunction(function);
-                callback.execute(object, frameTick);
-            }
-        }
-
-        frameTick++;
-    }
-}
-
-void ScriptHandler::handleMessage(const GameStartMessage& received)
-{
-    if(!mScripts.hasErrors())
-    {
-        gameStartCallback.execute();
-    }
-}
-
 void ScriptHandler::registerInterface()
 {
     for(auto& interface : mInterfaces)
@@ -223,7 +188,5 @@ void ScriptHandler::registerCallbacks(ScriptEntityMap& scriptEntities)
 {
     if(!mScripts.hasErrors())
     {
-        onFrameCallback.setFunction(mScripts.getFunctionByDecl("void onFrame(int frameNumber)"));
-        gameStartCallback.setFunction(mScripts.getFunctionByDecl("void gameStarted()"));
     }
 }
