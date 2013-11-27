@@ -25,7 +25,6 @@ void FrameTimeCaller::handleMessage(const FrameMessage& received)
             ScriptMemberCallback<int32_t> callback(mEngine);
             asIScriptObject* object = entity.second.getScriptObject();
             asIScriptFunction* function = object->GetObjectType()->GetMethodByDecl("void onFrame(int frameNumber)");
-            std::cout << "method address is: " << function << "\n";
             if(function)
             {
                 callback.setFunction(function);
