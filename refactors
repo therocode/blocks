@@ -12,12 +12,6 @@ server.cpp
 -Server should not be responsible of packing and unpacking network packages. a class which the packages are relayed to should be created.
 --------------------------------------------------------------
 
-in src/input/
-
-inputadaptor.cpp
--take out player ID.
---------------------------------------------------------------
-
 in src/networking
 
 remoteclientconnectionlistener.cpp
@@ -43,4 +37,4 @@ world.cpp
 
 in rendering
 
-pretty muhc everything needs an overhaul. this should be thought through and done when the models and animations are implemented
+pretty much everything needs an overhaul. this should be thought through and done when the models and animations are implemented
