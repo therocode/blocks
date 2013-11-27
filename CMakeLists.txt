@@ -87,6 +87,8 @@ set(source_files
     src/script/asaddons/scriptbuilder.cpp
     src/script/asaddons/scriptstdstring.cpp
     src/script/asaddons/scriptstdstring_utils.cpp
+    src/script/callers/scriptcaller.cpp
+    src/script/callers/ongroundcaller.cpp
     src/script/interfaces/entityinterface.cpp
     src/script/interfaces/landscapeinterface.cpp
     src/script/interfaces/mathsinterface.cpp
@@ -179,11 +181,14 @@ set(header_files
     src/script/scriptentitycore.h
     src/script/scripthandler.h
     src/script/scriptmodule.h
+    src/script/scriptstd.h
     src/script/asaddons/scriptarray.h
     src/script/asaddons/scriptmath.h
     src/script/asaddons/scriptvectors.h
     src/script/asaddons/scriptbuilder.h
     src/script/asaddons/scriptstdstring.h
+    src/script/callers/scriptcaller.h
+    src/script/callers/ongroundcaller.h
     src/script/interfaces/entityinterface.h
     src/script/interfaces/landscapeinterface.h
     src/script/interfaces/mathsinterface.h

@@ -6,3 +6,7 @@ ScriptInterface::ScriptInterface(fea::MessageBus& bus, WorldInterface& worldInte
     mLogName("script")
 {
 }
+
+ScriptInterface::~ScriptInterface()
+{
+}

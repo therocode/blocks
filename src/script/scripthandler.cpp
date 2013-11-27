@@ -9,6 +9,7 @@
 #include "interfaces/printinterface.h"
 #include "interfaces/randominterface.h"
 #include "interfaces/stringinterface.h"
+#include "callers/ongroundcaller.h"
 
 ScriptHandler::ScriptHandler(fea::MessageBus& bus, WorldInterface& worldInterface) : 
     mEngine(bus),
@@ -26,7 +27,6 @@ ScriptHandler::ScriptHandler(fea::MessageBus& bus, WorldInterface& worldInterfac
 
     mBus.addMessageSubscriber<FrameMessage>(*this);
     mBus.addMessageSubscriber<GameStartMessage>(*this);
-    mBus.addMessageSubscriber<EntityOnGroundMessage>(*this);
 
     ScriptEntityCore::sWorldInterface = &worldInterface;
     ScriptEntityCore::sBus = &bus;
@@ -40,7 +40,6 @@ ScriptHandler::~ScriptHandler()
 
     mBus.removeMessageSubscriber<FrameMessage>(*this);
     mBus.removeMessageSubscriber<GameStartMessage>(*this);
-    mBus.removeMessageSubscriber<EntityOnGroundMessage>(*this);
 }
 
 void ScriptHandler::setup()
@@ -54,6 +53,8 @@ void ScriptHandler::setup()
     mInterfaces.push_back(std::unique_ptr<ScriptInterface>(new PhysicsInterface(mBus, mWorldInterface)));
     mInterfaces.push_back(std::unique_ptr<ScriptInterface>(new PrintInterface(mBus, mWorldInterface)));
     mInterfaces.push_back(std::unique_ptr<ScriptInterface>(new RandomInterface(mBus, mWorldInterface)));
+
+    mCallers.push_back(std::unique_ptr<ScriptCaller>(new OnGroundCaller(mBus, mEngine, scriptEntities)));
 
     registerInterface();
 
@@ -77,6 +78,11 @@ void ScriptHandler::setup()
         registerCallbacks(scriptEntities);
         mBus.sendMessage<LogMessage>(LogMessage("Compilation process over.", logName, LogLevel::VERB));
         mBus.sendMessage<LogMessage>(LogMessage("Done setting up callbacks.", logName, LogLevel::VERB));
+
+        for(auto& caller : mCallers)
+        {
+            caller->setActive(true);
+        }
     }
 }
 
@@ -99,6 +105,17 @@ void ScriptHandler::handleMessage(const RebuildScriptsRequestedMessage& message)
         registerCallbacks(scriptEntities);
         mBus.sendMessage<LogMessage>(LogMessage("Compilation process over.", logName, LogLevel::VERB));
         mBus.sendMessage<LogMessage>(LogMessage("Done setting up callbacks.", logName, LogLevel::VERB));
+        for(auto& caller : mCallers)
+        {
+            caller->setActive(true);
+        }
+    }
+    else
+    {
+        for(auto& caller : mCallers)
+        {
+            caller->setActive(false);
+        }
     }
 }
 
@@ -191,31 +208,6 @@ void ScriptHandler::handleMessage(const GameStartMessage& received)
     if(!mScripts.hasErrors())
     {
         gameStartCallback.execute();
-    }
-}
-
-void ScriptHandler::handleMessage(const EntityOnGroundMessage& received)
-{
-    bool landed;
-    size_t id;
-
-    std::tie(id, landed) = received.data;
-
-    if(!mScripts.hasErrors())
-    {
-        auto entity = scriptEntities.find(id);
-
-        if(entity != scriptEntities.end())
-        {
-            ScriptMemberCallback<bool> callback(mEngine);
-            asIScriptObject* object = entity->second.getScriptObject();
-            asIScriptFunction* function = object->GetObjectType()->GetMethodByDecl("void onGround(bool landed)");
-            if(function)
-            {
-                callback.setFunction(function);
-                callback.execute(object, landed);
-            }
-        }
     }
 }
 

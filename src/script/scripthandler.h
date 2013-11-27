@@ -1,22 +1,20 @@
 #pragma once
 #include "scriptengine.h"
-#include "scriptentity.h"
-#include "scriptcallback.h"
 #include "../world/worldinterface.h"
 #include "scriptmessages.h"
 #include "../application/applicationmessages.h"
-#include <map>
+#include "scriptstd.h"
+#include "scriptcallback.h" //temp
 
-using ScriptEntityMap = std::map<size_t, ScriptEntity>;
 class ScriptInterface;
+class ScriptCaller;
 
 class ScriptHandler :
     public fea::MessageReceiver<RebuildScriptsRequestedMessage>,
     public fea::MessageReceiver<EntityCreatedMessage>,
     public fea::MessageReceiver<EntityRemovedMessage>,
     public fea::MessageReceiver<FrameMessage>,
-    public fea::MessageReceiver<GameStartMessage>,
-    public fea::MessageReceiver<EntityOnGroundMessage>
+    public fea::MessageReceiver<GameStartMessage>
 {
     public:
         ScriptHandler(fea::MessageBus& bus, WorldInterface& worldInterface);
@@ -28,7 +26,6 @@ class ScriptHandler :
         void handleMessage(const EntityRemovedMessage& message);
         void handleMessage(const FrameMessage& received);
         void handleMessage(const GameStartMessage& received);
-        void handleMessage(const EntityOnGroundMessage& received);
     private:
         void registerInterface();
         void registerCallbacks(ScriptEntityMap& scriptEntities);
@@ -41,6 +38,7 @@ class ScriptHandler :
         std::string logName;
 
         std::vector<std::unique_ptr<ScriptInterface>> mInterfaces;
+        std::vector<std::unique_ptr<ScriptCaller>> mCallers;
 
         ScriptCallback<int32_t> onFrameCallback;
         ScriptCallback<> gameStartCallback;
