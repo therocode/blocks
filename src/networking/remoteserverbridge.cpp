@@ -2,12 +2,13 @@
 #include <iostream>
 #include "packages.h"
 #include "application/applicationmessages.h"
+#include "networkstd.h"
 
 RemoteServerBridge::RemoteServerBridge(fea::MessageBus& bus) : mBus(bus), mLogName("network"), mGotPackagesToSend(false)
 {
     mConnected = false;
     mPort = 56566;
-    mChannelCount = 3;
+    mChannelCount = CHANNEL_COUNT;
 }
 
 RemoteServerBridge::~RemoteServerBridge()

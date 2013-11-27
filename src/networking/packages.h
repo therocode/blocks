@@ -5,13 +5,8 @@
 #include "entity/entitymessages.h"
 #include "world/worldmessages.h"
 #include "rendering/renderingmessages.h"
+#include "networkstd.h"
 
-const int CHANNEL_COUNT = 5;
-enum PACKET_CHANNELS{
-    CHANNEL_DEFAULT = 0,
-    CHANNEL_CHUNKS,
-    CHANNEL_ENTITY
-};
 using RebuildScriptsRequestedPackage = Package<RebuildScriptsRequested_tag, PackageType::REBUILD_SCRIPTS_REQUESTED, false, CHANNEL_DEFAULT, char>;
 
 using ChunkLoadedPackage        = Package<ChunkCreated_tag,         PackageType::CHUNK_LOADED,          false, CHANNEL_CHUNKS, ChunkCoordinate, RleIndexArray, RleSegmentArray>;
