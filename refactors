@@ -41,10 +41,6 @@ world.cpp
 -nicer structure. rgiht now, setvoxel is just handled in the world. maybe it could be handled in dimension.cpp
 --------------------------------------------------------------
 
-regarding entity/script
--figure out how the script system should be tied to an entity in a neat way that allows for mutual creations and removals.
---------------------------------------------------------------
-
 in rendering
 
 pretty muhc everything needs an overhaul. this should be thought through and done when the models and animations are implemented
