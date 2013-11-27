@@ -14,9 +14,6 @@ server.cpp
 
 in src/networking
 
-remoteclientconnectionlistener.cpp
--RemoteClientConnectionListener should not be responsible for converting host bytes to an IP string. Create utility class for this
-
 packages.h
 -Move channel enum and channel count into separate h file and use that in places like "mChannelCount = 3" in remoteserverbridge.cpp
 --------------------------------------------------------------
