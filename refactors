@@ -12,12 +12,6 @@ server.cpp
 -Server should not be responsible of packing and unpacking network packages. a class which the packages are relayed to should be created.
 --------------------------------------------------------------
 
-in src/networking
-
-packages.h
--Move channel enum and channel count into separate h file and use that in places like "mChannelCount = 3" in remoteserverbridge.cpp
---------------------------------------------------------------
-
 in src/world
 
 chunkprovider.h
