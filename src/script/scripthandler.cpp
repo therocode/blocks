@@ -203,18 +203,17 @@ void ScriptHandler::handleMessage(const EntityOnGroundMessage& received)
 
     if(!mScripts.hasErrors())
     {
-        for(auto& entity : scriptEntities)
+        auto entity = scriptEntities.find(id);
+
+        if(entity != scriptEntities.end())
         {
-            if(id == entity.first)
+            ScriptMemberCallback<bool> callback(mEngine);
+            asIScriptObject* object = entity->second.getScriptObject();
+            asIScriptFunction* function = object->GetObjectType()->GetMethodByDecl("void onGround(bool landed)");
+            if(function)
             {
-                ScriptMemberCallback<bool> callback(mEngine);
-                asIScriptObject* object = entity.second.getScriptObject();
-                asIScriptFunction* function = object->GetObjectType()->GetMethodByDecl("void onGround(bool landed)");
-                if(function)
-                {
-                    callback.setFunction(function);
-                    callback.execute(object, landed);
-                }
+                callback.setFunction(function);
+                callback.execute(object, landed);
             }
         }
     }
