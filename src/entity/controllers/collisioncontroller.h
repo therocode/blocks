@@ -2,16 +2,12 @@
 #include "blockstd.h"
 #include "entitycontroller.h"
 #include "../entitymessages.h"
+#include "physics/physicstypes.h"
 
 class CollisionController : public EntityController,
                             public fea::MessageReceiver<EntityMoveRequestedMessage>
 {
 	public:
-		struct AABB
-		{
-			float x, y, z;
-			float width = 1.0f, height = 1.0f, depth = 1.0f;
-		};
         CollisionController(fea::MessageBus& bus, WorldInterface& worldInterface);
         ~CollisionController();
         virtual void inspectEntity(fea::WeakEntityPtr entity) override;
