@@ -6,7 +6,7 @@
 #include <noise.h>
 #include <iostream>
 
-const int seed = 4;
+const int seed = 5;
 
 struct Range
 {
@@ -183,6 +183,7 @@ void generateRainfall(IntensityMap& map, const IntensityMap& heightmap)
             float value = (perlin.GetValue((float) x / 200.0f, (float) y / 200.0f, 500.5));
             //std::cout << "value: " << value << "\n";
             value = (value + 1.0f) / 2.0f;
+            value = value - heightmap.getUnit(x, y) / 4.0f;
             value = std::max(0.0f, std::min(value, 1.0f));
             map.setUnit(x, y, value);
         }
@@ -290,9 +291,15 @@ int main()
 
 
 
-    storage.addBiome(new Biome("peak", 1.0f, 1.0f, 1.0f,            Range(0.0f, 1.0f), Range(0.0f, 1.0f),  Range(0.9f, 1.0f)));
-    storage.addBiome(new Biome("mountain", 0.5f, 0.5f, 0.5f,        Range(0.0f, 1.0f), Range(0.0f, 1.0f),  Range(0.7f, 0.9f)));
+    storage.addBiome(new Biome("snowpeak", 1.0f, 1.0f, 1.0f,        Range(0.0f, 0.1f), Range(0.0f, 1.0f),  Range(0.9f, 1.0f)));
+    storage.addBiome(new Biome("peak", 0.6f, 0.6f, 0.6f,            Range(0.1f, 1.0f), Range(0.0f, 1.0f),  Range(0.9f, 1.0f)));
+
+    storage.addBiome(new Biome("baremountain", 0.5f, 0.5f, 0.5f,    Range(0.0f, 1.0f), Range(0.0f, 0.3f),  Range(0.7f, 0.9f)));
+    storage.addBiome(new Biome("grassmountain", 0.4f, 0.6f, 0.4f,   Range(0.0f, 1.0f), Range(0.3f, 1.0f),  Range(0.7f, 0.9f)));
+    storage.addBiome(new Biome("forestmountain", 0.2f, 0.4f, 0.2f,  Range(0.0f, 1.0f), Range(0.55f, 1.0f), Range(0.7f, 0.8f)));
+
     storage.addBiome(new Biome("steppe", 0.2f, 0.7f, 0.0f,          Range(0.0f, 1.0f), Range(0.0f, 1.0f),  Range(0.2f, 0.7f)));
+
     storage.addBiome(new Biome("ocean", 0.0f, 0.0f, 1.0f,           Range(0.0f, 1.0f), Range(0.0f, 1.0f),  Range(0.0f, 0.2f)));
  
     BiomeGenerator generator(&heightmap, &rainfall, &temperature, &biomeSelector, storage);
