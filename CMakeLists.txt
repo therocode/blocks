@@ -5,6 +5,8 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)   #for executables
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_LIST_DIR}/cmake/modules/")
 
+set(BUILD_EXPBIOMES FALSE CACHE BOOL "build the biome experiment application")
+
 set(ASM_OPTIMISATIONS FALSE CACHE BOOL "use assembler optimisation for noise generation")
 
 if(ASM_OPTIMISATIONS) #if this option is chosen, then it #ifdef NOISE_ASM in the code will be run
@@ -27,7 +29,9 @@ endif(ASM_OPTIMISATIONS)
 set(project_name blocks)
 project(${project_name})
 
-add_subdirectory(expbiomes)
+if(BUILD_EXPBIOMES)
+    add_subdirectory(expbiomes)
+endif()
 
 #Set source files.
 set(source_files
