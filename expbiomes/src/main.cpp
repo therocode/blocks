@@ -80,7 +80,7 @@ class IntensityMap
         {
             delete [] units;
         }
-        float getUnit(size_t x, size_t y)
+        float getUnit(size_t x, size_t y) const
         {
             return units[x + y * 800];
         }
@@ -106,7 +106,7 @@ class IntensityMap
 class BiomeGenerator
 {
     public:
-        BiomeGenerator(IntensityMap* r, IntensityMap* t, IntensityMap* b, BiomeStorage& s) : rainfall(r), temperature(t), biomeSelector(b), storage(s) {};
+        BiomeGenerator(IntensityMap* h, IntensityMap* r, IntensityMap* t, IntensityMap* b, BiomeStorage& s) : heightmap(h), rainfall(r), temperature(t), biomeSelector(b), storage(s) {};
         void toTexture(fea::Texture& texture)
         {
             for(int x = 0; x < 800; x++)
@@ -116,6 +116,7 @@ class BiomeGenerator
                     float temp = temperature->getUnit(x, y);
                     float rain = rainfall->getUnit(x, y);
                     float selector = biomeSelector->getUnit(x, y);
+                    float height = heightmap->getUnit(x, y);
 
                     Biome* biome = storage.getBiome(temp, rain, selector);
 
@@ -156,13 +157,20 @@ void generateHeightMap(IntensityMap& map)
     }
 }
 
-void generateRainfall(IntensityMap& map)
+void generateRainfall(IntensityMap& map, const IntensityMap& heightmap)
 {
     for(int x = 0; x < 800; x++)
     {
         for(int y = 0; y < 600; y++)
         {
             noise::module::Perlin perlin;
+           // noise::module::Voronoi voronoi;
+            //voronoi.EnableDistance(true);
+
+            //float xTurbulence = 1.0f - voronoi.GetValue((float) x / 200.0f, (float) y / 200.0f, -30.5);
+            //float yTurbulence = 1.0f - voronoi.GetValue((float) x / 200.0f, (float) y / 200.0f, 850.5);
+
+            //float invHeight = 1.0f - heightmap.getUnit(x + xTurbulence * 20, y + yTurbulence * 20);
 
             float value = (perlin.GetValue((float) x / 200.0f, (float) y / 200.0f, 500.5));
             //std::cout << "value: " << value << "\n";
@@ -173,7 +181,7 @@ void generateRainfall(IntensityMap& map)
     }
 }
 
-void generateTemperature(IntensityMap& map)
+void generateTemperature(IntensityMap& map, const IntensityMap& heightmap)
 {
     for(int x = 0; x < 800; x++)
     {
@@ -187,7 +195,10 @@ void generateTemperature(IntensityMap& map)
             //std::cout << "value: " << value << "\n";
             value = (value + 1.0f) / 2.0f;
             //value = value * (float)(y - 100) / 299.0f; //height fix
+            value = value - heightmap.getUnit(x, y) / 2.0f;
             value = std::max(0.0f, std::min(value, 1.0f));
+
+
             map.setUnit(x, y, value);
         }
     }
@@ -243,11 +254,11 @@ int main()
     heightmap.toTexture(heightmapTexture);
 
     IntensityMap rainfall;
-    generateRainfall(rainfall);
+    generateRainfall(rainfall, heightmap);
     rainfall.toTexture(rainfallTexture);
 
     IntensityMap temperature;
-    generateTemperature(temperature);
+    generateTemperature(temperature, heightmap);
     temperature.toTexture(temperatureTexture);
 
     IntensityMap biomeSelector;
@@ -266,7 +277,7 @@ int main()
     storage.addBiome(new Biome("sandydesert", 1.0f, 0.8f, 0.0f,     Range(0.3f, 1.0f), Range(0.0f, 0.2f)));
     storage.addBiome(new Biome("arcticdesert", 1.0f, 0.8f, 0.5f,     Range(0.0f, 0.3f), Range(0.0f, 0.2f)));
 
-    BiomeGenerator generator(&rainfall, &temperature, &biomeSelector, storage);
+    BiomeGenerator generator(&heightmap, &rainfall, &temperature, &biomeSelector, storage);
     generator.toTexture(biomeTexture);
 
     fea::Quad square(800.0f, 600.0f);
