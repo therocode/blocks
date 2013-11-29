@@ -27,6 +27,8 @@ endif(ASM_OPTIMISATIONS)
 set(project_name blocks)
 project(${project_name})
 
+add_subdirectory(expbiomes)
+
 #Set source files.
 set(source_files
 	src/application/blocksapp.cpp
