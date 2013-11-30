@@ -2,6 +2,7 @@
 #include <featherkit/util/window/sfml/sfmlwindowbackend.h>
 #include <featherkit/util/input/sfml/sfmlinputbackend.h>
 #include <featherkit/render2d.h>
+#include "../../src/utilities/simplexnoise.h"
 #include <SFML/Graphics/Image.hpp>
 #include <noise.h>
 #include <iostream>
@@ -154,9 +155,12 @@ void generateHeightMap(IntensityMap& map)
         {
             noise::module::Perlin perlin;
             perlin.SetSeed(seed);
+            //float value = raw_noise_3d((float) x / 200.0f, (float) y / 200.0f, 10.5);
+            float value = octave_noise_3d(6, 0.5f, 0.6f, (float) x / 200.0f, (float) y / 200.0f, 10.5);
 
-            float value = (perlin.GetValue((float) x / 200.0f, (float) y / 200.0f, 1000.5));
+            //float value = (perlin.GetValue((float) x / 200.0f, (float) y / 200.0f, 1000.5));
             //std::cout << "value: " << value << "\n";
+            value = value * 1.8f;
             value = (value + 1.0f) / 2.0f;
             value = std::max(0.0f, std::min(value, 1.0f));
             map.setUnit(x, y, value);
