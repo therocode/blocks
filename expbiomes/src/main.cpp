@@ -6,7 +6,7 @@
 #include <noise.h>
 #include <iostream>
 
-const int seed = 12;
+const int seed = 14;
 
 struct Range
 {
