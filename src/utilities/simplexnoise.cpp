@@ -467,6 +467,22 @@ float raw_noise_4d( const float x, const float y, const float z, const float w )
     return 27.0 * (n0 + n1 + n2 + n3 + n4);
 }
 
+void setSimplexSeed(const int32_t seed){
+    std::mt19937 eng(seed);
+    std::uniform_int_distribution<int> dist(0, 255);
+    for(int i = 0; i < 256; i ++)
+        perm[i] = i;
+
+    for(int i = 0; i < 10000; i ++){
+        int firstID = dist(eng);
+        int secondID = dist(eng);
+        int h = perm[firstID];
+        perm[firstID] = perm[secondID];
+        perm[secondID] = h;
+    }
+    memcpy(&perm[256], &perm[0], sizeof(int) * 256);
+}
+
 
 int fastfloor( const float x ) { return x >= 0 ? (int) x : (int) x - 1; }
 

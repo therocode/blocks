@@ -4,6 +4,7 @@
 #include "../entity/controllers/collisioncontroller.h"
 #include "../entity/controllers/gfxcontroller.h"
 #include "../entity/controllers/movementcontroller.h"
+#include "utilities/simplexnoise.h"
 
 	World::World(fea::MessageBus& messageBus) 
 :   bus(messageBus),
@@ -23,6 +24,7 @@ World::~World()
 
 void World::setup()
 {
+    setSimplexSeed(1337);
     entitySystem.setup();
 	standardDimension.initialise();
 
