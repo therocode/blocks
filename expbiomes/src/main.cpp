@@ -6,7 +6,7 @@
 #include <noise.h>
 #include <iostream>
 
-const int seed = 5;
+const int seed = 10;
 
 struct Range
 {
@@ -222,8 +222,8 @@ void generateBiomeSelector(IntensityMap& map)
         {
             noise::module::Perlin perlin;
             perlin.SetSeed(seed);
-            float xTurbulence = perlin.GetValue((float) x / 90.0f, (float) y / 90.0f, 0.5);
-            float yTurbulence = perlin.GetValue((float) x / 90.0f, (float) y / 90.0f, 50.5);
+            float xTurbulence = perlin.GetValue((float) x / 40.0f, (float) y / 50.0f, 0.5);
+            float yTurbulence = perlin.GetValue((float) x / 40.0f, (float) y / 50.0f, 50.5);
 
             noise::module::Voronoi voronoi;
             voronoi.SetSeed(seed);
@@ -294,13 +294,18 @@ int main()
     storage.addBiome(new Biome("snowpeak", 1.0f, 1.0f, 1.0f,        Range(0.0f, 0.1f), Range(0.0f, 1.0f),  Range(0.9f, 1.0f)));
     storage.addBiome(new Biome("peak", 0.6f, 0.6f, 0.6f,            Range(0.1f, 1.0f), Range(0.0f, 1.0f),  Range(0.9f, 1.0f)));
 
-    storage.addBiome(new Biome("baremountain", 0.5f, 0.5f, 0.5f,    Range(0.0f, 1.0f), Range(0.0f, 0.3f),  Range(0.7f, 0.9f)));
-    storage.addBiome(new Biome("grassmountain", 0.4f, 0.6f, 0.4f,   Range(0.0f, 1.0f), Range(0.3f, 1.0f),  Range(0.7f, 0.9f)));
-    storage.addBiome(new Biome("forestmountain", 0.2f, 0.4f, 0.2f,  Range(0.0f, 1.0f), Range(0.55f, 1.0f), Range(0.7f, 0.8f)));
+    storage.addBiome(new Biome("baremountain", 0.5f, 0.5f, 0.5f,    Range(0.0f, 1.0f), Range(0.0f, 1.0f),  Range(0.7f, 0.9f)));
+    storage.addBiome(new Biome("grassmountain", 0.4f, 0.6f, 0.4f,   Range(0.3f, 1.0f), Range(0.3f, 1.0f),  Range(0.7f, 0.9f)));
+    storage.addBiome(new Biome("snowymountain", 1.0f, 1.0f, 1.0f,   Range(0.0f, 0.3f), Range(0.4f, 1.0f),  Range(0.7f, 0.9f)));
 
-    storage.addBiome(new Biome("steppe", 0.2f, 0.7f, 0.0f,          Range(0.0f, 1.0f), Range(0.0f, 1.0f),  Range(0.2f, 0.7f)));
+    storage.addBiome(new Biome("forest", 0.0f, 0.4f, 0.0f,          Range(0.0f, 1.0f), Range(0.60f, 1.0f),  Range(0.2f, 0.7f)));
+    storage.addBiome(new Biome("plains", 0.2f, 0.7f, 0.0f,          Range(0.0f, 1.0f), Range(0.50f, 0.7f),  Range(0.2f, 0.7f)));
+    storage.addBiome(new Biome("steppe", 0.3f, 0.6f, 0.0f,          Range(0.0f, 1.0f), Range(0.20f, 0.60f),  Range(0.2f, 0.7f)));
+    storage.addBiome(new Biome("xeric", 1.0f, 0.8f, 0.2f,           Range(0.0f, 1.0f), Range(0.05f, 0.25f),  Range(0.2f, 0.7f)));
+    storage.addBiome(new Biome("desert", 1.3f, 1.3f, 0.2f,          Range(0.0f, 1.0f), Range(0.0f, 0.15f),  Range(0.2f, 0.7f)));
 
-    storage.addBiome(new Biome("ocean", 0.0f, 0.0f, 1.0f,           Range(0.0f, 1.0f), Range(0.0f, 1.0f),  Range(0.0f, 0.2f)));
+    storage.addBiome(new Biome("ocean", 0.0f, 0.0f, 1.0f,           Range(0.2f, 1.0f), Range(0.0f, 1.0f),  Range(0.0f, 0.2f)));
+    storage.addBiome(new Biome("arctic ocean", 0.0f, 0.9f, 1.0f,    Range(0.0f, 0.2f), Range(0.0f, 1.0f),  Range(0.0f, 0.2f)));
  
     BiomeGenerator generator(&heightmap, &rainfall, &temperature, &biomeSelector, storage);
     generator.toTexture(biomeTexture);
