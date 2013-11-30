@@ -56,6 +56,8 @@ set(source_files
 
     src/input/inputadaptor.cpp
 
+    src/math/mathutils.h
+
     src/networking/clientconnection.cpp
     src/networking/clientconnectionlistener.cpp
     src/networking/localclientconnectionlistener.cpp
@@ -154,6 +156,8 @@ set(header_files
 	src/input/inputmessages.h
     src/input/inputactions.h
     src/input/inputadaptor.h
+
+    src/math/mathutils.cpp
 
     src/networking/clientconnection.h
     src/networking/clientconnectionlistener.h

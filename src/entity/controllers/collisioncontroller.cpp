@@ -1,7 +1,6 @@
 #include "collisioncontroller.h"
 #include "../../world/worldinterface.h"
 #include <iostream>
-#include "rendering/renderer.h"
 
 CollisionController::CollisionController(fea::MessageBus& bus, WorldInterface& worldInterface) : EntityController(bus, worldInterface), mBus(bus)
 {
@@ -206,18 +205,15 @@ float CollisionController::sweepAroundAABB(const AABB a, glm::vec3 velocity, glm
 	}
 	return 1.0;
 }
-void CollisionController::renderDebugAABB(const AABB a, const int color)
-{
-	Renderer::sDebugRenderer.drawBox(a.x + a.width*0.5f, a.y + a.height*0.5f, a.z + a.depth*0.5f, a.width  + 0.01f, a.height + 0.01f, a.depth + 0.01f, color);
-}
+
 bool CollisionController::AABBOnGround(AABB a)
 {
 	float s = 0.05f;
 	AABB b;
-	a.x += a.width * s;
-	a.z += a.depth * s;
-	a.width *= 1.0f - s*2.0f;
-	a.depth *= 1.0f - s*2.0f;
+	//a.x += a.width * s;
+	//a.z += a.depth * s;
+	//a.width *= 1.0f - s*2.0f;
+	//a.depth *= 1.0f - s*2.0f;
 	a.y -= 0.01f;
 	a.height = 0;
 	float y = a.y;
@@ -231,18 +227,14 @@ bool CollisionController::AABBOnGround(AABB a)
 
 
 		if(mWorldInterface.getVoxelType(pos) != 0){
-			b.x = pos.x;
-			b.y = pos.y;
-			b.z = pos.z;
-
-			if(b.x < 0) b.x --;
-			if(b.y < 0) b.y --;
-			if(b.z < 0) b.z --;
+			b.x = glm::floor(pos.x);
+			b.y = glm::floor(pos.y);
+			b.z = glm::floor(pos.z);
 
 			b.x = (int)b.x;
 			b.y = (int)b.y;
 			b.z = (int)b.z;
-			if(AABBAABB(a, b)){
+			if(testAABBAABB(a, b)){
 				return true;
 			}
 		}
@@ -250,176 +242,7 @@ bool CollisionController::AABBOnGround(AABB a)
 	return false;
 
 }
-bool CollisionController::AABBAABB(const AABB a, const AABB b) const
-{
-	glm::vec3 aSize = glm::vec3(a.width * 0.5f, a.height * 0.5f, a.depth * 0.5f);
-	glm::vec3 bSize = glm::vec3(b.width * 0.5f, b.height * 0.5f, b.depth * 0.5f);
-	glm::vec3 v = glm::abs(glm::vec3(b.x + bSize.x, b.y + bSize.y, b.z + bSize.z) - glm::vec3(a.x + aSize.x, a.y + aSize.y, a.z + aSize.z));
-	return (v.x < (aSize.x + bSize.x)) && (v.y < aSize.y + bSize.y) && (v.z < aSize.z + bSize.z);
-    //if(a.x <= b.x + b.width && a.y <= b.y + b.height && a.z <= b.z + b.depth)
-      ///////7  if(a.x + a.width >= b.x && a.y + a.depth >= b.y && a.z + a.depth >= b.z)
-           // return true;
-    //return false;
-}
-float CollisionController::sweepAABB(const AABB a, const AABB b, const glm::vec3 v, glm::vec3& n)
-{
-    AABB newAABB = a;
-    newAABB.x += v.x;
-    newAABB.y += v.y;
-    newAABB.z += v.z;
-	n.x = n.y = n.z = 0;
-    if(!AABBAABB(newAABB, b))
-    {
-		 return 1.0;
-    }
 
-
-    float epsilon = 0.001f;
-    float xEntry, yEntry, zEntry;
-    float xExit,  yExit,  zExit;
-    if(v.x > 0.0f)
-    {
-        xEntry = b.x - (a.x + a.width);
-        xExit  = (b.x + b.width) - a.x;
-    }else
-    {
-        xEntry = (b.x + b.width) - a.x;
-        xExit  = b.x - (a.x + a.width);
-    }
-
-    if(v.y > 0.0f)
-    {
-        yEntry = b.y - (a.y + a.height);
-        yExit  = (b.y + b.height) - a.y;
-    }else
-    {
-        yEntry = (b.y + b.height) - a.y;
-        yExit  = b.y - (a.y + a.height);
-    }
-
-    if(v.z > 0.0f)
-    {
-        zEntry = b.z - (a.z + a.depth);
-        zExit  = (b.z + b.depth) - a.z;
-    }else
-    {
-        zEntry = (b.z + b.depth) - a.z;
-        zExit  = b.z - (a.z + a.depth);
-    }
-    //	printf("entry: %f, %f,%f\n", xEntry, yEntry, zEntry);
-    float xs, ys, zs;
-    float xe, ye, ze;
-    float infinity = std::numeric_limits<float>::infinity();
-
-    if(v.x == 0)
-    {
-        xs = -infinity;
-        xe =  infinity;
-    }else
-    {
-        xs = xEntry / v.x;
-        xe = xExit  / v.x;
-    }
-
-    if(v.y == 0)
-    {
-        ys = -infinity;
-        ye =  infinity;
-    }else
-    {
-        ys = yEntry / v.y;
-        ye = yExit  / v.y;
-    }
-    if(v.z  == 0)
-    {
-        zs = -infinity;
-        ze =  infinity;
-    }else
-    {
-        zs = zEntry / v.z;
-        ze = zExit  / v.z;
-    }
-
-    float entry = xs;
-    float exit  = xe;
-    if(ys > entry) entry = ys;
-    if(zs > entry) entry = zs;
-
-    if(ye < exit)  exit = ye;
-    if(ze < exit)  exit = ze;
-    float l = glm::length(v) + 0.0001f;
-
-    if(entry > exit)
-    {
-        n.x = n.y = n.z = 0.0f;
-        //		printf("what\n");
-        return 1.0f;
-    }else if(xs < -epsilon && ys < -epsilon && zs < -epsilon)
-    {
-        n.x = n.y = n.z = 0.0f;
-        //		printf("inside\n");
-        return 1.0f;
-    }else if(xs > 1.0f && ys > 1.0f && zs > 1.0f)
-    {
-        n.x = n.y = n.z = 0.0f;
-        //		printf("longer\n");
-        return 1.0f;
-    }
-    else
-    {
-        // printf("entries: %f, %f, %f\n", b.x + b.width - a.x,b.y + b.height - a.y, b.z + b.depth - a.z);
-        int axis = 0;
-        float maxL = xs;
-        if(ys > maxL)
-        {
-            maxL = ys;
-            axis = 1;
-        }
-        if(zs > maxL)
-        {
-            maxL = zs;
-            axis = 2;
-        }
-
-        if(axis == 0)
-        {
-            if(xEntry < 0.0f)
-            {
-                n.x = 1.f;
-            }else
-            {
-                n.x = -1.0f;
-            }
-        }else if(axis == 1)
-        {
-            if(yEntry < 0.0f)
-            {
-                n.y = 1.f;
-            }else
-            {
-                n.y = -1.0f;
-            }
-        }else if(axis == 2)
-        {
-            if(zEntry < 0.0f)
-            {
-                n.z = 1.f;
-            }else
-            {
-                n.z = -1.0f;
-            }
-        }
-		//printf("coollllllll %f, %f, %f, v: %f, %f, %f. n:%f, %f, %f\n", b.x - a.x, b.y - a.y, b.z - a.z, v.x, v.y, v.z, n.x, n.y, n.z);
-        if(maxL > 1.0f)
-        {
-            n.x = n.y = n.z =0.f;
-            return 1.0f;
-        }
-    }
-//Renderer::sDebugRenderer.drawBox(b.x + b.width*0.5f, b.y + b.height*0.5f, b.z + b.depth*0.5f, b.width  + 0.001f, b.height + 0.001f, b.depth + 0.001f, DebugRenderer::GREEN);
-
-    return entry;
-}
 void CollisionController::removeEntity(fea::EntityId id)
 {
     mEntities.erase(id);

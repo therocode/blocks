@@ -24,7 +24,7 @@ World::~World()
 
 void World::setup()
 {
-    setSimplexSeed(1337);
+    setSimplexSeed(88223);
     entitySystem.setup();
 	standardDimension.initialise();
 

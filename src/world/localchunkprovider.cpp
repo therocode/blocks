@@ -31,8 +31,8 @@ Chunk LocalChunkProvider::fetchChunk(const ChunkCoordinate& location) const
 #endif
 				if(noiseHeight > (40 - (location.y * (int32_t)chunkWidth + y)) )
 				{
-                	if(noise < 0.0f && (40 - (location.y * (int32_t)chunkWidth + y)) > noiseHeight - 1) noise = -0.9f;  
-					else noise = 1.0f; 
+                	if(noise < 0.0f && (40 - (location.y * (int32_t)chunkWidth + y)) > noiseHeight - 1) noise = -0.9f;
+					else noise = 1.0f;
 				}
 				if(noise < -0.5f)
                 {
@@ -46,14 +46,14 @@ Chunk LocalChunkProvider::fetchChunk(const ChunkCoordinate& location) const
                 {
                     types[currentBlock] = 0;
                 }
-				if(noiseYPos + noiseHeight * 1.f < -1 && types[currentBlock] != 0) 
+				if(noiseYPos + noiseHeight * 1.f < -1 && types[currentBlock] != 0)
 				{
 					types[currentBlock] = 6;
 				}
 				if(types[currentBlock] != 0)
-				{	
-				
-					
+				{
+
+
 					float s = 0.5f;
 					noiseYPos *= s;
 					noiseXPos *= s;
@@ -61,16 +61,16 @@ Chunk LocalChunkProvider::fetchChunk(const ChunkCoordinate& location) const
 #ifndef NOISE_ASM
 					if(raw_noise_3d(noiseYPos, noiseXPos, noiseZPos) > 0.9)
 					{
-						types[currentBlock] = 5;
+						types[currentBlock] = 19;
 					}
 #else
 					if(asm_raw_noise_3d(noiseYPos, noiseXPos, noiseZPos) > 0.9)
 					{
-						types[currentBlock] = 5;
+						types[currentBlock] = 19;
 					}
 #endif
-					
-					
+
+
 				}
 				float poo = 0;//glm::sin(glm::pow(noiseYPos, 2.f));
 				float len = glm::length(glm::vec2(0, 2) - glm::vec2(noiseXPos * 14 , noiseZPos * 14 )) + poo;
