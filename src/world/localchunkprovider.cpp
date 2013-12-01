@@ -27,7 +27,8 @@ Chunk LocalChunkProvider::fetchChunk(const ChunkCoordinate& location) const
                 float noiseHeight = ((octave_noise_2d(4.f, 0.5f, 1.0f, noiseXPos * 0.1f, noiseZPos * 0.1f) ) * 50.f );
 #else
                 float noise = asm_raw_noise_3d(noiseXPos, noiseYPos, noiseZPos, perm);
-                float noiseHeight = ((asm_raw_noise_2d(noiseXPos * 0.1f, noiseZPos * 0.1f) ) * 50.f );
+                // float noiseHeight = ((asm_raw_noise_2d(noiseXPos * 0.1f, noiseZPos * 0.1f, perm) ) * 50.f );
+				float noiseHeight = ((octave_noise_2d(4.f, 0.5f, 1.0f, noiseXPos * 0.1f, noiseZPos * 0.1f) ) * 50.f );
 #endif
                 if(noiseHeight > (40 - (location.y * (int32_t)chunkWidth + y)) )
                 {
