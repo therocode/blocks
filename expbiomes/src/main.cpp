@@ -7,7 +7,7 @@
 #include <noise.h>
 #include <iostream>
 
-const int seed = 14;
+const int seed = 15;
 
 struct Range
 {
@@ -245,6 +245,7 @@ void generateBiomeSelector(IntensityMap& map)
 
 int main()
 {
+    setSimplexSeed(seed);
     sf::Window sfWindow;
     fea::Window window(new fea::util::SFMLWindowBackend(sfWindow));
     fea::InputHandler input(new fea::util::SFMLInputBackend(sfWindow));
