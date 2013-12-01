@@ -2,6 +2,7 @@
 #include <featherkit/util/window/sfml/sfmlwindowbackend.h>
 #include <featherkit/util/input/sfml/sfmlinputbackend.h>
 #include <featherkit/render2d.h>
+#include "../../src/utilities/simplexnoise.h"
 #include <SFML/Graphics/Image.hpp>
 #include <noise.h>
 #include <iostream>
@@ -154,9 +155,12 @@ void generateHeightMap(IntensityMap& map)
         {
             noise::module::Perlin perlin;
             perlin.SetSeed(seed);
+            //float value = raw_noise_3d((float) x / 200.0f, (float) y / 200.0f, 10.5);
+            float value = octave_noise_3d(6, 0.5f, 0.6f, (float) x / 200.0f, (float) y / 200.0f, 10.5);
 
-            float value = (perlin.GetValue((float) x / 200.0f, (float) y / 200.0f, 1000.5));
+            //float value = (perlin.GetValue((float) x / 200.0f, (float) y / 200.0f, 1000.5));
             //std::cout << "value: " << value << "\n";
+            value = value * 1.8f;
             value = (value + 1.0f) / 2.0f;
             value = std::max(0.0f, std::min(value, 1.0f));
             map.setUnit(x, y, value);
@@ -179,9 +183,11 @@ void generateRainfall(IntensityMap& map, const IntensityMap& heightmap)
             //float yTurbulence = 1.0f - voronoi.GetValue((float) x / 200.0f, (float) y / 200.0f, 850.5);
 
             //float invHeight = 1.0f - heightmap.getUnit(x + xTurbulence * 20, y + yTurbulence * 20);
+            float value = octave_noise_3d(6, 0.5f, 0.6f, (float) x / 200.0f, (float) y / 200.0f, 500.5);
 
-            float value = (perlin.GetValue((float) x / 200.0f, (float) y / 200.0f, 500.5));
+            //float value = (perlin.GetValue((float) x / 200.0f, (float) y / 200.0f, 500.5));
             //std::cout << "value: " << value << "\n";
+            value = value * 1.8f;
             value = (value + 1.0f) / 2.0f;
             value = value - heightmap.getUnit(x, y) / 4.0f;
             value = std::max(0.0f, std::min(value, 1.0f));
@@ -201,8 +207,10 @@ void generateTemperature(IntensityMap& map, const IntensityMap& heightmap)
             float xTurbulence = 0.0f;//perlin.GetValue((float) x / 200.0f, (float) y / 200.0f, 0.5);
             float yTurbulence = 0.0f;//perlin.GetValue((float) x / 200.0f, (float) y / 200.0f, 50.5);
 
-            float value = (perlin.GetValue((float) x / 200.0f + xTurbulence, (float) y / 200.0f + yTurbulence, 0.5));
+            //float value = (perlin.GetValue((float) x / 200.0f + xTurbulence, (float) y / 200.0f + yTurbulence, 0.5));
+            float value = octave_noise_3d(6, 0.5f, 0.6f, (float) x / 200.0f, (float) y / 200.0f, 0.5);
             //std::cout << "value: " << value << "\n";
+            value = value * 1.2f + 0.2f;
             value = (value + 1.0f) / 2.0f;
             //value = value * (float)(y - 100) / 299.0f; //height fix
             value = value - heightmap.getUnit(x, y) / 2.0f;

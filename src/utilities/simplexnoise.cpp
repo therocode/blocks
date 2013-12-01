@@ -16,7 +16,7 @@
  */
 
 
-#include <math.h>
+#include <cmath>
 
 #include "simplexnoise.h"
 
@@ -179,8 +179,8 @@ float raw_noise_2d( const float x, const float y ) {
     float F2 = 0.5f * (sqrtf(3.0f) - 1.0f);
     // Hairy factor for 2D
     float s = (x + y) * F2;
-    int i = fastfloor( x + s );
-    int j = fastfloor( y + s );
+    int i = std::floor( x + s );
+    int j = std::floor( y + s );
 
     float G2 = (3.0f - sqrtf(3.0f)) / 6.0f;
     float t = (i + j) * G2;
@@ -247,9 +247,9 @@ float raw_noise_3d( const float x, const float y, const float z ) {
     // Skew the input space to determine which simplex cell we're in
     float F3 = 1.0f/3.0f;
     float s = (x+y+z)*F3; // Very nice and simple skew factor for 3D
-    int i = fastfloor(x+s);
-    int j = fastfloor(y+s);
-    int k = fastfloor(z+s);
+    int i = std::floor(x+s);
+    int j = std::floor(y+s);
+    int k = std::floor(z+s);
 
     float G3 = 1.0f/6.0f; // Very nice and simple unskew factor, too
     float t = (i+j+k)*G3;
@@ -343,10 +343,10 @@ float raw_noise_4d( const float x, const float y, const float z, const float w )
 
     // Skew the (x,y,z,w) space to determine which cell of 24 simplices we're in
     float s = (x + y + z + w) * F4; // Factor for 4D skewing
-    int i = fastfloor(x + s);
-    int j = fastfloor(y + s);
-    int k = fastfloor(z + s);
-    int l = fastfloor(w + s);
+    int i = std::floor(x + s);
+    int j = std::floor(y + s);
+    int k = std::floor(z + s);
+    int l = std::floor(w + s);
     float t = (i + j + k + l) * G4; // Factor for 4D unskewing
     float X0 = i - t; // Unskew the cell origin back to (x,y,z,w) space
     float Y0 = j - t;
@@ -483,8 +483,6 @@ void setSimplexSeed(const int32_t seed){
     memcpy(&perm[256], &perm[0], sizeof(int) * 256);
 }
 
-
-int fastfloor( const float x ) { return x >= 0 ? (int) x : (int) x - 1; }
 
 float dot( const int* g, const float x, const float y ) { return g[0]*x + g[1]*y; }
 float dot( const int* g, const float x, const float y, const float z ) { return g[0]*x + g[1]*y + g[2]*z; }

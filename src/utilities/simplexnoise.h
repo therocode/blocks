@@ -122,8 +122,6 @@ float raw_noise_3d(const float x, const float y, const float z);
 float raw_noise_4d(const float x, const float y, const float, const float w);
 
 
-int fastfloor(const float x);
-
 float dot(const int* g, const float x, const float y);
 float dot(const int* g, const float x, const float y, const float z);
 float dot(const int* g, const float x, const float y, const float z, const float w);

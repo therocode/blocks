@@ -5,7 +5,7 @@
 
 float differsBy(float a, float b)
 {
-    return fabs(a - b);
+    return std::abs(a - b);
 }
 
 TEST_CASE("Differs by", "[differs]")

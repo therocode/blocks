@@ -12,7 +12,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -O3")
 file(GLOB_RECURSE source_files "src/*.cpp")
 file(GLOB_RECURSE header_files "src/*.h")
 
-add_executable(${project_name} ${header_files} ${source_files})
+add_executable(${project_name} ${header_files} ${source_files} "../src/utilities/simplexnoise.cpp")
 
 find_package(Featherkit COMPONENTS rendering ui messaging structure entity REQUIRED)
 
