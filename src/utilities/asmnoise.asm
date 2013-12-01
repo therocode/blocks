@@ -8,33 +8,14 @@ section .data
 	tval     dd 0.6
 	retval   dd 32.0
 
-	;2D specific
 	F2       dd 0.36602542
 	G2       dd 0.21132487
 	tval2d   dd 0.5
 	retval2d dd 70.0
 
-	perm times 2 db \
-				151,160,137, 91, 90, 15,131, 13,201, 95, 96, 53,194,233,  7,225,\
-				140, 36,103, 30, 69,142,  8, 99, 37,240, 21, 10, 23,190,  6,148,\
-				247,120,234, 75,  0, 26,197, 62, 94,252,219,203,117, 35, 11, 32,\
-				 57,177, 33, 88,237,149, 56, 87,174, 20,125,136,171,168, 68,175,\
-				 74,165, 71,134,139, 48, 27,166, 77,146,158,231, 83,111,229,122,\
-				 60,211,133,230,220,105, 92, 41, 55, 46,245, 40,244,102,143, 54,\
-				 65, 25, 63,161,  1,216, 80, 73,209, 76,132,187,208, 89, 18,169,\
-				200,196,135,130,116,188,159, 86,164,100,109,198,173,186,  3, 64,\
-				 52,217,226,250,124,123,  5,202, 38,147,118,126,255, 82, 85,212,\
-				207,206, 59,227, 47, 16, 58, 17,182,189, 28, 42,223,183,170,213,\
-				119,248,152,  2, 44,154,163, 70,221,153,101,155,167, 43,172,  9,\
-				129, 22, 39,253, 19, 98,108,110, 79,113,224,232,178,185,112,104,\
-				218,246, 97,228,251, 34,242,193,238,210,144, 12,191,179,162,241,\
-				 81, 51,145,235,249, 14,239,107, 49,192,214, 31,181,199,106,157,\
-				184, 84,204,176,115,121, 50, 45,127,  4,150,254,138,236,205, 93,\
-				222,114, 67, 29, 24, 72,243,141,128,195, 78, 66,215, 61,156,180
-
-	grad3  db 1,1,0,  -1,1,0,  1,-1,0,  -1,-1,0,\
-			  1,0,1,  -1,0,1,  1,0,-1,  -1,0,-1,\
-			  0,1,1,  0,-1,1,  0,1,-1,  0,-1,-1
+	grad3    db 1,1,0,  -1,1,0,  1,-1,0,  -1,-1,0,\
+				1,0,1,  -1,0,1,  1,0,-1,  -1,0,-1,\
+				0,1,1,  0,-1,1,  0,1,-1,  0,-1,-1
 
 section .text
 
@@ -51,6 +32,11 @@ section .text
 	movups    [rsp-64],xmm9
 	movups    [rsp-80],xmm10
 	movups    [rsp-96],xmm11
+	mov       [rsp-112],rbx
+	mov       rbx ,r9
+%else ;elf64
+	mov       [rsp-112],rbx
+	mov       rbx ,rdi
 %endif
 ;0=x 1=y 2=z
 
@@ -107,33 +93,36 @@ section .text
 	cvtps2dq  xmm2,xmm2
 	cvtps2dq  xmm3,xmm3
 
-    pextrb    r9d ,xmm1,8 ;kk
-    pextrb    r10d,xmm2,8 ;k1
-    pextrb    r11d,xmm3,8 ;k2
-    movzx     rax ,byte [perm+r9]
-    movzx     rcx ,byte [perm+r9+r10]
-    movzx     rdx ,byte [perm+r9+r11]
-    movzx     r8  ,byte [perm+r9+1]
-    
-    pextrb    r9d ,xmm1,4 ;jj
-    pextrb    r10d,xmm2,4 ;j1
-    pextrb    r11d,xmm3,4 ;j2
+	pextrb    r9d ,xmm1,8 ;kk
+	pextrb    r10d,xmm2,8 ;k1
+	pextrb    r11d,xmm3,8 ;k2
+	add       r9  ,rbx
+	movzx     rax ,byte [r9]
+	movzx     rcx ,byte [r9+r10]
+	movzx     rdx ,byte [r9+r11]
+	movzx     r8  ,byte [r9+1]
+
+	pextrb    r9d ,xmm1,4 ;jj
+	pextrb    r10d,xmm2,4 ;j1
+	pextrb    r11d,xmm3,4 ;j2
 	add       r10 ,rcx
 	add       r11 ,rdx
-    mov       al  ,byte [perm+r9+rax]
-    mov       cl  ,byte [perm+r9+r10]
-    mov       dl  ,byte [perm+r9+r11]
-    mov       r8b ,byte [perm+r9+r8+1]
+	add       r9  ,rbx
+	mov       al  ,byte [r9+rax]
+	mov       cl  ,byte [r9+r10]
+	mov       dl  ,byte [r9+r11]
+	mov       r8b ,byte [r9+r8+1]
     
-    pextrb    r9d ,xmm1,0 ;ii
-    movd      r10d,xmm2   ;i1
-    movd      r11d,xmm3   ;i2
+	pextrb    r9d ,xmm1,0 ;ii
+	movd      r10d,xmm2   ;i1
+	movd      r11d,xmm3   ;i2
 	add       r10 ,rcx
 	add       r11 ,rdx
-    mov       al  ,byte [perm+r9+rax]
-    mov       cl  ,byte [perm+r9+r10]
-    mov       dl  ,byte [perm+r9+r11]
-    mov       r8b ,byte [perm+r9+r8+1]
+	add       r9  ,rbx
+	mov       al  ,byte [r9+rax]
+	mov       cl  ,byte [r9+r10]
+	mov       dl  ,byte [r9+r11]
+	mov       r8b ,byte [r9+r8+1]
 
 	mov       r9  ,12
 	div       r9b
@@ -208,6 +197,9 @@ section .text
 	movups    xmm9,[rsp-64]
 	movups    xmm10,[rsp-80]
 	movups    xmm11,[rsp-96]
+	mov       rbx ,[rsp-112]
+%else ;elf64
+	mov       rbx ,[rsp-112]
 %endif
 	ret
 
@@ -219,6 +211,11 @@ section .text
 	movups    [rsp-16],xmm6
 	movups    [rsp-32],xmm7
 	movups    [rsp-48],xmm8
+	mov       [rsp-64],rbx
+	mov       rbx ,r8
+%else ;elf64
+	mov       [rsp-64],rbx
+	mov       rbx ,rdi
 %endif
 ;0=x 1=y
 
@@ -261,16 +258,18 @@ section .text
 
 	pextrb    r8d ,xmm1,4 ;jj
 	pextrb    r9d ,xmm3,4 ;j1
-	movzx     rax ,byte [perm+r8]
-	movzx     rcx ,byte [perm+r8+r9]
-	movzx     rdx ,byte [perm+r8+1]
+	add       r8  ,rbx
+	movzx     rax ,byte [r8]
+	movzx     rcx ,byte [r8+r9]
+	movzx     rdx ,byte [r8+1]
 
 	pextrb	  r8d ,xmm1,0 ;ii
 	movd      r9d ,xmm3   ;i1
 	add       r9  ,rcx
-	mov       al  ,byte [perm+r8+rax]
-	mov       cl  ,byte [perm+r8+r9]
-	mov       dl  ,byte [perm+r8+rdx+1]
+	add       r8  ,rbx
+	mov       al  ,byte [r8+rax]
+	mov       cl  ,byte [r8+r9]
+	mov       dl  ,byte [r8+rdx+1]
 
 	mov       r9  ,12
 	div       r9b
@@ -327,4 +326,5 @@ section .text
 	movups    xmm7,[rsp-32]
 	movups    xmm8,[rsp-48]
 %endif
+	mov       rbx ,[rsp-64]
 	ret

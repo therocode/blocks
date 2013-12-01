@@ -474,13 +474,13 @@ void setSimplexSeed(const int32_t seed){
         perm[i] = i;
 
     for(int i = 0; i < 10000; i ++){
-        int firstID = dist(eng);
-        int secondID = dist(eng);
+        uint8_t firstID = dist(eng);
+        uint8_t secondID = dist(eng);
         int h = perm[firstID];
         perm[firstID] = perm[secondID];
         perm[secondID] = h;
     }
-    memcpy(&perm[256], &perm[0], sizeof(int) * 256);
+    memcpy(&perm[256], &perm[0], 256);
 }
 
 
