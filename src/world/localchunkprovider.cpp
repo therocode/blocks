@@ -17,61 +17,59 @@ Chunk LocalChunkProvider::fetchChunk(const ChunkCoordinate& location) const
         {
             for(int32_t x = 0; x < chunkWidth; x++)
             {
-				int currentBlock = x + z * chunkWidth + y * chunkWidthx2;
+                int currentBlock = x + z * chunkWidth + y * chunkWidthx2;
                 float noiseXPos = ((float)(x + location.x * (int32_t)chunkWidth)) / 14.0f;
                 float noiseYPos = ((float)(y + location.y * (int32_t)chunkWidth)) / 14.0f;
                 float noiseZPos = ((float)(z + location.z * (int32_t)chunkWidth)) / 14.0f;
 
 #ifndef NOISE_ASM
-				float noise = raw_noise_3d(noiseXPos, noiseYPos, noiseZPos);
-				float noiseHeight = ((raw_noise_2d(noiseXPos * 0.1f, noiseZPos * 0.1f) ) * 50.f );
+                float noise = raw_noise_3d(noiseXPos, noiseYPos, noiseZPos);
+                float noiseHeight = ((octave_noise_2d(4.f, 0.5f, 1.0f, noiseXPos * 0.1f, noiseZPos * 0.1f) ) * 50.f );
 #else
                 float noise = asm_raw_noise_3d(noiseXPos, noiseYPos, noiseZPos);
-				float noiseHeight = ((asm_raw_noise_2d(noiseXPos * 0.1f, noiseZPos * 0.1f) ) * 50.f );
+                float noiseHeight = ((asm_raw_noise_2d(noiseXPos * 0.1f, noiseZPos * 0.1f) ) * 50.f );
 #endif
-				if(noiseHeight > (40 - (location.y * (int32_t)chunkWidth + y)) )
-				{
+                if(noiseHeight > (40 - (location.y * (int32_t)chunkWidth + y)) )
+                {
                 	if(noise < 0.0f && (40 - (location.y * (int32_t)chunkWidth + y)) > noiseHeight - 1) noise = -0.9f;
-					else noise = 1.0f;
-				}
-				if(noise < -0.5f)
-                {
-                    types[currentBlock] = 1;
-                }
-                else if(noise < 0.0f)
-                {
-                    types[currentBlock] = 2;
-                }
-                else
-                {
-                    types[currentBlock] = 0;
-                }
-				if(noiseYPos + noiseHeight * 1.f < -1 && types[currentBlock] != 0)
-				{
-					types[currentBlock] = 6;
-				}
-				if(types[currentBlock] != 0)
-				{
-
-
-					float s = 0.5f;
-					noiseYPos *= s;
-					noiseXPos *= s;
-					noiseZPos *= s;
+                   else noise = 1.0f;
+               }
+               if(noise < -0.5f)
+               {
+                types[currentBlock] = 2;
+            }
+            else if(noise < 0.5f)
+            {
+                types[currentBlock] = 2;
+            }
+            else
+            {
+                types[currentBlock] = 0;
+            }
+            if(noiseYPos + noiseHeight * 1.f < -1 && types[currentBlock] != 0)
+            {
+               types[currentBlock] = 6;
+           }
+           if(types[currentBlock] != 0)
+           {
+            if(40 - ((location.y * (int32_t)chunkWidth + y)) == (int)noiseHeight)
+                types[currentBlock] = 1;
+            float s = 0.5f;
+            noiseYPos *= s;
+            noiseXPos *= s;
+            noiseZPos *= s;
 #ifndef NOISE_ASM
-					if(raw_noise_3d(noiseYPos, noiseXPos, noiseZPos) > 0.9)
-					{
-						types[currentBlock] = 19;
-					}
+            if(raw_noise_3d(noiseYPos, noiseXPos, noiseZPos) > 0.9)
+            {
+              types[currentBlock] = 19;
+          }
 #else
-					if(asm_raw_noise_3d(noiseYPos, noiseXPos, noiseZPos) > 0.9)
-					{
-						types[currentBlock] = 19;
-					}
+          if(asm_raw_noise_3d(noiseYPos, noiseXPos, noiseZPos) > 0.9)
+          {
+              types[currentBlock] = 19;
+          }
 #endif
-
-
-				}
+      }
 				float poo = 0;//glm::sin(glm::pow(noiseYPos, 2.f));
 				float len = glm::length(glm::vec2(0, 2) - glm::vec2(noiseXPos * 14 , noiseZPos * 14 )) + poo;
 				if(len < 3 && noiseYPos < 0)
