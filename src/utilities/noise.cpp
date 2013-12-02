@@ -27,6 +27,11 @@ void Noise::setSeed(uint32_t seed)
     std::copy(mPerm.begin(), mPerm.begin() + 256, mPerm.begin() + 256);
 }
 
+float Noise::white2D(float x, float y) const
+{
+    return mWhiteNoise.get2d(x, y, mPerm.data());
+}
+
 float Noise::simplex2D(float x, float y) const
 {
 #ifndef NOISE_ASM
