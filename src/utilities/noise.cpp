@@ -28,7 +28,11 @@ void Noise::setSeed(uint32_t seed)
 
 float Noise::simplex2D(float x, float y) const
 {
+#ifndef NOISE_ASM
     return raw_noise_2d(x, y, mPerm.data());
+#else
+	return asm_raw_noise_2d(x, y, mPerm.data());
+#endif
 }
 
 float Noise::simplex3D(float x, float y, float z) const
