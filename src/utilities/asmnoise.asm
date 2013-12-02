@@ -24,7 +24,8 @@ section .text
 ;-------------------
 ;3D simplex
 ;-------------------
-	asm_raw_noise_3d:
+asm_raw_noise_3d:
+
 %ifdef win64
 	movups    [rsp-16],xmm6
 	movups    [rsp-32],xmm7
@@ -206,7 +207,8 @@ section .text
 ;-------------------
 ;2D simplex
 ;-------------------
-	asm_raw_noise_2d:
+asm_raw_noise_2d:
+
 %ifdef win64
 	movups    [rsp-16],xmm6
 	movups    [rsp-32],xmm7
