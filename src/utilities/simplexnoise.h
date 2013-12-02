@@ -55,12 +55,6 @@ float octave_noise_2d(const float octaves,
         const float scale,
         const float x,
         const float y);
-float octave_noise_3d(const float octaves,
-        const float persistence,
-        const float scale,
-        const float x,
-        const float y,
-        const float z);
 float octave_noise_4d(const float octaves,
         const float persistence,
         const float scale,
@@ -79,14 +73,6 @@ float scaled_octave_noise_2d(  const float octaves,
         const float hiBound,
         const float x,
         const float y);
-float scaled_octave_noise_3d(  const float octaves,
-        const float persistence,
-        const float scale,
-        const float loBound,
-        const float hiBound,
-        const float x,
-        const float y,
-        const float z);
 float scaled_octave_noise_4d(  const float octaves,
         const float persistence,
         const float scale,
@@ -103,11 +89,6 @@ float scaled_raw_noise_2d( const float loBound,
         const float hiBound,
         const float x,
         const float y);
-float scaled_raw_noise_3d( const float loBound,
-        const float hiBound,
-        const float x,
-        const float y,
-        const float z);
 float scaled_raw_noise_4d( const float loBound,
         const float hiBound,
         const float x,
@@ -118,7 +99,7 @@ float scaled_raw_noise_4d( const float loBound,
 
 // Raw Simplex noise - a single noise value.
 float raw_noise_2d(const float x, const float y);
-float raw_noise_3d(const float x, const float y, const float z);
+float raw_noise_3d(const float x, const float y, const float z, const uint8_t* perm);
 float raw_noise_4d(const float x, const float y, const float, const float w);
 
 
