@@ -14,7 +14,7 @@ file(GLOB_RECURSE header_files "src/*.h")
 
 set(extra_sources  "../src/utilities/simplexnoise.cpp" "../src/utilities/noise.cpp" "../src/utilities/asmnoise.asm")
 
-add_executable(${project_name} ${header_files} ${source_files} "../src/utilities/simplexnoise.cpp" "../src/utilities/whitenoise.cpp" "../src/utilities/noise.cpp" "../src/utilities/asmnoise.asm")
+add_executable(${project_name} ${header_files} ${source_files} "../src/utilities/simplexnoise.cpp" "../src/utilities/whitenoise.cpp" "../src/utilities/noise.cpp" "../src/utilities/asmnoise.asm" "../src/utilities/voronoinoise.cpp")
 
 find_package(Featherkit COMPONENTS rendering ui messaging structure entity REQUIRED)
 
@@ -23,6 +23,4 @@ if(FEATHERKIT_FOUND)
     target_link_libraries(${project_name} ${FEATHERKIT_LIBRARIES})
 endif()
 
-include_directories(../../libnoise/noise/include/)
-
-target_link_libraries(${project_name} GL GLU GLEW sfml-window sfml-system sfml-graphics /home/tobbe/projects/libnoise/noise/lib/libnoise.so.0.3)
+target_link_libraries(${project_name} GL GLU GLEW sfml-window sfml-system sfml-graphics)

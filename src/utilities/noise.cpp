@@ -106,3 +106,8 @@ const uint8_t* Noise::getHaxxiPointer() const
 {
     return mPerm.data();
 }
+
+float Noise::voronoi2D(float x, float y) const
+{
+    return mVoronoiNosie.get2d(x, y, mPerm.data());
+}

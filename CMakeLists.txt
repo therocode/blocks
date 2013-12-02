@@ -117,6 +117,7 @@ set(source_files
 	src/utilities/random.cpp
     src/utilities/simplexnoise.cpp
 	src/utilities/timer.cpp
+    src/utilities/voronoinoise.cpp
     src/utilities/whitenoise.cpp
 
 	src/world/chunk.cpp
@@ -224,6 +225,7 @@ set(header_files
     src/utilities/simplexnoise.h
 	src/utilities/timer.h
 	src/utilities/tinydir.h
+    src/utilities/voronoinoise.h
     src/utilities/whitenoise.h
 
 	src/world/worldmessages.h
@@ -356,6 +358,6 @@ endif(OPENGL_FOUND)
 #tests
 
 if(ASM_OPTIMISATIONS)
-    add_executable(noise_test "test/noise/asmnoise.cpp" "src/utilities/asmnoise.asm" "src/utilities/simplexnoise.cpp" "src/utilities/whitenoise.cpp" "src/utilities/noise.cpp")
+    add_executable(noise_test "test/noise/asmnoise.cpp" "src/utilities/asmnoise.asm" "src/utilities/simplexnoise.cpp" "src/utilities/whitenoise.cpp" "src/utilities/noise.cpp" "src/utilities/voronoinoise.cpp")
     set_target_properties(noise_test PROPERTIES COMPILE_FLAGS "-std=c++11 -pthread")
 endif()
