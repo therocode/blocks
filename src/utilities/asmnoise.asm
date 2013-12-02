@@ -35,7 +35,7 @@ section .text
 	mov       [rsp-112],rbx
 	mov       rbx ,r9
 %else ;elf64
-	mov       [rsp-112],rbx
+	mov       [rsp-16],rbx
 	mov       rbx ,rdi
 %endif
 ;0=x 1=y 2=z
@@ -105,9 +105,9 @@ section .text
 	pextrb    r9d ,xmm1,4 ;jj
 	pextrb    r10d,xmm2,4 ;j1
 	pextrb    r11d,xmm3,4 ;j2
+	add       r9  ,rbx
 	add       r10 ,rcx
 	add       r11 ,rdx
-	add       r9  ,rbx
 	mov       al  ,byte [r9+rax]
 	mov       cl  ,byte [r9+r10]
 	mov       dl  ,byte [r9+r11]
@@ -116,9 +116,9 @@ section .text
 	pextrb    r9d ,xmm1,0 ;ii
 	movd      r10d,xmm2   ;i1
 	movd      r11d,xmm3   ;i2
+	add       r9  ,rbx
 	add       r10 ,rcx
 	add       r11 ,rdx
-	add       r9  ,rbx
 	mov       al  ,byte [r9+rax]
 	mov       cl  ,byte [r9+r10]
 	mov       dl  ,byte [r9+r11]
@@ -199,7 +199,7 @@ section .text
 	movups    xmm11,[rsp-96]
 	mov       rbx ,[rsp-112]
 %else ;elf64
-	mov       rbx ,[rsp-112]
+	mov       rbx ,[rsp-16]
 %endif
 	ret
 
@@ -211,11 +211,9 @@ section .text
 	movups    [rsp-16],xmm6
 	movups    [rsp-32],xmm7
 	movups    [rsp-48],xmm8
-	mov       [rsp-64],rbx
-	mov       rbx ,r8
+	mov       r10 ,r8
 %else ;elf64
-	mov       [rsp-64],rbx
-	mov       rbx ,rdi
+	mov       r10 ,rdi
 %endif
 ;0=x 1=y
 
@@ -258,15 +256,15 @@ section .text
 
 	pextrb    r8d ,xmm1,4 ;jj
 	pextrb    r9d ,xmm3,4 ;j1
-	add       r8  ,rbx
+	add       r8  ,r10
 	movzx     rax ,byte [r8]
 	movzx     rcx ,byte [r8+r9]
 	movzx     rdx ,byte [r8+1]
 
 	pextrb	  r8d ,xmm1,0 ;ii
 	movd      r9d ,xmm3   ;i1
+	add       r8  ,r10
 	add       r9  ,rcx
-	add       r8  ,rbx
 	mov       al  ,byte [r8+rax]
 	mov       cl  ,byte [r8+r9]
 	mov       dl  ,byte [r8+rdx+1]
@@ -326,5 +324,4 @@ section .text
 	movups    xmm7,[rsp-32]
 	movups    xmm8,[rsp-48]
 %endif
-	mov       rbx ,[rsp-64]
 	ret

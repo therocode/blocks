@@ -22,7 +22,6 @@ const float acceptableThreshold = 0.0001f;
 
 TEST_CASE("asm_noise_3d", "[noise]")
 {
-// setSimplexSeed(1337);
     CHECK(differsBy(asm_raw_noise_3d(0.0f, 0.0f, 0.0f, perm), raw_noise_3d(0.0f, 0.0f, 0.0f)) < acceptableThreshold);
     CHECK(differsBy(asm_raw_noise_3d(100.0f, 0.0f, 0.0f, perm), raw_noise_3d(100.0f, 0.0f, 0.0f)) < acceptableThreshold);
     CHECK(differsBy(asm_raw_noise_3d(0.0f, 100.0f, 0.0f, perm), raw_noise_3d(0.0f, 100.0f, 0.0f)) < acceptableThreshold);
