@@ -76,20 +76,20 @@ TEST_CASE("asm_noise_3d", "[noise]")
 
 TEST_CASE("asm_noise_2d", "[noise]")
 {
-    CHECK(differsBy(asm_raw_noise_2d(0.0f, 0.0f, perm), raw_noise_2d(0.0f, 0.0f)) < acceptableThreshold);
-    CHECK(differsBy(asm_raw_noise_2d(100.0f, 0.0f, perm), raw_noise_2d(100.0f, 0.0f)) < acceptableThreshold);
-    CHECK(differsBy(asm_raw_noise_2d(0.0f, 100.0f, perm), raw_noise_2d(0.0f, 100.0f)) < acceptableThreshold);
-    CHECK(differsBy(asm_raw_noise_2d(100.0f, 100.0f, perm), raw_noise_2d(100.0f, 100.0f)) < acceptableThreshold);
-    CHECK(differsBy(asm_raw_noise_2d(-100.0f, 0.0f, perm), raw_noise_2d(-100.0f, 0.0f)) < acceptableThreshold);
-    CHECK(differsBy(asm_raw_noise_2d(0.0f, -100.0f, perm), raw_noise_2d(0.0f, -100.0f)) < acceptableThreshold);
-    CHECK(differsBy(asm_raw_noise_2d(-100.0f, -100.0f, perm), raw_noise_2d(-100.0f, -100.0f)) < acceptableThreshold);
+    CHECK(differsBy(asm_raw_noise_2d(0.0f, 0.0f, perm), raw_noise_2d(0.0f, 0.0f, perm)) < acceptableThreshold);
+    CHECK(differsBy(asm_raw_noise_2d(100.0f, 0.0f, perm), raw_noise_2d(100.0f, 0.0f, perm)) < acceptableThreshold);
+    CHECK(differsBy(asm_raw_noise_2d(0.0f, 100.0f, perm), raw_noise_2d(0.0f, 100.0f, perm)) < acceptableThreshold);
+    CHECK(differsBy(asm_raw_noise_2d(100.0f, 100.0f, perm), raw_noise_2d(100.0f, 100.0f, perm)) < acceptableThreshold);
+    CHECK(differsBy(asm_raw_noise_2d(-100.0f, 0.0f, perm), raw_noise_2d(-100.0f, 0.0f, perm)) < acceptableThreshold);
+    CHECK(differsBy(asm_raw_noise_2d(0.0f, -100.0f, perm), raw_noise_2d(0.0f, -100.0f, perm)) < acceptableThreshold);
+    CHECK(differsBy(asm_raw_noise_2d(-100.0f, -100.0f, perm), raw_noise_2d(-100.0f, -100.0f, perm)) < acceptableThreshold);
 
-    CHECK(differsBy(asm_raw_noise_2d(0.01f, 0.0f, perm), raw_noise_2d(0.01f, 0.0f)) < acceptableThreshold);
-    CHECK(differsBy(asm_raw_noise_2d(0.0f, 0.01f, perm), raw_noise_2d(0.0f, 0.01f)) < acceptableThreshold);
-    CHECK(differsBy(asm_raw_noise_2d(0.01f, 0.01f, perm), raw_noise_2d(0.01f, 0.01f)) < acceptableThreshold);
-    CHECK(differsBy(asm_raw_noise_2d(-0.01f, 0.0f, perm), raw_noise_2d(-0.01f, 0.0f)) < acceptableThreshold);
-    CHECK(differsBy(asm_raw_noise_2d(0.0f, -0.01f, perm), raw_noise_2d(0.0f, -0.01f)) < acceptableThreshold);
-    CHECK(differsBy(asm_raw_noise_2d(-0.01f, -0.01f, perm), raw_noise_2d(-0.01f, -0.01f)) < acceptableThreshold);
+    CHECK(differsBy(asm_raw_noise_2d(0.01f, 0.0f, perm), raw_noise_2d(0.01f, 0.0f, perm)) < acceptableThreshold);
+    CHECK(differsBy(asm_raw_noise_2d(0.0f, 0.01f, perm), raw_noise_2d(0.0f, 0.01f, perm)) < acceptableThreshold);
+    CHECK(differsBy(asm_raw_noise_2d(0.01f, 0.01f, perm), raw_noise_2d(0.01f, 0.01f, perm)) < acceptableThreshold);
+    CHECK(differsBy(asm_raw_noise_2d(-0.01f, 0.0f, perm), raw_noise_2d(-0.01f, 0.0f, perm)) < acceptableThreshold);
+    CHECK(differsBy(asm_raw_noise_2d(0.0f, -0.01f, perm), raw_noise_2d(0.0f, -0.01f, perm)) < acceptableThreshold);
+    CHECK(differsBy(asm_raw_noise_2d(-0.01f, -0.01f, perm), raw_noise_2d(-0.01f, -0.01f, perm)) < acceptableThreshold);
 
     float counter = 0.0f;
     float failedC = 0.0f;
@@ -104,7 +104,7 @@ TEST_CASE("asm_noise_2d", "[noise]")
             float xc = (float)x / 10.0f;
             float yc = (float)y / 10.0f;
 
-            float difference = differsBy(asm_raw_noise_2d(xc, yc, perm), raw_noise_2d(xc, yc));
+            float difference = differsBy(asm_raw_noise_2d(xc, yc, perm), raw_noise_2d(xc, yc, perm));
 
             if(difference > acceptableThreshold)
             {

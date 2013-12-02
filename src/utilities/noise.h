@@ -12,6 +12,8 @@ class Noise
         Noise();
         Noise(uint32_t seed);
         void setSeed(uint32_t seed);
+        float simplex2D(float x, float y) const;
+        float simplexOctave2D(float x, float y, float scaleFactor = 1.0f, uint32_t octaves = 5, float persistence = 0.5f) const;
         float simplex3D(float x, float y, float z) const;
         float simplexOctave3D(float x, float y, float z, float scaleFactor = 1.0f, uint32_t octaves = 5, float persistence = 0.5f) const;
     private:

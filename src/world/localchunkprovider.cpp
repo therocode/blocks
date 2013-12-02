@@ -23,7 +23,7 @@ Chunk LocalChunkProvider::fetchChunk(const ChunkCoordinate& location) const
                 float noiseZPos = ((float)(z + location.z * (int32_t)chunkWidth)) / 14.0f;
 
                 float noise = mNoise.simplex3D(noiseXPos, noiseYPos, noiseZPos);
-                float noiseHeight = ((octave_noise_2d(4.f, 0.5f, 1.0f, noiseXPos * 0.1f, noiseZPos * 0.1f) ) * 50.f );
+                float noiseHeight = ((mNoise.simplexOctave2D(noiseXPos * 0.1f, noiseZPos * 0.1f, 1.0f, 4) ) * 50.f );
 
                 if(noiseHeight > (40 - (location.y * (int32_t)chunkWidth + y)) )
                 {
