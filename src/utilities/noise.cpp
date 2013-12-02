@@ -12,7 +12,7 @@ Noise::Noise(uint32_t seed)
 
 void Noise::setSeed(uint32_t seed)
 {
-    for(uint32_t i = 0; i < 256; i++)
+    for(uint16_t i = 0; i < 256; i++)
     {
         mPerm[i] = i;
     }
