@@ -2,7 +2,7 @@
 #include <featherkit/util/window/sfml/sfmlwindowbackend.h>
 #include <featherkit/util/input/sfml/sfmlinputbackend.h>
 #include <featherkit/render2d.h>
-#include "../../src/utilities/simplexnoise.h"
+#include "../../src/utilities/noise.h"
 #include <SFML/Graphics/Image.hpp>
 #include <noise.h>
 #include <iostream>
@@ -149,6 +149,7 @@ class BiomeGenerator
 
 void generateHeightMap(IntensityMap& map)
 {
+    Noise simplex(seed);
     for(int x = 0; x < 800; x++)
     {
         for(int y = 0; y < 600; y++)
@@ -156,7 +157,7 @@ void generateHeightMap(IntensityMap& map)
             noise::module::Perlin perlin;
             perlin.SetSeed(seed);
             //float value = raw_noise_3d((float) x / 200.0f, (float) y / 200.0f, 10.5);
-            float value = octave_noise_3d(6, 0.5f, 0.6f, (float) x / 200.0f, (float) y / 200.0f, 10.5);
+            float value = simplex.simplexOctave3D((float) x / 200.0f, (float) y / 200.0f, 10.5, 0.6, 6, 0.5f);
 
             //float value = (perlin.GetValue((float) x / 200.0f, (float) y / 200.0f, 1000.5));
             //std::cout << "value: " << value << "\n";
@@ -170,6 +171,7 @@ void generateHeightMap(IntensityMap& map)
 
 void generateRainfall(IntensityMap& map, const IntensityMap& heightmap)
 {
+    Noise simplex(seed);
     for(int x = 0; x < 800; x++)
     {
         for(int y = 0; y < 600; y++)
@@ -183,7 +185,7 @@ void generateRainfall(IntensityMap& map, const IntensityMap& heightmap)
             //float yTurbulence = 1.0f - voronoi.GetValue((float) x / 200.0f, (float) y / 200.0f, 850.5);
 
             //float invHeight = 1.0f - heightmap.getUnit(x + xTurbulence * 20, y + yTurbulence * 20);
-            float value = octave_noise_3d(6, 0.5f, 0.6f, (float) x / 200.0f, (float) y / 200.0f, 500.5);
+            float value = simplex.simplexOctave3D((float) x / 200.0f, (float) y / 200.0f, 500.5, 0.6f, 6, 0.5f);
 
             //float value = (perlin.GetValue((float) x / 200.0f, (float) y / 200.0f, 500.5));
             //std::cout << "value: " << value << "\n";
@@ -198,6 +200,7 @@ void generateRainfall(IntensityMap& map, const IntensityMap& heightmap)
 
 void generateTemperature(IntensityMap& map, const IntensityMap& heightmap)
 {
+    Noise simplex(seed);
     for(int x = 0; x < 800; x++)
     {
         for(int y = 0; y < 600; y++)
@@ -208,7 +211,7 @@ void generateTemperature(IntensityMap& map, const IntensityMap& heightmap)
             float yTurbulence = 0.0f;//perlin.GetValue((float) x / 200.0f, (float) y / 200.0f, 50.5);
 
             //float value = (perlin.GetValue((float) x / 200.0f + xTurbulence, (float) y / 200.0f + yTurbulence, 0.5));
-            float value = octave_noise_3d(6, 0.5f, 0.6f, (float) x / 200.0f, (float) y / 200.0f, 0.5);
+            float value = simplex.simplexOctave3D((float) x / 200.0f, (float) y / 200.0f, 0.5, 0.6f, 6, 0.5f);
             //std::cout << "value: " << value << "\n";
             value = value * 1.2f + 0.2f;
             value = (value + 1.0f) / 2.0f;
@@ -245,7 +248,6 @@ void generateBiomeSelector(IntensityMap& map)
 
 int main()
 {
-    setSimplexSeed(seed);
     sf::Window sfWindow;
     fea::Window window(new fea::util::SFMLWindowBackend(sfWindow));
     fea::InputHandler input(new fea::util::SFMLInputBackend(sfWindow));
