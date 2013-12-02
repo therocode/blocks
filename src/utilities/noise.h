@@ -4,6 +4,7 @@
 #include <random>
 #include <algorithm>
 #include "whitenoise.h"
+#include "voronoinoise.h"
 
 using PermutationTable = std::array<uint8_t, 512>;
 
@@ -18,10 +19,12 @@ class Noise
         float simplexOctave2D(float x, float y, float scaleFactor = 1.0f, uint32_t octaves = 5, float persistence = 0.5f) const;
         float simplex3D(float x, float y, float z) const;
         float simplexOctave3D(float x, float y, float z, float scaleFactor = 1.0f, uint32_t octaves = 5, float persistence = 0.5f) const;
+        float voronoi2D(float x, float y) const;
 
         const uint8_t* getHaxxiPointer() const;
     private:
         WhiteNoise mWhiteNoise;
+        VoronoiNoise mVoronoiNosie;
         std::ranlux24_base mRandomEngine;
         PermutationTable mPerm;
 };

@@ -4,7 +4,6 @@
 #include <featherkit/render2d.h>
 #include "../../src/utilities/noise.h"
 #include <SFML/Graphics/Image.hpp>
-#include <noise.h>
 #include <iostream>
 
 const int seed = 18;
@@ -154,16 +153,14 @@ void generateHeightMap(IntensityMap& map)
     {
         for(int y = 0; y < 600; y++)
         {
-            noise::module::Perlin perlin;
-            perlin.SetSeed(seed);
             //float value = raw_noise_3d((float) x / 200.0f, (float) y / 200.0f, 10.5);
-            float value = simplex.simplexOctave3D((float) x / 1.0f, (float) y / 1.0f, 10.5, 0.6, 1, 0.5f);
-            value = simplex.white2D((float) x / 2.0f, (float) y / 2.0f);
+            float value = simplex.simplexOctave3D((float) x / 200.0f, (float) y / 200.0f, 10.5, 0.6, 6, 0.5f);
+            //value = simplex.white2D((float) x / 2.0f, (float) y / 2.0f);
 
             //float value = (perlin.GetValue((float) x / 200.0f, (float) y / 200.0f, 1000.5));
             //std::cout << "value: " << value << "\n";
-            //value = value * 1.8f;
-            //value = (value + 1.0f) / 2.0f;
+            value = value * 1.8f;
+            value = (value + 1.0f) / 2.0f;
             value = std::max(0.0f, std::min(value, 1.0f));
             map.setUnit(x, y, value);
         }
@@ -177,8 +174,6 @@ void generateRainfall(IntensityMap& map, const IntensityMap& heightmap)
     {
         for(int y = 0; y < 600; y++)
         {
-            noise::module::Perlin perlin;
-            perlin.SetSeed(seed);
            // noise::module::Voronoi voronoi;
             //voronoi.EnableDistance(true);
 
@@ -206,8 +201,6 @@ void generateTemperature(IntensityMap& map, const IntensityMap& heightmap)
     {
         for(int y = 0; y < 600; y++)
         {
-            noise::module::Perlin perlin;
-            perlin.SetSeed(seed);
             float xTurbulence = 0.0f;//perlin.GetValue((float) x / 200.0f, (float) y / 200.0f, 0.5);
             float yTurbulence = 0.0f;//perlin.GetValue((float) x / 200.0f, (float) y / 200.0f, 50.5);
 
@@ -228,20 +221,16 @@ void generateTemperature(IntensityMap& map, const IntensityMap& heightmap)
 
 void generateBiomeSelector(IntensityMap& map)
 {
+    Noise simplex(seed);
     for(int x = 0; x < 800; x++)
     {
         for(int y = 0; y < 600; y++)
         {
-            noise::module::Perlin perlin;
-            perlin.SetSeed(seed);
-            float xTurbulence = perlin.GetValue((float) x / 40.0f, (float) y / 50.0f, 0.5);
-            float yTurbulence = perlin.GetValue((float) x / 40.0f, (float) y / 50.0f, 50.5);
+            float xTurbulence = simplex.simplexOctave3D((float) x / 40.0f, (float) y / 40.0f, 0.5, 0.6f, 6, 0.5f);
+            float yTurbulence = simplex.simplexOctave3D((float) x / 40.0f, (float) y / 40.0f, 50.5, 0.6f, 6, 0.5f);
 
-            noise::module::Voronoi voronoi;
-            voronoi.SetSeed(seed);
-            voronoi.EnableDistance(false);
-            float value = (voronoi.GetValue(((float) x / 70.0f) + xTurbulence * 0.3f, ((float) y / 70.0f) + yTurbulence * 0.3f, 0.5) + 2.0f) / 3.7f;
-            value = std::max(0.0f, std::min(value, 1.0f));
+            //float value = (voronoi.GetValue(((float) x / 70.0f) + xTurbulence * 0.3f, ((float) y / 70.0f) + yTurbulence * 0.3f, 0.5) + 2.0f) / 3.7f;
+            float value = simplex.voronoi2D(x / 60.0f + xTurbulence * 0.25f, y / 60.0f + yTurbulence * 0.25f);
             map.setUnit(x, y, value);
         }
     }
