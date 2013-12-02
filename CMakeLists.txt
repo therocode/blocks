@@ -113,6 +113,7 @@ set(source_files
     src/utilities/fpscontroller.cpp
     src/utilities/lodepng.cpp
     src/utilities/logger.cpp
+    src/utilities/noise.cpp
 	src/utilities/random.cpp
     src/utilities/simplexnoise.cpp
 	src/utilities/timer.cpp
@@ -217,6 +218,7 @@ set(header_files
     src/utilities/fpscontroller.h
     src/utilities/lodepng.h
     src/utilities/logger.h
+    src/utilities/noise.h
 	src/utilities/random.h
     src/utilities/simplexnoise.h
 	src/utilities/timer.h
