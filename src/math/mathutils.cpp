@@ -16,9 +16,9 @@ bool testAABBAABB(const AABB a, const AABB b)
 float sweepAABB(const AABB a, const AABB b, const glm::vec3 v, glm::vec3& n)
 {
     AABB newAABB = a;
-    newAABB.x += v.x;
-    newAABB.y += v.y;
-    newAABB.z += v.z;
+    newAABB.x = a.x + v.x;
+    newAABB.y = a.y + v.y;
+    newAABB.z = a.z + v.z;
     n.x = n.y = n.z = 0;
     if(!testAABBAABB(newAABB, b))
     {
