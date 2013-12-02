@@ -91,3 +91,8 @@ float Noise::simplexOctave3D(float x, float y, float z, float scaleFactor, uint3
 
     return total / maxAmplitude;
 }
+
+const uint8_t* Noise::getHaxxiPointer() const
+{
+    return mPerm.data();
+}
