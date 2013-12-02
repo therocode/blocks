@@ -23,7 +23,7 @@ const float acceptableThreshold = 0.0001f;
 
 TEST_CASE("asm_noise_3d", "[noise]")
 {
-    Noise noise(5);
+    Noise noise(7);
 
     CHECK(differsBy(asm_raw_noise_3d(0.0f, 0.0f, 0.0f, noise.getHaxxiPointer()), raw_noise_3d(0.0f, 0.0f, 0.0f, noise.getHaxxiPointer())) < acceptableThreshold);
     CHECK(differsBy(asm_raw_noise_3d(100.0f, 0.0f, 0.0f, noise.getHaxxiPointer()), raw_noise_3d(100.0f, 0.0f, 0.0f, noise.getHaxxiPointer())) < acceptableThreshold);

@@ -17,12 +17,13 @@ Noise::Noise(uint32_t seed)
 
 void Noise::setSeed(uint32_t seed)
 {
+    mRandomEngine.seed(seed);
     for(uint16_t i = 0; i < 256; i++)
     {
         mPerm[i] = i;
     }
-    
-    std::random_shuffle(mPerm.begin(), mPerm.begin() + 256);
+
+    std::shuffle(mPerm.begin(), mPerm.begin() + 256, mRandomEngine);
     std::copy(mPerm.begin(), mPerm.begin() + 256, mPerm.begin() + 256);
 }
 

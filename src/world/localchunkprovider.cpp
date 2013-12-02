@@ -1,7 +1,7 @@
 #include "localchunkprovider.h"
 #include "utilities/simplexnoise.h"
 
-LocalChunkProvider::LocalChunkProvider() : mNoise(0)
+LocalChunkProvider::LocalChunkProvider() : mNoise(11)
 {
 }
 
