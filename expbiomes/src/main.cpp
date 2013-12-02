@@ -240,12 +240,37 @@ void generateBiomeSelector(IntensityMap& map, int32_t xPos, int32_t yPos)
 class WorldPart
 {
     public:
-        WorldPart(int32_t x, int32_t y)
+        WorldPart(int32_t x, int32_t y, BiomeStorage& storage) : xPos(x), yPos(y),
+        generator(&heightmap, &rainfall, &temperature, &biomeSelector, storage)
         {
-
+            generateHeightMap(heightmap, x * partSize, y * partSize);
+            generateRainfall(rainfall, heightmap, x * partSize, y * partSize);
+            generateTemperature(temperature, heightmap, x * partSize, y * partSize);
+            generateBiomeSelector(biomeSelector, x * partSize, y * partSize);
+        }
+        void getHeightTexture(fea::Texture& texture)
+        {
+            heightmap.toTexture(texture);
+        }
+        void getRainfallTexture(fea::Texture& texture)
+        {
+            rainfall.toTexture(texture);
+        }
+        void getTemperatureTexture(fea::Texture& texture)
+        {
+            temperature.toTexture(texture);
+        }
+        void getBiomeSelectorTexture(fea::Texture& texture)
+        {
+            biomeSelector.toTexture(texture);
+        }
+        void getBiomeTexture(fea::Texture& texture)
+        {
+            generator.toTexture(texture);
         }
     private:
         int32_t xPos;
+        BiomeGenerator generator;
         int32_t yPos;
         IntensityMap heightmap;
         IntensityMap rainfall;
@@ -268,32 +293,14 @@ int main()
 
     bool shutDown = false;
 
-    fea::Texture biomeSelectorTexture;
-    biomeSelectorTexture.create(partSize, partSize, glm::vec3(1.0f, 0.0f, 1.0f), false, true);
-    fea::Texture heightmapTexture;
-    heightmapTexture.create(partSize, partSize, glm::vec3(1.0f, 0.0f, 1.0f), false, true);
-    fea::Texture rainfallTexture;
-    rainfallTexture.create(partSize, partSize, glm::vec3(1.0f, 0.0f, 1.0f), false, true);
-    fea::Texture temperatureTexture;
-    temperatureTexture.create(partSize, partSize, glm::vec3(1.0f, 0.0f, 1.0f), false, true);
-    fea::Texture biomeTexture;
-    biomeTexture.create(partSize, partSize, glm::vec3(1.0f, 0.0f, 1.0f), false, true);
-
-    IntensityMap heightmap;
-    generateHeightMap(heightmap, 0, 0);
-    heightmap.toTexture(heightmapTexture);
-
-    IntensityMap rainfall;
-    generateRainfall(rainfall, heightmap, 0, 0);
-    rainfall.toTexture(rainfallTexture);
-
-    IntensityMap temperature;
-    generateTemperature(temperature, heightmap, 0, 0);
-    temperature.toTexture(temperatureTexture);
-
-    IntensityMap biomeSelector;
-    generateBiomeSelector(biomeSelector, 0, 0);
-    biomeSelector.toTexture(biomeSelectorTexture);
+    fea::Texture texture1;
+    texture1.create(partSize, partSize, glm::vec3(1.0f, 0.0f, 1.0f), false, true);
+    fea::Texture texture2;
+    texture2.create(partSize, partSize, glm::vec3(1.0f, 0.0f, 1.0f), false, true);
+    fea::Texture texture3;
+    texture3.create(partSize, partSize, glm::vec3(1.0f, 0.0f, 1.0f), false, true);
+    fea::Texture texture4;
+    texture4.create(partSize, partSize, glm::vec3(1.0f, 0.0f, 1.0f), false, true);
 
     BiomeStorage storage;
                                                                     //temp             //rain
@@ -306,8 +313,6 @@ int main()
     //storage.addBiome(new Biome("drysteppe", 0.4f, 0.6f, 0.0f,       Range(0.4f, 0.8f), Range(0.05f, 0.5f), Range(0.2f, 1.0f)));
     //storage.addBiome(new Biome("sandydesert", 1.0f, 0.8f, 0.0f,     Range(0.3f, 1.0f), Range(0.0f, 0.2f),  Range(0.2f, 1.0f)));
     //storage.addBiome(new Biome("arcticdesert", 1.0f, 0.8f, 0.5f,    Range(0.0f, 0.3f), Range(0.0f, 0.2f),  Range(0.2f, 1.0f)));
-
-
 
     storage.addBiome(new Biome("snowpeak", 1.0f, 1.0f, 1.0f,        Range(0.0f, 0.1f), Range(0.0f, 1.0f),  Range(0.9f, 1.0f)));
     storage.addBiome(new Biome("peak", 0.6f, 0.6f, 0.6f,            Range(0.1f, 1.0f), Range(0.0f, 1.0f),  Range(0.9f, 1.0f)));
@@ -329,13 +334,31 @@ int main()
 
     storage.addBiome(new Biome("ocean", 0.0f, 0.0f, 1.0f,           Range(0.2f, 1.0f), Range(0.0f, 1.0f),  Range(0.0f, 0.2f)));
     storage.addBiome(new Biome("arctic ocean", 0.0f, 0.9f, 1.0f,    Range(0.0f, 0.2f), Range(0.0f, 1.0f),  Range(0.0f, 0.2f)));
- 
-    BiomeGenerator generator(&heightmap, &rainfall, &temperature, &biomeSelector, storage);
-    generator.toTexture(biomeTexture);
 
-    fea::Quad square(partSize, partSize);
-    square.setTexture(biomeTexture);
+    fea::Quad square1(partSize, partSize);
+    square1.setPosition(0.0f, 0.0f);
+    fea::Quad square2(partSize, partSize);
+    square2.setPosition(partSize, 0.0f);
+    fea::Quad square3(partSize, partSize);
+    square3.setPosition(0.0f, partSize);
+    fea::Quad square4(partSize, partSize);
+    square4.setPosition(partSize, partSize);
 
+
+    WorldPart part1(0, 0, storage);
+    WorldPart part2(1, 0, storage);
+    WorldPart part3(0, 1, storage);
+    WorldPart part4(1, 1, storage);
+
+    part1.getBiomeTexture(texture1);
+    part2.getBiomeTexture(texture2);
+    part3.getBiomeTexture(texture3);
+    part4.getBiomeTexture(texture4);
+
+    square1.setTexture(texture1);
+    square2.setTexture(texture2);
+    square3.setTexture(texture3);
+    square4.setTexture(texture4);
 
     while(!shutDown)
     {
@@ -356,34 +379,64 @@ int main()
                 }
                 else if(event.key.code == fea::Keyboard::Z)
                 {
-                    square.setTexture(heightmapTexture);
-                    square.setColour(1.0f, 1.0f, 1.0f);
+                    //square.setColour(1.0f, 1.0f, 1.0f);
                 }
                 else if(event.key.code == fea::Keyboard::A)
                 {
-                    square.setTexture(rainfallTexture);
-                    square.setColour(0.0f, 0.6f, 1.0f);
+                    //square.setTexture(rainfallTexture);
+                    //square.setColour(0.0f, 0.6f, 1.0f);
                 }
                 else if(event.key.code == fea::Keyboard::S)
                 {
-                    square.setTexture(temperatureTexture);
-                    square.setColour(1.0f, 0.3f, 0.0f);
+                    //square.setTexture(temperatureTexture);
+                    //square.setColour(1.0f, 0.3f, 0.0f);
                 }
                 else if(event.key.code == fea::Keyboard::D)
                 {
-                    square.setTexture(biomeSelectorTexture);
-                    square.setColour(1.0f, 1.0f, 1.0f);
+                    //square.setTexture(biomeSelectorTexture);
+                    //square.setColour(1.0f, 1.0f, 1.0f);
                 }
                 else if(event.key.code == fea::Keyboard::F)
                 {
-                    square.setTexture(biomeTexture);
-                    square.setColour(1.0f, 1.0f, 1.0f);
+                    //square.setTexture(biomeTexture);
+                    //square.setColour(1.0f, 1.0f, 1.0f);
+                }
+                else if(event.key.code == fea::Keyboard::UP)
+                {
+                    square1.translate(0.0f, 5.0f);
+                    square2.translate(0.0f, 5.0f);
+                    square3.translate(0.0f, 5.0f);
+                    square4.translate(0.0f, 5.0f);
+                }
+                else if(event.key.code == fea::Keyboard::DOWN)
+                {
+                    square1.translate(0.0f, -5.0f);
+                    square2.translate(0.0f, -5.0f);
+                    square3.translate(0.0f, -5.0f);
+                    square4.translate(0.0f, -5.0f);
+                }
+                else if(event.key.code == fea::Keyboard::LEFT)
+                {
+                    square1.translate(5.0f, 0.0f);
+                    square2.translate(5.0f, 0.0f);
+                    square3.translate(5.0f, 0.0f);
+                    square4.translate(5.0f, 0.0f);
+                }
+                else if(event.key.code == fea::Keyboard::RIGHT)
+                {
+                    square1.translate(-5.0f, 0.0f);
+                    square2.translate(-5.0f, 0.0f);
+                    square3.translate(-5.0f, 0.0f);
+                    square4.translate(-5.0f, 0.0f);
                 }
             }
         }
 
         renderer.clear();
-        renderer.queue(square);
+        renderer.queue(square1);
+        renderer.queue(square2);
+        renderer.queue(square3);
+        renderer.queue(square4);
         renderer.render();
         window.swapBuffers();
     }
