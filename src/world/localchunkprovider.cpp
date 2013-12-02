@@ -1,9 +1,9 @@
 #include "localchunkprovider.h"
 #include "utilities/simplexnoise.h"
 
-#ifdef NOISE_ASM
-#include "utilities/asmnoise.h"
-#endif
+LocalChunkProvider::LocalChunkProvider() : mNoise(0)
+{
+}
 
 Chunk LocalChunkProvider::fetchChunk(const ChunkCoordinate& location) const
 {
@@ -22,14 +22,9 @@ Chunk LocalChunkProvider::fetchChunk(const ChunkCoordinate& location) const
                 float noiseYPos = ((float)(y + location.y * (int32_t)chunkWidth)) / 14.0f;
                 float noiseZPos = ((float)(z + location.z * (int32_t)chunkWidth)) / 14.0f;
 
-#ifndef NOISE_ASM
-                float noise = raw_noise_3d(noiseXPos, noiseYPos, noiseZPos);
-                float noiseHeight = ((octave_noise_2d(4.f, 0.5f, 1.0f, noiseXPos * 0.1f, noiseZPos * 0.1f) ) * 50.f );
-#else
-                float noise = asm_raw_noise_3d(noiseXPos, noiseYPos, noiseZPos, perm);
-                // float noiseHeight = ((asm_raw_noise_2d(noiseXPos * 0.1f, noiseZPos * 0.1f, perm) ) * 50.f );
-				float noiseHeight = ((octave_noise_2d(4.f, 0.5f, 1.0f, noiseXPos * 0.1f, noiseZPos * 0.1f) ) * 50.f );
-#endif
+                float noise = mNoise.simplex3D(noiseXPos, noiseYPos, noiseZPos);
+                float noiseHeight = ((mNoise.simplexOctave2D(noiseXPos * 0.1f, noiseZPos * 0.1f, 1.0f, 4) ) * 50.f );
+
                 if(noiseHeight > (40 - (location.y * (int32_t)chunkWidth + y)) )
                 {
                 	if(noise < 0.0f && (40 - (location.y * (int32_t)chunkWidth + y)) > noiseHeight - 1) noise = -0.9f;
@@ -59,17 +54,10 @@ Chunk LocalChunkProvider::fetchChunk(const ChunkCoordinate& location) const
             noiseYPos *= s;
             noiseXPos *= s;
             noiseZPos *= s;
-#ifndef NOISE_ASM
-            if(raw_noise_3d(noiseYPos, noiseXPos, noiseZPos) > 0.9)
+            if(mNoise.simplex3D(noiseYPos, noiseXPos, noiseZPos) > 0.9)
             {
               types[currentBlock] = 19;
           }
-#else
-          if(asm_raw_noise_3d(noiseYPos, noiseXPos, noiseZPos, perm) > 0.9)
-          {
-              types[currentBlock] = 19;
-          }
-#endif
       }
 				float poo = 0;//glm::sin(glm::pow(noiseYPos, 2.f));
 				float len = glm::length(glm::vec2(0, 2) - glm::vec2(noiseXPos * 14 , noiseZPos * 14 )) + poo;

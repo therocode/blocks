@@ -354,6 +354,6 @@ endif(OPENGL_FOUND)
 #tests
 
 if(ASM_OPTIMISATIONS)
-    add_executable(noise_test "test/noise/asmnoise.cpp" "src/utilities/asmnoise.asm" "src/utilities/simplexnoise.cpp")
+    add_executable(noise_test "test/noise/asmnoise.cpp" "src/utilities/asmnoise.asm" "src/utilities/simplexnoise.cpp" "src/utilities/noise.cpp")
     set_target_properties(noise_test PROPERTIES COMPILE_FLAGS "-std=c++11 -pthread")
 endif()
