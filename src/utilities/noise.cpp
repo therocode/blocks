@@ -22,7 +22,7 @@ void Noise::setSeed(uint32_t seed)
         mPerm[i] = i;
     }
     
-    std::random_shuffle(mPerm.begin(), mPerm.begin() + 256);
+    std::shuffle(mPerm.begin(), mPerm.begin() + 256, mRandomEngine);
     std::copy(mPerm.begin(), mPerm.begin() + 256, mPerm.begin() + 256);
 }
 
