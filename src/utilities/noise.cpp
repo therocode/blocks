@@ -1,6 +1,10 @@
 #include "noise.h"
 #include "simplexnoise.h"
 
+#ifdef NOISE_ASM
+#include "asmnoise.h"
+#endif
+
 Noise::Noise()
 {
     setSeed(0);
@@ -29,7 +33,11 @@ float Noise::simplex2D(float x, float y) const
 
 float Noise::simplex3D(float x, float y, float z) const
 {
+#ifndef NOISE_ASM
     return raw_noise_3d(x, y, z, mPerm.data());
+#else
+	return asm_raw_noise_3d(x, y, z, mPerm.data());
+#endif
 }
 
 // 2D Multi-octave Simplex noise.
