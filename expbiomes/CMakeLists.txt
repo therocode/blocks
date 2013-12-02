@@ -23,6 +23,4 @@ if(FEATHERKIT_FOUND)
     target_link_libraries(${project_name} ${FEATHERKIT_LIBRARIES})
 endif()
 
-include_directories(../../libnoise/noise/include/)
-
-target_link_libraries(${project_name} GL GLU GLEW sfml-window sfml-system sfml-graphics /home/tobbe/projects/libnoise/noise/lib/libnoise.so.0.3)
+target_link_libraries(${project_name} GL GLU GLEW sfml-window sfml-system sfml-graphics)
