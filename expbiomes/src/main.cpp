@@ -7,7 +7,7 @@
 #include <iostream>
 
 const int seed = 18;
-const int32_t partSize = 256;
+const int32_t partSize = 512;
 
 struct Range
 {
@@ -150,12 +150,14 @@ class BiomeGenerator
 void generateHeightMap(IntensityMap& map, int32_t xPos, int32_t yPos)
 {
     Noise simplex(seed);
+    Noise simplex2(seed + 17);
     for(int x = 0; x < partSize; x++)
     {
         for(int y = 0; y < partSize; y++)
         {
             //float value = raw_noise_3d((float) x / 200.0f, (float) y / 200.0f, 10.5);
-            float value = simplex.simplexOctave3D((float) (x + xPos) / 200.0f, (float) (y + yPos) / 200.0f, 10.5, 0.6, 6, 0.5f);
+            float value = simplex.simplexOctave2D((float) (x + xPos) / 200.0f, (float) (y + yPos) / 200.0f, 0.6, 6, 0.5f);
+             value +=      simplex2.simplexOctave2D((float) (x + xPos) / 800.0f, (float) (y + yPos) / 800.0f, 0.6f, 6); //big rain difference
             //value = simplex.white2D((float) x / 2.0f, (float) y / 2.0f);
 
             //float value = (perlin.GetValue((float) x / 200.0f, (float) y / 200.0f, 1000.5));
@@ -183,6 +185,7 @@ void generateRainfall(IntensityMap& map, const IntensityMap& heightmap, int32_t 
 
             //float invHeight = 1.0f - heightmap.getUnit(x + xTurbulence * 20, y + yTurbulence * 20);
             float value = simplex.simplexOctave3D((float) (x + xPos) / 200.0f, (float) (y + yPos) / 200.0f, 500.5, 0.6f, 6, 0.5f);
+             value +=      simplex.simplexOctave3D((float) (x + xPos) / 800.0f, (float) (y + yPos) / 800.0f, 590.5, 0.6f, 6); //big rain difference
 
             //float value = (perlin.GetValue((float) x / 200.0f, (float) y / 200.0f, 500.5));
             //std::cout << "value: " << value << "\n";
@@ -206,7 +209,8 @@ void generateTemperature(IntensityMap& map, const IntensityMap& heightmap, int32
             float yTurbulence = 0.0f;//perlin.GetValue((float) x / 200.0f, (float) y / 200.0f, 50.5);
 
             //float value = (perlin.GetValue((float) x / 200.0f + xTurbulence, (float) y / 200.0f + yTurbulence, 0.5));
-            float value = simplex.simplexOctave3D((float) (x + xPos) / 200.0f, (float) (y + yPos) / 200.0f, 0.5, 0.6f, 6, 0.5f);
+            float value = simplex.simplexOctave3D((float) (x + xPos) / 200.0f, (float) (y + yPos) / 200.0f, 0.5, 0.6f, 6);
+             value +=      simplex.simplexOctave3D((float) (x + xPos) / 800.0f, (float) (y + yPos) / 800.0f, 90.5, 0.6f, 6); //big temperature difference
             //std::cout << "value: " << value << "\n";
             value = value * 1.2f + 0.2f;
             value = (value + 1.0f) / 2.0f;
