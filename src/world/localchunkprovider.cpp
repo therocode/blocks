@@ -44,7 +44,7 @@ Chunk LocalChunkProvider::fetchChunk(const ChunkCoordinate& location) const
             }
             if(noiseYPos + noiseHeight * 1.f < -1 && types[currentBlock] != 0)
             {
-               types[currentBlock] = 6;
+               types[currentBlock] = 15;
            }
            if(types[currentBlock] != 0)
            {

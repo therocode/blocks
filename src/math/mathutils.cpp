@@ -13,17 +13,20 @@ bool testAABBAABB(const AABB a, const AABB b)
     return true;
 }
 
-float sweepAABB(const AABB a, const AABB b, const glm::vec3 v, glm::vec3& n)
+float sweepAABB(const AABB a, const AABB b, const glm::vec3 va, const glm::vec3 vb, glm::vec3& n)
 {
+    glm::vec3 v = va - vb;
     AABB newAABB = a;
-    newAABB.x += v.x;
-    newAABB.y += v.y;
-    newAABB.z += v.z;
+    newAABB.x = a.x + v.x;
+    newAABB.y = a.y + v.y;
+    newAABB.z = a.z + v.z;
     n.x = n.y = n.z = 0;
     if(!testAABBAABB(newAABB, b))
     {
         return 1.0;
     }
+
+
 
     float epsilon = 0.001f;
     float xEntry, yEntry, zEntry;

@@ -89,7 +89,7 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
 	float n = 0.0;
 	int steps = 0;
 
-	while(n < 1.0f){
+	while(n < 1.0f && (steps < 3)){
 		steps++;
 		glm::vec3 normal = glm::vec3(0);
 		a.x = oldPosition.x - size.x * 0.5f;
@@ -97,7 +97,8 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
 		a.z = oldPosition.z - size.z * 0.5f;
 		n = sweepAroundAABB(a, v, normal, ignoreAxis);
 		// Renderer::sDebugRenderer.drawBox(a.x + a.width*0.5f, a.y + a.height*0.5f, a.z + a.depth*0.5f, a.width  + 0.001f, a.height + 0.001f, a.depth + 0.001f, DebugRenderer::ORANGE);
-		if(n < 1.f)
+
+    	if(n < 1.f )
 		{
 			for(int i = 0; i < 3; i++){
 				if(normal[i] != 0){
@@ -171,7 +172,7 @@ float CollisionController::sweepAroundAABB(const AABB a, glm::vec3 velocity, glm
 
 
                     //A is the entity, B is block in world, v is newPosition - oldPosition. Function should set norm to a normal on which face it collided. returns depth, which is between 0 and 1.
-                    float nn = sweepAABB(a, b, velocity, norm);
+                    float nn = sweepAABB(a, b, velocity, glm::vec3(0.f), norm);
 
                     //If depth is shallower than before, set the new depth to the new value.
 					int axis = 0;
