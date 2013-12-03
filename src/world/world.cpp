@@ -1,29 +1,29 @@
-#include "dimension.h"
+#include "world.h"
 #include "worldmessages.h"
 #include "localchunkprovider.h"
 
-Dimension::Dimension(fea::MessageBus& messageBus) : bus(messageBus),
+World::World(fea::MessageBus& messageBus) : bus(messageBus),
                                                     landscape(messageBus)
 {
 
 }
 
-void Dimension::initialise()
+void World::initialise()
 {
     landscape.setChunkProvider(std::unique_ptr<ChunkProvider>(new LocalChunkProvider()));
 }
 
-void Dimension::highlightChunk(size_t id, const ChunkCoordinate& chunk)
+void World::highlightChunk(size_t id, const ChunkCoordinate& chunk)
 {
     landscape.highlightChunk(id, chunk);
 }
 
-const Landscape& Dimension::getLandscape() const
+const Landscape& World::getLandscape() const
 {
     return landscape;
 }
 
-Landscape& Dimension::getLandscape()
+Landscape& World::getLandscape()
 {
     return landscape;
 }

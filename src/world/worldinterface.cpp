@@ -1,7 +1,7 @@
 #include "worldinterface.h"
 #include "rendering/renderer.h"
-	WorldInterface::WorldInterface(Dimension& dimension, EntitySystem& entitySystem)
-:   mDimension(dimension),
+	WorldInterface::WorldInterface(World& dimension, EntitySystem& entitySystem)
+:   mWorld(dimension),
 	mEntitySystem(entitySystem)
 {
 
@@ -22,7 +22,7 @@ VoxelType WorldInterface::getVoxelTypeInt(int x, int y, int z) const
 	
 	VoxelCoordinate voxelCoordinate = worldToChunkVoxel(x, y, z);//VoxelCoordinate((x + (x) % 16,(y) % 16,(z) % 16);
 
-	const Landscape& landscape = mDimension.getLandscape();
+	const Landscape& landscape = mWorld.getLandscape();
 
 	if(landscape.chunkIsLoaded(chunkCoordinate))
 	{
@@ -40,7 +40,7 @@ VoxelType WorldInterface::getVoxelType(float x, float y, float z) const
 	ChunkCoordinate chunkCoordinate = worldToChunk(x, y, z);
 	VoxelCoordinate voxelCoordinate = worldToChunkVoxel(x, y, z);
 
-	const Landscape& landscape = mDimension.getLandscape();
+	const Landscape& landscape = mWorld.getLandscape();
 
 	if(landscape.chunkIsLoaded(chunkCoordinate))
 	{
@@ -184,7 +184,7 @@ fea::WeakEntityPtr WorldInterface::createEntity(const std::string& scriptType, c
 
 const ChunkMap& WorldInterface::getChunkList() const
 {
-    return mDimension.getLandscape().getChunkList();
+    return mWorld.getLandscape().getChunkList();
 }
 
 EntityCreator WorldInterface::getEntityCreator() const

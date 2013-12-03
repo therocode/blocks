@@ -1,6 +1,6 @@
 #pragma once
 #include "../blockstd.h"
-#include "dimension.h"
+#include "world.h"
 #include "worldinterface.h"
 #include "../entity/entitysystem.h"
 #include <featherkit/messaging.h>
@@ -23,7 +23,7 @@ class Universe :
     private:
 		glm::vec3 mCamPos, mCamDir;
         fea::MessageBus& bus;
-        Dimension standardDimension;
+        World standardWorld;
         EntitySystem entitySystem;
         WorldInterface worldInterface;
 };

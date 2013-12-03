@@ -3,10 +3,10 @@
 #include "landscape.h"
 #include <featherkit/messaging.h>
 
-class Dimension
+class World
 {
     public:
-        Dimension(fea::MessageBus& messageBus);
+        World(fea::MessageBus& messageBus);
         void initialise(); 
         void highlightChunk(size_t id, const ChunkCoordinate& chunk);
         const Landscape& getLandscape() const;

@@ -8,9 +8,9 @@
 
 	Universe::Universe(fea::MessageBus& messageBus) 
 :   bus(messageBus),
-	standardDimension(messageBus),
+	standardWorld(messageBus),
 	entitySystem(messageBus),
-	worldInterface(standardDimension, entitySystem)
+	worldInterface(standardWorld, entitySystem)
 {
 	bus.addMessageSubscriber<PlayerEntersChunkMessage>(*this);
 	bus.addMessageSubscriber<SetVoxelMessage>(*this);
@@ -26,7 +26,7 @@ void Universe::setup()
 {
     setSimplexSeed(823);
     entitySystem.setup();
-	standardDimension.initialise();
+	standardWorld.initialise();
 
 	entitySystem.addController(std::unique_ptr<EntityController>(new PlayerController(bus, worldInterface)));
 	entitySystem.addController(std::unique_ptr<EntityController>(new PhysicsController(bus, worldInterface)));
@@ -52,7 +52,7 @@ void Universe::handleMessage(const PlayerEntersChunkMessage& received)
 
 	std::tie(playerId, chunkCoordinate) = received.data;
 
-    standardDimension.highlightChunk(playerId, chunkCoordinate);
+    standardWorld.highlightChunk(playerId, chunkCoordinate);
 }
 
 void Universe::handleMessage(const SetVoxelMessage& received)
@@ -65,9 +65,9 @@ void Universe::handleMessage(const SetVoxelMessage& received)
     ChunkCoordinate chunkCoord = worldToChunkInt(coordinate.x, coordinate.y, coordinate.z);
     VoxelCoordinate voxelCoord = worldToChunkVoxel(coordinate.x, coordinate.y, coordinate.z);
     
-    if(standardDimension.getLandscape().chunkIsLoaded(chunkCoord))
+    if(standardWorld.getLandscape().chunkIsLoaded(chunkCoord))
     {
-        standardDimension.getLandscape().getChunk(chunkCoord).setVoxelType(voxelCoord.x, voxelCoord.y, voxelCoord.z, type);
+        standardWorld.getLandscape().getChunk(chunkCoord).setVoxelType(voxelCoord.x, voxelCoord.y, voxelCoord.z, type);
 
         bus.sendMessage<VoxelSetMessage>(VoxelSetMessage(chunkCoord, voxelCoord, type));
     }
