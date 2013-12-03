@@ -1,4 +1,4 @@
-#include "world.h"
+#include "universe.h"
 #include "../entity/controllers/playercontroller.h"
 #include "../entity/controllers/physicscontroller.h"
 #include "../entity/controllers/collisioncontroller.h"
@@ -6,7 +6,7 @@
 #include "../entity/controllers/movementcontroller.h"
 #include "utilities/simplexnoise.h"
 
-	World::World(fea::MessageBus& messageBus) 
+	Universe::Universe(fea::MessageBus& messageBus) 
 :   bus(messageBus),
 	standardDimension(messageBus),
 	entitySystem(messageBus),
@@ -16,13 +16,13 @@
 	bus.addMessageSubscriber<SetVoxelMessage>(*this);
 }
 
-World::~World()
+Universe::~Universe()
 {
 	bus.removeMessageSubscriber<PlayerEntersChunkMessage>(*this);
 	bus.removeMessageSubscriber<SetVoxelMessage>(*this);
 }
 
-void World::setup()
+void Universe::setup()
 {
     setSimplexSeed(823);
     entitySystem.setup();
@@ -35,17 +35,17 @@ void World::setup()
 	entitySystem.addController(std::unique_ptr<EntityController>(new GfxController(bus, worldInterface)));
 }
 
-void World::update()
+void Universe::update()
 {
 	entitySystem.update();
 }
 
-void World::destroy()
+void Universe::destroy()
 {
     entitySystem.destroy();
 }
 
-void World::handleMessage(const PlayerEntersChunkMessage& received)
+void Universe::handleMessage(const PlayerEntersChunkMessage& received)
 {
     size_t playerId;
     ChunkCoordinate chunkCoordinate;
@@ -55,7 +55,7 @@ void World::handleMessage(const PlayerEntersChunkMessage& received)
     standardDimension.highlightChunk(playerId, chunkCoordinate);
 }
 
-void World::handleMessage(const SetVoxelMessage& received)
+void Universe::handleMessage(const SetVoxelMessage& received)
 {
     VoxelWorldCoordinate coordinate;
     VoxelType type;
@@ -73,7 +73,7 @@ void World::handleMessage(const SetVoxelMessage& received)
     }
 }
 
-WorldInterface& World::getWorldInterface()
+WorldInterface& Universe::getWorldInterface()
 {
     return worldInterface;
 }

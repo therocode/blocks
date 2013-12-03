@@ -6,7 +6,7 @@
 #include <SFML/Graphics/Image.hpp>
 #include <iostream>
 
-const int seed = 18;
+const int seed = 19;
 const int32_t partSize = 512;
 
 struct Range

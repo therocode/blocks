@@ -7,13 +7,13 @@
 #include "../rendering/renderingmessages.h"
 #include "worldmessages.h"
 
-class World : 
+class Universe : 
         public fea::MessageReceiver<PlayerEntersChunkMessage>,
         public fea::MessageReceiver<SetVoxelMessage>
 {
     public:
-        World(fea::MessageBus& messageBus);
-		~World();
+        Universe(fea::MessageBus& messageBus);
+		~Universe();
         void setup();
         void update();
         void destroy();
