@@ -7,6 +7,7 @@
 #include <iostream>
 
 const int seed = 18;
+const int32_t partSize = 512;
 
 struct Range
 {
@@ -70,7 +71,7 @@ class BiomeStorage
         std::vector<Biome*> biomes; 
 };
 
-const size_t unitAmount = 800 * 600;
+const size_t unitAmount = partSize * partSize;
 
 class IntensityMap
 {
@@ -85,17 +86,17 @@ class IntensityMap
         }
         float getUnit(size_t x, size_t y) const
         {
-            return units[x + y * 800];
+            return units[x + y * partSize];
         }
         void setUnit(size_t x, size_t y, float value)
         {
-            units[x + y * 800] = value;
+            units[x + y * partSize] = value;
         }
         void toTexture(fea::Texture& texture)
         {
-            for(int x = 0; x < 800; x++)
+            for(int x = 0; x < partSize; x++)
             {
-                for(int y = 0; y < 600; y++)
+                for(int y = 0; y < partSize; y++)
                 {
                     texture.setPixel(x, y, getUnit(x, y), getUnit(x, y), getUnit(x, y));
                 }
@@ -112,9 +113,9 @@ class BiomeGenerator
         BiomeGenerator(IntensityMap* h, IntensityMap* r, IntensityMap* t, IntensityMap* b, BiomeStorage& s) : heightmap(h), rainfall(r), temperature(t), biomeSelector(b), storage(s) {};
         void toTexture(fea::Texture& texture)
         {
-            for(int x = 0; x < 800; x++)
+            for(int x = 0; x < partSize; x++)
             {
-                for(int y = 0; y < 600; y++)
+                for(int y = 0; y < partSize; y++)
                 {
                     float temp = temperature->getUnit(x, y);
                     float rain = rainfall->getUnit(x, y);
@@ -146,15 +147,15 @@ class BiomeGenerator
         BiomeStorage& storage;
 };
 
-void generateHeightMap(IntensityMap& map)
+void generateHeightMap(IntensityMap& map, int32_t xPos, int32_t yPos)
 {
     Noise simplex(seed);
-    for(int x = 0; x < 800; x++)
+    for(int x = 0; x < partSize; x++)
     {
-        for(int y = 0; y < 600; y++)
+        for(int y = 0; y < partSize; y++)
         {
             //float value = raw_noise_3d((float) x / 200.0f, (float) y / 200.0f, 10.5);
-            float value = simplex.simplexOctave3D((float) x / 200.0f, (float) y / 200.0f, 10.5, 0.6, 6, 0.5f);
+            float value = simplex.simplexOctave3D((float) (x + xPos) / 200.0f, (float) (y + yPos) / 200.0f, 10.5, 0.6, 6, 0.5f);
             //value = simplex.white2D((float) x / 2.0f, (float) y / 2.0f);
 
             //float value = (perlin.GetValue((float) x / 200.0f, (float) y / 200.0f, 1000.5));
@@ -167,12 +168,12 @@ void generateHeightMap(IntensityMap& map)
     }
 }
 
-void generateRainfall(IntensityMap& map, const IntensityMap& heightmap)
+void generateRainfall(IntensityMap& map, const IntensityMap& heightmap, int32_t xPos, int32_t yPos)
 {
     Noise simplex(seed);
-    for(int x = 0; x < 800; x++)
+    for(int x = 0; x < partSize; x++)
     {
-        for(int y = 0; y < 600; y++)
+        for(int y = 0; y < partSize; y++)
         {
            // noise::module::Voronoi voronoi;
             //voronoi.EnableDistance(true);
@@ -181,7 +182,7 @@ void generateRainfall(IntensityMap& map, const IntensityMap& heightmap)
             //float yTurbulence = 1.0f - voronoi.GetValue((float) x / 200.0f, (float) y / 200.0f, 850.5);
 
             //float invHeight = 1.0f - heightmap.getUnit(x + xTurbulence * 20, y + yTurbulence * 20);
-            float value = simplex.simplexOctave3D((float) x / 200.0f, (float) y / 200.0f, 500.5, 0.6f, 6, 0.5f);
+            float value = simplex.simplexOctave3D((float) (x + xPos) / 200.0f, (float) (y + yPos) / 200.0f, 500.5, 0.6f, 6, 0.5f);
 
             //float value = (perlin.GetValue((float) x / 200.0f, (float) y / 200.0f, 500.5));
             //std::cout << "value: " << value << "\n";
@@ -194,18 +195,18 @@ void generateRainfall(IntensityMap& map, const IntensityMap& heightmap)
     }
 }
 
-void generateTemperature(IntensityMap& map, const IntensityMap& heightmap)
+void generateTemperature(IntensityMap& map, const IntensityMap& heightmap, int32_t xPos, int32_t yPos)
 {
     Noise simplex(seed);
-    for(int x = 0; x < 800; x++)
+    for(int x = 0; x < partSize; x++)
     {
-        for(int y = 0; y < 600; y++)
+        for(int y = 0; y < partSize; y++)
         {
             float xTurbulence = 0.0f;//perlin.GetValue((float) x / 200.0f, (float) y / 200.0f, 0.5);
             float yTurbulence = 0.0f;//perlin.GetValue((float) x / 200.0f, (float) y / 200.0f, 50.5);
 
             //float value = (perlin.GetValue((float) x / 200.0f + xTurbulence, (float) y / 200.0f + yTurbulence, 0.5));
-            float value = simplex.simplexOctave3D((float) x / 200.0f, (float) y / 200.0f, 0.5, 0.6f, 6, 0.5f);
+            float value = simplex.simplexOctave3D((float) (x + xPos) / 200.0f, (float) (y + yPos) / 200.0f, 0.5, 0.6f, 6, 0.5f);
             //std::cout << "value: " << value << "\n";
             value = value * 1.2f + 0.2f;
             value = (value + 1.0f) / 2.0f;
@@ -219,22 +220,38 @@ void generateTemperature(IntensityMap& map, const IntensityMap& heightmap)
     }
 }
 
-void generateBiomeSelector(IntensityMap& map)
+void generateBiomeSelector(IntensityMap& map, int32_t xPos, int32_t yPos)
 {
     Noise simplex(seed);
-    for(int x = 0; x < 800; x++)
+    for(int x = 0; x < partSize; x++)
     {
-        for(int y = 0; y < 600; y++)
+        for(int y = 0; y < partSize; y++)
         {
             float xTurbulence = simplex.simplexOctave3D((float) x / 40.0f, (float) y / 40.0f, 0.5, 0.6f, 6, 0.5f);
             float yTurbulence = simplex.simplexOctave3D((float) x / 40.0f, (float) y / 40.0f, 50.5, 0.6f, 6, 0.5f);
 
             //float value = (voronoi.GetValue(((float) x / 70.0f) + xTurbulence * 0.3f, ((float) y / 70.0f) + yTurbulence * 0.3f, 0.5) + 2.0f) / 3.7f;
-            float value = simplex.voronoi2D(x / 60.0f + xTurbulence * 0.25f, y / 60.0f + yTurbulence * 0.25f);
+            float value = simplex.voronoi2D((x + xPos) / 60.0f + xTurbulence * 0.25f, (y + yPos) / 60.0f + yTurbulence * 0.25f);
             map.setUnit(x, y, value);
         }
     }
 }
+
+class WorldPart
+{
+    public:
+        WorldPart(int32_t x, int32_t y)
+        {
+
+        }
+    private:
+        int32_t xPos;
+        int32_t yPos;
+        IntensityMap heightmap;
+        IntensityMap rainfall;
+        IntensityMap temperature;
+        IntensityMap biomeSelector;
+};
 
 int main()
 {
@@ -252,30 +269,30 @@ int main()
     bool shutDown = false;
 
     fea::Texture biomeSelectorTexture;
-    biomeSelectorTexture.create(800, 600, glm::vec3(1.0f, 0.0f, 1.0f), false, true);
+    biomeSelectorTexture.create(partSize, partSize, glm::vec3(1.0f, 0.0f, 1.0f), false, true);
     fea::Texture heightmapTexture;
-    heightmapTexture.create(800, 600, glm::vec3(1.0f, 0.0f, 1.0f), false, true);
+    heightmapTexture.create(partSize, partSize, glm::vec3(1.0f, 0.0f, 1.0f), false, true);
     fea::Texture rainfallTexture;
-    rainfallTexture.create(800, 600, glm::vec3(1.0f, 0.0f, 1.0f), false, true);
+    rainfallTexture.create(partSize, partSize, glm::vec3(1.0f, 0.0f, 1.0f), false, true);
     fea::Texture temperatureTexture;
-    temperatureTexture.create(800, 600, glm::vec3(1.0f, 0.0f, 1.0f), false, true);
+    temperatureTexture.create(partSize, partSize, glm::vec3(1.0f, 0.0f, 1.0f), false, true);
     fea::Texture biomeTexture;
-    biomeTexture.create(800, 600, glm::vec3(1.0f, 0.0f, 1.0f), false, true);
+    biomeTexture.create(partSize, partSize, glm::vec3(1.0f, 0.0f, 1.0f), false, true);
 
     IntensityMap heightmap;
-    generateHeightMap(heightmap);
+    generateHeightMap(heightmap, 0, 0);
     heightmap.toTexture(heightmapTexture);
 
     IntensityMap rainfall;
-    generateRainfall(rainfall, heightmap);
+    generateRainfall(rainfall, heightmap, 0, 0);
     rainfall.toTexture(rainfallTexture);
 
     IntensityMap temperature;
-    generateTemperature(temperature, heightmap);
+    generateTemperature(temperature, heightmap, 0, 0);
     temperature.toTexture(temperatureTexture);
 
     IntensityMap biomeSelector;
-    generateBiomeSelector(biomeSelector);
+    generateBiomeSelector(biomeSelector, 0, 0);
     biomeSelector.toTexture(biomeSelectorTexture);
 
     BiomeStorage storage;
@@ -316,7 +333,7 @@ int main()
     BiomeGenerator generator(&heightmap, &rainfall, &temperature, &biomeSelector, storage);
     generator.toTexture(biomeTexture);
 
-    fea::Quad square(800.0f, 600.0f);
+    fea::Quad square(partSize, partSize);
     square.setTexture(biomeTexture);
 
 
