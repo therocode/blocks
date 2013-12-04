@@ -428,15 +428,17 @@ asm_WhiteNoise_2d:
 %endif
 ;0=x 1=y
 
-	roundss xmm0,xmm0,1
-	roundss xmm2,xmm1,1
-	pextrb  r9  ,xmm0,0
-	pextrb  r10 ,xmm2,0
-	movzx   r10 ,[r8+r10]
-	add     r9  ,r10
-	mov     r10 ,[r8+r9]
-	movd    xmm0,r10
-	divss   xmm0,[whiteret]
+	roundss  xmm0,xmm0,1
+	roundss  xmm2,xmm1,1
+	cvtss2si r9d ,xmm0
+	cvtss2si r10d,xmm2
+	and      r9  ,255
+	and      r10 ,255
+	mov      r10b,[r8+r10]
+	add      r9  ,r10
+	mov      r10b,[r8+r9]
+	cvtsi2ss xmm0,r10d
+	divss    xmm0,[whiteret]
 
 %ifdef elf64
 	%undef r8

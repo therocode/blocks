@@ -32,7 +32,7 @@ float Noise::white2D(float x, float y) const
 #ifndef NOISE_ASM
     return mWhiteNoise.get2d(x, y, mPerm.data());
 #else
-	return asm_WhiteNoise2d(x, y, mPerm.data());
+	return asm_WhiteNoise_2d(x, y, mPerm.data());
 #endif
 }
 
