@@ -82,7 +82,7 @@ class Chunk
         VoxelType getVoxelType(const VoxelCoordinate& voxel) const;
         VoxelTypeData getVoxelTypeData() const;
         uint32_t getWidth() const;
-        const ChunkCoordinate& getLocation() const;
+        const ChunkCoordinate& getLocation() const; //should probably be gone
     private:
         VoxelSegmentTypeArray getUncompressedTypeSegment(uint32_t y, uint32_t z) const;
         void setSegmentTypeFromArray(uint16_t y, uint16_t z, const VoxelSegmentTypeArray& typeArray);

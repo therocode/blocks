@@ -213,7 +213,7 @@ void Server::acceptClientConnection(std::shared_ptr<ClientConnection> client)
     //resend chunk created messages
     for(const auto& chunk : mUniverse.getWorldInterface().getChunkList())
     {
-        std::shared_ptr<BasePackage> chunkAddedPackage(new ChunkLoadedPackage(chunk.second.getLocation(), chunk.second.getVoxelTypeData().mRleSegmentIndices, chunk.second.getVoxelTypeData().mRleSegments));
+        std::shared_ptr<BasePackage> chunkAddedPackage(new ChunkLoadedPackage(chunk.first, chunk.second.getVoxelTypeData().mRleSegmentIndices, chunk.second.getVoxelTypeData().mRleSegments));
         client->enqueuePackage(chunkAddedPackage);
     }
 
