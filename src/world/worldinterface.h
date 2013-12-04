@@ -1,5 +1,5 @@
 #pragma once
-#include "dimension.h"
+#include "world.h"
 #include "../entity/entitysystem.h"
 
 class asIScriptObject;
@@ -7,7 +7,7 @@ class asIScriptObject;
 class WorldInterface
 {
     public:
-        WorldInterface(Dimension& dimension, EntitySystem& entitySystem);
+        WorldInterface(World& dimension, EntitySystem& entitySystem);
 		VoxelType getVoxelTypeInt(int x, int y, int z) const;
         VoxelType getVoxelType(float x, float y, float z) const; 
         VoxelType getVoxelType(const glm::vec3& position) const; 
@@ -24,6 +24,6 @@ class WorldInterface
         }
         EntityCreator getEntityCreator() const;
     private:
-        Dimension& mDimension;
+        World& mWorld;
         EntitySystem& mEntitySystem;
 };

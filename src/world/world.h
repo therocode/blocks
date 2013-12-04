@@ -1,29 +1,18 @@
 #pragma once
-#include "../blockstd.h"
-#include "dimension.h"
-#include "worldinterface.h"
-#include "../entity/entitysystem.h"
+#include "chunk.h"
+#include "landscape.h"
 #include <featherkit/messaging.h>
-#include "../rendering/renderingmessages.h"
-#include "worldmessages.h"
 
-class World : 
-        public fea::MessageReceiver<PlayerEntersChunkMessage>,
-        public fea::MessageReceiver<SetVoxelMessage>
+class World
 {
     public:
         World(fea::MessageBus& messageBus);
-		~World();
-        void setup();
-        void update();
-        void destroy();
-        virtual void handleMessage(const PlayerEntersChunkMessage& received);
-        virtual void handleMessage(const SetVoxelMessage& received);
-        WorldInterface& getWorldInterface();
+        void initialise(); 
+        void highlightChunk(size_t id, const ChunkCoordinate& chunk);
+        const Landscape& getLandscape() const;
+        Landscape& getLandscape();
     private:
-		glm::vec3 mCamPos, mCamDir;
         fea::MessageBus& bus;
-        Dimension standardDimension;
-        EntitySystem entitySystem;
-        WorldInterface worldInterface;
+        Landscape landscape;
+        std::unordered_map<size_t, ChunkCoordinate> highlights;
 };

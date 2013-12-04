@@ -121,10 +121,10 @@ set(source_files
     src/utilities/whitenoise.cpp
 
 	src/world/chunk.cpp
-    src/world/dimension.cpp
     src/world/landscape.cpp
     src/world/localchunkprovider.cpp
-	src/world/world.cpp
+	src/world/universe.cpp
+    src/world/world.cpp
     src/world/worldinterface.cpp
 )
 
@@ -231,10 +231,10 @@ set(header_files
 	src/world/worldmessages.h
 	src/world/chunk.h
     src/world/chunkprovider.h
-    src/world/dimension.h
     src/world/landscape.h
     src/world/localchunkprovider.h
-	src/world/world.h
+	src/world/universe.h
+    src/world/world.h
     src/world/worldinterface.h
 )
 

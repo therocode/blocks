@@ -6,7 +6,7 @@
 #include <SFML/Graphics/Image.hpp>
 #include <iostream>
 
-const int seed = 18;
+const int seed = 19;
 const int32_t partSize = 512;
 
 struct Range
@@ -150,12 +150,14 @@ class BiomeGenerator
 void generateHeightMap(IntensityMap& map, int32_t xPos, int32_t yPos)
 {
     Noise simplex(seed);
+    Noise simplex2(seed + 17);
     for(int x = 0; x < partSize; x++)
     {
         for(int y = 0; y < partSize; y++)
         {
             //float value = raw_noise_3d((float) x / 200.0f, (float) y / 200.0f, 10.5);
-            float value = simplex.simplexOctave3D((float) (x + xPos) / 200.0f, (float) (y + yPos) / 200.0f, 10.5, 0.6, 6, 0.5f);
+            float value = simplex.simplexOctave2D((float) (x + xPos) / 200.0f, (float) (y + yPos) / 200.0f, 0.6, 6, 0.5f);
+             value +=      simplex2.simplexOctave2D((float) (x + xPos) / 800.0f, (float) (y + yPos) / 800.0f, 0.6f, 6); //big rain difference
             //value = simplex.white2D((float) x / 2.0f, (float) y / 2.0f);
 
             //float value = (perlin.GetValue((float) x / 200.0f, (float) y / 200.0f, 1000.5));
@@ -183,6 +185,7 @@ void generateRainfall(IntensityMap& map, const IntensityMap& heightmap, int32_t 
 
             //float invHeight = 1.0f - heightmap.getUnit(x + xTurbulence * 20, y + yTurbulence * 20);
             float value = simplex.simplexOctave3D((float) (x + xPos) / 200.0f, (float) (y + yPos) / 200.0f, 500.5, 0.6f, 6, 0.5f);
+             value +=      simplex.simplexOctave3D((float) (x + xPos) / 800.0f, (float) (y + yPos) / 800.0f, 590.5, 0.6f, 6); //big rain difference
 
             //float value = (perlin.GetValue((float) x / 200.0f, (float) y / 200.0f, 500.5));
             //std::cout << "value: " << value << "\n";
@@ -206,7 +209,8 @@ void generateTemperature(IntensityMap& map, const IntensityMap& heightmap, int32
             float yTurbulence = 0.0f;//perlin.GetValue((float) x / 200.0f, (float) y / 200.0f, 50.5);
 
             //float value = (perlin.GetValue((float) x / 200.0f + xTurbulence, (float) y / 200.0f + yTurbulence, 0.5));
-            float value = simplex.simplexOctave3D((float) (x + xPos) / 200.0f, (float) (y + yPos) / 200.0f, 0.5, 0.6f, 6, 0.5f);
+            float value = simplex.simplexOctave3D((float) (x + xPos) / 200.0f, (float) (y + yPos) / 200.0f, 0.5, 0.6f, 6);
+             value +=      simplex.simplexOctave3D((float) (x + xPos) / 800.0f, (float) (y + yPos) / 800.0f, 90.5, 0.6f, 6); //big temperature difference
             //std::cout << "value: " << value << "\n";
             value = value * 1.2f + 0.2f;
             value = (value + 1.0f) / 2.0f;
@@ -240,12 +244,55 @@ void generateBiomeSelector(IntensityMap& map, int32_t xPos, int32_t yPos)
 class WorldPart
 {
     public:
-        WorldPart(int32_t x, int32_t y)
+        WorldPart(int32_t x, int32_t y, BiomeStorage& storage) : xPos(x), yPos(y),
+        generator(&heightmap, &rainfall, &temperature, &biomeSelector, storage)
         {
-
+            generateHeightMap(heightmap, x * partSize, y * partSize);
+            generateRainfall(rainfall, heightmap, x * partSize, y * partSize);
+            generateTemperature(temperature, heightmap, x * partSize, y * partSize);
+            generateBiomeSelector(biomeSelector, x * partSize, y * partSize);
+        }
+        void getHeightTexture(fea::Texture& texture)
+        {
+            heightmap.toTexture(texture);
+        }
+        void getRainfallTexture(fea::Texture& texture)
+        {
+            rainfall.toTexture(texture);
+        }
+        void getTemperatureTexture(fea::Texture& texture)
+        {
+            temperature.toTexture(texture);
+        }
+        void getBiomeSelectorTexture(fea::Texture& texture)
+        {
+            biomeSelector.toTexture(texture);
+        }
+        void getBiomeTexture(fea::Texture& texture)
+        {
+            generator.toTexture(texture);
+        }
+        void setXPosition(int32_t x)
+        {
+            xPos = x;
+            int32_t y = yPos;
+            generateHeightMap(heightmap, x * partSize, y * partSize);
+            generateRainfall(rainfall, heightmap, x * partSize, y * partSize);
+            generateTemperature(temperature, heightmap, x * partSize, y * partSize);
+            generateBiomeSelector(biomeSelector, x * partSize, y * partSize);
+        }
+        void setYPosition(int32_t y)
+        {
+            int32_t x = xPos;
+            yPos = y;
+            generateHeightMap(heightmap, x * partSize, y * partSize);
+            generateRainfall(rainfall, heightmap, x * partSize, y * partSize);
+            generateTemperature(temperature, heightmap, x * partSize, y * partSize);
+            generateBiomeSelector(biomeSelector, x * partSize, y * partSize);
         }
     private:
         int32_t xPos;
+        BiomeGenerator generator;
         int32_t yPos;
         IntensityMap heightmap;
         IntensityMap rainfall;
@@ -259,41 +306,23 @@ int main()
     fea::Window window(new fea::util::SFMLWindowBackend(sfWindow));
     fea::InputHandler input(new fea::util::SFMLInputBackend(sfWindow));
 
-    window.create(fea::VideoMode(800, 600, 32), "Window and user input");
+    window.create(fea::VideoMode(768, 768, 32), "Window and user input");
     window.setFramerateLimit(60);
 
-    fea::Renderer2D renderer(fea::Viewport(800, 600, 0, 0, fea::Camera(800.0f / 2.0f, 600.0f / 2.0f)));
+    fea::Renderer2D renderer(fea::Viewport(768, 768, 0, 0, fea::Camera(768.0f / 2.0f, 768.0f / 2.0f)));
 
     renderer.setup();
 
     bool shutDown = false;
 
-    fea::Texture biomeSelectorTexture;
-    biomeSelectorTexture.create(partSize, partSize, glm::vec3(1.0f, 0.0f, 1.0f), false, true);
-    fea::Texture heightmapTexture;
-    heightmapTexture.create(partSize, partSize, glm::vec3(1.0f, 0.0f, 1.0f), false, true);
-    fea::Texture rainfallTexture;
-    rainfallTexture.create(partSize, partSize, glm::vec3(1.0f, 0.0f, 1.0f), false, true);
-    fea::Texture temperatureTexture;
-    temperatureTexture.create(partSize, partSize, glm::vec3(1.0f, 0.0f, 1.0f), false, true);
-    fea::Texture biomeTexture;
-    biomeTexture.create(partSize, partSize, glm::vec3(1.0f, 0.0f, 1.0f), false, true);
-
-    IntensityMap heightmap;
-    generateHeightMap(heightmap, 0, 0);
-    heightmap.toTexture(heightmapTexture);
-
-    IntensityMap rainfall;
-    generateRainfall(rainfall, heightmap, 0, 0);
-    rainfall.toTexture(rainfallTexture);
-
-    IntensityMap temperature;
-    generateTemperature(temperature, heightmap, 0, 0);
-    temperature.toTexture(temperatureTexture);
-
-    IntensityMap biomeSelector;
-    generateBiomeSelector(biomeSelector, 0, 0);
-    biomeSelector.toTexture(biomeSelectorTexture);
+    fea::Texture texture1;
+    texture1.create(partSize, partSize, glm::vec3(1.0f, 0.0f, 1.0f), false, true);
+    fea::Texture texture2;
+    texture2.create(partSize, partSize, glm::vec3(1.0f, 0.0f, 1.0f), false, true);
+    fea::Texture texture3;
+    texture3.create(partSize, partSize, glm::vec3(1.0f, 0.0f, 1.0f), false, true);
+    fea::Texture texture4;
+    texture4.create(partSize, partSize, glm::vec3(1.0f, 0.0f, 1.0f), false, true);
 
     BiomeStorage storage;
                                                                     //temp             //rain
@@ -306,8 +335,6 @@ int main()
     //storage.addBiome(new Biome("drysteppe", 0.4f, 0.6f, 0.0f,       Range(0.4f, 0.8f), Range(0.05f, 0.5f), Range(0.2f, 1.0f)));
     //storage.addBiome(new Biome("sandydesert", 1.0f, 0.8f, 0.0f,     Range(0.3f, 1.0f), Range(0.0f, 0.2f),  Range(0.2f, 1.0f)));
     //storage.addBiome(new Biome("arcticdesert", 1.0f, 0.8f, 0.5f,    Range(0.0f, 0.3f), Range(0.0f, 0.2f),  Range(0.2f, 1.0f)));
-
-
 
     storage.addBiome(new Biome("snowpeak", 1.0f, 1.0f, 1.0f,        Range(0.0f, 0.1f), Range(0.0f, 1.0f),  Range(0.9f, 1.0f)));
     storage.addBiome(new Biome("peak", 0.6f, 0.6f, 0.6f,            Range(0.1f, 1.0f), Range(0.0f, 1.0f),  Range(0.9f, 1.0f)));
@@ -329,13 +356,34 @@ int main()
 
     storage.addBiome(new Biome("ocean", 0.0f, 0.0f, 1.0f,           Range(0.2f, 1.0f), Range(0.0f, 1.0f),  Range(0.0f, 0.2f)));
     storage.addBiome(new Biome("arctic ocean", 0.0f, 0.9f, 1.0f,    Range(0.0f, 0.2f), Range(0.0f, 1.0f),  Range(0.0f, 0.2f)));
- 
-    BiomeGenerator generator(&heightmap, &rainfall, &temperature, &biomeSelector, storage);
-    generator.toTexture(biomeTexture);
 
-    fea::Quad square(partSize, partSize);
-    square.setTexture(biomeTexture);
+    fea::Quad square1(partSize, partSize);
+    square1.setPosition(0.0f, 0.0f);
+    fea::Quad square2(partSize, partSize);
+    square2.setPosition(partSize, 0.0f);
+    fea::Quad square3(partSize, partSize);
+    square3.setPosition(0.0f, partSize);
+    fea::Quad square4(partSize, partSize);
+    square4.setPosition(partSize, partSize);
 
+
+    WorldPart part1(0, 0, storage);
+    WorldPart part2(1, 0, storage);
+    WorldPart part3(0, 1, storage);
+    WorldPart part4(1, 1, storage);
+
+    part1.getBiomeTexture(texture1);
+    part2.getBiomeTexture(texture2);
+    part3.getBiomeTexture(texture3);
+    part4.getBiomeTexture(texture4);
+
+    square1.setTexture(texture1);
+    square2.setTexture(texture2);
+    square3.setTexture(texture3);
+    square4.setTexture(texture4);
+
+    int32_t currentX = 0;
+    int32_t currentY = 0;
 
     while(!shutDown)
     {
@@ -356,34 +404,203 @@ int main()
                 }
                 else if(event.key.code == fea::Keyboard::Z)
                 {
-                    square.setTexture(heightmapTexture);
-                    square.setColour(1.0f, 1.0f, 1.0f);
+                    part1.getHeightTexture(texture1);
+                    square1.setColour(1.0f, 1.0f, 1.0f);
+                    part2.getHeightTexture(texture2);
+                    square2.setColour(1.0f, 1.0f, 1.0f);
+                    part3.getHeightTexture(texture3);
+                    square3.setColour(1.0f, 1.0f, 1.0f);
+                    part4.getHeightTexture(texture4);
+                    square4.setColour(1.0f, 1.0f, 1.0f);
                 }
                 else if(event.key.code == fea::Keyboard::A)
                 {
-                    square.setTexture(rainfallTexture);
-                    square.setColour(0.0f, 0.6f, 1.0f);
+                    part1.getRainfallTexture(texture1);
+                    square1.setColour(0.0f, 0.6f, 1.0f);
+                    part2.getRainfallTexture(texture2);
+                    square2.setColour(0.0f, 0.6f, 1.0f);
+                    part3.getRainfallTexture(texture3);
+                    square3.setColour(0.0f, 0.6f, 1.0f);
+                    part4.getRainfallTexture(texture4);
+                    square4.setColour(0.0f, 0.6f, 1.0f);
                 }
                 else if(event.key.code == fea::Keyboard::S)
                 {
-                    square.setTexture(temperatureTexture);
-                    square.setColour(1.0f, 0.3f, 0.0f);
+                    part1.getTemperatureTexture(texture1);
+                    square1.setColour(1.0f, 0.3f, 0.0f);
+                    part2.getTemperatureTexture(texture2);
+                    square2.setColour(1.0f, 0.3f, 0.0f);
+                    part3.getTemperatureTexture(texture3);
+                    square3.setColour(1.0f, 0.3f, 0.0f);
+                    part4.getTemperatureTexture(texture4);
+                    square4.setColour(1.0f, 0.3f, 0.0f);
                 }
                 else if(event.key.code == fea::Keyboard::D)
                 {
-                    square.setTexture(biomeSelectorTexture);
-                    square.setColour(1.0f, 1.0f, 1.0f);
+                    part1.getBiomeSelectorTexture(texture1);
+                    square1.setColour(1.0f, 1.0f, 1.0f);
+                    part2.getBiomeSelectorTexture(texture2);
+                    square2.setColour(1.0f, 1.0f, 1.0f);
+                    part3.getBiomeSelectorTexture(texture3);
+                    square3.setColour(1.0f, 1.0f, 1.0f);
+                    part4.getBiomeSelectorTexture(texture4);
+                    square4.setColour(1.0f, 1.0f, 1.0f);
                 }
                 else if(event.key.code == fea::Keyboard::F)
                 {
-                    square.setTexture(biomeTexture);
-                    square.setColour(1.0f, 1.0f, 1.0f);
+                    part1.getBiomeTexture(texture1);
+                    square1.setColour(1.0f, 1.0f, 1.0f);
+                    part2.getBiomeTexture(texture2);
+                    square2.setColour(1.0f, 1.0f, 1.0f);
+                    part3.getBiomeTexture(texture3);
+                    square3.setColour(1.0f, 1.0f, 1.0f);
+                    part4.getBiomeTexture(texture4);
+                    square4.setColour(1.0f, 1.0f, 1.0f);
+                }
+                else if(event.key.code == fea::Keyboard::UP)
+                {
+                    square1.translate(0.0f, 5.0f);
+                    square2.translate(0.0f, 5.0f);
+                    square3.translate(0.0f, 5.0f);
+                    square4.translate(0.0f, 5.0f);
+                }
+                else if(event.key.code == fea::Keyboard::DOWN)
+                {
+                    square1.translate(0.0f, -5.0f);
+                    square2.translate(0.0f, -5.0f);
+                    square3.translate(0.0f, -5.0f);
+                    square4.translate(0.0f, -5.0f);
+                }
+                else if(event.key.code == fea::Keyboard::LEFT)
+                {
+                    square1.translate(5.0f, 0.0f);
+                    square2.translate(5.0f, 0.0f);
+                    square3.translate(5.0f, 0.0f);
+                    square4.translate(5.0f, 0.0f);
+                }
+                else if(event.key.code == fea::Keyboard::RIGHT)
+                {
+                    square1.translate(-5.0f, 0.0f);
+                    square2.translate(-5.0f, 0.0f);
+                    square3.translate(-5.0f, 0.0f);
+                    square4.translate(-5.0f, 0.0f);
                 }
             }
         }
 
+        if(square1.getPosition().x < 0.0f)
+        {
+            currentX++;
+            square1.translate(partSize * 2.0f, 0.0f);
+            part1.setXPosition(currentX + 1);
+            part1.getBiomeTexture(texture1);
+        }
+        if(square2.getPosition().x < 0.0f)
+        {
+            currentX++;
+            square2.translate(partSize * 2.0f, 0.0f);
+            part2.setXPosition(currentX + 1);
+            part2.getBiomeTexture(texture2);
+        }
+        if(square3.getPosition().x < 0.0f)
+        {
+            square3.translate(partSize * 2.0f, 0.0f);
+            part3.setXPosition(currentX + 1);
+            part3.getBiomeTexture(texture3);
+        }
+        if(square4.getPosition().x < 0.0f)
+        {
+            square4.translate(partSize * 2.0f, 0.0f);
+            part4.setXPosition(currentX + 1);
+            part4.getBiomeTexture(texture4);
+        }
+
+        if(square1.getPosition().x > partSize * 2)
+        {
+            currentX--;
+            square1.translate(-partSize * 2.0f, 0.0f);
+            part1.setXPosition(currentX);
+            part1.getBiomeTexture(texture1);
+        }
+        if(square2.getPosition().x > partSize * 2)
+        {
+            currentX--;
+            square2.translate(-partSize * 2.0f, 0.0f);
+            part2.setXPosition(currentX);
+            part2.getBiomeTexture(texture2);
+        }
+        if(square3.getPosition().x > partSize * 2)
+        {
+            square3.translate(-partSize * 2.0f, 0.0f);
+            part3.setXPosition(currentX);
+            part3.getBiomeTexture(texture3);
+        }
+        if(square4.getPosition().x > partSize * 2)
+        {
+            square4.translate(-partSize * 2.0f, 0.0f);
+            part4.setXPosition(currentX);
+            part4.getBiomeTexture(texture4);
+        }
+
+        if(square1.getPosition().y < 0.0f)
+        {
+            currentY++;
+            square1.translate(0.0f, partSize * 2.0f);
+            part1.setYPosition(currentY + 1);
+            part1.getBiomeTexture(texture1);
+        }
+        if(square2.getPosition().y < 0.0f)
+        {
+            square2.translate(0.0f, partSize * 2.0f);
+            part2.setYPosition(currentY + 1);
+            part2.getBiomeTexture(texture2);
+        }
+        if(square3.getPosition().y < 0.0f)
+        {
+            currentY++;
+            square3.translate(0.0f, partSize * 2.0f);
+            part3.setYPosition(currentY + 1);
+            part3.getBiomeTexture(texture3);
+        }
+        if(square4.getPosition().y < 0.0f)
+        {
+            square4.translate(0.0f, partSize * 2.0f);
+            part4.setYPosition(currentY + 1);
+            part4.getBiomeTexture(texture4);
+        }
+
+        if(square1.getPosition().y > partSize * 2)
+        {
+            currentY--;
+            square1.translate(0.0f, -partSize * 2.0f);
+            part1.setYPosition(currentY);
+            part1.getBiomeTexture(texture1);
+        }
+        if(square2.getPosition().y > partSize * 2)
+        {
+            square2.translate(0.0f, -partSize * 2.0f);
+            part2.setYPosition(currentY);
+            part2.getBiomeTexture(texture2);
+        }
+        if(square3.getPosition().y > partSize * 2)
+        {
+            currentY--;
+            square3.translate(0.0f, -partSize * 2.0f);
+            part3.setYPosition(currentY);
+            part3.getBiomeTexture(texture3);
+        }
+        if(square4.getPosition().y > partSize * 2)
+        {
+            square4.translate(0.0f, -partSize * 2.0f);
+            part4.setYPosition(currentY);
+            part4.getBiomeTexture(texture4);
+        }
+
         renderer.clear();
-        renderer.queue(square);
+        renderer.queue(square1);
+        renderer.queue(square2);
+        renderer.queue(square3);
+        renderer.queue(square4);
         renderer.render();
         window.swapBuffers();
     }

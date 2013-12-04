@@ -1,5 +1,5 @@
 #pragma once
-#include "../world/world.h"
+#include "../world/universe.h"
 #include "../networking/serverclientbridge.h"
 #include "../networking/clientconnection.h"
 #include "../networking/clientconnectionlistener.h"
@@ -45,7 +45,7 @@ class Server : public fea::MessageReceiver<FatalMessage>,
         void checkForDisconnectedClients();
         fea::MessageBus mBus;
         Logger mLogger;
-        World mWorld;
+        Universe mUniverse;
         ScriptHandler mScriptHandler;
         std::string mLogName;
         FPSController mFPSController;
