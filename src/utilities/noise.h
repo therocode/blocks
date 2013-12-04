@@ -24,7 +24,7 @@ class Noise
         const uint8_t* getHaxxiPointer() const;
     private:
         WhiteNoise mWhiteNoise;
-        VoronoiNoise mVoronoiNosie;
+        VoronoiNoise mVoronoiNoise;
         std::ranlux24_base mRandomEngine;
         PermutationTable mPerm;
 };

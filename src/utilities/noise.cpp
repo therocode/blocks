@@ -29,7 +29,11 @@ void Noise::setSeed(uint32_t seed)
 
 float Noise::white2D(float x, float y) const
 {
+#ifndef NOISE_ASM
     return mWhiteNoise.get2d(x, y, mPerm.data());
+#else
+	return asm_WhiteNoise2d(x, y, mPerm.data());
+#endif
 }
 
 float Noise::simplex2D(float x, float y) const
@@ -109,5 +113,5 @@ const uint8_t* Noise::getHaxxiPointer() const
 
 float Noise::voronoi2D(float x, float y) const
 {
-    return mVoronoiNosie.get2d(x, y, mPerm.data());
+    return mVoronoiNoise.get2d(x, y, mPerm.data());
 }
