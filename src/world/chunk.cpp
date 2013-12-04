@@ -3,6 +3,24 @@
 #include <chrono>
 #include <algorithm>
 
+ChunkRegionCoordinate::ChunkRegionCoordinate() : x(0), y(0), z(0)
+{
+}
+
+ChunkRegionCoordinate::ChunkRegionCoordinate(int8_t xA, int8_t yA, int8_t zA) : x(xA), y(yA), z(zA)
+{
+}
+
+bool ChunkRegionCoordinate::operator==(const ChunkRegionCoordinate& other) const
+{
+    return x == other.x && y == other.y && z == other.z;
+}
+
+bool ChunkRegionCoordinate::operator!=(const ChunkRegionCoordinate& other) const
+{
+    return x != other.x || y != other.y || z != other.z;
+}
+
 ChunkCoordinate worldToChunkInt(int x, int y, int z)
 {
 	int xNeg = x < 0;

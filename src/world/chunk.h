@@ -7,6 +7,18 @@
 #include <unordered_map>
 
 using ChunkCoordinate = glm::ivec3;
+
+struct ChunkRegionCoordinate
+{
+    ChunkRegionCoordinate();
+    ChunkRegionCoordinate(int8_t x, int8_t y, int8_t z);
+    bool operator==(const ChunkRegionCoordinate& other) const;
+    bool operator!=(const ChunkRegionCoordinate& other) const;
+    int8_t x;
+    int8_t y;
+    int8_t z;
+};
+
 using VoxelCoordinate = glm::uvec3;
 using VoxelWorldCoordinate = glm::ivec3;
 
@@ -139,6 +151,51 @@ namespace std
                     z = (z | (z << 8))  & 0xF00F00F00F00F00F;
                     z = (z | (z << 4))  & 0x30C30C30C30C30C3;
                     z = (z | (z << 2))  & 0x9249249249249249;
+
+                    return x | (y << 1) | (z << 2);
+                }
+        };
+}
+
+namespace std
+{
+    template<>
+        struct hash<ChunkRegionCoordinate>
+        {
+            public:
+                std::size_t operator()(ChunkRegionCoordinate const& coord) const 
+                {
+                    /*
+                    size_t x = coord.x;
+
+                                      x = 00000000 00000000 00000000 00000000 00000000 00000000 00000000 abcdefgh
+                                          00000000 00000000 00000000 00000000 00000000 00000000 abcdefgh 00000000 << 8
+                                          00000000 00000000 00000000 00000000 00000000 00000000 abcdefgh abcdefgh | x
+                                          00000000 00000000 00000000 00000000 00000000 00000000 11110000 00001111 &
+                                      x = 00000000 00000000 00000000 00000000 00000000 00000000 abcd0000 0000efgh
+                                          00000000 00000000 00000000 00000000 00000000 0000abcd 00000000 efgh0000 << 4
+                                          00000000 00000000 00000000 00000000 00000000 0000abcd abcd0000 efghefgh | x
+                                          00000000 00000000 00000000 00000000 00000000 00001100 00110000 11000011 &
+                                      x = 00000000 00000000 00000000 00000000 00000000 0000ab00 00cd0000 ef0000gh 
+                                          00000000 00000000 00000000 00000000 00000000 00ab0000 cd0000ef 0000gh00 << 2
+                                          00000000 00000000 00000000 00000000 00000000 00abab00 cdcd00ef ef00ghgh | x
+                                          00000000 00000000 00000000 00000000 00000000 00100100 10010010 01001001 &
+                                      x = 00000000 00000000 00000000 00000000 00000000 00a00b00 c00d00e0 0f00g00h
+                                      */
+                    size_t x = coord.x;
+                    x = (x | (x << 8))  & 0x000000000000F00F;
+                    x = (x | (x << 4))  & 0x00000000000C30C3;
+                    x = (x | (x << 2))  & 0x0000000000249249;
+
+                    size_t y = coord.y;
+                    y = (y | (y << 8))  & 0x000000000000F00F;
+                    y = (y | (y << 4))  & 0x00000000000C30C3;
+                    y = (y | (y << 2))  & 0x0000000000249249;
+
+                    size_t z = coord.z;
+                    z = (z | (z << 8))  & 0x000000000000F00F;
+                    z = (z | (z << 4))  & 0x00000000000C30C3;
+                    z = (z | (z << 2))  & 0x0000000000249249;
 
                     return x | (y << 1) | (z << 2);
                 }
