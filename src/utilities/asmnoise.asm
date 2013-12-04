@@ -356,15 +356,11 @@ asm_VoronoiNoise_2d:
 ;0=x 1=y r8=perm
 
 	unpcklps  xmm0,xmm1
-	pxor      xmm2,xmm2
-	vbroadcastss xmm3,[one]
-	cmpps     xmm2,xmm0,5
-	movaps    xmm4,xmm3
-	movaps    xmm1,xmm0
-	andps     xmm2,xmm3
-	subps     xmm1,xmm2
-;0=xy 1=xyInt 3=1.0 4=1.0
+	roundps   xmm1,xmm0,1
+;0=xy 1=xyInt
 
+	vbroadcastss xmm3,[one]
+	movaps    xmm4,xmm3
 	movaps    xmm7,xmm0
 	addps     xmm3,xmm3
 	subps     xmm1,xmm3
