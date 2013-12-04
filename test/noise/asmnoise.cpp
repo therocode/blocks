@@ -173,7 +173,58 @@ TEST_CASE("asm_WhiteNoise_2d", "[noise]")
         }
     }
 
-    INFO("2d noise: the success % is " << (successed/counter) * 100.0f << " and the failed % is " << (failedC/counter) * 100.0f << " of a total of " << counter << " runs");
+    INFO("2d white noise: the success % is " << (successed/counter) * 100.0f << " and the failed % is " << (failedC/counter) * 100.0f << " of a total of " << counter << " runs");
     
     CHECK(failed == false);
+}
+
+TEST_CASE("asm_VoronoiNoise_2d", "[noise]")
+{
+	VoronoiNoise voronoi;
+    Noise noise(5);
+
+    CHECK(differsBy(asm_VoronoiNoise_2d(0.0f, 0.0f, noise.getHaxxiPointer()), voronoi.get2d(0.0f, 0.0f, noise.getHaxxiPointer())) < acceptableThreshold);
+    CHECK(differsBy(asm_VoronoiNoise_2d(100.0f, 0.0f, noise.getHaxxiPointer()), voronoi.get2d(100.0f, 0.0f, noise.getHaxxiPointer())) < acceptableThreshold);
+    CHECK(differsBy(asm_VoronoiNoise_2d(0.0f, 100.0f, noise.getHaxxiPointer()), voronoi.get2d(0.0f, 100.0f, noise.getHaxxiPointer())) < acceptableThreshold);
+    CHECK(differsBy(asm_VoronoiNoise_2d(100.0f, 100.0f, noise.getHaxxiPointer()), voronoi.get2d(100.0f, 100.0f, noise.getHaxxiPointer())) < acceptableThreshold);
+    CHECK(differsBy(asm_VoronoiNoise_2d(-100.0f, 0.0f, noise.getHaxxiPointer()), voronoi.get2d(-100.0f, 0.0f, noise.getHaxxiPointer())) < acceptableThreshold);
+    CHECK(differsBy(asm_VoronoiNoise_2d(0.0f, -100.0f, noise.getHaxxiPointer()), voronoi.get2d(0.0f, -100.0f, noise.getHaxxiPointer())) < acceptableThreshold);
+    CHECK(differsBy(asm_VoronoiNoise_2d(-100.0f, -100.0f, noise.getHaxxiPointer()), voronoi.get2d(-100.0f, -100.0f, noise.getHaxxiPointer())) < acceptableThreshold);
+
+    CHECK(differsBy(asm_VoronoiNoise_2d(0.01f, 0.0f, noise.getHaxxiPointer()), voronoi.get2d(0.01f, 0.0f, noise.getHaxxiPointer())) < acceptableThreshold);
+    CHECK(differsBy(asm_VoronoiNoise_2d(0.0f, 0.01f, noise.getHaxxiPointer()), voronoi.get2d(0.0f, 0.01f, noise.getHaxxiPointer())) < acceptableThreshold);
+    CHECK(differsBy(asm_VoronoiNoise_2d(0.01f, 0.01f, noise.getHaxxiPointer()), voronoi.get2d(0.01f, 0.01f, noise.getHaxxiPointer())) < acceptableThreshold);
+    CHECK(differsBy(asm_VoronoiNoise_2d(-0.01f, 0.0f, noise.getHaxxiPointer()), voronoi.get2d(-0.01f, 0.0f, noise.getHaxxiPointer())) < acceptableThreshold);
+    CHECK(differsBy(asm_VoronoiNoise_2d(0.0f, -0.01f, noise.getHaxxiPointer()), voronoi.get2d(0.0f, -0.01f, noise.getHaxxiPointer())) < acceptableThreshold);
+    CHECK(differsBy(asm_VoronoiNoise_2d(-0.01f, -0.01f, noise.getHaxxiPointer()), voronoi.get2d(-0.01f, -0.01f, noise.getHaxxiPointer())) < acceptableThreshold);
+
+    // float counter = 0.0f;
+    // float failedC = 0.0f;
+    // float successed = 0.0f;
+
+    // bool failed = false;
+    // for(int x = -10; x < 10; x++)
+    // {
+        // for(int y = -10; y < 10; y++)
+        // {
+            // counter++;
+            // float xc = (float)x / 10.0f;
+            // float yc = (float)y / 10.0f;
+
+            // float difference = differsBy(asm_WhiteNoise_2d(xc, yc, noise.getHaxxiPointer()), white.get2d(xc, yc, noise.getHaxxiPointer()));
+
+            // if(difference > acceptableThreshold)
+            // {
+                // failed = true;
+                // failedC++;
+            // }
+            // else
+                // successed++;
+            // CHECK(difference < acceptableThreshold);
+        // }
+    // }
+
+    // INFO("2d white noise: the success % is " << (successed/counter) * 100.0f << " and the failed % is " << (failedC/counter) * 100.0f << " of a total of " << counter << " runs");
+    
+    // CHECK(failed == false);
 }
