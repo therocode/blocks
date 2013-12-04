@@ -363,46 +363,47 @@ asm_VoronoiNoise_2d:
 	movaps    xmm1,xmm0
 	andps     xmm2,xmm3
 	subps     xmm1,xmm2
-;0=xy 1=xyInt 4=1.0 ; 2=int(xyInt)
+;0=xy 1=xyInt 3=1.0 4=1.0
 
 	movaps    xmm7,xmm0
 	addps     xmm3,xmm3
 	subps     xmm1,xmm3
-	movaps    xmm2,xmm1 ;xcur ycur
-	movss     xmm11,xmm2
+	movaps    xmm3,xmm1 ;xcur ycur
+	movss     xmm11,xmm3
 	movss     xmm5,[vork]
 	movss     xmm8,[mindist]
 	xor       rax,rax
 	xor       rcx,rcx
 findcube:
-    movss     xmm0,xmm2
-    pshufd    xmm1,xmm2,1
+    movss     xmm0,xmm3
+    pshufd    xmm1,xmm3,1
 	call      asm_WhiteNoise_2d
 	movss     xmm6,xmm0
-	movss     xmm0,xmm2
+	movss     xmm0,xmm3
 	addss     xmm1,xmm5
 	call      asm_WhiteNoise_2d
 	unpcklps  xmm6,xmm0
-	addps     xmm6,xmm2
+	addps     xmm6,xmm3 ;xyPos
 	movaps    xmm10,xmm6
-	subps     xmm6,xmm7
-	dpps      xmm6,xmm6,00110001b
+	subps     xmm6,xmm7 ;xyDist
+	dpps      xmm6,xmm6,00110001b ;dist
 	vcmpss    xmm0,xmm6,xmm8,1
 	shufps    xmm0,xmm0,0
-	blendvps  xmm9,xmm10
+	blendvps  xmm9,xmm10 ;xyCandidate
 	minss     xmm8,xmm6
-
-	addss     xmm2,xmm4
+	addss     xmm3,xmm4
 	add       rax ,1
 	cmp       rax ,5
 	jbe       findcube
-	movss     xmm2,xmm11
-	shufps    xmm2,xmm2,1
-	addss     xmm2,xmm4  ;...
-	shufps    xmm2,xmm2,1
+	xor       rax ,rax
+	movss     xmm3,xmm11
+	shufps    xmm3,xmm3,1
+	addss     xmm3,xmm4  ;...
+	shufps    xmm3,xmm3,1
 	add       rcx ,1
 	cmp       rcx ,5
-	jne       findcube
+	jbe       findcube
+;9=xyCandidate
 
 	roundps   xmm0,xmm9,1
 	pshufd    xmm1,xmm0,1
