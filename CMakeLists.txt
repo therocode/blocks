@@ -361,3 +361,6 @@ if(ASM_OPTIMISATIONS)
     add_executable(noise_test "test/noise/asmnoise.cpp" "src/utilities/asmnoise.asm" "src/utilities/simplexnoise.cpp" "src/utilities/whitenoise.cpp" "src/utilities/noise.cpp" "src/utilities/voronoinoise.cpp")
     set_target_properties(noise_test PROPERTIES COMPILE_FLAGS "-std=c++11 -pthread")
 endif()
+
+add_executable(modmanager_test "test/world/modmanagertest.cpp" "src/world/modmanager.cpp" "src/world/chunk.cpp")
+set_target_properties(modmanager_test PROPERTIES COMPILE_FLAGS "-std=c++11")
