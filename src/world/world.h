@@ -1,6 +1,6 @@
 #pragma once
 #include "chunk.h"
-#include "landscape.h"
+#include "region.h"
 #include <featherkit/messaging.h>
 
 class World
@@ -9,10 +9,10 @@ class World
         World(fea::MessageBus& messageBus);
         void initialise(); 
         void highlightChunk(size_t id, const ChunkCoordinate& chunk);
-        const Landscape& getLandscape() const;
-        Landscape& getLandscape();
+        const Region& getLandscape() const;
+        Region& getLandscape();
     private:
         fea::MessageBus& bus;
-        Landscape landscape;
+        Region landscape;
         std::unordered_map<size_t, ChunkCoordinate> highlights;
 };

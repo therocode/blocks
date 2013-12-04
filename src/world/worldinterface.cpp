@@ -22,7 +22,7 @@ VoxelType WorldInterface::getVoxelTypeInt(int x, int y, int z) const
 	
 	VoxelCoordinate voxelCoordinate = worldToChunkVoxel(x, y, z);//VoxelCoordinate((x + (x) % 16,(y) % 16,(z) % 16);
 
-	const Landscape& landscape = mWorld.getLandscape();
+	const Region& landscape = mWorld.getLandscape();
 
 	if(landscape.chunkIsLoaded(chunkCoordinate))
 	{
@@ -40,7 +40,7 @@ VoxelType WorldInterface::getVoxelType(float x, float y, float z) const
 	ChunkCoordinate chunkCoordinate = worldToChunk(x, y, z);
 	VoxelCoordinate voxelCoordinate = worldToChunkVoxel(x, y, z);
 
-	const Landscape& landscape = mWorld.getLandscape();
+	const Region& landscape = mWorld.getLandscape();
 
 	if(landscape.chunkIsLoaded(chunkCoordinate))
 	{
