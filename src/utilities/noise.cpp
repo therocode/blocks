@@ -113,5 +113,9 @@ const uint8_t* Noise::getHaxxiPointer() const
 
 float Noise::voronoi2D(float x, float y) const
 {
+#ifndef NOISE_ASM
     return mVoronoiNoise.get2d(x, y, mPerm.data());
+#else
+    return asm_VoronoiNoise_2d(x, y, mPerm.data());
+#endif
 }
