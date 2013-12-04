@@ -9,7 +9,7 @@ float VoronoiNoise::get2d(float x, float y, const uint8_t* perm) const
     int xInt = std::floor(x);//(x > 0.0f? (int)x: (int)x - 1);
     int yInt = std::floor(y);//(y > 0.0f? (int)y: (int)y - 1);
 
-    float minDist = 2147483647.0f;
+    float minDist = 2147483648.0f;
     float xCandidate = 0.0f;
     float yCandidate = 0.0f;
 

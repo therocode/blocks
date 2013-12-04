@@ -18,8 +18,8 @@ section .data
 				0,1,1,  0,-1,1,  0,1,-1,  0,-1,-1
 
 	;voronoi
-	mindist  dd 2147483647.0 ;rounds to 2147483648.0?
-	vork     dd 1000.0
+	mindist  dd 2147483648.0
+	v1000    dd 1000.0
 
 	;white noise
 	whiteret dd 255.0
@@ -30,6 +30,7 @@ section .text
 			asm_raw_noise_2d,\
 			asm_VoronoiNoise_2d,\
 			asm_WhiteNoise_2d
+
 
 ;-------------------
 ;3D Simplex
@@ -351,54 +352,48 @@ asm_VoronoiNoise_2d:
 	movups    [rsp-48],xmm8
 	movups    [rsp-64],xmm9
 	movups    [rsp-80],xmm10
-	movups    [rsp-96],xmm11
 %endif
 ;0=x 1=y r8=perm
 
-	unpcklps  xmm0,xmm1
-	roundps   xmm1,xmm0,1
-;0=xy 1=xyInt
+	vunpcklps xmm3,xmm0,xmm1
+	roundps   xmm4,xmm3,1
+;3=xy 4=xyInt
 
-	vbroadcastss xmm3,[one]
-	movaps    xmm4,xmm3
-	movaps    xmm7,xmm0
-	addps     xmm3,xmm3
-	subps     xmm1,xmm3
-	movaps    xmm3,xmm1 ;xcur ycur
-	movss     xmm11,xmm3
-	movss     xmm5,[vork]
+	vbroadcastss xmm5,[one]
+	subps     xmm4,xmm5
+	subps     xmm4,xmm5           ;xycur
+	movss     xmm10,xmm4
+	movss     xmm7,[v1000]
 	movss     xmm8,[mindist]
-	xor       rax,rax
-	xor       rcx,rcx
+	mov       al  ,6
+	mov       cl  ,6
 findcube:
-    movss     xmm0,xmm3
-    pshufd    xmm1,xmm3,1
+    movss     xmm0,xmm4
+    pshufd    xmm1,xmm4,1
 	call      asm_WhiteNoise_2d
 	movss     xmm6,xmm0
-	movss     xmm0,xmm3
-	addss     xmm1,xmm5
+	movss     xmm0,xmm4
+	addss     xmm1,xmm7
 	call      asm_WhiteNoise_2d
 	unpcklps  xmm6,xmm0
-	addps     xmm6,xmm3 ;xyPos
-	movaps    xmm10,xmm6
-	subps     xmm6,xmm7 ;xyDist
-	dpps      xmm6,xmm6,00110001b ;dist
-	vcmpss    xmm0,xmm6,xmm8,1
+	addps     xmm6,xmm4           ;xyPos
+	vsubps    xmm2,xmm6,xmm3
+	dpps      xmm2,xmm2,00110001b ;dist
+	vcmpss    xmm0,xmm2,xmm8,1
 	shufps    xmm0,xmm0,0
-	blendvps  xmm9,xmm10 ;xyCandidate
-	minss     xmm8,xmm6
-	addss     xmm3,xmm4
-	add       rax ,1
-	cmp       rax ,5
-	jbe       findcube
-	xor       rax ,rax
-	movss     xmm3,xmm11
-	shufps    xmm3,xmm3,1
-	addss     xmm3,xmm4  ;...
-	shufps    xmm3,xmm3,1
-	add       rcx ,1
-	cmp       rcx ,5
-	jbe       findcube
+	blendvps  xmm9,xmm6           ;xyCandidate
+	minss     xmm8,xmm2
+
+	addss     xmm4,xmm5
+	sub       al  ,1
+	jnz       findcube
+	mov       al  ,6
+	movss     xmm4,xmm10
+	shufps    xmm4,xmm4,1
+	addss     xmm4,xmm5  ;...
+	shufps    xmm4,xmm4,1
+	sub       cl  ,1
+	jnz       findcube
 ;9=xyCandidate
 
 	roundps   xmm0,xmm9,1
@@ -411,9 +406,9 @@ findcube:
 	movups    xmm8,[rsp-48]
 	movups    xmm9,[rsp-64]
 	movups    xmm10,[rsp-80]
-	movups    xmm11,[rsp-96]
 %endif
 	ret
+
 
 ;-------------------
 ; White Noise 2D
@@ -427,14 +422,14 @@ asm_WhiteNoise_2d:
 
 	roundss  xmm0,xmm0,1
 	roundss  xmm2,xmm1,1
-	cvtss2si r9d ,xmm0
-	cvtss2si r10d,xmm2
+	cvtss2si edx ,xmm0
+	cvtss2si r9d,xmm2
+	and      edx ,255
 	and      r9  ,255
-	and      r10 ,255
-	mov      r10b,[r8+r10]
-	add      r9  ,r10
-	mov      r10b,[r8+r9]
-	cvtsi2ss xmm0,r10d
+	mov      r9b ,[r8+r9]
+	add      rdx ,r9
+	mov      r9b ,[r8+rdx]
+	cvtsi2ss xmm0,r9d
 	divss    xmm0,[whiteret]
 
 %ifdef elf64
