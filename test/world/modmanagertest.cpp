@@ -26,8 +26,8 @@ bool fexists(string filename)
 TEST_CASE("save and load", "[save][load]")
 {
     string regionName = "testRegion";
-    string indexPath = REGION_DIR + pathSep + regionName + ".idx";
-    string dataPath = REGION_DIR + pathSep + regionName + ".dat";
+    string indexPath = regionDir + pathSep + regionName + ".idx";
+    string dataPath = regionDir + pathSep + regionName + ".dat";
 
     if(fexists(indexPath))
     {
@@ -39,144 +39,180 @@ TEST_CASE("save and load", "[save][load]")
         remove(dataPath.c_str());
     }
 
-    ChunkCoordinate chunkLoc1 = ChunkCoordinate(1, 1, 1);
+    ChunkRegionCoordinate chunkLoc1 = ChunkRegionCoordinate(1, 1, 1);
     VoxelCoordinate voxLoc1 = VoxelCoordinate(1, 1, 1);
     VoxelType type1 = 1;
 
-    SECTION("set single mod")
-    {
-        ModManager manager(regionName);
-        manager.setMod(chunkLoc1, voxLoc1, type1);
-        manager.saveMods();
+    ModManager manager(regionName);
+    manager.setMod(chunkLoc1, voxLoc1, type1);
+    manager.saveMods();
 
-        ModManager manager2(regionName);
-        manager2.loadMods(chunkLoc1);
-        REQUIRE(type1 == manager2.getMod(chunkLoc1, voxLoc1)); 
+    ModManager manager2(regionName);
+    manager2.loadMods(chunkLoc1);
+    REQUIRE(type1 == manager2.getMod(chunkLoc1, voxLoc1)); 
+}
+
+TEST_CASE("save and load many", "[save][load]")
+{
+    string regionName = "testRegion";
+    string indexPath = regionDir + pathSep + regionName + ".idx";
+    string dataPath = regionDir + pathSep + regionName + ".dat";
+
+    if(fexists(indexPath))
+    {
+        remove(indexPath.c_str());
     }
 
-    SECTION("set some mods")
+    if(fexists(dataPath))
     {
-        ModManager manager(regionName);
+        remove(dataPath.c_str());
+    }
 
-        cout << "Setting..." << endl;
+    ChunkRegionCoordinate chunkLoc1 = ChunkRegionCoordinate(1, 1, 1);
+    VoxelCoordinate voxLoc1 = VoxelCoordinate(1, 1, 1);
+    VoxelType type1 = 1;
 
-        for(int cx = 0; cx < REGION_LENGTH; ++cx)
+    ModManager manager(regionName);
+
+    cout << "Setting..." << endl;
+
+    for(int cx = 0; cx < regionWidth; ++cx)
+    {
+        for(int cy = 0; cy < regionWidth; ++cy)
         {
-            for(int cy = 0; cy < REGION_LENGTH; ++cy)
+            for(int cz = 0; cz < 1; ++cz)
             {
-                for(int cz = 0; cz < 1; ++cz)
+                ChunkRegionCoordinate chunkLoc(cx, cy, cz);
+
+                for(int vx = 0; vx < chunkWidth; ++vx)
                 {
-                    ChunkCoordinate chunkLoc(cx, cy, cz);
-
-                    for(int vx = 0; vx < chunkWidth; ++vx)
+                    for(int vy = 0; vy < chunkWidth; ++vy)
                     {
-                        for(int vy = 0; vy < chunkWidth; ++vy)
+                        for(int vz = 0; vz < chunkWidth; ++vz)
                         {
-                            for(int vz = 0; vz < chunkWidth; ++vz)
-                            {
-                                VoxelCoordinate voxLoc(vx, vy, vz);
-                                manager.setMod(chunkLoc, voxLoc, type1);
-                            }
-                        }
-                    }
-
-                }
-            }
-        }
-
-        cout << "Saving..." << endl;
-
-        manager.saveMods();
-
-        cout << "Loading..." << endl;
-
-        ModManager manager2(regionName);
-        for(int cx = 0; cx < REGION_LENGTH; ++cx)
-        {
-            for(int cy = 0; cy < REGION_LENGTH; ++cy)
-            {
-                for(int cz = 0; cz < 1; ++cz)
-                {
-                    ChunkCoordinate chunkLoc(cx, cy, cz);
-                    manager2.loadMods(chunkLoc);
-
-                    for(int vx = 0; vx < chunkWidth; ++vx)
-                    {
-                        for(int vy = 0; vy < chunkWidth; ++vy)
-                        {
-                            for(int vz = 0; vz < chunkWidth; ++vz)
-                            {
-                                VoxelCoordinate voxLoc(vx, vy, vz);
-                                REQUIRE(type1 == manager2.getMod(chunkLoc, voxLoc)); 
-                            }
+                            VoxelCoordinate voxLoc(vx, vy, vz);
+                            manager.setMod(chunkLoc, voxLoc, type1);
                         }
                     }
                 }
+
             }
         }
     }
 
-    /*
-    SECTION("set all mods")
+    cout << "Saving..." << endl;
+
+    manager.saveMods();
+
+    cout << "Loading..." << endl;
+
+    ModManager manager2(regionName);
+    for(int cx = 0; cx < regionWidth; ++cx)
     {
-        ModManager manager(regionName);
-
-        cout << "Setting..." << endl;
-
-        for(int cx = 0; cx < REGION_LENGTH; ++cx)
+        for(int cy = 0; cy < regionWidth; ++cy)
         {
-            for(int cy = 0; cy < REGION_LENGTH; ++cy)
+            for(int cz = 0; cz < 1; ++cz)
             {
-                for(int cz = 0; cz < REGION_LENGTH; ++cz)
+                ChunkRegionCoordinate chunkLoc(cx, cy, cz);
+                manager2.loadMods(chunkLoc);
+
+                for(int vx = 0; vx < chunkWidth; ++vx)
                 {
-                    ChunkCoordinate chunkLoc(cx, cy, cz);
-
-                    for(int vx = 0; vx < chunkWidth; ++vx)
+                    for(int vy = 0; vy < chunkWidth; ++vy)
                     {
-                        for(int vy = 0; vy < chunkWidth; ++vy)
+                        for(int vz = 0; vz < chunkWidth; ++vz)
                         {
-                            for(int vz = 0; vz < chunkWidth; ++vz)
-                            {
-                                VoxelCoordinate voxLoc(vx, vy, vz);
-
-                                manager.setMod(chunkLoc, voxLoc, type1);
-                            }
+                            VoxelCoordinate voxLoc(vx, vy, vz);
+                            REQUIRE(type1 == manager2.getMod(chunkLoc, voxLoc)); 
                         }
                     }
                 }
             }
         }
+    }
+}
 
-        cout << "Saving..." << endl;
+TEST_CASE("save and load all", "[save][load]")
+{
+    string regionName = "testRegion";
+    string indexPath = regionDir + pathSep + regionName + ".idx";
+    string dataPath = regionDir + pathSep + regionName + ".dat";
 
-        manager.saveMods();
+    if(fexists(indexPath))
+    {
+        remove(indexPath.c_str());
+    }
 
-        cout << "Loading..." << endl;
+    if(fexists(dataPath))
+    {
+        remove(dataPath.c_str());
+    }
 
-        ModManager manager2(regionName);
-        for(int cx = 0; cx < REGION_LENGTH; ++cx)
+    ChunkRegionCoordinate chunkLoc1 = ChunkRegionCoordinate(1, 1, 1);
+    VoxelCoordinate voxLoc1 = VoxelCoordinate(1, 1, 1);
+    VoxelType type1 = 1;
+
+    ModManager manager(regionName);
+
+    cout << "Setting..." << endl;
+
+    int c = 0;
+
+    for(int cx = 0; cx < regionWidth; ++cx)
+    {
+        for(int cy = 0; cy < regionWidth; ++cy)
         {
-            for(int cy = 0; cy < REGION_LENGTH; ++cy)
+            for(int cz = 0; cz < regionWidth; ++cz)
             {
-                for(int cz = 0; cz < REGION_LENGTH; ++cz)
-                {
-                    ChunkCoordinate chunkLoc(cx, cy, cz);
-                    manager2.loadMods(chunkLoc);
+                ChunkRegionCoordinate chunkLoc(cx, cy, cz);
 
-                    for(int vx = 0; vx < chunkWidth; ++vx)
+                for(int vx = 0; vx < chunkWidth; ++vx)
+                {
+                    for(int vy = 0; vy < chunkWidth; ++vy)
                     {
-                        for(int vy = 0; vy < chunkWidth; ++vy)
+                        for(int vz = 0; vz < chunkWidth; ++vz)
                         {
-                            for(int vz = 0; vz < chunkWidth; ++vz)
-                            {
-                                VoxelCoordinate voxLoc(vx, vy, vz);
-                                REQUIRE(type1 == manager2.getMod(chunkLoc, voxLoc)); 
-                            }
+                            VoxelCoordinate voxLoc(vx, vy, vz);
+
+                            manager.setMod(chunkLoc, voxLoc, type1);
+                        }
+                    }
+                }
+
+                c++;
+                PR(c);
+            }
+        }
+    }
+
+    cout << "Saving..." << endl;
+
+    manager.saveMods();
+
+    cout << "Loading..." << endl;
+
+    ModManager manager2(regionName);
+    for(int cx = 0; cx < regionWidth; ++cx)
+    {
+        for(int cy = 0; cy < regionWidth; ++cy)
+        {
+            for(int cz = 0; cz < regionWidth; ++cz)
+            {
+                ChunkRegionCoordinate chunkLoc(cx, cy, cz);
+                manager2.loadMods(chunkLoc);
+
+                for(int vx = 0; vx < chunkWidth; ++vx)
+                {
+                    for(int vy = 0; vy < chunkWidth; ++vy)
+                    {
+                        for(int vz = 0; vz < chunkWidth; ++vz)
+                        {
+                            VoxelCoordinate voxLoc(vx, vy, vz);
+                            REQUIRE(type1 == manager2.getMod(chunkLoc, voxLoc)); 
                         }
                     }
                 }
             }
-        }     
+        }
     }
-    */
 }

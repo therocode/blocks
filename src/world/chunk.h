@@ -14,6 +14,8 @@ struct ChunkRegionCoordinate
     ChunkRegionCoordinate(int8_t x, int8_t y, int8_t z);
     bool operator==(const ChunkRegionCoordinate& other) const;
     bool operator!=(const ChunkRegionCoordinate& other) const;
+    bool operator<(const ChunkRegionCoordinate& other) const;
+    
     int8_t x;
     int8_t y;
     int8_t z;

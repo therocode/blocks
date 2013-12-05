@@ -21,6 +21,25 @@ bool ChunkRegionCoordinate::operator!=(const ChunkRegionCoordinate& other) const
     return x != other.x || y != other.y || z != other.z;
 }
 
+bool ChunkRegionCoordinate::operator<(const ChunkRegionCoordinate& other) const
+{
+    if(x == other.x)
+    {
+        if(y == other.y)
+        {
+            return z < other.z;
+        }
+        else
+        {
+            return y < other.y;
+        }
+    } 
+    else
+    {
+        return x < other.x;
+    }    
+}
+
 ChunkCoordinate worldToChunkInt(int x, int y, int z)
 {
 	int xNeg = x < 0;
