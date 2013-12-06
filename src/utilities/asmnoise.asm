@@ -222,10 +222,9 @@ asm_raw_noise_3d:
 asm_raw_noise_2d:
 
 %ifdef win64
-	%define   perm r8
 	movups    [rsp-16],xmm6
 	movups    [rsp-32],xmm7
-	movups    [rsp-48],xmm8
+	%define   perm r8
 %else ;elf64
 	%define   perm rdi
 %endif
@@ -303,41 +302,41 @@ asm_raw_noise_2d:
 
 	movlhps   xmm0,xmm4
 	vmulps    xmm6,xmm0,xmm0
-	vmulps    xmm8,xmm2,xmm2
+	vmulps    xmm7,xmm2,xmm2
 
 	dpps      xmm1,xmm0,00110001b
 	dpps      xmm3,xmm4,00110001b
 	dpps      xmm5,xmm2,00110001b
 
-	vshufps   xmm7,xmm6,xmm8,001000b
-	shufps    xmm6,xmm8,011101b
+	vshufps   xmm4,xmm6,xmm7,001000b
+	shufps    xmm6,xmm7,011101b
 
-	vbroadcastss xmm8,[tval2d]
-	subps     xmm8,xmm7
-	subps     xmm8,xmm6 ;t0t1t2
+	vbroadcastss xmm2,[tval2d]
+	subps     xmm2,xmm4
+	subps     xmm2,xmm6 ;t0t1t2
 
-	pxor      xmm7,xmm7
-	cmpps     xmm7,xmm8,1
-	andps     xmm7,xmm8
-	mulps     xmm7,xmm7
-	mulps     xmm7,xmm7
+	pxor      xmm4,xmm4
+	cmpps     xmm4,xmm2,1
+	andps     xmm4,xmm2
+	mulps     xmm4,xmm4
+	mulps     xmm4,xmm4
 
 	unpcklps  xmm1,xmm3
 	movlhps   xmm1,xmm5
-	mulps     xmm7,xmm1 ;n0n1n2
+	mulps     xmm4,xmm1 ;n0n1n2
 ;7=n0n1n2
 
-	pshufd    xmm0,xmm7,01b
-	movhlps   xmm1,xmm7
-	addss     xmm0,xmm7
+	pshufd    xmm0,xmm4,01b
+	movhlps   xmm1,xmm4
+	addss     xmm0,xmm4
 	addss     xmm0,xmm1
 	mulss     xmm0,[retval2d]
 
 %ifdef win64
 	movups    xmm6,[rsp-16]
 	movups    xmm7,[rsp-32]
-	movups    xmm8,[rsp-48]
 %endif
+%undef perm
 	ret
 
 
