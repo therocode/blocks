@@ -81,13 +81,13 @@ float raw_noise_3d(const float x, const float y, const float z, const uint8_t* p
 float raw_noise_4d(const float x, const float y, const float, const float w);
 
 
-float dot(const int* g, const float x, const float y);
-float dot(const int* g, const float x, const float y, const float z);
-float dot(const int* g, const float x, const float y, const float z, const float w);
+float dot(const int8_t* g, const float x, const float y);
+float dot(const int8_t* g, const float x, const float y, const float z);
+float dot(const int8_t* g, const float x, const float y, const float z, const float w);
 
 
 // The gradients are the midpoints of the vertices of a cube.
-static const int grad3[12][3] = {
+static const int8_t grad3[12][3] = {
     {1,1,0}, {-1,1,0}, {1,-1,0}, {-1,-1,0},
     {1,0,1}, {-1,0,1}, {1,0,-1}, {-1,0,-1},
     {0,1,1}, {0,-1,1}, {0,1,-1}, {0,-1,-1}
@@ -95,7 +95,7 @@ static const int grad3[12][3] = {
 
 
 // The gradients are the midpoints of the vertices of a hypercube.
-static const int grad4[32][4]= {
+static const int8_t grad4[32][4]= {
     {0,1,1,1},  {0,1,1,-1},  {0,1,-1,1},  {0,1,-1,-1},
     {0,-1,1,1}, {0,-1,1,-1}, {0,-1,-1,1}, {0,-1,-1,-1},
     {1,0,1,1},  {1,0,1,-1},  {1,0,-1,1},  {1,0,-1,-1},
@@ -139,7 +139,7 @@ static uint8_t perm[512] = {
 void setSimplexSeed(const int32_t seed);
 
 // A lookup table to traverse the simplex around a given point in 4D.
-static const int simplex[64][4] = {
+static const uint8_t simplex[64][4] = {
     {0,1,2,3},{0,1,3,2},{0,0,0,0},{0,2,3,1},{0,0,0,0},{0,0,0,0},{0,0,0,0},{1,2,3,0},
     {0,2,1,3},{0,0,0,0},{0,3,1,2},{0,3,2,1},{0,0,0,0},{0,0,0,0},{0,0,0,0},{1,3,2,0},
     {0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},

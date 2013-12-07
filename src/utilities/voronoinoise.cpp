@@ -16,15 +16,15 @@ float VoronoiNoise::get2d(float x, float y, const uint8_t* perm) const
     // Inside each unit cube, there is a seed point at a random position.  Go
     // through each of the nearby cubes until we find a cube with a seed point
     // that is closest to the specified position.
-    for (int yCur = yInt - 2; yCur <= yInt + 2; yCur++) 
+    for (int yCur = -2; yCur <= 2; yCur++) 
     {
-        for (int xCur = xInt - 2; xCur <= xInt + 2; xCur++) 
+        for (int xCur = -2; xCur <= 2; xCur++) 
         {
 
             // Calculate the position and distance to the seed point inside of
             // this unit cube.
-            float xPos = xCur + white.get2d(xCur, yCur, perm);
-            float yPos = yCur + white.get2d(xCur, yCur + 1000, perm); //this should be different
+            float xPos = (xInt + xCur) + white.get2d(xInt + xCur, yInt + yCur, perm);
+            float yPos = (yInt + yCur) + white.get2d(xInt + xCur, (yInt + yCur) + 1000, perm); //this should be different
             float xDist = xPos - x;
             float yDist = yPos - y;
             float dist = xDist * xDist + yDist * yDist;

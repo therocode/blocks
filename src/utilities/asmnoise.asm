@@ -224,10 +224,9 @@ asm_raw_noise_2d:
 %ifdef win64
 	movups    [rsp-16],xmm6
 	movups    [rsp-32],xmm7
-	movups    [rsp-48],xmm8
-	mov       r10 ,r8
+	%define   perm r8
 %else ;elf64
-	mov       r10 ,rdi
+	%define   perm rdi
 %endif
 ;0=x 1=y
 
@@ -268,31 +267,31 @@ asm_raw_noise_2d:
 	cvtps2dq  xmm1,xmm1
 	cvtps2dq  xmm3,xmm3
 
-	pextrb    r8d ,xmm1,4 ;jj
-	pextrb    r9d ,xmm3,4 ;j1
-	add       r8  ,r10
-	movzx     rax ,byte [r8]
-	movzx     rcx ,byte [r8+r9]
-	movzx     rdx ,byte [r8+1]
+	pextrb    r9d ,xmm1,4 ;jj
+	pextrb    r10d,xmm3,4 ;j1
+	add       r9  ,perm
+	movzx     rax ,byte [r9]
+	movzx     rcx ,byte [r9+r10]
+	movzx     rdx ,byte [r9+1]
 
-	pextrb	  r8d ,xmm1,0 ;ii
-	movd      r9d ,xmm3   ;i1
-	add       r8  ,r10
-	add       r9  ,rcx
-	mov       al  ,byte [r8+rax]
-	mov       cl  ,byte [r8+r9]
-	mov       dl  ,byte [r8+rdx+1]
+	pextrb	  r9d ,xmm1,0 ;ii
+	movd      r10d,xmm3   ;i1
+	add       r9  ,perm
+	add       r10 ,rcx
+	mov       al  ,byte [r9+rax]
+	mov       cl  ,byte [r9+r10]
+	mov       dl  ,byte [r9+rdx+1]
 
-	mov       r9  ,12
-	div       r9b
+	mov       r8  ,12
+	div       r8b
 	shr       ax  ,8                 ;gi0
 	pmovsxbd  xmm1,[grad3+rax+rax*2] ;grad3[gi0]
 	mov       rax ,rcx
-	div       r9b
+	div       r8b
 	shr       ax  ,8
 	pmovsxbd  xmm3,[grad3+rax+rax*2]
 	mov       rax ,rdx
-	div       r9b
+	div       r8b
 	shr       ax  ,8
 	pmovsxbd  xmm5,[grad3+rax+rax*2]
 
@@ -303,41 +302,41 @@ asm_raw_noise_2d:
 
 	movlhps   xmm0,xmm4
 	vmulps    xmm6,xmm0,xmm0
-	vmulps    xmm8,xmm2,xmm2
+	vmulps    xmm7,xmm2,xmm2
 
 	dpps      xmm1,xmm0,00110001b
 	dpps      xmm3,xmm4,00110001b
 	dpps      xmm5,xmm2,00110001b
 
-	vshufps   xmm7,xmm6,xmm8,001000b
-	shufps    xmm6,xmm8,011101b
+	vshufps   xmm4,xmm6,xmm7,001000b
+	shufps    xmm6,xmm7,011101b
 
-	vbroadcastss xmm8,[tval2d]
-	subps     xmm8,xmm7
-	subps     xmm8,xmm6 ;t0t1t2
+	vbroadcastss xmm2,[tval2d]
+	subps     xmm2,xmm4
+	subps     xmm2,xmm6 ;t0t1t2
 
-	pxor      xmm7,xmm7
-	cmpps     xmm7,xmm8,1
-	andps     xmm7,xmm8
-	mulps     xmm7,xmm7
-	mulps     xmm7,xmm7
+	pxor      xmm4,xmm4
+	cmpps     xmm4,xmm2,1
+	andps     xmm4,xmm2
+	mulps     xmm4,xmm4
+	mulps     xmm4,xmm4
 
 	unpcklps  xmm1,xmm3
 	movlhps   xmm1,xmm5
-	mulps     xmm7,xmm1 ;n0n1n2
+	mulps     xmm4,xmm1 ;n0n1n2
 ;7=n0n1n2
 
-	pshufd    xmm0,xmm7,01b
-	movhlps   xmm1,xmm7
-	addss     xmm0,xmm7
+	pshufd    xmm0,xmm4,01b
+	movhlps   xmm1,xmm4
+	addss     xmm0,xmm4
 	addss     xmm0,xmm1
 	mulss     xmm0,[retval2d]
 
 %ifdef win64
 	movups    xmm6,[rsp-16]
 	movups    xmm7,[rsp-32]
-	movups    xmm8,[rsp-48]
 %endif
+%undef perm
 	ret
 
 
@@ -368,8 +367,8 @@ asm_VoronoiNoise_2d:
 	mov       al  ,6
 	mov       cl  ,6
 findcube:
-    movss     xmm0,xmm4
-    pshufd    xmm1,xmm4,1
+	movss     xmm0,xmm4
+	pshufd    xmm1,xmm4,1
 	call      asm_WhiteNoise_2d
 	movss     xmm6,xmm0
 	movss     xmm0,xmm4
@@ -415,24 +414,24 @@ findcube:
 ;-------------------
 asm_WhiteNoise_2d:
 
-%ifdef elf64
-	%define r8 rdi
+%ifdef win64
+	%define  perm r8
+%else ;elf64
+	%define  perm rdi
 %endif
 ;0=x 1=y
 
 	roundss  xmm0,xmm0,1
 	roundss  xmm2,xmm1,1
 	cvtss2si edx ,xmm0
-	cvtss2si r9d,xmm2
+	cvtss2si r9d ,xmm2
 	and      edx ,255
 	and      r9  ,255
-	mov      r9b ,[r8+r9]
+	mov      r9b ,[perm+r9]
 	add      rdx ,r9
-	mov      r9b ,[r8+rdx]
+	mov      r9b ,[perm+rdx]
 	cvtsi2ss xmm0,r9d
 	divss    xmm0,[whiteret]
 
-%ifdef elf64
-	%undef r8
-%endif
+%undef perm
 	ret

@@ -93,8 +93,8 @@ float raw_noise_2d( const float x, const float y,  const uint8_t* perm) {
     float F2 = 0.5f * (sqrtf(3.0f) - 1.0f);
     // Hairy factor for 2D
     float s = (x + y) * F2;
-    int i = std::floor( x + s );
-    int j = std::floor( y + s );
+    float i = std::floor( x + s );
+    float j = std::floor( y + s );
 
     float G2 = (3.0f - sqrtf(3.0f)) / 6.0f;
     float t = (i + j) * G2;
@@ -107,7 +107,7 @@ float raw_noise_2d( const float x, const float y,  const uint8_t* perm) {
 
     // For the 2D case, the simplex shape is an equilateral triangle.
     // Determine which simplex we are in.
-    int i1, j1; // Offsets for second (middle) corner of simplex in (i,j) coords
+    uint8_t i1, j1; // Offsets for second (middle) corner of simplex in (i,j) coords
     if(x0>y0) {i1=1; j1=0;} // lower triangle, XY order: (0,0)->(1,0)->(1,1)
     else {i1=0; j1=1;} // upper triangle, YX order: (0,0)->(0,1)->(1,1)
 
@@ -120,11 +120,11 @@ float raw_noise_2d( const float x, const float y,  const uint8_t* perm) {
     float y2 = y0 - 1.0f + 2.0f * G2;
 
     // Work out the hashed gradient indices of the three simplex corners
-    int ii = i & 255;
-    int jj = j & 255;
-    int gi0 = perm[ii+perm[jj]] % 12;
-    int gi1 = perm[ii+i1+perm[jj+j1]] % 12;
-    int gi2 = perm[ii+1+perm[jj+1]] % 12;
+    uint8_t ii = int(i) & 255;
+    uint8_t jj = int(j) & 255;
+    uint8_t gi0 = perm[ii+perm[jj]] % 12;
+    uint8_t gi1 = perm[ii+i1+perm[jj+j1]] % 12;
+    uint8_t gi2 = perm[ii+1+perm[jj+1]] % 12;
 
     // Calculate the contribution from the three corners
     float t0 = 0.5f - x0*x0-y0*y0;
@@ -162,9 +162,9 @@ float raw_noise_3d(const float x, const float y, const float z, const uint8_t* p
     // Skew the input space to determine which simplex cell we're in
     float F3 = 1.0f/3.0f;
     float s = (x+y+z)*F3; // Very nice and simple skew factor for 3D
-    int i = std::floor(x+s);
-    int j = std::floor(y+s);
-    int k = std::floor(z+s);
+    float i = std::floor(x+s);
+    float j = std::floor(y+s);
+    float k = std::floor(z+s);
 
     float G3 = 1.0f/6.0f; // Very nice and simple unskew factor, too
     float t = (i+j+k)*G3;
@@ -177,8 +177,8 @@ float raw_noise_3d(const float x, const float y, const float z, const uint8_t* p
 
     // For the 3D case, the simplex shape is a slightly irregular tetrahedron.
     // Determine which simplex we are in.
-    int i1, j1, k1; // Offsets for second corner of simplex in (i,j,k) coords
-    int i2, j2, k2; // Offsets for third corner of simplex in (i,j,k) coords
+    uint8_t i1, j1, k1; // Offsets for second corner of simplex in (i,j,k) coords
+    uint8_t i2, j2, k2; // Offsets for third corner of simplex in (i,j,k) coords
 
     if(x0>=y0) {
         if(y0>=z0) { i1=1; j1=0; k1=0; i2=1; j2=1; k2=0; } // X Y Z order
@@ -206,13 +206,13 @@ float raw_noise_3d(const float x, const float y, const float z, const uint8_t* p
     float z3 = z0 - 1.0f + 3.0f*G3;
 
     // Work out the hashed gradient indices of the four simplex corners
-    int ii = i & 255;
-    int jj = j & 255;
-    int kk = k & 255;
-    int gi0 = perm[ii+perm[jj+perm[kk]]] % 12;
-    int gi1 = perm[ii+i1+perm[jj+j1+perm[kk+k1]]] % 12;
-    int gi2 = perm[ii+i2+perm[jj+j2+perm[kk+k2]]] % 12;
-    int gi3 = perm[ii+1+perm[jj+1+perm[kk+1]]] % 12;
+    uint8_t ii = int(i) & 255;
+    uint8_t jj = int(j) & 255;
+    uint8_t kk = int(k) & 255;
+    uint8_t gi0 = perm[ii+perm[jj+perm[kk]]] % 12;
+    uint8_t gi1 = perm[ii+i1+perm[jj+j1+perm[kk+k1]]] % 12;
+    uint8_t gi2 = perm[ii+i2+perm[jj+j2+perm[kk+k2]]] % 12;
+    uint8_t gi3 = perm[ii+1+perm[jj+1+perm[kk+1]]] % 12;
 
     // Calculate the contribution from the four corners
     float t0 = 0.6f - x0*x0 - y0*y0 - z0*z0;
@@ -399,6 +399,6 @@ void setSimplexSeed(const int32_t seed){
 }
 
 
-float dot( const int* g, const float x, const float y ) { return g[0]*x + g[1]*y; }
-float dot( const int* g, const float x, const float y, const float z ) { return g[0]*x + g[1]*y + g[2]*z; }
-float dot( const int* g, const float x, const float y, const float z, const float w ) { return g[0]*x + g[1]*y + g[2]*z + g[3]*w; }
+float dot( const int8_t* g, const float x, const float y ) { return g[0]*x + g[1]*y; }
+float dot( const int8_t* g, const float x, const float y, const float z ) { return g[0]*x + g[1]*y + g[2]*z; }
+float dot( const int8_t* g, const float x, const float y, const float z, const float w ) { return g[0]*x + g[1]*y + g[2]*z + g[3]*w; }
