@@ -1,72 +1,8 @@
 #pragma once
 #include <stdint.h>
 #include <functional>
-#include <vector>
-#include "../blockstd.h"
-#include <iostream>
 #include <unordered_map>
-
-using ChunkCoordinate = glm::ivec3;
-
-struct ChunkRegionCoordinate
-{
-    ChunkRegionCoordinate();
-    ChunkRegionCoordinate(int8_t x, int8_t y, int8_t z);
-    bool operator==(const ChunkRegionCoordinate& other) const;
-    bool operator!=(const ChunkRegionCoordinate& other) const;
-    int8_t x;
-    int8_t y;
-    int8_t z;
-};
-
-using VoxelCoordinate = glm::uvec3;
-using VoxelWorldCoordinate = glm::ivec3;
-
-const int32_t chunkWidth = 16;
-const int32_t chunkWidthx2 = chunkWidth * chunkWidth;
-const int32_t chunkWidthx3 = chunkWidth * chunkWidth * chunkWidth;
-const int32_t voxelAmount = chunkWidthx3;
-
-//top/bottom: y, -y
-//left/right:-x,  x
-//front/back:-z,  z
-enum BLOCK_FACES{
-	FACE_TOP = 0,
-	FACE_BOTTOM,
-	FACE_LEFT,
-	FACE_RIGHT, 
-	FACE_FRONT,
-	FACE_BACK
-};
-
-struct RleSegmentInfo
-{
-    uint32_t mSegmentStart;
-    uint32_t mSegmentSize;
-};
-
-using VoxelType = uint16_t;
-using VoxelTypeArray = std::array<VoxelType, voxelAmount>;
-using VoxelSegmentTypeArray = std::array<VoxelType, chunkWidth>;
-using RleIndexArray = std::array<RleSegmentInfo, chunkWidthx2>;
-using RleSegmentArray = std::vector<uint16_t>;
-
-ChunkCoordinate worldToChunk(float x, float y, float z);
-ChunkCoordinate worldToChunk(const glm::vec3& position);
-ChunkCoordinate worldToChunkInt(int x, int y, int z);
-
-VoxelCoordinate worldToChunkVoxel(const glm::vec3& position);
-VoxelCoordinate worldToChunkVoxel(float x, float y, float z);
-
-VoxelWorldCoordinate worldToVoxel(float x, float y, float z);
-VoxelWorldCoordinate worldToVoxel(const glm::vec3& position);
-
-struct VoxelTypeData
-{
-    VoxelTypeData(const RleIndexArray& rleSegmentIndices, const RleSegmentArray& rleSegments);
-    const RleIndexArray& mRleSegmentIndices;
-    const RleSegmentArray& mRleSegments;    
-};
+#include "worldstd.h"
 
 class Chunk
 {
@@ -97,6 +33,7 @@ class Chunk
 };
 
 using ChunkMap = std::unordered_map<ChunkCoordinate, Chunk>;
+using ChunkReferenceMap = std::unordered_map<ChunkCoordinate, Chunk&>;
 
 namespace std
 {
