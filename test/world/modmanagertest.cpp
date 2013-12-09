@@ -23,7 +23,7 @@ bool fexists(string filename)
     return file;
 }
 
-TEST_CASE("save and load", "[save][load]")
+TEST_CASE("save and load one", "[save][load]")
 {
     string regionName = "testRegion";
     string indexPath = regionDir + pathSep + regionName + ".idx";
@@ -68,8 +68,6 @@ TEST_CASE("save and load many", "[save][load]")
         remove(dataPath.c_str());
     }
 
-    ChunkRegionCoordinate chunkLoc1 = ChunkRegionCoordinate(1, 1, 1);
-    VoxelCoordinate voxLoc1 = VoxelCoordinate(1, 1, 1);
     VoxelType type1 = 1;
 
     ModManager manager(regionName);
@@ -78,7 +76,7 @@ TEST_CASE("save and load many", "[save][load]")
 
     for(int cx = 0; cx < regionWidth; ++cx)
     {
-        for(int cy = 0; cy < regionWidth; ++cy)
+        for(int cy = 0; cy < 1; ++cy)
         {
             for(int cz = 0; cz < 1; ++cz)
             {
@@ -109,7 +107,7 @@ TEST_CASE("save and load many", "[save][load]")
     ModManager manager2(regionName);
     for(int cx = 0; cx < regionWidth; ++cx)
     {
-        for(int cy = 0; cy < regionWidth; ++cy)
+        for(int cy = 0; cy < 1; ++cy)
         {
             for(int cz = 0; cz < 1; ++cz)
             {
@@ -148,15 +146,9 @@ TEST_CASE("save and load all", "[save][load]")
         remove(dataPath.c_str());
     }
 
-    ChunkRegionCoordinate chunkLoc1 = ChunkRegionCoordinate(1, 1, 1);
-    VoxelCoordinate voxLoc1 = VoxelCoordinate(1, 1, 1);
     VoxelType type1 = 1;
 
     ModManager manager(regionName);
-
-    cout << "Setting..." << endl;
-
-    int c = 0;
 
     for(int cx = 0; cx < regionWidth; ++cx)
     {
@@ -178,9 +170,6 @@ TEST_CASE("save and load all", "[save][load]")
                         }
                     }
                 }
-
-                c++;
-                PR(c);
             }
         }
     }
