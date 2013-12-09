@@ -360,13 +360,13 @@ endif(OPENGL_FOUND)
 #tests
 
 if(ASM_OPTIMISATIONS)
-    add_executable(noise_test "test/noise/asmnoise.cpp" "src/utilities/asmnoise.asm" "src/utilities/simplexnoise.cpp" "src/utilities/whitenoise.cpp" "src/utilities/noise.cpp" "src/utilities/voronoinoise.cpp")
-    set_target_properties(noise_test PROPERTIES COMPILE_FLAGS "-std=c++11 -pthread")
+    add_executable(test_noise "test/noise/asmnoise.cpp" "src/utilities/asmnoise.asm" "src/utilities/simplexnoise.cpp" "src/utilities/whitenoise.cpp" "src/utilities/noise.cpp" "src/utilities/voronoinoise.cpp")
+    set_target_properties(test_noise PROPERTIES COMPILE_FLAGS "-std=c++11 -pthread")
 endif()
 
-add_executable(modmanager_test "test/world/modmanagertest.cpp" "src/world/modmanager.cpp" "src/world/chunk.cpp" "src/world/worldstd.cpp")
-set_target_properties(modmanager_test PROPERTIES COMPILE_FLAGS "-std=c++11")
+add_executable(test_modmanager "test/world/modmanagertest.cpp" "src/world/modmanager.cpp" "src/world/chunk.cpp" "src/world/worldstd.cpp")
+set_target_properties(test_modmanager PROPERTIES COMPILE_FLAGS "-std=c++11")
 
 #profiling
-add_executable(modmanager_profile "profile/world/modmanagerprofile.cpp" "src/world/modmanager.cpp" "src/world/chunk.cpp")
-set_target_properties(modmanager_profile PROPERTIES COMPILE_FLAGS "-std=c++11")
+add_executable(profile_modmanager "profile/world/modmanagerprofile.cpp" "src/world/modmanager.cpp" "src/world/chunk.cpp" "src/world/worldstd.cpp")
+set_target_properties(profile_modmanager PROPERTIES COMPILE_FLAGS "-std=c++11")

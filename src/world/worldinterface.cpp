@@ -24,14 +24,14 @@ VoxelType WorldInterface::getVoxelTypeInt(int x, int y, int z) const
 
     const Region& landscape = mWorld.getLandscape();
 
-    if(landscape.chunkIsLoaded(chunkCoordinate))
-    {
-        return landscape.getChunk(chunkCoordinate).getVoxelType(voxelCoordinate);
-    }
-    else
-    {
+    //if(landscape.chunkIsLoaded(chunkCoordinate))
+    //{
+    //    return landscape.getChunk(chunkCoordinate).getVoxelType(voxelCoordinate);
+    //}
+    //else
+    //{
         return 0;
-    }
+    //}
 }
 VoxelType WorldInterface::getVoxelType(const VoxelWorldCoordinate coord) const{
     return getVoxelTypeInt(coord.x, coord.y, coord.z);
@@ -45,14 +45,14 @@ VoxelType WorldInterface::getVoxelType(float x, float y, float z) const
 
     const Region& landscape = mWorld.getLandscape();
 
-    if(landscape.chunkIsLoaded(chunkCoordinate))
-    {
-        return landscape.getChunk(chunkCoordinate).getVoxelType(voxelCoordinate);
-    }
-    else
-    {
+    //if(landscape.chunkIsLoaded(chunkCoordinate))
+    //{
+    //    return landscape.getChunk(chunkCoordinate).getVoxelType(voxelCoordinate);
+    //}
+    //else
+    //{
         return 0;
-    }
+    //}
 }
 
 VoxelType WorldInterface::getVoxelType(const glm::vec3& position) const

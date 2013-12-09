@@ -11,29 +11,30 @@ void Region::setChunkProvider(std::unique_ptr<ChunkProvider> del)
     chunkDeliverer = std::move(del);
 }
 
-Chunk& Region::loadChunk(const ChunkCoordinate& location)
+Chunk& Region::loadChunk(const ChunkRegionCoordinate& location)
 {
     auto chunk= chunks.find(location);
+    ChunkCoordinate tempLocation(location.x, location.y, location.z);
     if(chunk == chunks.end())
     {
-        chunks.emplace(location, chunkDeliverer->fetchChunk(location));
-        mBus.sendMessage<ChunkCreatedMessage>(ChunkCreatedMessage(location, chunks.at(location).getVoxelTypeData().mRleSegmentIndices, chunks.at(location).getVoxelTypeData().mRleSegments));
+        chunks.emplace(location, chunkDeliverer->fetchChunk(tempLocation));
+        mBus.sendMessage<ChunkCreatedMessage>(ChunkCreatedMessage(tempLocation, chunks.at(location).getVoxelTypeData().mRleSegmentIndices, chunks.at(location).getVoxelTypeData().mRleSegments));
     }
 
     return chunks.at(location);
 }
 
-bool Region::chunkIsLoaded(const ChunkCoordinate& location) const
+bool Region::chunkIsLoaded(const ChunkRegionCoordinate& location) const
 {
     return chunks.find(location) != chunks.end();
 }
 
-const Chunk& Region::getChunk(const ChunkCoordinate& location) const
+const Chunk& Region::getChunk(const ChunkRegionCoordinate& location) const
 {
     return chunks.at(location);
 }
 
-Chunk& Region::getChunk(const ChunkCoordinate& location)
+Chunk& Region::getChunk(const ChunkRegionCoordinate& location)
 {
     return chunks.at(location);
 }
@@ -43,7 +44,7 @@ ChunkReferenceMap Region::getChunkList() const
     return ChunkReferenceMap();
 }
 
-void Region::highlightChunk(size_t id, const ChunkCoordinate& chunk)
+void Region::highlightChunk(size_t id, const ChunkRegionCoordinate& chunk)
 {
     int32_t halfCheatBoxWidth = 6;
 
@@ -57,7 +58,7 @@ void Region::highlightChunk(size_t id, const ChunkCoordinate& chunk)
         {
             for(int32_t z = centerZ - halfCheatBoxWidth; z <= centerZ + halfCheatBoxWidth; z++)
             {
-                ChunkCoordinate coordinate(x, y, z);
+                ChunkRegionCoordinate coordinate(x, y, z);
                 loadChunk(coordinate);
             }
         }
@@ -71,12 +72,12 @@ void Region::checkUnloads(size_t id)
 {
     if(highlightedChunks.find(id) != highlightedChunks.end())
     {
-        std::vector<ChunkCoordinate> chunksToUnload;
+        std::vector<ChunkRegionCoordinate> chunksToUnload;
 
-        ChunkCoordinate& highlighted = highlightedChunks.at(id);
+        ChunkRegionCoordinate& highlighted = highlightedChunks.at(id);
         for(auto& chunk : chunks)
         {
-            ChunkCoordinate distance = highlighted - chunk.first;
+            ChunkRegionCoordinate distance;//highlighted - chunk.first; HACK must be fixed
 
             if(abs(distance.x + distance.z) > 12 || abs(distance.y) > 6)
             {
@@ -91,8 +92,8 @@ void Region::checkUnloads(size_t id)
     }
 }
 
-void Region::unloadChunk(const ChunkCoordinate& chunk)
+void Region::unloadChunk(const ChunkRegionCoordinate& chunk)
 {
-    mBus.sendMessage<ChunkDeletedMessage>(ChunkDeletedMessage(chunk));
-    chunks.erase(chunk);
+    //mBus.sendMessage<ChunkDeletedMessage>(ChunkDeletedMessage(chunk));
+    //chunks.erase(chunk);  AJJ AJJ HACL
 }
