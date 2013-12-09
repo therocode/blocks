@@ -38,9 +38,9 @@ Chunk& Region::getChunk(const ChunkCoordinate& location)
     return chunks.at(location);
 }
 
-const ChunkMap& Region::getChunkList() const
+ChunkReferenceMap Region::getChunkList() const
 {
-    return chunks;
+    return ChunkReferenceMap();
 }
 
 void Region::highlightChunk(size_t id, const ChunkCoordinate& chunk)

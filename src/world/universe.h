@@ -20,7 +20,6 @@ class Universe :
         virtual void handleMessage(const PlayerEntersChunkMessage& received);
         virtual void handleMessage(const SetVoxelMessage& received);
         WorldInterface& getWorldInterface();
-        ChunkMap getLoadedChunks();
     private:
 		glm::vec3 mCamPos, mCamDir;
         fea::MessageBus& bus;

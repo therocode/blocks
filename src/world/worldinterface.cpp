@@ -185,7 +185,7 @@ fea::WeakEntityPtr WorldInterface::createEntity(const std::string& scriptType, c
     return mEntitySystem.createEntity(scriptType, position);
 }
 
-const ChunkMap& WorldInterface::getChunkList() const
+ChunkList WorldInterface::getChunkList() const
 {
     return mWorld.getLandscape().getChunkList();
 }

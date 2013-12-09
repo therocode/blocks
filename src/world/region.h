@@ -14,7 +14,7 @@ class Region
         bool chunkIsLoaded(const ChunkCoordinate& location) const;
         const Chunk& getChunk(const ChunkCoordinate& location) const;
         Chunk& getChunk(const ChunkCoordinate& location);
-        const ChunkMap& getChunkList() const;
+        ChunkReferenceMap getChunkList() const;
         void highlightChunk(size_t id, const ChunkCoordinate& chunk);
     private:
         void checkUnloads(size_t id);

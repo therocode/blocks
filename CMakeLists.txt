@@ -123,6 +123,7 @@ set(source_files
 	src/world/chunk.cpp
     src/world/region.cpp
     src/world/localchunkprovider.cpp
+    src/world/worldstd.cpp
 	src/world/universe.cpp
     src/world/world.cpp
     src/world/worldinterface.cpp
@@ -233,6 +234,7 @@ set(header_files
     src/world/chunkprovider.h
     src/world/region.h
     src/world/localchunkprovider.h
+    src/world/worldstd.h
 	src/world/universe.h
     src/world/world.h
     src/world/worldinterface.h
@@ -362,7 +364,7 @@ if(ASM_OPTIMISATIONS)
     set_target_properties(noise_test PROPERTIES COMPILE_FLAGS "-std=c++11 -pthread")
 endif()
 
-add_executable(modmanager_test "test/world/modmanagertest.cpp" "src/world/modmanager.cpp" "src/world/chunk.cpp")
+add_executable(modmanager_test "test/world/modmanagertest.cpp" "src/world/modmanager.cpp" "src/world/chunk.cpp" "src/world/worldstd.cpp")
 set_target_properties(modmanager_test PROPERTIES COMPILE_FLAGS "-std=c++11")
 
 #profiling
