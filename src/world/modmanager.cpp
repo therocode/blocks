@@ -69,7 +69,7 @@ void ModManager::loadMods(const ChunkRegionCoordinate loc)
         {
             Mod mod;
             dataFile.read((char*)&mod, sizeof(Mod));
-            setMod(loc, mod.coord, mod.type);
+            _setMod(loc, mod.coord, mod.type);
         }
         dataFile.close();
     }
@@ -120,7 +120,7 @@ void ModManager::saveMods()
                             {
                                 Mod mod;
                                 iDataFile.read((char*)&mod, sizeof(Mod));
-                                setMod(loc, mod.coord, mod.type);
+                                _setMod(loc, mod.coord, mod.type);
                             } 
                         } 
                     }
@@ -164,19 +164,12 @@ void ModManager::saveMods()
 
 void ModManager::setMod(ChunkRegionCoordinate chunkLoc, VoxelCoordinate_uint8 voxLoc, VoxelType type)
 {
-    using it_type = RegionModMap::const_iterator;
-    it_type it = mMods.find(chunkLoc);
-    if(it == mMods.end())
-    {
-        mMods[chunkLoc] = ChunkModMap();
-    }
-
-    mMods[chunkLoc][voxLoc] = type;
+    _setMod(chunkLoc, voxLoc, type); 
 }
 
 void ModManager::setMod(ChunkRegionCoordinate chunkLoc, VoxelCoordinate voxLoc, VoxelType type)
 {
-    setMod(chunkLoc, VoxelCoordinate_uint8(voxLoc), type);
+    _setMod(chunkLoc, VoxelCoordinate_uint8(voxLoc), type);
 }
 
 VoxelType ModManager::getMod(ChunkRegionCoordinate chunkLoc, VoxelCoordinate voxLoc)
@@ -224,4 +217,16 @@ void ModManager::initIndexFile()
     }
 
     indexFile.close();
+}
+
+void ModManager::_setMod(ChunkRegionCoordinate chunkLoc, VoxelCoordinate_uint8 voxLoc, VoxelType type)
+{
+    using it_type = RegionModMap::const_iterator;
+    it_type it = mMods.find(chunkLoc);
+    if(it == mMods.end())
+    {
+        mMods[chunkLoc] = ChunkModMap();
+    }
+
+    mMods[chunkLoc][voxLoc] = type;
 }

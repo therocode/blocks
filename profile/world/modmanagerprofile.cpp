@@ -81,6 +81,18 @@ int main()
             {
                 ChunkRegionCoordinate chunkLoc(cx, cy, cz);
                 manager2.loadMods(chunkLoc);
+
+                for(int vx = 0; vx < chunkWidth; ++vx)
+                {
+                    for(int vy = 0; vy < chunkWidth; ++vy)
+                    {
+                        for(int vz = 0; vz < chunkWidth; ++vz)
+                        {
+                            VoxelCoordinate voxLoc(vx, vy, vz);
+                            manager.getMod(chunkLoc, voxLoc);
+                        }
+                    }
+                }
             }
         }
     }
