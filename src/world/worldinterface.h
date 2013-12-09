@@ -1,6 +1,7 @@
 #pragma once
 #include "world.h"
 #include "../entity/entitysystem.h"
+#include "chunk.h"
 
 using ChunkList = std::unordered_map<ChunkCoordinate, Chunk&>;
 
@@ -13,6 +14,7 @@ class WorldInterface
 		VoxelType getVoxelTypeInt(int x, int y, int z) const;
         VoxelType getVoxelType(float x, float y, float z) const; 
         VoxelType getVoxelType(const glm::vec3& position) const; 
+        VoxelType getVoxelType(const VoxelWorldCoordinate coord) const;
 		bool getVoxelAtRay(const glm::vec3& position, const glm::vec3& direction, const float maxDistance, int& hitFace, VoxelWorldCoordinate& hitBlock ) const;
 		bool getVoxelAtRay(float ox, float oy, float oz, float dx, float dy, float dz, const float maxDistance, int& hitFace, VoxelWorldCoordinate& hitBlock) const;
 		
