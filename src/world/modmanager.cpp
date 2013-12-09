@@ -2,8 +2,8 @@
 
 using namespace std;
 
-const string REGION_DIR = ".";
-const uint8_t REGION_LENGTH = 32;
+const string regionDir = ".";
+const uint8_t regionWidth = 32;
 
 const string pathSep =
 #ifdef _WIN32
@@ -17,14 +17,43 @@ VoxelCoordinate_uint8::VoxelCoordinate_uint8(VoxelCoordinate coord)
     : x(coord.x), y(coord.y), z(coord.z) 
 {}
 
+bool VoxelCoordinate_uint8::operator==(const VoxelCoordinate_uint8& other) const
+{
+    return x == other.x && y == other.y && z == other.z;
+}
+
+bool VoxelCoordinate_uint8::operator!=(const VoxelCoordinate_uint8& other) const
+{
+    return x != other.x || y != other.y || z != other.z;
+}
+
+bool VoxelCoordinate_uint8::operator<(const VoxelCoordinate_uint8& other) const
+{
+    if(x == other.x)
+    {
+        if(y == other.y)
+        {
+            return z < other.z;
+        }
+        else
+        {
+            return y < other.y;
+        }
+    } 
+    else
+    {
+        return x < other.x;
+    }    
+}
+
 ModManager::ModManager(string regionName)
     : mRegionName(regionName)
 {
-    mIndexPath = REGION_DIR + pathSep + mRegionName + ".idx";
-    mDataPath = REGION_DIR + pathSep + mRegionName + ".dat";
+    mIndexPath = regionDir + pathSep + mRegionName + ".idx";
+    mDataPath = regionDir + pathSep + mRegionName + ".dat";
 }
 
-void ModManager::loadMods(const ChunkCoordinate loc)
+void ModManager::loadMods(const ChunkRegionCoordinate loc)
 {
     ChunkIndex chunkIndex = getChunkIndex(loc);
 
@@ -40,7 +69,7 @@ void ModManager::loadMods(const ChunkCoordinate loc)
         {
             Mod mod;
             dataFile.read((char*)&mod, sizeof(Mod));
-            setMod(loc, mod.coord.toVoxelCoordinate(), mod.type);
+            setMod(loc, mod.coord, mod.type);
         }
         dataFile.close();
     }
@@ -48,16 +77,19 @@ void ModManager::loadMods(const ChunkCoordinate loc)
 
 void ModManager::applyMods(Chunk& chunk) 
 {
-    ChunkModMap mods = mMods[chunk.getLocation()];
+    throw ModManagerException("Not yet implemented.");
+    /*
+    ChunkModMap mods = mMods[chunk.getLocation()]; // <- This won't work if chunk returns ChunkCoordinate and not ChunkRegionCoordinate.
     for(ChunkModMap::iterator it = mods.begin(); it != mods.end(); ++it) 
     {
         chunk.setVoxelType(it->first.x, it->first.y, it->first.z, it->second);
     }
+    */
 }
 
 void ModManager::saveMods() 
 {
-    hash<ChunkCoordinate> chunkHash;
+    hash<ChunkRegionCoordinate> crcHash;
     ifstream iIndexFile(mIndexPath, ios::in | ios::binary);
 
     if(iIndexFile)
@@ -66,15 +98,15 @@ void ModManager::saveMods()
         
         if(iDataFile)
         {
-            for(int x = 0; x < REGION_LENGTH; ++x) 
+            for(int x = 0; x < regionWidth; ++x) 
             {
-                for(int y = 0; y < REGION_LENGTH; ++y)
+                for(int y = 0; y < regionWidth; ++y)
                 {
-                    for(int z = 0; z < REGION_LENGTH; ++z)
+                    for(int z = 0; z < regionWidth; ++z)
                     {
-                        ChunkCoordinate loc(x, y, z);
+                        ChunkRegionCoordinate loc(x, y, z);
 
-                        iIndexFile.seekg(chunkHash(loc));
+                        iIndexFile.seekg(crcHash(loc));
                         ChunkIndex chunkIndex;
                         iIndexFile.read((char*)&chunkIndex, sizeof(ChunkIndex));
 
@@ -88,7 +120,7 @@ void ModManager::saveMods()
                             {
                                 Mod mod;
                                 iDataFile.read((char*)&mod, sizeof(Mod));
-                                setMod(loc, mod.coord.toVoxelCoordinate(), mod.type);
+                                setMod(loc, mod.coord, mod.type);
                             } 
                         } 
                     }
@@ -109,11 +141,11 @@ void ModManager::saveMods()
     oIndexFile.clear();
     ofstream oDataFile(mDataPath, ios::out | ios::binary);
 
-    using it_type = unordered_map<ChunkCoordinate, ChunkModMap>::iterator;
+    using it_type = RegionModMap::iterator;
     for(it_type it = mMods.begin(); it != mMods.end(); ++it)
     {
 
-        oIndexFile.seekp(chunkHash(it->first)*sizeof(ChunkIndex));
+        oIndexFile.seekp(crcHash(it->first)*sizeof(ChunkIndex));
         ChunkIndex index = oDataFile.tellp();
         oIndexFile.write(reinterpret_cast<const char*>(&index), sizeof(ChunkIndex));
 
@@ -121,7 +153,7 @@ void ModManager::saveMods()
         oDataFile.write(reinterpret_cast<const char*>(&modCount), sizeof(modCount));
         for(ChunkModMap::iterator it2 = it->second.begin(); it2 != it->second.end(); ++it2)
         {
-            Mod mod(VoxelCoordinate_uint8(it2->first), it2->second);
+            Mod mod(it2->first, it2->second);
             oDataFile.write(reinterpret_cast<const char*>(&mod), sizeof(Mod)); 
         }
     }
@@ -130,9 +162,9 @@ void ModManager::saveMods()
     oDataFile.close();
 }
 
-void ModManager::setMod(ChunkCoordinate chunkLoc, VoxelCoordinate voxLoc, VoxelType type)
+void ModManager::setMod(ChunkRegionCoordinate chunkLoc, VoxelCoordinate_uint8 voxLoc, VoxelType type)
 {
-    using it_type = unordered_map<ChunkCoordinate, ChunkModMap>::const_iterator;
+    using it_type = RegionModMap::const_iterator;
     it_type it = mMods.find(chunkLoc);
     if(it == mMods.end())
     {
@@ -142,19 +174,24 @@ void ModManager::setMod(ChunkCoordinate chunkLoc, VoxelCoordinate voxLoc, VoxelT
     mMods[chunkLoc][voxLoc] = type;
 }
 
-VoxelType ModManager::getMod(ChunkCoordinate chunkLoc, VoxelCoordinate voxLoc)
+void ModManager::setMod(ChunkRegionCoordinate chunkLoc, VoxelCoordinate voxLoc, VoxelType type)
+{
+    setMod(chunkLoc, VoxelCoordinate_uint8(voxLoc), type);
+}
+
+VoxelType ModManager::getMod(ChunkRegionCoordinate chunkLoc, VoxelCoordinate voxLoc)
 {
     return mMods[chunkLoc][voxLoc];
 }
 
-ChunkIndex ModManager::getChunkIndex(ChunkCoordinate loc)
+ChunkIndex ModManager::getChunkIndex(ChunkRegionCoordinate loc)
 {
-    hash<ChunkCoordinate> chunkHash;
+    hash<ChunkRegionCoordinate> crcHash;
     ifstream indexFile(mIndexPath, ios::in | ios::binary);
 
     if(indexFile)
     {
-        indexFile.seekg(chunkHash(loc)*sizeof(ChunkIndex));
+        indexFile.seekg(crcHash(loc)*sizeof(ChunkIndex));
 
         ChunkIndex chunkIndex;
         indexFile.read((char*)&chunkIndex, sizeof(ChunkIndex));
@@ -174,13 +211,13 @@ void ModManager::initIndexFile()
     ofstream indexFile(mIndexPath, ios::out | ios::binary);
 
     ChunkIndex index = NO_CHUNK;
-    for(int x = 0; x < REGION_LENGTH; ++x)
+    for(int x = 0; x < regionWidth; ++x)
     {
-        for(int y = 0; y < REGION_LENGTH; ++y)
+        for(int y = 0; y < regionWidth; ++y)
         {
-            for(int z = 0; z < REGION_LENGTH; ++z)
+            for(int z = 0; z < regionWidth; ++z)
             {
-                ChunkCoordinate loc(x, y, z);
+                ChunkRegionCoordinate loc(x, y, z);
                 indexFile.write(reinterpret_cast<const char*>(&index), sizeof(ChunkIndex));
             }
         }

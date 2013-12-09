@@ -366,3 +366,7 @@ endif()
 
 add_executable(modmanager_test "test/world/modmanagertest.cpp" "src/world/modmanager.cpp" "src/world/chunk.cpp" "src/world/worldstd.cpp")
 set_target_properties(modmanager_test PROPERTIES COMPILE_FLAGS "-std=c++11")
+
+#profiling
+add_executable(modmanager_profile "profile/world/modmanagerprofile.cpp" "src/world/modmanager.cpp" "src/world/chunk.cpp")
+set_target_properties(modmanager_profile PROPERTIES COMPILE_FLAGS "-std=c++11")
