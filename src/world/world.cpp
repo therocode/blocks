@@ -15,7 +15,7 @@ void World::initialise()
 
 void World::highlightChunk(size_t id, const ChunkCoordinate& chunk)
 {
-    landscape.highlightChunk(id, chunk);
+    landscape.highlightChunk(id, ChunkRegionCoordinate(chunk.x, chunk.y, chunk.z));
 }
 
 const Region& World::getLandscape() const

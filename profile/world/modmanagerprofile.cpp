@@ -1,5 +1,6 @@
 #include <cstdio>
 #include <fstream>
+#include <iostream>
 #include <string>
 
 #include "world/chunk.h"

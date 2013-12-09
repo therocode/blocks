@@ -5,22 +5,24 @@
 #include <memory>
 #include <featherkit/messaging.h>
 
+using ChunkRegionMap = std::unordered_map<ChunkRegionCoordinate, Chunk>;
+
 class Region
 {
     public:
         Region(fea::MessageBus& bus);
         void setChunkProvider(std::unique_ptr<ChunkProvider> del);
-        Chunk& loadChunk(const ChunkCoordinate& location);
-        bool chunkIsLoaded(const ChunkCoordinate& location) const;
-        const Chunk& getChunk(const ChunkCoordinate& location) const;
-        Chunk& getChunk(const ChunkCoordinate& location);
+        Chunk& loadChunk(const ChunkRegionCoordinate& location);
+        bool chunkIsLoaded(const ChunkRegionCoordinate& location) const;
+        const Chunk& getChunk(const ChunkRegionCoordinate& location) const;
+        Chunk& getChunk(const ChunkRegionCoordinate& location);
         ChunkReferenceMap getChunkList() const;
-        void highlightChunk(size_t id, const ChunkCoordinate& chunk);
+        void highlightChunk(size_t id, const ChunkRegionCoordinate& chunk);
     private:
         void checkUnloads(size_t id);
-        void unloadChunk(const ChunkCoordinate& chunk);
+        void unloadChunk(const ChunkRegionCoordinate& chunk);
         fea::MessageBus& mBus;
-        ChunkMap chunks;
+        ChunkRegionMap chunks;
         std::unique_ptr<ChunkProvider> chunkDeliverer;
-        std::unordered_map<size_t, ChunkCoordinate> highlightedChunks;
+        std::unordered_map<size_t, ChunkRegionCoordinate> highlightedChunks;
 };
