@@ -22,7 +22,7 @@ VoxelType WorldInterface::getVoxelTypeInt(int x, int y, int z) const
 
     VoxelCoordinate voxelCoordinate = worldToChunkVoxel(x, y, z);//VoxelCoordinate((x + (x) % 16,(y) % 16,(z) % 16);
 
-    const Region& landscape = mWorld.getLandscape();
+    //const Region& landscape = mWorld.getLandscape();
 
     //if(landscape.chunkIsLoaded(chunkCoordinate))
     //{
@@ -43,7 +43,7 @@ VoxelType WorldInterface::getVoxelType(float x, float y, float z) const
     ChunkCoordinate chunkCoordinate = worldToChunk(x, y, z);
     VoxelCoordinate voxelCoordinate = worldToChunkVoxel(x, y, z);
 
-    const Region& landscape = mWorld.getLandscape();
+    //const Region& landscape = mWorld.getLandscape();
 
     //if(landscape.chunkIsLoaded(chunkCoordinate))
     //{
@@ -59,7 +59,6 @@ VoxelType WorldInterface::getVoxelType(const glm::vec3& position) const
 {
     return getVoxelType(position.x, position.y, position.z);
 }
-
 bool WorldInterface::getVoxelAtRay(const glm::vec3& position, const glm::vec3& direction, const float maxDistance, int& hitFace, VoxelWorldCoordinate& hitBlock ) const
 {
     return getVoxelAtRay(position.x, position.y, position.z, direction.x, direction.y, direction.z, maxDistance, hitFace, hitBlock);
@@ -185,9 +184,9 @@ fea::WeakEntityPtr WorldInterface::createEntity(const std::string& scriptType, c
     return mEntitySystem.createEntity(scriptType, position);
 }
 
-ChunkList WorldInterface::getChunkList() const
+ChunkReferenceMap WorldInterface::getChunkList() const
 {
-    return mWorld.getLandscape().getChunkList();
+    return mWorld.getChunkList();
 }
 
 EntityCreator WorldInterface::getEntityCreator() const

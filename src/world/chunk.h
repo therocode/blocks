@@ -33,7 +33,7 @@ class Chunk
 };
 
 using ChunkMap = std::unordered_map<ChunkCoordinate, Chunk>;
-using ChunkReferenceMap = std::unordered_map<ChunkCoordinate, Chunk&>;
+using ChunkReferenceMap = std::unordered_map<ChunkCoordinate, const Chunk&>;
 
 namespace std
 {

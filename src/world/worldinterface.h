@@ -3,8 +3,6 @@
 #include "../entity/entitysystem.h"
 #include "chunk.h"
 
-using ChunkList = std::unordered_map<ChunkCoordinate, Chunk&>;
-
 class asIScriptObject;
 
 class WorldInterface
@@ -19,7 +17,7 @@ class WorldInterface
 		bool getVoxelAtRay(float ox, float oy, float oz, float dx, float dy, float dz, const float maxDistance, int& hitFace, VoxelWorldCoordinate& hitBlock) const;
 		
         fea::WeakEntityPtr createEntity(const std::string& scriptType, const glm::vec3& position);
-        ChunkList getChunkList() const;
+        ChunkReferenceMap getChunkList() const;
 
         template<class Type>
         Type getEntityAttribute(fea::EntityId id, const std::string& name)
