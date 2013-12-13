@@ -18,6 +18,11 @@ bool ChunkRegionCoordinate::operator!=(const ChunkRegionCoordinate& other) const
     return x != other.x || y != other.y || z != other.z;
 }
 
+ChunkCoordinate ChunkRegionCoordinate::toWorldSpace(const RegionCoordinate& regionCoordinate)
+{
+    return ChunkCoordinate(regionCoordinate.x + x, regionCoordinate.y + y, regionCoordinate.z + z);
+}
+
 ChunkCoordinate worldToChunkInt(int x, int y, int z)
 {
 	int xNeg = x < 0;

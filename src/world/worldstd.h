@@ -4,6 +4,7 @@
 #include <array>
 
 using ChunkCoordinate = glm::ivec3;
+using RegionCoordinate = glm::ivec3;
 
 struct ChunkRegionCoordinate
 {
@@ -11,6 +12,7 @@ struct ChunkRegionCoordinate
     ChunkRegionCoordinate(int8_t x, int8_t y, int8_t z);
     bool operator==(const ChunkRegionCoordinate& other) const;
     bool operator!=(const ChunkRegionCoordinate& other) const;
+    ChunkCoordinate toWorldSpace(const RegionCoordinate& regionCoordinate);
     int8_t x;
     int8_t y;
     int8_t z;
