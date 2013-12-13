@@ -113,6 +113,7 @@ class ModManager
     private:
         ChunkIndex getChunkIndex(ChunkRegionCoordinate loc);
         void initIndexFile();
+        void _setMod(ChunkRegionCoordinate chunkLoc, VoxelCoordinate_uint8 voxLoc, VoxelType type);
 
         std::string mRegionName;
         std::string mIndexPath;
