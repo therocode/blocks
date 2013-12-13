@@ -9,7 +9,7 @@ class World
         World(fea::MessageBus& messageBus);
         void initialise(); 
         void highlightChunk(size_t id, const ChunkCoordinate& chunk);
-        ChunkReferenceMap getChunkList() const;
+        ChunkReferenceMap getChunkMap() const;
     private:
         fea::MessageBus& bus;
         Region landscape;

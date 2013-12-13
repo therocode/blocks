@@ -184,9 +184,9 @@ fea::WeakEntityPtr WorldInterface::createEntity(const std::string& scriptType, c
     return mEntitySystem.createEntity(scriptType, position);
 }
 
-ChunkReferenceMap WorldInterface::getChunkList() const
+ChunkReferenceMap WorldInterface::getChunkMap() const
 {
-    return mWorld.getChunkList();
+    return mWorld.getChunkMap();
 }
 
 EntityCreator WorldInterface::getEntityCreator() const

@@ -18,7 +18,7 @@ void World::highlightChunk(size_t id, const ChunkCoordinate& chunk)
     landscape.highlightChunk(id, ChunkRegionCoordinate(chunk.x, chunk.y, chunk.z));
 }
 
-ChunkReferenceMap World::getChunkList() const
+ChunkReferenceMap World::getChunkMap() const
 {
     return ChunkReferenceMap();
 }
