@@ -46,11 +46,11 @@ bool VoxelCoordinate_uint8::operator<(const VoxelCoordinate_uint8& other) const
     }    
 }
 
-ModManager::ModManager(string regionName)
-    : mRegionName(regionName)
+ModManager::ModManager(fea::MessageBus& messageBus, RegionCoordinate regionLoc)
+    : mBus(messageBus), mRegionLoc(regionLoc)
 {
-    mIndexPath = regionDir + pathSep + mRegionName + ".idx";
-    mDataPath = regionDir + pathSep + mRegionName + ".dat";
+    mIndexPath = regionDir + pathSep + glm::to_string(mRegionLoc) + ".idx";
+    mDataPath = regionDir + pathSep + glm::to_string(mRegionLoc) + ".dat";
 }
 
 void ModManager::loadMods(const ChunkRegionCoordinate loc)
@@ -65,6 +65,9 @@ void ModManager::loadMods(const ChunkRegionCoordinate loc)
         uint16_t modCount;
         dataFile.read((char*)&modCount, sizeof(uint16_t));    
 
+        uint64_t timestamp;
+        dataFile.read((char*)&timestamp, sizeof(uint64_t));
+
         for(int i = 0; i < modCount; ++i) 
         {
             Mod mod;
@@ -72,6 +75,8 @@ void ModManager::loadMods(const ChunkRegionCoordinate loc)
             _setMod(loc, mod.coord, mod.type);
         }
         dataFile.close();
+
+        mBus.sendMessage<ChunkLoadedMessage>(ChunkLoadedMessage(loc.toWorldSpace(mRegionLoc), timestamp));
     }
 }
 
@@ -87,10 +92,12 @@ void ModManager::applyMods(Chunk& chunk)
     */
 }
 
-void ModManager::saveMods() 
+void ModManager::saveMods(uint64_t currentTimestamp) 
 {
     hash<ChunkRegionCoordinate> crcHash;
     ifstream iIndexFile(mIndexPath, ios::in | ios::binary);
+
+    TimestampMap oldTimestamps;
 
     if(iIndexFile)
     {
@@ -106,7 +113,7 @@ void ModManager::saveMods()
                     {
                         ChunkRegionCoordinate loc(x, y, z);
 
-                        iIndexFile.seekg(crcHash(loc));
+                        iIndexFile.seekg(crcHash(loc)*sizeof(ChunkIndex));
                         ChunkIndex chunkIndex;
                         iIndexFile.read((char*)&chunkIndex, sizeof(ChunkIndex));
 
@@ -115,6 +122,9 @@ void ModManager::saveMods()
                             iDataFile.seekg(chunkIndex);
                             uint16_t modCount;
                             iDataFile.read((char*)(&modCount), sizeof(uint16_t));
+                            uint64_t timestamp;
+                            iDataFile.read((char*)(&timestamp), sizeof(uint64_t));
+                            oldTimestamps[loc] = timestamp;
                             mMods[loc] = ChunkModMap();
                             for(int i = 0; i < modCount; ++i)
                             {
@@ -151,6 +161,19 @@ void ModManager::saveMods()
 
         uint16_t modCount = it->second.size();
         oDataFile.write(reinterpret_cast<const char*>(&modCount), sizeof(modCount));
+
+        uint64_t timestamp;
+        TimestampMap::const_iterator got = oldTimestamps.find(it->first);
+        if(got == oldTimestamps.end())
+        {
+            timestamp = currentTimestamp;
+        }
+        else
+        {
+            timestamp = oldTimestamps[it->first];
+        }
+        oDataFile.write(reinterpret_cast<const char*>(&timestamp), sizeof(timestamp));
+
         for(ChunkModMap::iterator it2 = it->second.begin(); it2 != it->second.end(); ++it2)
         {
             Mod mod(it2->first, it2->second);
@@ -204,16 +227,9 @@ void ModManager::initIndexFile()
     ofstream indexFile(mIndexPath, ios::out | ios::binary);
 
     ChunkIndex index = NO_CHUNK;
-    for(int x = 0; x < regionWidth; ++x)
+    for(int i = 0; i < regionWidth*regionWidth*regionWidth; ++i)
     {
-        for(int y = 0; y < regionWidth; ++y)
-        {
-            for(int z = 0; z < regionWidth; ++z)
-            {
-                ChunkRegionCoordinate loc(x, y, z);
-                indexFile.write(reinterpret_cast<const char*>(&index), sizeof(ChunkIndex));
-            }
-        }
+        indexFile.write(reinterpret_cast<const char*>(&index), sizeof(ChunkIndex));
     }
 
     indexFile.close();

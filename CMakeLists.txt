@@ -365,8 +365,10 @@ if(ASM_OPTIMISATIONS)
 endif()
 
 add_executable(test_modmanager "test/world/modmanagertest.cpp" "src/world/modmanager.cpp" "src/world/chunk.cpp" "src/world/worldstd.cpp")
+target_link_libraries(test_modmanager ${FEATHERKIT_LIBRARIES})
 set_target_properties(test_modmanager PROPERTIES COMPILE_FLAGS "-std=c++11")
 
 #profiling
 add_executable(profile_modmanager "profile/world/modmanagerprofile.cpp" "src/world/modmanager.cpp" "src/world/chunk.cpp" "src/world/worldstd.cpp")
+target_link_libraries(profile_modmanager ${FEATHERKIT_LIBRARIES})
 set_target_properties(profile_modmanager PROPERTIES COMPILE_FLAGS "-std=c++11")
