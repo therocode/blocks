@@ -3,7 +3,6 @@
 using namespace std;
 
 const string regionDir = ".";
-const uint8_t regionWidth = 32;
 
 const string pathSep =
 #ifdef _WIN32

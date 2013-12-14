@@ -11,7 +11,8 @@ class World
         void highlightChunk(size_t id, const ChunkCoordinate& chunk);
         ChunkReferenceMap getChunkMap() const;
     private:
-        fea::MessageBus& bus;
-        Region landscape;
+        Region loadRegion(const RegionCoordinate& coordinate);
+        fea::MessageBus& mBus;
+        std::unordered_map<RegionCoordinate, Region> mRegions;
         std::unordered_map<size_t, ChunkCoordinate> highlights;
 };

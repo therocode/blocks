@@ -93,3 +93,26 @@ VoxelTypeData::VoxelTypeData(const RleIndexArray& rleSegmentIndices, const RleSe
 {
 
 }
+
+RegionCoordinate chunkToRegion(float x, float y, float z)
+{
+	bool xNeg = x < 0;
+	bool yNeg = y < 0;
+	bool zNeg = z < 0;
+	RegionCoordinate c;
+	
+	c.x =(((xNeg)?1:0) + x) / regionWidth;
+	c.y =(((yNeg)?1:0) + y) / regionWidth;
+	c.z =(((zNeg)?1:0) + z) / regionWidth;
+	
+	if(xNeg) c.x -= 1;
+	if(yNeg) c.y -= 1;
+	if(zNeg) c.z -= 1;
+	
+	return c;
+}
+ 
+RegionCoordinate chunkToRegion(const ChunkCoordinate& coordinate)
+{
+    return chunkToRegion(coordinate.x, coordinate.y, coordinate.z);
+}

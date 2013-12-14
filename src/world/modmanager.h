@@ -23,7 +23,6 @@
 #define NO_CHUNK -1
 
 extern const std::string regionDir;
-extern const uint8_t regionWidth;
 
 struct VoxelCoordinate_uint8
 {
