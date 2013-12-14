@@ -2,20 +2,27 @@
 #include "worldmessages.h"
 #include "localchunkprovider.h"
 
-World::World(fea::MessageBus& messageBus) : bus(messageBus),
-                                                    landscape(messageBus)
+World::World(fea::MessageBus& messageBus) : bus(messageBus)
 {
 
 }
 
 void World::initialise()
 {
-    landscape.setChunkProvider(std::unique_ptr<ChunkProvider>(new LocalChunkProvider()));
 }
 
 void World::highlightChunk(size_t id, const ChunkCoordinate& chunk)
 {
-    landscape.highlightChunk(id, ChunkRegionCoordinate(chunk.x, chunk.y, chunk.z));
+    RegionCoordinate regionCoordinate(chunk);
+
+    auto region = mRegions.find(regionCoordinate);
+
+    if(region == mRegions.end())
+    {
+        mRegions.emplace(regionCoordinate, loadRegion(regionCoordinate));
+        region = mRegions.find(regionCoordinate);
+    }
+    region->second.highlightChunk(id, ChunkRegionCoordinate(chunk.x, chunk.y, chunk.z));
 }
 
 ChunkReferenceMap World::getChunkMap() const
