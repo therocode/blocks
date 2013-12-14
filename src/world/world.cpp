@@ -2,7 +2,7 @@
 #include "worldmessages.h"
 #include "localchunkprovider.h"
 
-World::World(fea::MessageBus& messageBus) : bus(messageBus)
+World::World(fea::MessageBus& messageBus) : mBus(messageBus)
 {
 
 }
@@ -28,4 +28,12 @@ void World::highlightChunk(size_t id, const ChunkCoordinate& chunk)
 ChunkReferenceMap World::getChunkMap() const
 {
     return ChunkReferenceMap();
+}
+
+Region World::loadRegion(const RegionCoordinate& coordinate)
+{
+    Region newRegion(mBus);
+    newRegion.setChunkProvider(std::unique_ptr<ChunkProvider>(new LocalChunkProvider()));
+
+    return newRegion;
 }

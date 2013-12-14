@@ -12,7 +12,7 @@ class World
         ChunkReferenceMap getChunkMap() const;
     private:
         Region loadRegion(const RegionCoordinate& coordinate);
-        fea::MessageBus& bus;
+        fea::MessageBus& mBus;
         std::unordered_map<RegionCoordinate, Region> mRegions;
         std::unordered_map<size_t, ChunkCoordinate> highlights;
 };

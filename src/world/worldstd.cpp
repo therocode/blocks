@@ -114,5 +114,5 @@ RegionCoordinate chunkToRegion(float x, float y, float z)
  
 RegionCoordinate chunkToRegion(const ChunkCoordinate& coordinate)
 {
-    chunkToRegion(coordinate.x, coordinate.y, coordinate.z);
+    return chunkToRegion(coordinate.x, coordinate.y, coordinate.z);
 }
