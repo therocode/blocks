@@ -27,41 +27,43 @@ Chunk LocalChunkProvider::fetchChunk(const ChunkCoordinate& location) const
 
                 if(noiseHeight > (40 - (location.y * (int32_t)chunkWidth + y)) )
                 {
-                	if(noise < 0.0f && (40 - (location.y * (int32_t)chunkWidth + y)) > noiseHeight - 1) noise = -0.9f;
-                   else noise = 1.0f;
-               }
-               if(noise < -0.5f)
-               {
-                types[currentBlock] = 2;
-            }
-            else if(noise < 0.5f)
-            {
-                types[currentBlock] = 2;
-            }
-            else
-            {
-                types[currentBlock] = 0;
-            }
-            if(noiseYPos + noiseHeight * 1.f < -1 && types[currentBlock] != 0)
-            {
-               types[currentBlock] = 15;
-           }
-           if(types[currentBlock] != 0)
-           {
-            if(40 - ((location.y * (int32_t)chunkWidth + y)) == (int)noiseHeight)
-                types[currentBlock] = 1;
-            float s = 0.5f;
-            noiseYPos *= s;
-            noiseXPos *= s;
-            noiseZPos *= s;
-            if(mNoise.simplex3D(noiseYPos, noiseXPos, noiseZPos) > 0.9)
-            {
-              types[currentBlock] = 19;
-          }
-      }
+                    if(noise < 0.0f && (40 - (location.y * (int32_t)chunkWidth + y)) > noiseHeight - 1)
+                        noise = -0.9f;
+                    else
+                        noise = 1.0f;
+                }
+                if(noise < -0.5f)
+                {
+                    types[currentBlock] = 2;
+                }
+                else if(noise < 0.5f)
+                {
+                    types[currentBlock] = 2;
+                }
+                else
+                {
+                    types[currentBlock] = 0;
+                }
+                if(noiseYPos + noiseHeight * 1.f < -1 && types[currentBlock] != 0)
+                {
+                    types[currentBlock] = 15;
+                }
+                if(types[currentBlock] != 0)
+                {
+                    if(40 - ((location.y * (int32_t)chunkWidth + y)) == (int)noiseHeight)
+                        types[currentBlock] = 1;
+                    float s = 0.5f;
+                    noiseYPos *= s;
+                    noiseXPos *= s;
+                    noiseZPos *= s;
+                    if(mNoise.simplex3D(noiseYPos, noiseXPos, noiseZPos) > 0.9)
+                    {
+                        types[currentBlock] = 19;
+                    }
+                }
 				float poo = 0;//glm::sin(glm::pow(noiseYPos, 2.f));
-				float len = glm::length(glm::vec2(0, 2) - glm::vec2(noiseXPos * 14 , noiseZPos * 14 )) + poo;
-				if(len < 3 && noiseYPos < 0)
+				float len = glm::length(glm::vec2(0, -4) - glm::vec2(noiseXPos * 14 , noiseZPos * 14 )) + poo;
+				if(len < 4 && noiseYPos < 0)
 				{
 					types[currentBlock] = 8;
 				}

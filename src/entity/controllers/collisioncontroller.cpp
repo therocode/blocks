@@ -88,25 +88,48 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
     glm::vec3 ignoreAxis = glm::vec3(0);
     float n = 0.0;
     int steps = 0;
-
+    VoxelWorldCoordinate currentHitBlock;
     while(n < 1.0f && (steps < 3)){
         steps++;
-        glm::vec3 normal = glm::vec3(0);
+        glm::ivec3 normal = glm::ivec3(0);
         a.x = oldPosition.x - size.x * 0.5f;
         a.y = oldPosition.y - size.y * 0.5f;
         a.z = oldPosition.z - size.z * 0.5f;
-        n = sweepAroundAABB(a, v, normal, ignoreAxis);
+        n = sweepAroundAABB(a, v, normal, currentHitBlock, ignoreAxis);
         // Renderer::sDebugRenderer.drawBox(a.x + a.width*0.5f, a.y + a.height*0.5f, a.z + a.depth*0.5f, a.width  + 0.001f, a.height + 0.001f, a.depth + 0.001f, DebugRenderer::ORANGE);
 
         if(n < 1.f )
         {
+            float moveLen = glm::length(approvedPosition - oldPosition);
             for(int i = 0; i < 3; i++){
                 if(normal[i] != 0){
                     ignoreAxis[i] = 1.0;
                     break;
                 }
             }
-            approvedPosition = oldPosition + v * glm::max(n - 0.08f, 0.0f);
+            float e = 0.001f;
+            approvedPosition = oldPosition + v * n;//* glm::max(n - 0.08f / moveLen, 0.0f);
+            if(normal.x != 0){
+                  if(normal.x > 0){
+                    approvedPosition.x = (float)currentHitBlock.x + 1.0f + a.width * 0.5f + e;
+                }else{
+                    approvedPosition.x = (float)currentHitBlock.x - a.width * 0.5f - e;
+                }
+            }else if(normal.y != 0){
+                if(normal.y > 0){
+                    approvedPosition.y = (float)currentHitBlock.y + 1.0f + a.height * 0.5f + e;
+                }else{
+                    approvedPosition.y = (float)currentHitBlock.y - a.height * 0.5f - e;
+                }
+            }else if(normal.z != 0){
+                if(normal.z > 0){
+                    approvedPosition.z = (float)currentHitBlock.z + 1.0f + a.depth * 0.5f + e;
+                }else{
+                    approvedPosition.z = (float)currentHitBlock.z - a.depth * 0.5f - e;
+                }
+            }else{
+                printf("What\n");
+            }
             oldPosition = approvedPosition;
 
             velocity = mEntities.at(id).lock()->getAttribute<glm::vec3>("velocity");
@@ -114,9 +137,10 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
 
             float remainingTime = 1.0f - n;
             float magn = glm::length(velocity) * remainingTime;
-            float collDot = glm::dot(normal, v);
-            collDot = glm::clamp(collDot, -1.f, 1.f);
-            glm::vec3 c = (glm::vec3(1.f) - glm::abs(normal)) * v;
+            glm::vec3 c = v;//(glm::vec3(1.f) - glm::abs(normal)) * v;
+            if(normal.x != 0)c.x = 0;
+            if(normal.y != 0)c.y = 0;
+            if(normal.z != 0)c.z = 0;
 
             glm::vec3 additionalVelocity = c * remainingTime;
             approvedPosition += additionalVelocity;
@@ -124,7 +148,10 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
             //velocity += additionalVelocity;
             //velocity is either 0 or 1, depending if it collided or not. when all is working it should use the normal to do stuff.
             //printf("noral: %f, %f, %f\n", normal.x, normal.y, normal.z);
-            velocity     *= glm::vec3(1.0) - glm::abs(normal);
+            //velocity     *= glm::vec3(1.0) - glm::abs(normal);
+            if(normal.x != 0)velocity.x = 0;
+            if(normal.y != 0)velocity.y = 0;
+            if(normal.z != 0)velocity.z = 0;
             // acceleration *= glm::vec3(1.0) - glm::abs(normal);
             v = approvedPosition - oldPosition;
             entity->setAttribute<glm::vec3>("velocity", velocity);
@@ -138,12 +165,12 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
     mBus.sendMessage<EntityMovedMessage>(EntityMovedMessage(id, requestedPosition, approvedPosition));
 }
 
-float CollisionController::sweepAroundAABB(const AABB a, glm::vec3 velocity, glm::vec3& outNormal, const glm::vec3 ignoreAxis)
+float CollisionController::sweepAroundAABB(const AABB a, glm::vec3 velocity, glm::ivec3& outNormal, VoxelWorldCoordinate& hitBlock, const glm::vec3 ignoreAxis)
 {
     AABB b;
     int sx = 1, sy = 2, sz = 1;
     float n = 1.0f;
-    glm::vec3 normal = glm::vec3(0.f);
+    glm::ivec3 normal = glm::ivec3(0);
     float longest = 99999.f;
     //Loop througha cube of blocks and check if they are passableor not
     for(float x = -sx; x <= sx; x++)
@@ -169,9 +196,8 @@ float CollisionController::sweepAroundAABB(const AABB a, glm::vec3 velocity, glm
                 //b.z = (int)b.z;
                 if(mWorldInterface.getVoxelType(coord) != 0)
                 {
-                    glm::vec3 norm;
+                    glm::ivec3 norm;
                     // renderDebugAABB(b, DebugRenderer::GREEN);
-
 
                     //A is the entity, B is block in world, v is newPosition - oldPosition. Function should set norm to a normal on which face it collided. returns depth, which is between 0 and 1.
                     float nn = sweepAABB(a, b, velocity, glm::vec3(0.f), norm);
@@ -192,8 +218,9 @@ float CollisionController::sweepAroundAABB(const AABB a, glm::vec3 velocity, glm
                             nc[axis] += 1;
                         else
                             nc[axis] -= 1;
-                        if(mWorldInterface.getVoxelType(nc) != 0) continue;
+                        //if(mWorldInterface.getVoxelType(nc) != 0) continue;
 
+                        hitBlock = coord;
                         n = nn;
                         normal = norm;
                     }
@@ -217,7 +244,7 @@ bool CollisionController::AABBOnGround(AABB a)
     //a.z += a.depth * s;
     //a.width *= 1.0f - s*2.0f;
     //a.depth *= 1.0f - s*2.0f;
-    a.y -= 0.01f;
+    a.y -= 0.02f;
     a.height = 0;
     float y = a.y;
     glm::vec3 pos;
@@ -227,7 +254,6 @@ bool CollisionController::AABBOnGround(AABB a)
         {
             pos.x = x + a.x;
             pos.z = z + a.z;
-
 
             if(mWorldInterface.getVoxelType(pos) != 0){
                 b.x = glm::floor(pos.x);

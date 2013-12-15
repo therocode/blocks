@@ -2,6 +2,7 @@
 #include <vector>
 #include <chrono>
 #include "meshwalker.h"
+#include "marchingcubegenerator.h"
 
 using std::chrono::duration_cast;
 using std::chrono::microseconds;
@@ -33,6 +34,7 @@ VBO VBOCreator::generateChunkVBO(Chunk* mainChunk, Chunk* topChunk, Chunk* botto
     glm::vec3 chunkOffset(location.x * (float)chunkWidth, location.y * (float)chunkWidth, location.z * (float)chunkWidth);
 
     const VoxelTypeData& voxelTypeData = mainChunk->getVoxelTypeData();
+#if 1
     MeshWalker walker;
 
     for(uint32_t z = 0; z < chunkWidth; z++)
@@ -280,7 +282,7 @@ VBO VBOCreator::generateChunkVBO(Chunk* mainChunk, Chunk* topChunk, Chunk* botto
 		if(quad.mType == 1)resId = 3;
         textureLocation.x = (resId - 1) % 8;
         textureLocation.y = (resId - 1) / 8;
-        
+
 		rect->pushIndicesIntoVBO(nvbo);
         rect = (ChunkRect*)nvbo.getNextVertexPtr(4);
         rect->reset();
@@ -294,7 +296,11 @@ VBO VBOCreator::generateChunkVBO(Chunk* mainChunk, Chunk* topChunk, Chunk* botto
 
         verts +=4;indices+=6;
     }
+#else
+    MarchingCubeGenerator generator;
 
+
+#endif
     //printf("Generated %u vertices and %u indices\n", verts, indices);
     //After stuff has been added, you have to update the gpu vbo data.
     nvbo.uploadVBO();

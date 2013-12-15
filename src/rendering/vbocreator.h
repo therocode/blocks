@@ -20,6 +20,50 @@ struct ChunkVertex{
     }
 };
 
+struct ChunkTriangle {
+    ChunkVertex vs[3];
+    void setPosition(int i, float x, float y, float z){
+        if(i < 0 || i > 2) {
+            return;
+        }
+        vs[i].vert[0] = x;
+        vs[i].vert[1] = y;
+        vs[i].vert[2] = z;
+    }
+    void setUV(int i, float u, float v){
+        if(i < 0 || i > 2) {
+            return;
+        }
+        vs[i].uv[0] = u;
+        vs[i].uv[1] = v;
+    }
+    void calculateNormal(){
+        float* tPos = vs[0].vert;
+        glm::vec3 v0(tPos[0], tPos[1], tPos[2]);
+
+        tPos = vs[1].vert;
+        glm::vec3 v1(tPos[0], tPos[1], tPos[2]);
+
+        tPos = vs[2].vert;
+        glm::vec3 v2(tPos[0], tPos[1], tPos[2]);
+
+        v2 = v2 - v0;
+        v1 = glm::cross(v2, v0 - v1);
+
+        for(int i = 0; i < 3; i++){
+            vs[i].normal[0] = v1.x;
+            vs[i].normal[1] = v1.y;
+            vs[i].normal[2] = v1.z;
+        }
+    }
+    void pushIndicesIntoVBO(VBO& target){
+        int startID = target.getVertexCount();
+        target.pushIndex(startID);
+        target.pushIndex(startID + 1);
+        target.pushIndex(startID + 2);
+    }
+};
+
 /*chunk rectangle*/
 struct ChunkRect{
     ChunkVertex vs[4];
@@ -40,7 +84,7 @@ struct ChunkRect{
     }
     void calculateNormal(){
         float* tPos = vs[0].vert;
-        glm::vec3 v0(tPos[0], tPos[1], tPos[2]);		
+        glm::vec3 v0(tPos[0], tPos[1], tPos[2]);
 
         tPos = vs[1].vert;
         glm::vec3 v1(tPos[0], tPos[1], tPos[2]);
@@ -55,7 +99,7 @@ struct ChunkRect{
             vs[i].normal[0] = v1.x;
             vs[i].normal[1] = v1.y;
             vs[i].normal[2] = v1.z;
-        }	
+        }
     }
     void reset(){
         for(auto &v : vs)v.reset();
@@ -65,7 +109,7 @@ struct ChunkRect{
             v.color[0] = r;
             v.color[1] = g;
             v.color[2] = b;
-        }	
+        }
     }
     void setBounds(float sx, float sy, float ex, float ey){
         for(ChunkVertex &v : vs){
@@ -119,7 +163,7 @@ struct BillboardRect{
     }
     void calculateNormal(){
         float* tPos = vs[0].vert;
-        glm::vec3 v0(tPos[0], tPos[1], tPos[2]);		
+        glm::vec3 v0(tPos[0], tPos[1], tPos[2]);
 
         tPos = vs[1].vert;
         glm::vec3 v1(tPos[0], tPos[1], tPos[2]);
@@ -134,7 +178,7 @@ struct BillboardRect{
             vs[i].normal[0] = v1.x;
             vs[i].normal[1] = v1.y;
             vs[i].normal[2] = v1.z;
-        }	
+        }
     }
     void reset(){
         for(auto &v : vs)v.reset();
@@ -144,7 +188,7 @@ struct BillboardRect{
             v.color[0] = r;
             v.color[1] = g;
             v.color[2] = b;
-        }	
+        }
     }
 
     void pushIndicesIntoVBO(VBO& target){

@@ -13,7 +13,7 @@ bool testAABBAABB(const AABB a, const AABB b)
     return true;
 }
 
-float sweepAABB(const AABB a, const AABB b, const glm::vec3 va, const glm::vec3 vb, glm::vec3& n)
+float sweepAABB(const AABB a, const AABB b, const glm::vec3 va, const glm::vec3 vb, glm::ivec3& n)
 {
     glm::vec3 v = va - vb;
     AABB newAABB = a;
@@ -24,6 +24,22 @@ float sweepAABB(const AABB a, const AABB b, const glm::vec3 va, const glm::vec3 
     if(!testAABBAABB(newAABB, b))
     {
         return 1.0;
+    }
+    if(testAABBAABB(a, b)){
+        glm::vec3 d = glm::vec3(a.x, a.y, a.z) - glm::vec3(b.x, b.y, b.z);
+        glm::vec3 r = d / v;
+        float rn = glm::abs(r.x);
+        int h = 0;
+        if(glm::abs(r.y) < rn){
+            rn = glm::abs(r.y);
+            h = 1;
+        }
+        if(glm::abs(r.z < rn)){
+            rn = glm::abs(r.z);
+            h = 2;
+        }
+        n[h] = (v[h] < 0)?1: -1;
+        return 0;
     }
 
 
@@ -101,7 +117,6 @@ float sweepAABB(const AABB a, const AABB b, const glm::vec3 va, const glm::vec3 
 
     if(ye < exit)  exit = ye;
     if(ze < exit)  exit = ze;
-    float l = glm::length(v) + 0.0001f;
 
     if(entry > exit)
     {
@@ -139,34 +154,34 @@ float sweepAABB(const AABB a, const AABB b, const glm::vec3 va, const glm::vec3 
         {
             if(xEntry < 0.0f)
             {
-                n.x = 1.f;
+                n.x = 1;
             }else
             {
-                n.x = -1.0f;
+                n.x = -1;
             }
         }else if(axis == 1)
         {
             if(yEntry < 0.0f)
             {
-                n.y = 1.f;
+                n.y = 1;
             }else
             {
-                n.y = -1.0f;
+                n.y = -1;
             }
         }else if(axis == 2)
         {
             if(zEntry < 0.0f)
             {
-                n.z = 1.f;
+                n.z = 1;
             }else
             {
-                n.z = -1.0f;
+                n.z = -1;
             }
         }
         //printf("coollllllll %f, %f, %f, v: %f, %f, %f. n:%f, %f, %f\n", b.x - a.x, b.y - a.y, b.z - a.z, v.x, v.y, v.z, n.x, n.y, n.z);
         if(maxL > 1.0f)
         {
-            n.x = n.y = n.z =0.f;
+            n.x = n.y = n.z = 0;
             return 1.0f;
         }
     }
