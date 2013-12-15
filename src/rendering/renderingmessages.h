@@ -2,6 +2,9 @@
 #include <featherkit/messaging.h>
 #include "world/chunk.h"
 
+struct ClientChunkDeleted_tag{};//                                     coordinate
+using ClientChunkDeletedMessage = fea::Message<ClientChunkDeleted_tag, const ChunkCoordinate&>;
+
 struct AddGfxEntity_tag{};//                               id      position
 using AddGfxEntityMessage = fea::Message<AddGfxEntity_tag, size_t, const glm::vec3&>;
 

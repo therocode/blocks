@@ -10,8 +10,6 @@
 #include "../utilities/logger.h"
 
 class Server : public fea::MessageReceiver<FatalMessage>,
-               public fea::MessageReceiver<ChunkCreatedMessage>,
-               public fea::MessageReceiver<ChunkDeletedMessage>,
                public fea::MessageReceiver<AddGfxEntityMessage>,
                public fea::MessageReceiver<MoveGfxEntityMessage>,
                public fea::MessageReceiver<RotateGfxEntityMessage>,
@@ -27,8 +25,6 @@ class Server : public fea::MessageReceiver<FatalMessage>,
         void doLogic();
         void destroy();
         void handleMessage(const FatalMessage& received);
-        void handleMessage(const ChunkCreatedMessage& received);
-        void handleMessage(const ChunkDeletedMessage& received);
         void handleMessage(const AddGfxEntityMessage& received);
         void handleMessage(const MoveGfxEntityMessage& received);
         void handleMessage(const RotateGfxEntityMessage& received);

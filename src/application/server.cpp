@@ -7,8 +7,6 @@ Server::Server() : mUniverse(mBus),
     mLogName("server")
 {
     mBus.addMessageSubscriber<FatalMessage>(*this);
-    mBus.addMessageSubscriber<ChunkCreatedMessage>(*this);
-    mBus.addMessageSubscriber<ChunkDeletedMessage>(*this);
     mBus.addMessageSubscriber<AddGfxEntityMessage>(*this);
     mBus.addMessageSubscriber<MoveGfxEntityMessage>(*this);
     mBus.addMessageSubscriber<RotateGfxEntityMessage>(*this);
@@ -21,8 +19,6 @@ Server::Server() : mUniverse(mBus),
 Server::~Server()
 {
     mBus.removeMessageSubscriber<FatalMessage>(*this);
-    mBus.removeMessageSubscriber<ChunkCreatedMessage>(*this);
-    mBus.removeMessageSubscriber<ChunkDeletedMessage>(*this);
     mBus.removeMessageSubscriber<AddGfxEntityMessage>(*this);
     mBus.removeMessageSubscriber<MoveGfxEntityMessage>(*this);
     mBus.removeMessageSubscriber<RotateGfxEntityMessage>(*this);
@@ -84,23 +80,23 @@ void Server::handleMessage(const FatalMessage& received)
     exit(4);
 }
 
-void Server::handleMessage(const ChunkCreatedMessage& received)
-{
-    std::shared_ptr<BasePackage> chunkLoadedPackage(new ChunkLoadedPackage(received.data));
-    for(auto& client : mClients)
-    {
-        client.second->enqueuePackage(chunkLoadedPackage);
-    }
-}
-
-void Server::handleMessage(const ChunkDeletedMessage& received)
-{
-    std::shared_ptr<BasePackage> chunkDeletedPackage(new ChunkDeletedPackage(received.data));
-    for(auto& client : mClients)
-    {
-        client.second->enqueuePackage(chunkDeletedPackage);
-    }
-}
+//void Server::handleMessage(const ChunkCreatedMessage& received)
+//{
+//    std::shared_ptr<BasePackage> chunkLoadedPackage(new ChunkLoadedPackage(received.data));
+//    for(auto& client : mClients)
+//    {
+//        client.second->enqueuePackage(chunkLoadedPackage);
+//    }
+//}
+//
+//void Server::handleMessage(const ChunkDeletedMessage& received)
+//{
+//    std::shared_ptr<BasePackage> chunkDeletedPackage(new ChunkDeletedPackage(received.data));
+//    for(auto& client : mClients)
+//    {
+//        client.second->enqueuePackage(chunkDeletedPackage);
+//    }
+//}
 
 void Server::handleMessage(const AddGfxEntityMessage& received)
 {
