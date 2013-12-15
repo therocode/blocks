@@ -1,6 +1,7 @@
 #pragma once
 #include "worldstd.h"
-#include "region.h"
+
+class Region;
 
 class RegionProviderInterface
 {

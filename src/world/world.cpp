@@ -1,5 +1,4 @@
 #include "world.h"
-#include "localchunkprovider.h"
 
 ChunkReferenceMap World::getChunkMap() const
 {

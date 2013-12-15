@@ -1,6 +1,7 @@
 #pragma once
 #include "chunk.h"
 #include "regionproviderinterface.h"
+#include "region.h"
 
 class World : public RegionProviderInterface
 {
