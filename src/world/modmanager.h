@@ -4,12 +4,19 @@
 #include <cstdio>
 #include <exception>
 #include <fstream>
+#include <iostream>
 #include <map>
 #include <string>
 #include <unordered_map>
 #include <vector>
 
+#include <featherkit/messaging.h>
+
+#include <glm/gtx/string_cast.hpp>
+
 #include "chunk.h"
+#include "worldmessages.h"
+#include "worldstd.h"
 
 #define PR(x) std::cerr << #x << " = " << (x) << std::endl;
 
@@ -88,6 +95,7 @@ struct Mod
 using ChunkIndex = uint32_t;
 using ChunkModMap = std::unordered_map<VoxelCoordinate_uint8, VoxelType>;
 using RegionModMap = std::unordered_map<ChunkRegionCoordinate, ChunkModMap>;
+using TimestampMap = std::unordered_map<ChunkRegionCoordinate, uint64_t>;
 
 struct ModManagerException : public std::exception
 {
@@ -100,11 +108,11 @@ struct ModManagerException : public std::exception
 class ModManager 
 {
     public:
-        ModManager(std::string regionName);
+        ModManager(fea::MessageBus& messageBus, RegionCoordinate regionLoc);
 
         void loadMods(const ChunkRegionCoordinate loc);
         void applyMods(Chunk& chunk);
-        void saveMods();
+        void saveMods(uint64_t currentTimestamp);
         void setMod(ChunkRegionCoordinate chunkLoc, VoxelCoordinate_uint8 voxLoc, VoxelType type);
         void setMod(ChunkRegionCoordinate chunkLoc, VoxelCoordinate voxLoc, VoxelType type);
         VoxelType getMod(ChunkRegionCoordinate chunkLoc, VoxelCoordinate voxLoc);
@@ -114,7 +122,8 @@ class ModManager
         void initIndexFile();
         void _setMod(ChunkRegionCoordinate chunkLoc, VoxelCoordinate_uint8 voxLoc, VoxelType type);
 
-        std::string mRegionName;
+        fea::MessageBus mBus;
+        RegionCoordinate mRegionLoc;
         std::string mIndexPath;
         std::string mDataPath;
         RegionModMap mMods;

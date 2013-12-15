@@ -3,6 +3,10 @@
 #include <iostream>
 #include <string>
 
+#include <glm/gtx/string_cast.hpp>
+
+#include <featherkit/messaging.h>
+
 #include "world/chunk.h"
 #include "world/modmanager.h"
 
@@ -23,9 +27,11 @@ bool fexists(string filename)
 
 int main()
 {
-    string regionName = "testRegion";
-    string indexPath = regionDir + pathSep + regionName + ".idx";
-    string dataPath = regionDir + pathSep + regionName + ".dat";
+    fea::MessageBus bus;
+    RegionCoordinate regionLoc(1,1,1);
+    uint64_t timestamp = 0;
+    string indexPath = regionDir + pathSep + glm::to_string(regionLoc) + ".idx";
+    string dataPath = regionDir + pathSep + glm::to_string(regionLoc) + ".dat";
 
     if(fexists(indexPath))
     {
@@ -39,7 +45,7 @@ int main()
 
     VoxelType type1 = 1;
 
-    ModManager manager(regionName);
+    ModManager manager(bus, regionLoc);
 
     cout << "Setting..." << endl;
 
@@ -69,11 +75,11 @@ int main()
 
     cout << "Saving..." << endl;
 
-    manager.saveMods();
+    manager.saveMods(timestamp);
 
     cout << "Loading..." << endl;
 
-    ModManager manager2(regionName);
+    ModManager manager2(bus, regionLoc);
     for(int cx = 0; cx < regionWidth; ++cx)
     {
         for(int cy = 0; cy < 1; ++cy)

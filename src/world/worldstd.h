@@ -12,7 +12,7 @@ struct ChunkRegionCoordinate
     ChunkRegionCoordinate(int8_t x, int8_t y, int8_t z);
     bool operator==(const ChunkRegionCoordinate& other) const;
     bool operator!=(const ChunkRegionCoordinate& other) const;
-    ChunkCoordinate toWorldSpace(const RegionCoordinate& regionCoordinate);
+    ChunkCoordinate toWorldSpace(const RegionCoordinate& regionCoordinate) const;
     int8_t x;
     int8_t y;
     int8_t z;

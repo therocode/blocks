@@ -13,3 +13,6 @@ using SetVoxelMessage = fea::Message<SetVoxel_tag, const VoxelWorldCoordinate&, 
 
 struct VoxelSet_tag{};//
 using VoxelSetMessage = fea::Message<VoxelSet_tag, const ChunkCoordinate&, const VoxelCoordinate&, VoxelType>;
+
+struct ChunkLoaded_tag{};//                              chunk                   timestamp
+using ChunkLoadedMessage = fea::Message<ChunkLoaded_tag, const ChunkCoordinate&, uint64_t>;
