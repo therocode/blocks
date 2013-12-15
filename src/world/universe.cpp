@@ -8,17 +8,14 @@
 
 	Universe::Universe(fea::MessageBus& messageBus) 
 :   bus(messageBus),
-	standardWorld(messageBus),
 	entitySystem(messageBus),
 	worldInterface(standardWorld, entitySystem)
 {
-	bus.addMessageSubscriber<PlayerEntersChunkMessage>(*this);
 	bus.addMessageSubscriber<SetVoxelMessage>(*this);
 }
 
 Universe::~Universe()
 {
-	bus.removeMessageSubscriber<PlayerEntersChunkMessage>(*this);
 	bus.removeMessageSubscriber<SetVoxelMessage>(*this);
 }
 
@@ -26,7 +23,6 @@ void Universe::setup()
 {
     setSimplexSeed(823);
     entitySystem.setup();
-	standardWorld.initialise();
 
 	entitySystem.addController(std::unique_ptr<EntityController>(new PlayerController(bus, worldInterface)));
 	entitySystem.addController(std::unique_ptr<EntityController>(new PhysicsController(bus, worldInterface)));
@@ -43,16 +39,6 @@ void Universe::update()
 void Universe::destroy()
 {
     entitySystem.destroy();
-}
-
-void Universe::handleMessage(const PlayerEntersChunkMessage& received)
-{
-    size_t playerId;
-    ChunkCoordinate chunkCoordinate;
-
-	std::tie(playerId, chunkCoordinate) = received.data;
-
-    standardWorld.highlightChunk(playerId, chunkCoordinate);
 }
 
 void Universe::handleMessage(const SetVoxelMessage& received)

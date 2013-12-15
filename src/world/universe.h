@@ -8,7 +8,6 @@
 #include "worldmessages.h"
 
 class Universe : 
-        public fea::MessageReceiver<PlayerEntersChunkMessage>,
         public fea::MessageReceiver<SetVoxelMessage>
 {
     public:
@@ -17,7 +16,6 @@ class Universe :
         void setup();
         void update();
         void destroy();
-        virtual void handleMessage(const PlayerEntersChunkMessage& received);
         virtual void handleMessage(const SetVoxelMessage& received);
         WorldInterface& getWorldInterface();
     private:

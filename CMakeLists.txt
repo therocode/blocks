@@ -234,6 +234,7 @@ set(header_files
     src/world/chunkprovider.h
     src/world/region.h
     src/world/localchunkprovider.h
+    src/world/regionproviderinterface.h
     src/world/worldstd.h
 	src/world/universe.h
     src/world/world.h

@@ -1,18 +1,13 @@
 #pragma once
 #include "chunk.h"
-#include "region.h"
-#include <featherkit/messaging.h>
+#include "regionproviderinterface.h"
 
-class World
+class World : public RegionProviderInterface
 {
     public:
-        World(fea::MessageBus& messageBus);
-        void initialise(); 
-        void highlightChunk(size_t id, const ChunkCoordinate& chunk);
         ChunkReferenceMap getChunkMap() const;
+        bool hasRegion(const RegionCoordinate& coordinate) override;
+        const Region& getRegion(const RegionCoordinate& coordinate) override;
     private:
-        Region loadRegion(const RegionCoordinate& coordinate);
-        fea::MessageBus& mBus;
         std::unordered_map<RegionCoordinate, Region> mRegions;
-        std::unordered_map<size_t, ChunkCoordinate> highlights;
 };
