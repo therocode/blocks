@@ -16,7 +16,7 @@ class CollisionController : public EntityController,
         virtual void removeEntity(fea::EntityId id);
 		bool AABBOnGround(AABB a);
     private:
-		float sweepAroundAABB(const AABB a, glm::vec3 velocity, glm::ivec3& outnormal, VoxelWorldCoordinate& hitBlock, const glm::vec3 ignoreAxis = glm::vec3(0));
+		float sweepAroundAABB(const AABB _a, glm::vec3 velocity, glm::ivec3& outnormal, VoxelWorldCoordinate& hitBlock, const glm::vec3 ignoreAxis = glm::vec3(0));
         bool checkIfOnGround(fea::EntityPtr entity);
         fea::MessageBus& mBus;
 };

@@ -110,22 +110,37 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
             float e = 0.001f;
             approvedPosition = oldPosition + v * n;//* glm::max(n - 0.08f / moveLen, 0.0f);
             if(normal.x != 0){
-                  if(normal.x > 0){
-                    approvedPosition.x = (float)currentHitBlock.x + 1.0f + a.width * 0.5f + e;
+                if(normal.x > 0){
+                    moveLen = (float)currentHitBlock.x + 1.0f + a.width * 0.5f + e - approvedPosition.x;
+                    //approvedPosition.x = (float)currentHitBlock.x + 1.0f + a.width * 0.5f + e;
                 }else{
-                    approvedPosition.x = (float)currentHitBlock.x - a.width * 0.5f - e;
+                    moveLen = (float)currentHitBlock.x - a.width * 0.5f - e - approvedPosition.x; 
+                    //approvedPosition.x = (float)currentHitBlock.x - a.width * 0.5f - e;
+                }
+                if(glm::abs(moveLen) < 0.1f){
+                    approvedPosition.x += moveLen;
                 }
             }else if(normal.y != 0){
                 if(normal.y > 0){
-                    approvedPosition.y = (float)currentHitBlock.y + 1.0f + a.height * 0.5f + e;
+                    moveLen = (float)currentHitBlock.y + 1.0f + a.height * 0.5f + e - approvedPosition.y;
+                    //approvedPosition.x = (float)currentHitBlock.x + 1.0f + a.width * 0.5f + e;
                 }else{
-                    approvedPosition.y = (float)currentHitBlock.y - a.height * 0.5f - e;
+                    moveLen = (float)currentHitBlock.y - a.height * 0.5f - e - approvedPosition.y; 
+                    //approvedPosition.x = (float)currentHitBlock.x - a.width * 0.5f - e;
+                }
+                if(glm::abs(moveLen) < 0.1f){
+                    approvedPosition.y += moveLen;
                 }
             }else if(normal.z != 0){
                 if(normal.z > 0){
-                    approvedPosition.z = (float)currentHitBlock.z + 1.0f + a.depth * 0.5f + e;
+                    moveLen = (float)currentHitBlock.z + 1.0f + a.depth * 0.5f + e - approvedPosition.z;
+                    //approvedPosition.x = (float)currentHitBlock.x + 1.0f + a.width * 0.5f + e;
                 }else{
-                    approvedPosition.z = (float)currentHitBlock.z - a.depth * 0.5f - e;
+                    moveLen = (float)currentHitBlock.z - a.depth * 0.5f - e - approvedPosition.z; 
+                    //approvedPosition.x = (float)currentHitBlock.x - a.width * 0.5f - e;
+                }
+                if(glm::abs(moveLen) < 0.1f){
+                    approvedPosition.z += moveLen;
                 }
             }else{
                 printf("What\n");
@@ -165,11 +180,15 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
     mBus.sendMessage<EntityMovedMessage>(EntityMovedMessage(id, requestedPosition, approvedPosition));
 }
 
-float CollisionController::sweepAroundAABB(const AABB a, glm::vec3 velocity, glm::ivec3& outNormal, VoxelWorldCoordinate& hitBlock, const glm::vec3 ignoreAxis)
+float CollisionController::sweepAroundAABB(const AABB _a, glm::vec3 velocity, glm::ivec3& outNormal, VoxelWorldCoordinate& hitBlock, const glm::vec3 ignoreAxis)
 {
-    AABB b;
+    AABB a, b;
+    a = _a;
+    a.x = a.y = a.z = 0.0f;
+
     int sx = 1, sy = 2, sz = 1;
     float n = 1.0f;
+    float whatN = 1.0f;
     glm::ivec3 normal = glm::ivec3(0);
     float longest = 99999.f;
     //Loop througha cube of blocks and check if they are passableor not
@@ -179,13 +198,16 @@ float CollisionController::sweepAroundAABB(const AABB a, glm::vec3 velocity, glm
         {
             for(float z = -sz; z <= sz; z++)
             {
-                glm::vec3 cubePos = glm::vec3(a.x + velocity.x, a.y + velocity.y, a.z + velocity.z) + glm::vec3(x, y, z);
+                glm::vec3 cubePos = glm::vec3(_a.x + velocity.x, _a.y + velocity.y, _a.z + velocity.z) + glm::vec3(x, y, z);
                 //set position of aabb B
                 b.x = glm::floor(cubePos.x);
                 b.y = glm::floor(cubePos.y);
                 b.z = glm::floor(cubePos.z);
 
                 VoxelWorldCoordinate coord(b.x, b.y, b.z);
+                b.x -= _a.x;
+                b.y -= _a.y;
+                b.z -= _a.z;
 
                 //if(b.x < 0) b.x --;
                 //if(b.y < 0) b.y --;
@@ -218,8 +240,8 @@ float CollisionController::sweepAroundAABB(const AABB a, glm::vec3 velocity, glm
                             nc[axis] += 1;
                         else
                             nc[axis] -= 1;
-                        //if(mWorldInterface.getVoxelType(nc) != 0) continue;
-
+                        if(mWorldInterface.getVoxelType(nc) != 0){
+                        }
                         hitBlock = coord;
                         n = nn;
                         normal = norm;
@@ -227,6 +249,9 @@ float CollisionController::sweepAroundAABB(const AABB a, glm::vec3 velocity, glm
                 }
             }
         }
+    }
+    if(whatN < n){
+        n = whatN;
     }
     if(n < 1.0)
     {

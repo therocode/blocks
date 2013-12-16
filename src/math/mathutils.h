@@ -13,6 +13,6 @@ struct AABB
 using Vec3I = glm::ivec3;
 using scalar = double;
 
-float sweepAABB(const AABB a, const AABB b, const glm::vec3 va, const glm::vec3 vb,  glm::ivec3& n);
+float sweepAABB(const AABB _a, const AABB _b, const glm::vec3 va, const glm::vec3 vb,  glm::ivec3& n);
 bool testAABBAABB(const AABB a, const AABB b);
 void renderDebugAABB(const AABB a, const int color);

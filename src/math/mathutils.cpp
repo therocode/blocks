@@ -13,13 +13,21 @@ bool testAABBAABB(const AABB a, const AABB b)
     return true;
 }
 
-float sweepAABB(const AABB a, const AABB b, const glm::vec3 va, const glm::vec3 vb, glm::ivec3& n)
+float sweepAABB(const AABB _a, const AABB _b, const glm::vec3 va, const glm::vec3 vb, glm::ivec3& n)
 {
     glm::vec3 v = va - vb;
-    AABB newAABB = a;
-    newAABB.x = a.x + v.x;
-    newAABB.y = a.y + v.y;
-    newAABB.z = a.z + v.z;
+    AABB newAABB = _a;
+    newAABB.x = v.x;
+    newAABB.y = v.y;
+    newAABB.z = v.z;
+    AABB a = _a;
+    AABB b = _b;
+    b.x -= a.x;
+    b.y -= a.y;
+    b.z -= a.z;
+    a.x = a.y = a.z = 0.0f;
+
+
     n.x = n.y = n.z = 0;
     if(!testAABBAABB(newAABB, b))
     {
@@ -44,7 +52,7 @@ float sweepAABB(const AABB a, const AABB b, const glm::vec3 va, const glm::vec3 
 
 
 
-    float epsilon = 0.001f;
+    float epsilon = 0.01f;
     float xEntry, yEntry, zEntry;
     float xExit,  yExit,  zExit;
     if(v.x > 0.0f)
@@ -118,19 +126,19 @@ float sweepAABB(const AABB a, const AABB b, const glm::vec3 va, const glm::vec3 
     if(ye < exit)  exit = ye;
     if(ze < exit)  exit = ze;
 
-    if(entry > exit)
+    if(entry >= exit)
     {
         n.x = n.y = n.z = 0.0f;
         //      printf("what\n");
         return 1.0f;
-    }else if(xs < -epsilon && ys < -epsilon && zs < -epsilon)
+    }else if(xs < 0.0f && ys < 0.0f && zs < 0.0f)
     {
         n.x = n.y = n.z = 0.0f;
         //      printf("inside\n");
         return 1.0f;
     }else if(xs > 1.0f && ys > 1.0f && zs > 1.0f)
     {
-        n.x = n.y = n.z = 0.0f;
+        n.x = n.y = n.z = 0;
         //      printf("longer\n");
         return 1.0f;
     }
