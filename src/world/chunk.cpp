@@ -5,10 +5,16 @@
 
 Chunk::Chunk()
 {
+    VoxelTypeArray types;
+    types.fill(0);
+    setVoxelData(types);
 }
 
 Chunk::Chunk(const ChunkCoordinate& loc) : mLocation(loc)
 {
+    VoxelTypeArray types;
+    types.fill(0);
+    setVoxelData(types);
 }
 
 Chunk::Chunk(const ChunkCoordinate& loc, const VoxelTypeArray& types) : mLocation(loc)

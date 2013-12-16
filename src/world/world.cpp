@@ -14,3 +14,8 @@ const Region& World::getRegion(const RegionCoordinate& coordinate)
 {
     return mRegions.at(coordinate);
 }
+
+void World::addRegion(const RegionCoordinate& coordinate, const Region& region)
+{
+    mRegions.emplace(coordinate, std::move(region));
+}

@@ -50,9 +50,10 @@ void PlayerController::handleMessage(const PlayerJoinedMessage& received)
     std::cout << "created player entity and it's id is " << playerEntity.lock()->getId() << "\n";
     mPlayerEntities.emplace(playerId, playerEntity);
     playerEntity.lock()->setAttribute<ChunkCoordinate>("current_chunk", worldToChunk(position));
-    mBus.sendMessage<PlayerEntersChunkMessage>(PlayerEntersChunkMessage(playerId, worldToChunk(position)));
+    mBus.sendMessage(PlayerEntersChunkMessage(playerId, worldToChunk(position)));
+    mBus.sendMessage(ChunkRequestedMessage(worldToChunk(position)));
 
-    mBus.sendMessage<PlayerConnectedToEntityMessage>(PlayerConnectedToEntityMessage(playerId, playerEntity.lock()->getId()));
+    mBus.sendMessage(PlayerConnectedToEntityMessage(playerId, playerEntity.lock()->getId()));
 }
 
 void PlayerController::handleMessage(const PlayerDisconnectedMessage& received)

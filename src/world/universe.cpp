@@ -7,38 +7,42 @@
 #include "utilities/simplexnoise.h"
 
 	Universe::Universe(fea::MessageBus& messageBus) 
-:   bus(messageBus),
-	entitySystem(messageBus),
-	worldInterface(standardWorld, entitySystem)
+:   mBus(messageBus),
+	mEntitySystem(messageBus),
+	mWorldInterface(mStandardWorld, mEntitySystem),
+    mRegionProvider(mBus),
+    mChunkProvider(mBus, mStandardWorld)
 {
-	bus.addMessageSubscriber<SetVoxelMessage>(*this);
+	mBus.addMessageSubscriber<SetVoxelMessage>(*this);
+	mBus.addMessageSubscriber<RegionDeliverMessage>(*this);
 }
 
 Universe::~Universe()
 {
-	bus.removeMessageSubscriber<SetVoxelMessage>(*this);
+	mBus.removeMessageSubscriber<SetVoxelMessage>(*this);
+	mBus.removeMessageSubscriber<RegionDeliverMessage>(*this);
 }
 
 void Universe::setup()
 {
     setSimplexSeed(823);
-    entitySystem.setup();
+    mEntitySystem.setup();
 
-	entitySystem.addController(std::unique_ptr<EntityController>(new PlayerController(bus, worldInterface)));
-	entitySystem.addController(std::unique_ptr<EntityController>(new PhysicsController(bus, worldInterface)));
-	entitySystem.addController(std::unique_ptr<EntityController>(new CollisionController(bus, worldInterface)));
-	entitySystem.addController(std::unique_ptr<EntityController>(new MovementController(bus, worldInterface)));
-	entitySystem.addController(std::unique_ptr<EntityController>(new GfxController(bus, worldInterface)));
+	mEntitySystem.addController(std::unique_ptr<EntityController>(new PlayerController(mBus, mWorldInterface)));
+	mEntitySystem.addController(std::unique_ptr<EntityController>(new PhysicsController(mBus, mWorldInterface)));
+	mEntitySystem.addController(std::unique_ptr<EntityController>(new CollisionController(mBus, mWorldInterface)));
+	mEntitySystem.addController(std::unique_ptr<EntityController>(new MovementController(mBus, mWorldInterface)));
+	mEntitySystem.addController(std::unique_ptr<EntityController>(new GfxController(mBus, mWorldInterface)));
 }
 
 void Universe::update()
 {
-	entitySystem.update();
+	mEntitySystem.update();
 }
 
 void Universe::destroy()
 {
-    entitySystem.destroy();
+    mEntitySystem.destroy();
 }
 
 void Universe::handleMessage(const SetVoxelMessage& received)
@@ -55,12 +59,21 @@ void Universe::handleMessage(const SetVoxelMessage& received)
     //{
     //    standardWorld.getLandscape().getChunk(chunkCoord).setVoxelType(voxelCoord.x, voxelCoord.y, voxelCoord.z, type);
 
-    //    bus.sendMessage<VoxelSetMessage>(VoxelSetMessage(chunkCoord, voxelCoord, type));
+    //    mBus.sendMessage<VoxelSetMessage>(VoxelSetMessage(chunkCoord, voxelCoord, type));
     //}
+}
+
+void Universe::handleMessage(const RegionDeliverMessage& received)
+{
+    RegionCoordinate coordinate;
+    Region region;
+
+    std::tie(coordinate, region) = std::move(received.data);
+
+    mStandardWorld.addRegion(coordinate, region);
 }
 
 WorldInterface& Universe::getWorldInterface()
 {
-    return worldInterface;
+    return mWorldInterface;
 }
-

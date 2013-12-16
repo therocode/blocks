@@ -3,7 +3,7 @@
 
 class Region;
 
-class RegionProviderInterface
+class RegionStorageInterface
 {
     public:
         virtual bool hasRegion(const RegionCoordinate& coordinate) = 0;

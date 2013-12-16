@@ -1,11 +1,5 @@
 #include "region.h"
-#include "worldmessages.h"
 #include <iostream>
-
-Region::Region(fea::MessageBus& bus) : mBus(bus)
-{
-}
-
 
 bool Region::chunkIsLoaded(const ChunkRegionCoordinate& location) const
 {
