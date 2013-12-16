@@ -16,3 +16,9 @@ using VoxelSetMessage = fea::Message<VoxelSet_tag, const ChunkCoordinate&, const
 
 struct ChunkLoaded_tag{};//                              chunk                   timestamp
 using ChunkLoadedMessage = fea::Message<ChunkLoaded_tag, const ChunkCoordinate&, uint64_t>;
+
+struct ChunkHighlighted_tag{};//                                   chunk
+using ChunkHighlightedMessage = fea::Message<ChunkHighlighted_tag, const ChunkCoordinate&>;
+
+struct ChunkDehighlighted_tag{};//                                     chunk
+using ChunkDehighlightedMessage = fea::Message<ChunkDehighlighted_tag, const ChunkCoordinate&>;
