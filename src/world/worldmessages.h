@@ -28,3 +28,9 @@ using DeliverChunkMessage = fea::Message<DeliverChunk_tag, const ChunkCoordinate
 
 struct ChunkLoaded_tag{};//                              chunk                   timestamp
 using ChunkLoadedMessage = fea::Message<ChunkLoaded_tag, const ChunkCoordinate&, uint64_t>;
+
+struct ChunkHighlighted_tag{};//                                   chunk
+using ChunkHighlightedMessage = fea::Message<ChunkHighlighted_tag, const ChunkCoordinate&>;
+
+struct ChunkDehighlighted_tag{};//                                     chunk
+using ChunkDehighlightedMessage = fea::Message<ChunkDehighlighted_tag, const ChunkCoordinate&>;
