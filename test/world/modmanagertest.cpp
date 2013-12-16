@@ -16,290 +16,96 @@
 
 using namespace std;
 
-const string pathSep =
-#ifdef _WIN32
-    "\\";
-#else
-    "/";
-#endif
-
 bool fexists(string filename)
 {
     ifstream file(filename);
     return file;
 }
 
-class ChunkLoadedReceiver : public fea::MessageReceiver<ChunkLoadedMessage>
+TEST_CASE("set and get", "[set][get]")
 {
-    public:
-        uint64_t getTimestamp()
-        {
-            return mTimestamp;
-        }
+    ChunkCoordinate loc(12, 356, 9);
+    VoxelCoordinate voxLoc(9, 8, 7);
+    VoxelCoordinate voxLocInvalid(16, 16, 16);
+    VoxelCoordinate voxLocInvalid2(-1, -1, -1);
+    VoxelType type = 12;
 
-    private:
-        void handleMessage(const ChunkLoadedMessage& message)
-        {
-            tie(ignore, mTimestamp) = message.data; 
-        }
+    ModManager manager;
 
-        uint64_t mTimestamp;
-};
-
-TEST_CASE("save and load one", "[save][load]")
-{
-    fea::MessageBus bus;
-    RegionCoordinate regionLoc(-1,-1,-1);
-    uint64_t timestamp = 0;
-
-    string indexPath = regionDir + pathSep + glm::to_string(regionLoc) + ".idx";
-    string dataPath = regionDir + pathSep + glm::to_string(regionLoc) + ".dat";
-    if(fexists(indexPath))
+    SECTION("set and get one voxel")
     {
-        remove(indexPath.c_str());
+        manager.setMod(loc, voxLoc, type);
+        REQUIRE(type == manager.getMod(loc, voxLoc)); 
     }
 
-    if(fexists(dataPath))
+    SECTION("set invalid voxel location")
     {
-        remove(dataPath.c_str());
-    }
-
-    ChunkRegionCoordinate chunkLoc1 = ChunkRegionCoordinate(1, 1, 1);
-    VoxelCoordinate voxLoc1 = VoxelCoordinate(1, 1, 1);
-    VoxelType type1 = 1;
-
-    ModManager manager(bus, regionLoc);
-    manager.setMod(chunkLoc1, voxLoc1, type1);
-    manager.saveMods(timestamp);
-
-    ModManager manager2(bus, regionLoc);
-    manager2.loadMods(chunkLoc1);
-    REQUIRE(type1 == manager2.getMod(chunkLoc1, voxLoc1)); 
-}
-
-TEST_CASE("save and load many", "[save][load]")
-{
-    fea::MessageBus bus;
-    RegionCoordinate regionLoc(1,1,1);
-    uint64_t timestamp = 0;
-
-    string indexPath = regionDir + pathSep + glm::to_string(regionLoc) + ".idx";
-    string dataPath = regionDir + pathSep + glm::to_string(regionLoc) + ".dat";
-    if(fexists(indexPath))
-    {
-        remove(indexPath.c_str());
-    }
-
-    if(fexists(dataPath))
-    {
-        remove(dataPath.c_str());
-    }
-
-    VoxelType type1 = 1;
-
-    ModManager manager(bus, regionLoc);
-
-    for(int cx = 0; cx < regionWidth; ++cx)
-    {
-        for(int cy = 0; cy < 1; ++cy)
-        {
-            for(int cz = 0; cz < 1; ++cz)
-            {
-                ChunkRegionCoordinate chunkLoc(cx, cy, cz);
-
-                for(int vx = 0; vx < chunkWidth; ++vx)
-                {
-                    for(int vy = 0; vy < chunkWidth; ++vy)
-                    {
-                        for(int vz = 0; vz < chunkWidth; ++vz)
-                        {
-                            VoxelCoordinate voxLoc(vx, vy, vz);
-                            manager.setMod(chunkLoc, voxLoc, type1);
-                        }
-                    }
-                }
-
-            }
-        }
-    }
-
-    manager.saveMods(timestamp);
-
-    ModManager manager2(bus, regionLoc);
-    for(int cx = 0; cx < regionWidth; ++cx)
-    {
-        for(int cy = 0; cy < 1; ++cy)
-        {
-            for(int cz = 0; cz < 1; ++cz)
-            {
-                ChunkRegionCoordinate chunkLoc(cx, cy, cz);
-                manager2.loadMods(chunkLoc);
-
-                for(int vx = 0; vx < chunkWidth; ++vx)
-                {
-                    for(int vy = 0; vy < chunkWidth; ++vy)
-                    {
-                        for(int vz = 0; vz < chunkWidth; ++vz)
-                        {
-                            VoxelCoordinate voxLoc(vx, vy, vz);
-                            REQUIRE(type1 == manager2.getMod(chunkLoc, voxLoc)); 
-                        }
-                    }
-                }
-            }
-        }
+        CHECK_THROWS_AS(manager.setMod(loc, voxLocInvalid, type), ModManagerException);
+        CHECK_THROWS_AS(manager.setMod(loc, voxLocInvalid2, type), ModManagerException);
     }
 }
 
-TEST_CASE("save and load all", "[save][load]")
+TEST_CASE("save and load", "[save][load]")
 {
-    fea::MessageBus bus;
-    RegionCoordinate regionLoc(1,1,1);
-    uint64_t timestamp = 0;
-
-    string indexPath = regionDir + pathSep + glm::to_string(regionLoc) + ".idx";
-    string dataPath = regionDir + pathSep + glm::to_string(regionLoc) + ".dat";
-    if(fexists(indexPath))
-    {
-        remove(indexPath.c_str());
-    }
-
-    if(fexists(dataPath))
-    {
-        remove(dataPath.c_str());
-    }
-
-    VoxelType type1 = 1;
-
-    ModManager manager(bus, regionLoc);
-
-    for(int cx = 0; cx < regionWidth; ++cx)
-    {
-        for(int cy = 0; cy < regionWidth; ++cy)
-        {
-            for(int cz = 0; cz < regionWidth; ++cz)
-            {
-                ChunkRegionCoordinate chunkLoc(cx, cy, cz);
-
-                for(int vx = 0; vx < chunkWidth; ++vx)
-                {
-                    for(int vy = 0; vy < chunkWidth; ++vy)
-                    {
-                        for(int vz = 0; vz < chunkWidth; ++vz)
-                        {
-                            VoxelCoordinate voxLoc(vx, vy, vz);
-
-                            manager.setMod(chunkLoc, voxLoc, type1);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    manager.saveMods(timestamp);
-
-    ModManager manager2(bus, regionLoc);
-    for(int cx = 0; cx < regionWidth; ++cx)
-    {
-        for(int cy = 0; cy < regionWidth; ++cy)
-        {
-            for(int cz = 0; cz < regionWidth; ++cz)
-            {
-                ChunkRegionCoordinate chunkLoc(cx, cy, cz);
-                manager2.loadMods(chunkLoc);
-
-                for(int vx = 0; vx < chunkWidth; ++vx)
-                {
-                    for(int vy = 0; vy < chunkWidth; ++vy)
-                    {
-                        for(int vz = 0; vz < chunkWidth; ++vz)
-                        {
-                            VoxelCoordinate voxLoc(vx, vy, vz);
-                            REQUIRE(type1 == manager2.getMod(chunkLoc, voxLoc)); 
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-TEST_CASE("timestamp once", "[timestamp]")
-{
-    fea::MessageBus bus;
-    ChunkLoadedReceiver receiver;
-    bus.addMessageSubscriber(receiver);
-
-    RegionCoordinate regionLoc(1, 1, 1);
-    ChunkRegionCoordinate chunkLoc(1, 1, 1);
-    VoxelCoordinate voxLoc(1, 1, 1);
+    ChunkCoordinate loc(0, 0, 0);
+    ChunkCoordinate loc2(32, 32, 32);
+    RegionCoordinate regionLoc = chunkToRegion(loc);
+    RegionCoordinate regionLoc2 = chunkToRegion(loc2);
+    VoxelCoordinate voxLoc(0, 0, 0);    
+    VoxelCoordinate voxLoc2(1, 1, 1);
+    VoxelType defaultType = 0;
     VoxelType type = 1;
-    uint64_t timestamp = 643;
+    uint64_t timestamp = 0;
 
-    string indexPath = regionDir + pathSep + glm::to_string(regionLoc) + ".idx";
-    string dataPath = regionDir + pathSep + glm::to_string(regionLoc) + ".dat";
-    if(fexists(indexPath))
+    VoxelTypeArray voxelData;
+    voxelData.fill(defaultType);
+    Chunk chunk(loc, voxelData);
+    Chunk chunk2(loc2, voxelData);
+    ModManager manager;
+    ModManager manager2;
+    manager.deleteRegionFile(regionLoc);
+    manager.deleteRegionFile(regionLoc2);
+
+    SECTION("one voxel")
     {
-        remove(indexPath.c_str());
+        manager.setMod(loc, voxLoc, type);
+        manager.saveMods(timestamp, regionLoc);
+        manager2.loadMods(chunk);
+
+        REQUIRE(type == chunk.getVoxelType(voxLoc));
+        REQUIRE(defaultType == chunk.getVoxelType(voxLoc2));
     }
 
-    if(fexists(dataPath))
+    SECTION("set and load but don't save")
     {
-        remove(dataPath.c_str());
+        manager.setMod(loc, voxLoc, type);
+        manager.loadMods(chunk);
+
+        REQUIRE(defaultType == chunk.getVoxelType(voxLoc));
+        REQUIRE(defaultType == chunk.getVoxelType(voxLoc2));
     }
 
-    ModManager manager1(bus, regionLoc);
-    manager1.setMod(chunkLoc, voxLoc, type);
-    manager1.saveMods(timestamp);
+    SECTION("set and then load on a different manager")
+    {
+        manager.setMod(loc, voxLoc, type);
+        manager2.loadMods(chunk);
 
-    ModManager manager2(bus, regionLoc);
-    manager2.loadMods(chunkLoc);
+        REQUIRE(defaultType == chunk.getVoxelType(voxLoc));
+        REQUIRE(defaultType == chunk.getVoxelType(voxLoc2));
+    }
 
-    REQUIRE(timestamp == receiver.getTimestamp()); 
+    SECTION("all regions")
+    {
+        manager.setMod(loc, voxLoc, type);
+        manager.setMod(loc2, voxLoc, type);
+        manager.saveMods(timestamp);
+        manager.loadMods(chunk);
+        manager.loadMods(chunk2);
+
+        REQUIRE(type == chunk.getVoxelType(voxLoc));
+        REQUIRE(defaultType == chunk.getVoxelType(voxLoc2));
+        REQUIRE(type == chunk2.getVoxelType(voxLoc));
+        REQUIRE(defaultType == chunk.getVoxelType(voxLoc2));
+    }
 }
 
-TEST_CASE("timestamp twice", "[timestamp]")
-{
-    fea::MessageBus bus;
-    ChunkLoadedReceiver receiver;
-    bus.addMessageSubscriber(receiver);
-
-    RegionCoordinate regionLoc(1, 1, 1);
-    VoxelCoordinate voxLoc(1, 1, 1);
-    VoxelType type = 1;
-    ModManager manager1(bus, regionLoc);
-    ModManager manager2(bus, regionLoc);
-
-    string indexPath = regionDir + pathSep + glm::to_string(regionLoc) + ".idx";
-    string dataPath = regionDir + pathSep + glm::to_string(regionLoc) + ".dat";
-    if(fexists(indexPath))
-    {
-        remove(indexPath.c_str());
-    }
-
-    if(fexists(dataPath))
-    {
-        remove(dataPath.c_str());
-    }
-
-    ChunkRegionCoordinate chunkLoc(1, 1, 1);
-    uint64_t timestamp = 643;
-
-    manager1.setMod(chunkLoc, voxLoc, type);
-    manager1.saveMods(timestamp);
-
-    ChunkRegionCoordinate chunkLoc2(2,2,2);
-    uint64_t timestamp2 = 12312;
-
-    manager1.setMod(chunkLoc2, voxLoc, type);
-    manager1.saveMods(timestamp2);
-
-    manager2.loadMods(chunkLoc);
-
-    REQUIRE(timestamp == receiver.getTimestamp());
-
-    manager2.loadMods(chunkLoc2);
-
-    REQUIRE(timestamp2 == receiver.getTimestamp());
-}
