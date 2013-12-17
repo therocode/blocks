@@ -25,9 +25,9 @@ bool fexists(string filename)
 TEST_CASE("set and get", "[set][get]")
 {
     ChunkCoordinate loc(12, 356, 9);
-    VoxelCoordinate voxLoc(9, 8, 7);
-    VoxelCoordinate voxLocInvalid(16, 16, 16);
-    VoxelCoordinate voxLocInvalid2(-1, -1, -1);
+    VoxelChunkCoordinate voxLoc(9, 8, 7);
+    VoxelChunkCoordinate voxLocInvalid(16, 16, 16);
+    VoxelChunkCoordinate voxLocInvalid2(-1, -1, -1);
     VoxelType type = 12;
 
     ModManager manager;
@@ -51,8 +51,8 @@ TEST_CASE("save and load", "[save][load]")
     ChunkCoordinate loc2(32, 32, 32);
     RegionCoordinate regionLoc = chunkToRegion(loc);
     RegionCoordinate regionLoc2 = chunkToRegion(loc2);
-    VoxelCoordinate voxLoc(0, 0, 0);    
-    VoxelCoordinate voxLoc2(1, 1, 1);
+    VoxelChunkCoordinate voxLoc(0, 0, 0);    
+    VoxelChunkCoordinate voxLoc2(1, 1, 1);
     VoxelType defaultType = 0;
     VoxelType type = 1;
     uint64_t timestamp = 0;
@@ -108,4 +108,3 @@ TEST_CASE("save and load", "[save][load]")
         REQUIRE(defaultType == chunk.getVoxelType(voxLoc2));
     }
 }
-

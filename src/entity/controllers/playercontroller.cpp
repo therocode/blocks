@@ -50,9 +50,10 @@ void PlayerController::handleMessage(const PlayerJoinedMessage& received)
     std::cout << "created player entity and it's id is " << playerEntity.lock()->getId() << "\n";
     mPlayerEntities.emplace(playerId, playerEntity);
     playerEntity.lock()->setAttribute<ChunkCoordinate>("current_chunk", worldToChunk(position));
-    mBus.sendMessage<PlayerEntersChunkMessage>(PlayerEntersChunkMessage(playerId, worldToChunk(position)));
+    mBus.sendMessage(PlayerEntersChunkMessage(playerId, worldToChunk(position)));
+    mBus.sendMessage(ChunkRequestedMessage(worldToChunk(position)));
 
-    mBus.sendMessage<PlayerConnectedToEntityMessage>(PlayerConnectedToEntityMessage(playerId, playerEntity.lock()->getId()));
+    mBus.sendMessage(PlayerConnectedToEntityMessage(playerId, playerEntity.lock()->getId()));
 }
 
 void PlayerController::handleMessage(const PlayerDisconnectedMessage& received)
@@ -100,7 +101,7 @@ void PlayerController::handleMessage(const PlayerActionMessage& received)
 			VoxelWorldCoordinate voxel = mPlayerEntities.at(playerId).lock()->getAttribute<VoxelWorldCoordinate>("block_facing");
 			int face = mPlayerEntities.at(playerId).lock()->getAttribute<int>("block_facing_face");
 			ChunkCoordinate cc = worldToChunkInt(voxel.x, voxel.y, voxel.z);
-			VoxelCoordinate vc = worldToChunkVoxel(voxel.x, voxel.y, voxel.z);
+			VoxelChunkCoordinate vc = worldToChunkVoxel(voxel.x, voxel.y, voxel.z);
 			// printf("ChunkCoord: %i, %i, %i. VoxelCoord: %i, %i, %i. World: %i, %i, %i\n", cc.x, cc.y, cc.z, vc.x, vc.y, vc.z, voxel.x, voxel.y, voxel.z);
 			// printf("Face: %i\n", face);
 			switch(face){

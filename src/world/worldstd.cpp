@@ -1,5 +1,15 @@
 #include "worldstd.h"
 
+int32_t wrapInt(int32_t kX, int32_t const kLowerBound, int32_t const kUpperBound)
+{
+    int32_t range_size = kUpperBound - kLowerBound + 1;
+
+    if (kX < kLowerBound)
+        kX += range_size * ((kLowerBound - kX) / range_size + 1);
+
+    return kLowerBound + (kX - kLowerBound) % range_size;
+}
+
 ChunkRegionCoordinate::ChunkRegionCoordinate() : x(0), y(0), z(0)
 {
 }
@@ -69,12 +79,12 @@ VoxelWorldCoordinate worldToVoxel(const glm::vec3& position)
     return worldToVoxel(position.x, position.y, position.z);
 }
 
-VoxelCoordinate worldToChunkVoxel(const glm::vec3& position)
+VoxelChunkCoordinate worldToChunkVoxel(const glm::vec3& position)
 {
 	return worldToChunkVoxel(position.x, position.y, position.z);
 }
 
-VoxelCoordinate worldToChunkVoxel(float x, float y, float z)
+VoxelChunkCoordinate worldToChunkVoxel(float x, float y, float z)
 {
 	int xNegative = (int)(x - chunkWidth) / chunkWidth;
 	int yNegative = (int)(y - chunkWidth) / chunkWidth;
@@ -84,7 +94,7 @@ VoxelCoordinate worldToChunkVoxel(float x, float y, float z)
 	if(yNegative < 0) y += (-yNegative + 1) * chunkWidth;
 	if(zNegative < 0) z += (-zNegative + 1) * chunkWidth;
 
-    return VoxelCoordinate((((int)x) % chunkWidth),
+    return VoxelChunkCoordinate((((int)x) % chunkWidth),
                            (((int)y) % chunkWidth),
                            (((int)z) % chunkWidth));
 }
@@ -117,29 +127,9 @@ RegionCoordinate chunkToRegion(const ChunkCoordinate& coordinate)
     return chunkToRegion(coordinate.x, coordinate.y, coordinate.z);
 }
 
-ChunkRegionCoordinate chunkToChunkRegion(int x, int y, int z)
+ChunkRegionCoordinate chunkToChunkRegion(int32_t x, int32_t y, int32_t z)
 {
-    ChunkRegionCoordinate c;
-    c.x = x%regionWidth;
-    c.y = y%regionWidth;
-    c.z = z%regionWidth;
-
-    if(c.x == -2)
-        c.x = 1;
-    else if(c.x == -1)
-        c.x = 2;
-
-    if(c.y == -2)
-        c.y = 1;
-    else if(c.y == -1)
-        c.y = 2;
-
-    if(c.z == -2)
-        c.z = 1;
-    else if(c.z == -1)
-        c.z = 2;
-
-    return c;
+    return ChunkRegionCoordinate(wrapInt(x, 0, 31), wrapInt(y, 0, 31), wrapInt(z, 0, 31));
 }
 
 ChunkRegionCoordinate chunkToChunkRegion(const ChunkCoordinate& coordinate)

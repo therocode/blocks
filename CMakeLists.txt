@@ -121,8 +121,9 @@ set(source_files
     src/utilities/whitenoise.cpp
 
 	src/world/chunk.cpp
+    src/world/chunkprovider.cpp
     src/world/region.cpp
-    src/world/localchunkprovider.cpp
+    src/world/regionprovider.cpp
     src/world/worldstd.cpp
 	src/world/universe.cpp
     src/world/world.cpp
@@ -233,7 +234,8 @@ set(header_files
 	src/world/chunk.h
     src/world/chunkprovider.h
     src/world/region.h
-    src/world/localchunkprovider.h
+    src/world/regionstorageinterface.h
+    src/world/regionprovider.h
     src/world/worldstd.h
 	src/world/universe.h
     src/world/world.h

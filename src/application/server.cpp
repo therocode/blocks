@@ -7,28 +7,26 @@ Server::Server() : mUniverse(mBus),
     mLogName("server")
 {
     mBus.addMessageSubscriber<FatalMessage>(*this);
-    mBus.addMessageSubscriber<ChunkCreatedMessage>(*this);
-    mBus.addMessageSubscriber<ChunkDeletedMessage>(*this);
     mBus.addMessageSubscriber<AddGfxEntityMessage>(*this);
     mBus.addMessageSubscriber<MoveGfxEntityMessage>(*this);
     mBus.addMessageSubscriber<RotateGfxEntityMessage>(*this);
     mBus.addMessageSubscriber<RemoveGfxEntityMessage>(*this);
     mBus.addMessageSubscriber<PlayerConnectedToEntityMessage>(*this);
     mBus.addMessageSubscriber<PlayerFacingBlockMessage>(*this);
+    mBus.addMessageSubscriber<ChunkDeliverMessage>(*this);
     mBus.addMessageSubscriber<VoxelSetMessage>(*this);
 }
 
 Server::~Server()
 {
     mBus.removeMessageSubscriber<FatalMessage>(*this);
-    mBus.removeMessageSubscriber<ChunkCreatedMessage>(*this);
-    mBus.removeMessageSubscriber<ChunkDeletedMessage>(*this);
     mBus.removeMessageSubscriber<AddGfxEntityMessage>(*this);
     mBus.removeMessageSubscriber<MoveGfxEntityMessage>(*this);
     mBus.removeMessageSubscriber<RotateGfxEntityMessage>(*this);
     mBus.removeMessageSubscriber<RemoveGfxEntityMessage>(*this);
     mBus.removeMessageSubscriber<PlayerConnectedToEntityMessage>(*this);
     mBus.removeMessageSubscriber<PlayerFacingBlockMessage>(*this);
+    mBus.removeMessageSubscriber<ChunkDeliverMessage>(*this);
     mBus.removeMessageSubscriber<VoxelSetMessage>(*this);
 }
 
@@ -84,23 +82,31 @@ void Server::handleMessage(const FatalMessage& received)
     exit(4);
 }
 
-void Server::handleMessage(const ChunkCreatedMessage& received)
+void Server::handleMessage(const ChunkDeliverMessage& received)
 {
-    std::shared_ptr<BasePackage> chunkLoadedPackage(new ChunkLoadedPackage(received.data));
+    ChunkCoordinate coordinate;
+    Chunk chunk;
+
+    std::tie(coordinate, chunk) = received.data;
+
+    VoxelTypeData typeData = chunk.getVoxelTypeData();
+
+    std::shared_ptr<BasePackage> chunkLoadedPackage(new ChunkLoadedPackage(coordinate, typeData.mRleSegmentIndices, typeData.mRleSegments));
+
     for(auto& client : mClients)
     {
         client.second->enqueuePackage(chunkLoadedPackage);
     }
 }
 
-void Server::handleMessage(const ChunkDeletedMessage& received)
-{
-    std::shared_ptr<BasePackage> chunkDeletedPackage(new ChunkDeletedPackage(received.data));
-    for(auto& client : mClients)
-    {
-        client.second->enqueuePackage(chunkDeletedPackage);
-    }
-}
+//void Server::handleMessage(const ChunkDeletedMessage& received)
+//{
+//    std::shared_ptr<BasePackage> chunkDeletedPackage(new ChunkDeletedPackage(received.data));
+//    for(auto& client : mClients)
+//    {
+//        client.second->enqueuePackage(chunkDeletedPackage);
+//    }
+//}
 
 void Server::handleMessage(const AddGfxEntityMessage& received)
 {

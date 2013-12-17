@@ -1,39 +1,28 @@
 #include "world.h"
-#include "worldmessages.h"
-#include "localchunkprovider.h"
-
-World::World(fea::MessageBus& messageBus) : mBus(messageBus)
-{
-
-}
-
-void World::initialise()
-{
-}
-
-void World::highlightChunk(size_t id, const ChunkCoordinate& chunk)
-{
-    RegionCoordinate regionCoordinate(chunk);
-
-    auto region = mRegions.find(regionCoordinate);
-
-    if(region == mRegions.end())
-    {
-        mRegions.emplace(regionCoordinate, loadRegion(regionCoordinate));
-        region = mRegions.find(regionCoordinate);
-    }
-    region->second.highlightChunk(id, ChunkRegionCoordinate(chunk.x, chunk.y, chunk.z));
-}
 
 ChunkReferenceMap World::getChunkMap() const
 {
     return ChunkReferenceMap();
 }
 
-Region World::loadRegion(const RegionCoordinate& coordinate)
+bool World::hasRegion(const RegionCoordinate& coordinate)
 {
-    Region newRegion(mBus);
-    newRegion.setChunkProvider(std::unique_ptr<ChunkProvider>(new LocalChunkProvider()));
+    return mRegions.find(coordinate) != mRegions.end();
+}
 
-    return newRegion;
+const Region& World::getRegion(const RegionCoordinate& coordinate)
+{
+    return mRegions.at(coordinate);
+}
+
+void World::addRegion(const RegionCoordinate& coordinate, const Region& region)
+{
+    mRegions.emplace(coordinate, std::move(region));
+}
+
+void World::addChunk(const ChunkCoordinate& coordinate, const Chunk& chunk)
+{
+    RegionCoordinate region = chunkToRegion(coordinate);
+
+    mRegions.at(region).addChunk(chunkToChunkRegion(coordinate), chunk);
 }

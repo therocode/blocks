@@ -3,7 +3,7 @@
 using namespace std;
 
 VoxelCoordinate_uint8::VoxelCoordinate_uint8() {}
-VoxelCoordinate_uint8::VoxelCoordinate_uint8(VoxelCoordinate coord)
+VoxelCoordinate_uint8::VoxelCoordinate_uint8(VoxelChunkCoordinate coord)
     : x(coord.x), y(coord.y), z(coord.z) 
 {}
 
@@ -181,7 +181,7 @@ void ModManager::setMod(ChunkCoordinate loc, VoxelCoordinate_uint8 voxLoc, Voxel
     _setMod(regionLoc, chunkLoc, voxLoc, type); 
 }
 
-void ModManager::setMod(ChunkCoordinate loc, VoxelCoordinate voxLoc, VoxelType type)
+void ModManager::setMod(ChunkCoordinate loc, VoxelChunkCoordinate voxLoc, VoxelType type)
 {
     RegionCoordinate regionLoc = chunkToRegion(loc);
     ChunkRegionCoordinate chunkLoc = chunkToChunkRegion(loc);
@@ -189,7 +189,7 @@ void ModManager::setMod(ChunkCoordinate loc, VoxelCoordinate voxLoc, VoxelType t
     _setMod(regionLoc, chunkLoc, VoxelCoordinate_uint8(voxLoc), type);
 }
 
-VoxelType ModManager::getMod(ChunkCoordinate loc, VoxelCoordinate voxLoc)
+VoxelType ModManager::getMod(ChunkCoordinate loc, VoxelChunkCoordinate voxLoc)
 {
     RegionCoordinate regionLoc = chunkToRegion(loc);
     ChunkRegionCoordinate chunkLoc = chunkToChunkRegion(loc);

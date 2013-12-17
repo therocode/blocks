@@ -10,14 +10,13 @@
 #include "../utilities/logger.h"
 
 class Server : public fea::MessageReceiver<FatalMessage>,
-               public fea::MessageReceiver<ChunkCreatedMessage>,
-               public fea::MessageReceiver<ChunkDeletedMessage>,
                public fea::MessageReceiver<AddGfxEntityMessage>,
                public fea::MessageReceiver<MoveGfxEntityMessage>,
                public fea::MessageReceiver<RotateGfxEntityMessage>,
                public fea::MessageReceiver<RemoveGfxEntityMessage>,
                public fea::MessageReceiver<PlayerConnectedToEntityMessage>,
                public fea::MessageReceiver<PlayerFacingBlockMessage>,
+               public fea::MessageReceiver<ChunkDeliverMessage>,
                public fea::MessageReceiver<VoxelSetMessage>
 {
     public:
@@ -27,14 +26,13 @@ class Server : public fea::MessageReceiver<FatalMessage>,
         void doLogic();
         void destroy();
         void handleMessage(const FatalMessage& received);
-        void handleMessage(const ChunkCreatedMessage& received);
-        void handleMessage(const ChunkDeletedMessage& received);
         void handleMessage(const AddGfxEntityMessage& received);
         void handleMessage(const MoveGfxEntityMessage& received);
         void handleMessage(const RotateGfxEntityMessage& received);
         void handleMessage(const RemoveGfxEntityMessage& received);
         void handleMessage(const PlayerConnectedToEntityMessage& received);
         void handleMessage(const PlayerFacingBlockMessage& received);
+        void handleMessage(const ChunkDeliverMessage& received);
         void handleMessage(const VoxelSetMessage& received);
         void setClientListener(std::unique_ptr<ClientConnectionListener> clientListener);
 		fea::MessageBus& getBus();

@@ -6,10 +6,13 @@
 #include <featherkit/messaging.h>
 #include "../rendering/renderingmessages.h"
 #include "worldmessages.h"
+#include "chunkprovider.h"
+#include "regionprovider.h"
 
 class Universe : 
-        public fea::MessageReceiver<PlayerEntersChunkMessage>,
-        public fea::MessageReceiver<SetVoxelMessage>
+        public fea::MessageReceiver<SetVoxelMessage>,
+        public fea::MessageReceiver<RegionDeliverMessage>,
+        public fea::MessageReceiver<ChunkDeliverMessage>
 {
     public:
         Universe(fea::MessageBus& messageBus);
@@ -17,13 +20,16 @@ class Universe :
         void setup();
         void update();
         void destroy();
-        virtual void handleMessage(const PlayerEntersChunkMessage& received);
         virtual void handleMessage(const SetVoxelMessage& received);
+        virtual void handleMessage(const RegionDeliverMessage& received);
+        virtual void handleMessage(const ChunkDeliverMessage& received);
         WorldInterface& getWorldInterface();
     private:
 		glm::vec3 mCamPos, mCamDir;
-        fea::MessageBus& bus;
-        World standardWorld;
-        EntitySystem entitySystem;
-        WorldInterface worldInterface;
+        fea::MessageBus& mBus;
+        World mStandardWorld;
+        EntitySystem mEntitySystem;
+        WorldInterface mWorldInterface;
+        RegionProvider mRegionProvider;
+        ChunkProvider mChunkProvider;
 };

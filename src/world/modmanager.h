@@ -35,7 +35,7 @@ const std::string pathSep =
 struct VoxelCoordinate_uint8
 {
     VoxelCoordinate_uint8();
-    VoxelCoordinate_uint8(VoxelCoordinate coord);
+    VoxelCoordinate_uint8(VoxelChunkCoordinate coord);
 
     bool operator==(const VoxelCoordinate_uint8& other) const;
     bool operator!=(const VoxelCoordinate_uint8& other) const;
@@ -121,8 +121,8 @@ class ModManager
         void saveMods(uint64_t currentTimestamp);
         void saveMods(uint64_t currentTimestamp, RegionCoordinate regionLoc);
         void setMod(ChunkCoordinate loc, VoxelCoordinate_uint8 voxLoc, VoxelType type);
-        void setMod(ChunkCoordinate loc, VoxelCoordinate voxLoc, VoxelType type);
-        VoxelType getMod(ChunkCoordinate loc, VoxelCoordinate voxLoc);
+        void setMod(ChunkCoordinate loc, VoxelChunkCoordinate voxLoc, VoxelType type);
+        VoxelType getMod(ChunkCoordinate loc, VoxelChunkCoordinate voxLoc);
         void deleteRegionFile(const RegionCoordinate& regionLoc);
 
     private:

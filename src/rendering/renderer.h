@@ -6,7 +6,6 @@
 #include "../input/inputmessages.h"
 #include "renderingmessages.h"
 #include "../entity/entitymessages.h"
-#include "../world/worldmessages.h"
 #include "camera.h"
 #include <vector>
 #include <map>
@@ -21,7 +20,7 @@
 
 class Renderer
     :   public fea::MessageReceiver<UpdateChunkVboMessage>,
-        public fea::MessageReceiver<ChunkDeletedMessage>,
+        public fea::MessageReceiver<ClientChunkDeletedMessage>,
         public fea::MessageReceiver<WindowResizeMessage>,
         public fea::MessageReceiver<AddGfxEntityMessage>,
         public fea::MessageReceiver<MoveGfxEntityMessage>,
@@ -42,7 +41,7 @@ class Renderer
         void makeTexture(const std::string& path, uint32_t width, uint32_t height, GLuint& textureId);
         void setup();
         virtual void handleMessage(const UpdateChunkVboMessage& received);
-        virtual void handleMessage(const ChunkDeletedMessage& received);
+        virtual void handleMessage(const ClientChunkDeletedMessage& received);
         virtual void handleMessage(const WindowResizeMessage& received);
         virtual void handleMessage(const AddGfxEntityMessage& received);
         virtual void handleMessage(const MoveGfxEntityMessage& received);

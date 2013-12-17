@@ -6,6 +6,8 @@
 using ChunkCoordinate = glm::ivec3;
 using RegionCoordinate = glm::ivec3;
 
+int32_t wrapInt(int32_t kX, int32_t const kLowerBound, int32_t const kUpperBound);
+
 struct ChunkRegionCoordinate
 {
     ChunkRegionCoordinate();
@@ -18,7 +20,7 @@ struct ChunkRegionCoordinate
     int8_t z;
 };
 
-using VoxelCoordinate = glm::uvec3;
+using VoxelChunkCoordinate = glm::uvec3;
 using VoxelWorldCoordinate = glm::ivec3;
 
 const int32_t regionWidth = 32;
@@ -62,8 +64,8 @@ ChunkCoordinate worldToChunk(float x, float y, float z);
 ChunkCoordinate worldToChunk(const glm::vec3& position);
 ChunkCoordinate worldToChunkInt(int x, int y, int z);
 
-VoxelCoordinate worldToChunkVoxel(const glm::vec3& position);
-VoxelCoordinate worldToChunkVoxel(float x, float y, float z);
+VoxelChunkCoordinate worldToChunkVoxel(const glm::vec3& position);
+VoxelChunkCoordinate worldToChunkVoxel(float x, float y, float z);
 
 VoxelWorldCoordinate worldToVoxel(float x, float y, float z);
 VoxelWorldCoordinate worldToVoxel(const glm::vec3& position);
@@ -71,5 +73,5 @@ VoxelWorldCoordinate worldToVoxel(const glm::vec3& position);
 RegionCoordinate chunkToRegion(int x, int y, int z);
 RegionCoordinate chunkToRegion(const ChunkCoordinate& coordinate);
 
-ChunkRegionCoordinate chunkToChunkRegion(int x, int y, int z);
+ChunkRegionCoordinate chunkToChunkRegion(int32_t x, int32_t y, int32_t z);
 ChunkRegionCoordinate chunkToChunkRegion(const ChunkCoordinate& coordinate);

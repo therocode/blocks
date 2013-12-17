@@ -220,7 +220,7 @@ void Client::fetchServerData()
 			VoxelSetPackage* voxelSetPackage = (VoxelSetPackage*)package.get();
 
             ChunkCoordinate chunkCoordinate;
-            VoxelCoordinate voxelCoordinate;
+            VoxelChunkCoordinate voxelCoordinate;
             VoxelType type;
 
 			std::tie(chunkCoordinate, voxelCoordinate, type) = voxelSetPackage->getData();
@@ -277,7 +277,7 @@ void Client::fetchServerData()
 
             std::tie(coordinate) = chunkPackage->getData();
 
-			mBus.sendMessage<ChunkDeletedMessage>(ChunkDeletedMessage(chunkPackage->getData()));
+			mBus.sendMessage<ClientChunkDeletedMessage>(ClientChunkDeletedMessage(chunkPackage->getData()));
 
             mLocalChunks.erase(coordinate);
 		}

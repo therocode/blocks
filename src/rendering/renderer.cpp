@@ -10,7 +10,7 @@ Renderer::Renderer(fea::MessageBus& messageBus) : bus(messageBus), mPlayerId(-1)
 {
 	mTimer.start();
 	bus.addMessageSubscriber<UpdateChunkVboMessage>(*this);
-	bus.addMessageSubscriber<ChunkDeletedMessage>(*this);
+	bus.addMessageSubscriber<ClientChunkDeletedMessage>(*this);
 	bus.addMessageSubscriber<WindowResizeMessage>(*this);
 	bus.addMessageSubscriber<AddGfxEntityMessage>(*this);
 	bus.addMessageSubscriber<MoveGfxEntityMessage>(*this);
@@ -26,7 +26,7 @@ Renderer::Renderer(fea::MessageBus& messageBus) : bus(messageBus), mPlayerId(-1)
 Renderer::~Renderer()
 {
 	bus.removeMessageSubscriber<UpdateChunkVboMessage>(*this);
-	bus.removeMessageSubscriber<ChunkDeletedMessage>(*this);
+	bus.removeMessageSubscriber<ClientChunkDeletedMessage>(*this);
 	bus.removeMessageSubscriber<WindowResizeMessage>(*this);
 	bus.removeMessageSubscriber<AddGfxEntityMessage>(*this);
 	bus.removeMessageSubscriber<MoveGfxEntityMessage>(*this);
@@ -137,7 +137,7 @@ void Renderer::handleMessage(const UpdateChunkVboMessage& received)
     }*/
 }
 
-void Renderer::handleMessage(const ChunkDeletedMessage& received)
+void Renderer::handleMessage(const ClientChunkDeletedMessage& received)
 {
     ChunkCoordinate coordinate;
 
