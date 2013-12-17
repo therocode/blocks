@@ -75,3 +75,5 @@ RegionCoordinate chunkToRegion(const ChunkCoordinate& coordinate);
 
 ChunkRegionCoordinate chunkToChunkRegion(int32_t x, int32_t y, int32_t z);
 ChunkRegionCoordinate chunkToChunkRegion(const ChunkCoordinate& coordinate);
+
+ChunkCoordinate voxelToChunk(const VoxelCoordinate& coordinate);

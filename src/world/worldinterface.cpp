@@ -9,7 +9,7 @@
 
 VoxelType WorldInterface::getVoxelTypeInt(int x, int y, int z) const
 {
-    return getVoxelType(VoxelWorldCoordinate(x, y, z));
+    return mWorld.getVoxelType(VoxelWorldCoordinate(x, y, z));
 }
 
 VoxelType WorldInterface::getVoxelType(const VoxelWorldCoordinate coord) const
@@ -25,7 +25,7 @@ VoxelType WorldInterface::getVoxelType(float x, float y, float z) const
 
 VoxelType WorldInterface::getVoxelType(const glm::vec3& position) const
 {
-    return getVoxelType(position.x, position.y, position.z);
+    return getVoxelType(worldToVoxel(position));
 }
 bool WorldInterface::getVoxelAtRay(const glm::vec3& position, const glm::vec3& direction, const float maxDistance, int& hitFace, VoxelWorldCoordinate& hitBlock ) const
 {

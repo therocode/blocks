@@ -11,6 +11,7 @@ class World : public RegionStorageInterface
         const Region& getRegion(const RegionCoordinate& coordinate) override;
         void addRegion(const RegionCoordinate& coordinate, const Region& region);
         void addChunk(const ChunkCoordinate& coordinate, const Chunk& chunk);
+        VoxelType getVoxelType(const VoxelWorldCoordinate& voxelWorldCoordinate);
     private:
         std::unordered_map<RegionCoordinate, Region> mRegions;
 };

@@ -137,3 +137,12 @@ ChunkRegionCoordinate chunkToChunkRegion(const ChunkCoordinate& coordinate)
 {
     return chunkToChunkRegion(coordinate.x, coordinate.y, coordinate.z);
 }
+
+ChunkCoordinate voxelToChunk(const VoxelCoordinate& coordinate)
+{
+    int32_t x = coordinate.x < 0 ? (coordinate.x / 32) - 1: coordinate.x / 32;
+    int32_t y = coordinate.y < 0 ? (coordinate.y / 32) - 1: coordinate.y / 32;
+    int32_t z = coordinate.z < 0 ? (coordinate.z / 32) - 1: coordinate.z / 32;
+
+    return ChunkCoordinate(x, y, z);
+}
