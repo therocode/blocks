@@ -23,8 +23,8 @@ using RegionDeliverMessage = fea::Message<RegionDeliver_tag, const RegionCoordin
 struct ChunkRequested_tag{};//                                 coordinate
 using ChunkRequestedMessage = fea::Message<ChunkRequested_tag, const ChunkCoordinate&>;
 
-struct DeliverChunk_tag{};//                               coordinate              chunk
-using DeliverChunkMessage = fea::Message<DeliverChunk_tag, const ChunkCoordinate&, const Chunk&>;
+struct ChunkDeliver_tag{};//                               coordinate              chunk
+using ChunkDeliverMessage = fea::Message<ChunkDeliver_tag, const ChunkCoordinate&, const Chunk&>;
 
 struct ChunkLoaded_tag{};//                              chunk                   timestamp
 using ChunkLoadedMessage = fea::Message<ChunkLoaded_tag, const ChunkCoordinate&, uint64_t>;

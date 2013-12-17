@@ -15,12 +15,14 @@
 {
 	mBus.addMessageSubscriber<SetVoxelMessage>(*this);
 	mBus.addMessageSubscriber<RegionDeliverMessage>(*this);
+	mBus.addMessageSubscriber<ChunkDeliverMessage>(*this);
 }
 
 Universe::~Universe()
 {
 	mBus.removeMessageSubscriber<SetVoxelMessage>(*this);
 	mBus.removeMessageSubscriber<RegionDeliverMessage>(*this);
+	mBus.removeMessageSubscriber<ChunkDeliverMessage>(*this);
 }
 
 void Universe::setup()
@@ -71,6 +73,16 @@ void Universe::handleMessage(const RegionDeliverMessage& received)
     std::tie(coordinate, region) = std::move(received.data);
 
     mStandardWorld.addRegion(coordinate, region);
+}
+
+void Universe::handleMessage(const ChunkDeliverMessage& received)
+{
+    ChunkCoordinate coordinate;
+    Chunk chunk;
+
+    std::tie(coordinate, chunk) = std::move(received.data);
+
+    mStandardWorld.addChunk(coordinate, chunk);
 }
 
 WorldInterface& Universe::getWorldInterface()

@@ -20,3 +20,8 @@ ChunkReferenceMap Region::getChunkList() const
 {
     return ChunkReferenceMap();
 }
+
+void Region::addChunk(const ChunkRegionCoordinate& coordinate, const Chunk& chunk)
+{
+    chunks.emplace(coordinate, std::move(chunk));
+}

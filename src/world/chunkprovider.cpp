@@ -50,7 +50,7 @@ void ChunkProvider::handleMessage(const ChunkRequestedMessage& received)
     //at this point newChunk is updated with the modifications
     uint64_t timestamp = 0; //get proper timestamp later
 
-    mBus.sendMessage(DeliverChunkMessage(chunkCoordinate, newChunk)); //sends the finished chunk to be kept by whatever system
+    mBus.sendMessage(ChunkDeliverMessage(chunkCoordinate, newChunk)); //sends the finished chunk to be kept by whatever system
 
     mBus.sendMessage(ChunkLoadedMessage(chunkCoordinate, timestamp)); //the now fully initialised chunk is announced to the rest of the game
 }

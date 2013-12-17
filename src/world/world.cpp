@@ -19,3 +19,10 @@ void World::addRegion(const RegionCoordinate& coordinate, const Region& region)
 {
     mRegions.emplace(coordinate, std::move(region));
 }
+
+void World::addChunk(const ChunkCoordinate& coordinate, const Chunk& chunk)
+{
+    RegionCoordinate region = chunkToRegion(coordinate);
+
+    mRegions.at(region).addChunk(chunkToChunkRegion(coordinate), chunk);
+}

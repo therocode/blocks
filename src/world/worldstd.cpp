@@ -1,5 +1,15 @@
 #include "worldstd.h"
 
+int32_t wrapInt(int32_t kX, int32_t const kLowerBound, int32_t const kUpperBound)
+{
+    int32_t range_size = kUpperBound - kLowerBound + 1;
+
+    if (kX < kLowerBound)
+        kX += range_size * ((kLowerBound - kX) / range_size + 1);
+
+    return kLowerBound + (kX - kLowerBound) % range_size;
+}
+
 ChunkRegionCoordinate::ChunkRegionCoordinate() : x(0), y(0), z(0)
 {
 }
@@ -115,4 +125,15 @@ RegionCoordinate chunkToRegion(float x, float y, float z)
 RegionCoordinate chunkToRegion(const ChunkCoordinate& coordinate)
 {
     return chunkToRegion(coordinate.x, coordinate.y, coordinate.z);
+}
+
+ChunkRegionCoordinate chunkToChunkRegion(int32_t x, int32_t y, int32_t z)
+{
+    return ChunkRegionCoordinate(wrapInt(x, 0, 31), wrapInt(y, 0, 31), wrapInt(z, 0, 31));
+}
+
+
+ChunkRegionCoordinate chunkToChunkRegion(const ChunkCoordinate& coordinate)
+{
+    return chunkToChunkRegion(coordinate.x, coordinate.y, coordinate.z);
 }

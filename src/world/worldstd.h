@@ -6,6 +6,8 @@
 using ChunkCoordinate = glm::ivec3;
 using RegionCoordinate = glm::ivec3;
 
+int32_t wrapInt(int32_t kX, int32_t const kLowerBound, int32_t const kUpperBound);
+
 struct ChunkRegionCoordinate
 {
     ChunkRegionCoordinate();
@@ -70,3 +72,6 @@ VoxelWorldCoordinate worldToVoxel(const glm::vec3& position);
 
 RegionCoordinate chunkToRegion(float x, float y, float z);
 RegionCoordinate chunkToRegion(const ChunkCoordinate& coordinate);
+
+ChunkRegionCoordinate chunkToChunkRegion(int32_t x, int32_t y, int32_t z);
+ChunkRegionCoordinate chunkToChunkRegion(const ChunkCoordinate& coordinate);

@@ -11,7 +11,8 @@
 
 class Universe : 
         public fea::MessageReceiver<SetVoxelMessage>,
-        public fea::MessageReceiver<RegionDeliverMessage>
+        public fea::MessageReceiver<RegionDeliverMessage>,
+        public fea::MessageReceiver<ChunkDeliverMessage>
 {
     public:
         Universe(fea::MessageBus& messageBus);
@@ -21,6 +22,7 @@ class Universe :
         void destroy();
         virtual void handleMessage(const SetVoxelMessage& received);
         virtual void handleMessage(const RegionDeliverMessage& received);
+        virtual void handleMessage(const ChunkDeliverMessage& received);
         WorldInterface& getWorldInterface();
     private:
 		glm::vec3 mCamPos, mCamDir;
