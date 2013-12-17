@@ -2,15 +2,6 @@
 
 using namespace std;
 
-const string regionDir = ".";
-
-const string pathSep =
-#ifdef _WIN32
-    "\\";
-#else
-    "/";
-#endif
-
 VoxelCoordinate_uint8::VoxelCoordinate_uint8() {}
 VoxelCoordinate_uint8::VoxelCoordinate_uint8(VoxelChunkCoordinate coord)
     : x(coord.x), y(coord.y), z(coord.z) 
@@ -45,20 +36,16 @@ bool VoxelCoordinate_uint8::operator<(const VoxelCoordinate_uint8& other) const
     }    
 }
 
-ModManager::ModManager(fea::MessageBus& messageBus, RegionCoordinate regionLoc)
-    : mBus(messageBus), mRegionLoc(regionLoc)
+void ModManager::loadMods(Chunk& chunk)
 {
-    mIndexPath = regionDir + pathSep + glm::to_string(mRegionLoc) + ".idx";
-    mDataPath = regionDir + pathSep + glm::to_string(mRegionLoc) + ".dat";
-}
+    RegionCoordinate regionLoc = chunkToRegion(chunk.getLocation());
+    ChunkRegionCoordinate chunkLoc = chunkToChunkRegion(chunk.getLocation()); 
 
-void ModManager::loadMods(const ChunkRegionCoordinate loc)
-{
-    ChunkIndex chunkIndex = getChunkIndex(loc);
+    ChunkIndex chunkIndex = getChunkIndex(regionLoc, chunkLoc);
 
-    mMods[loc] = ChunkModMap();
+    mMods[regionLoc][chunkLoc] = ChunkModMap();
     if(chunkIndex != NO_CHUNK) { 
-        ifstream dataFile(mDataPath, ios::in | ios::binary);
+        ifstream dataFile(getFilename(regionLoc) + dataExt, ios::in | ios::binary);
         dataFile.seekg(chunkIndex);
 
         uint16_t modCount;
@@ -71,36 +58,39 @@ void ModManager::loadMods(const ChunkRegionCoordinate loc)
         {
             Mod mod;
             dataFile.read((char*)&mod, sizeof(Mod));
-            _setMod(loc, mod.coord, mod.type);
+            _setMod(regionLoc, chunkLoc, mod.coord, mod.type);
         }
         dataFile.close();
-
-        mBus.sendMessage<ChunkLoadedMessage>(ChunkLoadedMessage(loc.toWorldSpace(mRegionLoc), timestamp));
     }
-}
 
-void ModManager::applyMods(Chunk& chunk) 
-{
-    throw ModManagerException("Not yet implemented.");
-    /*
-    ChunkModMap mods = mMods[chunk.getLocation()]; // <- This won't work if chunk returns ChunkCoordinate and not ChunkRegionCoordinate.
+    ChunkModMap mods = mMods[regionLoc][chunkLoc]; 
     for(ChunkModMap::iterator it = mods.begin(); it != mods.end(); ++it) 
     {
         chunk.setVoxelType(it->first.x, it->first.y, it->first.z, it->second);
     }
-    */
 }
 
-void ModManager::saveMods(uint64_t currentTimestamp) 
+void ModManager::saveMods(uint64_t currentTimestamp)
 {
+    for(WorldModMap::iterator it = mMods.begin(); it != mMods.end(); ++it)
+    {
+        saveMods(currentTimestamp, it->first);
+    }
+}
+
+void ModManager::saveMods(uint64_t currentTimestamp, RegionCoordinate regionLoc) 
+{
+    string dataFilename = getFilename(regionLoc) + dataExt;
+    string indexFilename = getFilename(regionLoc) + indexExt;
+
     hash<ChunkRegionCoordinate> crcHash;
-    ifstream iIndexFile(mIndexPath, ios::in | ios::binary);
+    ifstream iIndexFile(indexFilename, ios::in | ios::binary);
 
     TimestampMap oldTimestamps;
 
     if(iIndexFile)
     {
-        ifstream iDataFile(mDataPath, ios::in | ios::binary);
+        ifstream iDataFile(dataFilename, ios::in | ios::binary);
         
         if(iDataFile)
         {
@@ -110,9 +100,9 @@ void ModManager::saveMods(uint64_t currentTimestamp)
                 {
                     for(int z = 0; z < regionWidth; ++z)
                     {
-                        ChunkRegionCoordinate loc(x, y, z);
+                        ChunkRegionCoordinate chunkLoc(x, y, z);
 
-                        iIndexFile.seekg(crcHash(loc)*sizeof(ChunkIndex));
+                        iIndexFile.seekg(crcHash(chunkLoc)*sizeof(ChunkIndex));
                         ChunkIndex chunkIndex;
                         iIndexFile.read((char*)&chunkIndex, sizeof(ChunkIndex));
 
@@ -123,13 +113,13 @@ void ModManager::saveMods(uint64_t currentTimestamp)
                             iDataFile.read((char*)(&modCount), sizeof(uint16_t));
                             uint64_t timestamp;
                             iDataFile.read((char*)(&timestamp), sizeof(uint64_t));
-                            oldTimestamps[loc] = timestamp;
-                            mMods[loc] = ChunkModMap();
+                            oldTimestamps[chunkLoc] = timestamp;
+                            mMods[regionLoc][chunkLoc] = ChunkModMap();
                             for(int i = 0; i < modCount; ++i)
                             {
                                 Mod mod;
                                 iDataFile.read((char*)&mod, sizeof(Mod));
-                                _setMod(loc, mod.coord, mod.type);
+                                _setMod(regionLoc, chunkLoc, mod.coord, mod.type);
                             } 
                         } 
                     }
@@ -137,23 +127,22 @@ void ModManager::saveMods(uint64_t currentTimestamp)
             }
 
             iDataFile.close();
-            remove(mDataPath.c_str());
+            remove(dataFilename.c_str());
         }
 
         iIndexFile.close();
-        remove(mIndexPath.c_str());
+        remove(indexFilename.c_str());
     }
    
-    initIndexFile();
+    initIndexFile(regionLoc);
 
-    fstream oIndexFile(mIndexPath, ios::binary | ios::in | ios::out);
+    fstream oIndexFile(indexFilename, ios::binary | ios::in | ios::out);
     oIndexFile.clear();
-    ofstream oDataFile(mDataPath, ios::out | ios::binary);
+    ofstream oDataFile(dataFilename, ios::out | ios::binary);
 
-    using it_type = RegionModMap::iterator;
-    for(it_type it = mMods.begin(); it != mMods.end(); ++it)
+    RegionModMap regionMods = mMods[regionLoc];
+    for(RegionModMap::iterator it = regionMods.begin(); it != regionMods.end(); ++it)
     {
-
         oIndexFile.seekp(crcHash(it->first)*sizeof(ChunkIndex));
         ChunkIndex index = oDataFile.tellp();
         oIndexFile.write(reinterpret_cast<const char*>(&index), sizeof(ChunkIndex));
@@ -184,29 +173,58 @@ void ModManager::saveMods(uint64_t currentTimestamp)
     oDataFile.close();
 }
 
-void ModManager::setMod(ChunkRegionCoordinate chunkLoc, VoxelCoordinate_uint8 voxLoc, VoxelType type)
+void ModManager::setMod(ChunkCoordinate loc, VoxelCoordinate_uint8 voxLoc, VoxelType type)
 {
-    _setMod(chunkLoc, voxLoc, type); 
+    RegionCoordinate regionLoc = chunkToRegion(loc);
+    ChunkRegionCoordinate chunkLoc = chunkToChunkRegion(loc);
+
+    _setMod(regionLoc, chunkLoc, voxLoc, type); 
 }
 
-void ModManager::setMod(ChunkRegionCoordinate chunkLoc, VoxelChunkCoordinate voxLoc, VoxelType type)
+void ModManager::setMod(ChunkCoordinate loc, VoxelChunkCoordinate voxLoc, VoxelType type)
 {
-    _setMod(chunkLoc, VoxelCoordinate_uint8(voxLoc), type);
+    RegionCoordinate regionLoc = chunkToRegion(loc);
+    ChunkRegionCoordinate chunkLoc = chunkToChunkRegion(loc);
+
+    _setMod(regionLoc, chunkLoc, VoxelCoordinate_uint8(voxLoc), type);
 }
 
-VoxelType ModManager::getMod(ChunkRegionCoordinate chunkLoc, VoxelChunkCoordinate voxLoc)
+VoxelType ModManager::getMod(ChunkCoordinate loc, VoxelChunkCoordinate voxLoc)
 {
-    return mMods[chunkLoc][voxLoc];
+    RegionCoordinate regionLoc = chunkToRegion(loc);
+    ChunkRegionCoordinate chunkLoc = chunkToChunkRegion(loc);
+
+    return mMods[regionLoc][chunkLoc][voxLoc];
 }
 
-ChunkIndex ModManager::getChunkIndex(ChunkRegionCoordinate loc)
+void ModManager::deleteRegionFile(const RegionCoordinate& regionLoc)
+{
+    string indexFilename = getFilename(regionLoc) + indexExt;
+    string dataFilename = getFilename(regionLoc) + dataExt;
+    
+    ifstream indexFile(indexFilename);
+    if(indexFile)
+    {
+        indexFile.close();
+        remove(indexFilename.c_str());
+    }
+
+    ifstream dataFile(dataFilename);
+    if(dataFile)
+    {
+        dataFile.close();
+        remove(dataFilename.c_str());
+    }
+}
+
+ChunkIndex ModManager::getChunkIndex(RegionCoordinate regionLoc, ChunkRegionCoordinate chunkLoc)
 {
     hash<ChunkRegionCoordinate> crcHash;
-    ifstream indexFile(mIndexPath, ios::in | ios::binary);
+    ifstream indexFile(getFilename(regionLoc) + indexExt, ios::in | ios::binary);
 
     if(indexFile)
     {
-        indexFile.seekg(crcHash(loc)*sizeof(ChunkIndex));
+        indexFile.seekg(crcHash(chunkLoc)*sizeof(ChunkIndex));
 
         ChunkIndex chunkIndex;
         indexFile.read((char*)&chunkIndex, sizeof(ChunkIndex));
@@ -216,14 +234,14 @@ ChunkIndex ModManager::getChunkIndex(ChunkRegionCoordinate loc)
     } 
     else
     {
-        initIndexFile();
+        initIndexFile(regionLoc);
         return NO_CHUNK;
     } 
 }
 
-void ModManager::initIndexFile()
+void ModManager::initIndexFile(RegionCoordinate regionLoc)
 {
-    ofstream indexFile(mIndexPath, ios::out | ios::binary);
+    ofstream indexFile(getFilename(regionLoc) + indexExt, ios::out | ios::binary);
 
     ChunkIndex index = NO_CHUNK;
     for(int i = 0; i < regionWidth*regionWidth*regionWidth; ++i)
@@ -234,14 +252,32 @@ void ModManager::initIndexFile()
     indexFile.close();
 }
 
-void ModManager::_setMod(ChunkRegionCoordinate chunkLoc, VoxelCoordinate_uint8 voxLoc, VoxelType type)
+void ModManager::_setMod(const RegionCoordinate& regionLoc, const ChunkRegionCoordinate& chunkLoc,const VoxelCoordinate_uint8& voxLoc, VoxelType type)
 {
-    using it_type = RegionModMap::const_iterator;
-    it_type it = mMods.find(chunkLoc);
-    if(it == mMods.end())
+    if(voxLoc.x >= chunkWidth || voxLoc.y >= chunkWidth || voxLoc.z >= chunkWidth)
     {
-        mMods[chunkLoc] = ChunkModMap();
+        throw ModManagerException("Voxel location out of bounds.");
     }
 
-    mMods[chunkLoc][voxLoc] = type;
+    WorldModMap::const_iterator got = mMods.find(regionLoc);
+    if(got == mMods.end())
+    {
+        mMods[regionLoc] = RegionModMap();
+        mMods[regionLoc][chunkLoc] = ChunkModMap();
+    }
+    else
+    {
+        RegionModMap::const_iterator got = mMods[regionLoc].find(chunkLoc);
+        if(got == mMods[regionLoc].end())
+        {
+            mMods[regionLoc][chunkLoc] = ChunkModMap();
+        }
+    }
+
+    mMods[regionLoc][chunkLoc][voxLoc] = type;
+}
+
+std::string ModManager::getFilename(RegionCoordinate regionLoc)
+{
+    return regionDir + pathSep + glm::to_string(regionLoc);
 }

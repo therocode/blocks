@@ -70,7 +70,7 @@ VoxelChunkCoordinate worldToChunkVoxel(float x, float y, float z);
 VoxelWorldCoordinate worldToVoxel(float x, float y, float z);
 VoxelWorldCoordinate worldToVoxel(const glm::vec3& position);
 
-RegionCoordinate chunkToRegion(float x, float y, float z);
+RegionCoordinate chunkToRegion(int x, int y, int z);
 RegionCoordinate chunkToRegion(const ChunkCoordinate& coordinate);
 
 ChunkRegionCoordinate chunkToChunkRegion(int32_t x, int32_t y, int32_t z);

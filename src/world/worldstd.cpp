@@ -104,7 +104,7 @@ VoxelTypeData::VoxelTypeData(const RleIndexArray& rleSegmentIndices, const RleSe
 
 }
 
-RegionCoordinate chunkToRegion(float x, float y, float z)
+RegionCoordinate chunkToRegion(int x, int y, int z)
 {
 	bool xNeg = x < 0;
 	bool yNeg = y < 0;
@@ -131,7 +131,6 @@ ChunkRegionCoordinate chunkToChunkRegion(int32_t x, int32_t y, int32_t z)
 {
     return ChunkRegionCoordinate(wrapInt(x, 0, 31), wrapInt(y, 0, 31), wrapInt(z, 0, 31));
 }
-
 
 ChunkRegionCoordinate chunkToChunkRegion(const ChunkCoordinate& coordinate)
 {
