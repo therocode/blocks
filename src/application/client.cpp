@@ -220,7 +220,7 @@ void Client::fetchServerData()
 			VoxelSetPackage* voxelSetPackage = (VoxelSetPackage*)package.get();
 
             ChunkCoordinate chunkCoordinate;
-            VoxelCoordinate voxelCoordinate;
+            VoxelChunkCoordinate voxelCoordinate;
             VoxelType type;
 
 			std::tie(chunkCoordinate, voxelCoordinate, type) = voxelSetPackage->getData();

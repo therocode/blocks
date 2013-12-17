@@ -11,7 +11,7 @@ using RebuildScriptsRequestedPackage = Package<RebuildScriptsRequested_tag, Pack
 
 using ChunkLoadedPackage        = Package<ChunkLoaded_tag,         PackageType::CHUNK_LOADED,          false, CHANNEL_CHUNKS, ChunkCoordinate, RleIndexArray, RleSegmentArray>;
 using ChunkDeletedPackage       = Package<ChunkLoaded_tag,         PackageType::CHUNK_DELETED,         false, CHANNEL_CHUNKS, ChunkCoordinate>;
-using VoxelSetPackage           = Package<VoxelSet_tag,             PackageType::VOXEL_SET,             false, CHANNEL_CHUNKS, ChunkCoordinate, VoxelCoordinate, VoxelType>;
+using VoxelSetPackage           = Package<VoxelSet_tag,             PackageType::VOXEL_SET,             false, CHANNEL_CHUNKS, ChunkCoordinate, VoxelChunkCoordinate, VoxelType>;
 
 using GfxEntityAddedPackage     = Package<AddGfxEntity_tag,         PackageType::GFX_ENTITY_ADDED,      false, CHANNEL_ENTITY, size_t, glm::vec3>;
 using GfxEntityMovedPackage     = Package<MoveGfxEntity_tag,        PackageType::GFX_ENTITY_MOVED,      false, CHANNEL_ENTITY, size_t, glm::vec3>;

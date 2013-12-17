@@ -63,7 +63,7 @@ int main()
                     {
                         for(int vz = 0; vz < chunkWidth; ++vz)
                         {
-                            VoxelCoordinate voxLoc(vx, vy, vz);
+                            VoxelChunkCoordinate voxLoc(vx, vy, vz);
                             manager.setMod(chunkLoc, voxLoc, type1);
                         }
                     }
@@ -95,7 +95,7 @@ int main()
                     {
                         for(int vz = 0; vz < chunkWidth; ++vz)
                         {
-                            VoxelCoordinate voxLoc(vx, vy, vz);
+                            VoxelChunkCoordinate voxLoc(vx, vy, vz);
                             manager.getMod(chunkLoc, voxLoc);
                         }
                     }

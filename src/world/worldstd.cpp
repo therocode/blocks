@@ -79,12 +79,12 @@ VoxelWorldCoordinate worldToVoxel(const glm::vec3& position)
     return worldToVoxel(position.x, position.y, position.z);
 }
 
-VoxelCoordinate worldToChunkVoxel(const glm::vec3& position)
+VoxelChunkCoordinate worldToChunkVoxel(const glm::vec3& position)
 {
 	return worldToChunkVoxel(position.x, position.y, position.z);
 }
 
-VoxelCoordinate worldToChunkVoxel(float x, float y, float z)
+VoxelChunkCoordinate worldToChunkVoxel(float x, float y, float z)
 {
 	int xNegative = (int)(x - chunkWidth) / chunkWidth;
 	int yNegative = (int)(y - chunkWidth) / chunkWidth;
@@ -94,7 +94,7 @@ VoxelCoordinate worldToChunkVoxel(float x, float y, float z)
 	if(yNegative < 0) y += (-yNegative + 1) * chunkWidth;
 	if(zNegative < 0) z += (-zNegative + 1) * chunkWidth;
 
-    return VoxelCoordinate((((int)x) % chunkWidth),
+    return VoxelChunkCoordinate((((int)x) % chunkWidth),
                            (((int)y) % chunkWidth),
                            (((int)z) % chunkWidth));
 }

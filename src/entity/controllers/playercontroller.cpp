@@ -101,7 +101,7 @@ void PlayerController::handleMessage(const PlayerActionMessage& received)
 			VoxelWorldCoordinate voxel = mPlayerEntities.at(playerId).lock()->getAttribute<VoxelWorldCoordinate>("block_facing");
 			int face = mPlayerEntities.at(playerId).lock()->getAttribute<int>("block_facing_face");
 			ChunkCoordinate cc = worldToChunkInt(voxel.x, voxel.y, voxel.z);
-			VoxelCoordinate vc = worldToChunkVoxel(voxel.x, voxel.y, voxel.z);
+			VoxelChunkCoordinate vc = worldToChunkVoxel(voxel.x, voxel.y, voxel.z);
 			// printf("ChunkCoord: %i, %i, %i. VoxelCoord: %i, %i, %i. World: %i, %i, %i\n", cc.x, cc.y, cc.z, vc.x, vc.y, vc.z, voxel.x, voxel.y, voxel.z);
 			// printf("Face: %i\n", face);
 			switch(face){

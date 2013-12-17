@@ -65,7 +65,7 @@ TEST_CASE("save and load one", "[save][load]")
     }
 
     ChunkRegionCoordinate chunkLoc1 = ChunkRegionCoordinate(1, 1, 1);
-    VoxelCoordinate voxLoc1 = VoxelCoordinate(1, 1, 1);
+    VoxelChunkCoordinate voxLoc1 = VoxelChunkCoordinate(1, 1, 1);
     VoxelType type1 = 1;
 
     ModManager manager(bus, regionLoc);
@@ -113,7 +113,7 @@ TEST_CASE("save and load many", "[save][load]")
                     {
                         for(int vz = 0; vz < chunkWidth; ++vz)
                         {
-                            VoxelCoordinate voxLoc(vx, vy, vz);
+                            VoxelChunkCoordinate voxLoc(vx, vy, vz);
                             manager.setMod(chunkLoc, voxLoc, type1);
                         }
                     }
@@ -141,7 +141,7 @@ TEST_CASE("save and load many", "[save][load]")
                     {
                         for(int vz = 0; vz < chunkWidth; ++vz)
                         {
-                            VoxelCoordinate voxLoc(vx, vy, vz);
+                            VoxelChunkCoordinate voxLoc(vx, vy, vz);
                             REQUIRE(type1 == manager2.getMod(chunkLoc, voxLoc)); 
                         }
                     }
@@ -187,7 +187,7 @@ TEST_CASE("save and load all", "[save][load]")
                     {
                         for(int vz = 0; vz < chunkWidth; ++vz)
                         {
-                            VoxelCoordinate voxLoc(vx, vy, vz);
+                            VoxelChunkCoordinate voxLoc(vx, vy, vz);
 
                             manager.setMod(chunkLoc, voxLoc, type1);
                         }
@@ -215,7 +215,7 @@ TEST_CASE("save and load all", "[save][load]")
                     {
                         for(int vz = 0; vz < chunkWidth; ++vz)
                         {
-                            VoxelCoordinate voxLoc(vx, vy, vz);
+                            VoxelChunkCoordinate voxLoc(vx, vy, vz);
                             REQUIRE(type1 == manager2.getMod(chunkLoc, voxLoc)); 
                         }
                     }
@@ -233,7 +233,7 @@ TEST_CASE("timestamp once", "[timestamp]")
 
     RegionCoordinate regionLoc(1, 1, 1);
     ChunkRegionCoordinate chunkLoc(1, 1, 1);
-    VoxelCoordinate voxLoc(1, 1, 1);
+    VoxelChunkCoordinate voxLoc(1, 1, 1);
     VoxelType type = 1;
     uint64_t timestamp = 643;
 
@@ -266,7 +266,7 @@ TEST_CASE("timestamp twice", "[timestamp]")
     bus.addMessageSubscriber(receiver);
 
     RegionCoordinate regionLoc(1, 1, 1);
-    VoxelCoordinate voxLoc(1, 1, 1);
+    VoxelChunkCoordinate voxLoc(1, 1, 1);
     VoxelType type = 1;
     ModManager manager1(bus, regionLoc);
     ModManager manager2(bus, regionLoc);

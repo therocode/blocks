@@ -12,7 +12,7 @@ const string pathSep =
 #endif
 
 VoxelCoordinate_uint8::VoxelCoordinate_uint8() {}
-VoxelCoordinate_uint8::VoxelCoordinate_uint8(VoxelCoordinate coord)
+VoxelCoordinate_uint8::VoxelCoordinate_uint8(VoxelChunkCoordinate coord)
     : x(coord.x), y(coord.y), z(coord.z) 
 {}
 
@@ -189,12 +189,12 @@ void ModManager::setMod(ChunkRegionCoordinate chunkLoc, VoxelCoordinate_uint8 vo
     _setMod(chunkLoc, voxLoc, type); 
 }
 
-void ModManager::setMod(ChunkRegionCoordinate chunkLoc, VoxelCoordinate voxLoc, VoxelType type)
+void ModManager::setMod(ChunkRegionCoordinate chunkLoc, VoxelChunkCoordinate voxLoc, VoxelType type)
 {
     _setMod(chunkLoc, VoxelCoordinate_uint8(voxLoc), type);
 }
 
-VoxelType ModManager::getMod(ChunkRegionCoordinate chunkLoc, VoxelCoordinate voxLoc)
+VoxelType ModManager::getMod(ChunkRegionCoordinate chunkLoc, VoxelChunkCoordinate voxLoc)
 {
     return mMods[chunkLoc][voxLoc];
 }

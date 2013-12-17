@@ -12,7 +12,7 @@ struct SetVoxel_tag{};//
 using SetVoxelMessage = fea::Message<SetVoxel_tag, const VoxelWorldCoordinate&, VoxelType>;
 
 struct VoxelSet_tag{};//
-using VoxelSetMessage = fea::Message<VoxelSet_tag, const ChunkCoordinate&, const VoxelCoordinate&, VoxelType>;
+using VoxelSetMessage = fea::Message<VoxelSet_tag, const ChunkCoordinate&, const VoxelChunkCoordinate&, VoxelType>;
 
 struct RegionNeeded_tag{};//                               region to force loading of
 using RegionNeededMessage = fea::Message<RegionNeeded_tag, const RegionCoordinate&>;

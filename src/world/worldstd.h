@@ -20,7 +20,7 @@ struct ChunkRegionCoordinate
     int8_t z;
 };
 
-using VoxelCoordinate = glm::uvec3;
+using VoxelChunkCoordinate = glm::uvec3;
 using VoxelWorldCoordinate = glm::ivec3;
 
 const int32_t regionWidth = 32;
@@ -64,8 +64,8 @@ ChunkCoordinate worldToChunk(float x, float y, float z);
 ChunkCoordinate worldToChunk(const glm::vec3& position);
 ChunkCoordinate worldToChunkInt(int x, int y, int z);
 
-VoxelCoordinate worldToChunkVoxel(const glm::vec3& position);
-VoxelCoordinate worldToChunkVoxel(float x, float y, float z);
+VoxelChunkCoordinate worldToChunkVoxel(const glm::vec3& position);
+VoxelChunkCoordinate worldToChunkVoxel(float x, float y, float z);
 
 VoxelWorldCoordinate worldToVoxel(float x, float y, float z);
 VoxelWorldCoordinate worldToVoxel(const glm::vec3& position);

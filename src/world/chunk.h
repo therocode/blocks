@@ -12,10 +12,10 @@ class Chunk
         Chunk(const ChunkCoordinate& loc, const VoxelTypeArray& types);
         Chunk(const ChunkCoordinate& loc, const RleIndexArray& indices, const RleSegmentArray& rleData);
         void setVoxelType(uint32_t x, uint32_t y, uint32_t z, VoxelType type);
-        void setVoxelType(const VoxelCoordinate& voxel, VoxelType type);
+        void setVoxelType(const VoxelChunkCoordinate& voxel, VoxelType type);
         void setVoxelData(const VoxelTypeArray& types);
         VoxelType getVoxelType(uint32_t x, uint32_t y, uint32_t z) const;
-        VoxelType getVoxelType(const VoxelCoordinate& voxel) const;
+        VoxelType getVoxelType(const VoxelChunkCoordinate& voxel) const;
         VoxelTypeData getVoxelTypeData() const;
         uint32_t getWidth() const;
         const ChunkCoordinate& getLocation() const; //should probably be gone

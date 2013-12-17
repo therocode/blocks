@@ -9,50 +9,18 @@
 
 VoxelType WorldInterface::getVoxelTypeInt(int x, int y, int z) const
 {
-    // int chunkWidth = 16;
-    ChunkCoordinate chunkCoordinate = worldToChunkInt(x, y, z);
-
-    // int xNegative = (int)(x - chunkWidth) / chunkWidth;
-    // int yNegative = (int)(y - chunkWidth) / chunkWidth;
-    // int zNegative = (int)(z - chunkWidth) / chunkWidth;
-
-    // if(xNegative < 0) x += (-xNegative + 1) * chunkWidth;
-    // if(yNegative < 0) y += (-yNegative + 1) * chunkWidth;
-    // if(zNegative < 0) z += (-zNegative + 1) * chunkWidth;
-
-    VoxelCoordinate voxelCoordinate = worldToChunkVoxel(x, y, z);//VoxelCoordinate((x + (x) % 16,(y) % 16,(z) % 16);
-
-    //const Region& landscape = mWorld.getLandscape();
-
-    //if(landscape.chunkIsLoaded(chunkCoordinate))
-    //{
-    //    return landscape.getChunk(chunkCoordinate).getVoxelType(voxelCoordinate);
-    //}
-    //else
-    //{
-        return 0;
-    //}
+    return getVoxelType(VoxelWorldCoordinate(x, y, z));
 }
-VoxelType WorldInterface::getVoxelType(const VoxelWorldCoordinate coord) const{
+
+VoxelType WorldInterface::getVoxelType(const VoxelWorldCoordinate coord) const
+{
     return getVoxelTypeInt(coord.x, coord.y, coord.z);
 }
 
 
 VoxelType WorldInterface::getVoxelType(float x, float y, float z) const
 {
-    ChunkCoordinate chunkCoordinate = worldToChunk(x, y, z);
-    VoxelCoordinate voxelCoordinate = worldToChunkVoxel(x, y, z);
-
-    //const Region& landscape = mWorld.getLandscape();
-
-    //if(landscape.chunkIsLoaded(chunkCoordinate))
-    //{
-    //    return landscape.getChunk(chunkCoordinate).getVoxelType(voxelCoordinate);
-    //}
-    //else
-    //{
-        return 0;
-    //}
+    return getVoxelType(worldToVoxel(x, y, z));
 }
 
 VoxelType WorldInterface::getVoxelType(const glm::vec3& position) const
@@ -68,7 +36,7 @@ bool WorldInterface::getVoxelAtRay(float ox, float oy, float oz, float dx, float
 {
     int ip[3] = {(int)ox -(ox<0), (int)oy -(oy<0), (int)oz -(oz<0)};
     glm::vec3 bp = glm::fract(glm::vec3(ox, oy, oz));
-    VoxelCoordinate chunkCoordinate = worldToChunkVoxel(ip[0], ip[1], ip[2]);
+    VoxelChunkCoordinate chunkCoordinate = worldToChunkVoxel(ip[0], ip[1], ip[2]);
     // printf("ip:%i, %i, %i\n", ip[0], ip[1], ip[2]);
     // printf("ip:%i, %i, %i\n", chunkCoordinate[0], chunkCoordinate[1], chunkCoordinate[2]);
     // printf("rp:%f, %f, %f\n", ox, oy, oz);

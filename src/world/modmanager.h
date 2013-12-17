@@ -26,7 +26,7 @@ extern const std::string regionDir;
 struct VoxelCoordinate_uint8
 {
     VoxelCoordinate_uint8();
-    VoxelCoordinate_uint8(VoxelCoordinate coord);
+    VoxelCoordinate_uint8(VoxelChunkCoordinate coord);
 
     bool operator==(const VoxelCoordinate_uint8& other) const;
     bool operator!=(const VoxelCoordinate_uint8& other) const;
@@ -113,8 +113,8 @@ class ModManager
         void applyMods(Chunk& chunk);
         void saveMods(uint64_t currentTimestamp);
         void setMod(ChunkRegionCoordinate chunkLoc, VoxelCoordinate_uint8 voxLoc, VoxelType type);
-        void setMod(ChunkRegionCoordinate chunkLoc, VoxelCoordinate voxLoc, VoxelType type);
-        VoxelType getMod(ChunkRegionCoordinate chunkLoc, VoxelCoordinate voxLoc);
+        void setMod(ChunkRegionCoordinate chunkLoc, VoxelChunkCoordinate voxLoc, VoxelType type);
+        VoxelType getMod(ChunkRegionCoordinate chunkLoc, VoxelChunkCoordinate voxLoc);
 
     private:
         ChunkIndex getChunkIndex(ChunkRegionCoordinate loc);
