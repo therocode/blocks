@@ -13,6 +13,7 @@ Server::Server() : mUniverse(mBus),
     mBus.addMessageSubscriber<RemoveGfxEntityMessage>(*this);
     mBus.addMessageSubscriber<PlayerConnectedToEntityMessage>(*this);
     mBus.addMessageSubscriber<PlayerFacingBlockMessage>(*this);
+    mBus.addMessageSubscriber<ChunkDeliverMessage>(*this);
     mBus.addMessageSubscriber<VoxelSetMessage>(*this);
 }
 
@@ -25,6 +26,7 @@ Server::~Server()
     mBus.removeMessageSubscriber<RemoveGfxEntityMessage>(*this);
     mBus.removeMessageSubscriber<PlayerConnectedToEntityMessage>(*this);
     mBus.removeMessageSubscriber<PlayerFacingBlockMessage>(*this);
+    mBus.removeMessageSubscriber<ChunkDeliverMessage>(*this);
     mBus.removeMessageSubscriber<VoxelSetMessage>(*this);
 }
 
@@ -80,15 +82,23 @@ void Server::handleMessage(const FatalMessage& received)
     exit(4);
 }
 
-//void Server::handleMessage(const ChunkCreatedMessage& received)
-//{
-//    std::shared_ptr<BasePackage> chunkLoadedPackage(new ChunkLoadedPackage(received.data));
-//    for(auto& client : mClients)
-//    {
-//        client.second->enqueuePackage(chunkLoadedPackage);
-//    }
-//}
-//
+void Server::handleMessage(const ChunkDeliverMessage& received)
+{
+    ChunkCoordinate coordinate;
+    Chunk chunk;
+
+    std::tie(coordinate, chunk) = received.data;
+
+    VoxelTypeData typeData = chunk.getVoxelTypeData();
+
+    std::shared_ptr<BasePackage> chunkLoadedPackage(new ChunkLoadedPackage(coordinate, typeData.mRleSegmentIndices, typeData.mRleSegments));
+
+    for(auto& client : mClients)
+    {
+        client.second->enqueuePackage(chunkLoadedPackage);
+    }
+}
+
 //void Server::handleMessage(const ChunkDeletedMessage& received)
 //{
 //    std::shared_ptr<BasePackage> chunkDeletedPackage(new ChunkDeletedPackage(received.data));
