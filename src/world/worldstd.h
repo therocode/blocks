@@ -17,7 +17,7 @@ using RegionCoord      = glm::i64vec3;
 using ChunkVoxelCoord  = glm::u8vec3;
 using RegionChunkCoord = glm::u8vec3;
 
-int32_t wrapInt(int32_t kX, int32_t const kLowerBound, int32_t const kUpperBound);
+int64_t wrapInt(int64_t kX, int64_t const kLowerBound, int64_t const kUpperBound);
 
 const int32_t regionWidth = 32;
 const int32_t chunkWidth = 16;
@@ -80,3 +80,7 @@ VoxelCoord worldToVoxel(const glm::vec3& worldCoordinate);
 glm::vec3  voxelToWorld(const VoxelCoord& voxelCoordinate);
 glm::vec3  chunkToWorld(const ChunkCoord& chunkCoordinate);
 glm::vec3  regionToWorld(const RegionCoord& regionCoordinate);
+ChunkCoord voxelToChunk(const VoxelCoord& voxelCoordinate);
+RegionCoord voxelToRegion(const VoxelCoord& voxelCoordinate);
+RegionCoord chunkToRegion(const ChunkCoord& chunkCoordinate);
+ChunkVoxelCoord voxelToChunkVoxel(const VoxelCoord& voxelCoordinate);

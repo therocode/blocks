@@ -1,8 +1,8 @@
 #include "worldstd.h"
 
-int32_t wrapInt(int32_t kX, int32_t const kLowerBound, int32_t const kUpperBound)
+int64_t wrapInt(int64_t kX, int64_t const kLowerBound, int64_t const kUpperBound)
 {
-    int32_t range_size = kUpperBound - kLowerBound + 1;
+    int64_t range_size = kUpperBound - kLowerBound + 1;
 
     if (kX < kLowerBound)
         kX += range_size * ((kLowerBound - kX) / range_size + 1);
@@ -141,4 +141,41 @@ glm::vec3 chunkToWorld(const ChunkCoord& chunkCoordinate)
 glm::vec3 regionToWorld(const RegionCoord& regionCoordinate)
 {
     return ((glm::vec3) regionCoordinate) * (float)regionWidth;
+}
+
+ChunkCoord voxelToChunk(const VoxelCoord& voxelCoordinate)
+{
+    int64_t x = voxelCoordinate.x < 0 ? (voxelCoordinate.x / chunkWidth) - 1: voxelCoordinate.x / chunkWidth;
+    int64_t y = voxelCoordinate.y < 0 ? (voxelCoordinate.y / chunkWidth) - 1: voxelCoordinate.y / chunkWidth;
+    int64_t z = voxelCoordinate.z < 0 ? (voxelCoordinate.z / chunkWidth) - 1: voxelCoordinate.z / chunkWidth;
+
+    return ChunkCoord(x, y, z);
+}
+
+RegionCoord voxelToRegion(const VoxelCoord& voxelCoordinate)
+{
+    int32_t width = regionWidth * chunkWidth;
+    int64_t x = voxelCoordinate.x < 0 ? (voxelCoordinate.x / width) - 1: voxelCoordinate.x / width;
+    int64_t y = voxelCoordinate.y < 0 ? (voxelCoordinate.y / width) - 1: voxelCoordinate.y / width;
+    int64_t z = voxelCoordinate.z < 0 ? (voxelCoordinate.z / width) - 1: voxelCoordinate.z / width;
+
+    return RegionCoord(x, y, z);
+}
+
+RegionCoord chunkToRegion(const ChunkCoord& chunkCoordinate)
+{
+    int64_t x = chunkCoordinate.x < 0 ? (chunkCoordinate.x / regionWidth) - 1: chunkCoordinate.x / regionWidth;
+    int64_t y = chunkCoordinate.y < 0 ? (chunkCoordinate.y / regionWidth) - 1: chunkCoordinate.y / regionWidth;
+    int64_t z = chunkCoordinate.z < 0 ? (chunkCoordinate.z / regionWidth) - 1: chunkCoordinate.z / regionWidth;
+
+    return RegionCoord(x, y, z);
+}
+
+ChunkVoxelCoord voxelToChunkVoxel(const VoxelCoord& voxelCoordinate)
+{
+    int64_t x = wrapInt(voxelCoordinate.x, 0, chunkWidth - 1);
+    int64_t y = wrapInt(voxelCoordinate.y, 0, chunkWidth - 1);
+    int64_t z = wrapInt(voxelCoordinate.z, 0, chunkWidth - 1);
+    
+    return ChunkVoxelCoord(x, y, z);
 }
