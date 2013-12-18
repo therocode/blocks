@@ -132,3 +132,13 @@ glm::vec3 voxelToWorld(const VoxelCoord& voxelCoordinate)
 {
     return (glm::vec3) voxelCoordinate;
 }
+
+glm::vec3 chunkToWorld(const ChunkCoord& chunkCoordinate)
+{
+    return ((glm::vec3) chunkCoordinate) * (float)chunkWidth;
+}
+
+glm::vec3 regionToWorld(const RegionCoord& regionCoordinate)
+{
+    return ((glm::vec3) regionCoordinate) * (float)regionWidth;
+}

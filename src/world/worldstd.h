@@ -78,3 +78,5 @@ ChunkCoordinate voxelToChunk(const VoxelWorldCoordinate& coordinate);
 //new
 VoxelCoord worldToVoxel(const glm::vec3& worldCoordinate);
 glm::vec3  voxelToWorld(const VoxelCoord& voxelCoordinate);
+glm::vec3  chunkToWorld(const ChunkCoord& chunkCoordinate);
+glm::vec3  regionToWorld(const RegionCoord& regionCoordinate);
