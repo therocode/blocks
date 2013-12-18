@@ -12,7 +12,7 @@ class Player : Entity
         {
         }
 		if(frameNumber == 1)
-			setPosition(0.75, -30000, -1.75);
+			setPosition(10.0, -30000, -1.75);
 			//setPosition(10, 60, 0);
             //setPosition(-11.548175f, 16.806120f, -8.115272f);
     }

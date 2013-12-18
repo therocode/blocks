@@ -16,6 +16,7 @@ class CollisionController : public EntityController,
         virtual void removeEntity(fea::EntityId id);
 		bool AABBOnGround(AABB a);
     private:
+        glm::vec3  pushOutFromBlocks(AABB a, glm::vec3 position, float maxMove = 0.1f);
 		float sweepAroundAABB(const AABB _a, glm::vec3 velocity, glm::ivec3& outnormal, VoxelWorldCoordinate& hitBlock, const glm::vec3 ignoreAxis = glm::vec3(0));
         bool checkIfOnGround(fea::EntityPtr entity);
         fea::MessageBus& mBus;

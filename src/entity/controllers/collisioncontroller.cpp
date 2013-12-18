@@ -96,7 +96,7 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
         a.y = oldPosition.y - size.y * 0.5f;
         a.z = oldPosition.z - size.z * 0.5f;
         n = sweepAroundAABB(a, v, normal, currentHitBlock, ignoreAxis);
-        // Renderer::sDebugRenderer.drawBox(a.x + a.width*0.5f, a.y + a.height*0.5f, a.z + a.depth*0.5f, a.width  + 0.001f, a.height + 0.001f, a.depth + 0.001f, DebugRenderer::ORANGE);
+        //Renderer::sDebugRenderer.drawBox(a.x + a.width*0.5f, a.y + a.height*0.5f, a.z + a.depth*0.5f, a.width  + 0.001f, a.height + 0.001f, a.depth + 0.001f, DebugRenderer::ORANGE);
 
         if(n < 1.f )
         {
@@ -110,6 +110,7 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
             float e = 0.001f;
             approvedPosition = oldPosition + v * n;//* glm::max(n - 0.08f / moveLen, 0.0f);
             if(normal.x != 0){
+                ignoreAxis.x = 1.0f;
                 if(normal.x > 0){
                     moveLen = (float)currentHitBlock.x + 1.0f + a.width * 0.5f + e - approvedPosition.x;
                     //approvedPosition.x = (float)currentHitBlock.x + 1.0f + a.width * 0.5f + e;
@@ -121,6 +122,7 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
                     approvedPosition.x += moveLen;
                 }
             }else if(normal.y != 0){
+                ignoreAxis.y = 1.0f;
                 if(normal.y > 0){
                     moveLen = (float)currentHitBlock.y + 1.0f + a.height * 0.5f + e - approvedPosition.y;
                     //approvedPosition.x = (float)currentHitBlock.x + 1.0f + a.width * 0.5f + e;
@@ -132,6 +134,7 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
                     approvedPosition.y += moveLen;
                 }
             }else if(normal.z != 0){
+                ignoreAxis.z = 1.0f;
                 if(normal.z > 0){
                     moveLen = (float)currentHitBlock.z + 1.0f + a.depth * 0.5f + e - approvedPosition.z;
                     //approvedPosition.x = (float)currentHitBlock.x + 1.0f + a.width * 0.5f + e;
@@ -233,6 +236,7 @@ float CollisionController::sweepAroundAABB(const AABB _a, glm::vec3 velocity, gl
                             break;
                         }
                     }
+                    if(ignoreAxis[axis] != 0.0) continue;
                     if(nn < n){
                         //Check if collision face is visible at all. if not, ignore this collision.
                         VoxelWorldCoordinate nc = coord;
