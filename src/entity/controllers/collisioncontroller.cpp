@@ -83,6 +83,11 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
     a.width  = size.x;
     a.height = size.y;
     a.depth  = size.z;
+    a.x = oldPosition.x - size.x * 0.5f;
+    a.y = oldPosition.y - size.y * 0.5f;
+    a.z = oldPosition.z - size.z * 0.5f;
+    oldPosition += pushOutFromBlocks(a);
+
     glm::vec3 v = approvedPosition - oldPosition;
 
     glm::vec3 ignoreAxis = glm::vec3(0);
@@ -183,6 +188,53 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
     mBus.sendMessage<EntityMovedMessage>(EntityMovedMessage(id, requestedPosition, approvedPosition));
 }
 
+glm::vec3 CollisionController::pushOutFromBlocks(const AABB& _a, float maxMove)
+{
+    AABB a, b;
+    a = _a;
+    a.x = a.y = a.z = 0.0f;
+    glm::vec3 resultVec = glm::vec3(0.0f);
+
+    int sx = 1, sy = 2, sz = 1;
+    float maxMoveSqrd = maxMove * maxMove;
+    //Loop througha cube of blocks and check if they are passableor not
+    for(float x = -sx; x <= sx; x++)
+    {
+        for(float y = -sy; y <= sy + 1; y++)
+        {
+            for(float z = -sz; z <= sz; z++)
+            {
+                glm::vec3 cubePos = glm::vec3(_a.x, _a.y, _a.z) + glm::vec3(x, y, z);
+                //set position of aabb B
+                b.x = glm::floor(cubePos.x);
+                b.y = glm::floor(cubePos.y);
+                b.z = glm::floor(cubePos.z);
+
+                VoxelWorldCoordinate coord(b.x, b.y, b.z);
+                b.x -= _a.x;
+                b.y -= _a.y;
+                b.z -= _a.z;
+
+                if(mWorldInterface.getVoxelType(coord) != 0)
+                {
+                    glm::vec3 pushNorm;
+                    testAABBAABB(a, b, pushNorm);
+                    if(glm::length2(pushNorm) < maxMoveSqrd)
+                    {
+                        a.x  += pushNorm.x;
+                        a.y  += pushNorm.y;
+                        a.z  += pushNorm.z;
+
+                        resultVec += pushNorm;
+
+                    }
+                }
+            }
+        }
+    }
+    return resultVec;
+}
+
 float CollisionController::sweepAroundAABB(const AABB _a, glm::vec3 velocity, glm::ivec3& outNormal, VoxelWorldCoordinate& hitBlock, const glm::vec3 ignoreAxis)
 {
     AABB a, b;
@@ -212,13 +264,6 @@ float CollisionController::sweepAroundAABB(const AABB _a, glm::vec3 velocity, gl
                 b.y -= _a.y;
                 b.z -= _a.z;
 
-                //if(b.x < 0) b.x --;
-                //if(b.y < 0) b.y --;
-                //if(b.z < 0) b.z --;
-
-                //b.x = (int)b.x;
-                //b.y = (int)b.y;
-                //b.z = (int)b.z;
                 if(mWorldInterface.getVoxelType(coord) != 0)
                 {
                     glm::ivec3 norm;

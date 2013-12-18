@@ -1,5 +1,31 @@
 #include "mathutils.h"
 
+float AABB::min(const int& axis)const{
+    if(axis == 0){
+        return x;
+    }
+    if(axis == 1){
+        return y;
+    }
+    if(axis == 2){
+        return z;
+    }
+    return x;
+}
+
+float AABB::max(const int& axis)const{
+    if(axis == 0){
+        return x + width;
+    }
+    if(axis == 1){
+        return y + height;
+    }
+    if(axis == 2){
+        return z + depth;
+    }
+    return x;
+}
+
 void renderDebugAABB(const AABB a, const int color)
 {
     Renderer::sDebugRenderer.drawBox(a.x + a.width*0.5f, a.y + a.height*0.5f, a.z + a.depth*0.5f, a.width  + 0.01f, a.height + 0.01f, a.depth + 0.01f, color);
@@ -11,6 +37,40 @@ bool testAABBAABB(const AABB a, const AABB b)
     if(a.y + a.height < b.y || a.y > b.y + b.height) return false;
     if(a.z + a.depth  < b.z || a.z > b.z + b.depth)  return false;
     return true;
+}
+
+bool testAABBAABB(const AABB& a, const AABB& b, glm::vec3& smallestPenetration)
+{
+    if(testAABBAABB(a, b)){
+        glm::vec3 aSize = glm::vec3(a.width, a.height, a.depth);
+        glm::vec3 bSize = glm::vec3(b.width, b.height, b.depth);
+        glm::vec3 d = glm::vec3(a.x, a.y, a.z) - glm::vec3(b.x, b.y, b.z);
+        for(int i = 0; i < 3; i ++){
+            if(d[i] < 0){
+                d[i] += aSize[i];
+            }else{
+                d[i] -= bSize[i];
+            }
+        }
+        float rn = glm::abs(d.x);
+        int h = 0;
+        if(glm::abs(d.y) < rn){
+            rn = glm::abs(d.y);
+            h = 1;
+        }
+        if(glm::abs(d.z < rn)){
+            rn = glm::abs(d.z);
+            h = 2;
+        }
+        smallestPenetration = glm::vec3(0.f);
+        smallestPenetration[h] = d[h];
+        if(d[h] < 0)
+            smallestPenetration[h] -= EPSILON;
+        else
+            smallestPenetration[h] += EPSILON;
+        return true;
+    }
+    return false;
 }
 
 float sweepAABB(const AABB _a, const AABB _b, const glm::vec3 va, const glm::vec3 vb, glm::ivec3& n)
