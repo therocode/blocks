@@ -67,13 +67,13 @@ bool WorldInterface::getVoxelAtRay(const glm::vec3& position, const glm::vec3& d
 
 bool WorldInterface::getVoxelAtRay(float ox, float oy, float oz, float dx, float dy, float dz, const float maxDistance, int& hitFace, VoxelWorldCoordinate& hitBlock)  const
 {
-    int ip[3] = {(int)ox -(ox<0), (int)oy -(oy<0), (int)oz -(oz<0)};
+    int ip[3];
+    ip[0] = glm::floor(ox);
+    ip[1] = glm::floor(oy);
+    ip[2] = glm::floor(oz);
+
     glm::vec3 bp = glm::fract(glm::vec3(ox, oy, oz));
     VoxelCoordinate chunkCoordinate = worldToChunkVoxel(ip[0], ip[1], ip[2]);
-    // printf("ip:%i, %i, %i\n", ip[0], ip[1], ip[2]);
-    // printf("ip:%i, %i, %i\n", chunkCoordinate[0], chunkCoordinate[1], chunkCoordinate[2]);
-    // printf("rp:%f, %f, %f\n", ox, oy, oz);
-    //glm::vec3 ip = glm::vec3((int), (int)oy, (int)oz);
 
     glm::vec3 d = glm::vec3(dx, dy, dz);
     if(glm::length2(d) != 0)
@@ -107,9 +107,7 @@ bool WorldInterface::getVoxelAtRay(float ox, float oy, float oz, float dx, float
         enterFaces[2] = FACE_BACK;
     }
     float ix, iy, iz;
-    // printf("o: %i, %i, %i\n", ip[0], ip[1], ip[2]);
     while(steps < 256){//Able to look 256 blocks away!
-        //glm::vec3 lp = glm::fract(p);
         glm::vec3 distInBlock = bounds - bp;
 
         glm::vec3 poop = distInBlock / d;
@@ -133,15 +131,6 @@ bool WorldInterface::getVoxelAtRay(float ox, float oy, float oz, float dx, float
                 ip[0], 
                 ip[1], 
                 ip[2]);
-        // if(vtype != getVoxelType((float)ip[0] + 0.1f, (float)ip[1] + 0.1f, (float)ip[2] + 0.1f))
-        // {
-        // printf("not the same. this is wrong.\n");
-        // VoxelCoordinate voxelCoordinate = worldToChunkVoxel(ip[0], ip[1], ip[2]);
-        // VoxelCoordinate voxelCoordinate2 = worldToChunkVoxel((float)ip[0] + 0.1f, (float)ip[1] + 0.1f, (float)ip[2] + 0.1f);
-        // voxelCoordinate -= voxelCoordinate2;
-        // printf("diffaerecne chunk: %i, %i, %i\n", voxelCoordinate.x, voxelCoordinate.y, voxelCoordinate.z);
-        // }
-        // Renderer::sDebugRenderer.drawPoint(ip[0] + 0.5f, ip[1] + 0.5f, ip[2] + 0.5f, DebugRenderer::ORANGE);
 
         if(vtype != (uint16_t)0) 
             break;
@@ -163,21 +152,11 @@ bool WorldInterface::getVoxelAtRay(float ox, float oy, float oz, float dx, float
             return false;
         }
     }
-    //	printf("steps:%i\n", steps);
-
-    //printf("not the same. this is wrong.\n");
-    // VoxelCoordinate voxelCoordinate = worldToChunkVoxel((int) -1, (int) -1, (int) -1);
-    //VoxelCoordinate voxelCoordinate2 = worldToChunkVoxel(1, 0, -1);
-    // voxelCoordinate -= voxelCoordinate2;
-    //printf("diffaerecne chunk: %i, %i, %i\n", voxelCoordinate2.x, voxelCoordinate2.y, voxelCoordinate2.z);
 
     glm::vec3 block = glm::vec3(ip[0] , ip[1] , ip[2]);
-    // printf("lookat block = %f, %f, %f\n",block.x, block.y, block.z);
     if(steps == 256){ return false; }
     hitBlock = VoxelWorldCoordinate(ip[0], ip[1],  ip[2]);
     return true;
-    // return glm::vec3(ip[0] - (ip[0] < 0), ip[1] - (ip[1] < 0), ip[2] - (ip[2] < 0)) + glm::vec3(0.5f);
-    // return glm::vec3((int)p.x - (p.x<0),(int)p.y - (p.y<0),(int)p.z - (p.z<0)) + glm::vec3(0.5f);
 }
 
 fea::WeakEntityPtr WorldInterface::createEntity(const std::string& scriptType, const glm::vec3& position)
