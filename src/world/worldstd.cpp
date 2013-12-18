@@ -10,29 +10,6 @@ int32_t wrapInt(int32_t kX, int32_t const kLowerBound, int32_t const kUpperBound
     return kLowerBound + (kX - kLowerBound) % range_size;
 }
 
-ChunkRegionCoordinate::ChunkRegionCoordinate() : x(0), y(0), z(0)
-{
-}
-
-ChunkRegionCoordinate::ChunkRegionCoordinate(int8_t xA, int8_t yA, int8_t zA) : x(xA), y(yA), z(zA)
-{
-}
-
-bool ChunkRegionCoordinate::operator==(const ChunkRegionCoordinate& other) const
-{
-    return x == other.x && y == other.y && z == other.z;
-}
-
-bool ChunkRegionCoordinate::operator!=(const ChunkRegionCoordinate& other) const
-{
-    return x != other.x || y != other.y || z != other.z;
-}
-
-ChunkCoordinate ChunkRegionCoordinate::toWorldSpace(const RegionCoordinate& regionCoordinate) const
-{
-    return ChunkCoordinate(regionCoordinate.x + x, regionCoordinate.y + y, regionCoordinate.z + z);
-}
-
 ChunkCoordinate worldToChunkInt(int x, int y, int z)
 {
 	int xNeg = x < 0;
@@ -74,10 +51,10 @@ VoxelWorldCoordinate worldToVoxel(float x, float y, float z)
 								glm::floor(z));
 }
 
-VoxelWorldCoordinate worldToVoxel(const glm::vec3& position)
-{
-    return worldToVoxel(position.x, position.y, position.z);
-}
+//VoxelWorldCoordinate worldToVoxel(const glm::vec3& position)
+//{
+//    return worldToVoxel(position.x, position.y, position.z);
+//}
 
 VoxelChunkCoordinate worldToChunkVoxel(const glm::vec3& position)
 {
@@ -137,11 +114,21 @@ ChunkRegionCoordinate chunkToChunkRegion(const ChunkCoordinate& coordinate)
     return chunkToChunkRegion(coordinate.x, coordinate.y, coordinate.z);
 }
 
-ChunkCoordinate voxelToChunk(const VoxelCoordinate& coordinate)
+ChunkCoordinate voxelToChunk(const VoxelWorldCoordinate& coordinate)
 {
     int32_t x = coordinate.x < 0 ? (coordinate.x / 32) - 1: coordinate.x / 32;
     int32_t y = coordinate.y < 0 ? (coordinate.y / 32) - 1: coordinate.y / 32;
     int32_t z = coordinate.z < 0 ? (coordinate.z / 32) - 1: coordinate.z / 32;
 
     return ChunkCoordinate(x, y, z);
+}
+
+VoxelCoord worldToVoxel(const glm::vec3& worldCoordinate)
+{
+    return (VoxelCoord)glm::floor(worldCoordinate);
+}
+
+glm::vec3 voxelToWorld(const VoxelCoord& voxelCoordinate)
+{
+    return (glm::vec3) voxelCoordinate;
 }
