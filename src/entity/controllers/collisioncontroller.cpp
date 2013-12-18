@@ -226,7 +226,6 @@ glm::vec3 CollisionController::pushOutFromBlocks(const AABB& _a, float maxMove)
                         a.z  += pushNorm.z;
 
                         resultVec += pushNorm;
-
                     }
                 }
             }
