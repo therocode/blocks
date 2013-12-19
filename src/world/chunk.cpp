@@ -10,19 +10,19 @@ Chunk::Chunk()
     setVoxelData(types);
 }
 
-Chunk::Chunk(const ChunkCoordinate& loc) : mLocation(loc)
+Chunk::Chunk(const ChunkCoord& loc) : mLocation(loc)
 {
     VoxelTypeArray types;
     types.fill(0);
     setVoxelData(types);
 }
 
-Chunk::Chunk(const ChunkCoordinate& loc, const VoxelTypeArray& types) : mLocation(loc)
+Chunk::Chunk(const ChunkCoord& loc, const VoxelTypeArray& types) : mLocation(loc)
 {
     setVoxelData(types);
 }
 
-Chunk::Chunk(const ChunkCoordinate& loc, const RleIndexArray& indices, const RleSegmentArray& rleData) : mLocation(loc), mRleSegmentIndices(indices), mRleSegments(rleData)
+Chunk::Chunk(const ChunkCoord& loc, const RleIndexArray& indices, const RleSegmentArray& rleData) : mLocation(loc), mRleSegmentIndices(indices), mRleSegments(rleData)
 {
 }
 
@@ -163,7 +163,7 @@ uint32_t Chunk::getWidth() const
     return chunkWidth;
 }
 
-const ChunkCoordinate& Chunk::getLocation() const
+const ChunkCoord& Chunk::getLocation() const
 {
     return mLocation;
 }

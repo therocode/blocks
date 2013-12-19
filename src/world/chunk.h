@@ -8,21 +8,21 @@ class Chunk
 {
     public:
         Chunk();
-        Chunk(const ChunkCoordinate& loc);
-        Chunk(const ChunkCoordinate& loc, const VoxelTypeArray& types);
-        Chunk(const ChunkCoordinate& loc, const RleIndexArray& indices, const RleSegmentArray& rleData);
+        Chunk(const ChunkCoord& loc);
+        Chunk(const ChunkCoord& loc, const VoxelTypeArray& types);
+        Chunk(const ChunkCoord& loc, const RleIndexArray& indices, const RleSegmentArray& rleData);
         void setVoxelType(uint32_t x, uint32_t y, uint32_t z, VoxelType type);
-        void setVoxelType(const VoxelChunkCoordinate& voxel, VoxelType type);
+        void setVoxelType(const ChunkVoxelCoord& voxel, VoxelType type);
         void setVoxelData(const VoxelTypeArray& types);
         VoxelType getVoxelType(uint32_t x, uint32_t y, uint32_t z) const;
-        VoxelType getVoxelType(const VoxelChunkCoordinate& voxel) const;
+        VoxelType getVoxelType(const ChunkVoxelCoord& voxel) const;
         VoxelTypeData getVoxelTypeData() const;
         uint32_t getWidth() const;
-        const ChunkCoordinate& getLocation() const; //should probably be gone
+        const ChunkCoord& getLocation() const; //should probably be gone
     private:
         VoxelSegmentTypeArray getUncompressedTypeSegment(uint32_t y, uint32_t z) const;
         void setSegmentTypeFromArray(uint16_t y, uint16_t z, const VoxelSegmentTypeArray& typeArray);
-        ChunkCoordinate mLocation;
+        ChunkCoord mLocation;
 
         RleIndexArray mRleSegmentIndices;
         RleSegmentArray mRleSegments;
@@ -32,16 +32,16 @@ class Chunk
         static uint32_t timesGenerated;
 };
 
-using ChunkMap = std::unordered_map<ChunkCoordinate, Chunk>;
-using ChunkReferenceMap = std::unordered_map<ChunkCoordinate, const Chunk&>;
+using ChunkMap = std::unordered_map<ChunkCoord, Chunk>;
+using ChunkReferenceMap = std::unordered_map<ChunkCoord, const Chunk&>;
 
 namespace std
 {
     template<>
-        struct hash<ChunkCoordinate>
+        struct hash<glm::i64vec3>
         {
             public:
-                std::size_t operator()(ChunkCoordinate const& coord) const 
+                std::size_t operator()(glm::i64vec3 const& coord) const 
                 {
                     /*
                     size_t x = coord.x;
@@ -97,10 +97,10 @@ namespace std
 namespace std
 {
     template<>
-        struct hash<ChunkRegionCoordinate>
+        struct hash<glm::u8vec3>
         {
             public:
-                std::size_t operator()(ChunkRegionCoordinate const& coord) const 
+                std::size_t operator()(glm::u8vec3 const& coord) const 
                 {
                     /*
                     size_t x = coord.x;

@@ -3,13 +3,6 @@
 #include <vector>
 #include <array>
 
-//old
-using ChunkCoordinate = glm::ivec3;
-using RegionCoordinate = glm::ivec3;
-using VoxelChunkCoordinate = glm::uvec3;
-using VoxelWorldCoordinate = glm::ivec3;
-using ChunkRegionCoordinate = glm::u8vec3;
-
 //new
 using VoxelCoord       = glm::i64vec3;
 using ChunkCoord       = glm::i64vec3; 
@@ -56,26 +49,6 @@ struct VoxelTypeData
     const RleSegmentArray& mRleSegments;    
 };
 
-//old
-ChunkCoordinate worldToChunk(float x, float y, float z);
-ChunkCoordinate worldToChunk(const glm::vec3& position);
-ChunkCoordinate worldToChunkInt(int x, int y, int z);
-
-VoxelChunkCoordinate worldToChunkVoxel(const glm::vec3& position);
-VoxelChunkCoordinate worldToChunkVoxel(float x, float y, float z);
-
-VoxelWorldCoordinate worldToVoxel(float x, float y, float z);
-//VoxelWorldCoordinate worldToVoxel(const glm::vec3& position);
-
-RegionCoordinate chunkToRegion(int x, int y, int z);
-RegionCoordinate chunkToRegion(const ChunkCoordinate& coordinate);
-
-ChunkRegionCoordinate chunkToChunkRegion(int32_t x, int32_t y, int32_t z);
-ChunkRegionCoordinate chunkToChunkRegion(const ChunkCoordinate& coordinate);
-
-ChunkCoordinate voxelToChunk(const VoxelWorldCoordinate& coordinate);
-
-//new
 VoxelCoord worldToVoxel(const glm::vec3& worldCoordinate);
 glm::vec3  voxelToWorld(const VoxelCoord& voxelCoordinate);
 glm::vec3  chunkToWorld(const ChunkCoord& chunkCoordinate);
