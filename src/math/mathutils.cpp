@@ -33,9 +33,9 @@ void renderDebugAABB(const AABB a, const int color)
 
 bool testAABBAABB(const AABB a, const AABB b)
 {
-    if(a.x + a.width  < b.x || a.x > b.x + b.width)  return false;
-    if(a.y + a.height < b.y || a.y > b.y + b.height) return false;
-    if(a.z + a.depth  < b.z || a.z > b.z + b.depth)  return false;
+    if(a.x + a.width  <= b.x || a.x >= b.x + b.width)  return false;
+    if(a.y + a.height <= b.y || a.y >= b.y + b.height) return false;
+    if(a.z + a.depth  <= b.z || a.z >= b.z + b.depth)  return false;
     return true;
 }
 
@@ -93,7 +93,7 @@ float sweepAABB(const AABB _a, const AABB _b, const glm::vec3 va, const glm::vec
     {
         return 1.0;
     }
-    if(testAABBAABB(a, b)){
+    if(false && testAABBAABB(a, b)){
         glm::vec3 d = glm::vec3(a.x, a.y, a.z) - glm::vec3(b.x, b.y, b.z);
         glm::vec3 r = d / v;
         float rn = glm::abs(r.x);
@@ -107,7 +107,7 @@ float sweepAABB(const AABB _a, const AABB _b, const glm::vec3 va, const glm::vec
             h = 2;
         }
         n[h] = (v[h] < 0)?1: -1;
-        return 0;
+        return 1.0;
     }
 
 

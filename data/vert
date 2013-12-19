@@ -36,6 +36,8 @@ uniform vec2 screenSize;
 
 varying vec4 textureBounds;
 
+varying vec4 worldPos;
+
 void main(){
     textureBounds = bounds;
 	texCoord = uv;
@@ -50,6 +52,8 @@ void main(){
 	lightPos = worldToCamera * lightPos;
 
 	vec4 v =  modelToWorld * vec4(vert, 1.0);
+
+    worldPos = v;
 	
 	v = worldToCamera * v;
 	posCamSpace = v.xyz;
@@ -68,5 +72,6 @@ void main(){
 	v = cameraToClip * v; 
 	//vColor = mix(modelAmbient + modelColor *  color, modelDiffuse *vec3(clamp(dot(nd, ld), .2, 1.0)), 0.5);
 	vColor = clamp(dot(nd, ld), .2, 1.0) * color;
+
 	gl_Position = v;
 }
