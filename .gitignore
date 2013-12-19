@@ -25,3 +25,5 @@ zlib-1.2.8/*
 *.sublime-workspace
 *.sublime-project
 .exrc
+*.dat
+*.idx
