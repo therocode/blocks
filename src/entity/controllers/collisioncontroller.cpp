@@ -86,7 +86,7 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
     a.x = oldPosition.x - size.x * 0.5f;
     a.y = oldPosition.y - size.y * 0.5f;
     a.z = oldPosition.z - size.z * 0.5f;
-    oldPosition += pushOutFromBlocks(a);
+    oldPosition += pushOutFromBlocks(a, 0.05f);
 
     glm::vec3 v = approvedPosition - oldPosition;
 
@@ -94,6 +94,9 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
     float n = 0.0;
     int steps = 0;
     VoxelWorldCoordinate currentHitBlock;
+    AABB b;
+    b.width = 1.0f;
+    b.height = 1.0f;
     while(n < 1.0f && (steps < 3)){
         steps++;
         glm::ivec3 normal = glm::ivec3(0);
@@ -105,28 +108,23 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
 
         if(n < 1.f )
         {
+            int32_t blockType = mWorldInterface.getVoxelType(currentHitBlock);
             float moveLen = glm::length(approvedPosition - oldPosition);
-            for(int i = 0; i < 3; i++){
-                if(normal[i] != 0){
-                    ignoreAxis[i] = 1.0;
-                    break;
+            if(blockType != 21)
+                for(int i = 0; i < 3; i++){
+                    if(normal[i] != 0){
+                        ignoreAxis[i] = 1.0;
+                        break;
+                    }
                 }
-            }
+
+            b.x = currentHitBlock.x;
+            b.y = currentHitBlock.y;
+            b.z = currentHitBlock.z;
+
             float e = 0.001f;
             approvedPosition = oldPosition + v * n;//* glm::max(n - 0.08f / moveLen, 0.0f);
-            if(normal.x != 0){
-                ignoreAxis.x = 1.0f;
-                if(normal.x > 0){
-                    moveLen = (float)currentHitBlock.x + 1.0f + a.width * 0.5f + e - approvedPosition.x;
-                    //approvedPosition.x = (float)currentHitBlock.x + 1.0f + a.width * 0.5f + e;
-                }else{
-                    moveLen = (float)currentHitBlock.x - a.width * 0.5f - e - approvedPosition.x; 
-                    //approvedPosition.x = (float)currentHitBlock.x - a.width * 0.5f - e;
-                }
-                if(glm::abs(moveLen) < 0.1f){
-                    approvedPosition.x += moveLen;
-                }
-            }else if(normal.y != 0){
+            if(normal.y != 0){
                 ignoreAxis.y = 1.0f;
                 if(normal.y > 0){
                     moveLen = (float)currentHitBlock.y + 1.0f + a.height * 0.5f + e - approvedPosition.y;
@@ -138,20 +136,46 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
                 if(glm::abs(moveLen) < 0.1f){
                     approvedPosition.y += moveLen;
                 }
-            }else if(normal.z != 0){
-                ignoreAxis.z = 1.0f;
-                if(normal.z > 0){
-                    moveLen = (float)currentHitBlock.z + 1.0f + a.depth * 0.5f + e - approvedPosition.z;
-                    //approvedPosition.x = (float)currentHitBlock.x + 1.0f + a.width * 0.5f + e;
-                }else{
-                    moveLen = (float)currentHitBlock.z - a.depth * 0.5f - e - approvedPosition.z; 
-                    //approvedPosition.x = (float)currentHitBlock.x - a.width * 0.5f - e;
-                }
-                if(glm::abs(moveLen) < 0.1f){
-                    approvedPosition.z += moveLen;
-                }
             }else{
-                printf("What\n");
+                if(blockType == 21){
+                    b.height = 0.5f;
+                }else{
+                    b.height = 1.0f;
+                }
+                if(b.max(1) - a.min(1) < 1.01){
+                    VoxelWorldCoordinate o = currentHitBlock;
+                    o.y ++;
+                    if(mWorldInterface.getVoxelType(o) == 0){
+                        oldPosition += v * 0.01f;
+                        oldPosition.y = b.max(1) + 0.01f + size.y * 0.5f;
+                        continue; 
+                    }
+                }
+                if(normal.x != 0){
+                    ignoreAxis.x = 1.0f;
+                    if(normal.x > 0){
+                        moveLen = (float)currentHitBlock.x + 1.0f + a.width * 0.5f + e - approvedPosition.x;
+                        //approvedPosition.x = (float)currentHitBlock.x + 1.0f + a.width * 0.5f + e;
+                    }else{
+                        moveLen = (float)currentHitBlock.x - a.width * 0.5f - e - approvedPosition.x; 
+                        //approvedPosition.x = (float)currentHitBlock.x - a.width * 0.5f - e;
+                    }
+                    if(glm::abs(moveLen) < 0.1f){
+                        approvedPosition.x += moveLen;
+                    }
+                }else if(normal.z != 0){
+                    ignoreAxis.z = 1.0f;
+                    if(normal.z > 0){
+                        moveLen = (float)currentHitBlock.z + 1.0f + a.depth * 0.5f + e - approvedPosition.z;
+                        //approvedPosition.x = (float)currentHitBlock.x + 1.0f + a.width * 0.5f + e;
+                    }else{
+                        moveLen = (float)currentHitBlock.z - a.depth * 0.5f - e - approvedPosition.z; 
+                        //approvedPosition.x = (float)currentHitBlock.x - a.width * 0.5f - e;
+                    }
+                    if(glm::abs(moveLen) < 0.1f){
+                        approvedPosition.z += moveLen;
+                    }
+                }
             }
             oldPosition = approvedPosition;
 
@@ -195,7 +219,7 @@ glm::vec3 CollisionController::pushOutFromBlocks(const AABB& _a, float maxMove)
     a.x = a.y = a.z = 0.0f;
     glm::vec3 resultVec = glm::vec3(0.0f);
 
-    int sx = 1, sy = 2, sz = 1;
+    int sx = _a.width*2.f, sy = _a.height*2.f, sz = _a.depth*2.f;
     float maxMoveSqrd = maxMove * maxMove;
     //Loop througha cube of blocks and check if they are passableor not
     for(float x = -sx; x <= sx; x++)
@@ -215,8 +239,15 @@ glm::vec3 CollisionController::pushOutFromBlocks(const AABB& _a, float maxMove)
                 b.y -= _a.y;
                 b.z -= _a.z;
 
-                if(mWorldInterface.getVoxelType(coord) != 0)
+                int blockType = mWorldInterface.getVoxelType(coord);
+
+                if(blockType != 0)
                 {
+                    if(blockType == 21)
+                        b.height = 0.5f;
+                    else
+                        b.height = 1.0f;
+
                     glm::vec3 pushNorm;
                     testAABBAABB(a, b, pushNorm);
                     if(glm::length2(pushNorm) < maxMoveSqrd)
@@ -240,7 +271,7 @@ float CollisionController::sweepAroundAABB(const AABB _a, glm::vec3 velocity, gl
     a = _a;
     a.x = a.y = a.z = 0.0f;
 
-    int sx = 1, sy = 2, sz = 1;
+    int sx = _a.width*2.f, sy = _a.height*2.f, sz = _a.depth*2.f;
     float n = 1.0f;
     float whatN = 1.0f;
     glm::ivec3 normal = glm::ivec3(0);
@@ -263,12 +294,19 @@ float CollisionController::sweepAroundAABB(const AABB _a, glm::vec3 velocity, gl
                 b.y -= _a.y;
                 b.z -= _a.z;
 
-                if(mWorldInterface.getVoxelType(coord) != 0)
+                int blockType = mWorldInterface.getVoxelType(coord);
+
+                if(blockType != 0)
                 {
+                    if(blockType == 21)
+                        b.height = 0.5f;
+                    else
+                        b.height = 1.0f;
                     glm::ivec3 norm;
                     // renderDebugAABB(b, DebugRenderer::GREEN);
 
-                    //A is the entity, B is block in world, v is newPosition - oldPosition. Function should set norm to a normal on which face it collided. returns depth, which is between 0 and 1.
+                    //A is the entity, B is block in world, v is newPosition - oldPosition. 
+                    //Function should set norm to a normal on which face it collided. returns depth, which is between 0 and 1.
                     float nn = sweepAABB(a, b, velocity, glm::vec3(0.f), norm);
 
                     //If depth is shallower than before, set the new depth to the new value.
