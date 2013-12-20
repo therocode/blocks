@@ -1,12 +1,15 @@
 #define CATCH_CONFIG_MAIN
 #include "../catch.hpp"
 
+#include <iostream>
 #include <tuple>
 
 #include <featherkit/messaging.h>
 
 #include "world/highlightmanager.h"
 #include "world/worldmessages.h"
+
+#define PR(x) std::cerr << #x << " = " << (x) << std::endl;
 
 using namespace std;
 
@@ -15,97 +18,113 @@ class TestReceiver :
     public fea::MessageReceiver<ChunkDehighlightedMessage>
 {
     public:
-        ChunkCoord getHighlightedLoc()
+        vector<ChunkCoord> getHighlightedLocs()
         {
-            return mHighlightedLoc;
+            return mHighlightedLocs;
         }
 
-        void setHighlightedLoc(ChunkCoord loc)
+        vector<ChunkCoord> getDehighlightedLocs()
         {
-            mHighlightedLoc = loc;
+            return mDehighlightedLocs;
         }
-
-        ChunkCoord getDehighlightedLoc()
+        
+        void clear()
         {
-            return mDehighlightedLoc;
-        }
-
-        void setDehighlightedLoc(ChunkCoord loc)
-        {
-            mDehighlightedLoc = loc;
+            mHighlightedLocs.clear();
+            mDehighlightedLocs.clear();
         }
     
     private:
         void handleMessage(const ChunkHighlightedMessage& message)
         {
-            tie(mHighlightedLoc) = message.data;
+            ChunkCoord loc;
+            tie(loc) = message.data;
+            mHighlightedLocs.push_back(loc);
         }
 
         void handleMessage(const ChunkDehighlightedMessage& message)
         {
-            tie(mDehighlightedLoc) = message.data;
+            ChunkCoord loc;
+            tie(loc) = message.data;
+            mDehighlightedLocs.push_back(loc);
         } 
 
-        ChunkCoord mHighlightedLoc;
-        ChunkCoord mDehighlightedLoc; 
+        vector<ChunkCoord> mHighlightedLocs;
+        vector<ChunkCoord> mDehighlightedLocs; 
 };
 
-TEST_CASE("adding and removing", "[adding][removing]")
+TEST_CASE("", "[spawn][despawn][move]")
 {
+    fea::EntityId eId1 = 1;
+    fea::EntityId eId2 = 2;
+    ChunkCoord loc1(0,0,0);
+    ChunkCoord loc2(1,0,0);
+    ChunkCoord loc3(5,0,0);
+
     fea::MessageBus bus;
     TestReceiver receiver;
     bus.addMessageSubscriber<ChunkHighlightedMessage>(receiver);
     bus.addMessageSubscriber<ChunkDehighlightedMessage>(receiver);
     HighlightManager manager(bus);
-    ChunkCoord loc(1,1,1);
-    ChunkCoord loc2(2,2,2);
 
-    receiver.setHighlightedLoc(loc2);
-    receiver.setDehighlightedLoc(loc2);
-
-    SECTION("add one")
+    SECTION("spawn entity") 
     {
-        manager.addHighlight(loc);
-        REQUIRE(loc == receiver.getHighlightedLoc());
-        REQUIRE(loc2 == receiver.getDehighlightedLoc());
+        bus.sendMessage<HighlightEntitySpawnedMessage>(HighlightEntitySpawnedMessage(eId1, loc1));
+
+        for(int64_t x = loc1.x - HIGHLIGHT_RADIUS; x < loc1.x + HIGHLIGHT_RADIUS + 1; ++x)
+        {
+            for(int64_t y = loc1.y - HIGHLIGHT_RADIUS; y < loc1.y + HIGHLIGHT_RADIUS + 1; ++y)
+            {
+                for(int64_t z = loc1.z - HIGHLIGHT_RADIUS; z < loc1.z + HIGHLIGHT_RADIUS + 1; ++z)
+                {
+                    ChunkCoord loc(x, y, z); 
+                    vector<ChunkCoord> highlightedLocs = receiver.getHighlightedLocs();
+                    vector<ChunkCoord>::const_iterator got = find(highlightedLocs.begin(), highlightedLocs.end(), loc);
+                    if(got == highlightedLocs.end())
+                    {
+                        REQUIRE(glm::distance(glm::dvec3(loc), glm::dvec3(loc1)) > HIGHLIGHT_RADIUS);
+                    } 
+                    else
+                    {
+                        REQUIRE(glm::distance(glm::dvec3(loc), glm::dvec3(loc1)) <= HIGHLIGHT_RADIUS);
+                    }
+                }
+            }
+        }
     }
 
-    SECTION("add one remove one")
+    SECTION("spawn and despawn entity") 
     {
-        manager.addHighlight(loc);
-        manager.removeHighlight(loc);
-        REQUIRE(loc == receiver.getHighlightedLoc());
-        REQUIRE(loc == receiver.getDehighlightedLoc());
+        bus.sendMessage<HighlightEntitySpawnedMessage>(HighlightEntitySpawnedMessage(eId1, loc1));
+        bus.sendMessage<HighlightEntityDespawnedMessage>(HighlightEntityDespawnedMessage(eId1, loc1));
+
+        REQUIRE(receiver.getHighlightedLocs().size() == receiver.getDehighlightedLocs().size());
     }
 
-    SECTION("add two remove one")
+    SECTION("spawn and move entity")
     {
-        manager.addHighlight(loc);
-        manager.addHighlight(loc);
-        manager.removeHighlight(loc);
-        REQUIRE(loc == receiver.getHighlightedLoc());
-        REQUIRE(loc2 == receiver.getDehighlightedLoc());
+        bus.sendMessage<HighlightEntitySpawnedMessage>(HighlightEntitySpawnedMessage(eId1, loc1));
+        bus.sendMessage<HighlightEntityMovedMessage>(HighlightEntityMovedMessage(eId1, loc2));
+
+        // Constant below is dependent on HIGHLIGHT_RADIUS 
+        REQUIRE(29 == receiver.getDehighlightedLocs().size());
     }
 
-    SECTION("add two remove two")
+    SECTION("intersect two highlight entities")
     {
-        manager.addHighlight(loc);
-        manager.addHighlight(loc);
-        manager.removeHighlight(loc);
-        manager.removeHighlight(loc);
-        REQUIRE(loc == receiver.getHighlightedLoc());
-        REQUIRE(loc == receiver.getDehighlightedLoc());
+        bus.sendMessage<HighlightEntitySpawnedMessage>(HighlightEntitySpawnedMessage(eId1, loc1));
+        bus.sendMessage<HighlightEntitySpawnedMessage>(HighlightEntitySpawnedMessage(eId2, loc3));
+
+        // Constant below is dependent on HIGHLIGHT_RADIUS 
+        REQUIRE(244 == receiver.getHighlightedLocs().size());
     }
 
-    SECTION("remove one")
+    SECTION("intersect two highlight entities and despawn one")
     {
-        CHECK_THROWS_AS(manager.removeHighlight(loc), HighlightManagerException);
-    }
-
-    SECTION("add one remove two")
-    {
-        manager.addHighlight(loc);
-        manager.removeHighlight(loc);
-        CHECK_THROWS_AS(manager.removeHighlight(loc), HighlightManagerException);
+        bus.sendMessage<HighlightEntitySpawnedMessage>(HighlightEntitySpawnedMessage(eId1, loc1));
+        bus.sendMessage<HighlightEntitySpawnedMessage>(HighlightEntitySpawnedMessage(eId2, loc3));
+        bus.sendMessage<HighlightEntityDespawnedMessage>(HighlightEntityDespawnedMessage(eId1, loc1));
+        
+        REQUIRE(121 == receiver.getDehighlightedLocs().size());        
     }
 }

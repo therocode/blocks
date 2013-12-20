@@ -1,5 +1,6 @@
 #pragma once
 #include "worldstd.h"
+#include <featherkit/entitysystem.h>
 #include <featherkit/messaging.h>
 
 class Region;
@@ -37,3 +38,12 @@ using ChunkHighlightedMessage = fea::Message<ChunkHighlighted_tag, const ChunkCo
 
 struct ChunkDehighlighted_tag{};//                                     chunk
 using ChunkDehighlightedMessage = fea::Message<ChunkDehighlighted_tag, const ChunkCoord&>;
+
+struct HighlightEntitySpawned_tag{};
+using HighlightEntitySpawnedMessage = fea::Message<HighlightEntitySpawned_tag, fea::EntityId, const ChunkCoord&>;
+
+struct HighlightEntityDespawned_tag{};
+using HighlightEntityDespawnedMessage = fea::Message<HighlightEntityDespawned_tag, fea::EntityId, const ChunkCoord&>;
+
+struct HighlightEntityMoved_tag{};
+using HighlightEntityMovedMessage = fea::Message<HighlightEntityMoved_tag, fea::EntityId, const ChunkCoord&>;
