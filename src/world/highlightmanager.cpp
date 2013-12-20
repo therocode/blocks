@@ -5,7 +5,7 @@ using namespace std;
 HighlightManager::HighlightManager(fea::MessageBus bus)
     : mBus(bus) {}
 
-void HighlightManager::addHighlight(ChunkCoordinate loc)
+void HighlightManager::addHighlight(ChunkCoord loc)
 {
     RefMap::const_iterator got = refCounts.find(loc);
     if(got == refCounts.end())
@@ -23,18 +23,18 @@ void HighlightManager::addHighlight(ChunkCoordinate loc)
     } 
 }
 
-void HighlightManager::removeHighlight(ChunkCoordinate loc)
+void HighlightManager::removeHighlight(ChunkCoord loc)
 {
     RefMap::const_iterator got = refCounts.find(loc);
     if(got == refCounts.end())
     {
-        throw HighlightManagerException(glm::to_string(loc) + " has not been highlighted."); 
+        //throw HighlightManagerException(glm::to_string(loc) + " has not been highlighted."); 
     }
     else
     {
         if(refCounts[loc] == 0)
         {
-            throw HighlightManagerException(glm::to_string(loc) + " has not been highlighted."); 
+            //throw HighlightManagerException(glm::to_string(loc) + " has not been highlighted."); 
         }
         
         --refCounts[loc];

@@ -15,22 +15,22 @@ class TestReceiver :
     public fea::MessageReceiver<ChunkDehighlightedMessage>
 {
     public:
-        ChunkCoordinate getHighlightedLoc()
+        ChunkCoord getHighlightedLoc()
         {
             return mHighlightedLoc;
         }
 
-        void setHighlightedLoc(ChunkCoordinate loc)
+        void setHighlightedLoc(ChunkCoord loc)
         {
             mHighlightedLoc = loc;
         }
 
-        ChunkCoordinate getDehighlightedLoc()
+        ChunkCoord getDehighlightedLoc()
         {
             return mDehighlightedLoc;
         }
 
-        void setDehighlightedLoc(ChunkCoordinate loc)
+        void setDehighlightedLoc(ChunkCoord loc)
         {
             mDehighlightedLoc = loc;
         }
@@ -46,8 +46,8 @@ class TestReceiver :
             tie(mDehighlightedLoc) = message.data;
         } 
 
-        ChunkCoordinate mHighlightedLoc;
-        ChunkCoordinate mDehighlightedLoc; 
+        ChunkCoord mHighlightedLoc;
+        ChunkCoord mDehighlightedLoc; 
 };
 
 TEST_CASE("adding and removing", "[adding][removing]")
@@ -57,8 +57,8 @@ TEST_CASE("adding and removing", "[adding][removing]")
     bus.addMessageSubscriber<ChunkHighlightedMessage>(receiver);
     bus.addMessageSubscriber<ChunkDehighlightedMessage>(receiver);
     HighlightManager manager(bus);
-    ChunkCoordinate loc(1,1,1);
-    ChunkCoordinate loc2(2,2,2);
+    ChunkCoord loc(1,1,1);
+    ChunkCoord loc2(2,2,2);
 
     receiver.setHighlightedLoc(loc2);
     receiver.setDehighlightedLoc(loc2);

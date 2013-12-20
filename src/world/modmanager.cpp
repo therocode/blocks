@@ -3,7 +3,7 @@
 using namespace std;
 
 VoxelCoordinate_uint8::VoxelCoordinate_uint8() {}
-VoxelCoordinate_uint8::VoxelCoordinate_uint8(VoxelChunkCoordinate coord)
+VoxelCoordinate_uint8::VoxelCoordinate_uint8(ChunkVoxelCoord coord)
     : x(coord.x), y(coord.y), z(coord.z) 
 {}
 
@@ -38,8 +38,8 @@ bool VoxelCoordinate_uint8::operator<(const VoxelCoordinate_uint8& other) const
 
 void ModManager::loadMods(Chunk& chunk)
 {
-    RegionCoordinate regionLoc = chunkToRegion(chunk.getLocation());
-    ChunkRegionCoordinate chunkLoc = chunkToChunkRegion(chunk.getLocation()); 
+    RegionCoord regionLoc = chunkToRegion(chunk.getLocation());
+    RegionChunkCoord chunkLoc = chunkToRegionChunk(chunk.getLocation()); 
 
     ChunkIndex chunkIndex = getChunkIndex(regionLoc, chunkLoc);
 
@@ -78,12 +78,12 @@ void ModManager::saveMods(uint64_t currentTimestamp)
     }
 }
 
-void ModManager::saveMods(uint64_t currentTimestamp, RegionCoordinate regionLoc) 
+void ModManager::saveMods(uint64_t currentTimestamp, RegionCoord regionLoc) 
 {
     string dataFilename = getFilename(regionLoc) + dataExt;
     string indexFilename = getFilename(regionLoc) + indexExt;
 
-    hash<ChunkRegionCoordinate> crcHash;
+    hash<RegionChunkCoord> crcHash;
     ifstream iIndexFile(indexFilename, ios::in | ios::binary);
 
     TimestampMap oldTimestamps;
@@ -100,7 +100,7 @@ void ModManager::saveMods(uint64_t currentTimestamp, RegionCoordinate regionLoc)
                 {
                     for(int z = 0; z < regionWidth; ++z)
                     {
-                        ChunkRegionCoordinate chunkLoc(x, y, z);
+                        RegionChunkCoord chunkLoc(x, y, z);
 
                         iIndexFile.seekg(crcHash(chunkLoc)*sizeof(ChunkIndex));
                         ChunkIndex chunkIndex;
@@ -173,31 +173,31 @@ void ModManager::saveMods(uint64_t currentTimestamp, RegionCoordinate regionLoc)
     oDataFile.close();
 }
 
-void ModManager::setMod(ChunkCoordinate loc, VoxelCoordinate_uint8 voxLoc, VoxelType type)
+void ModManager::setMod(ChunkCoord loc, VoxelCoordinate_uint8 voxLoc, VoxelType type)
 {
-    RegionCoordinate regionLoc = chunkToRegion(loc);
-    ChunkRegionCoordinate chunkLoc = chunkToChunkRegion(loc);
+    RegionCoord regionLoc = chunkToRegion(loc);
+    RegionChunkCoord chunkLoc = chunkToRegionChunk(loc);
 
     _setMod(regionLoc, chunkLoc, voxLoc, type); 
 }
 
-void ModManager::setMod(ChunkCoordinate loc, VoxelChunkCoordinate voxLoc, VoxelType type)
+void ModManager::setMod(ChunkCoord loc, ChunkVoxelCoord voxLoc, VoxelType type)
 {
-    RegionCoordinate regionLoc = chunkToRegion(loc);
-    ChunkRegionCoordinate chunkLoc = chunkToChunkRegion(loc);
+    RegionCoord regionLoc = chunkToRegion(loc);
+    RegionChunkCoord chunkLoc = chunkToRegionChunk(loc);
 
     _setMod(regionLoc, chunkLoc, VoxelCoordinate_uint8(voxLoc), type);
 }
 
-VoxelType ModManager::getMod(ChunkCoordinate loc, VoxelChunkCoordinate voxLoc)
+VoxelType ModManager::getMod(ChunkCoord loc, ChunkVoxelCoord voxLoc)
 {
-    RegionCoordinate regionLoc = chunkToRegion(loc);
-    ChunkRegionCoordinate chunkLoc = chunkToChunkRegion(loc);
+    RegionCoord regionLoc = chunkToRegion(loc);
+    RegionChunkCoord chunkLoc = chunkToRegionChunk(loc);
 
     return mMods[regionLoc][chunkLoc][voxLoc];
 }
 
-void ModManager::deleteRegionFile(const RegionCoordinate& regionLoc)
+void ModManager::deleteRegionFile(const RegionCoord& regionLoc)
 {
     string indexFilename = getFilename(regionLoc) + indexExt;
     string dataFilename = getFilename(regionLoc) + dataExt;
@@ -217,9 +217,9 @@ void ModManager::deleteRegionFile(const RegionCoordinate& regionLoc)
     }
 }
 
-ChunkIndex ModManager::getChunkIndex(RegionCoordinate regionLoc, ChunkRegionCoordinate chunkLoc)
+ChunkIndex ModManager::getChunkIndex(RegionCoord regionLoc, RegionChunkCoord chunkLoc)
 {
-    hash<ChunkRegionCoordinate> crcHash;
+    hash<RegionChunkCoord> crcHash;
     ifstream indexFile(getFilename(regionLoc) + indexExt, ios::in | ios::binary);
 
     if(indexFile)
@@ -239,7 +239,7 @@ ChunkIndex ModManager::getChunkIndex(RegionCoordinate regionLoc, ChunkRegionCoor
     } 
 }
 
-void ModManager::initIndexFile(RegionCoordinate regionLoc)
+void ModManager::initIndexFile(RegionCoord regionLoc)
 {
     ofstream indexFile(getFilename(regionLoc) + indexExt, ios::out | ios::binary);
 
@@ -252,7 +252,7 @@ void ModManager::initIndexFile(RegionCoordinate regionLoc)
     indexFile.close();
 }
 
-void ModManager::_setMod(const RegionCoordinate& regionLoc, const ChunkRegionCoordinate& chunkLoc,const VoxelCoordinate_uint8& voxLoc, VoxelType type)
+void ModManager::_setMod(const RegionCoord& regionLoc, const RegionChunkCoord& chunkLoc,const VoxelCoordinate_uint8& voxLoc, VoxelType type)
 {
     if(voxLoc.x >= chunkWidth || voxLoc.y >= chunkWidth || voxLoc.z >= chunkWidth)
     {
@@ -277,7 +277,7 @@ void ModManager::_setMod(const RegionCoordinate& regionLoc, const ChunkRegionCoo
     mMods[regionLoc][chunkLoc][voxLoc] = type;
 }
 
-std::string ModManager::getFilename(RegionCoordinate regionLoc)
+std::string ModManager::getFilename(RegionCoord regionLoc)
 {
-    return regionDir + pathSep + glm::to_string(regionLoc);
+    return regionDir + pathSep;// + glm::to_string(regionLoc);
 }

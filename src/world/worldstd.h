@@ -58,3 +58,4 @@ RegionCoord voxelToRegion(const VoxelCoord& voxelCoordinate);
 RegionCoord chunkToRegion(const ChunkCoord& chunkCoordinate);
 ChunkVoxelCoord voxelToChunkVoxel(const VoxelCoord& voxelCoordinate);
 RegionChunkCoord voxelToRegionChunk(const VoxelCoord& voxelCoordinate);
+RegionChunkCoord chunkToRegionChunk(const ChunkCoord& chunkCoordinate);

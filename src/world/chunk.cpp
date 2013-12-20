@@ -78,7 +78,7 @@ void Chunk::setVoxelType(uint32_t x, uint32_t y, uint32_t z, VoxelType type)
     setSegmentTypeFromArray(y, z, uncompressed);
 }
 
-void Chunk::setVoxelType(const VoxelChunkCoordinate& voxel, VoxelType type)
+void Chunk::setVoxelType(const ChunkVoxelCoord& voxel, VoxelType type)
 {
     setVoxelType(voxel.x, voxel.y, voxel.z, type);
 }
@@ -148,7 +148,7 @@ VoxelType Chunk::getVoxelType(uint32_t x, uint32_t y, uint32_t z) const
     return mRleSegments[segmentIterator + 1];
 }
 
-VoxelType Chunk::getVoxelType(const VoxelChunkCoordinate& voxel) const
+VoxelType Chunk::getVoxelType(const ChunkVoxelCoord& voxel) const
 {
     return getVoxelType(voxel.x, voxel.y, voxel.z);
 }

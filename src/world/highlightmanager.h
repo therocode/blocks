@@ -9,7 +9,7 @@
 #include "worldmessages.h"
 #include "worldstd.h"
 
-using RefMap = std::unordered_map<ChunkCoordinate, uint16_t>;
+using RefMap = std::unordered_map<ChunkCoord, uint16_t>;
 
 struct HighlightManagerException : public std::exception
 {
@@ -23,8 +23,8 @@ class HighlightManager
 {
     public:
         HighlightManager(fea::MessageBus bus);
-        void addHighlight(ChunkCoordinate loc);
-        void removeHighlight(ChunkCoordinate loc);
+        void addHighlight(ChunkCoord loc);
+        void removeHighlight(ChunkCoord loc);
 
     private:
         fea::MessageBus mBus;

@@ -35,7 +35,7 @@ const std::string pathSep =
 struct VoxelCoordinate_uint8
 {
     VoxelCoordinate_uint8();
-    VoxelCoordinate_uint8(VoxelChunkCoordinate coord);
+    VoxelCoordinate_uint8(ChunkVoxelCoord coord);
 
     bool operator==(const VoxelCoordinate_uint8& other) const;
     bool operator!=(const VoxelCoordinate_uint8& other) const;
@@ -102,9 +102,9 @@ struct Mod
 
 using ChunkIndex = uint32_t;
 using ChunkModMap = std::unordered_map<VoxelCoordinate_uint8, VoxelType>;
-using RegionModMap = std::unordered_map<ChunkRegionCoordinate, ChunkModMap>;
-using WorldModMap = std::unordered_map<RegionCoordinate, RegionModMap>;
-using TimestampMap = std::unordered_map<ChunkRegionCoordinate, uint64_t>;
+using RegionModMap = std::unordered_map<RegionChunkCoord, ChunkModMap>;
+using WorldModMap = std::unordered_map<RegionCoord, RegionModMap>;
+using TimestampMap = std::unordered_map<RegionChunkCoord, uint64_t>;
 
 struct ModManagerException : public std::exception
 {
@@ -119,20 +119,20 @@ class ModManager
     public:
         void loadMods(Chunk& chunk);
         void saveMods(uint64_t currentTimestamp);
-        void saveMods(uint64_t currentTimestamp, RegionCoordinate regionLoc);
-        void setMod(ChunkCoordinate loc, VoxelCoordinate_uint8 voxLoc, VoxelType type);
-        void setMod(ChunkCoordinate loc, VoxelChunkCoordinate voxLoc, VoxelType type);
-        VoxelType getMod(ChunkCoordinate loc, VoxelChunkCoordinate voxLoc);
-        void deleteRegionFile(const RegionCoordinate& regionLoc);
+        void saveMods(uint64_t currentTimestamp, RegionCoord regionLoc);
+        void setMod(ChunkCoord loc, VoxelCoordinate_uint8 voxLoc, VoxelType type);
+        void setMod(ChunkCoord loc, ChunkVoxelCoord voxLoc, VoxelType type);
+        VoxelType getMod(ChunkCoord loc, ChunkVoxelCoord voxLoc);
+        void deleteRegionFile(const RegionCoord& regionLoc);
 
     private:
-        ChunkIndex getChunkIndex(RegionCoordinate regionLoc, ChunkRegionCoordinate chunkLoc);
-        void initIndexFile(RegionCoordinate regionLoc);
-        void _setMod(const RegionCoordinate& regionLoc, const ChunkRegionCoordinate& chunkLoc, const VoxelCoordinate_uint8& voxLoc, VoxelType type);
-        std::string getFilename(RegionCoordinate regionLoc);
+        ChunkIndex getChunkIndex(RegionCoord regionLoc, RegionChunkCoord chunkLoc);
+        void initIndexFile(RegionCoord regionLoc);
+        void _setMod(const RegionCoord& regionLoc, const RegionChunkCoord& chunkLoc, const VoxelCoordinate_uint8& voxLoc, VoxelType type);
+        std::string getFilename(RegionCoord regionLoc);
 
         fea::MessageBus mBus;
-        RegionCoordinate mRegionLoc;
+        RegionCoord mRegionLoc;
         std::string mIndexPath;
         std::string mDataPath;
         WorldModMap mMods;
