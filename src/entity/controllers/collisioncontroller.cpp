@@ -110,13 +110,6 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
         {
             int32_t blockType = mWorldInterface.getVoxelType(currentHitBlock);
             float moveLen = glm::length(approvedPosition - oldPosition);
-            if(blockType != 21)
-                for(int i = 0; i < 3; i++){
-                    if(normal[i] != 0){
-                        ignoreAxis[i] = 1.0;
-                        break;
-                    }
-                }
 
             b.x = currentHitBlock.x;
             b.y = currentHitBlock.y;
@@ -137,20 +130,33 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
                     approvedPosition.y += moveLen;
                 }
             }else{
-                if(b.max(1) - a.min(1) <= 1.0){
-                    AABB aa = a;
-                    float newY = b.max(1) + 0.01f;// + size.y * 0.5f
-                    aa.z = currentHitBlock.z;//v.z * 0.2f;
-                    aa.x = currentHitBlock.x;//v.x * 0.2f;
-                    aa.y = newY;
-                    if(!testAABBWorld(aa)){
+                if(blockType == 21)
+                    b.height = 0.5f;
+                else
+                    b.height = 1.0f;
+
+                if(b.max(1) - a.min(1) <= 1.0f){
+                    if(AABBOnGround(a))
+                    {
+                        AABB aa = a;
+                        float newY = b.max(1) + 0.01f;// + size.y * 0.5f
                         if(normal.x != 0)
-                            oldPosition.x += v.x * 0.1f;
-                        else
-                            oldPosition.z += v.z * 0.1f;
-                        //oldPosition.y = newY + size.y * 0.5f;
-                        oldPosition.y += 1.01f;
-                        continue; 
+                        {
+                            aa.x += v.x;
+                        }else
+                        {
+                            aa.z += v.z;
+                        }
+                        aa.y = newY;
+                        if(!testAABBWorld(aa)){
+                            if(normal.x != 0)
+                                oldPosition.x += v.x * 0.1f;
+                            else
+                                oldPosition.z += v.z * 0.1f;
+                            oldPosition.y = newY + size.y * 0.5f;
+                            //oldPosition.y += b.height + 0.01f;
+                            continue; 
+                        }
                     }
                 }
                 if(normal.x != 0){
@@ -178,10 +184,11 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
                         approvedPosition.z += moveLen;
                     }
                 }
-                if(blockType == 21){
-                    b.height = 0.5f;
-                }else{
-                    b.height = 1.0f;
+            }
+            for(int i = 0; i < 3; i++){
+                if(normal[i] != 0){
+                    ignoreAxis[i] = 1.0;
+                    break;
                 }
             }
             oldPosition = approvedPosition;
@@ -241,6 +248,11 @@ bool CollisionController::testAABBWorld(const AABB& a) const{
 
                 if(blockType != 0)
                 {
+                    if(blockType == 21)
+                        b.height = 0.5f;
+                    else
+                        b.height = 1.0f;
+
                     if(testAABBAABB(a, b))
                     {
                         return true;
@@ -406,8 +418,8 @@ bool CollisionController::AABBOnGround(AABB a)
         {
             pos.x = x + a.x;
             pos.z = z + a.z;
-
-            if(mWorldInterface.getVoxelType(pos) != 0){
+            int32_t voxelType = mWorldInterface.getVoxelType(pos);
+            if(voxelType != 0){
                 b.x = glm::floor(pos.x);
                 b.y = glm::floor(pos.y);
                 b.z = glm::floor(pos.z);
