@@ -67,7 +67,7 @@ void Universe::handleMessage(const RegionDeliverMessage& received)
     RegionCoord coordinate;
     Region region;
 
-    std::tie(coordinate, region) = std::move(received.data);
+    std::tie(coordinate, region) = received.data;
 
     mStandardWorld.addRegion(coordinate, region);
 }

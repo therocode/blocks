@@ -124,6 +124,7 @@ set(source_files
 
 	src/world/chunk.cpp
     src/world/chunkprovider.cpp
+    src/world/intensitymap.cpp
     src/world/region.cpp
     src/world/regionprovider.cpp
     src/world/worldstd.cpp
@@ -236,6 +237,7 @@ set(header_files
 	src/world/worldmessages.h
 	src/world/chunk.h
     src/world/chunkprovider.h
+    src/world/intensitymap.h
     src/world/region.h
     src/world/regionstorageinterface.h
     src/world/regionprovider.h

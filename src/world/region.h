@@ -4,6 +4,7 @@
 #include <vector>
 #include <memory>
 #include "chunk.h"
+#include "intensitymap.h"
 
 using ChunkRegionMap = std::unordered_map<RegionChunkCoord, Chunk>;
 
@@ -17,4 +18,5 @@ class Region
         void addChunk(const RegionChunkCoord& coordinate, const Chunk& chunk);
     private:
         ChunkRegionMap chunks;
+        IntensityMap heightmap;
 };
