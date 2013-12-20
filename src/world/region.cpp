@@ -1,7 +1,7 @@
 #include "region.h"
 #include <iostream>
 
-bool Region::chunkIsLoaded(const RegionChunkCoord& location) const
+bool Region::hasChunk(const RegionChunkCoord& location) const
 {
     return chunks.find(location) != chunks.end();
 }

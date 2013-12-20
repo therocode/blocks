@@ -29,8 +29,17 @@ void World::addChunk(const ChunkCoord& coordinate, const Chunk& chunk)
 
 VoxelType World::getVoxelType(const VoxelCoord& voxelCoordinate)
 {
-    RegionCoord region = chunkToRegion(voxelToChunk(voxelCoordinate));
+    RegionCoord regionCoord = voxelToRegion(voxelCoordinate);
 
-    //mRegions.at(region).getChunk(chunkToChunkRegion(voxelToChunk(voxelWorldCoordinate))).getVoxelType(worldToChunkInt(voxelWorldCoordinate.x, voxelWorldCoordinate.y, voxelWorldCoordinate.z));
-    return 0;
+    if(hasRegion(regionCoord))
+    {
+        Region& region = mRegions.at(regionCoord);
+        RegionChunkCoord chunk = voxelToRegionChunk(voxelCoordinate);
+        if(region.hasChunk(chunk))
+            return region.getChunk(chunk).getVoxelType(voxelToChunkVoxel(voxelCoordinate));
+        else
+            return -1;
+    }
+    else
+        return -1;
 }

@@ -10,7 +10,7 @@ using ChunkRegionMap = std::unordered_map<RegionChunkCoord, Chunk>;
 class Region
 {
     public:
-        bool chunkIsLoaded(const RegionChunkCoord& location) const;
+        bool hasChunk(const RegionChunkCoord& location) const;
         const Chunk& getChunk(const RegionChunkCoord& location) const;
         Chunk& getChunk(const RegionChunkCoord& location);
         ChunkReferenceMap getChunkList() const;
