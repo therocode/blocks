@@ -51,7 +51,15 @@ void PlayerController::handleMessage(const PlayerJoinedMessage& received)
     mPlayerEntities.emplace(playerId, playerEntity);
     playerEntity.lock()->setAttribute<ChunkCoord>("current_chunk", worldToChunk(position));
     mBus.sendMessage(PlayerEntersChunkMessage(playerId, worldToChunk(position)));
-    mBus.sendMessage(ChunkRequestedMessage(worldToChunk(position)));
+
+    ChunkCoord chunkAt = worldToChunk(position);
+
+    for(int32_t x = -10; x < 11; x++)
+    for(int32_t y = -10; y < 11; y++)
+    for(int32_t z = -10; z < 11; z++)
+    {
+        mBus.sendMessage(ChunkRequestedMessage(chunkAt + ChunkCoord(x, y, z)));
+    }
 
     mBus.sendMessage(PlayerConnectedToEntityMessage(playerId, playerEntity.lock()->getId()));
 }
