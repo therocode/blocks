@@ -28,13 +28,13 @@ void HighlightManager::removeHighlight(ChunkCoord loc)
     RefMap::const_iterator got = refCounts.find(loc);
     if(got == refCounts.end())
     {
-        //throw HighlightManagerException(glm::to_string(loc) + " has not been highlighted."); 
+        throw HighlightManagerException(glm::to_string((glm::ivec3)loc) + " has not been highlighted."); //NOTE: not sure why this needs to be casted... not good.
     }
     else
     {
         if(refCounts[loc] == 0)
         {
-            //throw HighlightManagerException(glm::to_string(loc) + " has not been highlighted."); 
+            throw HighlightManagerException(glm::to_string((glm::ivec3)loc) + " has not been highlighted."); //NOTE: not sure why this needs to be casted... not good.
         }
         
         --refCounts[loc];
