@@ -1,4 +1,5 @@
 #include "worldgenerator.h"
+#include "../region.h"
 #include <iostream>
 
 Chunk WorldGenerator::generateChunk(const ChunkCoord& chunkCoordinate, const Region& region) const
@@ -11,7 +12,7 @@ Chunk WorldGenerator::generateChunk(const ChunkCoord& chunkCoordinate, const Reg
     for(int32_t y = 0; y < chunkWidth; y++)
     for(int32_t z = 0; z < chunkWidth; z++)
     {
-        float worldY = (float)(chunkY + y);
+        float worldY = (float)(chunkY + y) + region.getHeightmap().getUnit(x, z) * 100.0f;
         if(worldY < 0.0f)
             newChunk.setVoxelType(x, y, z, 1);
         else

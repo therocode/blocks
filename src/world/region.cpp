@@ -1,19 +1,34 @@
 #include "region.h"
 #include <iostream>
 
+Region::Region()
+{
+
+}
+
+Region::Region(const IntensityMap& heightmap)
+{
+    mHeightmap = heightmap;
+}
+
+Region::Region(IntensityMap&& heightmap)
+{
+    std::swap(mHeightmap, heightmap);
+}
+
 bool Region::hasChunk(const RegionChunkCoord& location) const
 {
-    return chunks.find(location) != chunks.end();
+    return mChunks.find(location) != mChunks.end();
 }
 
 const Chunk& Region::getChunk(const RegionChunkCoord& location) const
 {
-    return chunks.at(location);
+    return mChunks.at(location);
 }
 
 Chunk& Region::getChunk(const RegionChunkCoord& location)
 {
-    return chunks.at(location);
+    return mChunks.at(location);
 }
 
 ChunkReferenceMap Region::getChunkList() const
@@ -23,5 +38,10 @@ ChunkReferenceMap Region::getChunkList() const
 
 void Region::addChunk(const RegionChunkCoord& coordinate, const Chunk& chunk)
 {
-    chunks.emplace(coordinate, std::move(chunk));
+    mChunks.emplace(coordinate, std::move(chunk));
+}
+
+const IntensityMap& Region::getHeightmap() const
+{
+    return mHeightmap;
 }

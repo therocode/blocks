@@ -17,7 +17,8 @@ void RegionProvider::handleMessage(const RegionNeededMessage& received)
 
     std::tie(coordinate) = received.data;
 
-    Region newRegion;
+    Region newRegion(mRegionGenerator.generateHeightmap(coordinate));
+
 
     mBus.sendMessage(RegionDeliverMessage(coordinate, newRegion));
 }
