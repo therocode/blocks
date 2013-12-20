@@ -1,6 +1,7 @@
 #pragma once
 #include "worldmessages.h"
 #include "regionstorageinterface.h"
+#include "generation/worldgenerator.h"
 #include <featherkit/messaging.h>
 
 class ChunkProvider : public fea::MessageReceiver<ChunkRequestedMessage>
@@ -12,4 +13,5 @@ class ChunkProvider : public fea::MessageReceiver<ChunkRequestedMessage>
     private:
         fea::MessageBus& mBus;
         RegionStorageInterface& mRegionStorage;
+        WorldGenerator mWorldGenerator;
 };

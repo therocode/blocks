@@ -130,6 +130,7 @@ set(source_files
 	src/world/universe.cpp
     src/world/world.cpp
     src/world/worldinterface.cpp
+    src/world/generation/worldgenerator.cpp
 )
 
 set(header_files
@@ -242,6 +243,7 @@ set(header_files
 	src/world/universe.h
     src/world/world.h
     src/world/worldinterface.h
+    src/world/generation/worldgenerator.h
 )
 
 find_package(Featherkit REQUIRED COMPONENTS entity structure ui messaging)
