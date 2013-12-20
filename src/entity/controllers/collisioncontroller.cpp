@@ -137,17 +137,19 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
                     approvedPosition.y += moveLen;
                 }
             }else{
-                if(blockType == 21){
-                    b.height = 0.5f;
-                }else{
-                    b.height = 1.0f;
-                }
-                if(b.max(1) - a.min(1) < 1.01){
-                    VoxelWorldCoordinate o = currentHitBlock;
-                    o.y ++;
-                    if(mWorldInterface.getVoxelType(o) == 0){
-                        oldPosition += v * 0.01f;
-                        oldPosition.y = b.max(1) + 0.01f + size.y * 0.5f;
+                if(b.max(1) - a.min(1) <= 1.0){
+                    AABB aa = a;
+                    float newY = b.max(1) + 0.01f;// + size.y * 0.5f
+                    aa.z = currentHitBlock.z;//v.z * 0.2f;
+                    aa.x = currentHitBlock.x;//v.x * 0.2f;
+                    aa.y = newY;
+                    if(!testAABBWorld(aa)){
+                        if(normal.x != 0)
+                            oldPosition.x += v.x * 0.1f;
+                        else
+                            oldPosition.z += v.z * 0.1f;
+                        //oldPosition.y = newY + size.y * 0.5f;
+                        oldPosition.y += 1.01f;
                         continue; 
                     }
                 }
@@ -175,6 +177,11 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
                     if(glm::abs(moveLen) < 0.1f){
                         approvedPosition.z += moveLen;
                     }
+                }
+                if(blockType == 21){
+                    b.height = 0.5f;
+                }else{
+                    b.height = 1.0f;
                 }
             }
             oldPosition = approvedPosition;
@@ -210,6 +217,40 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
     }
     entity->setAttribute<glm::vec3>("position", approvedPosition);
     mBus.sendMessage<EntityMovedMessage>(EntityMovedMessage(id, requestedPosition, approvedPosition));
+}
+bool CollisionController::testAABBWorld(const AABB& a) const{
+    AABB b;
+    b.width = b.depth = 1.0f;
+    int sx = a.width*2.f + 0.5f, sy = a.height*2.f + 0.5f, sz = a.depth*2.f + 0.5f;
+    //Loop througha cube of blocks and check if they are passableor not
+    for(float x = -sx; x <= sx; x++)
+    {
+        for(float y = -sy; y <= sy + 1; y++)
+        {
+            for(float z = -sz; z <= sz; z++)
+            {
+                glm::vec3 cubePos = glm::vec3(a.x, a.y, a.z) + glm::vec3(x, y, z);
+                //set position of aabb B
+                b.x = glm::floor(cubePos.x);
+                b.y = glm::floor(cubePos.y);
+                b.z = glm::floor(cubePos.z);
+
+                VoxelWorldCoordinate coord(b.x, b.y, b.z);
+
+                int blockType = mWorldInterface.getVoxelType(coord);
+
+                if(blockType != 0)
+                {
+                    if(testAABBAABB(a, b))
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+    }
+    return false;
+
 }
 
 glm::vec3 CollisionController::pushOutFromBlocks(const AABB& _a, float maxMove)

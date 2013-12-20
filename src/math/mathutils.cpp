@@ -31,7 +31,7 @@ void renderDebugAABB(const AABB a, const int color)
     Renderer::sDebugRenderer.drawBox(a.x + a.width*0.5f, a.y + a.height*0.5f, a.z + a.depth*0.5f, a.width  + 0.01f, a.height + 0.01f, a.depth + 0.01f, color);
 }
 
-bool testAABBAABB(const AABB a, const AABB b)
+bool testAABBAABB(const AABB& a, const AABB& b) 
 {
     if(a.x + a.width  <= b.x || a.x >= b.x + b.width)  return false;
     if(a.y + a.height <= b.y || a.y >= b.y + b.height) return false;
