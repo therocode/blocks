@@ -1,26 +1,22 @@
 #include "worldgenerator.h"
+#include <iostream>
 
 Chunk WorldGenerator::generateChunk(const ChunkCoord& chunkCoordinate, const Region& region) const
 {
     Chunk newChunk;
 
-    newChunk.setVoxelType(0, 0, 0, 3);
-    newChunk.setVoxelType(1, 0, 0, 3);
-    newChunk.setVoxelType(2, 0, 0, 3);
-    newChunk.setVoxelType(3, 0, 0, 3);
-    newChunk.setVoxelType(4, 0, 0, 3);
-    newChunk.setVoxelType(5, 0, 0, 3);
-    newChunk.setVoxelType(6, 0, 0, 3);
-    newChunk.setVoxelType(7, 0, 0, 3);
-    newChunk.setVoxelType(8, 0, 0, 3);
-    newChunk.setVoxelType(9, 0, 0, 3);
-    newChunk.setVoxelType(10, 0, 0, 3);
-    newChunk.setVoxelType(11, 0, 0, 3);
-    newChunk.setVoxelType(12, 0, 0, 3);
-    newChunk.setVoxelType(12, 0, 0, 3);
-    newChunk.setVoxelType(13, 0, 0, 3);
-    newChunk.setVoxelType(14, 0, 0, 3);
-    newChunk.setVoxelType(15, 0, 0, 3);
+    float chunkY = chunkCoordinate.y * chunkWidth;
+
+    for(int32_t x = 0; x < chunkWidth; x++)
+    for(int32_t y = 0; y < chunkWidth; y++)
+    for(int32_t z = 0; z < chunkWidth; z++)
+    {
+        float worldY = (float)(chunkY + y);
+        if(worldY < 0.0f)
+            newChunk.setVoxelType(x, y, z, 1);
+        else
+            newChunk.setVoxelType(x, y, z, 0);
+    }
 
     return newChunk;
 }
