@@ -179,7 +179,7 @@ void Client::fetchServerData()
 		if(package->mType == PackageType::CHUNK_LOADED)
 		{
 			ChunkLoadedPackage* chunkPackage = (ChunkLoadedPackage*)package.get();
-			ChunkCoordinate coordinate;
+			ChunkCoord coordinate;
 
             RleIndexArray rleSegmentIndices;
             RleSegmentArray rleSegments;
@@ -190,81 +190,81 @@ void Client::fetchServerData()
 
             updateChunk(coordinate);
 
-            if(mLocalChunks.find(ChunkCoordinate(coordinate.x + 1, coordinate.y, coordinate.z)) != mLocalChunks.end())
+            if(mLocalChunks.find(ChunkCoord(coordinate.x + 1, coordinate.y, coordinate.z)) != mLocalChunks.end())
             {
-                updateChunk(ChunkCoordinate(coordinate.x + 1, coordinate.y, coordinate.z));
+                updateChunk(ChunkCoord(coordinate.x + 1, coordinate.y, coordinate.z));
             }
-            if(mLocalChunks.find(ChunkCoordinate(coordinate.x - 1, coordinate.y, coordinate.z)) != mLocalChunks.end())
+            if(mLocalChunks.find(ChunkCoord(coordinate.x - 1, coordinate.y, coordinate.z)) != mLocalChunks.end())
             {
-                updateChunk(ChunkCoordinate(coordinate.x - 1, coordinate.y, coordinate.z));
+                updateChunk(ChunkCoord(coordinate.x - 1, coordinate.y, coordinate.z));
             }
-            if(mLocalChunks.find(ChunkCoordinate(coordinate.x, coordinate.y + 1, coordinate.z)) != mLocalChunks.end())
+            if(mLocalChunks.find(ChunkCoord(coordinate.x, coordinate.y + 1, coordinate.z)) != mLocalChunks.end())
             {
-                updateChunk(ChunkCoordinate(coordinate.x, coordinate.y + 1, coordinate.z));
+                updateChunk(ChunkCoord(coordinate.x, coordinate.y + 1, coordinate.z));
             }
-            if(mLocalChunks.find(ChunkCoordinate(coordinate.x, coordinate.y - 1, coordinate.z)) != mLocalChunks.end())
+            if(mLocalChunks.find(ChunkCoord(coordinate.x, coordinate.y - 1, coordinate.z)) != mLocalChunks.end())
             {
-                updateChunk(ChunkCoordinate(coordinate.x, coordinate.y - 1, coordinate.z));
+                updateChunk(ChunkCoord(coordinate.x, coordinate.y - 1, coordinate.z));
             }
-            if(mLocalChunks.find(ChunkCoordinate(coordinate.x, coordinate.y, coordinate.z + 1)) != mLocalChunks.end())
+            if(mLocalChunks.find(ChunkCoord(coordinate.x, coordinate.y, coordinate.z + 1)) != mLocalChunks.end())
             {
-                updateChunk(ChunkCoordinate(coordinate.x, coordinate.y, coordinate.z + 1));
+                updateChunk(ChunkCoord(coordinate.x, coordinate.y, coordinate.z + 1));
             }
-            if(mLocalChunks.find(ChunkCoordinate(coordinate.x, coordinate.y, coordinate.z - 1)) != mLocalChunks.end())
+            if(mLocalChunks.find(ChunkCoord(coordinate.x, coordinate.y, coordinate.z - 1)) != mLocalChunks.end())
             {
-                updateChunk(ChunkCoordinate(coordinate.x, coordinate.y, coordinate.z - 1));
+                updateChunk(ChunkCoord(coordinate.x, coordinate.y, coordinate.z - 1));
             }
 		}
 		else if(package->mType == PackageType::VOXEL_SET)
 		{
 			VoxelSetPackage* voxelSetPackage = (VoxelSetPackage*)package.get();
 
-            ChunkCoordinate chunkCoordinate;
-            VoxelChunkCoordinate voxelCoordinate;
+            ChunkCoord chunkCoord;
+            ChunkVoxelCoord voxelCoord;
             VoxelType type;
 
-			std::tie(chunkCoordinate, voxelCoordinate, type) = voxelSetPackage->getData();
+			std::tie(chunkCoord, voxelCoord, type) = voxelSetPackage->getData();
 
-            auto chunk = mLocalChunks.find(chunkCoordinate);
+            auto chunk = mLocalChunks.find(chunkCoord);
 
             if(chunk != mLocalChunks.end())
             {
-                chunk->second.setVoxelType(voxelCoordinate, type);
-                updateChunk(chunkCoordinate);
+                chunk->second.setVoxelType(voxelCoord, type);
+                updateChunk(chunkCoord);
             }
 
-            ChunkCoordinate leftNeighbour = ChunkCoordinate(chunkCoordinate.x - 1, chunkCoordinate.y, chunkCoordinate.z);
-            if(voxelCoordinate.x == 0 && mLocalChunks.find(leftNeighbour) != mLocalChunks.end())
+            ChunkCoord leftNeighbour = ChunkCoord(chunkCoord.x - 1, chunkCoord.y, chunkCoord.z);
+            if(voxelCoord.x == 0 && mLocalChunks.find(leftNeighbour) != mLocalChunks.end())
             {
                 updateChunk(leftNeighbour);
             }
 
-            ChunkCoordinate rightNeighbour = ChunkCoordinate(chunkCoordinate.x + 1, chunkCoordinate.y, chunkCoordinate.z);
-            if(voxelCoordinate.x == chunkWidth - 1 && mLocalChunks.find(rightNeighbour) != mLocalChunks.end())
+            ChunkCoord rightNeighbour = ChunkCoord(chunkCoord.x + 1, chunkCoord.y, chunkCoord.z);
+            if(voxelCoord.x == chunkWidth - 1 && mLocalChunks.find(rightNeighbour) != mLocalChunks.end())
             {
                 updateChunk(rightNeighbour);
             }
 
-            ChunkCoordinate topNeighbour = ChunkCoordinate(chunkCoordinate.x, chunkCoordinate.y + 1, chunkCoordinate.z);
-            if(voxelCoordinate.y == chunkWidth - 1 && mLocalChunks.find(topNeighbour) != mLocalChunks.end())
+            ChunkCoord topNeighbour = ChunkCoord(chunkCoord.x, chunkCoord.y + 1, chunkCoord.z);
+            if(voxelCoord.y == chunkWidth - 1 && mLocalChunks.find(topNeighbour) != mLocalChunks.end())
             {
                 updateChunk(topNeighbour);
             }
 
-            ChunkCoordinate bottomNeighbour = ChunkCoordinate(chunkCoordinate.x, chunkCoordinate.y - 1, chunkCoordinate.z);
-            if(voxelCoordinate.y == 0 && mLocalChunks.find(bottomNeighbour) != mLocalChunks.end())
+            ChunkCoord bottomNeighbour = ChunkCoord(chunkCoord.x, chunkCoord.y - 1, chunkCoord.z);
+            if(voxelCoord.y == 0 && mLocalChunks.find(bottomNeighbour) != mLocalChunks.end())
             {
                 updateChunk(bottomNeighbour);
             }
 
-            ChunkCoordinate frontNeighbour = ChunkCoordinate(chunkCoordinate.x, chunkCoordinate.y, chunkCoordinate.z + 1);
-            if(voxelCoordinate.z == chunkWidth - 1 && mLocalChunks.find(frontNeighbour) != mLocalChunks.end())
+            ChunkCoord frontNeighbour = ChunkCoord(chunkCoord.x, chunkCoord.y, chunkCoord.z + 1);
+            if(voxelCoord.z == chunkWidth - 1 && mLocalChunks.find(frontNeighbour) != mLocalChunks.end())
             {
                 updateChunk(frontNeighbour);
             }
 
-            ChunkCoordinate backNeighbour = ChunkCoordinate(chunkCoordinate.x, chunkCoordinate.y, chunkCoordinate.z - 1);
-            if(voxelCoordinate.z == 0 && mLocalChunks.find(backNeighbour) != mLocalChunks.end())
+            ChunkCoord backNeighbour = ChunkCoord(chunkCoord.x, chunkCoord.y, chunkCoord.z - 1);
+            if(voxelCoord.z == 0 && mLocalChunks.find(backNeighbour) != mLocalChunks.end())
             {
                 updateChunk(backNeighbour);
             }
@@ -273,7 +273,7 @@ void Client::fetchServerData()
 		{
 			ChunkDeletedPackage* chunkPackage = (ChunkDeletedPackage*)package.get();
 
-            ChunkCoordinate coordinate;
+            ChunkCoord coordinate;
 
             std::tie(coordinate) = chunkPackage->getData();
 
@@ -323,12 +323,12 @@ void Client::fetchServerData()
 
             std::tie(playerId, x, y, z) = playerFacingBlockPackage->getData();
 
-			mBus.sendMessage<PlayerFacingBlockMessage>(PlayerFacingBlockMessage(playerId, VoxelWorldCoordinate(x, y, z)));
+			mBus.sendMessage<PlayerFacingBlockMessage>(PlayerFacingBlockMessage(playerId, VoxelCoord(x, y, z)));
 		}
 	}
 }
 
-void Client::updateChunk(const ChunkCoordinate& coordinate)
+void Client::updateChunk(const ChunkCoord& coordinate)
 {
     Chunk* mainChunk = &mLocalChunks.at(coordinate);
     Chunk* topChunk = nullptr;
@@ -338,12 +338,12 @@ void Client::updateChunk(const ChunkCoordinate& coordinate)
     Chunk* leftChunk = nullptr;
     Chunk* rightChunk = nullptr;
 
-    auto top    = mLocalChunks.find(ChunkCoordinate(coordinate.x, coordinate.y + 1, coordinate.z));
-    auto bottom = mLocalChunks.find(ChunkCoordinate(coordinate.x, coordinate.y - 1, coordinate.z));
-    auto front  = mLocalChunks.find(ChunkCoordinate(coordinate.x, coordinate.y, coordinate.z + 1));
-    auto back   = mLocalChunks.find(ChunkCoordinate(coordinate.x, coordinate.y, coordinate.z - 1));
-    auto left   = mLocalChunks.find(ChunkCoordinate(coordinate.x - 1, coordinate.y, coordinate.z));
-    auto right  = mLocalChunks.find(ChunkCoordinate(coordinate.x + 1, coordinate.y, coordinate.z));
+    auto top    = mLocalChunks.find(ChunkCoord(coordinate.x, coordinate.y + 1, coordinate.z));
+    auto bottom = mLocalChunks.find(ChunkCoord(coordinate.x, coordinate.y - 1, coordinate.z));
+    auto front  = mLocalChunks.find(ChunkCoord(coordinate.x, coordinate.y, coordinate.z + 1));
+    auto back   = mLocalChunks.find(ChunkCoord(coordinate.x, coordinate.y, coordinate.z - 1));
+    auto left   = mLocalChunks.find(ChunkCoord(coordinate.x - 1, coordinate.y, coordinate.z));
+    auto right  = mLocalChunks.find(ChunkCoord(coordinate.x + 1, coordinate.y, coordinate.z));
 
     if(top != mLocalChunks.end())
         topChunk = &top->second;

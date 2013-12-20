@@ -7,11 +7,11 @@ class World : public RegionStorageInterface
 {
     public:
         ChunkReferenceMap getChunkMap() const;
-        bool hasRegion(const RegionCoordinate& coordinate) override;
-        const Region& getRegion(const RegionCoordinate& coordinate) override;
-        void addRegion(const RegionCoordinate& coordinate, const Region& region);
-        void addChunk(const ChunkCoordinate& coordinate, const Chunk& chunk);
-        VoxelType getVoxelType(const VoxelCoord& voxelWorldCoordinate);
+        bool hasRegion(const RegionCoord& coordinate) override;
+        const Region& getRegion(const RegionCoord& coordinate) override;
+        void addRegion(const RegionCoord& coordinate, const Region& region);
+        void addChunk(const ChunkCoord& coordinate, const Chunk& chunk);
+        VoxelType getVoxelType(const VoxelCoord& voxelCoord);
     private:
-        std::unordered_map<RegionCoordinate, Region> mRegions;
+        std::unordered_map<RegionCoord, Region> mRegions;
 };

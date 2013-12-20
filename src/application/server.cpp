@@ -84,7 +84,7 @@ void Server::handleMessage(const FatalMessage& received)
 
 void Server::handleMessage(const ChunkDeliverMessage& received)
 {
-    ChunkCoordinate coordinate;
+    ChunkCoord coordinate;
     Chunk chunk;
 
     std::tie(coordinate, chunk) = received.data;
@@ -168,7 +168,7 @@ void Server::handleMessage(const PlayerConnectedToEntityMessage& received)
 void Server::handleMessage(const PlayerFacingBlockMessage& received)
 {
     size_t id;
-    VoxelWorldCoordinate vector;
+    VoxelCoord vector;
     int x;
     int y;
     int z;

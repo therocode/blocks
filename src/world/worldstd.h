@@ -50,6 +50,8 @@ struct VoxelTypeData
 };
 
 VoxelCoord worldToVoxel(const glm::vec3& worldCoordinate);
+ChunkCoord worldToChunk(const glm::vec3& worldCoordinate);
+RegionCoord worldToRegion(const glm::vec3& worldCoordinate);
 glm::vec3  voxelToWorld(const VoxelCoord& voxelCoordinate);
 glm::vec3  chunkToWorld(const ChunkCoord& chunkCoordinate);
 glm::vec3  regionToWorld(const RegionCoord& regionCoordinate);

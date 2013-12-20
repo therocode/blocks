@@ -29,7 +29,7 @@ class PlayerController :
         void handleMessage(const PlayerPitchYawMessage& received);
         void handleMessage(const EntityMovedMessage& received);
     private:
-        void playerEntersChunk(size_t playerId, const ChunkCoordinate& chunk);
+        void playerEntersChunk(size_t playerId, const ChunkCoord& chunk);
         void updateVoxelLookAt(size_t playerId);
         std::unordered_map<size_t, fea::WeakEntityPtr> mPlayerEntities;
 };

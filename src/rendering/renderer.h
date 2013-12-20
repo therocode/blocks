@@ -70,7 +70,7 @@ class Renderer
 		float fadeIn = 0.f;
 		glm::mat4 projectionMatrix;
         fea::MessageBus& bus;
-        std::unordered_map<ChunkCoordinate, VBO> vbos;
+        std::unordered_map<ChunkCoord, VBO> vbos;
         ChunkGeneratorQueue mGeneratorQueue;
         std::unordered_map<size_t, Billboard> billboards;
         GLuint blockTexture;

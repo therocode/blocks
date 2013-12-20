@@ -20,6 +20,16 @@ VoxelCoord worldToVoxel(const glm::vec3& worldCoordinate)
     return (VoxelCoord)glm::floor(worldCoordinate);
 }
 
+ChunkCoord worldToChunk(const glm::vec3& worldCoordinate)
+{
+    return (ChunkCoord)(glm::floor(worldCoordinate / (float)chunkWidth));
+}
+
+RegionCoord worldToRegion(const glm::vec3& worldCoordinate)
+{
+    return (RegionCoord)(glm::floor(worldCoordinate / (float)(regionWidth * chunkWidth)));
+}
+
 glm::vec3 voxelToWorld(const VoxelCoord& voxelCoordinate)
 {
     return (glm::vec3) voxelCoordinate;

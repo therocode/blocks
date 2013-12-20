@@ -158,7 +158,7 @@ float CollisionController::sweepAroundAABB(const AABB a, glm::vec3 velocity, glm
                 b.y = glm::floor(cubePos.y);
                 b.z = glm::floor(cubePos.z);
 
-                VoxelWorldCoordinate coord(b.x, b.y, b.z);
+                VoxelCoord coord(b.x, b.y, b.z);
 
                 //if(b.x < 0) b.x --;
                 //if(b.y < 0) b.y --;
@@ -187,7 +187,7 @@ float CollisionController::sweepAroundAABB(const AABB a, glm::vec3 velocity, glm
                     }
                     if(nn < n){
                         //Check if collision face is visible at all. if not, ignore this collision.
-                        VoxelWorldCoordinate nc = coord;
+                        VoxelCoord nc = coord;
                         if(norm[axis] > 0)
                             nc[axis] += 1;
                         else

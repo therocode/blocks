@@ -173,7 +173,7 @@ class VBOCreator
 	};
     public:
     VBOCreator();
-    VBO generateChunkVBO(const ChunkCoordinate& coord, const VoxelTypeData& voxelTypeData);
+    VBO generateChunkVBO(const ChunkCoord& coord, const VoxelTypeData& voxelTypeData);
     VBO generateChunkVBO(Chunk* mainChunk, Chunk* topChunk, Chunk* bottomChunk, Chunk* frontChunk, Chunk* backChunk, Chunk* leftChunk, Chunk* rightChunk);
     VBO generateBoardVBO(const glm::vec2& dimensions) const;
 private:

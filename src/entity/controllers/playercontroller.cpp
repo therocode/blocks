@@ -49,7 +49,7 @@ void PlayerController::handleMessage(const PlayerJoinedMessage& received)
     fea::WeakEntityPtr playerEntity = mWorldInterface.createEntity("Player", position);
     std::cout << "created player entity and it's id is " << playerEntity.lock()->getId() << "\n";
     mPlayerEntities.emplace(playerId, playerEntity);
-    playerEntity.lock()->setAttribute<ChunkCoordinate>("current_chunk", worldToChunk(position));
+    playerEntity.lock()->setAttribute<ChunkCoord>("current_chunk", worldToChunk(position));
     mBus.sendMessage(PlayerEntersChunkMessage(playerId, worldToChunk(position)));
     mBus.sendMessage(ChunkRequestedMessage(worldToChunk(position)));
 
@@ -88,20 +88,20 @@ void PlayerController::handleMessage(const PlayerActionMessage& received)
 	}
     else if(action == DIG)
     {
-        // glm::vec3 worldPos = mPlayerEntities.at(playerId).lock()->getAttribute<VoxelWorldCoordinate>("block_facing");
+        // glm::vec3 worldPos = mPlayerEntities.at(playerId).lock()->getAttribute<VoxelWorldCoord>("block_facing");
 		if(mPlayerEntities.at(playerId).lock()->getAttribute<bool>("is_facing_block")){
-			VoxelWorldCoordinate voxel = mPlayerEntities.at(playerId).lock()->getAttribute<VoxelWorldCoordinate>("block_facing");
+			VoxelWorldCoord voxel = mPlayerEntities.at(playerId).lock()->getAttribute<VoxelWorldCoord>("block_facing");
 			mBus.sendMessage<SetVoxelMessage>(SetVoxelMessage(voxel, 0));
 		}
     }
     else if(action == BUILD)
     {
-        // glm::vec3 worldPos = mPlayerEntities.at(playerId).lock()->getAttribute<VoxelWorldCoordinate>("block_facing");
+        // glm::vec3 worldPos = mPlayerEntities.at(playerId).lock()->getAttribute<VoxelWorldCoord>("block_facing");
 		if(mPlayerEntities.at(playerId).lock()->getAttribute<bool>("is_facing_block")){
-			VoxelWorldCoordinate voxel = mPlayerEntities.at(playerId).lock()->getAttribute<VoxelWorldCoordinate>("block_facing");
+			VoxelWorldCoord voxel = mPlayerEntities.at(playerId).lock()->getAttribute<VoxelWorldCoord>("block_facing");
 			int face = mPlayerEntities.at(playerId).lock()->getAttribute<int>("block_facing_face");
-			ChunkCoordinate cc = worldToChunkInt(voxel.x, voxel.y, voxel.z);
-			VoxelChunkCoordinate vc = worldToChunkVoxel(voxel.x, voxel.y, voxel.z);
+			ChunkCoord cc = worldToChunkInt(voxel.x, voxel.y, voxel.z);
+			VoxelChunkCoord vc = worldToChunkVoxel(voxel.x, voxel.y, voxel.z);
 			// printf("ChunkCoord: %i, %i, %i. VoxelCoord: %i, %i, %i. World: %i, %i, %i\n", cc.x, cc.y, cc.z, vc.x, vc.y, vc.z, voxel.x, voxel.y, voxel.z);
 			// printf("Face: %i\n", face);
 			switch(face){
@@ -201,7 +201,7 @@ void PlayerController::handleMessage(const EntityMovedMessage& received)
         //updating current chunk
         glm::vec3 position = entity->getAttribute<glm::vec3>("position");
 
-        if(worldToChunk(position) != entity->getAttribute<ChunkCoordinate>("current_chunk"))
+        if(worldToChunk(position) != entity->getAttribute<ChunkCoord>("current_chunk"))
         {
             playerEntersChunk(id, worldToChunk(position));
         }
@@ -209,10 +209,10 @@ void PlayerController::handleMessage(const EntityMovedMessage& received)
 
 }
 
-void PlayerController::playerEntersChunk(size_t playerId, const ChunkCoordinate& chunk)
+void PlayerController::playerEntersChunk(size_t playerId, const ChunkCoord& chunk)
 {
     mBus.sendMessage<PlayerEntersChunkMessage>(PlayerEntersChunkMessage(playerId, chunk));
-    mPlayerEntities.at(playerId).lock()->setAttribute<ChunkCoordinate>("current_chunk", chunk);
+    mPlayerEntities.at(playerId).lock()->setAttribute<ChunkCoord>("current_chunk", chunk);
 }
 
 void PlayerController::updateVoxelLookAt(size_t playerId)
@@ -225,18 +225,18 @@ void PlayerController::updateVoxelLookAt(size_t playerId)
     glm::vec3 position = entity->getAttribute<glm::vec3>("position");
 
 	glm::vec3 direction = glm::vec3(glm::cos(pitch) * glm::sin(yaw), glm::sin(pitch), glm::cos(pitch) * glm::cos(yaw));
-	VoxelWorldCoordinate block;
+	VoxelWorldCoord block;
 	int face;
 	bool f = mWorldInterface.getVoxelAtRay(position + glm::vec3(0, 0.6f, 0), direction, 200.f, face, block);
 
 	if(entity->getAttribute<int>("block_facing_face") != face){
 		entity->setAttribute<int>("block_facing_face", face);
 	}
-    if(block != entity->getAttribute<VoxelWorldCoordinate>("block_facing"))
+    if(block != entity->getAttribute<VoxelWorldCoord>("block_facing"))
 	{
 		entity->setAttribute<bool>("is_facing_block", f);
 		entity->setAttribute<bool>("is_facing_block", f);
-        entity->setAttribute<VoxelWorldCoordinate>("block_facing", block);
+        entity->setAttribute<VoxelCoord>("block_facing", block);
         mBus.sendMessage<PlayerFacingBlockMessage>(PlayerFacingBlockMessage(playerId, block));
     }
 }

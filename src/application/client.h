@@ -44,7 +44,7 @@ class Client :
         long mFrame = 0;
         FPSController mFPSCounter;
         void fetchServerData();
-        void updateChunk(const ChunkCoordinate& coordinate);
+        void updateChunk(const ChunkCoord& coordinate);
         bool mLockedMouse;
         fea::MessageBus mBus;
         Logger mLogger;

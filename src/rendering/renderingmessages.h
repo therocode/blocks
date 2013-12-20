@@ -3,7 +3,7 @@
 #include "world/chunk.h"
 
 struct ClientChunkDeleted_tag{};//                                     coordinate
-using ClientChunkDeletedMessage = fea::Message<ClientChunkDeleted_tag, const ChunkCoordinate&>;
+using ClientChunkDeletedMessage = fea::Message<ClientChunkDeleted_tag, const ChunkCoord&>;
 
 struct AddGfxEntity_tag{};//                               id      position
 using AddGfxEntityMessage = fea::Message<AddGfxEntity_tag, size_t, const glm::vec3&>;
@@ -21,7 +21,7 @@ struct CameraUpdated_tag{};//
 using CameraUpdatedMessage = fea::Message<CameraUpdated_tag, const glm::vec3&, const glm::vec3&>;
 
 struct PlayerFacingBlock_tag{};//                                playerid    voxelposition
-using PlayerFacingBlockMessage = fea::Message<PlayerFacingBlock_tag, size_t, const VoxelWorldCoordinate&>;
+using PlayerFacingBlockMessage = fea::Message<PlayerFacingBlock_tag, size_t, const VoxelCoord&>;
 
 struct UpdateChunkVbo_tag{};//                                 main    top     bottom  front   back    left    right
 using UpdateChunkVboMessage = fea::Message<UpdateChunkVbo_tag, Chunk*, Chunk*, Chunk*, Chunk*, Chunk*, Chunk*, Chunk*>;

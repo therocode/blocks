@@ -5,16 +5,16 @@
 #include <memory>
 #include "chunk.h"
 
-using ChunkRegionMap = std::unordered_map<ChunkRegionCoordinate, Chunk>;
+using ChunkRegionMap = std::unordered_map<RegionChunkCoord, Chunk>;
 
 class Region
 {
     public:
-        bool chunkIsLoaded(const ChunkRegionCoordinate& location) const;
-        const Chunk& getChunk(const ChunkRegionCoordinate& location) const;
-        Chunk& getChunk(const ChunkRegionCoordinate& location);
+        bool chunkIsLoaded(const RegionChunkCoord& location) const;
+        const Chunk& getChunk(const RegionChunkCoord& location) const;
+        Chunk& getChunk(const RegionChunkCoord& location);
         ChunkReferenceMap getChunkList() const;
-        void addChunk(const ChunkRegionCoordinate& coordinate, const Chunk& chunk);
+        void addChunk(const RegionChunkCoord& coordinate, const Chunk& chunk);
     private:
         ChunkRegionMap chunks;
 };

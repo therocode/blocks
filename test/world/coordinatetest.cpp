@@ -27,6 +27,24 @@ TEST_CASE("worldToVoxel", "[coord]")
     REQUIRE(worldToVoxel(glm::vec3(-1.9f, -1.9f, -1.9f)) == VoxelCoord(-2, -2, -2));
 }
 
+TEST_CASE("worldToChunk", "[coord]")
+{
+    REQUIRE(worldToChunk(glm::vec3(0.0f, 0.0f, 0.0f)) == ChunkCoord(0, 0, 0));
+    REQUIRE(worldToChunk(glm::vec3(15.9f, 15.9f, 15.9f)) == ChunkCoord(0, 0, 0));
+    REQUIRE(worldToChunk(glm::vec3(16.5f, 16.5f, 16.5f)) == ChunkCoord(1, 1, 1));
+    REQUIRE(worldToChunk(glm::vec3(-16.0f, -16.0f, -16.0f)) == ChunkCoord(-1, -1, -1));
+    REQUIRE(worldToChunk(glm::vec3(-16.9f, -16.9f, -16.9f)) == ChunkCoord(-2, -2, -2));
+}
+
+TEST_CASE("worldToRegion", "[coord]")
+{
+    REQUIRE(worldToRegion(glm::vec3(0.0f, 0.0f, 0.0f)) == RegionCoord(0, 0, 0));
+    REQUIRE(worldToRegion(glm::vec3(511.9f, 511.9f, 511.9f)) == RegionCoord(0, 0, 0));
+    REQUIRE(worldToRegion(glm::vec3(512.5f, 512.5f, 512.5f)) == RegionCoord(1, 1, 1));
+    REQUIRE(worldToRegion(glm::vec3(-512.0f, -512.0f, -512.0f)) == RegionCoord(-1, -1, -1));
+    REQUIRE(worldToRegion(glm::vec3(-512.9f, -512.9f, -512.9f)) == RegionCoord(-2, -2, -2));
+}
+
 TEST_CASE("voxelToWorld", "[coord]")
 {
     REQUIRE(voxelToWorld(VoxelCoord(0, 0, 0)) == glm::vec3(0.0f, 0.0f, 0.0f));
