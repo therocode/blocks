@@ -27,3 +27,4 @@ zlib-1.2.8/*
 .exrc
 *.dat
 *.idx
+*.vim
