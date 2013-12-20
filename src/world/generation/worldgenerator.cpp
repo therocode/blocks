@@ -15,6 +15,8 @@ Chunk WorldGenerator::generateChunk(const ChunkCoord& chunkCoordinate, const Reg
 
     //std::cout << "chunk is " << glm::to_string((glm::ivec3)chunkCoordinate) << "\n";
 
+    //must probably be something with the for looping and/or the conversion functions; all start coordinates are unique anyway and regionCoord.x seems to be the culprit
+
     for(int32_t y = 0; y < chunkWidth; y++)
     {
         voxelCoord.x = chunkVoxelCoord.x;
