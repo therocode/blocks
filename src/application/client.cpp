@@ -219,17 +219,18 @@ void Client::fetchServerData()
 		{
 			VoxelSetPackage* voxelSetPackage = (VoxelSetPackage*)package.get();
 
-            ChunkCoord chunkCoord;
-            ChunkVoxelCoord voxelCoord;
+            VoxelCoord voxelCoord;
             VoxelType type;
 
-			std::tie(chunkCoord, voxelCoord, type) = voxelSetPackage->getData();
+			std::tie(voxelCoord, type) = voxelSetPackage->getData();
+
+            ChunkCoord chunkCoord = voxelToChunk(voxelCoord);
 
             auto chunk = mLocalChunks.find(chunkCoord);
 
             if(chunk != mLocalChunks.end())
             {
-                chunk->second.setVoxelType(voxelCoord, type);
+                chunk->second.setVoxelType(voxelToChunkVoxel(voxelCoord), type);
                 updateChunk(chunkCoord);
             }
 

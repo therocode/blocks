@@ -5,12 +5,12 @@ ChunkReferenceMap World::getChunkMap() const
     return ChunkReferenceMap();
 }
 
-bool World::hasRegion(const RegionCoord& coordinate)
+bool World::hasRegion(const RegionCoord& coordinate) const
 {
     return mRegions.find(coordinate) != mRegions.end();
 }
 
-const Region& World::getRegion(const RegionCoord& coordinate)
+const Region& World::getRegion(const RegionCoord& coordinate) const
 {
     return mRegions.at(coordinate);
 }
@@ -27,13 +27,13 @@ void World::addChunk(const ChunkCoord& coordinate, const Chunk& chunk)
     mRegions.at(region).addChunk(chunkToRegionChunk(coordinate), chunk);
 }
 
-VoxelType World::getVoxelType(const VoxelCoord& voxelCoordinate)
+VoxelType World::getVoxelType(const VoxelCoord& voxelCoordinate) const
 {
     RegionCoord regionCoord = voxelToRegion(voxelCoordinate);
 
     if(hasRegion(regionCoord))
     {
-        Region& region = mRegions.at(regionCoord);
+        const Region& region = mRegions.at(regionCoord);
         RegionChunkCoord chunk = voxelToRegionChunk(voxelCoordinate);
         if(region.hasChunk(chunk))
             return region.getChunk(chunk).getVoxelType(voxelToChunkVoxel(voxelCoordinate));
@@ -42,4 +42,24 @@ VoxelType World::getVoxelType(const VoxelCoord& voxelCoordinate)
     }
     else
         return -1;
+}
+
+bool World::setVoxelType(const VoxelCoord& voxelCoordinate, VoxelType type)
+{
+    RegionCoord regionCoord = voxelToRegion(voxelCoordinate);
+
+    if(hasRegion(regionCoord))
+    {
+        Region& region = mRegions.at(regionCoord);
+        RegionChunkCoord chunk = voxelToRegionChunk(voxelCoordinate);
+        if(region.hasChunk(chunk))
+        {
+            region.getChunk(chunk).setVoxelType(voxelToChunkVoxel(voxelCoordinate), type);
+            return true;
+        }
+        else
+            return false;
+    }
+    else
+        return false;
 }

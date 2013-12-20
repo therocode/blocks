@@ -54,15 +54,12 @@ void Universe::handleMessage(const SetVoxelMessage& received)
 
     std::tie(coordinate, type) = received.data;
 
-    ChunkCoord chunkCoord = voxelToChunk(coordinate);
-    ChunkVoxelCoord voxelCoord = voxelToChunkVoxel(coordinate);
-    
-    //if(standardWorld.getLandscape().chunkIsLoaded(chunkCoord))
-    //{
-    //    standardWorld.getLandscape().getChunk(chunkCoord).setVoxelType(voxelCoord.x, voxelCoord.y, voxelCoord.z, type);
+    bool succeeded = mStandardWorld.setVoxelType(coordinate, type);
 
-    //    mBus.sendMessage<VoxelSetMessage>(VoxelSetMessage(chunkCoord, voxelCoord, type));
-    //}
+    if(succeeded)
+    {
+        mBus.sendMessage<VoxelSetMessage>(VoxelSetMessage(coordinate, type));
+    }
 }
 
 void Universe::handleMessage(const RegionDeliverMessage& received)
