@@ -49,13 +49,13 @@ void Universe::destroy()
 
 void Universe::handleMessage(const SetVoxelMessage& received)
 {
-    VoxelWorldCoordinate coordinate;
+    VoxelCoord coordinate;
     VoxelType type;
 
     std::tie(coordinate, type) = received.data;
 
-    ChunkCoordinate chunkCoord = worldToChunkInt(coordinate.x, coordinate.y, coordinate.z);
-    VoxelChunkCoordinate voxelCoord = worldToChunkVoxel(coordinate.x, coordinate.y, coordinate.z);
+    ChunkCoord chunkCoord = voxelToChunk(coordinate);
+    ChunkVoxelCoord voxelCoord = voxelToChunkVoxel(coordinate);
     
     //if(standardWorld.getLandscape().chunkIsLoaded(chunkCoord))
     //{
@@ -67,7 +67,7 @@ void Universe::handleMessage(const SetVoxelMessage& received)
 
 void Universe::handleMessage(const RegionDeliverMessage& received)
 {
-    RegionCoordinate coordinate;
+    RegionCoord coordinate;
     Region region;
 
     std::tie(coordinate, region) = std::move(received.data);
@@ -77,7 +77,7 @@ void Universe::handleMessage(const RegionDeliverMessage& received)
 
 void Universe::handleMessage(const ChunkDeliverMessage& received)
 {
-    ChunkCoordinate coordinate;
+    ChunkCoord coordinate;
     Chunk chunk;
 
     std::tie(coordinate, chunk) = std::move(received.data);

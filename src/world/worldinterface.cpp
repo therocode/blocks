@@ -9,10 +9,10 @@
 
 VoxelType WorldInterface::getVoxelTypeInt(int x, int y, int z) const
 {
-    return mWorld.getVoxelType(VoxelWorldCoordinate(x, y, z));
+    return mWorld.getVoxelType(VoxelCoord(x, y, z));
 }
 
-VoxelType WorldInterface::getVoxelType(const VoxelWorldCoordinate coord) const
+VoxelType WorldInterface::getVoxelType(const VoxelCoord coord) const
 {
     return getVoxelTypeInt(coord.x, coord.y, coord.z);
 }
@@ -20,23 +20,23 @@ VoxelType WorldInterface::getVoxelType(const VoxelWorldCoordinate coord) const
 
 VoxelType WorldInterface::getVoxelType(float x, float y, float z) const
 {
-    return getVoxelType(worldToVoxel(x, y, z));
+    return getVoxelType(worldToVoxel(glm::vec3(x, y, z)));
 }
 
 VoxelType WorldInterface::getVoxelType(const glm::vec3& position) const
 {
     return getVoxelType(worldToVoxel(position));
 }
-bool WorldInterface::getVoxelAtRay(const glm::vec3& position, const glm::vec3& direction, const float maxDistance, int& hitFace, VoxelWorldCoordinate& hitBlock ) const
+bool WorldInterface::getVoxelAtRay(const glm::vec3& position, const glm::vec3& direction, const float maxDistance, int& hitFace, VoxelCoord& hitBlock ) const
 {
     return getVoxelAtRay(position.x, position.y, position.z, direction.x, direction.y, direction.z, maxDistance, hitFace, hitBlock);
 }
 
-bool WorldInterface::getVoxelAtRay(float ox, float oy, float oz, float dx, float dy, float dz, const float maxDistance, int& hitFace, VoxelWorldCoordinate& hitBlock)  const
+bool WorldInterface::getVoxelAtRay(float ox, float oy, float oz, float dx, float dy, float dz, const float maxDistance, int& hitFace, VoxelCoord& hitBlock)  const
 {
     int ip[3] = {(int)ox -(ox<0), (int)oy -(oy<0), (int)oz -(oz<0)};
     glm::vec3 bp = glm::fract(glm::vec3(ox, oy, oz));
-    VoxelChunkCoordinate chunkCoordinate = worldToChunkVoxel(ip[0], ip[1], ip[2]);
+    ChunkVoxelCoord chunkCoordinate = voxelToChunkVoxel(worldToVoxel(glm::vec3(ip[0], ip[1], ip[2])));
     // printf("ip:%i, %i, %i\n", ip[0], ip[1], ip[2]);
     // printf("ip:%i, %i, %i\n", chunkCoordinate[0], chunkCoordinate[1], chunkCoordinate[2]);
     // printf("rp:%f, %f, %f\n", ox, oy, oz);
@@ -141,7 +141,7 @@ bool WorldInterface::getVoxelAtRay(float ox, float oy, float oz, float dx, float
     glm::vec3 block = glm::vec3(ip[0] , ip[1] , ip[2]);
     // printf("lookat block = %f, %f, %f\n",block.x, block.y, block.z);
     if(steps == 256){ return false; }
-    hitBlock = VoxelWorldCoordinate(ip[0], ip[1],  ip[2]);
+    hitBlock = VoxelCoord(ip[0], ip[1],  ip[2]);
     return true;
     // return glm::vec3(ip[0] - (ip[0] < 0), ip[1] - (ip[1] < 0), ip[2] - (ip[2] < 0)) + glm::vec3(0.5f);
     // return glm::vec3((int)p.x - (p.x<0),(int)p.y - (p.y<0),(int)p.z - (p.z<0)) + glm::vec3(0.5f);

@@ -13,11 +13,11 @@ ChunkProvider::~ChunkProvider()
 
 void ChunkProvider::handleMessage(const ChunkRequestedMessage& received)
 {
-    ChunkCoordinate chunkCoordinate;
+    ChunkCoord chunkCoordinate;
 
     std::tie(chunkCoordinate) = received.data;
 
-    RegionCoordinate regionCoordinate = chunkToRegion(chunkCoordinate);
+    RegionCoord regionCoordinate = chunkToRegion(chunkCoordinate);
 
     if(!mRegionStorage.hasRegion(regionCoordinate))
     {

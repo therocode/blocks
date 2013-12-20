@@ -13,7 +13,7 @@ RegionProvider::~RegionProvider()
 
 void RegionProvider::handleMessage(const RegionNeededMessage& received)
 {
-    RegionCoordinate coordinate;
+    RegionCoord coordinate;
 
     std::tie(coordinate) = received.data;
 

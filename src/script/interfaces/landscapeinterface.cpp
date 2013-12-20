@@ -18,7 +18,7 @@ void LandscapeInterface::registerInterface(asIScriptEngine* engine)
 
 void LandscapeInterface::setVoxelType(float x, float y, float z, uint16_t type)
 {
-    mBus.sendMessage<SetVoxelMessage>(SetVoxelMessage(VoxelWorldCoordinate(floor(x), floor(y), floor(z)), type));
+    mBus.sendMessage<SetVoxelMessage>(SetVoxelMessage(VoxelCoord(floor(x), floor(y), floor(z)), type));
 }
 
 void LandscapeInterface::setVoxelType(const glm::vec3& coordinate, uint16_t type)

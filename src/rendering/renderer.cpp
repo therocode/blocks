@@ -139,7 +139,7 @@ void Renderer::handleMessage(const UpdateChunkVboMessage& received)
 
 void Renderer::handleMessage(const ClientChunkDeletedMessage& received)
 {
-    ChunkCoordinate coordinate;
+    ChunkCoord coordinate;
 
     std::tie(coordinate) = received.data;
 
@@ -202,7 +202,7 @@ void Renderer::handleMessage(const PlayerConnectedToEntityMessage& received)
 void Renderer::render()
 {
     cameraUpdate();
-    mGeneratorQueue.generateSomeChunks(vbos, VoxelWorldCoordinate(cam.GetPosition()));
+    mGeneratorQueue.generateSomeChunks(vbos, VoxelCoord(cam.GetPosition()));
 	GLenum err = glGetError();
 	if(err != GL_NO_ERROR){
 		printf("Some GL error here: %x\n.", err);
@@ -260,15 +260,15 @@ void Renderer::render()
 
 	glBindTexture(GL_TEXTURE_2D, blockTexture);
 
-	ChunkCoordinate currentChunk = worldToChunk(cam.GetPosition());
+	ChunkCoord currentChunk = worldToChunk(cam.GetPosition());
 
 	//For looping texture atlas textures, used in chunks.
 	mShaderProgram.setUniform("enableBoundsTexture", 1);
 	float chunkSize = glm::sqrt(((chunkWidth / 2)*(chunkWidth / 2))* 3);
 	for(auto chunk : vbos)
 	{	
-		const ChunkCoordinate& p = chunk.first;
-        glm::vec3 worldPos = (glm::vec3)(p * chunkWidth) + glm::vec3(chunkWidth / 2, chunkWidth / 2, chunkWidth / 2);
+		const ChunkCoord& p = chunk.first;
+        glm::vec3 worldPos = (glm::vec3)((glm::ivec3)p * chunkWidth) + glm::vec3(chunkWidth / 2, chunkWidth / 2, chunkWidth / 2); //NOTE: this cast might be odd (glm::ivec3)
         if(mFrustum.sphereInFrustum(worldPos, chunkSize) != Frustum::OUTSIDE)
         {
           chunk.second.draw(mShaderProgram);

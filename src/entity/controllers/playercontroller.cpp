@@ -90,7 +90,7 @@ void PlayerController::handleMessage(const PlayerActionMessage& received)
     {
         // glm::vec3 worldPos = mPlayerEntities.at(playerId).lock()->getAttribute<VoxelWorldCoord>("block_facing");
 		if(mPlayerEntities.at(playerId).lock()->getAttribute<bool>("is_facing_block")){
-			VoxelWorldCoord voxel = mPlayerEntities.at(playerId).lock()->getAttribute<VoxelWorldCoord>("block_facing");
+			VoxelCoord voxel = mPlayerEntities.at(playerId).lock()->getAttribute<VoxelCoord>("block_facing");
 			mBus.sendMessage<SetVoxelMessage>(SetVoxelMessage(voxel, 0));
 		}
     }
@@ -98,10 +98,10 @@ void PlayerController::handleMessage(const PlayerActionMessage& received)
     {
         // glm::vec3 worldPos = mPlayerEntities.at(playerId).lock()->getAttribute<VoxelWorldCoord>("block_facing");
 		if(mPlayerEntities.at(playerId).lock()->getAttribute<bool>("is_facing_block")){
-			VoxelWorldCoord voxel = mPlayerEntities.at(playerId).lock()->getAttribute<VoxelWorldCoord>("block_facing");
+			VoxelCoord voxel = mPlayerEntities.at(playerId).lock()->getAttribute<VoxelCoord>("block_facing");
 			int face = mPlayerEntities.at(playerId).lock()->getAttribute<int>("block_facing_face");
-			ChunkCoord cc = worldToChunkInt(voxel.x, voxel.y, voxel.z);
-			VoxelChunkCoord vc = worldToChunkVoxel(voxel.x, voxel.y, voxel.z);
+			ChunkCoord cc = voxelToChunk(voxel);
+			ChunkVoxelCoord vc = voxelToChunkVoxel(voxel);
 			// printf("ChunkCoord: %i, %i, %i. VoxelCoord: %i, %i, %i. World: %i, %i, %i\n", cc.x, cc.y, cc.z, vc.x, vc.y, vc.z, voxel.x, voxel.y, voxel.z);
 			// printf("Face: %i\n", face);
 			switch(face){
@@ -225,14 +225,14 @@ void PlayerController::updateVoxelLookAt(size_t playerId)
     glm::vec3 position = entity->getAttribute<glm::vec3>("position");
 
 	glm::vec3 direction = glm::vec3(glm::cos(pitch) * glm::sin(yaw), glm::sin(pitch), glm::cos(pitch) * glm::cos(yaw));
-	VoxelWorldCoord block;
+	VoxelCoord block;
 	int face;
 	bool f = mWorldInterface.getVoxelAtRay(position + glm::vec3(0, 0.6f, 0), direction, 200.f, face, block);
 
 	if(entity->getAttribute<int>("block_facing_face") != face){
 		entity->setAttribute<int>("block_facing_face", face);
 	}
-    if(block != entity->getAttribute<VoxelWorldCoord>("block_facing"))
+    if(block != entity->getAttribute<VoxelCoord>("block_facing"))
 	{
 		entity->setAttribute<bool>("is_facing_block", f);
 		entity->setAttribute<bool>("is_facing_block", f);

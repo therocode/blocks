@@ -16,7 +16,7 @@ void ChunkGeneratorQueue::addToQueue(Chunk* mainChunk, Chunk* topChunk, Chunk* b
         mQueue.emplace(mainChunk->getLocation(), t);
     }
 }
-void ChunkGeneratorQueue::generateSomeChunks(std::unordered_map<ChunkCoordinate, VBO>& chunkMap, const VoxelWorldCoordinate focusPoint){
+void ChunkGeneratorQueue::generateSomeChunks(std::unordered_map<ChunkCoord, VBO>& chunkMap, const VoxelCoord focusPoint){
     mTimer.start();
     while(mTimer.getTime() < mMaxGenTime){
         auto iterator = mQueue.begin(); 
@@ -26,7 +26,7 @@ void ChunkGeneratorQueue::generateSomeChunks(std::unordered_map<ChunkCoordinate,
         auto closestChunk = iterator;
         float minDist = 999999999.f;
         for(;iterator != mQueue.end(); iterator ++){
-            VoxelWorldCoordinate c = iterator->first;
+            VoxelCoord c = iterator->first;
             c *= chunkWidth;
             float d = glm::length2(c - focusPoint);
             if(d < minDist){
