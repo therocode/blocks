@@ -3,12 +3,12 @@
 
 IntensityMap::IntensityMap()
 {
-    units = std::unique_ptr<float[]>(new float[regionWidth * regionWidth]);
+    units = std::unique_ptr<float[]>(new float[regionWidth * regionWidth * chunkWidthx2]);
 }
 
 IntensityMap::IntensityMap(const IntensityMap& other)
 {
-    size_t dataSize = regionWidth * regionWidth;
+    size_t dataSize = regionWidth * regionWidth * chunkWidthx2;
     
     units = std::unique_ptr<float[]>(new float[dataSize]);
 
@@ -23,7 +23,7 @@ IntensityMap::IntensityMap(IntensityMap&& other)
 
 const IntensityMap& IntensityMap::operator=(const IntensityMap& other)
 {
-    size_t dataSize = regionWidth * regionWidth;
+    size_t dataSize = regionWidth * regionWidth * chunkWidthx2;
     
     units = std::unique_ptr<float[]>(new float[dataSize]);
 

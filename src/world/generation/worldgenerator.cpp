@@ -6,17 +6,33 @@ Chunk WorldGenerator::generateChunk(const ChunkCoord& chunkCoordinate, const Reg
 {
     Chunk newChunk;
 
+    VoxelCoord chunkVoxelCoord = worldToVoxel(chunkToWorld(chunkCoordinate));
+    VoxelCoord voxelCoord;
+    RegionVoxelCoord regionCoord;
+
     float chunkY = chunkCoordinate.y * chunkWidth;
 
+    voxelCoord.x = chunkVoxelCoord.x;
     for(int32_t x = 0; x < chunkWidth; x++)
-    for(int32_t y = 0; y < chunkWidth; y++)
-    for(int32_t z = 0; z < chunkWidth; z++)
     {
-        float worldY = (float)(chunkY + y) + region.getHeightmap().getUnit(x, z) * 100.0f;
-        if(worldY < 0.0f)
-            newChunk.setVoxelType(x, y, z, 1);
-        else
-            newChunk.setVoxelType(x, y, z, 0);
+        voxelCoord.y = chunkVoxelCoord.y;
+        for(int32_t y = 0; y < chunkWidth; y++)
+        {
+            voxelCoord.z = chunkVoxelCoord.z;
+            for(int32_t z = 0; z < chunkWidth; z++)
+            {
+                regionCoord = voxelToRegionVoxel(voxelCoord);
+                float worldY = (float)(chunkY + y) + region.getHeightmap().getUnit(regionCoord.x, regionCoord.y) * 100.0f;
+                if(worldY < 0.0f)
+                    newChunk.setVoxelType(x, y, z, 1);
+                else
+                    newChunk.setVoxelType(x, y, z, 0);
+                
+                voxelCoord.z++;
+            }
+            voxelCoord.y++;
+        }
+        voxelCoord.x++;
     }
 
     return newChunk;

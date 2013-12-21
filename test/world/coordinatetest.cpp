@@ -162,17 +162,17 @@ TEST_CASE("chunkToRegionChunk", "[coord]")
 
 TEST_CASE("voxelToRegionVoxel", "[coord]")
 {
-    REQUIRE(voxelToRegionVoxel(VoxelCoord(0, 0, 0)) == RegionVoxelCoord(0, 0, 0));
-    REQUIRE(voxelToRegionVoxel(VoxelCoord(1, 1, 1)) == RegionVoxelCoord(1, 1, 1));
-    REQUIRE(voxelToRegionVoxel(VoxelCoord(-1, -1, -1)) == RegionVoxelCoord(511, 511, 511));
+    REQUIRE(voxelToRegionVoxel(VoxelCoord(0, 0, 0)) == RegionVoxelCoord(0, 0));
+    REQUIRE(voxelToRegionVoxel(VoxelCoord(1, 1, 1)) == RegionVoxelCoord(1, 1));
+    REQUIRE(voxelToRegionVoxel(VoxelCoord(-1, -1, -1)) == RegionVoxelCoord(511, 511));
 
-    REQUIRE(voxelToRegionVoxel(VoxelCoord(510, 510, 510)) == RegionVoxelCoord(510, 510, 510));
-    REQUIRE(voxelToRegionVoxel(VoxelCoord(511, 511, 511)) == RegionVoxelCoord(511, 511, 511));
-    REQUIRE(voxelToRegionVoxel(VoxelCoord(512, 512, 512)) == RegionVoxelCoord(0, 0, 0));
-    REQUIRE(voxelToRegionVoxel(VoxelCoord(513, 513, 513)) == RegionVoxelCoord(1, 1, 1));
+    REQUIRE(voxelToRegionVoxel(VoxelCoord(510, 510, 510)) == RegionVoxelCoord(510, 510));
+    REQUIRE(voxelToRegionVoxel(VoxelCoord(511, 511, 511)) == RegionVoxelCoord(511, 511));
+    REQUIRE(voxelToRegionVoxel(VoxelCoord(512, 512, 512)) == RegionVoxelCoord(0, 0));
+    REQUIRE(voxelToRegionVoxel(VoxelCoord(513, 513, 513)) == RegionVoxelCoord(1, 1));
 
-    REQUIRE(voxelToRegionVoxel(VoxelCoord(-510, -510, -510)) == RegionVoxelCoord(2, 2, 2));
-    REQUIRE(voxelToRegionVoxel(VoxelCoord(-511, -511, -511)) == RegionVoxelCoord(1, 1, 1));
-    REQUIRE(voxelToRegionVoxel(VoxelCoord(-512, -512, -512)) == RegionVoxelCoord(0, 0, 0));
-    REQUIRE(voxelToRegionVoxel(VoxelCoord(-513, -513, -513)) == RegionVoxelCoord(511, 511, 511));
+    REQUIRE(voxelToRegionVoxel(VoxelCoord(-510, -510, -510)) == RegionVoxelCoord(2, 2));
+    REQUIRE(voxelToRegionVoxel(VoxelCoord(-511, -511, -511)) == RegionVoxelCoord(1, 1));
+    REQUIRE(voxelToRegionVoxel(VoxelCoord(-512, -512, -512)) == RegionVoxelCoord(0, 0));
+    REQUIRE(voxelToRegionVoxel(VoxelCoord(-513, -513, -513)) == RegionVoxelCoord(511, 511));
 }
