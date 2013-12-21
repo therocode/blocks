@@ -135,7 +135,7 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
                 else
                     b.height = 1.0f;
 
-                if(b.max(1) - a.min(1) <= 1.0f){
+                if(b.max(1) - a.min(1) <= 0.5f){
                     if(AABBOnGround(a))
                     {
                         AABB aa = a;
