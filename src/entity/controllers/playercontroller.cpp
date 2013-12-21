@@ -54,9 +54,9 @@ void PlayerController::handleMessage(const PlayerJoinedMessage& received)
 
     ChunkCoord chunkAt = worldToChunk(position);
 
-    for(int32_t x = -10; x < 11; x++)
-    for(int32_t y = -10; y < 11; y++)
-    for(int32_t z = -10; z < 11; z++)
+    for(int32_t x = 0; x < 5; x++)
+    for(int32_t y = -10; y < 0; y++)
+    for(int32_t z = 0; z < 5; z++)
     {
         mBus.sendMessage(ChunkRequestedMessage(chunkAt + ChunkCoord(x, y, z)));
     }

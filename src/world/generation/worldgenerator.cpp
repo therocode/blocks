@@ -12,7 +12,7 @@ Chunk WorldGenerator::generateChunk(const ChunkCoord& chunkCoordinate, const Reg
 
     float chunkY = chunkToWorld(chunkCoordinate).y;
 
-    //std::cout << "chunk z is " << chunkCoordinate.z << "\n";
+    std::cout << "chunk is " << glm::to_string((glm::ivec3)chunkCoordinate) << "\n";
 
     voxelCoord.x = chunkVoxelCoord.x;
     for(int32_t x = 0; x < chunkWidth; x++)
@@ -23,7 +23,8 @@ Chunk WorldGenerator::generateChunk(const ChunkCoord& chunkCoordinate, const Reg
             voxelCoord.z = chunkVoxelCoord.z;
             for(int32_t z = 0; z < chunkWidth; z++)
             {
-    //std::cout << "voxel z is " << voxelCoord.z << "\n";
+    if(chunkCoordinate == ChunkCoord(1,0,3))
+    std::cout << "voxel z is " << glm::to_string((glm::ivec3)voxelCoord) << "\n";
                 //std::cout << "voxel coord for chunk is " << voxelCoord.x << " " << voxelCoord.y << " " << voxelCoord.z << "\n";
                 regionCoord = voxelToRegionVoxel(voxelCoord);
                 //std::cout << "region coord: " << regionCoord.x << " " << regionCoord.y << "\n";

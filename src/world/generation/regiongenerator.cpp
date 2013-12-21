@@ -1,5 +1,6 @@
 #include "regiongenerator.h"
 #include "utilities/noise.h"
+#include <iostream>
 
 IntensityMap RegionGenerator::generateHeightmap(const RegionCoord& regionCoordinate) const
 {
@@ -7,10 +8,12 @@ IntensityMap RegionGenerator::generateHeightmap(const RegionCoord& regionCoordin
     Noise simplex(899);
     Noise simplex2(899 + 17);
 
+    std::cout << "region: " << glm::to_string((glm::ivec2)regionCoordinate) << "\n";
+
     glm::vec3 regionPos = regionToWorld(regionCoordinate);
 
-    for(int x = 0; x < regionWidth * chunkWidth; x++)
-    for(int y = 0; y < regionWidth * chunkWidth; y++)
+    for(size_t x = 0; x < regionWidth * chunkWidth; x++)
+    for(size_t y = 0; y < regionWidth * chunkWidth; y++)
     {
         //float value = raw_noise_3d((float) x / 200.0f, (float) y / 200.0f, 10.5);
         float value = simplex.simplexOctave2D((float) (x + regionPos.x) / 200.0f, (float) (y + regionPos.y) / 200.0f, 0.6f, 6);
@@ -19,6 +22,7 @@ IntensityMap RegionGenerator::generateHeightmap(const RegionCoord& regionCoordin
 
         //float value = (perlin.GetValue((float) x / 200.0f, (float) y / 200.0f, 1000.5));
         //std::cout << "value: " << value << "\n";
+        std::cout << value << "\n";
         value = value * 1.8f;
         value = (value + 1.0f) / 2.0f;
         value = std::max(0.0f, std::min(value, 1.0f));
