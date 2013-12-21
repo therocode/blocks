@@ -117,6 +117,7 @@ struct ModManagerException : public std::exception
 class ModManager 
 {
     public:
+        ModManager(fea::MessageBus& bus);
         void loadMods(Chunk& chunk);
         void saveMods(uint64_t currentTimestamp);
         void saveMods(uint64_t currentTimestamp, RegionCoord regionLoc);
@@ -131,7 +132,7 @@ class ModManager
         void _setMod(const RegionCoord& regionLoc, const RegionChunkCoord& chunkLoc, const VoxelCoordinate_uint8& voxLoc, VoxelType type);
         std::string getFilename(RegionCoord regionLoc);
 
-        fea::MessageBus mBus;
+        fea::MessageBus& mBus;
         RegionCoord mRegionLoc;
         std::string mIndexPath;
         std::string mDataPath;

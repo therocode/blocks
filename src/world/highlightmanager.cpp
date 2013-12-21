@@ -2,46 +2,134 @@
 
 using namespace std;
 
-HighlightManager::HighlightManager(fea::MessageBus bus)
-    : mBus(bus) {}
-
-void HighlightManager::addHighlight(ChunkCoord loc)
+HighlightManager::HighlightManager(fea::MessageBus& bus)
+    : mBus(bus) 
 {
-    RefMap::const_iterator got = refCounts.find(loc);
-    if(got == refCounts.end())
-    {
-        refCounts[loc] = 1;
-    }
-    else
-    {
-        ++refCounts[loc];
-    }
-
-    if(refCounts[loc] == 1) 
-    {
-        mBus.sendMessage<ChunkHighlightedMessage>(loc);
-    } 
+    mBus.addMessageSubscriber<HighlightEntitySpawnedMessage>(*this);
+    mBus.addMessageSubscriber<HighlightEntityDespawnedMessage>(*this);
+    mBus.addMessageSubscriber<HighlightEntityMovedMessage>(*this);
 }
 
-void HighlightManager::removeHighlight(ChunkCoord loc)
+void HighlightManager::handleMessage(const HighlightEntitySpawnedMessage& msg)
 {
-    RefMap::const_iterator got = refCounts.find(loc);
-    if(got == refCounts.end())
-    {
-        throw HighlightManagerException(glm::to_string((glm::ivec3)loc) + " has not been highlighted."); //NOTE: not sure why this needs to be casted... not good.
-    }
-    else
-    {
-        if(refCounts[loc] == 0)
-        {
-            throw HighlightManagerException(glm::to_string((glm::ivec3)loc) + " has not been highlighted."); //NOTE: not sure why this needs to be casted... not good.
-        }
-        
-        --refCounts[loc];
+    fea::EntityId id;
+    ChunkCoord loc;
+    tie(id, loc) = msg.data; 
 
-        if(refCounts[loc] == 0)
+    EntityMap::const_iterator got = mEntityMap.find(id);
+    if(got != mEntityMap.end())
+    {
+        throw HighlightManagerException("Entity already spawned.");
+    }
+
+    mEntityMap[id] = loc;
+    highlightShape(loc); 
+}
+
+void HighlightManager::handleMessage(const HighlightEntityDespawnedMessage& msg)
+{
+    fea::EntityId id;
+    ChunkCoord loc;
+    tie(id, loc) = msg.data;
+
+    EntityMap::const_iterator got = mEntityMap.find(id);
+    if(got == mEntityMap.end())
+    {
+        throw HighlightManagerException("Entity hasn't spawned.");
+    }
+
+    dehighlightShape(mEntityMap[id]);
+    mEntityMap.erase(got);
+}
+
+void HighlightManager::handleMessage(const HighlightEntityMovedMessage& msg)
+{
+    fea::EntityId id;
+    ChunkCoord loc;
+    tie(id, loc) = msg.data;
+
+    EntityMap::const_iterator got = mEntityMap.find(id);
+    if(got == mEntityMap.end())
+    {
+        throw HighlightManagerException("Entity hasn't spawned.");
+    }
+
+    highlightShape(loc);
+    dehighlightShape(mEntityMap[id]);
+    mEntityMap[id] = loc;
+}
+
+void HighlightManager::highlightShape(const ChunkCoord& loc)
+{
+    for(int64_t x = loc.x - HIGHLIGHT_RADIUS; x < loc.x + HIGHLIGHT_RADIUS + 1; ++x)
+    {
+        for(int64_t y = loc.y - HIGHLIGHT_RADIUS; y < loc.y + HIGHLIGHT_RADIUS + 1; ++y)
         {
-            mBus.sendMessage<ChunkDehighlightedMessage>(loc);
+            for(int64_t z = loc.z - HIGHLIGHT_RADIUS; z < loc.z + HIGHLIGHT_RADIUS + 1; ++z)
+            {
+                ChunkCoord subLoc(x, y, z);
+
+                if(glm::distance(glm::dvec3(loc), glm::dvec3(subLoc)) <= (double)HIGHLIGHT_RADIUS)
+                {
+                    highlightChunk(subLoc);
+                }
+            }
         }
+    }
+}
+
+void HighlightManager::dehighlightShape(const ChunkCoord& loc)
+{
+    for(int64_t x = loc.x - HIGHLIGHT_RADIUS; x < loc.x + HIGHLIGHT_RADIUS + 1; ++x)
+    {
+        for(int64_t y = loc.y - HIGHLIGHT_RADIUS; y < loc.y + HIGHLIGHT_RADIUS + 1; ++y)
+        {
+            for(int64_t z = loc.z - HIGHLIGHT_RADIUS; z < loc.z + HIGHLIGHT_RADIUS + 1; ++z)
+            {
+                ChunkCoord subLoc(x, y, z);
+
+                if(glm::distance(glm::dvec3(loc), glm::dvec3(subLoc)) <= (double)HIGHLIGHT_RADIUS)
+                {
+                    dehighlightChunk(subLoc);
+                }
+            }
+        }
+    }
+}
+
+void HighlightManager::highlightChunk(const ChunkCoord& coord)
+{
+    RefMap::const_iterator got = mRefCounts.find(coord);
+    if(got == mRefCounts.end())
+    {
+        mRefCounts[coord] = 0;
+    }
+
+    ++mRefCounts[coord];
+
+    if(mRefCounts[coord] == 1) 
+    {
+        mBus.sendMessage<ChunkHighlightedMessage>(ChunkHighlightedMessage(coord));    
+    }
+}
+
+void HighlightManager::dehighlightChunk(const ChunkCoord& coord)
+{
+    RefMap::const_iterator got = mRefCounts.find(coord);
+    if(got == mRefCounts.end())
+    {
+        throw HighlightManagerException("Chunk has not been highlighted");
+    }
+
+    if(mRefCounts[coord] == 0) 
+    {
+        throw HighlightManagerException("Chunk has not been highlighted");
+    }
+
+    --mRefCounts[coord];
+
+    if(mRefCounts[coord] == 0)
+    {
+        mBus.sendMessage<ChunkDehighlightedMessage>(ChunkDehighlightedMessage(coord));
     }
 }

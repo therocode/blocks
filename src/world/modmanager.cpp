@@ -36,6 +36,9 @@ bool VoxelCoordinate_uint8::operator<(const VoxelCoordinate_uint8& other) const
     }    
 }
 
+ModManager::ModManager(fea::MessageBus& bus) 
+    : mBus(bus) {}
+
 void ModManager::loadMods(Chunk& chunk)
 {
     RegionCoord regionLoc = chunkToRegion(chunk.getLocation());
@@ -44,6 +47,8 @@ void ModManager::loadMods(Chunk& chunk)
     ChunkIndex chunkIndex = getChunkIndex(regionLoc, chunkLoc);
 
     mMods[regionLoc][chunkLoc] = ChunkModMap();
+
+    uint64_t timestamp;
     if(chunkIndex != NO_CHUNK) { 
         ifstream dataFile(getFilename(regionLoc) + dataExt, ios::in | ios::binary);
         dataFile.seekg(chunkIndex);
@@ -51,7 +56,6 @@ void ModManager::loadMods(Chunk& chunk)
         uint16_t modCount;
         dataFile.read((char*)&modCount, sizeof(uint16_t));    
 
-        uint64_t timestamp;
         dataFile.read((char*)&timestamp, sizeof(uint64_t));
 
         for(int i = 0; i < modCount; ++i) 
@@ -68,6 +72,8 @@ void ModManager::loadMods(Chunk& chunk)
     {
         chunk.setVoxelType(it->first.x, it->first.y, it->first.z, it->second);
     }
+
+    mBus.sendMessage<ChunkModdedMessage>(ChunkModdedMessage(chunk, timestamp));
 }
 
 void ModManager::saveMods(uint64_t currentTimestamp)
