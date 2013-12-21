@@ -5,8 +5,8 @@
 IntensityMap RegionGenerator::generateHeightmap(const RegionCoord& regionCoordinate) const
 {
     IntensityMap heightmap;
-    Noise simplex(899);
-    Noise simplex2(899 + 17);
+    Noise simplex(900);
+    Noise simplex2(900 + 17);
 
     std::cout << "region: " << glm::to_string((glm::ivec2)regionCoordinate) << "\n";
 
@@ -22,8 +22,7 @@ IntensityMap RegionGenerator::generateHeightmap(const RegionCoord& regionCoordin
 
         //float value = (perlin.GetValue((float) x / 200.0f, (float) y / 200.0f, 1000.5));
         //std::cout << "value: " << value << "\n";
-        std::cout << value << "\n";
-        value = value * 1.8f;
+        //value = value * 1.8f;
         value = (value + 1.0f) / 2.0f;
         value = std::max(0.0f, std::min(value, 1.0f));
         heightmap.setUnit(x, y, value);
