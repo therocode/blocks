@@ -30,6 +30,8 @@ TEST_CASE("worldToVoxel", "[coord]")
 TEST_CASE("worldToChunk", "[coord]")
 {
     REQUIRE(worldToChunk(glm::vec3(0.0f, 0.0f, 0.0f)) == ChunkCoord(0, 0, 0));
+    REQUIRE(worldToChunk(glm::vec3(1.0f, 1.0f, 1.0f)) == ChunkCoord(0, 0, 0));
+    REQUIRE(worldToChunk(glm::vec3(-1.0f, -1.0f, -1.0f)) == ChunkCoord(-1, -1, -1));
     REQUIRE(worldToChunk(glm::vec3(15.9f, 15.9f, 15.9f)) == ChunkCoord(0, 0, 0));
     REQUIRE(worldToChunk(glm::vec3(16.5f, 16.5f, 16.5f)) == ChunkCoord(1, 1, 1));
     REQUIRE(worldToChunk(glm::vec3(-16.0f, -16.0f, -16.0f)) == ChunkCoord(-1, -1, -1));
@@ -39,6 +41,8 @@ TEST_CASE("worldToChunk", "[coord]")
 TEST_CASE("worldToRegion", "[coord]")
 {
     REQUIRE(worldToRegion(glm::vec3(0.0f, 0.0f, 0.0f)) == RegionCoord(0, 0, 0));
+    REQUIRE(worldToRegion(glm::vec3(1.0f, 1.0f, 1.0f)) == RegionCoord(0, 0, 0));
+    REQUIRE(worldToRegion(glm::vec3(-1.0f, -1.0f, -1.0f)) == RegionCoord(-1, -1, -1));
     REQUIRE(worldToRegion(glm::vec3(511.9f, 511.9f, 511.9f)) == RegionCoord(0, 0, 0));
     REQUIRE(worldToRegion(glm::vec3(512.5f, 512.5f, 512.5f)) == RegionCoord(1, 1, 1));
     REQUIRE(worldToRegion(glm::vec3(-512.0f, -512.0f, -512.0f)) == RegionCoord(-1, -1, -1));
@@ -62,13 +66,15 @@ TEST_CASE("chunkToWorld", "[coord]")
 TEST_CASE("regionToWorld", "[coord]")
 {
     REQUIRE(regionToWorld(RegionCoord(0, 0, 0)) == glm::vec3(0.0f, 0.0f, 0.0f));
-    REQUIRE(regionToWorld(RegionCoord(1, 1, 1)) == glm::vec3(1.0f * regionWidth, 1.0f * regionWidth, 1.0f * regionWidth));
-    REQUIRE(regionToWorld(RegionCoord(-2, -2, -2)) == glm::vec3(-2.0f * regionWidth, -2.0f * regionWidth, -2.0f * regionWidth));
+    REQUIRE(regionToWorld(RegionCoord(1, 1, 1)) == glm::vec3(1.0f * regionWidth * chunkWidth, 1.0f * regionWidth * chunkWidth, 1.0f * regionWidth * chunkWidth));
+    REQUIRE(regionToWorld(RegionCoord(-2, -2, -2)) == glm::vec3(-2.0f * regionWidth * chunkWidth, -2.0f * regionWidth * chunkWidth, -2.0f * regionWidth * chunkWidth));
 }
 
 TEST_CASE("voxelToChunk", "[coord]")
 {
     REQUIRE(voxelToChunk(VoxelCoord(0, 0, 0)) == ChunkCoord(0, 0, 0));
+    REQUIRE(voxelToChunk(VoxelCoord(1, 1, 1)) == ChunkCoord(0, 0, 0));
+    REQUIRE(voxelToChunk(VoxelCoord(-1, -1, -1)) == ChunkCoord(-1, -1, -1));
     REQUIRE(voxelToChunk(VoxelCoord(14, 14, 14)) == ChunkCoord(0, 0, 0));
     REQUIRE(voxelToChunk(VoxelCoord(15, 15, 15)) == ChunkCoord(0, 0, 0));
     REQUIRE(voxelToChunk(VoxelCoord(16, 16, 16)) == ChunkCoord(1, 1, 1));
@@ -82,6 +88,8 @@ TEST_CASE("voxelToChunk", "[coord]")
 TEST_CASE("voxelToRegion", "[coord]")
 {
     REQUIRE(voxelToRegion(VoxelCoord(0, 0, 0)) == RegionCoord(0, 0, 0));
+    REQUIRE(voxelToRegion(VoxelCoord(1, 1, 1)) == RegionCoord(0, 0, 0));
+    REQUIRE(voxelToRegion(VoxelCoord(-1, -1, -1)) == RegionCoord(-1, -1, -1));
     REQUIRE(voxelToRegion(VoxelCoord(511, 511, 511)) == RegionCoord(0, 0, 0));
     REQUIRE(voxelToRegion(VoxelCoord(512, 512, 512)) == RegionCoord(1, 1, 1));
     REQUIRE(voxelToRegion(VoxelCoord(513, 513, 513)) == RegionCoord(1, 1, 1));
@@ -93,6 +101,8 @@ TEST_CASE("voxelToRegion", "[coord]")
 TEST_CASE("chunkToRegion", "[coord]")
 {
     REQUIRE(chunkToRegion(ChunkCoord(0, 0, 0)) == RegionCoord(0, 0, 0));
+    REQUIRE(chunkToRegion(ChunkCoord(1, 1, 1)) == RegionCoord(0, 0, 0));
+    REQUIRE(chunkToRegion(ChunkCoord(-1, -1, -1)) == RegionCoord(-1, -1, -1));
     REQUIRE(chunkToRegion(ChunkCoord(31, 31, 31)) == RegionCoord(0, 0, 0));
     REQUIRE(chunkToRegion(ChunkCoord(32, 32, 32)) == RegionCoord(1, 1, 1));
     REQUIRE(chunkToRegion(ChunkCoord(33, 33, 33)) == RegionCoord(1, 1, 1));
@@ -104,6 +114,8 @@ TEST_CASE("chunkToRegion", "[coord]")
 TEST_CASE("voxelToChunkVoxel", "[coord]")
 {
     REQUIRE(voxelToChunkVoxel(VoxelCoord(0, 0, 0)) == ChunkVoxelCoord(0, 0, 0));
+    REQUIRE(voxelToChunkVoxel(VoxelCoord(1, 1, 1)) == ChunkVoxelCoord(1, 1, 1));
+    REQUIRE(voxelToChunkVoxel(VoxelCoord(-1, -1, -1)) == ChunkVoxelCoord(15, 15, 15));
     REQUIRE(voxelToChunkVoxel(VoxelCoord(-13, -13, -13)) == ChunkVoxelCoord(3, 3, 3));
     REQUIRE(voxelToChunkVoxel(VoxelCoord(-14, -14, -14)) == ChunkVoxelCoord(2, 2, 2));
     REQUIRE(voxelToChunkVoxel(VoxelCoord(-15, -15, -15)) == ChunkVoxelCoord(1, 1, 1));

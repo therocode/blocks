@@ -42,7 +42,7 @@ glm::vec3 chunkToWorld(const ChunkCoord& chunkCoordinate)
 
 glm::vec3 regionToWorld(const RegionCoord& regionCoordinate)
 {
-    return ((glm::vec3) regionCoordinate) * (float)regionWidth;
+    return ((glm::vec3) regionCoordinate) * (float)(regionWidth * chunkWidth);
 }
 
 ChunkCoord voxelToChunk(const VoxelCoord& voxelCoordinate)
