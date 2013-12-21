@@ -84,6 +84,7 @@ set(source_files
 	src/rendering/vbo.cpp
 	src/rendering/vbocreator.cpp
     src/rendering/newvbo.cpp
+    src/rendering/marchingcubegenerator.cpp
 
     src/script/scriptcallback.cpp
     src/script/scriptengine.cpp
@@ -195,6 +196,7 @@ set(header_files
 	src/rendering/vbo.h
 	src/rendering/vbocreator.h
     src/rendering/newvbo.h
+    src/rendering/marchingcubegenerator.h
 
 	src/script/scriptmessages.h
     src/script/scriptcallback.h

@@ -4,8 +4,8 @@
 
 PhysicsController::PhysicsController(fea::MessageBus& bus, WorldInterface& worldInterface) : EntityController(bus, worldInterface), gravityConstant(-0.003f)
 {
-	mTimer.start();
-	accumulator = 0;
+    mTimer.start();
+    accumulator = 0;
     mBus.addMessageSubscriber<GravityRequestedMessage>(*this);
     mBus.addMessageSubscriber<PhysicsImpulseMessage>(*this);
 }
@@ -21,9 +21,9 @@ void PhysicsController::inspectEntity(fea::WeakEntityPtr entity)
     fea::EntityPtr locked = entity.lock();
 
     if(locked->hasAttribute("position") &&
-       locked->hasAttribute("velocity") &&
-       locked->hasAttribute("drag") && 
-       locked->hasAttribute("physics_type"))
+            locked->hasAttribute("velocity") &&
+            locked->hasAttribute("drag") && 
+            locked->hasAttribute("physics_type"))
     {
         mEntities.emplace(locked->getId(), entity);
     }
@@ -31,15 +31,15 @@ void PhysicsController::inspectEntity(fea::WeakEntityPtr entity)
 
 void PhysicsController::onFrame(int dt)
 {
-	//int dt = mTimer.getDeltaTime();
-	if(dt > 100) return;
-	dt += accumulator;
-	int millisecondsPerStep = 1000/60;
-	int steps = dt / millisecondsPerStep;
-	accumulator = dt % millisecondsPerStep;
-	//printf("dt: %i\n", dt);
-	if(steps == 0) return;
-	if(steps > 10) steps = 10;
+    //int dt = mTimer.getDeltaTime();
+    if(dt > 500) return;
+    dt += accumulator;
+    int millisecondsPerStep = 1000/60;
+    int steps = dt / millisecondsPerStep;
+    accumulator = dt % millisecondsPerStep;
+    //printf("dt: %i\n", dt);
+    if(steps == 0) return;
+    if(steps > 10) steps = 10;
 
     //steps = 1; // if steps are used, it turns weird with the movementcontroller
 
@@ -53,23 +53,24 @@ void PhysicsController::onFrame(int dt)
             gravityForce = glm::vec3(0.0f, gravityConstant, 0.0f);
         }
 
+        glm::vec3 newPosition = entity->getAttribute<glm::vec3>("position");
         glm::vec3 currentPosition = entity->getAttribute<glm::vec3>("position");
         glm::vec3 currentVelocity = entity->getAttribute<glm::vec3>("velocity");
-     
-		glm::vec3 acceleration = gravityForce + entity->getAttribute<glm::vec3>("acceleration");
-		glm::vec3 newVelocity = currentVelocity + acceleration;
-		glm::vec3 newPosition = currentPosition + newVelocity;
-		float drag = entity->getAttribute<float>("drag");
-        bool onGround = entity->getAttribute<bool>("on_ground");
-		for(int i = 0; i < steps; i ++)
-		{
-			newPosition = newPosition + newVelocity;
-			newVelocity += acceleration;
-			newVelocity *= (1.0f - drag);
+
+        glm::vec3 acceleration = gravityForce + entity->getAttribute<glm::vec3>("acceleration");
+        glm::vec3 newVelocity = currentVelocity + acceleration;
+        for(int i = 0; i < steps; i ++)
+        {
+            newPosition = currentPosition + newVelocity;
+            float drag = entity->getAttribute<float>("drag");
+            bool onGround = entity->getAttribute<bool>("on_ground");
+            newPosition = newPosition + newVelocity;
+            newVelocity += acceleration;
+            newVelocity *= (1.0f - drag);
             if(onGround){
-               newVelocity *= 0.9f; 
+                newVelocity *= 0.9f; 
             }
-		}
+        }
         entity->setAttribute<glm::vec3>("velocity", newVelocity);
         mBus.sendMessage<EntityMoveRequestedMessage>(EntityMoveRequestedMessage(entity->getId(), newPosition));
     }
