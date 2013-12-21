@@ -101,3 +101,12 @@ RegionChunkCoord chunkToRegionChunk(const ChunkCoord& chunkCoordinate)
     return RegionChunkCoord(x, y, z);
 }
 
+RegionVoxelCoord voxelToRegionVoxel(const VoxelCoord& voxelCoordinate)
+{
+    int32_t width = regionWidth * chunkWidth;
+    int64_t x = wrapInt(voxelCoordinate.x, 0, width - 1);
+    int64_t y = wrapInt(voxelCoordinate.y, 0, width - 1);
+    int64_t z = wrapInt(voxelCoordinate.z, 0, width - 1);
+
+    return RegionVoxelCoord(x, y, z);
+}
