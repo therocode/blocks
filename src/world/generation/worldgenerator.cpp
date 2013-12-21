@@ -23,7 +23,7 @@ Chunk WorldGenerator::generateChunk(const ChunkCoord& chunkCoordinate, const Reg
             voxelCoord.z = chunkVoxelCoord.z;
             for(int32_t z = 0; z < chunkWidth; z++)
             {
-    std::cout << "voxel z is " << voxelCoord.z << "\n";
+    //std::cout << "voxel z is " << voxelCoord.z << "\n";
                 //std::cout << "voxel coord for chunk is " << voxelCoord.x << " " << voxelCoord.y << " " << voxelCoord.z << "\n";
                 regionCoord = voxelToRegionVoxel(voxelCoord);
                 //std::cout << "region coord: " << regionCoord.x << " " << regionCoord.y << "\n";
