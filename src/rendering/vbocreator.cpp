@@ -2,6 +2,7 @@
 #include <vector>
 #include <chrono>
 #include "meshwalker.h"
+#include "marchingcubegenerator.h"
 
 using std::chrono::duration_cast;
 using std::chrono::microseconds;
@@ -33,6 +34,7 @@ VBO VBOCreator::generateChunkVBO(Chunk* mainChunk, Chunk* topChunk, Chunk* botto
     glm::vec3 chunkOffset(location.x * (float)chunkWidth, location.y * (float)chunkWidth, location.z * (float)chunkWidth);
 
     const VoxelTypeData& voxelTypeData = mainChunk->getVoxelTypeData();
+#if 1
     MeshWalker walker;
 
     for(uint32_t z = 0; z < chunkWidth; z++)
@@ -280,7 +282,7 @@ VBO VBOCreator::generateChunkVBO(Chunk* mainChunk, Chunk* topChunk, Chunk* botto
 		if(quad.mType == 1)resId = 3;
         textureLocation.x = (resId - 1) % 8;
         textureLocation.y = (resId - 1) / 8;
-        
+
 		rect->pushIndicesIntoVBO(nvbo);
         rect = (ChunkRect*)nvbo.getNextVertexPtr(4);
         rect->reset();
@@ -294,7 +296,11 @@ VBO VBOCreator::generateChunkVBO(Chunk* mainChunk, Chunk* topChunk, Chunk* botto
 
         verts +=4;indices+=6;
     }
+#else
+    MarchingCubeGenerator generator;
 
+
+#endif
     //printf("Generated %u vertices and %u indices\n", verts, indices);
     //After stuff has been added, you have to update the gpu vbo data.
     nvbo.uploadVBO();
@@ -308,77 +314,7 @@ VBO VBOCreator::generateChunkVBO(Chunk* mainChunk, Chunk* topChunk, Chunk* botto
 
     return nvbo;
 }
-/*
-inline void VBOCreator::setRectData(Rectangle& r, float x, float y, float z, int face, float u, float v, float width, float height) const
-{
-    float nhs = 0.f;
-    switch(face){
-        case FRONT:
-            z += 1.0f;
-            r.setPosition(0, x + nhs,  y + height, z);
-            r.setPosition(1, x + nhs,  y + nhs, z);
-            r.setPosition(2, x + width,  y + nhs, z);
-            r.setPosition(3, x + width,  y + height, z);
-            break;
-        case RIGHT:
-            x += 1.0f;
-            r.setPosition(0, x, y + height, z + width);
-            r.setPosition(1, x, y + nhs, z + width);
-            r.setPosition(2, x, y + nhs, z + nhs);
-            r.setPosition(3, x, y + height, z + nhs);
-            break;
-        case BACK:
-            //z -= hs;
-            r.setPosition(0, x + width,  y + height, z);
-            r.setPosition(1, x + width,  y + nhs, z);
-            r.setPosition(2, x + nhs,  y + nhs, z);
-            r.setPosition(3, x + nhs,  y + height, z);
-            break;
-        case LEFT:
-            //x -= hs;
-            r.setPosition(0, x, y + height, z + nhs);
-            r.setPosition(1, x, y + nhs, z + nhs);
-            r.setPosition(2, x, y + nhs, z + width);
-            r.setPosition(3, x, y + height, z + width);
-            break;
-        case TOP:
-            y += 1.0f;
-            r.setPosition(0, x + nhs, y, z + nhs);
-            r.setPosition(1, x + nhs, y, z + height);
-            r.setPosition(2, x + width, y, z + height);
-            r.setPosition(3, x + width, y, z + nhs);
-            break;
-        case BOTTOM:
-            //y -= hs;
-            r.setPosition(0, x + width, y, z + nhs);
-            r.setPosition(1, x + width, y, z + height);
-            r.setPosition(2, x + nhs, y, z + height);
-            r.setPosition(3, x + nhs, y, z + nhs);
-            break;
-        case CENTER:
-            width *= 0.5f;
-            height *= 0.5f;
-            nhs = -width;
-            r.setPosition(0, x + nhs,  y + height, z);
-            r.setPosition(1, x + nhs,  y + nhs, z);
-            r.setPosition(2, x + width,  y + nhs, z);
-            r.setPosition(3, x + width,  y + height, z);
-            break;
-    }
 
-    float uo, vo;
-    uo = vo	= 0.125f;
-#ifdef EMSCRIPTEN
-    float e = 0.006f;
-#else
-    float e = 0.0006f;
-#endif
-    r.setUV(0, e+      (float)u * uo,  e+      (float)v * vo);
-    r.setUV(1, e+      (float)u * uo, -e+ vo + (float)v * vo);
-    r.setUV(2,-e+ uo + (float)u * uo, -e+ vo + (float)v * vo);
-    r.setUV(3,-e+ uo + (float)u * uo,  e+      (float)v * vo);
-
-}*/
 inline void VBOCreator::setChunkRectData(ChunkRect& r, float x, float y, float z, int face, float u, float v, float width, float height) const
 {
     float nhs = 0.f;

@@ -12,8 +12,6 @@
 
 #define PR(x) std::cerr << #x << " = " << (x) << std::endl;
 
-const int HIGHLIGHT_RADIUS = 3;
-
 using RefMap = std::unordered_map<ChunkCoord, uint16_t>;
 using EntityMap = std::unordered_map<fea::EntityId, ChunkCoord>;
 
@@ -31,7 +29,7 @@ class HighlightManager :
     public fea::MessageReceiver<HighlightEntityMovedMessage>
 {
     public:
-        HighlightManager(fea::MessageBus& bus);
+        HighlightManager(fea::MessageBus& bus, int highlightRadius);
 
     private:
         virtual void handleMessage(const HighlightEntitySpawnedMessage& msg);
@@ -45,5 +43,5 @@ class HighlightManager :
         fea::MessageBus& mBus;
         RefMap mRefCounts;
         EntityMap mEntityMap;
-
+        int mHighlightRadius;
 };

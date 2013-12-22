@@ -144,7 +144,7 @@ void Camera::Update()
 	matrix[0][ 1 ] = -( bx * x + by * y + bz * z );
 	matrix[0][ 2 ] = -( cx * x + cy * y + cz * z );
 	matrix[0][ 3 ] = 1.0f;*/
-	matrix = glm::lookAt(position, position + direction, upDirection);
+	matrix = glm::lookAt(position, position + direction * 10.f, upDirection);
 
 }
 

@@ -34,7 +34,7 @@ void Server::setup()
 {
     mScriptHandler.setup();
     mUniverse.setup();
-    mFPSController.setMaxFPS(60);
+    mFPSController.setMaxFPS(0);
     mBus.sendMessage<LogMessage>(LogMessage("Server initialised and ready to go", mLogName, LogLevel::INFO));
     mBus.sendMessage<GameStartMessage>(GameStartMessage());
 }

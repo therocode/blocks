@@ -60,33 +60,34 @@ TEST_CASE("", "[spawn][despawn][move]")
     ChunkCoord loc1(0,0,0);
     ChunkCoord loc2(1,0,0);
     ChunkCoord loc3(5,0,0);
+    int highlightRadius = 3;
 
     fea::MessageBus bus;
     TestReceiver receiver;
     bus.addMessageSubscriber<ChunkHighlightedMessage>(receiver);
     bus.addMessageSubscriber<ChunkDehighlightedMessage>(receiver);
-    HighlightManager manager(bus);
+    HighlightManager manager(bus, highlightRadius);
 
     SECTION("spawn entity") 
     {
         bus.sendMessage<HighlightEntitySpawnedMessage>(HighlightEntitySpawnedMessage(eId1, loc1));
 
-        for(int64_t x = loc1.x - HIGHLIGHT_RADIUS; x < loc1.x + HIGHLIGHT_RADIUS + 1; ++x)
+        for(int64_t x = loc1.x - highlightRadius; x < loc1.x + highlightRadius + 1; ++x)
         {
-            for(int64_t y = loc1.y - HIGHLIGHT_RADIUS; y < loc1.y + HIGHLIGHT_RADIUS + 1; ++y)
+            for(int64_t y = loc1.y - highlightRadius; y < loc1.y + highlightRadius + 1; ++y)
             {
-                for(int64_t z = loc1.z - HIGHLIGHT_RADIUS; z < loc1.z + HIGHLIGHT_RADIUS + 1; ++z)
+                for(int64_t z = loc1.z - highlightRadius; z < loc1.z + highlightRadius + 1; ++z)
                 {
                     ChunkCoord loc(x, y, z); 
                     vector<ChunkCoord> highlightedLocs = receiver.getHighlightedLocs();
                     vector<ChunkCoord>::const_iterator got = find(highlightedLocs.begin(), highlightedLocs.end(), loc);
                     if(got == highlightedLocs.end())
                     {
-                        REQUIRE(glm::distance(glm::dvec3(loc), glm::dvec3(loc1)) > HIGHLIGHT_RADIUS);
+                        REQUIRE(glm::distance(glm::dvec3(loc), glm::dvec3(loc1)) > highlightRadius);
                     } 
                     else
                     {
-                        REQUIRE(glm::distance(glm::dvec3(loc), glm::dvec3(loc1)) <= HIGHLIGHT_RADIUS);
+                        REQUIRE(glm::distance(glm::dvec3(loc), glm::dvec3(loc1)) <= highlightRadius);
                     }
                 }
             }
@@ -106,7 +107,6 @@ TEST_CASE("", "[spawn][despawn][move]")
         bus.sendMessage<HighlightEntitySpawnedMessage>(HighlightEntitySpawnedMessage(eId1, loc1));
         bus.sendMessage<HighlightEntityMovedMessage>(HighlightEntityMovedMessage(eId1, loc2));
 
-        // Constant below is dependent on HIGHLIGHT_RADIUS 
         REQUIRE(29 == receiver.getDehighlightedLocs().size());
     }
 
@@ -115,7 +115,6 @@ TEST_CASE("", "[spawn][despawn][move]")
         bus.sendMessage<HighlightEntitySpawnedMessage>(HighlightEntitySpawnedMessage(eId1, loc1));
         bus.sendMessage<HighlightEntitySpawnedMessage>(HighlightEntitySpawnedMessage(eId2, loc3));
 
-        // Constant below is dependent on HIGHLIGHT_RADIUS 
         REQUIRE(244 == receiver.getHighlightedLocs().size());
     }
 

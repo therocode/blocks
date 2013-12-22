@@ -211,11 +211,19 @@ void Renderer::render()
     // glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 
 	glm::vec3 fullColor = glm::vec3((float)0x00 / 255.f, (float)0xb2 / 255.f, (float)0xff / 255.f);
-	glm::vec3 cameraOffset = glm::vec3(0, 0.6f, 0);
 	float time = mTimer.getTime() * 1.2f;
 	float dT_f = mTimer.getDeltaTime();
 	glm::vec3 mV = glm::cross(cam.GetDirection(), glm::vec3(0, 1, 0));
 	float sc = 0.4f;
+    cameraOffset.y -= (cameraOffset.y - originalCameraPos.y) / 10.f;
+    if(glm::abs(cameraOffset.y - originalCameraPos.y) > 1.f)
+    {
+        float h = cameraOffset.y - originalCameraPos.y;
+        h = (h < 0)?-1.f:1.f;
+        cameraOffset.y = originalCameraPos.y + h;
+    }
+    glm::vec3 resThing = originalCameraPos;
+    resThing.y = cameraOffset.y;
 	if(speed > 0){
 	//	cameraOffset.y += glm::sin(time*0.01f)*speed * sc;
 	//	cameraOffset.x += glm::cos(time*0.005f)*speed * sc;
@@ -225,7 +233,9 @@ void Renderer::render()
 	interpDuck += (duck - interpDuck) * 0.2f;
 	//cameraOffset.y -= interpDuck;
 	duck *= 0.9f;
-	cam.SetPosition(originalCameraPos + cameraOffset);
+	//cam.SetPosition(originalCameraPos + cameraOffset);
+    resThing.y += 0.6f;
+	cam.SetPosition(resThing);
 	float y = cam.GetPosition().y;
 	glm::vec3 color = glm::mix(fullColor, glm::vec3(0.f), 1.f - glm::clamp((y - 15) * 0.05f, 0.f, 1.f));
 	// printf("color: %f, %f, %f\n", color.x, color.y, color.z);
@@ -336,6 +346,7 @@ void Renderer::render()
 	mShaderProgram.unbind();
 	
 	sDebugRenderer.performDrawing();
+#if 0
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 	glBlendEquation(GL_FUNC_ADD);
@@ -436,6 +447,7 @@ void Renderer::render()
 	
 	glEnd();
 	glDisable(GL_BLEND);
+#endif
 	
 	glEnable(GL_DEPTH_TEST);
 }
