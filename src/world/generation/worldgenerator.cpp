@@ -30,6 +30,7 @@ Chunk WorldGenerator::generateChunk(const ChunkCoord& chunkCoordinate, const Reg
                 //if(chunkCoordinate == ChunkCoord(1,0,3))
                 //std::cout << "region coord: " << regionCoord.x << " " << regionCoord.y << "\n";
                 float worldY = (float)(chunkY + y) + region.getHeightmap().getUnit(regionCoord.x, regionCoord.y) * 100.f;
+
                 if(worldY < 0.0f)
                 {
                     RegionCoord region = voxelToRegion(voxelCoord);

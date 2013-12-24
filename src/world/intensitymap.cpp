@@ -41,12 +41,12 @@ const IntensityMap& IntensityMap::operator=(IntensityMap&& other)
 
 float IntensityMap::getUnit(size_t x, size_t y) const
 {
-    return units[x + y * regionWidth];
+    return units[x + y * regionWidth * chunkWidth];
 }
 
 void IntensityMap::setUnit(size_t x, size_t y, float value)
 {
-    units[x + y * regionWidth] = value;
+    units[x + y * regionWidth * chunkWidth] = value;
 }
 
 //void IntensityMap::toTexture(fea::Texture& texture)
