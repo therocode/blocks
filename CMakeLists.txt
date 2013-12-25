@@ -123,9 +123,10 @@ set(source_files
     src/utilities/voronoinoise.cpp
     src/utilities/whitenoise.cpp
 
+	src/world/biome.cpp
+	src/world/biomestorage.cpp
 	src/world/chunk.cpp
     src/world/chunkprovider.cpp
-    src/world/intensitymap.cpp
     src/world/highlightmanager.cpp
     src/world/region.cpp
     src/world/regionprovider.cpp
@@ -239,9 +240,11 @@ set(header_files
     src/utilities/whitenoise.h
 
 	src/world/worldmessages.h
+	src/world/biome.h
+	src/world/biomestorage.h
 	src/world/chunk.h
     src/world/chunkprovider.h
-    src/world/intensitymap.h
+    src/world/valuemap.h
     src/world/highlightmanager.h
     src/world/region.h
     src/world/regionstorageinterface.h

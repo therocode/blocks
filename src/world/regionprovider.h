@@ -2,6 +2,7 @@
 #include <featherkit/messaging.h>
 #include "worldmessages.h"
 #include "generation/regiongenerator.h"
+#include "biomestorage.h"
 
 class RegionProvider : public fea::MessageReceiver<RegionNeededMessage>
 {
@@ -12,4 +13,5 @@ class RegionProvider : public fea::MessageReceiver<RegionNeededMessage>
     private:
         fea::MessageBus& mBus;
         RegionGenerator mRegionGenerator;
+        BiomeStorage mStorage;
 };

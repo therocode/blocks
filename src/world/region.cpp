@@ -6,14 +6,20 @@ Region::Region()
 
 }
 
-Region::Region(const IntensityMap& heightmap)
+Region::Region(const IntensityMap& heightmap, const IntensityMap& rainmap, const IntensityMap& temperaturemap, const IntensityMap& biomeSelector)
 {
     mHeightmap = heightmap;
+    mRainmap = rainmap;
+    mTemperaturemap = temperaturemap;
+    mBiomeSelector = biomeSelector;
 }
 
-Region::Region(IntensityMap&& heightmap)
+Region::Region(IntensityMap&& heightmap, IntensityMap&& rainmap, IntensityMap&& temperaturemap, IntensityMap&& biomeSelector)
 {
     std::swap(mHeightmap, heightmap);
+    std::swap(mRainmap, rainmap);
+    std::swap(mTemperaturemap, temperaturemap);
+    std::swap(mBiomeSelector, biomeSelector);
 }
 
 bool Region::hasChunk(const RegionChunkCoord& location) const
@@ -49,4 +55,29 @@ void Region::removeChunk(const RegionChunkCoord& coordinate)
 const IntensityMap& Region::getHeightmap() const
 {
     return mHeightmap;
+}
+
+const IntensityMap& Region::getRainmap() const
+{
+    return mRainmap;
+}
+
+const IntensityMap& Region::getTemperaturemap() const
+{
+    return mTemperaturemap;
+}
+
+const IntensityMap& Region::getBiomeSelector() const
+{
+    return mBiomeSelector;
+}
+
+void Region::setBiomeTypes(VoxelTypeMap& biomeTypes)
+{
+    mBiomeTypes = biomeTypes;
+}
+
+const VoxelTypeMap& Region::getBiomeTypes() const
+{
+    return mBiomeTypes;
 }
