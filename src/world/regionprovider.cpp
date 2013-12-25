@@ -52,7 +52,7 @@ void RegionProvider::handleMessage(const RegionNeededMessage& received)
         float temperature = newRegion.getTemperaturemap().getUnit(x, y);
         float selector = newRegion.getBiomeSelector().getUnit(x, y);
 
-        Biome* biome = mStorage.getBiome(height, rain, temperature, selector);
+        Biome* biome = mStorage.getBiome(temperature, rain, height, selector);
 
         biomeTypes.setUnit(x, y, biome->mType);
     }
