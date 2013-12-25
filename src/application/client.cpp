@@ -278,9 +278,9 @@ void Client::fetchServerData()
 
             std::tie(coordinate) = chunkPackage->getData();
 
-			mBus.sendMessage<ClientChunkDeletedMessage>(ClientChunkDeletedMessage(chunkPackage->getData()));
+			//mBus.sendMessage<ClientChunkDeletedMessage>(ClientChunkDeletedMessage(chunkPackage->getData()));
 
-            mLocalChunks.erase(coordinate);
+            //mLocalChunks.erase(coordinate);
 		}
 		else if(package->mType == PackageType::GFX_ENTITY_ADDED)
 		{
