@@ -1,0 +1,3 @@
+[submodule "extlibs"]
+	path = extlibs
+	url = ssh://gitolite@pallkars.net/blocks_ext
