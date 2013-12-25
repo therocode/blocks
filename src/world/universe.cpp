@@ -79,13 +79,15 @@ void Universe::handleMessage(const RegionDeliverMessage& received)
 
 void Universe::handleMessage(const ChunkHighlightedMessage& received)
 {
+    std::cout << "highlighted " << glm::to_string((glm::ivec3)std::get<0>(received.data)) << "\n";
     mBus.sendMessage(ChunkRequestedMessage(received.data));
 }
 
 void Universe::handleMessage(const ChunkDehighlightedMessage& received)
 {
     mStandardWorld.removeChunk(std::get<0>(received.data));
-    //mBus.sendMessage(ChunkDeletedMessage(received.data));
+    std::cout << "dehighlighted " << glm::to_string((glm::ivec3)std::get<0>(received.data)) << "\n";
+    mBus.sendMessage(ChunkDeletedMessage(received.data));
 }
 
 void Universe::handleMessage(const ChunkDeliverMessage& received)
