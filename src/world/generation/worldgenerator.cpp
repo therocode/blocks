@@ -36,10 +36,11 @@ Chunk WorldGenerator::generateChunk(const ChunkCoord& chunkCoordinate, const Reg
                 regionCoord = voxelToRegionVoxel(voxelCoord);
                 //if(chunkCoordinate == ChunkCoord(1,0,3))
                 //std::cout << "region coord: " << regionCoord.x << " " << regionCoord.y << "\n";
-                float worldY = (float)(chunkY + y) + region.getHeightmap().getUnit(regionCoord.x, regionCoord.y) * 100.f;
+                float worldY = (float)(chunkY + y);
+                float threshold =  region.getHeightmap().getUnit(regionCoord.x, regionCoord.y) * 100.f;
                 VoxelType biomeType = region.getBiomeTypes().getUnit(regionCoord.x, regionCoord.y);
 
-                if(worldY < 0.0f)
+                if(worldY < threshold)
                 {
                     voxelData[zIndex + yIndex + x] = biomeType;
                 }
