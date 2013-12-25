@@ -16,8 +16,8 @@ IntensityMap RegionGenerator::generateHeightmap(const RegionCoord& regionCoordin
     for(size_t x = 0; x < regionWidth * chunkWidth; x++)
     {
         //float value = raw_noise_3d((float) x / 200.0f, (float) y / 200.0f, 10.5);
-        float value = simplex.simplexOctave2D((float) (x + regionPos.x) / 200.0f, (float) (y + regionPos.y) / 200.0f, 0.6f, 6);
-        value +=      simplex2.simplexOctave2D((float) (x + regionPos.x) / 800.0f, (float) (y + regionPos.y) / 800.0f, 0.6f, 6); //big height difference
+        float value = simplex.simplexOctave2D((float) (x + regionPos.x) / 200.0f, (float) (y + regionPos.z) / 200.0f, 0.6f, 6);
+        value +=      simplex2.simplexOctave2D((float) (x + regionPos.x) / 800.0f, (float) (y + regionPos.z) / 800.0f, 0.6f, 6); //big height difference
         //value = simplex.white2D((float) x / 2.0f, (float) y / 2.0f);
 
         //float value = (perlin.GetValue((float) x / 200.0f, (float) y / 200.0f, 1000.5));
