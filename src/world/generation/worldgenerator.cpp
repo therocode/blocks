@@ -17,6 +17,8 @@ Chunk WorldGenerator::generateChunk(const ChunkCoord& chunkCoordinate, const Reg
 
     //must probably be something with the for looping and/or the conversion functions; all start coordinates are unique anyway and regionCoord.x seems to be the culprit
 
+    VoxelTypeArray voxelData;
+
     for(int32_t y = 0; y < chunkWidth; y++)
     {
         voxelCoord.x = chunkVoxelCoord.x;
@@ -34,23 +36,25 @@ Chunk WorldGenerator::generateChunk(const ChunkCoord& chunkCoordinate, const Reg
                 if(worldY < 0.0f)
                 {
                     RegionCoord region = voxelToRegion(voxelCoord);
-                    if(region == RegionCoord(0,0))
-                        newChunk.setVoxelType(x, y, z, 2);
-                    else if(region == RegionCoord(-1, 0))
-                        newChunk.setVoxelType(x, y, z, 1);
-                    else if(region == RegionCoord(0, -1))
-                        newChunk.setVoxelType(x, y, z, 4);
-                    else if(region == RegionCoord(-1, -1))
-                        newChunk.setVoxelType(x, y, z, 1);
+                    if(region == RegionCoord(-1,-1))
+                        voxelData[z * chunkWidthx2 + y * chunkWidth + z] = 2;
+                    else if(region == RegionCoord(-2, -1))
+                        voxelData[z * chunkWidthx2 + y * chunkWidth + z] = 1;
+                    else if(region == RegionCoord(-1, -2))
+                        voxelData[z * chunkWidthx2 + y * chunkWidth + z] = 4;
+                    else if(region == RegionCoord(-2, -2))
+                        voxelData[z * chunkWidthx2 + y * chunkWidth + z] = 1;
                 }
                 else
-                    newChunk.setVoxelType(x, y, z, 0);
+                    voxelData[z * chunkWidthx2 + y * chunkWidth + z] = 0;
 
                 voxelCoord.z++;
             }
             voxelCoord.x++;
         }
     }
+
+    newChunk.setVoxelData(voxelData);
 
     return newChunk;
 }

@@ -46,6 +46,8 @@ void PlayerController::handleMessage(const PlayerJoinedMessage& received)
 
     std::tie(playerId, position) = received.data;
 
+    position = glm::vec3(-512, 0, -512);
+
     fea::WeakEntityPtr playerEntity = mWorldInterface.createEntity("Player", position);
     std::cout << "created player entity and it's id is " << playerEntity.lock()->getId() << "\n";
     mPlayerEntities.emplace(playerId, playerEntity);

@@ -12,8 +12,8 @@ IntensityMap RegionGenerator::generateHeightmap(const RegionCoord& regionCoordin
 
     glm::vec3 regionPos = regionToWorld(regionCoordinate);
 
-    for(size_t x = 0; x < regionWidth * chunkWidth; x++)
     for(size_t y = 0; y < regionWidth * chunkWidth; y++)
+    for(size_t x = 0; x < regionWidth * chunkWidth; x++)
     {
         //float value = raw_noise_3d((float) x / 200.0f, (float) y / 200.0f, 10.5);
         float value = simplex.simplexOctave2D((float) (x + regionPos.x) / 200.0f, (float) (y + regionPos.y) / 200.0f, 0.6f, 6);
@@ -22,7 +22,7 @@ IntensityMap RegionGenerator::generateHeightmap(const RegionCoord& regionCoordin
 
         //float value = (perlin.GetValue((float) x / 200.0f, (float) y / 200.0f, 1000.5));
         //std::cout << "value: " << value << "\n";
-        //value = value * 1.8f;
+        value = value * 1.8f;
         value = (value + 1.0f) / 2.0f;
         value = std::max(0.0f, std::min(value, 1.0f));
         heightmap.setUnit(x, y, value);
