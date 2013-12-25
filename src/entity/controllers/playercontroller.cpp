@@ -65,7 +65,7 @@ void PlayerController::handleMessage(const PlayerDisconnectedMessage& received)
     std::tie(playerId) = received.data;
 
     mBus.sendMessage<RemoveEntityMessage>(RemoveEntityMessage(mPlayerEntities.at(playerId).lock()->getId()));
-    mBus.sendMessage(HighlightEntityDespawnedMessage(playerId, mPlayerEntities.at(playerId).lock()->getAttribute<ChunkCoord>("current_chunk")));
+    mBus.sendMessage(HighlightEntityDespawnedMessage(playerId));
     mPlayerEntities.erase(playerId);
 }
 

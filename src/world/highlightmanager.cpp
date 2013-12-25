@@ -29,8 +29,7 @@ void HighlightManager::handleMessage(const HighlightEntitySpawnedMessage& msg)
 void HighlightManager::handleMessage(const HighlightEntityDespawnedMessage& msg)
 {
     fea::EntityId id;
-    ChunkCoord loc;
-    tie(id, loc) = msg.data;
+    tie(id) = msg.data;
 
     EntityMap::const_iterator got = mEntityMap.find(id);
     if(got == mEntityMap.end())

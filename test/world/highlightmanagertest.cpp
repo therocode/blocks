@@ -97,7 +97,7 @@ TEST_CASE("", "[spawn][despawn][move]")
     SECTION("spawn and despawn entity") 
     {
         bus.sendMessage<HighlightEntitySpawnedMessage>(HighlightEntitySpawnedMessage(eId1, loc1));
-        bus.sendMessage<HighlightEntityDespawnedMessage>(HighlightEntityDespawnedMessage(eId1, loc1));
+        bus.sendMessage<HighlightEntityDespawnedMessage>(HighlightEntityDespawnedMessage(eId1));
 
         REQUIRE(receiver.getHighlightedLocs().size() == receiver.getDehighlightedLocs().size());
     }
@@ -122,7 +122,7 @@ TEST_CASE("", "[spawn][despawn][move]")
     {
         bus.sendMessage<HighlightEntitySpawnedMessage>(HighlightEntitySpawnedMessage(eId1, loc1));
         bus.sendMessage<HighlightEntitySpawnedMessage>(HighlightEntitySpawnedMessage(eId2, loc3));
-        bus.sendMessage<HighlightEntityDespawnedMessage>(HighlightEntityDespawnedMessage(eId1, loc1));
+        bus.sendMessage<HighlightEntityDespawnedMessage>(HighlightEntityDespawnedMessage(eId1));
         
         REQUIRE(121 == receiver.getDehighlightedLocs().size());        
     }
