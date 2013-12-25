@@ -19,13 +19,18 @@ Chunk WorldGenerator::generateChunk(const ChunkCoord& chunkCoordinate, const Reg
 
     VoxelTypeArray voxelData;
 
+    size_t yIndex = 0;
+    size_t zIndex = 0;
+
     for(int32_t y = 0; y < chunkWidth; y++)
     {
-        voxelCoord.x = chunkVoxelCoord.x;
-        for(int32_t x = 0; x < chunkWidth; x++)
+        yIndex = y * chunkWidthx2;
+        voxelCoord.z = chunkVoxelCoord.z;
+        for(int32_t z = 0; z < chunkWidth; z++)
         {
-            voxelCoord.z = chunkVoxelCoord.z;
-            for(int32_t z = 0; z < chunkWidth; z++)
+            zIndex = z * chunkWidth;
+            voxelCoord.x = chunkVoxelCoord.x;
+            for(int32_t x = 0; x < chunkWidth; x++)
             {
                 //std::cout << "voxel coord for chunk is " << voxelCoord.x << " " << voxelCoord.y << " " << voxelCoord.z << "\n";
                 regionCoord = voxelToRegionVoxel(voxelCoord);
@@ -37,20 +42,20 @@ Chunk WorldGenerator::generateChunk(const ChunkCoord& chunkCoordinate, const Reg
                 {
                     RegionCoord region = voxelToRegion(voxelCoord);
                     if(region == RegionCoord(-1,-1))
-                        voxelData[z * chunkWidthx2 + y * chunkWidth + z] = 2;
+                        voxelData[zIndex + yIndex + x] = 2;
                     else if(region == RegionCoord(-2, -1))
-                        voxelData[z * chunkWidthx2 + y * chunkWidth + z] = 1;
+                        voxelData[zIndex + yIndex + x] = 1;
                     else if(region == RegionCoord(-1, -2))
-                        voxelData[z * chunkWidthx2 + y * chunkWidth + z] = 4;
+                        voxelData[zIndex + yIndex + x] = 4;
                     else if(region == RegionCoord(-2, -2))
-                        voxelData[z * chunkWidthx2 + y * chunkWidth + z] = 1;
+                        voxelData[zIndex + yIndex + x] = 1;
                 }
                 else
-                    voxelData[z * chunkWidthx2 + y * chunkWidth + z] = 0;
+                    voxelData[zIndex + yIndex + x] = 0;
 
-                voxelCoord.z++;
+                voxelCoord.x++;
             }
-            voxelCoord.x++;
+            voxelCoord.z++;
         }
     }
 
