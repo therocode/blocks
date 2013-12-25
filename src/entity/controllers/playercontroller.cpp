@@ -46,22 +46,14 @@ void PlayerController::handleMessage(const PlayerJoinedMessage& received)
 
     std::tie(playerId, position) = received.data;
 
-    position = glm::vec3(-512, 0, -512);
-
     fea::WeakEntityPtr playerEntity = mWorldInterface.createEntity("Player", position);
     std::cout << "created player entity and it's id is " << playerEntity.lock()->getId() << "\n";
     mPlayerEntities.emplace(playerId, playerEntity);
     playerEntity.lock()->setAttribute<ChunkCoord>("current_chunk", worldToChunk(position));
     mBus.sendMessage(PlayerEntersChunkMessage(playerId, worldToChunk(position)));
+    mBus.sendMessage(HighlightEntitySpawnedMessage(playerId, worldToChunk(position)));
 
     ChunkCoord chunkAt = worldToChunk(position);
-
-    for(int32_t x = -10; x < 10; x++)
-    for(int32_t y = -10; y < 10; y++)
-    for(int32_t z = -10; z < 10; z++)
-    {
-        mBus.sendMessage(ChunkRequestedMessage(chunkAt + ChunkCoord(x, y, z)));
-    }
 
     mBus.sendMessage(PlayerConnectedToEntityMessage(playerId, playerEntity.lock()->getId()));
 }
@@ -73,6 +65,7 @@ void PlayerController::handleMessage(const PlayerDisconnectedMessage& received)
     std::tie(playerId) = received.data;
 
     mBus.sendMessage<RemoveEntityMessage>(RemoveEntityMessage(mPlayerEntities.at(playerId).lock()->getId()));
+    mBus.sendMessage(HighlightEntityDespawnedMessage(playerId, mPlayerEntities.at(playerId).lock()->getAttribute<ChunkCoord>("current_chunk")));
     mPlayerEntities.erase(playerId);
 }
 
@@ -221,7 +214,8 @@ void PlayerController::handleMessage(const EntityMovedMessage& received)
 
 void PlayerController::playerEntersChunk(size_t playerId, const ChunkCoord& chunk)
 {
-    mBus.sendMessage<PlayerEntersChunkMessage>(PlayerEntersChunkMessage(playerId, chunk));
+    mBus.sendMessage(PlayerEntersChunkMessage(playerId, chunk));
+    mBus.sendMessage(HighlightEntityMovedMessage(playerId, chunk));
     mPlayerEntities.at(playerId).lock()->setAttribute<ChunkCoord>("current_chunk", chunk);
 }
 

@@ -11,11 +11,14 @@
 	mEntitySystem(messageBus),
 	mWorldInterface(mStandardWorld, mEntitySystem),
     mRegionProvider(mBus),
-    mChunkProvider(mBus, mStandardWorld)
+    mChunkProvider(mBus, mStandardWorld),
+    mHighlightManager(mBus, 5)
 {
 	mBus.addMessageSubscriber<SetVoxelMessage>(*this);
 	mBus.addMessageSubscriber<RegionDeliverMessage>(*this);
 	mBus.addMessageSubscriber<ChunkDeliverMessage>(*this);
+	mBus.addMessageSubscriber<ChunkHighlightedMessage>(*this);
+	mBus.addMessageSubscriber<ChunkDehighlightedMessage>(*this);
 }
 
 Universe::~Universe()
@@ -23,6 +26,8 @@ Universe::~Universe()
 	mBus.removeMessageSubscriber<SetVoxelMessage>(*this);
 	mBus.removeMessageSubscriber<RegionDeliverMessage>(*this);
 	mBus.removeMessageSubscriber<ChunkDeliverMessage>(*this);
+	mBus.removeMessageSubscriber<ChunkHighlightedMessage>(*this);
+	mBus.removeMessageSubscriber<ChunkDehighlightedMessage>(*this);
 }
 
 void Universe::setup()
@@ -70,6 +75,17 @@ void Universe::handleMessage(const RegionDeliverMessage& received)
     std::tie(coordinate, region) = received.data;
 
     mStandardWorld.addRegion(coordinate, region);
+}
+
+void Universe::handleMessage(const ChunkHighlightedMessage& received)
+{
+    mBus.sendMessage(ChunkRequestedMessage(received.data));
+}
+
+void Universe::handleMessage(const ChunkDehighlightedMessage& received)
+{
+    mStandardWorld.removeChunk(std::get<0>(received.data));
+    //mBus.sendMessage(ChunkDeletedMessage(received.data));
 }
 
 void Universe::handleMessage(const ChunkDeliverMessage& received)

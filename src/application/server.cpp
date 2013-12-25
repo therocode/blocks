@@ -14,6 +14,7 @@ Server::Server() : mUniverse(mBus),
     mBus.addMessageSubscriber<PlayerConnectedToEntityMessage>(*this);
     mBus.addMessageSubscriber<PlayerFacingBlockMessage>(*this);
     mBus.addMessageSubscriber<ChunkDeliverMessage>(*this);
+    mBus.addMessageSubscriber<ChunkDeletedMessage>(*this);
     mBus.addMessageSubscriber<VoxelSetMessage>(*this);
 }
 
@@ -27,6 +28,7 @@ Server::~Server()
     mBus.removeMessageSubscriber<PlayerConnectedToEntityMessage>(*this);
     mBus.removeMessageSubscriber<PlayerFacingBlockMessage>(*this);
     mBus.removeMessageSubscriber<ChunkDeliverMessage>(*this);
+    mBus.removeMessageSubscriber<ChunkDeletedMessage>(*this);
     mBus.removeMessageSubscriber<VoxelSetMessage>(*this);
 }
 
@@ -99,14 +101,14 @@ void Server::handleMessage(const ChunkDeliverMessage& received)
     }
 }
 
-//void Server::handleMessage(const ChunkDeletedMessage& received)
-//{
-//    std::shared_ptr<BasePackage> chunkDeletedPackage(new ChunkDeletedPackage(received.data));
-//    for(auto& client : mClients)
-//    {
-//        client.second->enqueuePackage(chunkDeletedPackage);
-//    }
-//}
+void Server::handleMessage(const ChunkDeletedMessage& received)
+{
+    std::shared_ptr<BasePackage> chunkDeletedPackage(new ChunkDeletedPackage(received.data));
+    for(auto& client : mClients)
+    {
+        client.second->enqueuePackage(chunkDeletedPackage);
+    }
+}
 
 void Server::handleMessage(const AddGfxEntityMessage& received)
 {

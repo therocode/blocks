@@ -40,15 +40,7 @@ Chunk WorldGenerator::generateChunk(const ChunkCoord& chunkCoordinate, const Reg
 
                 if(worldY < 0.0f)
                 {
-                    RegionCoord region = voxelToRegion(voxelCoord);
-                    if(region == RegionCoord(-1,-1))
-                        voxelData[zIndex + yIndex + x] = 2;
-                    else if(region == RegionCoord(-2, -1))
-                        voxelData[zIndex + yIndex + x] = 1;
-                    else if(region == RegionCoord(-1, -2))
-                        voxelData[zIndex + yIndex + x] = 4;
-                    else if(region == RegionCoord(-2, -2))
-                        voxelData[zIndex + yIndex + x] = 1;
+                    voxelData[zIndex + yIndex + x] = 1;
                 }
                 else
                     voxelData[zIndex + yIndex + x] = 0;

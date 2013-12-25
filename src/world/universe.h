@@ -8,11 +8,14 @@
 #include "worldmessages.h"
 #include "chunkprovider.h"
 #include "regionprovider.h"
+#include "highlightmanager.h"
 
 class Universe : 
         public fea::MessageReceiver<SetVoxelMessage>,
         public fea::MessageReceiver<RegionDeliverMessage>,
-        public fea::MessageReceiver<ChunkDeliverMessage>
+        public fea::MessageReceiver<ChunkDeliverMessage>,
+        public fea::MessageReceiver<ChunkHighlightedMessage>,
+        public fea::MessageReceiver<ChunkDehighlightedMessage>
 {
     public:
         Universe(fea::MessageBus& messageBus);
@@ -23,6 +26,8 @@ class Universe :
         virtual void handleMessage(const SetVoxelMessage& received);
         virtual void handleMessage(const RegionDeliverMessage& received);
         virtual void handleMessage(const ChunkDeliverMessage& received);
+        virtual void handleMessage(const ChunkHighlightedMessage& received);
+        virtual void handleMessage(const ChunkDehighlightedMessage& received);
         WorldInterface& getWorldInterface();
     private:
 		glm::vec3 mCamPos, mCamDir;
@@ -32,4 +37,5 @@ class Universe :
         WorldInterface mWorldInterface;
         RegionProvider mRegionProvider;
         ChunkProvider mChunkProvider;
+        HighlightManager mHighlightManager;
 };

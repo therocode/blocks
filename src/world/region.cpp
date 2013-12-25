@@ -41,6 +41,11 @@ void Region::addChunk(const RegionChunkCoord& coordinate, const Chunk& chunk)
     mChunks.emplace(coordinate, std::move(chunk));
 }
 
+void Region::removeChunk(const RegionChunkCoord& coordinate)
+{
+    mChunks.erase(coordinate);
+}
+
 const IntensityMap& Region::getHeightmap() const
 {
     return mHeightmap;

@@ -27,6 +27,13 @@ void World::addChunk(const ChunkCoord& coordinate, const Chunk& chunk)
     mRegions.at(region).addChunk(chunkToRegionChunk(coordinate), chunk);
 }
 
+void World::removeChunk(const ChunkCoord& coordinate)
+{
+    RegionCoord region = chunkToRegion(coordinate);
+
+    mRegions.at(region).removeChunk(chunkToRegionChunk(coordinate));
+}
+
 VoxelType World::getVoxelType(const VoxelCoord& voxelCoordinate) const
 {
     RegionCoord regionCoord = voxelToRegion(voxelCoordinate);
