@@ -46,7 +46,7 @@ struct HighlightEntitySpawned_tag{};
 using HighlightEntitySpawnedMessage = fea::Message<HighlightEntitySpawned_tag, fea::EntityId, const ChunkCoord&>;
 
 struct HighlightEntityDespawned_tag{};
-using HighlightEntityDespawnedMessage = fea::Message<HighlightEntityDespawned_tag, fea::EntityId, const ChunkCoord&>;
+using HighlightEntityDespawnedMessage = fea::Message<HighlightEntityDespawned_tag, fea::EntityId>;
 
 struct HighlightEntityMoved_tag{};
 using HighlightEntityMovedMessage = fea::Message<HighlightEntityMoved_tag, fea::EntityId, const ChunkCoord&>;
