@@ -119,9 +119,9 @@ void Renderer::handleMessage(const UpdateChunkVboMessage& received)
 
     std::tie(mainChunk, topChunk, bottomChunk, frontChunk, backChunk, leftChunk, rightChunk) = received.data;
 
-    mGeneratorQueue.addToQueue(mainChunk, topChunk, bottomChunk, frontChunk, backChunk, leftChunk, rightChunk); 
+    //mGeneratorQueue.addToQueue(mainChunk, topChunk, bottomChunk, frontChunk, backChunk, leftChunk, rightChunk); 
 
-    /*VBOCreator vboCreator;
+    VBOCreator vboCreator;
 
     auto vboEntry = vbos.find(mainChunk->getLocation());
 
@@ -134,7 +134,7 @@ void Renderer::handleMessage(const UpdateChunkVboMessage& received)
         vbos.at(mainChunk->getLocation()).destroyBuffers();
         vbos.erase(mainChunk->getLocation());
         vbos.emplace(mainChunk->getLocation(), vboCreator.generateChunkVBO(mainChunk, topChunk, bottomChunk, frontChunk, backChunk, leftChunk, rightChunk));
-    }*/
+    }
 }
 
 void Renderer::handleMessage(const ClientChunkDeletedMessage& received)
@@ -202,7 +202,7 @@ void Renderer::handleMessage(const PlayerConnectedToEntityMessage& received)
 void Renderer::render()
 {
     cameraUpdate();
-    mGeneratorQueue.generateSomeChunks(vbos, VoxelCoord(cam.GetPosition()));
+    //mGeneratorQueue.generateSomeChunks(vbos, VoxelCoord(cam.GetPosition()));
 	GLenum err = glGetError();
 	if(err != GL_NO_ERROR){
 		printf("Some GL error here: %x\n.", err);

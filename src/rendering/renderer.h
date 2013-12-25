@@ -16,7 +16,7 @@
 #include "debugrenderer.h"
 #include "frustum.h"
 
-#include "chunkgeneratorqueue.h"
+//#include "chunkgeneratorqueue.h"
 
 class Renderer
     :   public fea::MessageReceiver<UpdateChunkVboMessage>,
@@ -72,7 +72,7 @@ class Renderer
 		glm::mat4 projectionMatrix;
         fea::MessageBus& bus;
         std::unordered_map<ChunkCoord, VBO> vbos;
-        ChunkGeneratorQueue mGeneratorQueue;
+        //ChunkGeneratorQueue mGeneratorQueue;
         std::unordered_map<size_t, Billboard> billboards;
         GLuint blockTexture;
         glm::vec2 mScreenSize;
