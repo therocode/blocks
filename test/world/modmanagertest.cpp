@@ -114,6 +114,19 @@ TEST_CASE("save and load", "[save][load]")
         REQUIRE(defaultType == chunk.getVoxelType(voxLoc2));
     }
 
+    SECTION("save and load twice")
+    {
+        manager.setMod(loc, voxLoc, type);
+        manager.saveMods(timestamp, regionLoc);
+        manager.loadMods(chunk);
+        manager.setMod(loc, voxLoc2, type);
+        manager.saveMods(timestamp, regionLoc);
+        manager.loadMods(chunk);
+
+        REQUIRE(type == chunk.getVoxelType(voxLoc));
+        REQUIRE(type == chunk.getVoxelType(voxLoc2));
+    }
+
     SECTION("set and load but don't save")
     {
         manager.setMod(loc, voxLoc, type);

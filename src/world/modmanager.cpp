@@ -108,25 +108,29 @@ void ModManager::saveMods(uint64_t currentTimestamp, RegionCoord regionLoc)
                     {
                         RegionChunkCoord chunkLoc(x, y, z);
 
-                        iIndexFile.seekg(crcHash(chunkLoc)*sizeof(ChunkIndex));
-                        ChunkIndex chunkIndex;
-                        iIndexFile.read((char*)&chunkIndex, sizeof(ChunkIndex));
-
-                        if(chunkIndex != NO_CHUNK)
+                        RegionModMap::const_iterator got = mMods[regionLoc].find(chunkLoc);
+                        if(got == mMods[regionLoc].end())
                         {
-                            iDataFile.seekg(chunkIndex);
-                            uint16_t modCount;
-                            iDataFile.read((char*)(&modCount), sizeof(uint16_t));
-                            uint64_t timestamp;
-                            iDataFile.read((char*)(&timestamp), sizeof(uint64_t));
-                            oldTimestamps[chunkLoc] = timestamp;
-                            mMods[regionLoc][chunkLoc] = ChunkModMap();
-                            for(int i = 0; i < modCount; ++i)
+                            iIndexFile.seekg(crcHash(chunkLoc)*sizeof(ChunkIndex));
+                            ChunkIndex chunkIndex;
+                            iIndexFile.read((char*)&chunkIndex, sizeof(ChunkIndex));
+
+                            if(chunkIndex != NO_CHUNK)
                             {
-                                Mod mod;
-                                iDataFile.read((char*)&mod, sizeof(Mod));
-                                _setMod(regionLoc, chunkLoc, mod.coord, mod.type);
-                            } 
+                                iDataFile.seekg(chunkIndex);
+                                uint16_t modCount;
+                                iDataFile.read((char*)(&modCount), sizeof(uint16_t));
+                                uint64_t timestamp;
+                                iDataFile.read((char*)(&timestamp), sizeof(uint64_t));
+                                oldTimestamps[chunkLoc] = timestamp;
+                                mMods[regionLoc][chunkLoc] = ChunkModMap();
+                                for(int i = 0; i < modCount; ++i)
+                                {
+                                    Mod mod;
+                                    iDataFile.read((char*)&mod, sizeof(Mod));
+                                    _setMod(regionLoc, chunkLoc, mod.coord, mod.type);
+                                } 
+                            }
                         } 
                     }
                 }
