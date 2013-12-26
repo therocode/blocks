@@ -285,5 +285,13 @@ void ModManager::_setMod(const RegionCoord& regionLoc, const RegionChunkCoord& c
 
 std::string ModManager::getFilename(RegionCoord regionLoc)
 {
-    return regionDir + pathSep + glm::to_string((glm::ivec2)regionLoc);  //NOTE: not sure why this needs to be casted... not good.
+    std::string xPart = std::to_string(regionLoc.x);
+    std::string yPart = std::to_string(regionLoc.y);
+
+    if(xPart[0] == '-')
+        xPart[0] = '_';
+    if(yPart[0] == '-')
+        yPart[0] = '_';
+
+    return regionDir + pathSep + xPart + "_" + yPart;  //NOTE: not sure why this needs to be casted... not good.
 }
