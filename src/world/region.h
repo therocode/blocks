@@ -22,6 +22,7 @@ class Region
         ChunkReferenceMap getChunkList() const;
         void addChunk(const RegionChunkCoord& coordinate, const Chunk& chunk);
         void removeChunk(const RegionChunkCoord& coordinate);
+        size_t getLoadedChunkAmount() const;
         const IntensityMap& getHeightmap() const;
         const IntensityMap& getRainmap() const;
         const IntensityMap& getTemperaturemap() const;

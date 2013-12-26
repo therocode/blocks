@@ -1,7 +1,7 @@
 #include "chunkprovider.h"
 #include "chunk.h"
 
-ChunkProvider::ChunkProvider(fea::MessageBus& bus, RegionStorageInterface& regionProvider) : mBus(bus), mRegionStorage(regionProvider)
+ChunkProvider::ChunkProvider(fea::MessageBus& bus, RegionStorageInterface& regionProvider, ModManager& modManager) : mBus(bus), mRegionStorage(regionProvider), mModManager(modManager)
 {
     mBus.addMessageSubscriber<ChunkRequestedMessage>(*this);
 }
@@ -28,8 +28,7 @@ void ChunkProvider::handleMessage(const ChunkRequestedMessage& received)
 
     Chunk newChunk = mWorldGenerator.generateChunk(chunkCoordinate, region);
 
-    //mod manager stuff for the chunk here
-    //at this point newChunk is updated with the modifications
+    mModManager.loadMods(newChunk);
     uint64_t timestamp = 0; //get proper timestamp later
 
     mBus.sendMessage(ChunkDeliverMessage(chunkCoordinate, newChunk)); //sends the finished chunk to be kept by whatever system

@@ -6,9 +6,6 @@
 class Region;
 class Chunk;
 
-//struct ChunkCreated_tag{};//                               coordinate              chunk
-//using ChunkCreatedMessage = fea::Message<ChunkCreated_tag, const ChunkCoord, const RleIndexArray&, const RleSegmentArray&>;
-
 struct SetVoxel_tag{};//
 using SetVoxelMessage = fea::Message<SetVoxel_tag, const VoxelCoord&, VoxelType>;
 
@@ -20,6 +17,9 @@ using RegionNeededMessage = fea::Message<RegionNeeded_tag, const RegionCoord&>;
 
 struct RegionDeliver_tag{};//                                coordinate               new region
 using RegionDeliverMessage = fea::Message<RegionDeliver_tag, const RegionCoord&, const std::reference_wrapper<Region>>;
+
+struct RegionDeleted_tag{};//                                coordinate
+using RegionDeletedMessage = fea::Message<RegionDeleted_tag, const RegionCoord&>;
 
 struct ChunkRequested_tag{};//                                 coordinate
 using ChunkRequestedMessage = fea::Message<ChunkRequested_tag, const ChunkCoord&>;

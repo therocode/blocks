@@ -11,14 +11,16 @@
 	mEntitySystem(messageBus),
 	mWorldInterface(mStandardWorld, mEntitySystem),
     mRegionProvider(mBus),
-    mChunkProvider(mBus, mStandardWorld),
-    mHighlightManager(mBus, 9)
+    mChunkProvider(mBus, mStandardWorld, mModManager),
+    mHighlightManager(mBus, 9),
+    mModManager(mBus)
 {
 	mBus.addMessageSubscriber<SetVoxelMessage>(*this);
 	mBus.addMessageSubscriber<RegionDeliverMessage>(*this);
 	mBus.addMessageSubscriber<ChunkDeliverMessage>(*this);
 	mBus.addMessageSubscriber<ChunkHighlightedMessage>(*this);
 	mBus.addMessageSubscriber<ChunkDehighlightedMessage>(*this);
+	mBus.addMessageSubscriber<RegionDeletedMessage>(*this);
 }
 
 Universe::~Universe()
@@ -28,11 +30,11 @@ Universe::~Universe()
 	mBus.removeMessageSubscriber<ChunkDeliverMessage>(*this);
 	mBus.removeMessageSubscriber<ChunkHighlightedMessage>(*this);
 	mBus.removeMessageSubscriber<ChunkDehighlightedMessage>(*this);
+	mBus.removeMessageSubscriber<RegionDeletedMessage>(*this);
 }
 
 void Universe::setup()
 {
-    setSimplexSeed(823);
     mEntitySystem.setup();
 
 	mEntitySystem.addController(std::unique_ptr<EntityController>(new PlayerController(mBus, mWorldInterface)));
@@ -50,6 +52,7 @@ void Universe::update()
 void Universe::destroy()
 {
     mEntitySystem.destroy();
+    mModManager.saveMods(0);
 }
 
 void Universe::handleMessage(const SetVoxelMessage& received)
@@ -64,6 +67,7 @@ void Universe::handleMessage(const SetVoxelMessage& received)
     if(succeeded)
     {
         mBus.sendMessage<VoxelSetMessage>(VoxelSetMessage(coordinate, type));
+        mModManager.setMod(voxelToChunk(coordinate), voxelToChunkVoxel(coordinate), type);
     }
 }
 
@@ -75,6 +79,7 @@ void Universe::handleMessage(const RegionDeliverMessage& received)
     std::tie(coordinate, region) = received.data;
 
     mStandardWorld.addRegion(coordinate, region);
+    std::cout << "region created: " << glm::to_string((glm::ivec2)coordinate) << "\n";
 }
 
 void Universe::handleMessage(const ChunkHighlightedMessage& received)
@@ -84,8 +89,14 @@ void Universe::handleMessage(const ChunkHighlightedMessage& received)
 
 void Universe::handleMessage(const ChunkDehighlightedMessage& received)
 {
-    mStandardWorld.removeChunk(std::get<0>(received.data));
+    bool regionDeleted = mStandardWorld.removeChunk(std::get<0>(received.data));
     mBus.sendMessage(ChunkDeletedMessage(received.data));
+    
+    if(regionDeleted)
+    {
+        mBus.sendMessage(RegionDeletedMessage(chunkToRegion(std::get<0>(received.data))));
+        std::cout << "region deleted: " << glm::to_string(glm::ivec2(chunkToRegion(std::get<0>(received.data)))) << "\n";
+    }
 }
 
 void Universe::handleMessage(const ChunkDeliverMessage& received)
@@ -96,6 +107,11 @@ void Universe::handleMessage(const ChunkDeliverMessage& received)
     std::tie(coordinate, chunk) = std::move(received.data);
 
     mStandardWorld.addChunk(coordinate, chunk);
+}
+
+void Universe::handleMessage(const RegionDeletedMessage& received)
+{
+    mModManager.saveMods(0, std::get<0>(received.data));
 }
 
 WorldInterface& Universe::getWorldInterface()

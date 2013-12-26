@@ -128,6 +128,7 @@ set(source_files
 	src/world/chunk.cpp
     src/world/chunkprovider.cpp
     src/world/highlightmanager.cpp
+    src/world/modmanager.cpp
     src/world/region.cpp
     src/world/regionprovider.cpp
     src/world/worldstd.cpp
@@ -246,6 +247,7 @@ set(header_files
     src/world/chunkprovider.h
     src/world/valuemap.h
     src/world/highlightmanager.h
+    src/world/modmanager.h
     src/world/region.h
     src/world/regionstorageinterface.h
     src/world/regionprovider.h

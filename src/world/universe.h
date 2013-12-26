@@ -15,7 +15,8 @@ class Universe :
         public fea::MessageReceiver<RegionDeliverMessage>,
         public fea::MessageReceiver<ChunkDeliverMessage>,
         public fea::MessageReceiver<ChunkHighlightedMessage>,
-        public fea::MessageReceiver<ChunkDehighlightedMessage>
+        public fea::MessageReceiver<ChunkDehighlightedMessage>,
+        public fea::MessageReceiver<RegionDeletedMessage>
 {
     public:
         Universe(fea::MessageBus& messageBus);
@@ -28,6 +29,7 @@ class Universe :
         virtual void handleMessage(const ChunkDeliverMessage& received);
         virtual void handleMessage(const ChunkHighlightedMessage& received);
         virtual void handleMessage(const ChunkDehighlightedMessage& received);
+        virtual void handleMessage(const RegionDeletedMessage& received);
         WorldInterface& getWorldInterface();
     private:
 		glm::vec3 mCamPos, mCamDir;
@@ -38,4 +40,5 @@ class Universe :
         RegionProvider mRegionProvider;
         ChunkProvider mChunkProvider;
         HighlightManager mHighlightManager;
+        ModManager mModManager;
 };

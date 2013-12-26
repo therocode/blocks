@@ -96,8 +96,8 @@ IntensityMap RegionGenerator::generateBiomeSelector(const RegionCoord& regionCoo
     for(size_t y = 0; y < regionWidth * chunkWidth; y++)
     for(size_t x = 0; x < regionWidth * chunkWidth; x++)
     {
-        float xTurbulence = simplex.simplexOctave2D((float) (x + regionPos.x) / 160.0f, (float) (y + regionPos.z) / 160.0f, 0.6f, 6);
-        float yTurbulence = simplex2.simplexOctave2D((float) (x + regionPos.x) / 160.0f, (float) (y + regionPos.z) / 160.0f, 0.6f, 6); //big height difference
+        float xTurbulence = simplex.simplexOctave2D((float) (x + regionPos.x) / 80.0f, (float) (y + regionPos.z) / 80.0f, 0.6f, 6);
+        float yTurbulence = simplex2.simplexOctave2D((float) (x + regionPos.x) / 80.0f, (float) (y + regionPos.z) / 80.0f, 0.6f, 6); //big height difference
 
         //float value = (voronoi.GetValue(((float) x / 70.0f) + xTurbulence * 0.3f, ((float) y / 70.0f) + yTurbulence * 0.3f, 0.5) + 2.0f) / 3.7f;
         float value = simplex.voronoi2D((x + regionPos.x) / 60.0f + xTurbulence * 0.25f, (y + regionPos.y) / 60.0f + yTurbulence * 0.25f);
