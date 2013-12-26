@@ -6,6 +6,8 @@
 #include "whitenoise.h"
 #include "voronoinoise.h"
 
+const uint32_t globalSeed = 51253;
+
 using PermutationTable = std::array<uint8_t, 512>;
 
 class Noise

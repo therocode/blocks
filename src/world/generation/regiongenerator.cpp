@@ -5,8 +5,8 @@
 IntensityMap RegionGenerator::generateHeightmap(const RegionCoord& regionCoordinate) const
 {
     IntensityMap heightmap;
-    Noise simplex(900);
-    Noise simplex2(900 + 17);
+    Noise simplex(globalSeed + 3);
+    Noise simplex2(globalSeed + 17);
 
     glm::vec3 regionPos = regionToWorld(regionCoordinate);
 
@@ -32,8 +32,8 @@ IntensityMap RegionGenerator::generateHeightmap(const RegionCoord& regionCoordin
 IntensityMap RegionGenerator::generateRainfall(const RegionCoord& regionCoordinate) const
 {
     IntensityMap rainmap;
-    Noise simplex(90);
-    Noise simplex2(90 + 17);
+    Noise simplex(globalSeed + 9);
+    Noise simplex2(globalSeed + 41234);
 
     glm::vec3 regionPos = regionToWorld(regionCoordinate);
 
@@ -60,8 +60,8 @@ IntensityMap RegionGenerator::generateRainfall(const RegionCoord& regionCoordina
 IntensityMap RegionGenerator::generateTemperature(const RegionCoord& regionCoordinate) const
 {
     IntensityMap temperaturemap;
-    Noise simplex(9);
-    Noise simplex2(9 + 17);
+    Noise simplex(globalSeed + 123412);
+    Noise simplex2(globalSeed + 1723);
 
     glm::vec3 regionPos = regionToWorld(regionCoordinate);
 
@@ -88,8 +88,8 @@ IntensityMap RegionGenerator::generateTemperature(const RegionCoord& regionCoord
 IntensityMap RegionGenerator::generateBiomeSelector(const RegionCoord& regionCoordinate) const
 {
     IntensityMap biomSelectorMap;
-    Noise simplex(5);
-    Noise simplex2(5 + 17);
+    Noise simplex(globalSeed + 9123);
+    Noise simplex2(globalSeed + 23423);
 
     glm::vec3 regionPos = regionToWorld(regionCoordinate);
 
