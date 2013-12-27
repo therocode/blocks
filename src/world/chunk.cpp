@@ -158,6 +158,24 @@ VoxelTypeData Chunk::getVoxelTypeData() const
     return VoxelTypeData(mRleSegmentIndices, mRleSegments);
 }
 
+VoxelTypeArray Chunk::getFlatVoxelTypeData() const
+{
+    VoxelTypeArray typeData;
+    size_t iterator = 0;
+
+    for(uint32_t y = 0; y < chunkWidth; y++)
+    {
+        for(uint32_t z = 0; z < chunkWidth; z++)
+        {
+            VoxelSegmentTypeArray segment = getUncompressedTypeSegment(y, z);
+
+            std::copy(segment.begin(), segment.end(), typeData.begin() + iterator);
+            iterator += segment.size();
+        }
+    }
+    return typeData;
+}
+
 uint32_t Chunk::getWidth() const
 {
     return chunkWidth;

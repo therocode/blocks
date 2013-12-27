@@ -17,6 +17,7 @@ class Chunk
         VoxelType getVoxelType(uint32_t x, uint32_t y, uint32_t z) const;
         VoxelType getVoxelType(const ChunkVoxelCoord& voxel) const;
         VoxelTypeData getVoxelTypeData() const;
+        VoxelTypeArray getFlatVoxelTypeData() const;
         uint32_t getWidth() const;
         const ChunkCoord& getLocation() const; //should probably be gone
     private:
