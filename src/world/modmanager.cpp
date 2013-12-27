@@ -83,10 +83,16 @@ void ModManager::loadMods(Chunk& chunk)
         timestamp = mTimestamps[regionLoc][chunkLoc];
     }
 
-    ChunkModMap mods = mMods[regionLoc][chunkLoc]; 
-    for(ChunkModMap::iterator it = mods.begin(); it != mods.end(); ++it) 
-    {
-        chunk.setVoxelType(it->first.x, it->first.y, it->first.z, it->second);
+    ChunkModMap mods = mMods[regionLoc][chunkLoc];
+    if(!mods.empty())
+    { 
+        VoxelTypeArray vta = chunk.getFlatVoxelTypeData();
+        for(ChunkModMap::iterator it = mods.begin(); it != mods.end(); ++it) 
+        {
+            vta[it->first.x + it->first.z*chunkWidth + it->first.y*chunkWidthx2] = it->second;
+            //chunk.setVoxelType(it->first.x, it->first.y, it->first.z, it->second);
+        }
+        chunk.setVoxelData(vta);
     }
 
     mBus.sendMessage<ChunkModdedMessage>(ChunkModdedMessage(chunk, timestamp));

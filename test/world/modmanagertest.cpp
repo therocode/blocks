@@ -68,7 +68,7 @@ TEST_CASE("save and load", "[save][load]")
     ChunkCoord loc2(32, 32, 32);
     RegionCoord regionLoc = chunkToRegion(loc);
     RegionCoord regionLoc2 = chunkToRegion(loc2);
-    ChunkVoxelCoord voxLoc(0, 0, 0);    
+    ChunkVoxelCoord voxLoc(2, 2, 2);    
     ChunkVoxelCoord voxLoc2(1, 1, 1);
     VoxelType defaultType = 0;
     VoxelType type = 1;
@@ -79,6 +79,7 @@ TEST_CASE("save and load", "[save][load]")
     voxelData.fill(defaultType);
     Chunk chunk(loc, voxelData);
     Chunk chunk2(loc2, voxelData);
+    Chunk chunkClone(loc, voxelData);
     ModManager manager(bus);
     ModManager manager2(bus);
     manager.deleteRegionFile(regionLoc);
@@ -137,10 +138,10 @@ TEST_CASE("save and load", "[save][load]")
         manager.setMod(loc, voxLoc2, type);
         manager.recordTimestamp(loc, timestamp);
         manager.saveMods(regionLoc);
-        manager.loadMods(chunk);
+        manager.loadMods(chunkClone);
 
-        REQUIRE(type == chunk.getVoxelType(voxLoc));
-        REQUIRE(type == chunk.getVoxelType(voxLoc2));
+        REQUIRE(type == chunkClone.getVoxelType(voxLoc));
+        REQUIRE(type == chunkClone.getVoxelType(voxLoc2));
     }
 
     SECTION("set and then load with same manager instance")
