@@ -2,40 +2,6 @@
 
 using namespace std;
 
-VoxelCoordinate_uint8::VoxelCoordinate_uint8() {}
-VoxelCoordinate_uint8::VoxelCoordinate_uint8(ChunkVoxelCoord coord)
-    : x(coord.x), y(coord.y), z(coord.z) 
-{}
-
-bool VoxelCoordinate_uint8::operator==(const VoxelCoordinate_uint8& other) const
-{
-    return x == other.x && y == other.y && z == other.z;
-}
-
-bool VoxelCoordinate_uint8::operator!=(const VoxelCoordinate_uint8& other) const
-{
-    return x != other.x || y != other.y || z != other.z;
-}
-
-bool VoxelCoordinate_uint8::operator<(const VoxelCoordinate_uint8& other) const
-{
-    if(x == other.x)
-    {
-        if(y == other.y)
-        {
-            return z < other.z;
-        }
-        else
-        {
-            return y < other.y;
-        }
-    } 
-    else
-    {
-        return x < other.x;
-    }    
-}
-
 ModManager::ModManager(fea::MessageBus& bus) 
     : mBus(bus) {}
 
@@ -201,20 +167,12 @@ void ModManager::saveMods(RegionCoord regionLoc)
     oDataFile.close();
 }
 
-void ModManager::setMod(ChunkCoord loc, VoxelCoordinate_uint8 voxLoc, VoxelType type)
-{
-    RegionCoord regionLoc = chunkToRegion(loc);
-    RegionChunkCoord chunkLoc = chunkToRegionChunk(loc);
-
-    _setMod(regionLoc, chunkLoc, voxLoc, type); 
-}
-
 void ModManager::setMod(ChunkCoord loc, ChunkVoxelCoord voxLoc, VoxelType type)
 {
     RegionCoord regionLoc = chunkToRegion(loc);
     RegionChunkCoord chunkLoc = chunkToRegionChunk(loc);
 
-    _setMod(regionLoc, chunkLoc, VoxelCoordinate_uint8(voxLoc), type);
+    _setMod(regionLoc, chunkLoc, voxLoc, type);
 }
 
 VoxelType ModManager::getMod(ChunkCoord loc, ChunkVoxelCoord voxLoc)
@@ -288,26 +246,11 @@ void ModManager::initIndexFile(RegionCoord regionLoc)
     indexFile.close();
 }
 
-void ModManager::_setMod(const RegionCoord& regionLoc, const RegionChunkCoord& chunkLoc,const VoxelCoordinate_uint8& voxLoc, VoxelType type)
+void ModManager::_setMod(const RegionCoord& regionLoc, const RegionChunkCoord& chunkLoc,const ChunkVoxelCoord& voxLoc, VoxelType type)
 {
     if(voxLoc.x >= chunkWidth || voxLoc.y >= chunkWidth || voxLoc.z >= chunkWidth)
     {
         throw ModManagerException("Voxel location out of bounds.");
-    }
-
-    WorldModMap::const_iterator got = mMods.find(regionLoc);
-    if(got == mMods.end())
-    {
-        mMods[regionLoc] = RegionModMap();
-        mMods[regionLoc][chunkLoc] = ChunkModMap();
-    }
-    else
-    {
-        RegionModMap::const_iterator got = mMods[regionLoc].find(chunkLoc);
-        if(got == mMods[regionLoc].end())
-        {
-            mMods[regionLoc][chunkLoc] = ChunkModMap();
-        }
     }
 
     mMods[regionLoc][chunkLoc][voxLoc] = type;
