@@ -86,28 +86,42 @@ TEST_CASE("save and load", "[save][load]")
     TestReceiver receiver;
     bus.addMessageSubscriber<ChunkModdedMessage>(receiver);
 
-    SECTION("chunkmoddedmessage timestamp")
+    SECTION("load an untimestamped chunk")
+    {
+        manager.loadMods(chunk);
+
+        REQUIRE(0 == receiver.timestamp);
+    }
+
+    SECTION("save a region containing an untimestamped chunk")
     {
         manager.setMod(loc, voxLoc, type);
-        manager.saveMods(timestamp, regionLoc);
-        manager2.loadMods(chunk);
-
-        REQUIRE(timestamp == receiver.timestamp);
+        CHECK_THROWS_AS(manager.saveMods(regionLoc), ModManagerException);
     }
 
     SECTION("chunkmoddedmessage chunk")
     {
         manager.setMod(loc, voxLoc, type);
-        manager.saveMods(timestamp, regionLoc);
+        manager.recordTimestamp(loc, timestamp);
+        manager.saveMods(regionLoc);
         manager2.loadMods(chunk);
 
         REQUIRE(chunk.getLocation() == receiver.chunk.getLocation()); 
     }
 
+    SECTION("chunkmoddedmessage timestamp")
+    {
+        manager.recordTimestamp(loc, timestamp);
+        manager.loadMods(chunk);
+
+        REQUIRE(timestamp == receiver.timestamp); 
+    }
+
     SECTION("one voxel")
     {
         manager.setMod(loc, voxLoc, type);
-        manager.saveMods(timestamp, regionLoc);
+        manager.recordTimestamp(loc, timestamp);
+        manager.saveMods(regionLoc);
         manager2.loadMods(chunk);
 
         REQUIRE(type == chunk.getVoxelType(voxLoc));
@@ -117,23 +131,34 @@ TEST_CASE("save and load", "[save][load]")
     SECTION("save and load twice")
     {
         manager.setMod(loc, voxLoc, type);
-        manager.saveMods(timestamp, regionLoc);
+        manager.recordTimestamp(loc, timestamp);
+        manager.saveMods(regionLoc);
         manager.loadMods(chunk);
         manager.setMod(loc, voxLoc2, type);
-        manager.saveMods(timestamp, regionLoc);
+        manager.recordTimestamp(loc, timestamp);
+        manager.saveMods(regionLoc);
         manager.loadMods(chunk);
 
         REQUIRE(type == chunk.getVoxelType(voxLoc));
         REQUIRE(type == chunk.getVoxelType(voxLoc2));
     }
 
-    SECTION("set and load but don't save")
+    SECTION("set and then load with same manager instance")
     {
         manager.setMod(loc, voxLoc, type);
         manager.loadMods(chunk);
 
-        REQUIRE(defaultType == chunk.getVoxelType(voxLoc));
+        REQUIRE(type == chunk.getVoxelType(voxLoc));
         REQUIRE(defaultType == chunk.getVoxelType(voxLoc2));
+    }
+
+    SECTION("set and then load with different manager instance")
+    {
+        manager.setMod(loc, voxLoc, type);
+        manager2.loadMods(chunk);
+
+        REQUIRE(defaultType == chunk.getVoxelType(voxLoc));
+        REQUIRE(defaultType == chunk.getVoxelType(voxLoc2)); 
     }
 
     SECTION("set and then load on a different manager")
@@ -149,9 +174,11 @@ TEST_CASE("save and load", "[save][load]")
     {
         manager.setMod(loc, voxLoc, type);
         manager.setMod(loc2, voxLoc, type);
-        manager.saveMods(timestamp);
-        manager.loadMods(chunk);
-        manager.loadMods(chunk2);
+        manager.recordTimestamp(loc, timestamp);
+        manager.recordTimestamp(loc2, timestamp);
+        manager.saveMods();
+        manager2.loadMods(chunk);
+        manager2.loadMods(chunk2);
 
         REQUIRE(type == chunk.getVoxelType(voxLoc));
         REQUIRE(defaultType == chunk.getVoxelType(voxLoc2));

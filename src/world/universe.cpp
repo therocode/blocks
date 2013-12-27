@@ -53,7 +53,7 @@ void Universe::destroy()
 {
     mEntitySystem.destroy();
     mBus.sendMessage(LogMessage(std::string("saving modifications to disk for all regions"), "file", LogLevel::VERB));
-    mModManager.saveMods(0);
+    mModManager.saveMods();
 }
 
 void Universe::handleMessage(const SetVoxelMessage& received)
@@ -90,6 +90,7 @@ void Universe::handleMessage(const ChunkHighlightedMessage& received)
 
 void Universe::handleMessage(const ChunkDehighlightedMessage& received)
 {
+    mModManager.recordTimestamp(std::get<0>(received.data), 0);
     bool regionDeleted = mStandardWorld.removeChunk(std::get<0>(received.data));
     mBus.sendMessage(ChunkDeletedMessage(received.data));
     
@@ -113,7 +114,7 @@ void Universe::handleMessage(const ChunkDeliverMessage& received)
 void Universe::handleMessage(const RegionDeletedMessage& received)
 {
     mBus.sendMessage(LogMessage("saving modifications to disk for region" + glm::to_string((glm::ivec2)std::get<0>(received.data)), "file", LogLevel::VERB));
-    mModManager.saveMods(0, std::get<0>(received.data));
+    mModManager.saveMods(std::get<0>(received.data));
 }
 
 WorldInterface& Universe::getWorldInterface()

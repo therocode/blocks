@@ -104,7 +104,8 @@ using ChunkIndex = uint32_t;
 using ChunkModMap = std::unordered_map<VoxelCoordinate_uint8, VoxelType>;
 using RegionModMap = std::unordered_map<RegionChunkCoord, ChunkModMap>;
 using WorldModMap = std::unordered_map<RegionCoord, RegionModMap>;
-using TimestampMap = std::unordered_map<RegionChunkCoord, uint64_t>;
+using RegionTimestampMap = std::unordered_map<RegionChunkCoord, uint64_t>;
+using WorldTimestampMap = std::unordered_map<RegionCoord, RegionTimestampMap>;
 
 struct ModManagerException : public std::exception
 {
@@ -119,12 +120,13 @@ class ModManager
     public:
         ModManager(fea::MessageBus& bus);
         void loadMods(Chunk& chunk);
-        void saveMods(uint64_t currentTimestamp);
-        void saveMods(uint64_t currentTimestamp, RegionCoord regionLoc);
+        void saveMods();
+        void saveMods(RegionCoord regionLoc);
         void setMod(ChunkCoord loc, VoxelCoordinate_uint8 voxLoc, VoxelType type);
         void setMod(ChunkCoord loc, ChunkVoxelCoord voxLoc, VoxelType type);
         VoxelType getMod(ChunkCoord loc, ChunkVoxelCoord voxLoc);
         void deleteRegionFile(const RegionCoord& regionLoc);
+        void recordTimestamp(ChunkCoord loc, uint64_t timestamp);
 
     private:
         ChunkIndex getChunkIndex(RegionCoord regionLoc, RegionChunkCoord chunkLoc);
@@ -137,6 +139,7 @@ class ModManager
         std::string mIndexPath;
         std::string mDataPath;
         WorldModMap mMods;
+        WorldTimestampMap mTimestamps;
 };
 
 
