@@ -22,8 +22,6 @@ class Noise
         float simplex3D(float x, float y, float z) const;
         float simplexOctave3D(float x, float y, float z, float scaleFactor = 1.0f, uint32_t octaves = 5, float persistence = 0.5f) const;
         float voronoi2D(float x, float y) const;
-
-        const uint8_t* getHaxxiPointer() const;
     private:
         WhiteNoise mWhiteNoise;
         VoronoiNoise mVoronoiNoise;
