@@ -1,270 +1,245 @@
 #include "vbo.h"
-#ifdef oldvbo
+
+size_t VertexElement::getElementByteSize(unsigned int element){
+    switch(element){
+        case ELEMENT_FLOAT:
+            return sizeof(float);
+        case ELEMENT_FLOAT2:
+            return sizeof(float) * 2;
+        case ELEMENT_FLOAT3:
+            return sizeof(float) * 3;
+        case ELEMENT_FLOAT4:
+            return sizeof(float) * 4;
+        default:
+            return sizeof(float) * 3;
+    }
+}
+
+GLint VertexElement::getElementSize(unsigned int element){
+    switch(element){
+        case ELEMENT_FLOAT:
+            return 1;
+        case ELEMENT_FLOAT2:
+            return 2;
+        case ELEMENT_FLOAT3:
+            return 3;
+        case ELEMENT_FLOAT4:
+            return 4;
+        default:
+            return 3;
+    }
+}
+
+GLenum VertexElement::getElementType(unsigned int element){
+    switch(element){
+        case ELEMENT_FLOAT:
+        case ELEMENT_FLOAT2:
+        case ELEMENT_FLOAT3:
+        case ELEMENT_FLOAT4:
+            return GL_FLOAT;
+        default:
+            return GL_FLOAT;
+    }
+}
+
+VertexDeclaration::VertexDeclaration(){
+
+}
+
+size_t VertexDeclaration::getVertexSize(){
+    return mCurrentSize;
+}
+
+void VertexDeclaration::addElement(unsigned int elementType, unsigned int shaderLayout, std::string shaderAttribute){
+    VertexElement e;
+    e.elementType = elementType;
+    e.layoutID = shaderLayout;
+    e.attributeName = shaderAttribute;
+
+    e.offset = mCurrentSize;
+    mCurrentSize += VertexElement::getElementByteSize(elementType);
+    mVertexElements.push_back(e);
+}
+
+void VertexDeclaration::clear(){
+    mCurrentSize = 0;
+    mVertexElements.clear();
+}
+
 #define BUFFER_OFFSET(i) ((char*)NULL + (i))
-VBO::VBO():mCurrentVBOByteSize(0),mVBOCreated(false){
-    mDrawType = GL_TRIANGLES;
-    mVBOCreated = false;
-    //Registering standard attributes.
-    registerAttribute("vert",   0, VBOAttribute::ATTRIBUTE_FLOAT3);
-    registerAttribute("normal", 1, VBOAttribute::ATTRIBUTE_FLOAT3);
-    registerAttribute("color",  2, VBOAttribute::ATTRIBUTE_FLOAT3);
-    registerAttribute("uv",     3, VBOAttribute::ATTRIBUTE_FLOAT2);
-    //registerAttribute("bounds", 4, VBOAttribute::ATTRIBUTE_FLOAT4);
-}
-
-VBO::~VBO(){
-}
-void VBO::PushTriangle(const Triangle& t){
-    for(Vertex i : t.vs){
-        PushVertex(i);
-    }
-}
-void VBO::PushVertex(const Vertex& v){
-    mvVertices.push_back(v);	
-    mvIndices.push_back(mvVertices.size() - 1);
-}
-void VBO::Clear(){
-    for(auto t = mAttributes.begin(); t != mAttributes.end(); t++){
-        t->second.clear();
-    }
-    mvVertices.clear();
-    mvIndices.clear();
-}
-
-void VBO::PushRectangle(const Rectangle& r){
-    int si = mvVertices.size() ;
-    for(Vertex v : r.vs){
-        mvVertices.push_back(v);
-        AttribValue val;
-        
-        for(int i = 0; i <3; i++)
-            val.floats[i] = v.normal[i];
-        pushToAttribute("normal", val);
-        
-        for(int i = 0; i <3; i++)
-            val.floats[i] = v.color[i];
-        pushToAttribute("color", val);
-        
-        for(int i = 0; i <2; i++)
-            val.floats[i] = v.uv[i];
-        pushToAttribute("uv", val);
-
-        for(int i = 0; i <3; i++)
-            val.floats[i] = v.position[i];
-        pushToAttribute("vert", val);
-    }
-    mvIndices.push_back(si);
-    mvIndices.push_back(si + 1);
-    mvIndices.push_back(si + 2);
-
-    mvIndices.push_back(si + 2);
-    mvIndices.push_back(si + 3);
-    mvIndices.push_back(si);
-}
-void VBO::createDataArray(std::vector<float>& data){
-    if(mAttributes.size() == 0) return;
-    mStride = 0;
-    for(auto t = mAttributes.begin(); t != mAttributes.end(); t++){
-        mStride += t->second.getElementSize();
-    }
-
-    unsigned int elementCount = mAttributes.at("vert").getElementCount();
-
-    for(unsigned int i = 0; i < elementCount; i ++){
-        for(auto t = mAttributes.begin(); t != mAttributes.end(); t++){
-            AttribValue v = t->second.getAttribElement(i);
-            for(int val = 0; val < v.usedValues; val ++)
-                data.push_back(v.floats[val]);
-        }
-    }   
-}
-
-void VBO::UpdateVBO(){
-    std::vector<float> wow;
-    CreateVBO();	
-    createDataArray(wow);
-    //mCurrentVBOByteSize = sizeof(Vertex)*mvVertices.size();;
-    mCurrentVBOByteSize = sizeof(float) * wow.size();
-
-    int idSize = sizeof(int) * mvIndices.size();
-    BindBuffer();
-    //glBufferData(GL_ARRAY_BUFFER, mCurrentVBOByteSize, mvVertices.data(), GL_STATIC_DRAW); 
-    glBufferData(GL_ARRAY_BUFFER, mCurrentVBOByteSize, wow.data(), GL_STATIC_DRAW); 
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, idSize, mvIndices.data(), GL_STATIC_DRAW);
-
-    UnbindBuffer();
-    mDrawSize = mvIndices.size();
-    Clear();
-}
-void VBO::DestroyVBO()
-{
-    Clear();
-    if(mVBOCreated)
-    {
-        glDeleteBuffers(2, mID);
-        mVBOCreated = false;
-    }
-}
-void VBO::CreateVBO()
-{
-    if(!mVBOCreated){
-        glGenBuffers(2, mID);
-        mVBOCreated = true;
+void VertexDeclaration::bind(){
+    for(VertexElement v : mVertexElements){
+        glEnableVertexAttribArray(v.layoutID);
+        glVertexAttribPointer(v.layoutID, 
+                VertexElement::getElementSize(v.elementType), 
+                VertexElement::getElementType(v.elementType), 
+                GL_FALSE, mCurrentSize, BUFFER_OFFSET(v.offset));
     }
 }
 
-VBOAttribute& VBO::getAttribute(const std::string& attribName){
-    auto attributeIterator = mAttributes.find(attribName);
-
-    if(attributeIterator == mAttributes.end())
-        return attributeIterator->second;
-    }
-    assert(false); //because returning nothing is undefined behaviour
-}
-
-VBOAttribute& VBO::getAttribute(GLuint attribID){
-    assert(false); //because returning nothing is undefined behaviour
-}
-
-void VBO::registerAttribute(const std::string& name, const int id, const int type ){
-    VBOAttribute newAttrib(name, id, type);
-    mAttributes.emplace(name, newAttrib);
-}
-void VBO::setMainAttribute(const std::string& name){
-    auto attributeIterator = mAttributes.find(name);
-    if(attributeIterator != mAttributes.end()){
-        mMainAttrib = attributeIterator->second.getAttributeID();
-    }
-}
-void VBO::pushToAttribute(const std::string& name, AttribValue v){
-    auto attributeIterator = mAttributes.find(name);
-    if(attributeIterator != mAttributes.end()){
-        if(attributeIterator->second.getAttributeID() == mMainAttrib){
-            for(auto t = mAttributes.begin(); t != mAttributes.end(); t++){
-                if(t->second.getAttributeID() == mMainAttrib) continue;
-                if(!t->second.mIsUpdated){
-                    t->second.addElement(t->second.mLastValue);
-                }
-                t->second.mIsUpdated = false;
-            }
-        }
-        attributeIterator->second.addElement(v);
-    }
-}
-void VBO::DrawVBO(){
-	
-    BindBuffer();
-    int stride = sizeof(Vertex);
-#if 0 
-    //Use vertexpointer and stuff
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glVertexPointer(3, GL_FLOAT, stride, 0);
-    glEnableClientState(GL_COLOR_ARRAY);
-    glColorPointer(3, GL_FLOAT, stride, BUFFER_OFFSET(3 * sizeof(float)));
-
-    glEnableClientState(GL_NORMAL_ARRAY);
-    glNormalPointer(GL_FLOAT, stride, BUFFER_OFFSET(6 * sizeof(float)));
-
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-    glTexCoordPointer(2, GL_FLOAT, stride, BUFFER_OFFSET(9 * sizeof(float)));
-
-    glDrawElements(mDrawType, mvIndices.size(), GL_UNSIGNED_INT, 0);
-    glDisableClientState(GL_VERTEX_ARRAY);
-    glDisableClientState(GL_COLOR_ARRAY);
-    glDisableClientState(GL_NORMAL_ARRAY);
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-#else
-    for(int i = 0; i< 4; i++){
-        glEnableVertexAttribArray(i);
-    }
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride , 0);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, stride , BUFFER_OFFSET(3 * sizeof(float)));
-    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, stride , BUFFER_OFFSET(6 * sizeof(float)));
-    glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, stride , BUFFER_OFFSET(9 * sizeof(float)));
-    glDrawElements(mDrawType, mvIndices.size(), GL_UNSIGNED_INT, 0);
-    for(int i = 0; i< 4; i++){
-        glDisableVertexAttribArray(i);
-    }
-/*    for(auto t = mAttributes.begin(); t != mAttributes.end(); t++){
-        glEnableVertexAttribArray(t->second.getAttributeID());
-        glVertexAttribPointer(t->second.getAttributeID(), t->second.getElementValueCount(), t->second.getType(), GL_FALSE, 
-    }
-*/
-#endif
-    UnbindBuffer();
-}
-void VBO::DrawVBO(ShaderProgram& program)
-{
-    if(!mVBOCreated)return;
-    if(mDrawSize == 0) return;
-    BindBuffer();
-/*	
-    int stride = sizeof(Vertex);
-
-    GLint i = program.getAttribLocation("vert");
-    glEnableVertexAttribArray(i);
-    glVertexAttribPointer(i, 3, GL_FLOAT, GL_FALSE, stride , 0);
-
-    i = program.getAttribLocation("normal");
-    glEnableVertexAttribArray(i);
-    glVertexAttribPointer(i, 3, GL_FLOAT, GL_FALSE, stride , BUFFER_OFFSET(6 * sizeof(float)));
-
-    i = program.getAttribLocation("color");
-    glEnableVertexAttribArray(i);
-    glVertexAttribPointer(i, 3, GL_FLOAT, GL_FALSE, stride , BUFFER_OFFSET(3 * sizeof(float)));
-
-    i = program.getAttribLocation("uv");
-    glEnableVertexAttribArray(i);
-    glVertexAttribPointer(i, 2, GL_FLOAT, GL_FALSE, stride , BUFFER_OFFSET(9 * sizeof(float)));
-
-    glDrawElements(mDrawType, mDrawSize, GL_UNSIGNED_INT, 0);
-*/
-    unsigned int offset = 0;
-    int idd = 0;
-
-    for(auto t = mAttributes.begin(); t != mAttributes.end(); t++){
-        idd++;
-        GLint id = program.getAttribLocation(t->second.getName());
+void VertexDeclaration::bind(ShaderProgram& program){
+    for(VertexElement v : mVertexElements){
+        GLint id = program.getAttribLocation(v.attributeName);
         glEnableVertexAttribArray(id);
-        glVertexAttribPointer(id, t->second.getElementValueCount(), t->second.getType(), GL_FALSE, mStride, BUFFER_OFFSET(offset * sizeof(float)));
-        offset += t->second.getElementValueCount();
-    }
-
-    glDrawElements(mDrawType, mDrawSize, GL_UNSIGNED_INT, 0);
-
-    for(auto t = mAttributes.begin(); t != mAttributes.end(); t++)
-        glDisableVertexAttribArray(program.getAttribLocation(t->second.getName()));
-
-    UnbindBuffer();
-}
-
-void VBO::BindBuffer(){
-    if(mVBOCreated){
-        glBindBuffer(GL_ARRAY_BUFFER, mID[VERTICES]);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mID[INDICES]);
+        glVertexAttribPointer(id, 
+                VertexElement::getElementSize(v.elementType), 
+                VertexElement::getElementType(v.elementType), 
+                GL_FALSE, mCurrentSize, BUFFER_OFFSET(v.offset));
+       // printf("bound element %s to %i. offset %i, stride: %i\n", v.attributeName.c_str(), id, v.offset, mCurrentSize);
     }
 }
-void VBO::UnbindBuffer(){
-    if(mVBOCreated){
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+void VertexDeclaration::unbind(){
+    for(VertexElement v : mVertexElements){
+        glDisableVertexAttribArray(v.layoutID);
     }
 }
-void VBO::DeleteBuffer(){
-    if(mVBOCreated){
+
+void VertexDeclaration::unbind(ShaderProgram& program){
+    for(VertexElement v : mVertexElements){
+        glDisableVertexAttribArray(program.getAttribLocation(v.attributeName));
+    }
+}
+
+//start VBO
+
+VBO::VBO(){
+    mMaxVertices = 0;
+    mMaxIndices = 0;
+    mCurrentVertex = 0;
+    mCurrentIndex = 0;
+    mAllocated = false;
+    mVertexSize = 0;
+    mCreatedBuffers = false;
+}
+
+void VBO::setMaxSize(unsigned int vertexCount, unsigned int indexCount){
+    mMaxVertices = vertexCount;
+    mMaxIndices = indexCount;
+}
+
+void VBO::allocateBuffers(){
+    if(!mAllocated){
+        mVertexSize = mVertexDeclaration.getVertexSize();
+        mpVertexData = new char[mMaxVertices * mVertexSize + 1];//not sure why I have to add one extra char. let's say it's padding.
+        mpIndexData  = new int[mMaxIndices];
+        mAllocated = true;
+    }
+}
+
+void VBO::deallocateBuffers(){
+    if(mAllocated){
+        delete[] mpVertexData;
+        delete[] mpIndexData;
+        mAllocated = false;
+    }
+}
+
+VertexDeclaration& VBO::getVertexDeclaration(){
+    return mVertexDeclaration;
+}
+
+unsigned int VBO::getIndexCount(){
+    return mCurrentIndex; 
+}
+unsigned int VBO::getVertexCount(){
+    return mCurrentVertex;
+}
+
+void VBO::createBuffers(){
+    if(!mCreatedBuffers){
+        glGenBuffers(2, mID);
+        mCreatedBuffers = true;
+    }
+}
+
+void VBO::destroyBuffers(){
+    if(mCreatedBuffers){
         glDeleteBuffers(2, mID);
-        mVBOCreated = false;
+        mCreatedBuffers = false;
     }
 }
-void VBO::SetDrawType(GLint type){
+
+void VBO::uploadVBO(){
+	if(!mAllocated) return;
+    createBuffers();
+    bind();
+    glBufferData(GL_ARRAY_BUFFER, mCurrentVertex * mVertexSize,(void*) mpVertexData, GL_STATIC_DRAW); 
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, mCurrentIndex * sizeof(int), mpIndexData, GL_STATIC_DRAW);
+    mDrawCount = mCurrentIndex;
+
+    clear();
+    unbind();
+}
+void VBO::reset(){
+    mCurrentVertex = 0;
+    mCurrentIndex = 0;
+    mDrawCount = 0;
+}
+
+void VBO::clear(){
+    deallocateBuffers(); 
+    mCurrentVertex = 0;
+    mCurrentIndex = 0;
+}
+
+void VBO::pushIndex(int i){
+    if(mCurrentIndex < mMaxIndices){
+        //printf("pushed index %u\n", i);
+        mpIndexData[mCurrentIndex] = i;
+        mCurrentIndex ++;
+    }else printf("indices full\n");
+}
+
+char* VBO::getNextVertexPtr(int vertexAmount){
+    if(mAllocated && mCurrentVertex + (vertexAmount - 1) < mMaxVertices){
+        char* v = getVertexPtr(mCurrentVertex);
+        mCurrentVertex += vertexAmount;
+        return v;
+    }
+    return nullptr;
+}
+
+char* VBO::getVertexPtr(int i){
+    if(mAllocated && i < mMaxVertices){
+        char* v = mpVertexData;
+        v += i * mVertexSize;
+        return v;
+    }
+    return nullptr;
+}
+
+void VBO::bind(){
+    glBindBuffer(GL_ARRAY_BUFFER, mID[VERTEX_BUFFER]);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mID[INDEX_BUFFER]);
+}
+
+void VBO::unbind(){
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+}
+
+void VBO::draw(){
+    bind();
+    mVertexDeclaration.bind();
+    glDrawElements(mDrawType, mDrawCount, GL_UNSIGNED_INT, 0);
+    mVertexDeclaration.unbind();
+    unbind();
+}
+
+void VBO::draw(ShaderProgram& program){
+    bind();
+    mVertexDeclaration.bind(program);
+    glDrawElements(mDrawType, mDrawCount, GL_UNSIGNED_INT, 0);
+    mVertexDeclaration.unbind(program);
+    unbind();
+}
+
+void VBO::setDrawType(GLenum type){
     mDrawType = type;
 }
-GLint VBO::GetDrawType(){
+
+GLenum VBO::getDrawType(){
     return mDrawType;
 }
 
-int VBO::GetDrawAmount()
-{
-    return mDrawSize;
-}
-#endif

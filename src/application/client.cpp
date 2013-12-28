@@ -54,13 +54,14 @@ void Client::setup()
 	mWindow.lockCursor(true);
 	mWindow.setVSyncEnabled(false);
 	mRenderer.setup();
-	//	mWindow.setFramerateLimit(30);
+	//mWindow.setFramerateLimit(30);
 
 	mBus.sendMessage<WindowResizeMessage>(WindowResizeMessage(800, 600));
 
 	std::vector<unsigned char> icon;
 	loadTexture("data/textures/icon16x16.png", 16, 16, icon);
 	mWindow.setIcon(16, 16, icon.data());
+    mFPSCounter.setMaxFPS(0);
     mFPSCounter.setSampleTime(0.5f);
 
 	//if there's an error, display it

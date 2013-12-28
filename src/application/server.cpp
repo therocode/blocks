@@ -36,7 +36,7 @@ void Server::setup()
 {
     mScriptHandler.setup();
     mUniverse.setup();
-    mFPSController.setMaxFPS(0);
+    mFPSController.setMaxFPS(60);
     mBus.sendMessage<LogMessage>(LogMessage("Server initialised and ready to go", mLogName, LogLevel::INFO));
     mBus.sendMessage<GameStartMessage>(GameStartMessage());
 }
@@ -46,7 +46,7 @@ fea::MessageBus& Server::getBus()
 }
 void Server::doLogic()
 {
-    mFPSController.frameBegin();
+    //mFPSController.frameBegin();
     checkForDisconnectedClients();
 
     for(auto& client : mClients)

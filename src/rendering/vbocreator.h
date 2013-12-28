@@ -1,9 +1,8 @@
 #pragma once
 #include "blockstd.h"
-//#include "vbo.h"
 #include "../world/chunk.h"
 #include <chrono>
-#include "newvbo.h"
+#include "vbo.h"
 
 /* Vertex with bounds.*/
 struct ChunkVertex{

@@ -1,7 +1,7 @@
 #include "blockstd.h"
 #include "world/worldstd.h"
 #include "world/chunk.h"
-#include "newvbo.h"
+#include "vbo.h"
 //rmembemr http://http.developer.nvidia.com/GPUGems3/gpugems3_ch01.html
 //http://www.cc.gatech.edu/~bader/COURSES/GATECH/CSE6140-Fall2007/papers/LC87.pdf
 //http://paulbourke.net/geometry/polygonise/volexample.zip

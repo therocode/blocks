@@ -83,7 +83,6 @@ set(source_files
     src/rendering/texture.cpp
 	src/rendering/vbo.cpp
 	src/rendering/vbocreator.cpp
-    src/rendering/newvbo.cpp
     src/rendering/marchingcubegenerator.cpp
 
     src/script/scriptcallback.cpp
@@ -198,7 +197,6 @@ set(header_files
     src/rendering/texture.h
 	src/rendering/vbo.h
 	src/rendering/vbocreator.h
-    src/rendering/newvbo.h
     src/rendering/marchingcubegenerator.h
 
 	src/script/scriptmessages.h

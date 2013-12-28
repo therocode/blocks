@@ -103,7 +103,8 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
         a.x = oldPosition.x - size.x * 0.5f;
         a.y = oldPosition.y - size.y * 0.5f;
         a.z = oldPosition.z - size.z * 0.5f;
-        n = sweepAroundAABB(a, v, normal, currentHitBlock, ignoreAxis);
+        glm::vec3 c(0);
+        n = sweepAroundAABB(a, v, normal, currentHitBlock, c);
         //Renderer::sDebugRenderer.drawBox(a.x + a.width*0.5f, a.y + a.height*0.5f, a.z + a.depth*0.5f, a.width  + 0.001f, a.height + 0.001f, a.depth + 0.001f, DebugRenderer::ORANGE);
 
         if(n < 1.f )
@@ -135,7 +136,7 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
                 else
                     b.height = 1.0f;
 
-                if(b.max(1) - a.min(1) <= 0.5f){
+                if(b.max(1) - a.min(1) <= 1.0f){
                     if(AABBOnGround(a))
                     {
                         AABB aa = a;
