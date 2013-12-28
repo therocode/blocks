@@ -47,6 +47,7 @@ Chunk WorldGenerator::generateChunk(const ChunkCoord& chunkCoordinate, const Reg
                 else
                     voxelData[zIndex + yIndex + x] = 0;
 
+
                 voxelCoord.x++;
             }
             voxelCoord.z++;

@@ -49,7 +49,7 @@ IntensityMap RegionGenerator::generateRainfall(const RegionCoord& regionCoordina
         //std::cout << "value: " << value << "\n";
         value = value * 1.8f;
         value = (value + 1.0f) / 2.0f;
-        value = value - rainmap.getUnit(x, y) / 4.0f;
+        value = value;// - rainmap.getUnit(x, y) / 4.0f;  dunno what goes here
         value = std::max(0.0f, std::min(value, 1.0f));
         rainmap.setUnit(x, y, value);
     }
@@ -77,7 +77,7 @@ IntensityMap RegionGenerator::generateTemperature(const RegionCoord& regionCoord
         //std::cout << "value: " << value << "\n";
         value = value * 1.8f;
         value = (value + 1.0f) / 2.0f;
-        value = value - temperaturemap.getUnit(x, y) / 2.0f;
+        value = value; //- temperaturemap.getUnit(x, y) / 2.0f;    heightmap goes here to affect temperature!
         value = std::max(0.0f, std::min(value, 1.0f));
         temperaturemap.setUnit(x, y, value);
     }

@@ -20,6 +20,7 @@ Region::Region(IntensityMap&& heightmap, IntensityMap&& rainmap, IntensityMap&& 
     std::swap(mRainmap, rainmap);
     std::swap(mTemperaturemap, temperaturemap);
     std::swap(mBiomeSelector, biomeSelector);
+
 }
 
 bool Region::hasChunk(const RegionChunkCoord& location) const
