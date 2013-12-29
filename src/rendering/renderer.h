@@ -10,6 +10,7 @@
 #include <vector>
 #include <map>
 #include "../utilities/timer.h"
+#include "vbocreator.h"
 
 #include "shaderprogram.h"
 
@@ -86,4 +87,5 @@ class Renderer
         float mCameraYaw;
 
         Frustum mFrustum;
+        VBOCreator vboCreator;
 };

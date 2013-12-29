@@ -1,5 +1,4 @@
 #include "renderer.h"
-#include "vbocreator.h"
 #include <featherkit/rendering/opengl.h>
 #include <iostream>
 #include "../utilities/lodepng.h"
@@ -120,8 +119,6 @@ void Renderer::handleMessage(const UpdateChunkVboMessage& received)
     std::tie(mainChunk, topChunk, bottomChunk, frontChunk, backChunk, leftChunk, rightChunk) = received.data;
 
     //mGeneratorQueue.addToQueue(mainChunk, topChunk, bottomChunk, frontChunk, backChunk, leftChunk, rightChunk); 
-
-    VBOCreator vboCreator;
 
     auto vboEntry = vbos.find(mainChunk->getLocation());
 
