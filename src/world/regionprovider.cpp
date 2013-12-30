@@ -1,5 +1,6 @@
 #include "regionprovider.h"
 #include "region.h"
+#include "utilities/lodepng.h"
 
 RegionProvider::RegionProvider(fea::MessageBus& bus) : mBus(bus)
 {
@@ -44,8 +45,8 @@ void RegionProvider::handleMessage(const RegionNeededMessage& received)
 
     VoxelTypeMap biomeTypes;
 
-    for(int32_t y = 0; y < regionWidth * chunkWidth; y++)
-    for(int32_t x = 0; x < regionWidth * chunkWidth; x++)
+    for(int32_t y = 0; y < regionVoxelWidth; y++)
+    for(int32_t x = 0; x < regionVoxelWidth; x++)
     {
         float height = newRegion.getHeightmap().getUnit(x, y);
         float rain = newRegion.getRainmap().getUnit(x, y);
@@ -55,11 +56,16 @@ void RegionProvider::handleMessage(const RegionNeededMessage& received)
         Biome* biome = mStorage.getBiome(temperature, rain, height, selector);
 
         biomeTypes.setUnit(x, y, biome->mType);
-    }
 
+        mImage[x + y*(regionVoxelWidth)].r = biome->r * 255;
+        mImage[x + y*(regionVoxelWidth)].g = biome->g * 255;
+        mImage[x + y*(regionVoxelWidth)].b = biome->b * 255;
+        mImage[x + y*(regionVoxelWidth)].a = 255;
+    }
 
     newRegion.setBiomeTypes(biomeTypes);
 
-
     mBus.sendMessage(RegionDeliverMessage(coordinate, newRegion));
+
+    lodepng_encode32_file(std::string("region" + std::to_string(coordinate.x) + "_" + std::to_string(coordinate.y) + ".png").c_str(), (uint8_t*) mImage.data(), regionVoxelWidth, regionVoxelWidth);
 }

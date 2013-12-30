@@ -4,6 +4,14 @@
 #include "generation/regiongenerator.h"
 #include "biomestorage.h"
 
+struct Pixel
+{
+    uint8_t r;
+    uint8_t g;
+    uint8_t b;
+    uint8_t a;
+};
+
 class RegionProvider : public fea::MessageReceiver<RegionNeededMessage>
 {
     public:
@@ -14,4 +22,5 @@ class RegionProvider : public fea::MessageReceiver<RegionNeededMessage>
         fea::MessageBus& mBus;
         RegionGenerator mRegionGenerator;
         BiomeStorage mStorage;
+        std::array<Pixel, regionVoxelWidthx2> mImage;
 };

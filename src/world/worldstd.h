@@ -13,8 +13,11 @@ using RegionVoxelCoord = glm::u16vec2;
 
 int64_t wrapInt(int64_t kX, int64_t const kLowerBound, int64_t const kUpperBound);
 
-const int32_t regionWidth = 32;
 const int32_t chunkWidth = 16;
+const int32_t regionChunkWidth = 32;
+const int32_t regionChunkWidthx2 = regionChunkWidth * regionChunkWidth;
+const int32_t regionVoxelWidth = regionChunkWidth * chunkWidth;
+const int32_t regionVoxelWidthx2 = regionVoxelWidth * regionVoxelWidth;
 const int32_t chunkWidthx2 = chunkWidth * chunkWidth;
 const int32_t chunkWidthx3 = chunkWidth * chunkWidth * chunkWidth;
 const int32_t voxelAmount = chunkWidthx3;
