@@ -23,4 +23,7 @@ class RegionProvider : public fea::MessageReceiver<RegionNeededMessage>
         RegionGenerator mRegionGenerator;
         BiomeStorage mStorage;
         std::array<Pixel, regionVoxelWidthx2> mImage;
+        std::array<Pixel, regionVoxelWidthx2> mRain;
+        std::array<Pixel, regionVoxelWidthx2> mTemp;
+        std::array<Pixel, regionVoxelWidthx2> mHeight;
 };
