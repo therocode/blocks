@@ -66,8 +66,8 @@ TEST_CASE("chunkToWorld", "[coord]")
 TEST_CASE("regionToWorld", "[coord]")
 {
     REQUIRE(regionToWorld(RegionCoord(0, 0)) == glm::vec3(0.0f, 0.0f, 0.0f));
-    REQUIRE(regionToWorld(RegionCoord(1, 1)) == glm::vec3(1.0f * regionWidth * chunkWidth, 0.0f, 1.0f * regionWidth * chunkWidth));
-    REQUIRE(regionToWorld(RegionCoord(-2, -2)) == glm::vec3(-2.0f * regionWidth * chunkWidth, 0.0f, -2.0f * regionWidth * chunkWidth));
+    REQUIRE(regionToWorld(RegionCoord(1, 1)) == glm::vec3(1.0f * regionVoxelWidth, 0.0f, 1.0f * regionVoxelWidth));
+    REQUIRE(regionToWorld(RegionCoord(-2, -2)) == glm::vec3(-2.0f * regionVoxelWidth, 0.0f, -2.0f * regionVoxelWidth));
 }
 
 TEST_CASE("voxelToChunk", "[coord]")

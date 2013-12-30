@@ -57,10 +57,10 @@ void RegionProvider::handleMessage(const RegionNeededMessage& received)
 
         biomeTypes.setUnit(x, y, biome->mType);
 
-        mImage[x + y*(regionVoxelWidth)].r = biome->r * 255;
-        mImage[x + y*(regionVoxelWidth)].g = biome->g * 255;
-        mImage[x + y*(regionVoxelWidth)].b = biome->b * 255;
-        mImage[x + y*(regionVoxelWidth)].a = 255;
+        mImage[x + (regionVoxelWidth - y -1)*(regionVoxelWidth)].r = biome->r * 255;
+        mImage[x + (regionVoxelWidth - y -1)*(regionVoxelWidth)].g = biome->g * 255;
+        mImage[x + (regionVoxelWidth - y -1)*(regionVoxelWidth)].b = biome->b * 255;
+        mImage[x + (regionVoxelWidth - y -1)*(regionVoxelWidth)].a = 255;
     }
 
     newRegion.setBiomeTypes(biomeTypes);

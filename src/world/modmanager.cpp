@@ -86,11 +86,11 @@ void ModManager::saveMods(RegionCoord regionLoc)
         
         if(iDataFile)
         {
-            for(int x = 0; x < regionWidth; ++x) 
+            for(int x = 0; x < regionChunkWidth; ++x) 
             {
-                for(int y = 0; y < regionWidth; ++y)
+                for(int y = 0; y < regionChunkWidth; ++y)
                 {
-                    for(int z = 0; z < regionWidth; ++z)
+                    for(int z = 0; z < regionChunkWidth; ++z)
                     {
                         RegionChunkCoord chunkLoc(x, y, z);
 
@@ -238,7 +238,7 @@ void ModManager::initIndexFile(RegionCoord regionLoc)
     ofstream indexFile(getFilename(regionLoc) + indexExt, ios::out | ios::binary);
 
     ChunkIndex index = NO_CHUNK;
-    for(int i = 0; i < regionWidth*regionWidth*regionWidth; ++i)
+    for(int i = 0; i < regionChunkWidth*regionChunkWidth*regionChunkWidth; ++i)
     {
         indexFile.write(reinterpret_cast<const char*>(&index), sizeof(ChunkIndex));
     }

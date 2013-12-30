@@ -10,8 +10,8 @@ IntensityMap RegionGenerator::generateHeightmap(const RegionCoord& regionCoordin
 
     glm::vec3 regionPos = regionToWorld(regionCoordinate);
 
-    for(size_t y = 0; y < regionWidth * chunkWidth; y++)
-    for(size_t x = 0; x < regionWidth * chunkWidth; x++)
+    for(size_t y = 0; y < regionVoxelWidth; y++)
+    for(size_t x = 0; x < regionVoxelWidth; x++)
     {
         //float value = raw_noise_3d((float) x / 800.0f, (float) y / 800.0f, 10.5);
         float value = simplex.simplexOctave2D((float) (x + regionPos.x) / 800.0f, (float) (y + regionPos.z) / 800.0f, 0.6f, 6);
@@ -37,8 +37,8 @@ IntensityMap RegionGenerator::generateRainfall(const RegionCoord& regionCoordina
 
     glm::vec3 regionPos = regionToWorld(regionCoordinate);
 
-    for(size_t y = 0; y < regionWidth * chunkWidth; y++)
-    for(size_t x = 0; x < regionWidth * chunkWidth; x++)
+    for(size_t y = 0; y < regionVoxelWidth; y++)
+    for(size_t x = 0; x < regionVoxelWidth; x++)
     {
         //float value = raw_noise_3d((float) x / 800.0f, (float) y / 800.0f, 10.5);
         float value = simplex.simplexOctave2D((float) (x + regionPos.x) / 800.0f, (float) (y + regionPos.z) / 800.0f, 0.6f, 6);
@@ -65,8 +65,8 @@ IntensityMap RegionGenerator::generateTemperature(const RegionCoord& regionCoord
 
     glm::vec3 regionPos = regionToWorld(regionCoordinate);
 
-    for(size_t y = 0; y < regionWidth * chunkWidth; y++)
-    for(size_t x = 0; x < regionWidth * chunkWidth; x++)
+    for(size_t y = 0; y < regionVoxelWidth; y++)
+    for(size_t x = 0; x < regionVoxelWidth; x++)
     {
         //float value = raw_noise_3d((float) x / 800.0f, (float) y / 800.0f, 10.5);
         float value = simplex.simplexOctave2D((float) (x + regionPos.x) / 800.0f, (float) (y + regionPos.z) / 800.0f, 0.6f, 6);
@@ -93,8 +93,8 @@ IntensityMap RegionGenerator::generateBiomeSelector(const RegionCoord& regionCoo
 
     glm::vec3 regionPos = regionToWorld(regionCoordinate);
 
-    for(size_t y = 0; y < regionWidth * chunkWidth; y++)
-    for(size_t x = 0; x < regionWidth * chunkWidth; x++)
+    for(size_t y = 0; y < regionVoxelWidth; y++)
+    for(size_t x = 0; x < regionVoxelWidth; x++)
     {
         float xTurbulence = simplex.simplexOctave2D((float) (x + regionPos.x) / 80.0f, (float) (y + regionPos.z) / 80.0f, 0.6f, 6);
         float yTurbulence = simplex2.simplexOctave2D((float) (x + regionPos.x) / 80.0f, (float) (y + regionPos.z) / 80.0f, 0.6f, 6); //big height difference

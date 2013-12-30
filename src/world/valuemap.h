@@ -9,11 +9,11 @@ class ValueMap
     public:
         ValueMap()
         {
-            units = std::unique_ptr<ValueType[]>(new ValueType[regionWidth * regionWidth * chunkWidthx2]);
+            units = std::unique_ptr<ValueType[]>(new ValueType[regionVoxelWidthx2]);
         }
         ValueMap(const ValueMap& other)
         {
-            size_t dataSize = regionWidth * regionWidth * chunkWidthx2;
+            size_t dataSize = regionVoxelWidthx2;
 
             units = std::unique_ptr<ValueType[]>(new ValueType[dataSize]);
 
@@ -26,7 +26,7 @@ class ValueMap
         }
         const ValueMap& operator=(const ValueMap& other)
         {
-            size_t dataSize = regionWidth * regionWidth * chunkWidthx2;
+            size_t dataSize = regionVoxelWidthx2;
 
             units = std::unique_ptr<ValueType[]>(new ValueType[dataSize]);
 
@@ -42,11 +42,11 @@ class ValueMap
         }
         ValueType getUnit(size_t x, size_t y) const
         {
-            return units[x + y * regionWidth * chunkWidth];
+            return units[x + y * regionVoxelWidth];
         }
         void setUnit(size_t x, size_t y, ValueType value)
         {
-            units[x + y * regionWidth * chunkWidth] = value;
+            units[x + y * regionVoxelWidth] = value;
         }
         //void toTexture(fea::Texture& texture);
     private:

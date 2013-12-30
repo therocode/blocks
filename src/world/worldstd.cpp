@@ -27,7 +27,7 @@ ChunkCoord worldToChunk(const glm::vec3& worldCoordinate)
 
 RegionCoord worldToRegion(const glm::vec3& worldCoordinate)
 {
-    return (RegionCoord)(glm::floor(worldCoordinate / (float)(regionWidth * chunkWidth)));
+    return (RegionCoord)(glm::floor(worldCoordinate / (float)(regionVoxelWidth)));
 }
 
 glm::vec3 voxelToWorld(const VoxelCoord& voxelCoordinate)
@@ -42,7 +42,7 @@ glm::vec3 chunkToWorld(const ChunkCoord& chunkCoordinate)
 
 glm::vec3 regionToWorld(const RegionCoord& regionCoordinate)
 {
-    glm::vec2 worldCoordinate = ((glm::vec2) regionCoordinate) * (float)(regionWidth * chunkWidth);
+    glm::vec2 worldCoordinate = ((glm::vec2) regionCoordinate) * (float)(regionVoxelWidth);
     return glm::vec3(worldCoordinate.x, 0.0f, worldCoordinate.y);
 }
 
@@ -57,7 +57,7 @@ ChunkCoord voxelToChunk(const VoxelCoord& voxelCoordinate)
 
 RegionCoord voxelToRegion(const VoxelCoord& voxelCoordinate)
 {
-    int32_t width = regionWidth * chunkWidth;
+    int32_t width = regionVoxelWidth;
     int64_t x = voxelCoordinate.x < 0 ? ((voxelCoordinate.x+1) / width) - 1: voxelCoordinate.x / width;
     int64_t z = voxelCoordinate.z < 0 ? ((voxelCoordinate.z+1) / width) - 1: voxelCoordinate.z / width;
 
@@ -66,8 +66,8 @@ RegionCoord voxelToRegion(const VoxelCoord& voxelCoordinate)
 
 RegionCoord chunkToRegion(const ChunkCoord& chunkCoordinate)
 {
-    int64_t x = chunkCoordinate.x < 0 ? ((chunkCoordinate.x+1) / regionWidth) - 1: chunkCoordinate.x / regionWidth;
-    int64_t z = chunkCoordinate.z < 0 ? ((chunkCoordinate.z+1) / regionWidth) - 1: chunkCoordinate.z / regionWidth;
+    int64_t x = chunkCoordinate.x < 0 ? ((chunkCoordinate.x+1) / regionChunkWidth) - 1: chunkCoordinate.x / regionChunkWidth;
+    int64_t z = chunkCoordinate.z < 0 ? ((chunkCoordinate.z+1) / regionChunkWidth) - 1: chunkCoordinate.z / regionChunkWidth;
 
     return RegionCoord(x, z);
 }
@@ -84,25 +84,25 @@ ChunkVoxelCoord voxelToChunkVoxel(const VoxelCoord& voxelCoordinate)
 RegionChunkCoord voxelToRegionChunk(const VoxelCoord& voxelCoordinate)
 {
     ChunkCoord chunkCoordinate = voxelToChunk(voxelCoordinate);
-    int64_t x = wrapInt(chunkCoordinate.x, 0, regionWidth - 1);
-    int64_t y = wrapInt(chunkCoordinate.y, 0, regionWidth - 1);
-    int64_t z = wrapInt(chunkCoordinate.z, 0, regionWidth - 1);
+    int64_t x = wrapInt(chunkCoordinate.x, 0, regionChunkWidth - 1);
+    int64_t y = wrapInt(chunkCoordinate.y, 0, regionChunkWidth - 1);
+    int64_t z = wrapInt(chunkCoordinate.z, 0, regionChunkWidth - 1);
     
     return RegionChunkCoord(x, y, z);
 }
 
 RegionChunkCoord chunkToRegionChunk(const ChunkCoord& chunkCoordinate)
 {
-    int64_t x = wrapInt(chunkCoordinate.x, 0, regionWidth - 1);
-    int64_t y = wrapInt(chunkCoordinate.y, 0, regionWidth - 1);
-    int64_t z = wrapInt(chunkCoordinate.z, 0, regionWidth - 1);
+    int64_t x = wrapInt(chunkCoordinate.x, 0, regionChunkWidth - 1);
+    int64_t y = wrapInt(chunkCoordinate.y, 0, regionChunkWidth - 1);
+    int64_t z = wrapInt(chunkCoordinate.z, 0, regionChunkWidth - 1);
 
     return RegionChunkCoord(x, y, z);
 }
 
 RegionVoxelCoord voxelToRegionVoxel(const VoxelCoord& voxelCoordinate)
 {
-    int32_t width = regionWidth * chunkWidth;
+    int32_t width = regionVoxelWidth;
     int64_t x = wrapInt(voxelCoordinate.x, 0, width - 1);
     int64_t z = wrapInt(voxelCoordinate.z, 0, width - 1);
 
