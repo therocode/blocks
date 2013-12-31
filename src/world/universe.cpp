@@ -12,7 +12,7 @@
 	mWorldInterface(mStandardWorld, mEntitySystem),
     mRegionProvider(mBus),
     mChunkProvider(mBus, mStandardWorld, mModManager),
-    mHighlightManager(mBus, 7),
+    mHighlightManager(mBus, 15),
     mModManager(mBus)
 {
 	mBus.addMessageSubscriber<SetVoxelMessage>(*this);
