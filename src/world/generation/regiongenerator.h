@@ -8,6 +8,6 @@ class RegionGenerator
     public:
         IntensityMap generateHeightmap(const RegionCoord& regionCoordinate) const;
         IntensityMap generateRainfall(const RegionCoord& regionCoordinate) const;
-        IntensityMap generateTemperature(const RegionCoord& regionCoordinate) const;
+        IntensityMap generateTemperature(const RegionCoord& regionCoordinate, const IntensityMap& height) const;
         IntensityMap generateBiomeSelector(const RegionCoord& regionCoordinate) const;
 };

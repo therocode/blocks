@@ -70,7 +70,7 @@ float Noise::simplexOctave2D(float x, float y, float scaleFactor, uint32_t octav
 
     for(int i=0; i < octaves; i++)
     {
-        total += simplex2D(x * frequency, y * frequency) * amplitude;
+        total += simplex2D(x * frequency + 3000.f * i, y * frequency + 1500.0f * i) * amplitude;
 
         frequency *= 2.0f;
         maxAmplitude += amplitude;

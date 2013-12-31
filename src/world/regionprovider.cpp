@@ -41,7 +41,8 @@ void RegionProvider::handleMessage(const RegionNeededMessage& received)
 
     std::tie(coordinate) = received.data;
 
-    Region newRegion(mRegionGenerator.generateHeightmap(coordinate), mRegionGenerator.generateRainfall(coordinate), mRegionGenerator.generateTemperature(coordinate), mRegionGenerator.generateBiomeSelector(coordinate));
+    IntensityMap height = mRegionGenerator.generateHeightmap(coordinate);
+    Region newRegion(height, mRegionGenerator.generateRainfall(coordinate), mRegionGenerator.generateTemperature(coordinate, height), mRegionGenerator.generateBiomeSelector(coordinate));
 
     VoxelTypeMap biomeTypes;
 
