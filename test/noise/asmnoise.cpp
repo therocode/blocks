@@ -25,22 +25,22 @@ TEST_CASE("asm_noise_3d", "[noise]")
 {
     Noise noise(7);
 
-    CHECK(differsBy(asm_raw_noise_3d(0.0f, 0.0f, 0.0f, noise.getHaxxiPointer()), raw_noise_3d(0.0f, 0.0f, 0.0f, noise.getHaxxiPointer())) < acceptableThreshold);
-    CHECK(differsBy(asm_raw_noise_3d(100.0f, 0.0f, 0.0f, noise.getHaxxiPointer()), raw_noise_3d(100.0f, 0.0f, 0.0f, noise.getHaxxiPointer())) < acceptableThreshold);
-    CHECK(differsBy(asm_raw_noise_3d(0.0f, 100.0f, 0.0f, noise.getHaxxiPointer()), raw_noise_3d(0.0f, 100.0f, 0.0f, noise.getHaxxiPointer())) < acceptableThreshold);
-    CHECK(differsBy(asm_raw_noise_3d(0.0f, 0.0f, 100.0f, noise.getHaxxiPointer()), raw_noise_3d(0.0f, 0.0f, 100.0f, noise.getHaxxiPointer())) < acceptableThreshold);
-    CHECK(differsBy(asm_raw_noise_3d(-100.0f, 0.0f, 0.0f, noise.getHaxxiPointer()), raw_noise_3d(-100.0f, 0.0f, 0.0f, noise.getHaxxiPointer())) < acceptableThreshold);
-    CHECK(differsBy(asm_raw_noise_3d(0.0f, -100.0f, 0.0f, noise.getHaxxiPointer()), raw_noise_3d(0.0f, -100.0f, 0.0f, noise.getHaxxiPointer())) < acceptableThreshold);
-    CHECK(differsBy(asm_raw_noise_3d(0.0f, 0.0f, -100.0f, noise.getHaxxiPointer()), raw_noise_3d(0.0f, 0.0f, -100.0f, noise.getHaxxiPointer())) < acceptableThreshold);
-    CHECK(differsBy(asm_raw_noise_3d(100.0f, 100.0f, 100.0f, noise.getHaxxiPointer()), raw_noise_3d(100.0f, 100.0f, 100.0f, noise.getHaxxiPointer())) < acceptableThreshold);
-    CHECK(differsBy(asm_raw_noise_3d(-100.0f, -100.0f, -100.0f, noise.getHaxxiPointer()), raw_noise_3d(-100.0f, -100.0f, -100.0f, noise.getHaxxiPointer())) < acceptableThreshold);
+    CHECK(differsBy(asm_raw_noise_3d(0.0f, 0.0f, 0.0f, noise.getPermPointer()), raw_noise_3d(0.0f, 0.0f, 0.0f, noise.getPermPointer())) < acceptableThreshold);
+    CHECK(differsBy(asm_raw_noise_3d(100.0f, 0.0f, 0.0f, noise.getPermPointer()), raw_noise_3d(100.0f, 0.0f, 0.0f, noise.getPermPointer())) < acceptableThreshold);
+    CHECK(differsBy(asm_raw_noise_3d(0.0f, 100.0f, 0.0f, noise.getPermPointer()), raw_noise_3d(0.0f, 100.0f, 0.0f, noise.getPermPointer())) < acceptableThreshold);
+    CHECK(differsBy(asm_raw_noise_3d(0.0f, 0.0f, 100.0f, noise.getPermPointer()), raw_noise_3d(0.0f, 0.0f, 100.0f, noise.getPermPointer())) < acceptableThreshold);
+    CHECK(differsBy(asm_raw_noise_3d(-100.0f, 0.0f, 0.0f, noise.getPermPointer()), raw_noise_3d(-100.0f, 0.0f, 0.0f, noise.getPermPointer())) < acceptableThreshold);
+    CHECK(differsBy(asm_raw_noise_3d(0.0f, -100.0f, 0.0f, noise.getPermPointer()), raw_noise_3d(0.0f, -100.0f, 0.0f, noise.getPermPointer())) < acceptableThreshold);
+    CHECK(differsBy(asm_raw_noise_3d(0.0f, 0.0f, -100.0f, noise.getPermPointer()), raw_noise_3d(0.0f, 0.0f, -100.0f, noise.getPermPointer())) < acceptableThreshold);
+    CHECK(differsBy(asm_raw_noise_3d(100.0f, 100.0f, 100.0f, noise.getPermPointer()), raw_noise_3d(100.0f, 100.0f, 100.0f, noise.getPermPointer())) < acceptableThreshold);
+    CHECK(differsBy(asm_raw_noise_3d(-100.0f, -100.0f, -100.0f, noise.getPermPointer()), raw_noise_3d(-100.0f, -100.0f, -100.0f, noise.getPermPointer())) < acceptableThreshold);
 
-    CHECK(differsBy(asm_raw_noise_3d(0.0f, 0.0f, 0.0f, noise.getHaxxiPointer()),  raw_noise_3d(0.0f, 0.0f, 0.0f, noise.getHaxxiPointer())) < acceptableThreshold);
-    CHECK(differsBy(asm_raw_noise_3d(0.0f, 0.0f, 0.0f, noise.getHaxxiPointer()),  raw_noise_3d(0.0f, 0.0f, 0.0f, noise.getHaxxiPointer())) < acceptableThreshold);
-    CHECK(differsBy(asm_raw_noise_3d(0.0f, -0.1f, 0.0f, noise.getHaxxiPointer()), raw_noise_3d(0.0f, -0.1f, 0.0f, noise.getHaxxiPointer())) < acceptableThreshold);
-    CHECK(differsBy(asm_raw_noise_3d(0.0f, -0.1f, 0.0f, noise.getHaxxiPointer()), raw_noise_3d(0.0f, -0.1f, 0.0f, noise.getHaxxiPointer())) < acceptableThreshold);
-    CHECK(differsBy(asm_raw_noise_3d(0.0f, 0.0f, -0.1f, noise.getHaxxiPointer()), raw_noise_3d(0.0f, 0.0f, -0.1f, noise.getHaxxiPointer())) < acceptableThreshold);
-    CHECK(differsBy(asm_raw_noise_3d(0.0f, 0.0f, -0.1f, noise.getHaxxiPointer()), raw_noise_3d(0.0f, 0.0f, -0.1f, noise.getHaxxiPointer())) < acceptableThreshold);
+    CHECK(differsBy(asm_raw_noise_3d(0.0f, 0.0f, 0.0f, noise.getPermPointer()),  raw_noise_3d(0.0f, 0.0f, 0.0f, noise.getPermPointer())) < acceptableThreshold);
+    CHECK(differsBy(asm_raw_noise_3d(0.0f, 0.0f, 0.0f, noise.getPermPointer()),  raw_noise_3d(0.0f, 0.0f, 0.0f, noise.getPermPointer())) < acceptableThreshold);
+    CHECK(differsBy(asm_raw_noise_3d(0.0f, -0.1f, 0.0f, noise.getPermPointer()), raw_noise_3d(0.0f, -0.1f, 0.0f, noise.getPermPointer())) < acceptableThreshold);
+    CHECK(differsBy(asm_raw_noise_3d(0.0f, -0.1f, 0.0f, noise.getPermPointer()), raw_noise_3d(0.0f, -0.1f, 0.0f, noise.getPermPointer())) < acceptableThreshold);
+    CHECK(differsBy(asm_raw_noise_3d(0.0f, 0.0f, -0.1f, noise.getPermPointer()), raw_noise_3d(0.0f, 0.0f, -0.1f, noise.getPermPointer())) < acceptableThreshold);
+    CHECK(differsBy(asm_raw_noise_3d(0.0f, 0.0f, -0.1f, noise.getPermPointer()), raw_noise_3d(0.0f, 0.0f, -0.1f, noise.getPermPointer())) < acceptableThreshold);
 
     float counter = 0.0f;
     float failedC = 0.0f;
@@ -58,7 +58,7 @@ TEST_CASE("asm_noise_3d", "[noise]")
                 float yc = (float)y / 10.0f;
                 float zc = (float)z / 10.0f;
 
-                float difference = differsBy(asm_raw_noise_3d(xc, yc, zc, noise.getHaxxiPointer()), raw_noise_3d(xc, yc, zc, noise.getHaxxiPointer()));
+                float difference = differsBy(asm_raw_noise_3d(xc, yc, zc, noise.getPermPointer()), raw_noise_3d(xc, yc, zc, noise.getPermPointer()));
 
                 if(difference > acceptableThreshold)
                 {
@@ -81,20 +81,20 @@ TEST_CASE("asm_noise_2d", "[noise]")
 {
     Noise noise(5);
 
-    CHECK(differsBy(asm_raw_noise_2d(0.0f, 0.0f, noise.getHaxxiPointer()), raw_noise_2d(0.0f, 0.0f, noise.getHaxxiPointer())) < acceptableThreshold);
-    CHECK(differsBy(asm_raw_noise_2d(100.0f, 0.0f, noise.getHaxxiPointer()), raw_noise_2d(100.0f, 0.0f, noise.getHaxxiPointer())) < acceptableThreshold);
-    CHECK(differsBy(asm_raw_noise_2d(0.0f, 100.0f, noise.getHaxxiPointer()), raw_noise_2d(0.0f, 100.0f, noise.getHaxxiPointer())) < acceptableThreshold);
-    CHECK(differsBy(asm_raw_noise_2d(100.0f, 100.0f, noise.getHaxxiPointer()), raw_noise_2d(100.0f, 100.0f, noise.getHaxxiPointer())) < acceptableThreshold);
-    CHECK(differsBy(asm_raw_noise_2d(-100.0f, 0.0f, noise.getHaxxiPointer()), raw_noise_2d(-100.0f, 0.0f, noise.getHaxxiPointer())) < acceptableThreshold);
-    CHECK(differsBy(asm_raw_noise_2d(0.0f, -100.0f, noise.getHaxxiPointer()), raw_noise_2d(0.0f, -100.0f, noise.getHaxxiPointer())) < acceptableThreshold);
-    CHECK(differsBy(asm_raw_noise_2d(-100.0f, -100.0f, noise.getHaxxiPointer()), raw_noise_2d(-100.0f, -100.0f, noise.getHaxxiPointer())) < acceptableThreshold);
+    CHECK(differsBy(asm_raw_noise_2d(0.0f, 0.0f, noise.getPermPointer()), raw_noise_2d(0.0f, 0.0f, noise.getPermPointer())) < acceptableThreshold);
+    CHECK(differsBy(asm_raw_noise_2d(100.0f, 0.0f, noise.getPermPointer()), raw_noise_2d(100.0f, 0.0f, noise.getPermPointer())) < acceptableThreshold);
+    CHECK(differsBy(asm_raw_noise_2d(0.0f, 100.0f, noise.getPermPointer()), raw_noise_2d(0.0f, 100.0f, noise.getPermPointer())) < acceptableThreshold);
+    CHECK(differsBy(asm_raw_noise_2d(100.0f, 100.0f, noise.getPermPointer()), raw_noise_2d(100.0f, 100.0f, noise.getPermPointer())) < acceptableThreshold);
+    CHECK(differsBy(asm_raw_noise_2d(-100.0f, 0.0f, noise.getPermPointer()), raw_noise_2d(-100.0f, 0.0f, noise.getPermPointer())) < acceptableThreshold);
+    CHECK(differsBy(asm_raw_noise_2d(0.0f, -100.0f, noise.getPermPointer()), raw_noise_2d(0.0f, -100.0f, noise.getPermPointer())) < acceptableThreshold);
+    CHECK(differsBy(asm_raw_noise_2d(-100.0f, -100.0f, noise.getPermPointer()), raw_noise_2d(-100.0f, -100.0f, noise.getPermPointer())) < acceptableThreshold);
 
-    CHECK(differsBy(asm_raw_noise_2d(0.01f, 0.0f, noise.getHaxxiPointer()), raw_noise_2d(0.01f, 0.0f, noise.getHaxxiPointer())) < acceptableThreshold);
-    CHECK(differsBy(asm_raw_noise_2d(0.0f, 0.01f, noise.getHaxxiPointer()), raw_noise_2d(0.0f, 0.01f, noise.getHaxxiPointer())) < acceptableThreshold);
-    CHECK(differsBy(asm_raw_noise_2d(0.01f, 0.01f, noise.getHaxxiPointer()), raw_noise_2d(0.01f, 0.01f, noise.getHaxxiPointer())) < acceptableThreshold);
-    CHECK(differsBy(asm_raw_noise_2d(-0.01f, 0.0f, noise.getHaxxiPointer()), raw_noise_2d(-0.01f, 0.0f, noise.getHaxxiPointer())) < acceptableThreshold);
-    CHECK(differsBy(asm_raw_noise_2d(0.0f, -0.01f, noise.getHaxxiPointer()), raw_noise_2d(0.0f, -0.01f, noise.getHaxxiPointer())) < acceptableThreshold);
-    CHECK(differsBy(asm_raw_noise_2d(-0.01f, -0.01f, noise.getHaxxiPointer()), raw_noise_2d(-0.01f, -0.01f, noise.getHaxxiPointer())) < acceptableThreshold);
+    CHECK(differsBy(asm_raw_noise_2d(0.01f, 0.0f, noise.getPermPointer()), raw_noise_2d(0.01f, 0.0f, noise.getPermPointer())) < acceptableThreshold);
+    CHECK(differsBy(asm_raw_noise_2d(0.0f, 0.01f, noise.getPermPointer()), raw_noise_2d(0.0f, 0.01f, noise.getPermPointer())) < acceptableThreshold);
+    CHECK(differsBy(asm_raw_noise_2d(0.01f, 0.01f, noise.getPermPointer()), raw_noise_2d(0.01f, 0.01f, noise.getPermPointer())) < acceptableThreshold);
+    CHECK(differsBy(asm_raw_noise_2d(-0.01f, 0.0f, noise.getPermPointer()), raw_noise_2d(-0.01f, 0.0f, noise.getPermPointer())) < acceptableThreshold);
+    CHECK(differsBy(asm_raw_noise_2d(0.0f, -0.01f, noise.getPermPointer()), raw_noise_2d(0.0f, -0.01f, noise.getPermPointer())) < acceptableThreshold);
+    CHECK(differsBy(asm_raw_noise_2d(-0.01f, -0.01f, noise.getPermPointer()), raw_noise_2d(-0.01f, -0.01f, noise.getPermPointer())) < acceptableThreshold);
 
     float counter = 0.0f;
     float failedC = 0.0f;
@@ -109,7 +109,7 @@ TEST_CASE("asm_noise_2d", "[noise]")
             float xc = (float)x / 10.0f;
             float yc = (float)y / 10.0f;
 
-            float difference = differsBy(asm_raw_noise_2d(xc, yc, noise.getHaxxiPointer()), raw_noise_2d(xc, yc, noise.getHaxxiPointer()));
+            float difference = differsBy(asm_raw_noise_2d(xc, yc, noise.getPermPointer()), raw_noise_2d(xc, yc, noise.getPermPointer()));
 
             if(difference > acceptableThreshold)
             {
@@ -132,20 +132,20 @@ TEST_CASE("asm_WhiteNoise_2d", "[noise]")
 	WhiteNoise white;
     Noise noise(5);
 
-    CHECK(differsBy(asm_WhiteNoise_2d(0.0f, 0.0f, noise.getHaxxiPointer()), white.get2d(0.0f, 0.0f, noise.getHaxxiPointer())) < acceptableThreshold);
-    CHECK(differsBy(asm_WhiteNoise_2d(100.0f, 0.0f, noise.getHaxxiPointer()), white.get2d(100.0f, 0.0f, noise.getHaxxiPointer())) < acceptableThreshold);
-    CHECK(differsBy(asm_WhiteNoise_2d(0.0f, 100.0f, noise.getHaxxiPointer()), white.get2d(0.0f, 100.0f, noise.getHaxxiPointer())) < acceptableThreshold);
-    CHECK(differsBy(asm_WhiteNoise_2d(100.0f, 100.0f, noise.getHaxxiPointer()), white.get2d(100.0f, 100.0f, noise.getHaxxiPointer())) < acceptableThreshold);
-    CHECK(differsBy(asm_WhiteNoise_2d(-100.0f, 0.0f, noise.getHaxxiPointer()), white.get2d(-100.0f, 0.0f, noise.getHaxxiPointer())) < acceptableThreshold);
-    CHECK(differsBy(asm_WhiteNoise_2d(0.0f, -100.0f, noise.getHaxxiPointer()), white.get2d(0.0f, -100.0f, noise.getHaxxiPointer())) < acceptableThreshold);
-    CHECK(differsBy(asm_WhiteNoise_2d(-100.0f, -100.0f, noise.getHaxxiPointer()), white.get2d(-100.0f, -100.0f, noise.getHaxxiPointer())) < acceptableThreshold);
+    CHECK(differsBy(asm_WhiteNoise_2d(0.0f, 0.0f, noise.getPermPointer()), white.get2d(0.0f, 0.0f, noise.getPermPointer())) < acceptableThreshold);
+    CHECK(differsBy(asm_WhiteNoise_2d(100.0f, 0.0f, noise.getPermPointer()), white.get2d(100.0f, 0.0f, noise.getPermPointer())) < acceptableThreshold);
+    CHECK(differsBy(asm_WhiteNoise_2d(0.0f, 100.0f, noise.getPermPointer()), white.get2d(0.0f, 100.0f, noise.getPermPointer())) < acceptableThreshold);
+    CHECK(differsBy(asm_WhiteNoise_2d(100.0f, 100.0f, noise.getPermPointer()), white.get2d(100.0f, 100.0f, noise.getPermPointer())) < acceptableThreshold);
+    CHECK(differsBy(asm_WhiteNoise_2d(-100.0f, 0.0f, noise.getPermPointer()), white.get2d(-100.0f, 0.0f, noise.getPermPointer())) < acceptableThreshold);
+    CHECK(differsBy(asm_WhiteNoise_2d(0.0f, -100.0f, noise.getPermPointer()), white.get2d(0.0f, -100.0f, noise.getPermPointer())) < acceptableThreshold);
+    CHECK(differsBy(asm_WhiteNoise_2d(-100.0f, -100.0f, noise.getPermPointer()), white.get2d(-100.0f, -100.0f, noise.getPermPointer())) < acceptableThreshold);
 
-    CHECK(differsBy(asm_WhiteNoise_2d(0.01f, 0.0f, noise.getHaxxiPointer()), white.get2d(0.01f, 0.0f, noise.getHaxxiPointer())) < acceptableThreshold);
-    CHECK(differsBy(asm_WhiteNoise_2d(0.0f, 0.01f, noise.getHaxxiPointer()), white.get2d(0.0f, 0.01f, noise.getHaxxiPointer())) < acceptableThreshold);
-    CHECK(differsBy(asm_WhiteNoise_2d(0.01f, 0.01f, noise.getHaxxiPointer()), white.get2d(0.01f, 0.01f, noise.getHaxxiPointer())) < acceptableThreshold);
-    CHECK(differsBy(asm_WhiteNoise_2d(-0.01f, 0.0f, noise.getHaxxiPointer()), white.get2d(-0.01f, 0.0f, noise.getHaxxiPointer())) < acceptableThreshold);
-    CHECK(differsBy(asm_WhiteNoise_2d(0.0f, -0.01f, noise.getHaxxiPointer()), white.get2d(0.0f, -0.01f, noise.getHaxxiPointer())) < acceptableThreshold);
-    CHECK(differsBy(asm_WhiteNoise_2d(-0.01f, -0.01f, noise.getHaxxiPointer()), white.get2d(-0.01f, -0.01f, noise.getHaxxiPointer())) < acceptableThreshold);
+    CHECK(differsBy(asm_WhiteNoise_2d(0.01f, 0.0f, noise.getPermPointer()), white.get2d(0.01f, 0.0f, noise.getPermPointer())) < acceptableThreshold);
+    CHECK(differsBy(asm_WhiteNoise_2d(0.0f, 0.01f, noise.getPermPointer()), white.get2d(0.0f, 0.01f, noise.getPermPointer())) < acceptableThreshold);
+    CHECK(differsBy(asm_WhiteNoise_2d(0.01f, 0.01f, noise.getPermPointer()), white.get2d(0.01f, 0.01f, noise.getPermPointer())) < acceptableThreshold);
+    CHECK(differsBy(asm_WhiteNoise_2d(-0.01f, 0.0f, noise.getPermPointer()), white.get2d(-0.01f, 0.0f, noise.getPermPointer())) < acceptableThreshold);
+    CHECK(differsBy(asm_WhiteNoise_2d(0.0f, -0.01f, noise.getPermPointer()), white.get2d(0.0f, -0.01f, noise.getPermPointer())) < acceptableThreshold);
+    CHECK(differsBy(asm_WhiteNoise_2d(-0.01f, -0.01f, noise.getPermPointer()), white.get2d(-0.01f, -0.01f, noise.getPermPointer())) < acceptableThreshold);
 
     float counter = 0.0f;
     float failedC = 0.0f;
@@ -160,7 +160,7 @@ TEST_CASE("asm_WhiteNoise_2d", "[noise]")
             float xc = (float)x / 10.0f;
             float yc = (float)y / 10.0f;
 
-            float difference = differsBy(asm_WhiteNoise_2d(xc, yc, noise.getHaxxiPointer()), white.get2d(xc, yc, noise.getHaxxiPointer()));
+            float difference = differsBy(asm_WhiteNoise_2d(xc, yc, noise.getPermPointer()), white.get2d(xc, yc, noise.getPermPointer()));
 
             if(difference > acceptableThreshold)
             {
@@ -183,20 +183,20 @@ TEST_CASE("asm_VoronoiNoise_2d", "[noise]")
 	VoronoiNoise voronoi;
     Noise noise(5);
 
-    CHECK(differsBy(asm_VoronoiNoise_2d(0.0f, 0.0f, noise.getHaxxiPointer()), voronoi.get2d(0.0f, 0.0f, noise.getHaxxiPointer())) < acceptableThreshold);
-    CHECK(differsBy(asm_VoronoiNoise_2d(100.0f, 0.0f, noise.getHaxxiPointer()), voronoi.get2d(100.0f, 0.0f, noise.getHaxxiPointer())) < acceptableThreshold);
-    CHECK(differsBy(asm_VoronoiNoise_2d(0.0f, 100.0f, noise.getHaxxiPointer()), voronoi.get2d(0.0f, 100.0f, noise.getHaxxiPointer())) < acceptableThreshold);
-    CHECK(differsBy(asm_VoronoiNoise_2d(100.0f, 100.0f, noise.getHaxxiPointer()), voronoi.get2d(100.0f, 100.0f, noise.getHaxxiPointer())) < acceptableThreshold);
-    CHECK(differsBy(asm_VoronoiNoise_2d(-100.0f, 0.0f, noise.getHaxxiPointer()), voronoi.get2d(-100.0f, 0.0f, noise.getHaxxiPointer())) < acceptableThreshold);
-    CHECK(differsBy(asm_VoronoiNoise_2d(0.0f, -100.0f, noise.getHaxxiPointer()), voronoi.get2d(0.0f, -100.0f, noise.getHaxxiPointer())) < acceptableThreshold);
-    CHECK(differsBy(asm_VoronoiNoise_2d(-100.0f, -100.0f, noise.getHaxxiPointer()), voronoi.get2d(-100.0f, -100.0f, noise.getHaxxiPointer())) < acceptableThreshold);
+    CHECK(differsBy(asm_VoronoiNoise_2d(0.0f, 0.0f, noise.getPermPointer()), voronoi.get2d(0.0f, 0.0f, noise.getPermPointer())) < acceptableThreshold);
+    CHECK(differsBy(asm_VoronoiNoise_2d(100.0f, 0.0f, noise.getPermPointer()), voronoi.get2d(100.0f, 0.0f, noise.getPermPointer())) < acceptableThreshold);
+    CHECK(differsBy(asm_VoronoiNoise_2d(0.0f, 100.0f, noise.getPermPointer()), voronoi.get2d(0.0f, 100.0f, noise.getPermPointer())) < acceptableThreshold);
+    CHECK(differsBy(asm_VoronoiNoise_2d(100.0f, 100.0f, noise.getPermPointer()), voronoi.get2d(100.0f, 100.0f, noise.getPermPointer())) < acceptableThreshold);
+    CHECK(differsBy(asm_VoronoiNoise_2d(-100.0f, 0.0f, noise.getPermPointer()), voronoi.get2d(-100.0f, 0.0f, noise.getPermPointer())) < acceptableThreshold);
+    CHECK(differsBy(asm_VoronoiNoise_2d(0.0f, -100.0f, noise.getPermPointer()), voronoi.get2d(0.0f, -100.0f, noise.getPermPointer())) < acceptableThreshold);
+    CHECK(differsBy(asm_VoronoiNoise_2d(-100.0f, -100.0f, noise.getPermPointer()), voronoi.get2d(-100.0f, -100.0f, noise.getPermPointer())) < acceptableThreshold);
 
-    CHECK(differsBy(asm_VoronoiNoise_2d(0.01f, 0.0f, noise.getHaxxiPointer()), voronoi.get2d(0.01f, 0.0f, noise.getHaxxiPointer())) < acceptableThreshold);
-    CHECK(differsBy(asm_VoronoiNoise_2d(0.0f, 0.01f, noise.getHaxxiPointer()), voronoi.get2d(0.0f, 0.01f, noise.getHaxxiPointer())) < acceptableThreshold);
-    CHECK(differsBy(asm_VoronoiNoise_2d(0.01f, 0.01f, noise.getHaxxiPointer()), voronoi.get2d(0.01f, 0.01f, noise.getHaxxiPointer())) < acceptableThreshold);
-    CHECK(differsBy(asm_VoronoiNoise_2d(-0.01f, 0.0f, noise.getHaxxiPointer()), voronoi.get2d(-0.01f, 0.0f, noise.getHaxxiPointer())) < acceptableThreshold);
-    CHECK(differsBy(asm_VoronoiNoise_2d(0.0f, -0.01f, noise.getHaxxiPointer()), voronoi.get2d(0.0f, -0.01f, noise.getHaxxiPointer())) < acceptableThreshold);
-    CHECK(differsBy(asm_VoronoiNoise_2d(-0.01f, -0.01f, noise.getHaxxiPointer()), voronoi.get2d(-0.01f, -0.01f, noise.getHaxxiPointer())) < acceptableThreshold);
+    CHECK(differsBy(asm_VoronoiNoise_2d(0.01f, 0.0f, noise.getPermPointer()), voronoi.get2d(0.01f, 0.0f, noise.getPermPointer())) < acceptableThreshold);
+    CHECK(differsBy(asm_VoronoiNoise_2d(0.0f, 0.01f, noise.getPermPointer()), voronoi.get2d(0.0f, 0.01f, noise.getPermPointer())) < acceptableThreshold);
+    CHECK(differsBy(asm_VoronoiNoise_2d(0.01f, 0.01f, noise.getPermPointer()), voronoi.get2d(0.01f, 0.01f, noise.getPermPointer())) < acceptableThreshold);
+    CHECK(differsBy(asm_VoronoiNoise_2d(-0.01f, 0.0f, noise.getPermPointer()), voronoi.get2d(-0.01f, 0.0f, noise.getPermPointer())) < acceptableThreshold);
+    CHECK(differsBy(asm_VoronoiNoise_2d(0.0f, -0.01f, noise.getPermPointer()), voronoi.get2d(0.0f, -0.01f, noise.getPermPointer())) < acceptableThreshold);
+    CHECK(differsBy(asm_VoronoiNoise_2d(-0.01f, -0.01f, noise.getPermPointer()), voronoi.get2d(-0.01f, -0.01f, noise.getPermPointer())) < acceptableThreshold);
 
     float counter = 0.0f;
     float failedC = 0.0f;
@@ -211,7 +211,7 @@ TEST_CASE("asm_VoronoiNoise_2d", "[noise]")
             float xc = (float)x / 10.0f;
             float yc = (float)y / 10.0f;
 
-            float difference = differsBy(asm_VoronoiNoise_2d(xc, yc, noise.getHaxxiPointer()), voronoi.get2d(xc, yc, noise.getHaxxiPointer()));
+            float difference = differsBy(asm_VoronoiNoise_2d(xc, yc, noise.getPermPointer()), voronoi.get2d(xc, yc, noise.getPermPointer()));
 
             if(difference > acceptableThreshold)
             {

@@ -70,7 +70,7 @@ float Noise::simplexOctave2D(float x, float y, float scaleFactor, uint32_t octav
 
     for(int i=0; i < octaves; i++)
     {
-        total += simplex2D(x * frequency, y * frequency) * amplitude;
+        total += simplex2D(x * frequency + 3000.0f * i, y * frequency + 2000.0f * i) * amplitude;
 
         frequency *= 2.0f;
         maxAmplitude += amplitude;
@@ -113,4 +113,9 @@ float Noise::voronoi2D(float x, float y) const
 #else
     return asm_VoronoiNoise_2d(x, y, mPerm.data());
 #endif
+}
+
+const uint8_t* Noise::getPermPointer() const
+{
+    return mPerm.data();
 }

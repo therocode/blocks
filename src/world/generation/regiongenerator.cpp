@@ -70,6 +70,7 @@ IntensityMap RegionGenerator::generateTemperature(const RegionCoord& regionCoord
     {
         //float value = raw_noise_3d((float) x / 800.0f, (float) y / 800.0f, 10.5);
         float value = simplex.simplexOctave2D((float) (x + regionPos.x) / 800.0f, (float) (y + regionPos.z) / 800.0f, 0.6f, 6);
+        //float value = simplex.simplex2D((float) (x + regionPos.x) / 80.0f, (float) (y + regionPos.z) / 80.0f);
         value +=      simplex2.simplexOctave2D((float) (x + regionPos.x) / 3800.0f, (float) (y + regionPos.z) / 3800.0f, 0.6f, 6); //big height difference
         //value = simplex.white2D((float) x / 2.0f, (float) y / 2.0f);
 
