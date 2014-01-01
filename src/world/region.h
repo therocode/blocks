@@ -6,9 +6,12 @@
 #include "chunk.h"
 #include "valuemap.h"
 
+class Biome;
+
 using ChunkRegionMap = std::unordered_map<RegionChunkCoord, Chunk>;
 using IntensityMap = ValueMap<float>;
-using VoxelTypeMap = ValueMap<VoxelType>;
+using BiomeIndices = ValueMap<uint16_t>;
+using BiomeIndexMap = std::unordered_map<uint16_t, Biome*>;
 
 class Region
 {
@@ -27,13 +30,14 @@ class Region
         const IntensityMap& getRainmap() const;
         const IntensityMap& getTemperaturemap() const;
         const IntensityMap& getBiomeSelector() const;
-        void setBiomeTypes(VoxelTypeMap& biomeTypes);
-        const VoxelTypeMap& getBiomeTypes() const;
+        void setBiomes(const BiomeIndices& biomeIndices, const BiomeIndexMap& biomeMap);
+        const Biome* getBiome(const RegionVoxelCoord& coordinate) const;
     private:
         ChunkRegionMap mChunks;
         IntensityMap mHeightmap;
         IntensityMap mRainmap;
         IntensityMap mTemperaturemap;
         IntensityMap mBiomeSelector;
-        VoxelTypeMap mBiomeTypes;
+        BiomeIndices mBiomeIndices;
+        BiomeIndexMap mBiomeMap;
 };

@@ -78,12 +78,13 @@ const IntensityMap& Region::getBiomeSelector() const
     return mBiomeSelector;
 }
 
-void Region::setBiomeTypes(VoxelTypeMap& biomeTypes)
+void Region::setBiomes(const BiomeIndices& biomeIndices, const BiomeIndexMap& biomeMap)
 {
-    mBiomeTypes = biomeTypes;
+    mBiomeIndices = biomeIndices;
+    mBiomeMap = biomeMap;
 }
 
-const VoxelTypeMap& Region::getBiomeTypes() const
+const Biome* Region::getBiome(const RegionVoxelCoord& coordinate) const
 {
-    return mBiomeTypes;
+    return mBiomeMap.at(mBiomeIndices.getUnit(coordinate.x, coordinate.y));
 }

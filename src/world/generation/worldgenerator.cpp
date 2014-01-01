@@ -1,5 +1,6 @@
 #include "worldgenerator.h"
 #include "../region.h"
+#include "../biome.h"
 #include <iostream>
 
 Chunk WorldGenerator::generateChunk(const ChunkCoord& chunkCoordinate, const Region& region) const
@@ -37,7 +38,8 @@ Chunk WorldGenerator::generateChunk(const ChunkCoord& chunkCoordinate, const Reg
                 //std::cout << "region coord: " << regionCoord.x << " " << regionCoord.y << "\n";
                 float worldY = (float)(chunkY + y);
                 float threshold =  region.getHeightmap().getUnit(regionCoord.x, regionCoord.y) * 100.f;
-                VoxelType biomeType = region.getBiomeTypes().getUnit(regionCoord.x, regionCoord.y);
+                const Biome* biome = region.getBiome(regionCoord);
+                VoxelType biomeType = biome->mType;
 
                 if(worldY < threshold)
                 {

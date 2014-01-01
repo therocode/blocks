@@ -1,6 +1,7 @@
 #include "regionprovider.h"
 #include "region.h"
 #include "utilities/lodepng.h"
+#include <unordered_map>
 
 RegionProvider::RegionProvider(fea::MessageBus& bus) : mBus(bus)
 {
@@ -44,7 +45,10 @@ void RegionProvider::handleMessage(const RegionNeededMessage& received)
     IntensityMap height = mRegionGenerator.generateHeightmap(coordinate);
     Region newRegion(height, mRegionGenerator.generateRainfall(coordinate), mRegionGenerator.generateTemperature(coordinate, height), mRegionGenerator.generateBiomeSelector(coordinate));
 
-    VoxelTypeMap biomeTypes;
+
+    ValueMap<uint16_t> biomeIndices;
+    uint16_t nextBiomeIndex = 0;
+    std::unordered_map<Biome*, uint16_t> usedBiomes;
 
     for(int32_t y = 0; y < regionVoxelWidth; y++)
     for(int32_t x = 0; x < regionVoxelWidth; x++)
@@ -55,8 +59,18 @@ void RegionProvider::handleMessage(const RegionNeededMessage& received)
         float selector = newRegion.getBiomeSelector().getUnit(x, y);
 
         Biome* biome = mStorage.getBiome(temperature, rain, height, selector);
-
-        biomeTypes.setUnit(x, y, biome->mType);
+        
+        auto content = usedBiomes.find(biome);
+        if(content == usedBiomes.end())
+        {
+            usedBiomes.emplace(biome, nextBiomeIndex);
+            biomeIndices.setUnit(x, y, nextBiomeIndex);
+            nextBiomeIndex++;
+        }
+        else
+        {
+            biomeIndices.setUnit(x, y, content->second);
+        }
 
         //mImage[x + (regionVoxelWidth - y -1)*(regionVoxelWidth)].r = biome->r * 255;
         //mImage[x + (regionVoxelWidth - y -1)*(regionVoxelWidth)].g = biome->g * 255;
@@ -80,7 +94,14 @@ void RegionProvider::handleMessage(const RegionNeededMessage& received)
         //mHeight[x + (regionVoxelWidth - y -1)*(regionVoxelWidth)].a = 255;
     }
 
-    newRegion.setBiomeTypes(biomeTypes);
+    std::unordered_map<uint16_t, Biome*> usedBiomesFlipped;
+
+    for(auto entry : usedBiomes)
+    {
+        usedBiomesFlipped.emplace(entry.second, entry.first);
+    }
+
+    newRegion.setBiomes(biomeIndices, usedBiomesFlipped);
 
     mBus.sendMessage(RegionDeliverMessage(coordinate, newRegion));
 

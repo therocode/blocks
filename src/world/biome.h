@@ -13,6 +13,7 @@ struct Range
 struct Biome
 {
     Biome(const std::string& name, VoxelType type, float red, float green, float blue, Range temp, Range rain, Range height);
+    std::string mName;
     VoxelType mType;
     float r;
     float g;
