@@ -8,8 +8,8 @@ Chunk WorldGenerator::generateChunk(const ChunkCoord& chunkCoordinate, const Reg
 
     VoxelCoord chunkVoxelCoord = worldToVoxel(chunkToWorld(chunkCoordinate));
     //std::cout << chunkVoxelCoord.z << " is z \n";
-    VoxelCoord voxelCoord;
-    RegionVoxelCoord regionCoord;
+    RegionVoxelCoord regionStart = voxelToRegionVoxel(chunkVoxelCoord);
+    RegionVoxelCoord regionCoord = regionStart;
 
     float chunkY = chunkVoxelCoord.y;
 
@@ -25,15 +25,14 @@ Chunk WorldGenerator::generateChunk(const ChunkCoord& chunkCoordinate, const Reg
     for(int32_t y = 0; y < chunkWidth; y++)
     {
         yIndex = y * chunkWidthx2;
-        voxelCoord.z = chunkVoxelCoord.z;
+        regionCoord.y = regionStart.y;
         for(int32_t z = 0; z < chunkWidth; z++)
         {
             zIndex = z * chunkWidth;
-            voxelCoord.x = chunkVoxelCoord.x;
+            regionCoord.x = regionStart.x;
             for(int32_t x = 0; x < chunkWidth; x++)
             {
                 //std::cout << "voxel coord for chunk is " << voxelCoord.x << " " << voxelCoord.y << " " << voxelCoord.z << "\n";
-                regionCoord = voxelToRegionVoxel(voxelCoord);
                 //if(chunkCoordinate == ChunkCoord(1,0,3))
                 //std::cout << "region coord: " << regionCoord.x << " " << regionCoord.y << "\n";
                 float worldY = (float)(chunkY + y);
@@ -48,9 +47,9 @@ Chunk WorldGenerator::generateChunk(const ChunkCoord& chunkCoordinate, const Reg
                     voxelData[zIndex + yIndex + x] = 0;
 
 
-                voxelCoord.x++;
+                regionCoord.x++;
             }
-            voxelCoord.z++;
+            regionCoord.y++;
         }
     }
 

@@ -58,34 +58,34 @@ void RegionProvider::handleMessage(const RegionNeededMessage& received)
 
         biomeTypes.setUnit(x, y, biome->mType);
 
-        mImage[x + (regionVoxelWidth - y -1)*(regionVoxelWidth)].r = biome->r * 255;
-        mImage[x + (regionVoxelWidth - y -1)*(regionVoxelWidth)].g = biome->g * 255;
-        mImage[x + (regionVoxelWidth - y -1)*(regionVoxelWidth)].b = biome->b * 255;
-        mImage[x + (regionVoxelWidth - y -1)*(regionVoxelWidth)].a = 255;
-        //mImage[x + (regionVoxelWidth - y -1)*(regionVoxelWidth)].r = newRegion.getBiomeSelector().getUnit(x, y) * 255;
-        //mImage[x + (regionVoxelWidth - y -1)*(regionVoxelWidth)].g = 0;
-        //mImage[x + (regionVoxelWidth - y -1)*(regionVoxelWidth)].b = 0;
+        //mImage[x + (regionVoxelWidth - y -1)*(regionVoxelWidth)].r = biome->r * 255;
+        //mImage[x + (regionVoxelWidth - y -1)*(regionVoxelWidth)].g = biome->g * 255;
+        //mImage[x + (regionVoxelWidth - y -1)*(regionVoxelWidth)].b = biome->b * 255;
         //mImage[x + (regionVoxelWidth - y -1)*(regionVoxelWidth)].a = 255;
-        mRain[x + (regionVoxelWidth - y -1)*(regionVoxelWidth)].r = 0;
-        mRain[x + (regionVoxelWidth - y -1)*(regionVoxelWidth)].g = 0;
-        mRain[x + (regionVoxelWidth - y -1)*(regionVoxelWidth)].b = newRegion.getRainmap().getUnit(x, y) * 255;
-        mRain[x + (regionVoxelWidth - y -1)*(regionVoxelWidth)].a = 255;
-        mTemp[x + (regionVoxelWidth - y -1)*(regionVoxelWidth)].r = newRegion.getTemperaturemap().getUnit(x, y) * 255;
-        mTemp[x + (regionVoxelWidth - y -1)*(regionVoxelWidth)].g = 0;
-        mTemp[x + (regionVoxelWidth - y -1)*(regionVoxelWidth)].b = 0;
-        mTemp[x + (regionVoxelWidth - y -1)*(regionVoxelWidth)].a = 255;
-        mHeight[x + (regionVoxelWidth - y -1)*(regionVoxelWidth)].r = newRegion.getHeightmap().getUnit(x, y) * 255;
-        mHeight[x + (regionVoxelWidth - y -1)*(regionVoxelWidth)].g = newRegion.getHeightmap().getUnit(x, y) * 255;
-        mHeight[x + (regionVoxelWidth - y -1)*(regionVoxelWidth)].b = newRegion.getHeightmap().getUnit(x, y) * 255;
-        mHeight[x + (regionVoxelWidth - y -1)*(regionVoxelWidth)].a = 255;
+        ////mImage[x + (regionVoxelWidth - y -1)*(regionVoxelWidth)].r = newRegion.getBiomeSelector().getUnit(x, y) * 255;
+        ////mImage[x + (regionVoxelWidth - y -1)*(regionVoxelWidth)].g = 0;
+        ////mImage[x + (regionVoxelWidth - y -1)*(regionVoxelWidth)].b = 0;
+        ////mImage[x + (regionVoxelWidth - y -1)*(regionVoxelWidth)].a = 255;
+        //mRain[x + (regionVoxelWidth - y -1)*(regionVoxelWidth)].r = 0;
+        //mRain[x + (regionVoxelWidth - y -1)*(regionVoxelWidth)].g = 0;
+        //mRain[x + (regionVoxelWidth - y -1)*(regionVoxelWidth)].b = newRegion.getRainmap().getUnit(x, y) * 255;
+        //mRain[x + (regionVoxelWidth - y -1)*(regionVoxelWidth)].a = 255;
+        //mTemp[x + (regionVoxelWidth - y -1)*(regionVoxelWidth)].r = newRegion.getTemperaturemap().getUnit(x, y) * 255;
+        //mTemp[x + (regionVoxelWidth - y -1)*(regionVoxelWidth)].g = 0;
+        //mTemp[x + (regionVoxelWidth - y -1)*(regionVoxelWidth)].b = 0;
+        //mTemp[x + (regionVoxelWidth - y -1)*(regionVoxelWidth)].a = 255;
+        //mHeight[x + (regionVoxelWidth - y -1)*(regionVoxelWidth)].r = newRegion.getHeightmap().getUnit(x, y) * 255;
+        //mHeight[x + (regionVoxelWidth - y -1)*(regionVoxelWidth)].g = newRegion.getHeightmap().getUnit(x, y) * 255;
+        //mHeight[x + (regionVoxelWidth - y -1)*(regionVoxelWidth)].b = newRegion.getHeightmap().getUnit(x, y) * 255;
+        //mHeight[x + (regionVoxelWidth - y -1)*(regionVoxelWidth)].a = 255;
     }
 
     newRegion.setBiomeTypes(biomeTypes);
 
     mBus.sendMessage(RegionDeliverMessage(coordinate, newRegion));
 
-    lodepng_encode32_file(std::string("regiona" + std::to_string(coordinate.x) + "_" + std::to_string(coordinate.y) + ".png").c_str(), (uint8_t*) mImage.data(), regionVoxelWidth, regionVoxelWidth);
-    lodepng_encode32_file(std::string("regionr" + std::to_string(coordinate.x) + "_" + std::to_string(coordinate.y) + ".png").c_str(), (uint8_t*) mRain.data(), regionVoxelWidth, regionVoxelWidth);
-    lodepng_encode32_file(std::string("regiont" + std::to_string(coordinate.x) + "_" + std::to_string(coordinate.y) + ".png").c_str(), (uint8_t*) mTemp.data(), regionVoxelWidth, regionVoxelWidth);
-    lodepng_encode32_file(std::string("regionh" + std::to_string(coordinate.x) + "_" + std::to_string(coordinate.y) + ".png").c_str(), (uint8_t*) mHeight.data(), regionVoxelWidth, regionVoxelWidth);
+    //lodepng_encode32_file(std::string("regiona" + std::to_string(coordinate.x) + "_" + std::to_string(coordinate.y) + ".png").c_str(), (uint8_t*) mImage.data(), regionVoxelWidth, regionVoxelWidth);
+    //lodepng_encode32_file(std::string("regionr" + std::to_string(coordinate.x) + "_" + std::to_string(coordinate.y) + ".png").c_str(), (uint8_t*) mRain.data(), regionVoxelWidth, regionVoxelWidth);
+    //lodepng_encode32_file(std::string("regiont" + std::to_string(coordinate.x) + "_" + std::to_string(coordinate.y) + ".png").c_str(), (uint8_t*) mTemp.data(), regionVoxelWidth, regionVoxelWidth);
+    //lodepng_encode32_file(std::string("regionh" + std::to_string(coordinate.x) + "_" + std::to_string(coordinate.y) + ".png").c_str(), (uint8_t*) mHeight.data(), regionVoxelWidth, regionVoxelWidth);
 }
