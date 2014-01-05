@@ -5,7 +5,7 @@
 
 RegionProvider::RegionProvider(fea::MessageBus& bus) : mBus(bus)
 {
-    mBus.addMessageSubscriber<RegionNeededMessage>(*this);
+    mBus.addSubscriber<RegionNeededMessage>(*this);
 
 
     //                                                                   temp              rain                 height
@@ -33,7 +33,7 @@ RegionProvider::RegionProvider(fea::MessageBus& bus) : mBus(bus)
 
 RegionProvider::~RegionProvider()
 {
-    mBus.removeMessageSubscriber<RegionNeededMessage>(*this);
+    mBus.removeSubscriber<RegionNeededMessage>(*this);
 }
 
 void RegionProvider::handleMessage(const RegionNeededMessage& received)
@@ -103,7 +103,7 @@ void RegionProvider::handleMessage(const RegionNeededMessage& received)
 
     newRegion.setBiomes(biomeIndices, usedBiomesFlipped);
 
-    mBus.sendMessage(RegionDeliverMessage(coordinate, newRegion));
+    mBus.send(RegionDeliverMessage(coordinate, newRegion));
 
     //lodepng_encode32_file(std::string("regiona" + std::to_string(coordinate.x) + "_" + std::to_string(coordinate.y) + ".png").c_str(), (uint8_t*) mImage.data(), regionVoxelWidth, regionVoxelWidth);
     //lodepng_encode32_file(std::string("regionr" + std::to_string(coordinate.x) + "_" + std::to_string(coordinate.y) + ".png").c_str(), (uint8_t*) mRain.data(), regionVoxelWidth, regionVoxelWidth);

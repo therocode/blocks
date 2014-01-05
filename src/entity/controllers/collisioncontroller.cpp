@@ -4,12 +4,12 @@
 
 CollisionController::CollisionController(fea::MessageBus& bus, WorldInterface& worldInterface) : EntityController(bus, worldInterface), mBus(bus)
 {
-    mBus.addMessageSubscriber<EntityMoveRequestedMessage>(*this);
+    mBus.addSubscriber<EntityMoveRequestedMessage>(*this);
 }
 
 CollisionController::~CollisionController()
 {
-    mBus.removeMessageSubscriber<EntityMoveRequestedMessage>(*this);
+    mBus.removeSubscriber<EntityMoveRequestedMessage>(*this);
 }
 
 void CollisionController::inspectEntity(fea::WeakEntityPtr entity)
@@ -48,12 +48,12 @@ void CollisionController::onFrame(int dt)
         if(isOnGround){
             if(!AABBOnGround(a)){
                 entity->setAttribute<bool>("on_ground", false);
-                mBus.sendMessage<EntityOnGroundMessage>(EntityOnGroundMessage(entity->getId(), false));
+                mBus.send<EntityOnGroundMessage>(EntityOnGroundMessage(entity->getId(), false));
             }
         }else{
             if(AABBOnGround(a) && glm::abs(velocity.y) <= 0.001f){
                 entity->setAttribute<bool>("on_ground", true);
-                mBus.sendMessage<EntityOnGroundMessage>(EntityOnGroundMessage(entity->getId(), true));
+                mBus.send<EntityOnGroundMessage>(EntityOnGroundMessage(entity->getId(), true));
             }
         }
     }
@@ -224,7 +224,7 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& messag
         }
     }
     entity->setAttribute<glm::vec3>("position", approvedPosition);
-    mBus.sendMessage<EntityMovedMessage>(EntityMovedMessage(id, requestedPosition, approvedPosition));
+    mBus.send<EntityMovedMessage>(EntityMovedMessage(id, requestedPosition, approvedPosition));
 }
 bool CollisionController::testAABBWorld(const AABB& a) const{
     AABB b;
@@ -450,7 +450,7 @@ bool CollisionController::checkIfOnGround(fea::EntityPtr entity)
     if(glm::abs(currentVelocity.y) < 0.6 && !isOnGround)
     {
         entity->setAttribute<bool>("on_ground", true);
-        mBus.sendMessage<EntityOnGroundMessage>(EntityOnGroundMessage(entity->getId(), true));
+        mBus.send<EntityOnGroundMessage>(EntityOnGroundMessage(entity->getId(), true));
         return true;
     }
     return false;

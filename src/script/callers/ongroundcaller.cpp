@@ -2,12 +2,12 @@
 
 OnGroundCaller::OnGroundCaller(fea::MessageBus& bus, ScriptEngine& engine, ScriptEntityMap& scriptEntities) : ScriptCaller(bus, engine, scriptEntities)
 {
-    mBus.addMessageSubscriber<EntityOnGroundMessage>(*this);
+    mBus.addSubscriber<EntityOnGroundMessage>(*this);
 }
 
 OnGroundCaller::~OnGroundCaller()
 {
-    mBus.removeMessageSubscriber<EntityOnGroundMessage>(*this);
+    mBus.removeSubscriber<EntityOnGroundMessage>(*this);
 }
 
 void OnGroundCaller::handleMessage(const EntityOnGroundMessage& received)

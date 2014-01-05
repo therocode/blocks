@@ -34,7 +34,7 @@ void BlocksApplication::setup(const std::vector<std::string>& args)
 			joinServer(address, port);   //setup local client and do not setup a server. give client a NetworkServerClientBridge and connect it to remote
 		}else{
 		//sergveri isn't craeted
-			// server->getBus().sendMessage<LogMessage>(LogMessage("No address given. Good bye.", "Client", LogLevel::INFO));
+			// server->getBus().send<LogMessage>(LogMessage("No address given. Good bye.", "Client", LogLevel::INFO));
 			printf("No server address specified. Quitting.\n");
 			exit(3);
 		}
@@ -130,7 +130,7 @@ void BlocksApplication::setupDedicatedServer(int32_t port)
 
     if(enet_initialize() < 0)
     {
-        server->getBus().sendMessage<LogMessage>(LogMessage("Couldn't initialise enet", "network", LogLevel::ERR));
+        server->getBus().send<LogMessage>(LogMessage("Couldn't initialise enet", "network", LogLevel::ERR));
     }
     else
     {
@@ -146,7 +146,7 @@ void BlocksApplication::joinServer(const std::string& address, int32_t port)
 
     if(enet_initialize() < 0)
     {
-        client->getBus().sendMessage<LogMessage>(LogMessage("Couldn't initialise enet", "network", LogLevel::ERR));
+        client->getBus().send<LogMessage>(LogMessage("Couldn't initialise enet", "network", LogLevel::ERR));
     }
     else
     {

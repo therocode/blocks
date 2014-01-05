@@ -61,7 +61,7 @@ void ModManager::loadMods(Chunk& chunk)
         chunk.setVoxelData(vta);
     }
 
-    mBus.sendMessage<ChunkModdedMessage>(ChunkModdedMessage(chunk, timestamp));
+    mBus.send<ChunkModdedMessage>(ChunkModdedMessage(chunk, timestamp));
 }
 
 void ModManager::saveMods()

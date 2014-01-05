@@ -130,6 +130,7 @@ set(source_files
     src/world/modmanager.cpp
     src/world/region.cpp
     src/world/regionprovider.cpp
+    src/world/regionlodmanager.cpp
     src/world/worldstd.cpp
 	src/world/universe.cpp
     src/world/world.cpp
@@ -189,6 +190,7 @@ set(header_files
 	src/rendering/billboard.h
 	src/rendering/camera.h
     src/rendering/frustum.h
+	src/rendering/mesh.h
 	src/rendering/meshwalker.h
 	src/rendering/renderer.h
 	src/rendering/shader.h
@@ -249,6 +251,7 @@ set(header_files
     src/world/region.h
     src/world/regionstorageinterface.h
     src/world/regionprovider.h
+    src/world/regionlodmanager.h
     src/world/worldstd.h
 	src/world/universe.h
     src/world/world.h

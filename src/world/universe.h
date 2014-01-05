@@ -9,6 +9,7 @@
 #include "chunkprovider.h"
 #include "regionprovider.h"
 #include "highlightmanager.h"
+#include "regionlodmanager.h"
 
 class Universe : 
         public fea::MessageReceiver<SetVoxelMessage>,
@@ -41,4 +42,5 @@ class Universe :
         ChunkProvider mChunkProvider;
         HighlightManager mHighlightManager;
         ModManager mModManager;
+        RegionLodManager mLodManager;
 };

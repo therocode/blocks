@@ -15,24 +15,24 @@ Client::Client() :
 	mLogName("client"),
 	mBridge(nullptr)
 {
-	mBus.addMessageSubscriber<PlayerActionMessage>(*this);
-	mBus.addMessageSubscriber<PlayerMoveDirectionMessage>(*this);
-	mBus.addMessageSubscriber<PlayerMoveActionMessage>(*this);
-	mBus.addMessageSubscriber<PlayerPitchYawMessage>(*this);
-	mBus.addMessageSubscriber<RebuildScriptsRequestedMessage>(*this);
-    mBus.addMessageSubscriber<WindowFocusLostMessage>(*this);
-    mBus.addMessageSubscriber<WindowInputMessage>(*this);
+	mBus.addSubscriber<PlayerActionMessage>(*this);
+	mBus.addSubscriber<PlayerMoveDirectionMessage>(*this);
+	mBus.addSubscriber<PlayerMoveActionMessage>(*this);
+	mBus.addSubscriber<PlayerPitchYawMessage>(*this);
+	mBus.addSubscriber<RebuildScriptsRequestedMessage>(*this);
+    mBus.addSubscriber<WindowFocusLostMessage>(*this);
+    mBus.addSubscriber<WindowInputMessage>(*this);
 }
 
 Client::~Client()
 {
-	mBus.removeMessageSubscriber<PlayerActionMessage>(*this);
-	mBus.removeMessageSubscriber<PlayerMoveDirectionMessage>(*this);
-	mBus.removeMessageSubscriber<PlayerMoveActionMessage>(*this);
-	mBus.removeMessageSubscriber<PlayerPitchYawMessage>(*this);
-	mBus.removeMessageSubscriber<RebuildScriptsRequestedMessage>(*this);
-    mBus.removeMessageSubscriber<WindowFocusLostMessage>(*this);
-    mBus.removeMessageSubscriber<WindowInputMessage>(*this);
+	mBus.removeSubscriber<PlayerActionMessage>(*this);
+	mBus.removeSubscriber<PlayerMoveDirectionMessage>(*this);
+	mBus.removeSubscriber<PlayerMoveActionMessage>(*this);
+	mBus.removeSubscriber<PlayerPitchYawMessage>(*this);
+	mBus.removeSubscriber<RebuildScriptsRequestedMessage>(*this);
+    mBus.removeSubscriber<WindowFocusLostMessage>(*this);
+    mBus.removeSubscriber<WindowInputMessage>(*this);
 }
 
 bool Client::loadTexture(const std::string& path, uint32_t width, uint32_t height, std::vector<unsigned char>& result)
@@ -56,7 +56,7 @@ void Client::setup()
 	mRenderer.setup();
 	//mWindow.setFramerateLimit(30);
 
-	mBus.sendMessage<WindowResizeMessage>(WindowResizeMessage(800, 600));
+	mBus.send<WindowResizeMessage>(WindowResizeMessage(800, 600));
 
 	std::vector<unsigned char> icon;
 	loadTexture("data/textures/icon16x16.png", 16, 16, icon);
@@ -95,7 +95,7 @@ void Client::render()
 void Client::destroy()
 {
 	mWindow.close();
-	mBus.sendMessage<LogMessage>(LogMessage("client destroyed", mLogName, LogLevel::INFO));
+	mBus.send<LogMessage>(LogMessage("client destroyed", mLogName, LogLevel::INFO));
 }
 
 void Client::handleMessage(const PlayerActionMessage& received)
@@ -164,7 +164,7 @@ bool Client::requestedQuit()
 void Client::setServerBridge(std::unique_ptr<ServerClientBridge> bridge)
 {
 	mBridge = std::move(bridge);
-	mBus.sendMessage<LogMessage>(LogMessage("client connected to server", mLogName, LogLevel::INFO));
+	mBus.send<LogMessage>(LogMessage("client connected to server", mLogName, LogLevel::INFO));
 }
 
 fea::MessageBus& Client::getBus()
@@ -280,39 +280,39 @@ void Client::fetchServerData()
 
             std::tie(coordinate) = chunkPackage->getData();
 
-			mBus.sendMessage<ClientChunkDeletedMessage>(ClientChunkDeletedMessage(chunkPackage->getData()));
+			mBus.send<ClientChunkDeletedMessage>(ClientChunkDeletedMessage(chunkPackage->getData()));
 
             mLocalChunks.erase(coordinate);
 		}
 		else if(package->mType == PackageType::GFX_ENTITY_ADDED)
 		{
 			GfxEntityAddedPackage* gfxAddedPackage = (GfxEntityAddedPackage*)package.get();
-			mBus.sendMessage<AddGfxEntityMessage>(AddGfxEntityMessage(gfxAddedPackage->getData()));
+			mBus.send<AddGfxEntityMessage>(AddGfxEntityMessage(gfxAddedPackage->getData()));
 		}
 		else if(package->mType == PackageType::GFX_ENTITY_MOVED)
 		{
 			GfxEntityMovedPackage* gfxMovedPackage = (GfxEntityMovedPackage*)package.get();
-			mBus.sendMessage<MoveGfxEntityMessage>(MoveGfxEntityMessage(gfxMovedPackage->getData()));
+			mBus.send<MoveGfxEntityMessage>(MoveGfxEntityMessage(gfxMovedPackage->getData()));
 		}
 		else if(package->mType == PackageType::GFX_ENTITY_ROTATED)
 		{
 			GfxEntityRotatedPackage* gfxEntityRotatedPackage = (GfxEntityRotatedPackage*)package.get();
-			mBus.sendMessage<RotateGfxEntityMessage>(RotateGfxEntityMessage(gfxEntityRotatedPackage->getData()));
+			mBus.send<RotateGfxEntityMessage>(RotateGfxEntityMessage(gfxEntityRotatedPackage->getData()));
 		}
 		else if(package->mType == PackageType::GFX_ENTITY_REMOVED)
 		{
 			GfxEntityRemovedPackage* gfxRemovedPackage = (GfxEntityRemovedPackage*)package.get();
-			mBus.sendMessage<RemoveGfxEntityMessage>(RemoveGfxEntityMessage(gfxRemovedPackage->getData()));
+			mBus.send<RemoveGfxEntityMessage>(RemoveGfxEntityMessage(gfxRemovedPackage->getData()));
 		}
 		else if(package->mType == PackageType::PLAYER_ID)
 		{
 			PlayerIdPackage* playerIdPackage = (PlayerIdPackage*)package.get();
-			mBus.sendMessage<PlayerIdMessage>(PlayerIdMessage(playerIdPackage->getData()));
+			mBus.send<PlayerIdMessage>(PlayerIdMessage(playerIdPackage->getData()));
 		}
 		else if(package->mType == PackageType::PLAYER_CONNECTED_TO_ENTITY)
 		{
 			PlayerConnectedToEntityPackage* playerConnectedToEntityPackage = (PlayerConnectedToEntityPackage*)package.get();
-			mBus.sendMessage<PlayerConnectedToEntityMessage>(PlayerConnectedToEntityMessage(playerConnectedToEntityPackage->getData()));
+			mBus.send<PlayerConnectedToEntityMessage>(PlayerConnectedToEntityMessage(playerConnectedToEntityPackage->getData()));
 		}
 		else if(package->mType == PackageType::PLAYER_FACING_BLOCK)
 		{
@@ -326,7 +326,7 @@ void Client::fetchServerData()
 
             std::tie(playerId, x, y, z) = playerFacingBlockPackage->getData();
 
-			mBus.sendMessage<PlayerFacingBlockMessage>(PlayerFacingBlockMessage(playerId, VoxelCoord(x, y, z)));
+			mBus.send<PlayerFacingBlockMessage>(PlayerFacingBlockMessage(playerId, VoxelCoord(x, y, z)));
 		}
 	}
 }
@@ -361,5 +361,5 @@ void Client::updateChunk(const ChunkCoord& coordinate)
     if(right != mLocalChunks.end())
         rightChunk = &right->second;
 
-    mBus.sendMessage<UpdateChunkVboMessage>(UpdateChunkVboMessage(mainChunk, topChunk, bottomChunk, frontChunk, backChunk, leftChunk, rightChunk));
+    mBus.send<UpdateChunkVboMessage>(UpdateChunkVboMessage(mainChunk, topChunk, bottomChunk, frontChunk, backChunk, leftChunk, rightChunk));
 }

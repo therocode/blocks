@@ -4,12 +4,12 @@
 
 MovementController::MovementController(fea::MessageBus& bus, WorldInterface& worldInterface) : EntityController(bus, worldInterface)
 {
-    mBus.addMessageSubscriber<EntityJumpMessage>(*this);
+    mBus.addSubscriber<EntityJumpMessage>(*this);
 }
 
 MovementController::~MovementController()
 {
-    mBus.removeMessageSubscriber<EntityJumpMessage>(*this);
+    mBus.removeSubscriber<EntityJumpMessage>(*this);
 }
 
 void MovementController::inspectEntity(fea::WeakEntityPtr entity)
@@ -143,8 +143,8 @@ void MovementController::onFrame(int dt)
 			float ySpeed = entity->getAttribute<glm::vec3>("velocity").y;
 			if(onGround)
 			{
-				mBus.sendMessage<PhysicsImpulseMessage>(PhysicsImpulseMessage(entity->getId(), glm::vec3(0.0f, jumpStrength / 8.0f, 0.0f)));
-				mBus.sendMessage<EntityOnGroundMessage>(EntityOnGroundMessage(entity->getId(), false));
+				mBus.send<PhysicsImpulseMessage>(PhysicsImpulseMessage(entity->getId(), glm::vec3(0.0f, jumpStrength / 8.0f, 0.0f)));
+				mBus.send<EntityOnGroundMessage>(EntityOnGroundMessage(entity->getId(), false));
 				entity->setAttribute<bool>("on_ground", false);
 			}
 		}

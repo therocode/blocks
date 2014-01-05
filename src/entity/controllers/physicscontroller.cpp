@@ -6,14 +6,14 @@ PhysicsController::PhysicsController(fea::MessageBus& bus, WorldInterface& world
 {
     mTimer.start();
     accumulator = 0;
-    mBus.addMessageSubscriber<GravityRequestedMessage>(*this);
-    mBus.addMessageSubscriber<PhysicsImpulseMessage>(*this);
+    mBus.addSubscriber<GravityRequestedMessage>(*this);
+    mBus.addSubscriber<PhysicsImpulseMessage>(*this);
 }
 
 PhysicsController::~PhysicsController()
 {
-    mBus.removeMessageSubscriber<GravityRequestedMessage>(*this);
-    mBus.removeMessageSubscriber<PhysicsImpulseMessage>(*this);
+    mBus.removeSubscriber<GravityRequestedMessage>(*this);
+    mBus.removeSubscriber<PhysicsImpulseMessage>(*this);
 }
 
 void PhysicsController::inspectEntity(fea::WeakEntityPtr entity)
@@ -72,7 +72,7 @@ void PhysicsController::onFrame(int dt)
             }
         }
         entity->setAttribute<glm::vec3>("velocity", newVelocity);
-        mBus.sendMessage<EntityMoveRequestedMessage>(EntityMoveRequestedMessage(entity->getId(), newPosition));
+        mBus.send<EntityMoveRequestedMessage>(EntityMoveRequestedMessage(entity->getId(), newPosition));
     }
 }
 

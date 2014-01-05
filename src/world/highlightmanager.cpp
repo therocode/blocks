@@ -5,9 +5,9 @@ using namespace std;
 HighlightManager::HighlightManager(fea::MessageBus& bus, int highlightRadius)
     : mBus(bus), mHighlightRadius(highlightRadius) 
 {
-    mBus.addMessageSubscriber<HighlightEntitySpawnedMessage>(*this);
-    mBus.addMessageSubscriber<HighlightEntityDespawnedMessage>(*this);
-    mBus.addMessageSubscriber<HighlightEntityMovedMessage>(*this);
+    mBus.addSubscriber<HighlightEntitySpawnedMessage>(*this);
+    mBus.addSubscriber<HighlightEntityDespawnedMessage>(*this);
+    mBus.addSubscriber<HighlightEntityMovedMessage>(*this);
 }
 
 void HighlightManager::handleMessage(const HighlightEntitySpawnedMessage& msg)
@@ -108,7 +108,7 @@ void HighlightManager::highlightChunk(const ChunkCoord& coord)
 
     if(mRefCounts[coord] == 1) 
     {
-        mBus.sendMessage<ChunkHighlightedMessage>(ChunkHighlightedMessage(coord));    
+        mBus.send<ChunkHighlightedMessage>(ChunkHighlightedMessage(coord));    
     }
 }
 
@@ -129,6 +129,6 @@ void HighlightManager::dehighlightChunk(const ChunkCoord& coord)
 
     if(mRefCounts[coord] == 0)
     {
-        mBus.sendMessage<ChunkDehighlightedMessage>(ChunkDehighlightedMessage(coord));
+        mBus.send<ChunkDehighlightedMessage>(ChunkDehighlightedMessage(coord));
     }
 }

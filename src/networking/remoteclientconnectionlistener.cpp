@@ -26,7 +26,7 @@ void RemoteClientConnectionListener::listenerFunction()
                     {
                         char ipName[16];
                         enet_address_get_host_ip(&event.peer->address, ipName, 16);
-                        mBus.sendMessage<LogMessage>(LogMessage("A new client connected from " + std::string(ipName), mLogName, LogLevel::INFO));
+                        mBus.send<LogMessage>(LogMessage("A new client connected from " + std::string(ipName), mLogName, LogLevel::INFO));
                         /* Store any relevant client information here. */
                         RemoteClientBridge* newClientBridge = new RemoteClientBridge(event.peer);
                         size_t newClientId = mNextClientId;
@@ -101,12 +101,12 @@ void RemoteClientConnectionListener::createHost()
 	if(mHost == NULL)
     {
 		printf("Server couldn't create, port already in use.\n");
-        mBus.sendMessage<LogMessage>(LogMessage("Cannot listen on port " + std::to_string(mPort) + ", port already in use!", mLogName, LogLevel::ERR));
+        mBus.send<LogMessage>(LogMessage("Cannot listen on port " + std::to_string(mPort) + ", port already in use!", mLogName, LogLevel::ERR));
 		exit(1);
 	}
     
     else
 	{
-        mBus.sendMessage<LogMessage>(LogMessage("Now listening on port " + std::to_string(mPort) + " for incoming connections.", mLogName, LogLevel::INFO));
+        mBus.send<LogMessage>(LogMessage("Now listening on port " + std::to_string(mPort) + " for incoming connections.", mLogName, LogLevel::INFO));
 	}
 }

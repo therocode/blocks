@@ -6,30 +6,30 @@ Server::Server() : mUniverse(mBus),
     mScriptHandler(mBus, mUniverse.getWorldInterface()),
     mLogName("server")
 {
-    mBus.addMessageSubscriber<FatalMessage>(*this);
-    mBus.addMessageSubscriber<AddGfxEntityMessage>(*this);
-    mBus.addMessageSubscriber<MoveGfxEntityMessage>(*this);
-    mBus.addMessageSubscriber<RotateGfxEntityMessage>(*this);
-    mBus.addMessageSubscriber<RemoveGfxEntityMessage>(*this);
-    mBus.addMessageSubscriber<PlayerConnectedToEntityMessage>(*this);
-    mBus.addMessageSubscriber<PlayerFacingBlockMessage>(*this);
-    mBus.addMessageSubscriber<ChunkDeliverMessage>(*this);
-    mBus.addMessageSubscriber<ChunkDeletedMessage>(*this);
-    mBus.addMessageSubscriber<VoxelSetMessage>(*this);
+    mBus.addSubscriber<FatalMessage>(*this);
+    mBus.addSubscriber<AddGfxEntityMessage>(*this);
+    mBus.addSubscriber<MoveGfxEntityMessage>(*this);
+    mBus.addSubscriber<RotateGfxEntityMessage>(*this);
+    mBus.addSubscriber<RemoveGfxEntityMessage>(*this);
+    mBus.addSubscriber<PlayerConnectedToEntityMessage>(*this);
+    mBus.addSubscriber<PlayerFacingBlockMessage>(*this);
+    mBus.addSubscriber<ChunkDeliverMessage>(*this);
+    mBus.addSubscriber<ChunkDeletedMessage>(*this);
+    mBus.addSubscriber<VoxelSetMessage>(*this);
 }
 
 Server::~Server()
 {
-    mBus.removeMessageSubscriber<FatalMessage>(*this);
-    mBus.removeMessageSubscriber<AddGfxEntityMessage>(*this);
-    mBus.removeMessageSubscriber<MoveGfxEntityMessage>(*this);
-    mBus.removeMessageSubscriber<RotateGfxEntityMessage>(*this);
-    mBus.removeMessageSubscriber<RemoveGfxEntityMessage>(*this);
-    mBus.removeMessageSubscriber<PlayerConnectedToEntityMessage>(*this);
-    mBus.removeMessageSubscriber<PlayerFacingBlockMessage>(*this);
-    mBus.removeMessageSubscriber<ChunkDeliverMessage>(*this);
-    mBus.removeMessageSubscriber<ChunkDeletedMessage>(*this);
-    mBus.removeMessageSubscriber<VoxelSetMessage>(*this);
+    mBus.removeSubscriber<FatalMessage>(*this);
+    mBus.removeSubscriber<AddGfxEntityMessage>(*this);
+    mBus.removeSubscriber<MoveGfxEntityMessage>(*this);
+    mBus.removeSubscriber<RotateGfxEntityMessage>(*this);
+    mBus.removeSubscriber<RemoveGfxEntityMessage>(*this);
+    mBus.removeSubscriber<PlayerConnectedToEntityMessage>(*this);
+    mBus.removeSubscriber<PlayerFacingBlockMessage>(*this);
+    mBus.removeSubscriber<ChunkDeliverMessage>(*this);
+    mBus.removeSubscriber<ChunkDeletedMessage>(*this);
+    mBus.removeSubscriber<VoxelSetMessage>(*this);
 }
 
 void Server::setup()
@@ -37,8 +37,8 @@ void Server::setup()
     mScriptHandler.setup();
     mUniverse.setup();
     mFPSController.setMaxFPS(60);
-    mBus.sendMessage<LogMessage>(LogMessage("Server initialised and ready to go", mLogName, LogLevel::INFO));
-    mBus.sendMessage<GameStartMessage>(GameStartMessage());
+    mBus.send<LogMessage>(LogMessage("Server initialised and ready to go", mLogName, LogLevel::INFO));
+    mBus.send<GameStartMessage>(GameStartMessage());
 }
 fea::MessageBus& Server::getBus()
 {
@@ -54,7 +54,7 @@ void Server::doLogic()
         fetchClientData(client.second);
     }
 
-    mBus.sendMessage<FrameMessage>(FrameMessage(true));
+    mBus.send<FrameMessage>(FrameMessage(true));
 
     mUniverse.update();
 
@@ -72,7 +72,7 @@ void Server::destroy()
 {
     mUniverse.destroy();
     mScriptHandler.destroy();
-    mBus.sendMessage<LogMessage>(LogMessage("Server destroyed", mLogName, LogLevel::INFO));
+    mBus.send<LogMessage>(LogMessage("Server destroyed", mLogName, LogLevel::INFO));
 }
 
 void Server::handleMessage(const FatalMessage& received)
@@ -80,7 +80,7 @@ void Server::handleMessage(const FatalMessage& received)
     std::string message;
 
     std::tie(message) = received.data;
-    mBus.sendMessage<LogMessage>(LogMessage(message, mLogName, LogLevel::ERR));
+    mBus.send<LogMessage>(LogMessage(message, mLogName, LogLevel::ERR));
     exit(4);
 }
 
@@ -206,7 +206,7 @@ void Server::acceptClientConnection(std::shared_ptr<ClientConnection> client)
 
     mClients.emplace(newClientId, client);
 
-    mBus.sendMessage<LogMessage>(LogMessage(std::string("Client id ") + std::to_string(newClientId) + std::string(" connected"), mLogName, LogLevel::INFO));
+    mBus.send<LogMessage>(LogMessage(std::string("Client id ") + std::to_string(newClientId) + std::string(" connected"), mLogName, LogLevel::INFO));
 
     std::shared_ptr<BasePackage> playerIdPackage(new PlayerIdPackage(newClientId));
     client->enqueuePackage(playerIdPackage);
@@ -225,7 +225,7 @@ void Server::acceptClientConnection(std::shared_ptr<ClientConnection> client)
         client->enqueuePackage(chunkAddedPackage);
     }
 
-    mBus.sendMessage<PlayerJoinedMessage>(PlayerJoinedMessage(newClientId, glm::vec3(0.0f, 45.0f, 0.0f))); //position could be loaded from file or at spawn
+    mBus.send<PlayerJoinedMessage>(PlayerJoinedMessage(newClientId, glm::vec3(0.0f, 45.0f, 0.0f))); //position could be loaded from file or at spawn
 }
 
 void Server::pollNewClients()
@@ -251,12 +251,12 @@ void Server::fetchClientData(std::weak_ptr<ClientConnection> client)
         {
             if(package->mType == PackageType::REBUILD_SCRIPTS_REQUESTED)
             {
-                mBus.sendMessage<RebuildScriptsRequestedMessage>(RebuildScriptsRequestedMessage('0'));
+                mBus.send<RebuildScriptsRequestedMessage>(RebuildScriptsRequestedMessage('0'));
             }
             else if(package->mType == PackageType::PLAYER_ACTION)
             {
                 PlayerActionPackage* playerActionPackage = (PlayerActionPackage*) package.get();
-                mBus.sendMessage<PlayerActionMessage>(PlayerActionMessage(playerActionPackage->getData()));
+                mBus.send<PlayerActionMessage>(PlayerActionMessage(playerActionPackage->getData()));
             }
             else if(package->mType == PackageType::PLAYER_MOVE_DIRECTION)
             {
@@ -268,18 +268,18 @@ void Server::fetchClientData(std::weak_ptr<ClientConnection> client)
 
                 MoveDirection dir(forwardsBack, leftRight);
 
-                mBus.sendMessage<PlayerMoveDirectionMessage>(PlayerMoveDirectionMessage(id, dir));
+                mBus.send<PlayerMoveDirectionMessage>(PlayerMoveDirectionMessage(id, dir));
             }
             else if(package->mType == PackageType::PLAYER_MOVE_ACTION)
             {
                 PlayerMoveActionPackage* playerMoveActionPackage = (PlayerMoveActionPackage*) package.get();
 
-                mBus.sendMessage<PlayerMoveActionMessage>(PlayerMoveActionMessage(playerMoveActionPackage->getData()));
+                mBus.send<PlayerMoveActionMessage>(PlayerMoveActionMessage(playerMoveActionPackage->getData()));
             }
             else if(package->mType == PackageType::PLAYER_PITCH_YAW)
             {
                 PlayerPitchYawPackage* playerPitchYawPackage = (PlayerPitchYawPackage*) package.get();
-                mBus.sendMessage<PlayerPitchYawMessage>(PlayerPitchYawMessage(playerPitchYawPackage->getData()));
+                mBus.send<PlayerPitchYawMessage>(PlayerPitchYawMessage(playerPitchYawPackage->getData()));
             }
         }
     }
@@ -301,6 +301,6 @@ void Server::checkForDisconnectedClients()
     {
         mClients.erase(client);
         //send playerdisconnectedmessage
-        mBus.sendMessage<PlayerDisconnectedMessage>(PlayerDisconnectedMessage(client));
+        mBus.send<PlayerDisconnectedMessage>(PlayerDisconnectedMessage(client));
     }
 }

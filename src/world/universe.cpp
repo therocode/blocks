@@ -6,31 +6,32 @@
 #include "../entity/controllers/movementcontroller.h"
 #include "utilities/simplexnoise.h"
 
-	Universe::Universe(fea::MessageBus& messageBus) 
+Universe::Universe(fea::MessageBus& messageBus) 
 :   mBus(messageBus),
 	mEntitySystem(messageBus),
 	mWorldInterface(mStandardWorld, mEntitySystem),
     mRegionProvider(mBus),
     mChunkProvider(mBus, mStandardWorld, mModManager),
-    mHighlightManager(mBus, 15),
-    mModManager(mBus)
+    mHighlightManager(mBus, 7),
+    mModManager(mBus),
+    mLodManager(mBus)
 {
-	mBus.addMessageSubscriber<SetVoxelMessage>(*this);
-	mBus.addMessageSubscriber<RegionDeliverMessage>(*this);
-	mBus.addMessageSubscriber<ChunkDeliverMessage>(*this);
-	mBus.addMessageSubscriber<ChunkHighlightedMessage>(*this);
-	mBus.addMessageSubscriber<ChunkDehighlightedMessage>(*this);
-	mBus.addMessageSubscriber<RegionDeletedMessage>(*this);
+	mBus.addSubscriber<SetVoxelMessage>(*this);
+	mBus.addSubscriber<RegionDeliverMessage>(*this);
+	mBus.addSubscriber<ChunkDeliverMessage>(*this);
+	mBus.addSubscriber<ChunkHighlightedMessage>(*this);
+	mBus.addSubscriber<ChunkDehighlightedMessage>(*this);
+	mBus.addSubscriber<RegionDeletedMessage>(*this);
 }
 
 Universe::~Universe()
 {
-	mBus.removeMessageSubscriber<SetVoxelMessage>(*this);
-	mBus.removeMessageSubscriber<RegionDeliverMessage>(*this);
-	mBus.removeMessageSubscriber<ChunkDeliverMessage>(*this);
-	mBus.removeMessageSubscriber<ChunkHighlightedMessage>(*this);
-	mBus.removeMessageSubscriber<ChunkDehighlightedMessage>(*this);
-	mBus.removeMessageSubscriber<RegionDeletedMessage>(*this);
+	mBus.removeSubscriber<SetVoxelMessage>(*this);
+	mBus.removeSubscriber<RegionDeliverMessage>(*this);
+	mBus.removeSubscriber<ChunkDeliverMessage>(*this);
+	mBus.removeSubscriber<ChunkHighlightedMessage>(*this);
+	mBus.removeSubscriber<ChunkDehighlightedMessage>(*this);
+	mBus.removeSubscriber<RegionDeletedMessage>(*this);
 }
 
 void Universe::setup()
@@ -52,7 +53,7 @@ void Universe::update()
 void Universe::destroy()
 {
     mEntitySystem.destroy();
-    mBus.sendMessage(LogMessage(std::string("saving modifications to disk for all regions"), "file", LogLevel::VERB));
+    mBus.send(LogMessage(std::string("saving modifications to disk for all regions"), "file", LogLevel::VERB));
     mModManager.saveMods();
 }
 
@@ -67,7 +68,7 @@ void Universe::handleMessage(const SetVoxelMessage& received)
 
     if(succeeded)
     {
-        mBus.sendMessage<VoxelSetMessage>(VoxelSetMessage(coordinate, type));
+        mBus.send<VoxelSetMessage>(VoxelSetMessage(coordinate, type));
         mModManager.setMod(voxelToChunk(coordinate), voxelToChunkVoxel(coordinate), type);
     }
 }
@@ -85,18 +86,18 @@ void Universe::handleMessage(const RegionDeliverMessage& received)
 
 void Universe::handleMessage(const ChunkHighlightedMessage& received)
 {
-    mBus.sendMessage(ChunkRequestedMessage(received.data));
+    mBus.send(ChunkRequestedMessage(received.data));
 }
 
 void Universe::handleMessage(const ChunkDehighlightedMessage& received)
 {
     mModManager.recordTimestamp(std::get<0>(received.data), 0);
     bool regionDeleted = mStandardWorld.removeChunk(std::get<0>(received.data));
-    mBus.sendMessage(ChunkDeletedMessage(received.data));
+    mBus.send(ChunkDeletedMessage(received.data));
     
     if(regionDeleted)
     {
-        mBus.sendMessage(RegionDeletedMessage(chunkToRegion(std::get<0>(received.data))));
+        mBus.send(RegionDeletedMessage(chunkToRegion(std::get<0>(received.data))));
         std::cout << "region deleted: " << glm::to_string(glm::ivec2(chunkToRegion(std::get<0>(received.data)))) << "\n";
     }
 }
@@ -113,7 +114,7 @@ void Universe::handleMessage(const ChunkDeliverMessage& received)
 
 void Universe::handleMessage(const RegionDeletedMessage& received)
 {
-    mBus.sendMessage(LogMessage("saving modifications to disk for region" + glm::to_string((glm::ivec2)std::get<0>(received.data)), "file", LogLevel::VERB));
+    mBus.send(LogMessage("saving modifications to disk for region" + glm::to_string((glm::ivec2)std::get<0>(received.data)), "file", LogLevel::VERB));
     mModManager.saveMods(std::get<0>(received.data));
 }
 

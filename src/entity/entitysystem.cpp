@@ -12,15 +12,15 @@ EntitySystem::EntitySystem(fea::MessageBus& bus) :
     mFactory(mManager),
     mLogName("entity")
 {
-    mBus.addMessageSubscriber<CreateEntityMessage>(*this);
-    mBus.addMessageSubscriber<RemoveEntityMessage>(*this);
+    mBus.addSubscriber<CreateEntityMessage>(*this);
+    mBus.addSubscriber<RemoveEntityMessage>(*this);
     mTimer.start();
 }
 
 EntitySystem::~EntitySystem()
 {
-    mBus.removeMessageSubscriber<CreateEntityMessage>(*this);
-    mBus.removeMessageSubscriber<RemoveEntityMessage>(*this);
+    mBus.removeSubscriber<CreateEntityMessage>(*this);
+    mBus.removeSubscriber<RemoveEntityMessage>(*this);
 }
 
 void EntitySystem::addController(std::unique_ptr<EntityController> controller)
@@ -30,7 +30,7 @@ void EntitySystem::addController(std::unique_ptr<EntityController> controller)
 
 void EntitySystem::setup()
 {
-    mBus.sendMessage<LogMessage>(LogMessage("Loading entity definitions", mLogName, LogLevel::INFO));
+    mBus.send<LogMessage>(LogMessage("Loading entity definitions", mLogName, LogLevel::INFO));
 
     EntityDefinitionLoader loader;
 
@@ -38,19 +38,19 @@ void EntitySystem::setup()
     std::vector<std::string> definitionFiles;
     exploder.explodeFolder("data", ".*\\.def", definitionFiles);
 
-    mBus.sendMessage<LogMessage>(LogMessage("Found " + std::to_string(definitionFiles.size()) + " entity definitions", mLogName, LogLevel::INFO));
+    mBus.send<LogMessage>(LogMessage("Found " + std::to_string(definitionFiles.size()) + " entity definitions", mLogName, LogLevel::INFO));
     for(auto& fileName : definitionFiles)
     {
         EntityDefinition temp = loader.loadFromJSONFile(fileName);
         if(loader.errorOccurred())
         {
-            mBus.sendMessage<LogMessage>(LogMessage(loader.getErrorString(), mLogName, LogLevel::ERR));
-            mBus.sendMessage<FatalMessage>(std::string("Shutdown issued due to erroneous entity definition"));
+            mBus.send<LogMessage>(LogMessage(loader.getErrorString(), mLogName, LogLevel::ERR));
+            mBus.send<FatalMessage>(std::string("Shutdown issued due to erroneous entity definition"));
         }
         mFactory.addDefinition(temp);
-        mBus.sendMessage<LogMessage>(LogMessage("Added entity type '" + temp.name + "' to entity definitions", mLogName, LogLevel::VERB));
+        mBus.send<LogMessage>(LogMessage("Added entity type '" + temp.name + "' to entity definitions", mLogName, LogLevel::VERB));
     }
-    mBus.sendMessage<LogMessage>(LogMessage("Entity definitions loaded", mLogName, LogLevel::INFO));
+    mBus.send<LogMessage>(LogMessage("Entity definitions loaded", mLogName, LogLevel::INFO));
 }
 
 void EntitySystem::update()
@@ -64,7 +64,7 @@ void EntitySystem::update()
 
 void EntitySystem::destroy()
 {
-    mBus.sendMessage<LogMessage>(LogMessage("Removing all entities", mLogName, LogLevel::VERB));
+    mBus.send<LogMessage>(LogMessage("Removing all entities", mLogName, LogLevel::VERB));
     fea::EntityGroup entities = mManager.getAll();
 
     for(auto entity : entities)
@@ -79,7 +79,7 @@ fea::WeakEntityPtr EntitySystem::createEntity(const std::string& type, const glm
 
     entity.lock()->setAttribute<glm::vec3>("position", position);
 
-    mBus.sendMessage<EntityCreatedMessage>(EntityCreatedMessage(entity, type));
+    mBus.send<EntityCreatedMessage>(EntityCreatedMessage(entity, type));
 
     attachEntity(entity);
 
@@ -122,7 +122,7 @@ void EntitySystem::removeEntity(fea::EntityId id)
 
     mManager.removeEntity(id);
 
-    mBus.sendMessage<EntityRemovedMessage>(EntityRemovedMessage(id));
+    mBus.send<EntityRemovedMessage>(EntityRemovedMessage(id));
 }
 
 EntityCreator EntitySystem::getEntityCreator()

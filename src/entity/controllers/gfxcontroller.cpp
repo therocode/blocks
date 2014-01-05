@@ -4,12 +4,12 @@
 
 GfxController::GfxController(fea::MessageBus& bus, WorldInterface& worldInterface) : EntityController(bus, worldInterface)
 {
-    mBus.addMessageSubscriber<EntityMovedMessage>(*this);
+    mBus.addSubscriber<EntityMovedMessage>(*this);
 }
 
 GfxController::~GfxController()
 {
-    mBus.removeMessageSubscriber<EntityMovedMessage>(*this);
+    mBus.removeSubscriber<EntityMovedMessage>(*this);
 }
 
 void GfxController::inspectEntity(fea::WeakEntityPtr entity)
@@ -19,7 +19,7 @@ void GfxController::inspectEntity(fea::WeakEntityPtr entity)
     if(locked->hasAttribute("position"))
     {
         mEntities.emplace(locked->getId(), entity);
-        mBus.sendMessage<AddGfxEntityMessage>(AddGfxEntityMessage(locked->getId(), locked->getAttribute<glm::vec3>("position")));
+        mBus.send<AddGfxEntityMessage>(AddGfxEntityMessage(locked->getId(), locked->getAttribute<glm::vec3>("position")));
     }
 }
 
@@ -31,11 +31,11 @@ void GfxController::handleMessage(const EntityMovedMessage& message)
    
    std::tie(id, oldPosition, newPosition) = message.data;
    
-   mBus.sendMessage<MoveGfxEntityMessage>(MoveGfxEntityMessage(id, newPosition));
+   mBus.send<MoveGfxEntityMessage>(MoveGfxEntityMessage(id, newPosition));
 }
 
 void GfxController::removeEntity(fea::EntityId id)
 {
-    mBus.sendMessage<RemoveGfxEntityMessage>(RemoveGfxEntityMessage(id));
+    mBus.send<RemoveGfxEntityMessage>(RemoveGfxEntityMessage(id));
 }
 

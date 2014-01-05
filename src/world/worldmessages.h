@@ -16,7 +16,7 @@ struct RegionNeeded_tag{};//                               region to force loadi
 using RegionNeededMessage = fea::Message<RegionNeeded_tag, const RegionCoord&>;
 
 struct RegionDeliver_tag{};//                                coordinate               new region
-using RegionDeliverMessage = fea::Message<RegionDeliver_tag, const RegionCoord&, const std::reference_wrapper<Region>>;
+using RegionDeliverMessage = fea::Message<RegionDeliver_tag, const RegionCoord&, const Region&>;
 
 struct RegionDeleted_tag{};//                                coordinate
 using RegionDeletedMessage = fea::Message<RegionDeleted_tag, const RegionCoord&>;

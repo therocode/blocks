@@ -85,7 +85,7 @@ TEST_CASE("save and load", "[save][load]")
     manager.deleteRegionFile(regionLoc);
     manager.deleteRegionFile(regionLoc2);
     TestReceiver receiver;
-    bus.addMessageSubscriber<ChunkModdedMessage>(receiver);
+    bus.addSubscriber<ChunkModdedMessage>(receiver);
 
     SECTION("load an untimestamped chunk")
     {

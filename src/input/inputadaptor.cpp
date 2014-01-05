@@ -27,13 +27,13 @@ InputAdaptor::InputAdaptor(fea::MessageBus& b):
     first = true;
     mouseDown = false;
     windowFocus = true;
-    mBus.addMessageSubscriber<PlayerIdMessage>(*this);
+    mBus.addSubscriber<PlayerIdMessage>(*this);
     mNewPitch = mNewYaw = 0;
 }
 
 InputAdaptor::~InputAdaptor()
 {
-    mBus.removeMessageSubscriber<PlayerIdMessage>(*this);
+    mBus.removeSubscriber<PlayerIdMessage>(*this);
 }
 
 void InputAdaptor::update()
@@ -53,11 +53,11 @@ void InputAdaptor::update()
         else if(event.type == fea::Event::LOSTFOCUS)
         {
             windowFocus = false;
-            mBus.sendMessage<WindowFocusLostMessage>(WindowFocusLostMessage());
+            mBus.send<WindowFocusLostMessage>(WindowFocusLostMessage());
         }
         else if(event.type == fea::Event::CLOSED)
         {
-            mBus.sendMessage<PlayerActionMessage>(PlayerActionMessage(mPlayerId, InputAction::QUIT));
+            mBus.send<PlayerActionMessage>(PlayerActionMessage(mPlayerId, InputAction::QUIT));
         }
         else if(event.type == fea::Event::MOUSEMOVED)
         {
@@ -74,14 +74,14 @@ void InputAdaptor::update()
                     yaw   *= sensitivity;
                     PlayerPitchYawMessage msg(mPlayerId, pitch, yaw);
                    // msg.onlyLocal = true;
-                    mBus.sendMessage<PlayerPitchYawMessage>(msg);
+                    mBus.send<PlayerPitchYawMessage>(msg);
                    /* if(glm::abs(mNewYaw) > 10.f || glm::abs(mNewPitch) > 10.f)
                     {
                         mNewYaw *= sensitivity;
                         mNewPitch *= sensitivity;
                         msg.onlyLocal = false;
                         msg = PlayerPitchYawMessage(mPlayerId, mNewPitch, mNewYaw);
-                        mBus.sendMessage<PlayerPitchYawMessage>(msg);
+                        mBus.send<PlayerPitchYawMessage>(msg);
                         mNewPitch = mNewYaw = 0;
                     }*/
                 }
@@ -102,33 +102,33 @@ void InputAdaptor::update()
             //printf("clicked at psition %i, %i\n", event.mouseButton.x, event.mouseButton.y);
             if(event.mouseButton.button == fea::Mouse::Button::LEFT)
             {
-                mBus.sendMessage<PlayerActionMessage>(PlayerActionMessage(mPlayerId, InputAction::DIG));
+                mBus.send<PlayerActionMessage>(PlayerActionMessage(mPlayerId, InputAction::DIG));
             }
             else if(event.mouseButton.button == fea::Mouse::Button::RIGHT)
             {
-                mBus.sendMessage<PlayerActionMessage>(PlayerActionMessage(mPlayerId, InputAction::BUILD));
+                mBus.send<PlayerActionMessage>(PlayerActionMessage(mPlayerId, InputAction::BUILD));
             }
             if(event.mouseButton.y > 1 && event.mouseButton.x > 10)
             {
-                mBus.sendMessage<WindowInputMessage>(WindowInputMessage());
+                mBus.send<WindowInputMessage>(WindowInputMessage());
             }
         }
         else if(event.type == fea::Event::MOUSEWHEELMOVED)
         {
             if(event.mouseWheel.delta > 0)
             {
-                mBus.sendMessage<PlayerActionMessage>(PlayerActionMessage(mPlayerId, InputAction::DIG));
+                mBus.send<PlayerActionMessage>(PlayerActionMessage(mPlayerId, InputAction::DIG));
             }
             else if(event.mouseWheel.delta < 0)
             {
-                mBus.sendMessage<PlayerActionMessage>(PlayerActionMessage(mPlayerId, InputAction::BUILD));
+                mBus.send<PlayerActionMessage>(PlayerActionMessage(mPlayerId, InputAction::BUILD));
             }
             if(event.mouseWheel.x > 0)
             {
-                mBus.sendMessage<PlayerPitchYawMessage>(PlayerPitchYawMessage(mPlayerId, 0, -1.0f));
+                mBus.send<PlayerPitchYawMessage>(PlayerPitchYawMessage(mPlayerId, 0, -1.0f));
             }else if(event.mouseWheel.x < 0)
             {
-                mBus.sendMessage<PlayerPitchYawMessage>(PlayerPitchYawMessage(mPlayerId, 0, 1.0f));
+                mBus.send<PlayerPitchYawMessage>(PlayerPitchYawMessage(mPlayerId, 0, 1.0f));
             }
         }
         else if(event.type == fea::Event::MOUSEBUTTONRELEASED)
@@ -136,12 +136,12 @@ void InputAdaptor::update()
             mouseDown = false;
             if(event.mouseButton.button == fea::Mouse::Button::LEFT)
             {
-                mBus.sendMessage<PlayerActionMessage>(PlayerActionMessage(mPlayerId, InputAction::STOPMOUSELEFT));
+                mBus.send<PlayerActionMessage>(PlayerActionMessage(mPlayerId, InputAction::STOPMOUSELEFT));
             }
         }
         else if(event.type == fea::Event::RESIZED)
         {
-            mBus.sendMessage<WindowResizeMessage>(WindowResizeMessage(event.size.width, event.size.height));
+            mBus.send<WindowResizeMessage>(WindowResizeMessage(event.size.width, event.size.height));
         }
     }
 
@@ -150,7 +150,7 @@ void InputAdaptor::update()
         if(action == "quit")
         {
             printf("Hej, jag slutar nu. Hejdå.\n");
-            mBus.sendMessage<PlayerActionMessage>(PlayerActionMessage(mPlayerId, InputAction::QUIT));
+            mBus.send<PlayerActionMessage>(PlayerActionMessage(mPlayerId, InputAction::QUIT));
         }
         else if(action == "forwards")
         {
@@ -173,11 +173,11 @@ void InputAdaptor::update()
             sendMovementData();
         }
         else if(action == "jump")
-            mBus.sendMessage<PlayerActionMessage>(PlayerActionMessage(mPlayerId, InputAction::JUMP));
+            mBus.send<PlayerActionMessage>(PlayerActionMessage(mPlayerId, InputAction::JUMP));
         else if(action == "crouch")
-            mBus.sendMessage<PlayerActionMessage>(PlayerActionMessage(mPlayerId, InputAction::CROUCH));
+            mBus.send<PlayerActionMessage>(PlayerActionMessage(mPlayerId, InputAction::CROUCH));
         else if(action == "rebuild_scripts")
-            mBus.sendMessage<RebuildScriptsRequestedMessage>(RebuildScriptsRequestedMessage('0'));
+            mBus.send<RebuildScriptsRequestedMessage>(RebuildScriptsRequestedMessage('0'));
 
         else if(action == "stopforwards")
         {
@@ -200,9 +200,9 @@ void InputAdaptor::update()
             sendMovementData();
         }
         else if(action == "stopjump")
-            mBus.sendMessage<PlayerActionMessage>(PlayerActionMessage(mPlayerId, InputAction::STOPJUMP));
+            mBus.send<PlayerActionMessage>(PlayerActionMessage(mPlayerId, InputAction::STOPJUMP));
         else if(action == "stopcrouch")
-            mBus.sendMessage<PlayerActionMessage>(PlayerActionMessage(mPlayerId, InputAction::STOPCROUCH));
+            mBus.send<PlayerActionMessage>(PlayerActionMessage(mPlayerId, InputAction::STOPCROUCH));
     }
 }
 
@@ -215,10 +215,10 @@ void InputAdaptor::sendMovementData()
 {
     direction.setDirection(mHoldingForwards, mHoldingBackwards, mHoldingLeft, mHoldingRight);
 
-    mBus.sendMessage<PlayerMoveDirectionMessage>(PlayerMoveDirectionMessage(mPlayerId, direction));
+    mBus.send<PlayerMoveDirectionMessage>(PlayerMoveDirectionMessage(mPlayerId, direction));
 
     if(direction.isStill())
-        mBus.sendMessage<PlayerMoveActionMessage>(PlayerMoveActionMessage(mPlayerId, MoveAction::STANDING));
+        mBus.send<PlayerMoveActionMessage>(PlayerMoveActionMessage(mPlayerId, MoveAction::STANDING));
     else
-        mBus.sendMessage<PlayerMoveActionMessage>(PlayerMoveActionMessage(mPlayerId, MoveAction::WALKING));
+        mBus.send<PlayerMoveActionMessage>(PlayerMoveActionMessage(mPlayerId, MoveAction::WALKING));
 }

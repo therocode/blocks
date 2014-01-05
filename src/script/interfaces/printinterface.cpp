@@ -15,10 +15,10 @@ void PrintInterface::registerInterface(asIScriptEngine* engine)
 
 void PrintInterface::scriptPrint(const std::string& text)
 {
-    mBus.sendMessage<LogMessage>(LogMessage(text, mLogName, LogLevel::INFO));
+    mBus.send<LogMessage>(LogMessage(text, mLogName, LogLevel::INFO));
 }
 
 void PrintInterface::scriptPrint(const std::string& text, uint32_t level)
 {
-    mBus.sendMessage<LogMessage>(LogMessage(text, mLogName, level));
+    mBus.send<LogMessage>(LogMessage(text, mLogName, level));
 }

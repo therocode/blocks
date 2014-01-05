@@ -8,14 +8,14 @@ Logger::Logger(fea::MessageBus& bus, uint32_t logLevel) : mBus(bus),
                                        mLogLevel(logLevel)
 {
     Console::Initialise();
-    mBus.addMessageSubscriber<LogMessage>(*this);
-    mBus.addMessageSubscriber<LogLevelMessage>(*this);
+    mBus.addSubscriber<LogMessage>(*this);
+    mBus.addSubscriber<LogLevelMessage>(*this);
 }
 
 Logger::~Logger()
 {
-    mBus.removeMessageSubscriber<LogMessage>(*this);
-    mBus.removeMessageSubscriber<LogLevelMessage>(*this);
+    mBus.removeSubscriber<LogMessage>(*this);
+    mBus.removeSubscriber<LogLevelMessage>(*this);
     Console::ResetColor();
 }
 

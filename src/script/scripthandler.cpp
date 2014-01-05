@@ -20,9 +20,9 @@ ScriptHandler::ScriptHandler(fea::MessageBus& bus, WorldInterface& worldInterfac
     mWorldInterface(worldInterface),
     logName("script")
 {
-    mBus.addMessageSubscriber<RebuildScriptsRequestedMessage>(*this);
-    mBus.addMessageSubscriber<EntityCreatedMessage>(*this);
-    mBus.addMessageSubscriber<EntityRemovedMessage>(*this);
+    mBus.addSubscriber<RebuildScriptsRequestedMessage>(*this);
+    mBus.addSubscriber<EntityCreatedMessage>(*this);
+    mBus.addSubscriber<EntityRemovedMessage>(*this);
 
     ScriptEntityCore::sWorldInterface = &worldInterface;
     ScriptEntityCore::sBus = &bus;
@@ -30,9 +30,9 @@ ScriptHandler::ScriptHandler(fea::MessageBus& bus, WorldInterface& worldInterfac
 
 ScriptHandler::~ScriptHandler()
 {
-    mBus.removeMessageSubscriber<RebuildScriptsRequestedMessage>(*this);
-    mBus.removeMessageSubscriber<EntityCreatedMessage>(*this);
-    mBus.removeMessageSubscriber<EntityRemovedMessage>(*this);
+    mBus.removeSubscriber<RebuildScriptsRequestedMessage>(*this);
+    mBus.removeSubscriber<EntityCreatedMessage>(*this);
+    mBus.removeSubscriber<EntityRemovedMessage>(*this);
 }
 
 void ScriptHandler::setup()
@@ -60,19 +60,19 @@ void ScriptHandler::setup()
     exploder.explodeFolder("data", ".*\\.as", sourceFiles);
     for(auto& string : sourceFiles)
     {
-        mBus.sendMessage<LogMessage>(LogMessage("Adding " + string + " for compilation.", logName, LogLevel::VERB));
+        mBus.send<LogMessage>(LogMessage("Adding " + string + " for compilation.", logName, LogLevel::VERB));
     }
 
-    mBus.sendMessage<LogMessage>(LogMessage("Compiling scripts...", logName, LogLevel::INFO));
+    mBus.send<LogMessage>(LogMessage("Compiling scripts...", logName, LogLevel::INFO));
     bool succeeded = mScripts.compileFromSourceList(sourceFiles);
-    mBus.sendMessage<LogMessage>(LogMessage("Compilation process over.", logName, LogLevel::INFO));
+    mBus.send<LogMessage>(LogMessage("Compilation process over.", logName, LogLevel::INFO));
 
     if(succeeded)
     {
-        mBus.sendMessage<LogMessage>(LogMessage("Setting up script callbacks...", logName, LogLevel::VERB));
+        mBus.send<LogMessage>(LogMessage("Setting up script callbacks...", logName, LogLevel::VERB));
         registerCallbacks(scriptEntities);
-        mBus.sendMessage<LogMessage>(LogMessage("Compilation process over.", logName, LogLevel::VERB));
-        mBus.sendMessage<LogMessage>(LogMessage("Done setting up callbacks.", logName, LogLevel::VERB));
+        mBus.send<LogMessage>(LogMessage("Compilation process over.", logName, LogLevel::VERB));
+        mBus.send<LogMessage>(LogMessage("Done setting up callbacks.", logName, LogLevel::VERB));
 
         for(auto& caller : mCallers)
         {
@@ -90,16 +90,16 @@ void ScriptHandler::destroy()
 
 void ScriptHandler::handleMessage(const RebuildScriptsRequestedMessage& message)
 {
-    mBus.sendMessage<LogMessage>(LogMessage("Compiling scripts...", logName, LogLevel::INFO));
+    mBus.send<LogMessage>(LogMessage("Compiling scripts...", logName, LogLevel::INFO));
     bool succeeded = mScripts.compileFromSourceList(sourceFiles);
-    mBus.sendMessage<LogMessage>(LogMessage("Compilation process over.", logName, LogLevel::INFO));
+    mBus.send<LogMessage>(LogMessage("Compilation process over.", logName, LogLevel::INFO));
 
     if(succeeded)
     {
-        mBus.sendMessage<LogMessage>(LogMessage("Setting up script callbacks...", logName, LogLevel::VERB));
+        mBus.send<LogMessage>(LogMessage("Setting up script callbacks...", logName, LogLevel::VERB));
         registerCallbacks(scriptEntities);
-        mBus.sendMessage<LogMessage>(LogMessage("Compilation process over.", logName, LogLevel::VERB));
-        mBus.sendMessage<LogMessage>(LogMessage("Done setting up callbacks.", logName, LogLevel::VERB));
+        mBus.send<LogMessage>(LogMessage("Compilation process over.", logName, LogLevel::VERB));
+        mBus.send<LogMessage>(LogMessage("Done setting up callbacks.", logName, LogLevel::VERB));
         for(auto& caller : mCallers)
         {
             caller->setActive(true);
@@ -124,7 +124,7 @@ void ScriptHandler::handleMessage(const EntityCreatedMessage& message)
     asIObjectType* objectType = mScripts.getObjectTypeByDecl(type);
     if(!objectType)
     {
-        mBus.sendMessage<LogMessage>(LogMessage("Script runtime error: Trying to create entity of invalid type '" + type + "'", logName, LogLevel::ERR));
+        mBus.send<LogMessage>(LogMessage("Script runtime error: Trying to create entity of invalid type '" + type + "'", logName, LogLevel::ERR));
         return;
     }
 
@@ -150,7 +150,7 @@ void ScriptHandler::handleMessage(const EntityCreatedMessage& message)
         // otherwise it will be destroyed when the context is reused or destroyed.
         obj->AddRef();
 
-        mBus.sendMessage<LogMessage>(LogMessage("Created entity id " + std::to_string(id) + " of type '" + type + "'", logName, LogLevel::VERB));
+        mBus.send<LogMessage>(LogMessage("Created entity id " + std::to_string(id) + " of type '" + type + "'", logName, LogLevel::VERB));
 
         mEngine.freeContext(ctx);
 
@@ -159,7 +159,7 @@ void ScriptHandler::handleMessage(const EntityCreatedMessage& message)
     }
     else
     {
-        mBus.sendMessage<LogMessage>(LogMessage("Script runtime error: Entity of type '" + type + "' has no valid factory function", logName, LogLevel::ERR));
+        mBus.send<LogMessage>(LogMessage("Script runtime error: Entity of type '" + type + "' has no valid factory function", logName, LogLevel::ERR));
     }
 }
 
