@@ -10,16 +10,13 @@ set(BUILD_TESTS TRUE CACHE BOOL "build the tests")
 set(BUILD_GAME TRUE CACHE BOOL "build the actual game")
 
 set(ASM_OPTIMISATIONS FALSE CACHE BOOL "use assembler optimisation for noise generation")
+set(ASM_COMPILER_PATH "" CACHE PATH "select asm compiler to use")
 
 if(ASM_OPTIMISATIONS) #if this option is chosen, then it #ifdef NOISE_ASM in the code will be run
 	set(64_BIT_ASM TRUE CACHE BOOL "Generate 64 or 32 bit asm.")
 
 	if(64_BIT_ASM)
-		if(WIN32)
-			set(YASM_PATH "${CMAKE_SOURCE_DIR}/yasm/yasm-1.2.0-win64.exe")
-		else()
-			set(YASM_PATH "${CMAKE_SOURCE_DIR}/yasm/yasm-linux64")
-		endif()
+        set(YASM_PATH ${ASM_COMPILER_PATH})
 		enable_language(ASM-NASM)
 		add_definitions(-DNOISE_ASM)
 	else()

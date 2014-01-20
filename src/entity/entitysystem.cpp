@@ -65,7 +65,7 @@ void EntitySystem::update()
 void EntitySystem::destroy()
 {
     mBus.send<LogMessage>(LogMessage("Removing all entities", mLogName, LogLevel::VERB));
-    fea::EntityGroup entities = mManager.getAll();
+    fea::EntitySet entities = mManager.getAll();
 
     for(auto entity : entities)
     {

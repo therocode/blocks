@@ -12,7 +12,7 @@ Universe::Universe(fea::MessageBus& messageBus)
 	mWorldInterface(mStandardWorld, mEntitySystem),
     mRegionProvider(mBus),
     mChunkProvider(mBus, mStandardWorld, mModManager),
-    mHighlightManager(mBus, 7),
+    mHighlightManager(mBus, 17),
     mModManager(mBus),
     mLodManager(mBus)
 {
