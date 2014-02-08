@@ -44,7 +44,7 @@ void PlayerController::handleMessage(const PlayerJoinedMessage& received)
     size_t playerId;
     glm::vec3 position;
 
-    std::tie(playerId, position) = received.data;
+    std::tie(playerId, position) = received.mData;
 
     fea::WeakEntityPtr playerEntity = mWorldInterface.createEntity("Player", position);
     std::cout << "created player entity and it's id is " << playerEntity.lock()->getId() << "\n";
@@ -62,7 +62,7 @@ void PlayerController::handleMessage(const PlayerDisconnectedMessage& received)
 {
     size_t playerId;
 
-    std::tie(playerId) = received.data;
+    std::tie(playerId) = received.mData;
 
     mBus.send<RemoveEntityMessage>(RemoveEntityMessage(mPlayerEntities.at(playerId).lock()->getId()));
     mBus.send(HighlightEntityDespawnedMessage(playerId));
@@ -74,7 +74,7 @@ void PlayerController::handleMessage(const PlayerActionMessage& received)
     size_t playerId;
     InputAction action;
 
-    std::tie(playerId, action) = received.data;
+    std::tie(playerId, action) = received.mData;
 
     if(action == FORWARDS)
     {
@@ -144,7 +144,7 @@ void PlayerController::handleMessage(const PlayerMoveDirectionMessage& received)
     size_t playerId;
     MoveDirection direction;
 
-    std::tie(playerId, direction) = received.data;
+    std::tie(playerId, direction) = received.mData;
 
     mPlayerEntities.at(playerId).lock()->setAttribute<MoveDirection>("move_direction", direction);
 }
@@ -154,7 +154,7 @@ void PlayerController::handleMessage(const PlayerMoveActionMessage& received)
     size_t playerId;
     MoveAction moveAction;
 
-    std::tie(playerId, moveAction) = received.data;
+    std::tie(playerId, moveAction) = received.mData;
 
     mPlayerEntities.at(playerId).lock()->setAttribute<MoveAction>("move_action", moveAction);
 }
@@ -166,7 +166,7 @@ void PlayerController::handleMessage(const PlayerPitchYawMessage& received) //mo
     float pitch;
     float yaw;
 
-    std::tie(playerId, pitch, yaw) = received.data;
+    std::tie(playerId, pitch, yaw) = received.mData;
 
     auto playerEntry = mPlayerEntities.find(playerId);
     if(playerEntry != mPlayerEntities.end())
@@ -194,7 +194,7 @@ void PlayerController::handleMessage(const EntityMovedMessage& received)
 {
     size_t id;
 
-    std::tie(id, std::ignore, std::ignore) = received.data;
+    std::tie(id, std::ignore, std::ignore) = received.mData;
 
     if(mPlayerEntities.find(id) != mPlayerEntities.end())
     {

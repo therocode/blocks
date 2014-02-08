@@ -62,7 +62,7 @@ void Universe::handleMessage(const SetVoxelMessage& received)
     VoxelCoord coordinate;
     VoxelType type;
 
-    std::tie(coordinate, type) = received.data;
+    std::tie(coordinate, type) = received.mData;
 
     bool succeeded = mStandardWorld.setVoxelType(coordinate, type);
 
@@ -78,7 +78,7 @@ void Universe::handleMessage(const RegionDeliverMessage& received)
     RegionCoord coordinate;
     Region region;
 
-    std::tie(coordinate, region) = received.data;
+    std::tie(coordinate, region) = received.mData;
 
     mStandardWorld.addRegion(coordinate, region);
     std::cout << "region created: " << glm::to_string((glm::ivec2)coordinate) << "\n";
@@ -86,19 +86,19 @@ void Universe::handleMessage(const RegionDeliverMessage& received)
 
 void Universe::handleMessage(const ChunkHighlightedMessage& received)
 {
-    mBus.send(ChunkRequestedMessage(received.data));
+    mBus.send(ChunkRequestedMessage(received.mData));
 }
 
 void Universe::handleMessage(const ChunkDehighlightedMessage& received)
 {
-    mModManager.recordTimestamp(std::get<0>(received.data), 0);
-    bool regionDeleted = mStandardWorld.removeChunk(std::get<0>(received.data));
-    mBus.send(ChunkDeletedMessage(received.data));
+    mModManager.recordTimestamp(std::get<0>(received.mData), 0);
+    bool regionDeleted = mStandardWorld.removeChunk(std::get<0>(received.mData));
+    mBus.send(ChunkDeletedMessage(received.mData));
     
     if(regionDeleted)
     {
-        mBus.send(RegionDeletedMessage(chunkToRegion(std::get<0>(received.data))));
-        std::cout << "region deleted: " << glm::to_string(glm::ivec2(chunkToRegion(std::get<0>(received.data)))) << "\n";
+        mBus.send(RegionDeletedMessage(chunkToRegion(std::get<0>(received.mData))));
+        std::cout << "region deleted: " << glm::to_string(glm::ivec2(chunkToRegion(std::get<0>(received.mData)))) << "\n";
     }
 }
 
@@ -107,15 +107,15 @@ void Universe::handleMessage(const ChunkDeliverMessage& received)
     ChunkCoord coordinate;
     Chunk chunk;
 
-    std::tie(coordinate, chunk) = std::move(received.data);
+    std::tie(coordinate, chunk) = std::move(received.mData);
 
     mStandardWorld.addChunk(coordinate, chunk);
 }
 
 void Universe::handleMessage(const RegionDeletedMessage& received)
 {
-    mBus.send(LogMessage("saving modifications to disk for region" + glm::to_string((glm::ivec2)std::get<0>(received.data)), "file", LogLevel::VERB));
-    mModManager.saveMods(std::get<0>(received.data));
+    mBus.send(LogMessage("saving modifications to disk for region" + glm::to_string((glm::ivec2)std::get<0>(received.mData)), "file", LogLevel::VERB));
+    mModManager.saveMods(std::get<0>(received.mData));
 }
 
 WorldInterface& Universe::getWorldInterface()

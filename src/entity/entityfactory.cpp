@@ -7,24 +7,38 @@
 #include "controllers/moveaction.h"
 #include "controllers/movedirection.h"
 
-EntityFactory::EntityFactory(fea::EntityManager& manager) : mManager(manager)
+EntityFactory::EntityFactory(fea::EntityManager& manager) : mManager(manager), mFactory(manager)
 {
     //register templates
     fea::util::JsonEntityLoader loader;
-    loader.registerType("#vec3#",sizeof(glm::vec3));
-    loader.registerType("#int16#",sizeof(int16_t));
-    loader.registerType("#chunkcoordinate#",sizeof(ChunkCoord));
-	loader.registerType("#voxelworldcoordinate#", sizeof(VoxelCoord));
-    mManager.registerAttributes(loader.loadAttributesJson("data/attributes.json"));
-    mManager.registerEntityTemplates(loader.loadEntitiesJson("data/entities.json"));
-    mManager.registerDefaultSetter("position", vec3Setter);
-    mManager.registerDefaultSetter("velocity", vec3Setter);
-    mManager.registerDefaultSetter("acceleration", vec3Setter);
-    mManager.registerDefaultSetter("pitch", fea::util::floatSetter);
-    mManager.registerDefaultSetter("yaw", fea::util::floatSetter);
-    mManager.registerDefaultSetter("hitbox", vec3Setter);
-    mManager.registerDefaultSetter("on_ground", fea::util::boolSetter);
-    mManager.registerDefaultSetter("jumping", fea::util::boolSetter);
+    mManager.registerAttribute<glm::vec3>("position");
+    mManager.registerAttribute<glm::vec3>("velocity");
+    mManager.registerAttribute<glm::vec3>("acceleration");
+    mManager.registerAttribute<float>("pitch");
+    mManager.registerAttribute<float>("yaw");
+    mManager.registerAttribute<uint32_t>("physics_type");
+    mManager.registerAttribute<float>("drag");
+    mManager.registerAttribute<glm::vec3>("hitbox");
+    mManager.registerAttribute<bool>("on_ground");
+    mManager.registerAttribute<ChunkCoord>("current_chunk");
+    mManager.registerAttribute<VoxelCoord>("block_facing");
+    mManager.registerAttribute<bool>("is_facing_block");
+    mManager.registerAttribute<uint32_t>("block_facing_face");
+    mManager.registerAttribute<float>("walk_speed");
+    mManager.registerAttribute<float>("run_speed");
+    mManager.registerAttribute<float>("jump_strength");
+    mManager.registerAttribute<bool>("jumping");
+    mManager.registerAttribute<uint32_t>("move_action");
+    mManager.registerAttribute<int16_t>("move_direction");
+    mFactory.registerEntityTemplates(loader.loadEntityTemplates("data/entities.json"));
+    mFactory.registerDefaultSetter("position", vec3Setter);
+    mFactory.registerDefaultSetter("velocity", vec3Setter);
+    mFactory.registerDefaultSetter("acceleration", vec3Setter);
+    mFactory.registerDefaultSetter("pitch", fea::util::floatSetter);
+    mFactory.registerDefaultSetter("yaw", fea::util::floatSetter);
+    mFactory.registerDefaultSetter("hitbox", vec3Setter);
+    mFactory.registerDefaultSetter("on_ground", fea::util::boolSetter);
+    mFactory.registerDefaultSetter("jumping", fea::util::boolSetter);
 }
 
 fea::WeakEntityPtr EntityFactory::spawnEntity(const std::string& scriptType)
@@ -38,7 +52,7 @@ fea::WeakEntityPtr EntityFactory::spawnEntity(const std::string& scriptType)
     const EntityDefinition& definition = mEntityDefinitions.at(scriptType);
     std::string category = definition.category;
 
-    fea::EntityPtr spawned = mManager.createEntity(category).lock();
+    fea::EntityPtr spawned = mFactory.createEntity(category).lock();
     spawned->setAttribute<PhysicsType>("physics_type", definition.physicsType);
     spawned->setAttribute<float>("drag", definition.drag);
     spawned->setAttribute<float>("walk_speed", definition.walkSpeed);

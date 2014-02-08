@@ -28,7 +28,7 @@ void ChunkGeneratorQueue::generateSomeChunks(std::unordered_map<ChunkCoord, VBO>
         for(;iterator != mQueue.end(); iterator ++){
             VoxelCoord c = iterator->first;
             c *= chunkWidth;
-            float d = glm::length2(c - focusPoint);
+            float d = glm::length((glm::vec3)(c - focusPoint));
             if(d < minDist){
                 minDist = d;
                 closestChunk = iterator;

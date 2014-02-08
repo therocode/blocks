@@ -79,7 +79,7 @@ void Server::handleMessage(const FatalMessage& received)
 {
     std::string message;
 
-    std::tie(message) = received.data;
+    std::tie(message) = received.mData;
     mBus.send<LogMessage>(LogMessage(message, mLogName, LogLevel::ERR));
     exit(4);
 }
@@ -89,7 +89,7 @@ void Server::handleMessage(const ChunkDeliverMessage& received)
     ChunkCoord coordinate;
     Chunk chunk;
 
-    std::tie(coordinate, chunk) = received.data;
+    std::tie(coordinate, chunk) = received.mData;
 
     VoxelTypeData typeData = chunk.getVoxelTypeData();
 
@@ -103,7 +103,7 @@ void Server::handleMessage(const ChunkDeliverMessage& received)
 
 void Server::handleMessage(const ChunkDeletedMessage& received)
 {
-    std::shared_ptr<BasePackage> chunkDeletedPackage(new ChunkDeletedPackage(received.data));
+    std::shared_ptr<BasePackage> chunkDeletedPackage(new ChunkDeletedPackage(received.mData));
     for(auto& client : mClients)
     {
         client.second->enqueuePackage(chunkDeletedPackage);
@@ -114,9 +114,9 @@ void Server::handleMessage(const AddGfxEntityMessage& received)
 {
     size_t id;
 
-    std::tie(id, std::ignore) = received.data;
+    std::tie(id, std::ignore) = received.mData;
 
-    std::shared_ptr<BasePackage> gfxEntityAddedPackage(new GfxEntityAddedPackage(received.data));
+    std::shared_ptr<BasePackage> gfxEntityAddedPackage(new GfxEntityAddedPackage(received.mData));
     for(auto& client : mClients)
     {
         client.second->enqueuePackage(gfxEntityAddedPackage);
@@ -127,7 +127,7 @@ void Server::handleMessage(const AddGfxEntityMessage& received)
 
 void Server::handleMessage(const MoveGfxEntityMessage& received)
 {
-    std::shared_ptr<BasePackage> gfxEntityMovedPackage(new GfxEntityMovedPackage(received.data));
+    std::shared_ptr<BasePackage> gfxEntityMovedPackage(new GfxEntityMovedPackage(received.mData));
     for(auto& client : mClients)
     {
         client.second->enqueuePackage(gfxEntityMovedPackage);
@@ -136,7 +136,7 @@ void Server::handleMessage(const MoveGfxEntityMessage& received)
 
 void Server::handleMessage(const RotateGfxEntityMessage& received)
 {
-    std::shared_ptr<BasePackage> gfxEntityRotatedPackage(new GfxEntityRotatedPackage(received.data));
+    std::shared_ptr<BasePackage> gfxEntityRotatedPackage(new GfxEntityRotatedPackage(received.mData));
     for(auto& client : mClients)
     {
         client.second->enqueuePackage(gfxEntityRotatedPackage);
@@ -147,9 +147,9 @@ void Server::handleMessage(const RemoveGfxEntityMessage& received)
 {
     size_t id;
 
-    std::tie(id) = received.data;
+    std::tie(id) = received.mData;
 
-    std::shared_ptr<BasePackage> gfxEntityRemovedPackage(new GfxEntityRemovedPackage(received.data));
+    std::shared_ptr<BasePackage> gfxEntityRemovedPackage(new GfxEntityRemovedPackage(received.mData));
     for(auto& client : mClients)
     {
         client.second->enqueuePackage(gfxEntityRemovedPackage);
@@ -160,7 +160,7 @@ void Server::handleMessage(const RemoveGfxEntityMessage& received)
 
 void Server::handleMessage(const PlayerConnectedToEntityMessage& received)
 {
-    std::shared_ptr<BasePackage> playerConnectedToEntityPackage(new PlayerConnectedToEntityPackage(received.data));
+    std::shared_ptr<BasePackage> playerConnectedToEntityPackage(new PlayerConnectedToEntityPackage(received.mData));
     for(auto& client : mClients)
     {
         client.second->enqueuePackage(playerConnectedToEntityPackage);
@@ -175,7 +175,7 @@ void Server::handleMessage(const PlayerFacingBlockMessage& received)
     int y;
     int z;
 
-    std::tie(id, vector) = received.data;
+    std::tie(id, vector) = received.mData;
 
     x = vector.x;
     y = vector.y;
@@ -188,7 +188,7 @@ void Server::handleMessage(const PlayerFacingBlockMessage& received)
 
 void Server::handleMessage(const VoxelSetMessage& received)
 {
-    std::shared_ptr<BasePackage> voxelSetPackage(new VoxelSetPackage(received.data));
+    std::shared_ptr<BasePackage> voxelSetPackage(new VoxelSetPackage(received.mData));
     for(auto& client : mClients)
     {
         client.second->enqueuePackage(voxelSetPackage);

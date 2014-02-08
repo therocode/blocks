@@ -155,6 +155,6 @@ void MovementController::handleMessage(const EntityJumpMessage& received)
 {
     size_t id;
 	bool jumping;
-    std::tie(id, jumping) = received.data;
+    std::tie(id, jumping) = received.mData;
 	mEntities.at(id).lock()->setAttribute<bool>("jumping", jumping);
 }

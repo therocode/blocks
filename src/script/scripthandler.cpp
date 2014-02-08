@@ -88,7 +88,7 @@ void ScriptHandler::destroy()
     mEngine.destroy();
 }
 
-void ScriptHandler::handleMessage(const RebuildScriptsRequestedMessage& message)
+void ScriptHandler::handleMessage(const RebuildScriptsRequestedMessage& received)
 {
     mBus.send<LogMessage>(LogMessage("Compiling scripts...", logName, LogLevel::INFO));
     bool succeeded = mScripts.compileFromSourceList(sourceFiles);
@@ -114,12 +114,12 @@ void ScriptHandler::handleMessage(const RebuildScriptsRequestedMessage& message)
     }
 }
 
-void ScriptHandler::handleMessage(const EntityCreatedMessage& message)
+void ScriptHandler::handleMessage(const EntityCreatedMessage& received)
 {
     fea::WeakEntityPtr wEntity;
     std::string type;
     
-    std::tie(wEntity, type) = message.data;
+    std::tie(wEntity, type) = received.mData;
 
     asIObjectType* objectType = mScripts.getObjectTypeByDecl(type);
     if(!objectType)
@@ -163,10 +163,10 @@ void ScriptHandler::handleMessage(const EntityCreatedMessage& message)
     }
 }
 
-void ScriptHandler::handleMessage(const EntityRemovedMessage& message)
+void ScriptHandler::handleMessage(const EntityRemovedMessage& received)
 {
     size_t id;
-    std::tie(id) = message.data;
+    std::tie(id) = received.mData;
 
     auto entity = scriptEntities.find(id);
 

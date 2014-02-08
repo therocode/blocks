@@ -8,7 +8,7 @@
 
 EntitySystem::EntitySystem(fea::MessageBus& bus) : 
     mBus(bus), 
-    mManager(new fea::util::BasicEntityBackend()),
+    mManager(),
     mFactory(mManager),
     mLogName("entity")
 {
@@ -91,7 +91,7 @@ void EntitySystem::handleMessage(const CreateEntityMessage& received)
     std::string type;
     glm::vec3 position;
     
-    std::tie(type, position) = received.data;
+    std::tie(type, position) = received.mData;
 
     createEntity(type, position);
 }
@@ -100,7 +100,7 @@ void EntitySystem::handleMessage(const RemoveEntityMessage& received)
 {
     size_t id;
 
-    std::tie(id) = received.data;
+    std::tie(id) = received.mData;
 
     removeEntity(id);
 }

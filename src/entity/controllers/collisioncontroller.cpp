@@ -59,13 +59,13 @@ void CollisionController::onFrame(int dt)
     }
 }
 
-void CollisionController::handleMessage(const EntityMoveRequestedMessage& message)
+void CollisionController::handleMessage(const EntityMoveRequestedMessage& received)
 {
     fea::EntityId id;
     glm::vec3 requestedPosition;
     glm::vec3 approvedPosition;
 
-    std::tie(id, requestedPosition) = message.data;
+    std::tie(id, requestedPosition) = received.mData;
 
     approvedPosition = requestedPosition;
 

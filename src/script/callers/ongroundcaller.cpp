@@ -17,7 +17,7 @@ void OnGroundCaller::handleMessage(const EntityOnGroundMessage& received)
         bool landed;
         size_t id;
 
-        std::tie(id, landed) = received.data;
+        std::tie(id, landed) = received.mData;
 
         auto entity = mScriptEntities.find(id);
 
