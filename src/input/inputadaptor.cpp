@@ -2,8 +2,8 @@
 #include "../script/scriptmessages.h"
 #include "inputadaptor.h"
 #include "inputactions.h"
-#include <featherkit/util/input/sdl2/sdl2inputbackend.h>
-#include <featherkit/userinterfaceutil.h>
+#include <fea/util/input/sdl2/sdl2inputbackend.h>
+#include <fea/userinterfaceutil.h>
 #include "zlib.h"
 
 InputAdaptor::InputAdaptor(fea::MessageBus& b):

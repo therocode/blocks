@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include <memory>
-#include <featherkit/entitysystem.h>
+#include <fea/entitysystem.h>
 #include "controllers/entitycontroller.h"
 #include "entityfactory.h"
 #include "entitycreator.h"

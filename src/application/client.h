@@ -1,5 +1,5 @@
 #pragma once
-#include <featherkit/userinterface.h>
+#include <fea/userinterface.hpp>
 #include "../input/inputmessages.h"
 #include "../rendering/renderingmessages.h"
 #include "../script/scriptmessages.h"

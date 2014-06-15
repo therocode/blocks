@@ -1,7 +1,7 @@
 #include "client.h"
 #include <iostream>
-#include <featherkit/util/window/sdl2/sdl2windowbackend.h>
-#include <featherkit/util/input/sdl2/sdl2inputbackend.h>
+#include <fea/util/window/sdl2/sdl2windowbackend.h>
+#include <fea/util/input/sdl2/sdl2inputbackend.h>
 #include "../networking/packages.h"
 #include "../application/applicationmessages.h"
 

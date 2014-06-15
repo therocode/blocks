@@ -1,7 +1,7 @@
 #pragma once
 #include <stdint.h>
 #include <string>
-#include <featherkit/messaging.h>
+#include <fea/messaging.h>
 #include "../world/worldinterface.h"
 
 class ScriptEntityCore

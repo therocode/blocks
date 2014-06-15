@@ -10,7 +10,7 @@
 #include <unordered_map>
 #include <vector>
 
-#include <featherkit/messaging.h>
+#include <fea/messaging.h>
 #include <glm/gtx/string_cast.hpp>
 
 #include "chunk.h"

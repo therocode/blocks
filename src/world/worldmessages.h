@@ -1,7 +1,7 @@
 #pragma once
 #include "worldstd.h"
-#include <featherkit/entitysystem.h>
-#include <featherkit/messaging.h>
+#include <fea/entitysystem.h>
+#include <fea/messaging.h>
 
 class Region;
 class Chunk;

@@ -1,6 +1,6 @@
 #pragma once
-#include <featherkit/messaging.h>
-#include <featherkit/entitysystem.h>
+#include <fea/messaging.h>
+#include <fea/entitysystem.h>
 #include <map>
 
 class WorldInterface;

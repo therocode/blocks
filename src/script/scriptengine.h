@@ -1,6 +1,6 @@
 #pragma once
 #include <angelscript.h>
-#include <featherkit/messaging.h>
+#include <fea/messaging.h>
 #include "scriptmodule.h"
 
 class ScriptEngine

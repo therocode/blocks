@@ -1,5 +1,5 @@
 #pragma once
-#include <featherkit/messaging.h>
+#include <fea/messaging.h>
 #include "worldmessages.h"
 #include "generation/regiongenerator.h"
 #include "biomestorage.h"

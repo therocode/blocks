@@ -1,27 +1,12 @@
 #pragma once
-#include <featherkit/messaging.h>
+#include <fea/messaging.hpp>
 #include "world/chunk.h"
 
-struct ClientChunkDeleted_tag{};//                                     coordinate
-using ClientChunkDeletedMessage = fea::Message<ClientChunkDeleted_tag, const ChunkCoord&>;
-
-struct AddGfxEntity_tag{};//                               id      position
-using AddGfxEntityMessage = fea::Message<AddGfxEntity_tag, size_t, const glm::vec3&>;
-
-struct MoveGfxEntity_tag{};//                                id      position
-using MoveGfxEntityMessage = fea::Message<MoveGfxEntity_tag, size_t, const glm::vec3&>;
-
-struct RotateGfxEntity_tag{};//                                  id      pitch  yaw
-using RotateGfxEntityMessage = fea::Message<RotateGfxEntity_tag, size_t, float, float>;
-
-struct RemoveGfxEntity_tag{};//
-using RemoveGfxEntityMessage = fea::Message<RemoveGfxEntity_tag, size_t>;
-
-struct CameraUpdated_tag{};//
-using CameraUpdatedMessage = fea::Message<CameraUpdated_tag, const glm::vec3&, const glm::vec3&>;
-
-struct PlayerFacingBlock_tag{};//                                playerid    voxelposition
-using PlayerFacingBlockMessage = fea::Message<PlayerFacingBlock_tag, size_t, const VoxelCoord&>;
-
-struct UpdateChunkVbo_tag{};//                                 main    top     bottom  front   back    left    right
-using UpdateChunkVboMessage = fea::Message<UpdateChunkVbo_tag, Chunk*, Chunk*, Chunk*, Chunk*, Chunk*, Chunk*, Chunk*>;
+FEA_DECLARE_MESSAGE(ClientChunkDeletedMessage, const ChunkCoord& coordinate;);
+FEA_DECLARE_MESSAGE(AddGfxEntityMessage, size_t id; const glm::vec3& position;);
+FEA_DECLARE_MESSAGE(MoveGfxEntityMessage, size_t id; const glm::vec3& position;);
+FEA_DECLARE_MESSAGE(RotateGfxEntityMessage, size_t id; float pitch; float yaw;);
+FEA_DECLARE_MESSAGE(RemoveGfxEntityMessage, size_t id;);
+FEA_DECLARE_MESSAGE(CameraUpdatedMessage, const glm::vec3& onevec; const glm::vec3& twovec;);
+FEA_DECLARE_MESSAGE(PlayerFacingBlockMessage, size_t playerId; const VoxelCoord& voxelPosition;);
+FEA_DECLARE_MESSAGE(UpdateChunkVboMessage, Chunk* main; Chunk* top; Chunk* bottom; Chunk* front; Chunk* back; Chunk* left; Chunk* right;);

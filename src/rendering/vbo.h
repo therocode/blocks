@@ -1,6 +1,6 @@
 #pragma once
 #include <vector>
-#include <featherkit/rendering/opengl.h>
+#include <fea/rendering/opengl.hpp>
 #include "blockstd.h"
 #include "shaderprogram.h"
 #include <map>

@@ -3,7 +3,7 @@
 #include <iostream>
 #include <unordered_map>
 
-#include <featherkit/messaging.h>
+#include <fea/messaging.h>
 #include <glm/gtx/string_cast.hpp>
 
 #include "chunk.h"

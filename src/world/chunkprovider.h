@@ -2,7 +2,7 @@
 #include "worldmessages.h"
 #include "regionstorageinterface.h"
 #include "generation/worldgenerator.h"
-#include <featherkit/messaging.h>
+#include <fea/messaging.h>
 #include "modmanager.h"
 
 class ChunkProvider : public fea::MessageReceiver<ChunkRequestedMessage>

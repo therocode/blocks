@@ -1,6 +1,6 @@
 #pragma once
 #include "../blockstd.h"
-#include <featherkit/structure.h>
+#include <fea/structure.hpp>
 #include "client.h"
 #include "server.h"
 

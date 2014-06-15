@@ -1,4 +1,4 @@
-#include <featherkit/entitysystemutil.h>
+#include <fea/entitysystemutil.h>
 #include <iostream>
 #include "../blockstd.h"
 #include "entityfactory.h"

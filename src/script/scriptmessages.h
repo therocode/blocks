@@ -1,5 +1,4 @@
 #pragma once
-#include <featherkit/messaging.h>
+#include <fea/messaging.hpp>
 
-struct RebuildScriptsRequested_tag{};//                                          nothing
-using RebuildScriptsRequestedMessage = fea::Message<RebuildScriptsRequested_tag, char>;
+FEA_DECLARE_MESSAGE(RebuildScriptsRequestedMessage);

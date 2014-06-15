@@ -4,7 +4,7 @@
 #include "../application/applicationmessages.h"
 #include "entitydefinitionloader.h"
 #include "../utilities/folderexploder.h"
-#include <featherkit/entitysystemutil.h>
+#include <fea/entitysystemutil.h>
 
 EntitySystem::EntitySystem(fea::MessageBus& bus) : 
     mBus(bus), 

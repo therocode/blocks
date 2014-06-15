@@ -1,12 +1,7 @@
 #pragma once
 #include "inputactions.h"
-#include <featherkit/messaging.h>
+#include <fea/messaging.hpp>
 
-struct WindowResize_tag{};//                               width     height
-using WindowResizeMessage = fea::Message<WindowResize_tag, uint32_t, uint32_t>;
-
-struct PlayerAction_tag{};//                               playerid  inputaction enum string 
-using PlayerActionMessage = fea::Message<PlayerAction_tag, size_t, InputAction>;
-
-struct PlayerPitchYaw_tag{};//                                 player  pitch  yaw
-using PlayerPitchYawMessage = fea::Message<PlayerPitchYaw_tag, size_t, float, float>;
+FEA_DECLARE_MESSAGE(WindowResizeMessage, uint32_t width; uint32_t height;);
+FEA_DECLARE_MESSAGE(PlayerActionMessage, size_t playerId; InputAction action;);
+FEA_DECLARE_MESSAGE(PlayerPitchYawMessage, size_t playerId; float pitch; float yaw;);

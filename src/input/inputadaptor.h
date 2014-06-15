@@ -1,6 +1,6 @@
 #pragma once
-#include <featherkit/userinterface.h>
-#include <featherkit/messaging.h>
+#include <fea/userinterface.hpp>
+#include <fea/messaging.hpp>
 #include "../entity/entitymessages.h"
 #include "../entity/controllers/movedirection.h"
 #include "application/applicationmessages.h"
