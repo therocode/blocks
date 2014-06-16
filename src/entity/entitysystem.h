@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include <memory>
-#include <fea/entitysystem.h>
+#include <fea/entitysystem.hpp>
 #include "controllers/entitycontroller.h"
 #include "entityfactory.h"
 #include "entitycreator.h"
@@ -28,7 +28,7 @@ class EntitySystem :
         template<class Type>
         Type getEntityAttribute(fea::EntityId id, const std::string& name)
         {
-            return mManager.getEntity(id).lock()->getAttribute<Type>(name);
+            return mManager.findEntity(id).lock()->getAttribute<Type>(name);
         }
         EntityCreator getEntityCreator();
     private:

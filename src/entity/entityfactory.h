@@ -1,5 +1,5 @@
 #pragma once
-#include <fea/entitysystem.h>
+#include <fea/entitysystem.hpp>
 #include "entitydefinition.h"
 
 class EntityFactory

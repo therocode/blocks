@@ -1,6 +1,6 @@
 #pragma once
-#include <fea/messaging.h>
-#include <fea/entitysystem.h>
+#include <fea/messaging.hpp>
+#include <fea/entitysystem.hpp>
 #include <map>
 
 class WorldInterface;

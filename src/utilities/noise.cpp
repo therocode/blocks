@@ -114,8 +114,3 @@ float Noise::voronoi2D(float x, float y) const
     return asm_VoronoiNoise_2d(x, y, mPerm.data());
 #endif
 }
-
-const uint8_t* Noise::getPermPointer() const
-{
-    return mPerm.data();
-}

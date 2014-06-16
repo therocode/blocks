@@ -1,5 +1,5 @@
 #pragma once
-#include <fea/entitysystem.h>
+#include <fea/entitysystem.hpp>
 #include <angelscript.h>
 
 class ScriptEntity

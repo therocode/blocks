@@ -1,52 +1,23 @@
 #pragma once
 #include "worldstd.h"
-#include <fea/entitysystem.h>
-#include <fea/messaging.h>
+#include <fea/entitysystem.hpp>
+#include <fea/messaging.hpp>
 
 class Region;
 class Chunk;
 
-struct SetVoxel_tag{};//
-using SetVoxelMessage = fea::Message<SetVoxel_tag, const VoxelCoord&, VoxelType>;
-
-struct VoxelSet_tag{};//
-using VoxelSetMessage = fea::Message<VoxelSet_tag, const VoxelCoord&, VoxelType>;
-
-struct RegionNeeded_tag{};//                               region to force loading of
-using RegionNeededMessage = fea::Message<RegionNeeded_tag, const RegionCoord&>;
-
-struct RegionDeliver_tag{};//                                coordinate               new region
-using RegionDeliverMessage = fea::Message<RegionDeliver_tag, const RegionCoord&, const Region&>;
-
-struct RegionDeleted_tag{};//                                coordinate
-using RegionDeletedMessage = fea::Message<RegionDeleted_tag, const RegionCoord&>;
-
-struct ChunkRequested_tag{};//                                 coordinate
-using ChunkRequestedMessage = fea::Message<ChunkRequested_tag, const ChunkCoord&>;
-
-struct ChunkDeliver_tag{};//                               coordinate              chunk
-using ChunkDeliverMessage = fea::Message<ChunkDeliver_tag, const ChunkCoord&, const Chunk&>;
-
-struct ChunkDeleted_tag{};//                               coordinate
-using ChunkDeletedMessage = fea::Message<ChunkDeleted_tag, const ChunkCoord&>;
-
-struct ChunkLoaded_tag{};//                              chunk loc          timestamp
-using ChunkLoadedMessage = fea::Message<ChunkLoaded_tag, const ChunkCoord&, uint64_t>;
-
-struct ChunkModded_tag{};//                              chunk         timestamp
-using ChunkModdedMessage = fea::Message<ChunkModded_tag, const Chunk&, uint64_t>;
-
-struct ChunkHighlighted_tag{};//                                   chunk
-using ChunkHighlightedMessage = fea::Message<ChunkHighlighted_tag, const ChunkCoord&>;
-
-struct ChunkDehighlighted_tag{};//                                     chunk
-using ChunkDehighlightedMessage = fea::Message<ChunkDehighlighted_tag, const ChunkCoord&>;
-
-struct HighlightEntitySpawned_tag{};
-using HighlightEntitySpawnedMessage = fea::Message<HighlightEntitySpawned_tag, fea::EntityId, const ChunkCoord&>;
-
-struct HighlightEntityDespawned_tag{};
-using HighlightEntityDespawnedMessage = fea::Message<HighlightEntityDespawned_tag, fea::EntityId>;
-
-struct HighlightEntityMoved_tag{};
-using HighlightEntityMovedMessage = fea::Message<HighlightEntityMoved_tag, fea::EntityId, const ChunkCoord&>;
+FEA_DECLARE_MESSAGE(SetVoxelMessage, const VoxelCoord& voxel; VoxelType type;);
+FEA_DECLARE_MESSAGE(VoxelSetMessage, const VoxelCoord& voxel; VoxelType type;);
+FEA_DECLARE_MESSAGE(RegionNeededMessage, const RegionCoord& region;);
+FEA_DECLARE_MESSAGE(RegionDeliverMessage, const RegionCoord& coordinate; const Region& newRegion;);
+FEA_DECLARE_MESSAGE(RegionDeletedMessage, const RegionCoord& coordinate;);
+FEA_DECLARE_MESSAGE(ChunkRequestedMessage, const ChunkCoord& coordinate;);
+FEA_DECLARE_MESSAGE(ChunkDeliverMessage, const ChunkCoord& coordinate; const Chunk& chunk;);
+FEA_DECLARE_MESSAGE(ChunkDeletedMessage, const ChunkCoord& coordinate;);
+FEA_DECLARE_MESSAGE(ChunkLoadedMessage, const ChunkCoord& coordinate; uint64_t timestamp;);
+FEA_DECLARE_MESSAGE(ChunkModdedMessage, const Chunk& chunk; uint64_t timestamp;);
+FEA_DECLARE_MESSAGE(ChunkHighlightedMessage, const ChunkCoord& coordinate;);
+FEA_DECLARE_MESSAGE(ChunkDehighlightedMessage, const ChunkCoord& coordinate;);
+FEA_DECLARE_MESSAGE(HighlightEntitySpawnedMessage, fea::EntityId id; const ChunkCoord& coordinate;);
+FEA_DECLARE_MESSAGE(HighlightEntityDespawnedMessage, fea::EntityId id;);
+FEA_DECLARE_MESSAGE(HighlightEntityMovedMessage, fea::EntityId id; const ChunkCoord& coordinate;);

@@ -4,7 +4,7 @@
 #include "enet/enet.h"
 #include <thread>
 #include <atomic>
-#include <fea/messaging.h>
+#include <fea/messaging.hpp>
 #include "packages.h"
 
 class RemoteClientConnectionListener : public ClientConnectionListener
