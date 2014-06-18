@@ -1,14 +1,14 @@
 #include "client.h"
 #include <iostream>
-#include <fea/util/window/sdl2/sdl2windowbackend.h>
-#include <fea/util/input/sdl2/sdl2inputbackend.h>
+#include <fea/ui/sdl2windowbackend.hpp>
+#include <fea/ui/sdl2inputbackend.hpp>
 #include "../networking/packages.h"
 #include "../application/applicationmessages.h"
 
 
 Client::Client() :
     mLogger(mBus, LogLevel::VERB),
-	mWindow(new fea::util::SDL2WindowBackend()),
+	mWindow(new fea::SDL2WindowBackend()),
 	mRenderer(mBus),
 	mInputAdaptor(mBus),
 	mQuit(false),
@@ -56,7 +56,7 @@ void Client::setup()
 	mRenderer.setup();
 	//mWindow.setFramerateLimit(30);
 
-	mBus.send<WindowResizeMessage>(WindowResizeMessage(800, 600));
+	mBus.send<WindowResizeMessage>(WindowResizeMessage{800, 600});
 
 	std::vector<unsigned char> icon;
 	loadTexture("data/textures/icon16x16.png", 16, 16, icon);
@@ -95,48 +95,40 @@ void Client::render()
 void Client::destroy()
 {
 	mWindow.close();
-	mBus.send<LogMessage>(LogMessage("client destroyed", mLogName, LogLevel::INFO));
+	mBus.send<LogMessage>(LogMessage{"client destroyed", mLogName, LogLevel::INFO});
 }
 
 void Client::handleMessage(const PlayerActionMessage& received)
 {
-	size_t playerId;
-	InputAction action;
-	std::tie(playerId, action) = received.data;
-
-	if(action == InputAction::QUIT)
+	if(received.action == InputAction::QUIT)
 	{
 		mQuit = true;
 	}
 	else
 	{
         if(!mLockedMouse)return;
-		mBridge->enqueuePackage(std::shared_ptr<BasePackage>(new PlayerActionPackage(playerId, action)));
+		mBridge->enqueuePackage(std::shared_ptr<BasePackage>(new PlayerActionPackage(received.playerId, received.action)));
 	}
 }
 
 void Client::handleMessage(const PlayerMoveDirectionMessage& received)
 {
     if(!mLockedMouse)return;
-    size_t id;
-    MoveDirection dir;
 
-    std::tie(id, dir) = received.data;
-
-    mBridge->enqueuePackage(std::shared_ptr<BasePackage>(new PlayerMoveDirectionPackage(id, dir.getForwardBack(), dir.getLeftRight())));
+    mBridge->enqueuePackage(std::shared_ptr<BasePackage>(new PlayerMoveDirectionPackage(received.id, received.direction.getForwardBack(), received.direction.getLeftRight())));
 }
 
 void Client::handleMessage(const PlayerMoveActionMessage& received)
 {
     if(!mLockedMouse)return;
-    mBridge->enqueuePackage(std::shared_ptr<BasePackage>(new PlayerMoveActionPackage(received.data)));
+    mBridge->enqueuePackage(std::shared_ptr<BasePackage>(new PlayerMoveActionPackage(received.id, received.action)));
 }
 
 void Client::handleMessage(const PlayerPitchYawMessage& received)
 {
     if(!mLockedMouse)return;
 
-	mBridge->enqueuePackage(std::shared_ptr<BasePackage>(new PlayerPitchYawPackage(received.data)));
+	mBridge->enqueuePackage(std::shared_ptr<BasePackage>(new PlayerPitchYawPackage(received.playerId, received.pitch, received.yaw)));
 }
 
 void Client::handleMessage(const RebuildScriptsRequestedMessage& received)
@@ -164,7 +156,7 @@ bool Client::requestedQuit()
 void Client::setServerBridge(std::unique_ptr<ServerClientBridge> bridge)
 {
 	mBridge = std::move(bridge);
-	mBus.send<LogMessage>(LogMessage("client connected to server", mLogName, LogLevel::INFO));
+	mBus.send<LogMessage>(LogMessage{"client connected to server", mLogName, LogLevel::INFO});
 }
 
 fea::MessageBus& Client::getBus()
@@ -280,39 +272,39 @@ void Client::fetchServerData()
 
             std::tie(coordinate) = chunkPackage->getData();
 
-			mBus.send<ClientChunkDeletedMessage>(ClientChunkDeletedMessage(chunkPackage->getData()));
+			mBus.send(ClientChunkDeletedMessage{std::get<0>(chunkPackage->getData())});
 
             mLocalChunks.erase(coordinate);
 		}
 		else if(package->mType == PackageType::GFX_ENTITY_ADDED)
 		{
 			GfxEntityAddedPackage* gfxAddedPackage = (GfxEntityAddedPackage*)package.get();
-			mBus.send<AddGfxEntityMessage>(AddGfxEntityMessage(gfxAddedPackage->getData()));
+			mBus.send(AddGfxEntityMessage{std::get<0>(gfxAddedPackage->getData()), std::get<1>(gfxAddedPackage->getData())});
 		}
 		else if(package->mType == PackageType::GFX_ENTITY_MOVED)
 		{
 			GfxEntityMovedPackage* gfxMovedPackage = (GfxEntityMovedPackage*)package.get();
-			mBus.send<MoveGfxEntityMessage>(MoveGfxEntityMessage(gfxMovedPackage->getData()));
+			mBus.send(MoveGfxEntityMessage{std::get<0>(gfxMovedPackage->getData()), std::get<1>(gfxMovedPackage->getData())});
 		}
 		else if(package->mType == PackageType::GFX_ENTITY_ROTATED)
 		{
 			GfxEntityRotatedPackage* gfxEntityRotatedPackage = (GfxEntityRotatedPackage*)package.get();
-			mBus.send<RotateGfxEntityMessage>(RotateGfxEntityMessage(gfxEntityRotatedPackage->getData()));
+			mBus.send(RotateGfxEntityMessage{std::get<0>(gfxEntityRotatedPackage->getData()), std::get<1>(gfxEntityRotatedPackage->getData())});
 		}
 		else if(package->mType == PackageType::GFX_ENTITY_REMOVED)
 		{
 			GfxEntityRemovedPackage* gfxRemovedPackage = (GfxEntityRemovedPackage*)package.get();
-			mBus.send<RemoveGfxEntityMessage>(RemoveGfxEntityMessage(gfxRemovedPackage->getData()));
+			mBus.send(RemoveGfxEntityMessage{std::get<0>(gfxRemovedPackage->getData())});
 		}
 		else if(package->mType == PackageType::PLAYER_ID)
 		{
 			PlayerIdPackage* playerIdPackage = (PlayerIdPackage*)package.get();
-			mBus.send<PlayerIdMessage>(PlayerIdMessage(playerIdPackage->getData()));
+			mBus.send(PlayerIdMessage{std::get<0>(playerIdPackage->getData())});
 		}
 		else if(package->mType == PackageType::PLAYER_CONNECTED_TO_ENTITY)
 		{
 			PlayerConnectedToEntityPackage* playerConnectedToEntityPackage = (PlayerConnectedToEntityPackage*)package.get();
-			mBus.send<PlayerConnectedToEntityMessage>(PlayerConnectedToEntityMessage(playerConnectedToEntityPackage->getData()));
+			mBus.send(PlayerConnectedToEntityMessage{std::get<0>(playerConnectedToEntityPackage->getData()), std::get<1>(playerConnectedToEntityPackage->getData())});
 		}
 		else if(package->mType == PackageType::PLAYER_FACING_BLOCK)
 		{
@@ -326,7 +318,7 @@ void Client::fetchServerData()
 
             std::tie(playerId, x, y, z) = playerFacingBlockPackage->getData();
 
-			mBus.send<PlayerFacingBlockMessage>(PlayerFacingBlockMessage(playerId, VoxelCoord(x, y, z)));
+			mBus.send<PlayerFacingBlockMessage>(PlayerFacingBlockMessage{playerId, VoxelCoord(x, y, z)});
 		}
 	}
 }
@@ -361,5 +353,5 @@ void Client::updateChunk(const ChunkCoord& coordinate)
     if(right != mLocalChunks.end())
         rightChunk = &right->second;
 
-    mBus.send<UpdateChunkVboMessage>(UpdateChunkVboMessage(mainChunk, topChunk, bottomChunk, frontChunk, backChunk, leftChunk, rightChunk));
+    mBus.send<UpdateChunkVboMessage>(UpdateChunkVboMessage{mainChunk, topChunk, bottomChunk, frontChunk, backChunk, leftChunk, rightChunk});
 }

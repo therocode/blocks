@@ -1,4 +1,3 @@
-#include <fea/entitysystemutil.h>
 #include <iostream>
 #include "../blockstd.h"
 #include "entityfactory.h"
@@ -6,11 +5,12 @@
 #include "../world/chunk.h"
 #include "controllers/moveaction.h"
 #include "controllers/movedirection.h"
+#include <fea/entity/jsonentityloader.hpp>
 
 EntityFactory::EntityFactory(fea::EntityManager& manager) : mManager(manager), mFactory(manager)
 {
     //register templates
-    fea::util::JsonEntityLoader loader;
+    fea::JsonEntityLoader loader;
     mManager.registerAttribute<glm::vec3>("position");
     mManager.registerAttribute<glm::vec3>("velocity");
     mManager.registerAttribute<glm::vec3>("acceleration");
@@ -30,7 +30,8 @@ EntityFactory::EntityFactory(fea::EntityManager& manager) : mManager(manager), m
     mManager.registerAttribute<bool>("jumping");
     mManager.registerAttribute<uint32_t>("move_action");
     mManager.registerAttribute<int16_t>("move_direction");
-    mFactory.registerEntityTemplates(loader.loadEntityTemplates("data/entities.json"));
+    for(const auto& entityTemplate : loader.loadEntityTemplates("data/entities.json"))
+        mFactory.addTemplate(entityTemplate.first, entityTemplate.second);
     mFactory.registerDefaultSetter("position", vec3Setter);
     mFactory.registerDefaultSetter("velocity", vec3Setter);
     mFactory.registerDefaultSetter("acceleration", vec3Setter);

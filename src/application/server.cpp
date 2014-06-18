@@ -37,8 +37,8 @@ void Server::setup()
     mScriptHandler.setup();
     mUniverse.setup();
     mFPSController.setMaxFPS(60);
-    mBus.send<LogMessage>(LogMessage("Server initialised and ready to go", mLogName, LogLevel::INFO));
-    mBus.send<GameStartMessage>(GameStartMessage());
+    mBus.send<LogMessage>(LogMessage{"Server initialised and ready to go", mLogName, LogLevel::INFO});
+    mBus.send<GameStartMessage>(GameStartMessage{});
 }
 fea::MessageBus& Server::getBus()
 {
@@ -54,7 +54,7 @@ void Server::doLogic()
         fetchClientData(client.second);
     }
 
-    mBus.send<FrameMessage>(FrameMessage(true));
+    mBus.send<FrameMessage>(FrameMessage{true});
 
     mUniverse.update();
 
@@ -72,24 +72,19 @@ void Server::destroy()
 {
     mUniverse.destroy();
     mScriptHandler.destroy();
-    mBus.send<LogMessage>(LogMessage("Server destroyed", mLogName, LogLevel::INFO));
+    mBus.send<LogMessage>(LogMessage{"Server destroyed", mLogName, LogLevel::INFO});
 }
 
 void Server::handleMessage(const FatalMessage& received)
 {
-    std::string message;
-
-    std::tie(message) = received.mData;
-    mBus.send<LogMessage>(LogMessage(message, mLogName, LogLevel::ERR));
+    mBus.send<LogMessage>(LogMessage{received.message, mLogName, LogLevel::ERR});
     exit(4);
 }
 
 void Server::handleMessage(const ChunkDeliverMessage& received)
 {
-    ChunkCoord coordinate;
-    Chunk chunk;
-
-    std::tie(coordinate, chunk) = received.mData;
+    const ChunkCoord& coordinate = received.coordinate;
+    const Chunk& chunk = received.chunk;
 
     VoxelTypeData typeData = chunk.getVoxelTypeData();
 
@@ -103,7 +98,7 @@ void Server::handleMessage(const ChunkDeliverMessage& received)
 
 void Server::handleMessage(const ChunkDeletedMessage& received)
 {
-    std::shared_ptr<BasePackage> chunkDeletedPackage(new ChunkDeletedPackage(received.mData));
+    std::shared_ptr<BasePackage> chunkDeletedPackage(new ChunkDeletedPackage{received.coordinate});
     for(auto& client : mClients)
     {
         client.second->enqueuePackage(chunkDeletedPackage);
@@ -112,22 +107,18 @@ void Server::handleMessage(const ChunkDeletedMessage& received)
 
 void Server::handleMessage(const AddGfxEntityMessage& received)
 {
-    size_t id;
-
-    std::tie(id, std::ignore) = received.mData;
-
-    std::shared_ptr<BasePackage> gfxEntityAddedPackage(new GfxEntityAddedPackage(received.mData));
+    std::shared_ptr<BasePackage> gfxEntityAddedPackage(new GfxEntityAddedPackage(received.id, received.position));
     for(auto& client : mClients)
     {
         client.second->enqueuePackage(gfxEntityAddedPackage);
     }
 
-    graphicsEntities.insert(id); //temphack
+    graphicsEntities.insert(received.id); //temphack
 }
 
 void Server::handleMessage(const MoveGfxEntityMessage& received)
 {
-    std::shared_ptr<BasePackage> gfxEntityMovedPackage(new GfxEntityMovedPackage(received.mData));
+    std::shared_ptr<BasePackage> gfxEntityMovedPackage(new GfxEntityMovedPackage(received.id, received.position));
     for(auto& client : mClients)
     {
         client.second->enqueuePackage(gfxEntityMovedPackage);
@@ -136,7 +127,7 @@ void Server::handleMessage(const MoveGfxEntityMessage& received)
 
 void Server::handleMessage(const RotateGfxEntityMessage& received)
 {
-    std::shared_ptr<BasePackage> gfxEntityRotatedPackage(new GfxEntityRotatedPackage(received.mData));
+    std::shared_ptr<BasePackage> gfxEntityRotatedPackage(new GfxEntityRotatedPackage(received.id, received.pitch, received.yaw));
     for(auto& client : mClients)
     {
         client.second->enqueuePackage(gfxEntityRotatedPackage);
@@ -145,22 +136,18 @@ void Server::handleMessage(const RotateGfxEntityMessage& received)
 
 void Server::handleMessage(const RemoveGfxEntityMessage& received)
 {
-    size_t id;
-
-    std::tie(id) = received.mData;
-
-    std::shared_ptr<BasePackage> gfxEntityRemovedPackage(new GfxEntityRemovedPackage(received.mData));
+    std::shared_ptr<BasePackage> gfxEntityRemovedPackage(new GfxEntityRemovedPackage(received.id));
     for(auto& client : mClients)
     {
         client.second->enqueuePackage(gfxEntityRemovedPackage);
     }
 
-    graphicsEntities.erase(id); //temphack
+    graphicsEntities.erase(received.id); //temphack
 }
 
 void Server::handleMessage(const PlayerConnectedToEntityMessage& received)
 {
-    std::shared_ptr<BasePackage> playerConnectedToEntityPackage(new PlayerConnectedToEntityPackage(received.mData));
+    std::shared_ptr<BasePackage> playerConnectedToEntityPackage(new PlayerConnectedToEntityPackage(received.playerId, received.entityId));
     for(auto& client : mClients)
     {
         client.second->enqueuePackage(playerConnectedToEntityPackage);
@@ -169,13 +156,11 @@ void Server::handleMessage(const PlayerConnectedToEntityMessage& received)
 
 void Server::handleMessage(const PlayerFacingBlockMessage& received)
 {
-    size_t id;
-    VoxelCoord vector;
+    size_t id = received.playerId;
+    VoxelCoord vector = received.voxelPosition;
     int x;
     int y;
     int z;
-
-    std::tie(id, vector) = received.mData;
 
     x = vector.x;
     y = vector.y;
@@ -188,7 +173,7 @@ void Server::handleMessage(const PlayerFacingBlockMessage& received)
 
 void Server::handleMessage(const VoxelSetMessage& received)
 {
-    std::shared_ptr<BasePackage> voxelSetPackage(new VoxelSetPackage(received.mData));
+    std::shared_ptr<BasePackage> voxelSetPackage(new VoxelSetPackage(received.voxel , received.type));
     for(auto& client : mClients)
     {
         client.second->enqueuePackage(voxelSetPackage);
@@ -206,7 +191,7 @@ void Server::acceptClientConnection(std::shared_ptr<ClientConnection> client)
 
     mClients.emplace(newClientId, client);
 
-    mBus.send<LogMessage>(LogMessage(std::string("Client id ") + std::to_string(newClientId) + std::string(" connected"), mLogName, LogLevel::INFO));
+    mBus.send<LogMessage>(LogMessage{std::string("Client id ") + std::to_string(newClientId) + std::string(" connected"), mLogName, LogLevel::INFO});
 
     std::shared_ptr<BasePackage> playerIdPackage(new PlayerIdPackage(newClientId));
     client->enqueuePackage(playerIdPackage);
@@ -225,7 +210,7 @@ void Server::acceptClientConnection(std::shared_ptr<ClientConnection> client)
         client->enqueuePackage(chunkAddedPackage);
     }
 
-    mBus.send<PlayerJoinedMessage>(PlayerJoinedMessage(newClientId, glm::vec3(0.0f, 45.0f, 0.0f))); //position could be loaded from file or at spawn
+    mBus.send<PlayerJoinedMessage>(PlayerJoinedMessage{newClientId, glm::vec3(0.0f, 45.0f, 0.0f)}); //position could be loaded from file or at spawn
 }
 
 void Server::pollNewClients()
@@ -251,12 +236,12 @@ void Server::fetchClientData(std::weak_ptr<ClientConnection> client)
         {
             if(package->mType == PackageType::REBUILD_SCRIPTS_REQUESTED)
             {
-                mBus.send<RebuildScriptsRequestedMessage>(RebuildScriptsRequestedMessage('0'));
+                mBus.send<RebuildScriptsRequestedMessage>(RebuildScriptsRequestedMessage());
             }
             else if(package->mType == PackageType::PLAYER_ACTION)
             {
                 PlayerActionPackage* playerActionPackage = (PlayerActionPackage*) package.get();
-                mBus.send<PlayerActionMessage>(PlayerActionMessage(playerActionPackage->getData()));
+                mBus.send<PlayerActionMessage>(PlayerActionMessage{std::get<0>(playerActionPackage->getData()), std::get<1>(playerActionPackage->getData())});
             }
             else if(package->mType == PackageType::PLAYER_MOVE_DIRECTION)
             {
@@ -268,18 +253,18 @@ void Server::fetchClientData(std::weak_ptr<ClientConnection> client)
 
                 MoveDirection dir(forwardsBack, leftRight);
 
-                mBus.send<PlayerMoveDirectionMessage>(PlayerMoveDirectionMessage(id, dir));
+                mBus.send<PlayerMoveDirectionMessage>(PlayerMoveDirectionMessage{id, dir});
             }
             else if(package->mType == PackageType::PLAYER_MOVE_ACTION)
             {
                 PlayerMoveActionPackage* playerMoveActionPackage = (PlayerMoveActionPackage*) package.get();
 
-                mBus.send<PlayerMoveActionMessage>(PlayerMoveActionMessage(playerMoveActionPackage->getData()));
+                mBus.send<PlayerMoveActionMessage>(PlayerMoveActionMessage{std::get<0>(playerMoveActionPackage->getData()), std::get<1>(playerMoveActionPackage->getData())});
             }
             else if(package->mType == PackageType::PLAYER_PITCH_YAW)
             {
                 PlayerPitchYawPackage* playerPitchYawPackage = (PlayerPitchYawPackage*) package.get();
-                mBus.send<PlayerPitchYawMessage>(PlayerPitchYawMessage(playerPitchYawPackage->getData()));
+                mBus.send<PlayerPitchYawMessage>(PlayerPitchYawMessage{std::get<0>(playerPitchYawPackage->getData()), std::get<1>(playerPitchYawPackage->getData()),std::get<2>( playerPitchYawPackage->getData())});
             }
         }
     }
@@ -301,6 +286,6 @@ void Server::checkForDisconnectedClients()
     {
         mClients.erase(client);
         //send playerdisconnectedmessage
-        mBus.send<PlayerDisconnectedMessage>(PlayerDisconnectedMessage(client));
+        mBus.send<PlayerDisconnectedMessage>(PlayerDisconnectedMessage{client});
     }
 }
