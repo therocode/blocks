@@ -66,15 +66,15 @@ void Renderer::makeTexture(const std::string& path, uint32_t width, uint32_t hei
 void Renderer::setup()
 {
     std::cout << "hoj: " << glGetError() << "\n";
-    glewExperimental = GL_FALSE;
-	GLenum err = glewInit();
-    std::cout << "hej: " << glGetError() << "\n";
-	if(GLEW_OK != err)
+    //glewExperimental = GL_FALSE;
+    auto glStatus = feaogl_LoadFunctions();
+
+	if(feaogl_LOAD_FAILED != glStatus)
 	{
-		fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
+		fprintf(stderr, "Error: when inisitailingin gl\n");
 	}else
 	{
-		fprintf(stdout, "Status: Using GLEW %s\n", glewGetString(GLEW_VERSION));
+		//fprintf(stdout, "Status: Using GLEW %s\n", glewGetString(GLEW_VERSION));
 	}
 	//glEnable(GL_LIGHTING);
 	//glEnable(GL_LIGHT0);
@@ -108,15 +108,13 @@ void Renderer::setCameraMatrix(const glm::mat4& m){
 
 void Renderer::handleMessage(const UpdateChunkVboMessage& received)
 {
-    Chunk* mainChunk;
-    Chunk* topChunk;
-    Chunk* bottomChunk;
-    Chunk* frontChunk;
-    Chunk* backChunk;
-    Chunk* leftChunk;
-    Chunk* rightChunk;
-
-    std::tie(mainChunk, topChunk, bottomChunk, frontChunk, backChunk, leftChunk, rightChunk) = received.data;
+    Chunk* mainChunk = received.main;
+    Chunk* topChunk = received.top;
+    Chunk* bottomChunk = received.bottom;
+    Chunk* frontChunk = received.front;
+    Chunk* backChunk = received.back;
+    Chunk* leftChunk = received.left;
+    Chunk* rightChunk = received.right;
 
     //mGeneratorQueue.addToQueue(mainChunk, topChunk, bottomChunk, frontChunk, backChunk, leftChunk, rightChunk); 
 
