@@ -5,13 +5,13 @@
 
     "pitch":"float",
     "yaw":"float",
-    "physics_type":"uint32",
+    "physics_type":"physics_type",
     "drag":"float",
 
     "hitbox":"vec3",
     "on_ground":"bool",
 
-    "current_chunk":"ivec3",
+    "current_chunk":"i64vec3",
     "block_facing":"uvec3",
 	"is_facing_block":"bool",
 	"block_facing_face":"uint32",
@@ -20,6 +20,6 @@
     "run_speed":"float",
     "jump_strength":"float",
 	"jumping":"bool",
-    "move_action":"uint32",
-    "move_direction":"int16"
+    "move_action":"move_action",
+    "move_direction":"move_direction"
 }

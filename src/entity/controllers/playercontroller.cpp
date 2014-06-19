@@ -209,7 +209,6 @@ void PlayerController::updateVoxelLookAt(size_t playerId)
 {
     fea::EntityPtr entity = mPlayerEntities.at(playerId).lock();
 
-
     float pitch = entity->getAttribute<float>("pitch");
     float yaw = entity->getAttribute<float>("yaw");
     glm::vec3 position = entity->getAttribute<glm::vec3>("position");
@@ -219,14 +218,17 @@ void PlayerController::updateVoxelLookAt(size_t playerId)
 	int face;
 	bool f = mWorldInterface.getVoxelAtRay(position + glm::vec3(0, 0.6f, 0), direction, 200.f, face, block);
 
-	if(entity->getAttribute<int>("block_facing_face") != face){
-		entity->setAttribute<int>("block_facing_face", face);
-	}
-    if(block != entity->getAttribute<VoxelCoord>("block_facing"))
-	{
-		entity->setAttribute<bool>("is_facing_block", f);
-		entity->setAttribute<bool>("is_facing_block", f);
-        entity->setAttribute<VoxelCoord>("block_facing", block);
-        mBus.send(PlayerFacingBlockMessage{(fea::EntityId)playerId, block});
+    if(entity)
+    {
+        if(entity->getAttribute<uint32_t>("block_facing_face") != face){
+            entity->setAttribute<uint32_t>("block_facing_face", face);
+        }
+        if(block != entity->getAttribute<VoxelCoord>("block_facing"))
+        {
+            entity->setAttribute<bool>("is_facing_block", f);
+            entity->setAttribute<bool>("is_facing_block", f);
+            entity->setAttribute<VoxelCoord>("block_facing", block);
+            mBus.send(PlayerFacingBlockMessage{(fea::EntityId)playerId, block});
+        }
     }
 }

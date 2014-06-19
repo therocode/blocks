@@ -15,6 +15,10 @@ EntityFactory::EntityFactory(fea::EntityManager& manager) : mManager(manager), m
 
     fea::addBasicDataTypes(mFactory);
     fea::addGlmDataTypes(mFactory);
+    
+    mFactory.addDataType<PhysicsType>("physics_type");
+    mFactory.addDataType<MoveAction>("move_action");
+    mFactory.addDataType<MoveDirection>("move_direction");
 
     for(const auto& entityAttribute : loader.loadEntityAttributes("data/attributes.json"))
         mFactory.registerAttribute(entityAttribute.first, entityAttribute.second);

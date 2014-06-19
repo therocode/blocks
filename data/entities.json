@@ -1,6 +1,7 @@
-{
-    "living":
-    {
+{   "entities":
+    [{"name": "living",
+        "attributes":
+        {
         "position":"",
         "velocity":"0.0f,0.0f,0.0f",
         "acceleration":"0.0f,0.0f,0.0f",
@@ -14,14 +15,15 @@
         "on_ground":"false",
 		"jumping":"false",
         "current_chunk":"",
-        "block_facing":"",
-		"block_facing_face":"",
-		"is_facing_block":"",
+        "block_facing":"0,0,0",
+		"block_facing_face":"0",
+		"is_facing_block":"false",
 
         "walk_speed":"",
         "run_speed":"",
         "jump_strength":"",
         "move_action":"",
         "move_direction":""
+        }
     }
 }

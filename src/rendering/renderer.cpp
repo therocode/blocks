@@ -65,7 +65,7 @@ void Renderer::makeTexture(const std::string& path, uint32_t width, uint32_t hei
 
 void Renderer::setup()
 {
-    std::cout << "hoj: " << glGetError() << "\n";
+    //std::cout << "hoj: " << glGetError() << "\n";
     //glewExperimental = GL_FALSE;
     auto glStatus = feaogl_LoadFunctions();
 
@@ -444,8 +444,9 @@ void Renderer::cameraUpdate()
 	cam.SetPitchYaw(mCameraPitch, mCameraYaw);
     //camera must be updated from mPitch and mYaw
     originalCameraPos = mCameraPosition;
+
 	
-   // std::cout << "i am camera and i will update pitch and yaw: " << mCameraPitch << " " << mCameraYaw << "\n";
+    //std::cout << "i am camera and i will update pitch and yaw: " << mCameraPitch << " " << mCameraYaw << "\n";
 
 
 	setCameraMatrix(cam.GetMatrix());

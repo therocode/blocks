@@ -289,7 +289,7 @@ void Client::fetchServerData()
 		else if(package->mType == PackageType::GFX_ENTITY_ROTATED)
 		{
 			GfxEntityRotatedPackage* gfxEntityRotatedPackage = (GfxEntityRotatedPackage*)package.get();
-			mBus.send(RotateGfxEntityMessage{std::get<0>(gfxEntityRotatedPackage->getData()), std::get<1>(gfxEntityRotatedPackage->getData())});
+			mBus.send(RotateGfxEntityMessage{std::get<0>(gfxEntityRotatedPackage->getData()), std::get<1>(gfxEntityRotatedPackage->getData()), std::get<2>(gfxEntityRotatedPackage->getData())});
 		}
 		else if(package->mType == PackageType::GFX_ENTITY_REMOVED)
 		{

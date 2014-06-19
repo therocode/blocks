@@ -43,6 +43,8 @@ void InputAdaptor::update()
 
     while(inputHandler.pollEvent(event))
     {
+        actionHandler.feedEvent(event);
+
         if(event.type == fea::Event::GAINEDFOCUS)
         {
             windowFocus = true;
