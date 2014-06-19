@@ -9,10 +9,10 @@
 
 #include <string>
 
-#include <fea/json/json_value.h>
+#include "json_value.h"
 
-#include <fea/json/detail/json_internal_tokenizer.h>
-#include <fea/json/detail/json_internal_parser.h>
+#include "detail/json_internal_tokenizer.h"
+#include "detail/json_internal_parser.h"
 
 #include <istream>
 #include <iostream>

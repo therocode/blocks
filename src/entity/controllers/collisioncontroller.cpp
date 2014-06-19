@@ -48,12 +48,12 @@ void CollisionController::onFrame(int dt)
         if(isOnGround){
             if(!AABBOnGround(a)){
                 entity->setAttribute<bool>("on_ground", false);
-                mBus.send<EntityOnGroundMessage>(EntityOnGroundMessage(entity->getId(), false));
+                mBus.send(EntityOnGroundMessage{entity->getId(), false});
             }
         }else{
             if(AABBOnGround(a) && glm::abs(velocity.y) <= 0.001f){
                 entity->setAttribute<bool>("on_ground", true);
-                mBus.send<EntityOnGroundMessage>(EntityOnGroundMessage(entity->getId(), true));
+                mBus.send(EntityOnGroundMessage{entity->getId(), true});
             }
         }
     }
@@ -61,11 +61,9 @@ void CollisionController::onFrame(int dt)
 
 void CollisionController::handleMessage(const EntityMoveRequestedMessage& received)
 {
-    fea::EntityId id;
-    glm::vec3 requestedPosition;
+    fea::EntityId id = received.id;
+    glm::vec3 requestedPosition = received.newPosition;
     glm::vec3 approvedPosition;
-
-    std::tie(id, requestedPosition) = received.mData;
 
     approvedPosition = requestedPosition;
 
@@ -224,7 +222,7 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& receiv
         }
     }
     entity->setAttribute<glm::vec3>("position", approvedPosition);
-    mBus.send<EntityMovedMessage>(EntityMovedMessage(id, requestedPosition, approvedPosition));
+    mBus.send(EntityMovedMessage{id, requestedPosition, approvedPosition});
 }
 bool CollisionController::testAABBWorld(const AABB& a) const{
     AABB b;
@@ -450,7 +448,7 @@ bool CollisionController::checkIfOnGround(fea::EntityPtr entity)
     if(glm::abs(currentVelocity.y) < 0.6 && !isOnGround)
     {
         entity->setAttribute<bool>("on_ground", true);
-        mBus.send<EntityOnGroundMessage>(EntityOnGroundMessage(entity->getId(), true));
+        mBus.send(EntityOnGroundMessage{entity->getId(), true});
         return true;
     }
     return false;

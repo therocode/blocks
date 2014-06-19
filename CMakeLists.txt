@@ -347,6 +347,11 @@ if(BUILD_GAME)
     	link_directories(${CMAKE_CURRENT_SOURCE_DIR}/extlibs/angelscript/angelscript/lib)
     	target_link_libraries(${project_name} Angelscript -lpthread)
     endif(ANGELSCRIPT_FOUND)
+
+    find_package(JsonCpp REQUIRED)
+    if(JSONCPP_FOUND)
+        include_directories(${JSONCPP_INCLUDE_DIRS})
+    endif()
     
     if(FEATHERKIT_FOUND)
     	include_directories(${FEATHERKIT_INCLUDE_DIRS})

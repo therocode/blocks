@@ -1,4 +1,5 @@
 #include "debugrenderer.h"
+#include <GL/gl.h>
 
 void DebugRenderer::drawBox(float x, float y, float z, float sx, float sy, float sz, int color)
 {
@@ -40,6 +41,7 @@ void DebugRenderer::drawPoint(float x, float y, float z, int color)
 	p.color = color;
 	mPoints.push_back(p);
 }
+
 void DebugRenderer::performDrawing()
 {
 	// glDisable(GL_DEPTH_TEST);

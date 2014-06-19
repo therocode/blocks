@@ -30,37 +30,37 @@ void MoveDirection::setDirection(bool forwards, bool backwards, bool left, bool 
         leftRight--;
 }
 
-bool MoveDirection::getForwards()
+bool MoveDirection::getForwards() const
 {
-    return forwardBack = 1;
+    return forwardBack == 1;
 }
 
-bool MoveDirection::getBackwards()
+bool MoveDirection::getBackwards() const
 {
-    return forwardBack = -1;
+    return forwardBack == -1;
 }
 
-bool MoveDirection::getLeft()
+bool MoveDirection::getLeft() const
 {
-    return leftRight = 1;
+    return leftRight == 1;
 }
 
-bool MoveDirection::getRight()
+bool MoveDirection::getRight() const
 {
-    return leftRight = -1;
+    return leftRight == -1;
 }
 
-bool MoveDirection::isStill()
+bool MoveDirection::isStill() const
 {
     return !forwardBack && !leftRight;
 }
 
-int8_t MoveDirection::getForwardBack()
+int8_t MoveDirection::getForwardBack() const
 {
     return forwardBack;
 }
 
-int8_t MoveDirection::getLeftRight()
+int8_t MoveDirection::getLeftRight() const
 {
     return leftRight;
 }

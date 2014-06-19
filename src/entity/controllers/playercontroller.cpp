@@ -41,40 +41,34 @@ void PlayerController::onFrame(int dt)
 
 void PlayerController::handleMessage(const PlayerJoinedMessage& received)
 {
-    size_t playerId;
-    glm::vec3 position;
-
-    std::tie(playerId, position) = received.mData;
+    size_t playerId = received.playerId;
+    glm::vec3 position = received.position;
 
     fea::WeakEntityPtr playerEntity = mWorldInterface.createEntity("Player", position);
     std::cout << "created player entity and it's id is " << playerEntity.lock()->getId() << "\n";
     mPlayerEntities.emplace(playerId, playerEntity);
     playerEntity.lock()->setAttribute<ChunkCoord>("current_chunk", worldToChunk(position));
-    mBus.send(PlayerEntersChunkMessage(playerId, worldToChunk(position)));
-    mBus.send(HighlightEntitySpawnedMessage(playerId, worldToChunk(position)));
+    mBus.send(PlayerEntersChunkMessage{playerId, worldToChunk(position)});
+    mBus.send(HighlightEntitySpawnedMessage{(fea::EntityId)playerId, worldToChunk(position)});
 
     ChunkCoord chunkAt = worldToChunk(position);
 
-    mBus.send(PlayerConnectedToEntityMessage(playerId, playerEntity.lock()->getId()));
+    mBus.send(PlayerConnectedToEntityMessage{(fea::EntityId)playerId, playerEntity.lock()->getId()});
 }
 
 void PlayerController::handleMessage(const PlayerDisconnectedMessage& received)
 {
-    size_t playerId;
+    size_t playerId = received.playerId;
 
-    std::tie(playerId) = received.mData;
-
-    mBus.send<RemoveEntityMessage>(RemoveEntityMessage(mPlayerEntities.at(playerId).lock()->getId()));
-    mBus.send(HighlightEntityDespawnedMessage(playerId));
+    mBus.send(RemoveEntityMessage{mPlayerEntities.at(playerId).lock()->getId()});
+    mBus.send(HighlightEntityDespawnedMessage{(fea::EntityId)playerId});
     mPlayerEntities.erase(playerId);
 }
 
 void PlayerController::handleMessage(const PlayerActionMessage& received)
 {
-    size_t playerId;
-    InputAction action;
-
-    std::tie(playerId, action) = received.mData;
+    size_t playerId = received.playerId;
+    InputAction action = received.action;
 
     if(action == FORWARDS)
     {
@@ -83,18 +77,18 @@ void PlayerController::handleMessage(const PlayerActionMessage& received)
     }
     else if(action == JUMP)
     {
-        mBus.send<EntityJumpMessage>(EntityJumpMessage(mPlayerEntities.at(playerId).lock()->getId(), true));
+        mBus.send<EntityJumpMessage>(EntityJumpMessage{mPlayerEntities.at(playerId).lock()->getId(), true});
     }
     else if(action == STOPJUMP)
 	{
-		mBus.send<EntityJumpMessage>(EntityJumpMessage(mPlayerEntities.at(playerId).lock()->getId(), false));
+		mBus.send<EntityJumpMessage>(EntityJumpMessage{mPlayerEntities.at(playerId).lock()->getId(), false});
 	}
     else if(action == DIG)
     {
         // glm::vec3 worldPos = mPlayerEntities.at(playerId).lock()->getAttribute<VoxelWorldCoord>("block_facing");
 		if(mPlayerEntities.at(playerId).lock()->getAttribute<bool>("is_facing_block")){
 			VoxelCoord voxel = mPlayerEntities.at(playerId).lock()->getAttribute<VoxelCoord>("block_facing");
-			mBus.send<SetVoxelMessage>(SetVoxelMessage(voxel, 0));
+			mBus.send<SetVoxelMessage>(SetVoxelMessage{voxel, 0});
 		}
     }
     else if(action == BUILD)
@@ -134,39 +128,33 @@ void PlayerController::handleMessage(const PlayerActionMessage& received)
 					break;
 			}
 
-			mBus.send<SetVoxelMessage>(SetVoxelMessage(voxel,21));//rand()%4 + 17));// (playerId + 1) % 20));
+			mBus.send<SetVoxelMessage>(SetVoxelMessage{voxel, 21});//rand()%4 + 17));// (playerId + 1) % 20));
 		}
     }
 }
 
 void PlayerController::handleMessage(const PlayerMoveDirectionMessage& received)
 {
-    size_t playerId;
-    MoveDirection direction;
-
-    std::tie(playerId, direction) = received.mData;
+    size_t playerId = received.id;
+    MoveDirection direction = received.direction;
 
     mPlayerEntities.at(playerId).lock()->setAttribute<MoveDirection>("move_direction", direction);
 }
 
 void PlayerController::handleMessage(const PlayerMoveActionMessage& received)
 {
-    size_t playerId;
-    MoveAction moveAction;
-
-    std::tie(playerId, moveAction) = received.mData;
+    size_t playerId = received.id;
+    MoveAction moveAction = received.action;
 
     mPlayerEntities.at(playerId).lock()->setAttribute<MoveAction>("move_action", moveAction);
 }
 
 void PlayerController::handleMessage(const PlayerPitchYawMessage& received) //movement controller ni the future
 {
-	size_t playerId;
+	size_t playerId = received.playerId;
 
-    float pitch;
-    float yaw;
-
-    std::tie(playerId, pitch, yaw) = received.mData;
+    float pitch = received.pitch;
+    float yaw = received.yaw;
 
     auto playerEntry = mPlayerEntities.find(playerId);
     if(playerEntry != mPlayerEntities.end())
@@ -185,16 +173,14 @@ void PlayerController::handleMessage(const PlayerPitchYawMessage& received) //mo
 
         float newYaw = entity->getAttribute<float>("yaw");
 		//printf("Pitch: %f, and yaw: %f\n", newPitch, newYaw);
-        mBus.send<RotateGfxEntityMessage>(RotateGfxEntityMessage(playerEntry->second.lock()->getId(), newPitch, newYaw));
+        mBus.send(RotateGfxEntityMessage{playerEntry->second.lock()->getId(), newPitch, newYaw});
         updateVoxelLookAt(playerId);
     }
 }
 
 void PlayerController::handleMessage(const EntityMovedMessage& received)
 {
-    size_t id;
-
-    std::tie(id, std::ignore, std::ignore) = received.mData;
+    size_t id = received.id;
 
     if(mPlayerEntities.find(id) != mPlayerEntities.end())
     {
@@ -214,8 +200,8 @@ void PlayerController::handleMessage(const EntityMovedMessage& received)
 
 void PlayerController::playerEntersChunk(size_t playerId, const ChunkCoord& chunk)
 {
-    mBus.send(PlayerEntersChunkMessage(playerId, chunk));
-    mBus.send(HighlightEntityMovedMessage(playerId, chunk));
+    mBus.send(PlayerEntersChunkMessage{(fea::EntityId)playerId, chunk});
+    mBus.send(HighlightEntityMovedMessage{(fea::EntityId)playerId, chunk});
     mPlayerEntities.at(playerId).lock()->setAttribute<ChunkCoord>("current_chunk", chunk);
 }
 
@@ -241,6 +227,6 @@ void PlayerController::updateVoxelLookAt(size_t playerId)
 		entity->setAttribute<bool>("is_facing_block", f);
 		entity->setAttribute<bool>("is_facing_block", f);
         entity->setAttribute<VoxelCoord>("block_facing", block);
-        mBus.send<PlayerFacingBlockMessage>(PlayerFacingBlockMessage(playerId, block));
+        mBus.send(PlayerFacingBlockMessage{(fea::EntityId)playerId, block});
     }
 }

@@ -143,8 +143,8 @@ void MovementController::onFrame(int dt)
 			float ySpeed = entity->getAttribute<glm::vec3>("velocity").y;
 			if(onGround)
 			{
-				mBus.send<PhysicsImpulseMessage>(PhysicsImpulseMessage(entity->getId(), glm::vec3(0.0f, jumpStrength / 8.0f, 0.0f)));
-				mBus.send<EntityOnGroundMessage>(EntityOnGroundMessage(entity->getId(), false));
+				mBus.send<PhysicsImpulseMessage>(PhysicsImpulseMessage{entity->getId(), glm::vec3(0.0f, jumpStrength / 8.0f, 0.0f)});
+				mBus.send<EntityOnGroundMessage>(EntityOnGroundMessage{entity->getId(), false});
 				entity->setAttribute<bool>("on_ground", false);
 			}
 		}
@@ -153,8 +153,5 @@ void MovementController::onFrame(int dt)
 
 void MovementController::handleMessage(const EntityJumpMessage& received)
 {
-    size_t id;
-	bool jumping;
-    std::tie(id, jumping) = received.mData;
-	mEntities.at(id).lock()->setAttribute<bool>("jumping", jumping);
+	mEntities.at(received.id).lock()->setAttribute<bool>("jumping", received.jumping);
 }

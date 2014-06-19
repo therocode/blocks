@@ -11,7 +11,7 @@ FEA_DECLARE_MESSAGE(EntityMovedMessage, fea::EntityId id; const glm::vec3& oldPo
 FEA_DECLARE_MESSAGE(GravityRequestedMessage, float gravityConstant;);
 FEA_DECLARE_MESSAGE(CreateEntityMessage, const std::string& type; const glm::vec3& position;);
 FEA_DECLARE_MESSAGE(EntityCreatedMessage, fea::WeakEntityPtr entity; const std::string& type;);
-FEA_DECLARE_MESSAGE(EntityJumpMessage, size_t id; const bool type;);
+FEA_DECLARE_MESSAGE(EntityJumpMessage, size_t id; const bool jumping;);
 FEA_DECLARE_MESSAGE(EntityOnGroundMessage, fea::EntityId id; bool landed;);
 FEA_DECLARE_MESSAGE(RemoveEntityMessage, size_t id;);
 FEA_DECLARE_MESSAGE(EntityRemovedMessage, size_t id;);

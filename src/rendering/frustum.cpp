@@ -109,7 +109,7 @@ void Plane::setCoefficients(float a, float b, float c, float d)
     // set the normal vector
     normal = glm::vec3(a,b,c);
     //compute the lenght of the vector
-    float l = glm::length(normal.length());
+    float l = glm::length(normal);
     // normalize the vector
     if(glm::length2(normal) != 0)
         normal = glm::normalize(normal);

@@ -72,27 +72,22 @@ void PhysicsController::onFrame(int dt)
             }
         }
         entity->setAttribute<glm::vec3>("velocity", newVelocity);
-        mBus.send<EntityMoveRequestedMessage>(EntityMoveRequestedMessage(entity->getId(), newPosition));
+        mBus.send<EntityMoveRequestedMessage>(EntityMoveRequestedMessage{entity->getId(), newPosition});
     }
 }
 
 void PhysicsController::handleMessage(const GravityRequestedMessage& received)
 {
-    std::tie(gravityConstant) = received.data;
+    gravityConstant = received.gravityConstant;
 }
 
 void PhysicsController::handleMessage(const PhysicsImpulseMessage& received)
 {
-    size_t id;
-    glm::vec3 force;
-
-    std::tie(id, force) = received.data;
-
-    auto entity = mEntities.find(id);
+    auto entity = mEntities.find(received.id);
 
     if(entity != mEntities.end())
     {
-        entity->second.lock()->addToAttribute<glm::vec3>("velocity", force / 10.0f);
+        entity->second.lock()->addToAttribute<glm::vec3>("velocity", received.force / 10.0f);
     }
 }
 

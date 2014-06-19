@@ -1,5 +1,5 @@
 #include "renderer.h"
-#include <fea/rendering/opengl.h>
+#include <fea/rendering/opengl.hpp>
 #include <iostream>
 #include "../utilities/lodepng.h"
 

@@ -7,7 +7,7 @@
 #ifndef JSON0_JSON_H
 #define JSON0_JSON_H
 
-#include <fea/json/json_reader.h>
-#include <fea/json/json_writer.h>
+#include "json_reader.h"
+#include "json_writer.h"
 
 #endif

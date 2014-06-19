@@ -19,23 +19,17 @@ void GfxController::inspectEntity(fea::WeakEntityPtr entity)
     if(locked->hasAttribute("position"))
     {
         mEntities.emplace(locked->getId(), entity);
-        mBus.send<AddGfxEntityMessage>(AddGfxEntityMessage(locked->getId(), locked->getAttribute<glm::vec3>("position")));
+        mBus.send(AddGfxEntityMessage{locked->getId(), locked->getAttribute<glm::vec3>("position")});
     }
 }
 
 void GfxController::handleMessage(const EntityMovedMessage& message)
 {
-   size_t id;
-   glm::vec3 oldPosition;
-   glm::vec3 newPosition;
-   
-   std::tie(id, oldPosition, newPosition) = message.data;
-   
-   mBus.send<MoveGfxEntityMessage>(MoveGfxEntityMessage(id, newPosition));
+   mBus.send(MoveGfxEntityMessage{message.id, message.newPosition});
 }
 
 void GfxController::removeEntity(fea::EntityId id)
 {
-    mBus.send<RemoveGfxEntityMessage>(RemoveGfxEntityMessage(id));
+    mBus.send(RemoveGfxEntityMessage{id});
 }
 

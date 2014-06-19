@@ -11,7 +11,7 @@
 #include <ios>
 #include <iostream>
 
-#include <fea/json/json_value.h>
+#include "../json_value.h"
 
 namespace json
 {
