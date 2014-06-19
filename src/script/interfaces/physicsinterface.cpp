@@ -14,10 +14,10 @@ void PhysicsInterface::registerInterface(asIScriptEngine* engine)
 
 void PhysicsInterface::setGravity(float constant)
 {
-    mBus.send<GravityRequestedMessage>(GravityRequestedMessage(constant));
+    mBus.send<GravityRequestedMessage>(GravityRequestedMessage{constant});
 }
 
 void PhysicsInterface::applyImpulse(size_t id, const glm::vec3& force)
 {
-    mBus.send<PhysicsImpulseMessage>(PhysicsImpulseMessage(id, force));
+    mBus.send<PhysicsImpulseMessage>(PhysicsImpulseMessage{id, force});
 }

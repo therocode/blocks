@@ -134,9 +134,7 @@ void Renderer::handleMessage(const UpdateChunkVboMessage& received)
 
 void Renderer::handleMessage(const ClientChunkDeletedMessage& received)
 {
-    ChunkCoord coordinate;
-
-    std::tie(coordinate) = received.data;
+    ChunkCoord coordinate = received.coordinate;
 
     vbos.at(coordinate).destroyBuffers();
     vbos.erase(coordinate);
@@ -144,19 +142,16 @@ void Renderer::handleMessage(const ClientChunkDeletedMessage& received)
 
 void Renderer::handleMessage(const PlayerFacingBlockMessage& received)
 {
-	glm::vec3 v;
-    size_t playerId;
-
-	std::tie(playerId, v) = received.data;
+	glm::vec3 v = (glm::vec3)received.voxelPosition;
+    size_t playerId = received.playerId;
 
     if(playerId == mPlayerId)
 	    mCurrentlyFacingBlock = v;
 }
 void Renderer::handleMessage(const WindowResizeMessage& received)
 {
-	uint32_t width;
-	uint32_t height;
-	std::tie(width, height) = received.data;
+	uint32_t width = received.width;
+	uint32_t height = received.height;
 	//I create a projection matrix, instead of gluproejction.
 	projectionMatrix = glm::perspective(80.f, ((float)width)/((float)height), 0.1f, 1000.f);
     mFrustum.setCamInternals(80.f, ((float)width)/((float)height), 0.1f, 1000.f);
@@ -176,17 +171,13 @@ void Renderer::handleMessage(const WindowResizeMessage& received)
 
 void Renderer::handleMessage(const PlayerIdMessage& received)
 {
-    size_t playerId;
-
-    std::tie(mPlayerId) = received.data;
+    mPlayerId = received.id;
 }
 
 void Renderer::handleMessage(const PlayerConnectedToEntityMessage& received)
 {
-    size_t playerId;
-    size_t entityId;
-
-    std::tie(playerId, entityId) = received.data;
+    size_t playerId = received.playerId;
+    size_t entityId = received.entityId;
 
     if(playerId == mPlayerId)
     {
@@ -236,7 +227,7 @@ void Renderer::render()
 	// printf("color: %f, %f, %f\n", color.x, color.y, color.z);
 	glClearColor(color.x, color.y, color.z, 1.0f);
 	
-	bus.send<CameraUpdatedMessage>(CameraUpdatedMessage(cam.GetPosition(), cam.GetDirection()));
+	bus.send(CameraUpdatedMessage{cam.GetPosition(), cam.GetDirection()});
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	mShaderProgram.bind();
 	cam.Update();
@@ -254,14 +245,14 @@ void Renderer::render()
 	mShaderProgram.setUniform("screenSize", mScreenSize);
 	
 	//I set these because easier to debug.
-	#ifndef EMSCRIPTEN
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		glMultMatrixf(glm::value_ptr(projectionMatrix));
-		glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity();
-		glMultMatrixf(glm::value_ptr(cam.GetMatrix()));
-	#endif
+	//#ifndef EMSCRIPTEN
+	//	glMatrixMode(GL_PROJECTION);
+	//	glLoadIdentity();
+	//	glMultMatrixf(glm::value_ptr(projectionMatrix));
+	//	glMatrixMode(GL_MODELVIEW);
+	//	glLoadIdentity();
+	//	glMultMatrixf(glm::value_ptr(cam.GetMatrix()));
+	//#endif
 
 	glBindTexture(GL_TEXTURE_2D, blockTexture);
 
@@ -462,10 +453,8 @@ void Renderer::cameraUpdate()
 
 void Renderer::handleMessage(const AddGfxEntityMessage& received)
 {
-	size_t id;
-	glm::vec3 position;
-
-	std::tie(id, position) = received.data;
+	size_t id = received.id;
+	glm::vec3 position = received.position;
 
 	VBOCreator vboCreator;
 
@@ -476,10 +465,8 @@ void Renderer::handleMessage(const AddGfxEntityMessage& received)
 
 void Renderer::handleMessage(const MoveGfxEntityMessage& received)
 {
-	size_t id;
-	glm::vec3 position;
-
-	std::tie(id, position) = received.data;
+	size_t id = received.id;
+	glm::vec3 position = received.position;
 
 	billboards.at(id).mPosition = position;
 
@@ -498,11 +485,9 @@ void Renderer::handleMessage(const MoveGfxEntityMessage& received)
 
 void Renderer::handleMessage(const RotateGfxEntityMessage& received)
 {
-    size_t id;
-    float pitch;
-    float yaw;
-
-    std::tie(id, pitch, yaw) = received.data;
+    size_t id = received.id;
+    float pitch = received.pitch;
+    float yaw = received.yaw;
 
     billboards.at(id).mPitch = pitch;
     billboards.at(id).mYaw = yaw;
@@ -516,9 +501,7 @@ void Renderer::handleMessage(const RotateGfxEntityMessage& received)
 
 void Renderer::handleMessage(const RemoveGfxEntityMessage& received)
 {
-	size_t id;
-
-	std::tie(id) = received.data;
+	size_t id = received.id;
 
 	billboards.at(id).mVbo.destroyBuffers();
 	billboards.erase(id);

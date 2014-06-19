@@ -21,12 +21,9 @@ Logger::~Logger()
 
 void Logger::handleMessage(const LogMessage& received)
 {
-    std::string message;
-    std::string component;
-    uint32_t level;
-
-    std::tie(message, component, level) = received.data;
-
+    std::string message = received.message;
+    std::string component = received.component;
+    uint32_t level = received.level;
 
     if(level <= mLogLevel)
     {
@@ -39,7 +36,7 @@ void Logger::handleMessage(const LogMessage& received)
 
 void Logger::handleMessage(const LogLevelMessage& received)
 {
-    std::tie(mLogLevel) = received.data;
+    mLogLevel = received.level;
 
     if(mLogLevel > LogLevel::VERB)
         mLogLevel = LogLevel::VERB;

@@ -60,19 +60,19 @@ void ScriptHandler::setup()
     exploder.explodeFolder("data", ".*\\.as", sourceFiles);
     for(auto& string : sourceFiles)
     {
-        mBus.send<LogMessage>(LogMessage("Adding " + string + " for compilation.", logName, LogLevel::VERB));
+        mBus.send<LogMessage>(LogMessage{"Adding " + string + " for compilation.", logName, LogLevel::VERB});
     }
 
-    mBus.send<LogMessage>(LogMessage("Compiling scripts...", logName, LogLevel::INFO));
+    mBus.send<LogMessage>(LogMessage{"Compiling scripts...", logName, LogLevel::INFO});
     bool succeeded = mScripts.compileFromSourceList(sourceFiles);
-    mBus.send<LogMessage>(LogMessage("Compilation process over.", logName, LogLevel::INFO));
+    mBus.send<LogMessage>(LogMessage{"Compilation process over.", logName, LogLevel::INFO});
 
     if(succeeded)
     {
-        mBus.send<LogMessage>(LogMessage("Setting up script callbacks...", logName, LogLevel::VERB));
+        mBus.send<LogMessage>(LogMessage{"Setting up script callbacks...", logName, LogLevel::VERB});
         registerCallbacks(scriptEntities);
-        mBus.send<LogMessage>(LogMessage("Compilation process over.", logName, LogLevel::VERB));
-        mBus.send<LogMessage>(LogMessage("Done setting up callbacks.", logName, LogLevel::VERB));
+        mBus.send<LogMessage>(LogMessage{"Compilation process over.", logName, LogLevel::VERB});
+        mBus.send<LogMessage>(LogMessage{"Done setting up callbacks.", logName, LogLevel::VERB});
 
         for(auto& caller : mCallers)
         {
@@ -90,16 +90,16 @@ void ScriptHandler::destroy()
 
 void ScriptHandler::handleMessage(const RebuildScriptsRequestedMessage& received)
 {
-    mBus.send<LogMessage>(LogMessage("Compiling scripts...", logName, LogLevel::INFO));
+    mBus.send<LogMessage>(LogMessage{"Compiling scripts...", logName, LogLevel::INFO});
     bool succeeded = mScripts.compileFromSourceList(sourceFiles);
-    mBus.send<LogMessage>(LogMessage("Compilation process over.", logName, LogLevel::INFO));
+    mBus.send<LogMessage>(LogMessage{"Compilation process over.", logName, LogLevel::INFO});
 
     if(succeeded)
     {
-        mBus.send<LogMessage>(LogMessage("Setting up script callbacks...", logName, LogLevel::VERB));
+        mBus.send<LogMessage>(LogMessage{"Setting up script callbacks...", logName, LogLevel::VERB});
         registerCallbacks(scriptEntities);
-        mBus.send<LogMessage>(LogMessage("Compilation process over.", logName, LogLevel::VERB));
-        mBus.send<LogMessage>(LogMessage("Done setting up callbacks.", logName, LogLevel::VERB));
+        mBus.send<LogMessage>(LogMessage{"Compilation process over.", logName, LogLevel::VERB});
+        mBus.send<LogMessage>(LogMessage{"Done setting up callbacks.", logName, LogLevel::VERB});
         for(auto& caller : mCallers)
         {
             caller->setActive(true);
@@ -116,15 +116,13 @@ void ScriptHandler::handleMessage(const RebuildScriptsRequestedMessage& received
 
 void ScriptHandler::handleMessage(const EntityCreatedMessage& received)
 {
-    fea::WeakEntityPtr wEntity;
-    std::string type;
+    fea::WeakEntityPtr wEntity = received.entity;
+    std::string type = received.type;
     
-    std::tie(wEntity, type) = received.mData;
-
     asIObjectType* objectType = mScripts.getObjectTypeByDecl(type);
     if(!objectType)
     {
-        mBus.send<LogMessage>(LogMessage("Script runtime error: Trying to create entity of invalid type '" + type + "'", logName, LogLevel::ERR));
+        mBus.send<LogMessage>(LogMessage{"Script runtime error: Trying to create entity of invalid type '" + type + "'", logName, LogLevel::ERR});
         return;
     }
 
@@ -150,7 +148,7 @@ void ScriptHandler::handleMessage(const EntityCreatedMessage& received)
         // otherwise it will be destroyed when the context is reused or destroyed.
         obj->AddRef();
 
-        mBus.send<LogMessage>(LogMessage("Created entity id " + std::to_string(id) + " of type '" + type + "'", logName, LogLevel::VERB));
+        mBus.send<LogMessage>(LogMessage{"Created entity id " + std::to_string(id) + " of type '" + type + "'", logName, LogLevel::VERB});
 
         mEngine.freeContext(ctx);
 
@@ -159,14 +157,13 @@ void ScriptHandler::handleMessage(const EntityCreatedMessage& received)
     }
     else
     {
-        mBus.send<LogMessage>(LogMessage("Script runtime error: Entity of type '" + type + "' has no valid factory function", logName, LogLevel::ERR));
+        mBus.send<LogMessage>(LogMessage{"Script runtime error: Entity of type '" + type + "' has no valid factory function", logName, LogLevel::ERR});
     }
 }
 
 void ScriptHandler::handleMessage(const EntityRemovedMessage& received)
 {
-    size_t id;
-    std::tie(id) = received.mData;
+    size_t id = received.id;
 
     auto entity = scriptEntities.find(id);
 

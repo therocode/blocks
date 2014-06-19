@@ -14,10 +14,10 @@ RegionLodManager::~RegionLodManager()
 
 void RegionLodManager::handleMessage(const RegionDeliverMessage& message)
 {
-    mRegions.emplace(std::get<0>(message.data), std::get<1>(message.data));
+    mRegions.emplace(message.coordinate, message.newRegion);
 }
 
 void RegionLodManager::handleMessage(const RegionDeletedMessage& message)
 {
-    mRegions.erase(std::get<0>(message.data));
+    mRegions.erase(message.coordinate);
 }

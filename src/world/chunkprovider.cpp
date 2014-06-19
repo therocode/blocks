@@ -14,15 +14,13 @@ ChunkProvider::~ChunkProvider()
 
 void ChunkProvider::handleMessage(const ChunkRequestedMessage& received)
 {
-    ChunkCoord chunkCoordinate;
-
-    std::tie(chunkCoordinate) = received.data;
+    ChunkCoord chunkCoordinate = received.coordinate;
 
     RegionCoord regionCoordinate = chunkToRegion(chunkCoordinate);
 
     if(!mRegionStorage.hasRegion(regionCoordinate))
     {
-        mBus.send(RegionNeededMessage(regionCoordinate));
+        mBus.send(RegionNeededMessage{regionCoordinate});
     }
 
     const Region& region = mRegionStorage.getRegion(regionCoordinate);
@@ -33,7 +31,7 @@ void ChunkProvider::handleMessage(const ChunkRequestedMessage& received)
     mModManager.loadMods(newChunk);
     uint64_t timestamp = 0; //get proper timestamp later
 
-    mBus.send(ChunkDeliverMessage(chunkCoordinate, newChunk)); //sends the finished chunk to be kept by whatever system
+    mBus.send(ChunkDeliverMessage{chunkCoordinate, newChunk}); //sends the finished chunk to be kept by whatever system
 
-    mBus.send(ChunkLoadedMessage(chunkCoordinate, timestamp)); //the now fully initialised chunk is announced to the rest of the game
+    mBus.send(ChunkLoadedMessage{chunkCoordinate, timestamp}); //the now fully initialised chunk is announced to the rest of the game
 }

@@ -1,5 +1,5 @@
 #pragma once
-#include <fea/messaging.h>
+#include <fea/messaging.hpp>
 #include "../scriptengine.h"
 #include "../scriptstd.h"
 

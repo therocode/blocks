@@ -26,12 +26,12 @@ void ScriptEntityCore::release()
 
 void ScriptEntityCore::setPosition(float x, float y, float z)
 {
-    sBus->send<EntityMoveRequestedMessage>(EntityMoveRequestedMessage(mId, glm::vec3(x, y, z)));
+    sBus->send<EntityMoveRequestedMessage>(EntityMoveRequestedMessage{(fea::EntityId)mId, glm::vec3(x, y, z)});
 }
 
 void ScriptEntityCore::setPosition(const glm::vec3& vec)
 {
-    sBus->send<EntityMoveRequestedMessage>(EntityMoveRequestedMessage(mId, vec));
+    sBus->send<EntityMoveRequestedMessage>(EntityMoveRequestedMessage{(fea::EntityId)mId, vec});
 }
 
 glm::vec3 ScriptEntityCore::getPosition()

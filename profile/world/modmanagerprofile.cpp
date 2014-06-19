@@ -6,7 +6,7 @@
 
 #include <glm/gtx/string_cast.hpp>
 
-#include <featherkit/messaging.h>
+#include <fea/messaging.hpp>
 
 #include "world/chunk.h"
 #include "world/modmanager.h"

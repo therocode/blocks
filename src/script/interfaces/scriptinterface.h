@@ -1,5 +1,5 @@
 #pragma once
-#include <fea/messaging.h>
+#include <fea/messaging.hpp>
 #include "world/worldinterface.h"
 #include "utilities/logger.h"
 

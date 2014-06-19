@@ -856,6 +856,7 @@ bool CScriptArray::operator==(const CScriptArray &other) const
 		}
 
 	if( cmpContext )
+    {
 		if( isNested )
 		{
 			asEContextState state = cmpContext->GetState();
@@ -864,7 +865,10 @@ bool CScriptArray::operator==(const CScriptArray &other) const
 				cmpContext->Abort();
 		}
 		else
+        {
 			cmpContext->Release();
+        }
+    }
 
 	return isEqual;
 }
@@ -1038,6 +1042,7 @@ int CScriptArray::Find(asUINT index, void *value) const
 	}
 
 	if( cmpContext )
+    {
 		if( isNested )
 		{
 			asEContextState state = cmpContext->GetState();
@@ -1046,7 +1051,10 @@ int CScriptArray::Find(asUINT index, void *value) const
 				cmpContext->Abort();
 		}
 		else
+        {
 			cmpContext->Release();
+        }
+    }
 
 	return ret;
 }
@@ -1211,6 +1219,7 @@ void CScriptArray::Sort(asUINT index, asUINT count, bool asc)
 	}
 
 	if( cmpContext )
+    {
 		if( isNested )
 		{
 			asEContextState state = cmpContext->GetState();
@@ -1219,7 +1228,10 @@ void CScriptArray::Sort(asUINT index, asUINT count, bool asc)
 				cmpContext->Abort();
 		}
 		else
+        {
 			cmpContext->Release();
+        }
+    }
 }
 
 // internal
@@ -1346,7 +1358,7 @@ void CScriptArray::Precache()
 
 				if( (flags & asTM_INREF) )
 				{
-					if( (paramTypeId & asTYPEID_OBJHANDLE) || mustBeConst && !(flags & asTM_CONST) )
+					if( (paramTypeId & asTYPEID_OBJHANDLE) || (mustBeConst && !(flags & asTM_CONST)) )
 						continue;
 				}
 				else if( paramTypeId & asTYPEID_OBJHANDLE )

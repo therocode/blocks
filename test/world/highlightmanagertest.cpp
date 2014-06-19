@@ -4,7 +4,7 @@
 #include <iostream>
 #include <tuple>
 
-#include <featherkit/messaging.h>
+#include <fea/messaging.hpp>
 
 #include "world/highlightmanager.h"
 #include "world/worldmessages.h"
@@ -37,15 +37,13 @@ class TestReceiver :
     private:
         void handleMessage(const ChunkHighlightedMessage& message)
         {
-            ChunkCoord loc;
-            tie(loc) = message.data;
+            ChunkCoord loc = message.coordinate;
             mHighlightedLocs.push_back(loc);
         }
 
         void handleMessage(const ChunkDehighlightedMessage& message)
         {
-            ChunkCoord loc;
-            tie(loc) = message.data;
+            ChunkCoord loc = message.coordinate;
             mDehighlightedLocs.push_back(loc);
         } 
 
@@ -70,7 +68,7 @@ TEST_CASE("", "[spawn][despawn][move]")
 
     SECTION("spawn entity") 
     {
-        bus.send<HighlightEntitySpawnedMessage>(HighlightEntitySpawnedMessage(eId1, loc1));
+        bus.send<HighlightEntitySpawnedMessage>(HighlightEntitySpawnedMessage{eId1, loc1});
 
         for(int64_t x = loc1.x - highlightRadius; x < loc1.x + highlightRadius + 1; ++x)
         {
@@ -96,33 +94,33 @@ TEST_CASE("", "[spawn][despawn][move]")
 
     SECTION("spawn and despawn entity") 
     {
-        bus.send<HighlightEntitySpawnedMessage>(HighlightEntitySpawnedMessage(eId1, loc1));
-        bus.send<HighlightEntityDespawnedMessage>(HighlightEntityDespawnedMessage(eId1));
+        bus.send<HighlightEntitySpawnedMessage>(HighlightEntitySpawnedMessage{eId1, loc1});
+        bus.send<HighlightEntityDespawnedMessage>(HighlightEntityDespawnedMessage{eId1});
 
         REQUIRE(receiver.getHighlightedLocs().size() == receiver.getDehighlightedLocs().size());
     }
 
     SECTION("spawn and move entity")
     {
-        bus.send<HighlightEntitySpawnedMessage>(HighlightEntitySpawnedMessage(eId1, loc1));
-        bus.send<HighlightEntityMovedMessage>(HighlightEntityMovedMessage(eId1, loc2));
+        bus.send<HighlightEntitySpawnedMessage>(HighlightEntitySpawnedMessage{eId1, loc1});
+        bus.send<HighlightEntityMovedMessage>(HighlightEntityMovedMessage{eId1, loc2});
 
         REQUIRE(29 == receiver.getDehighlightedLocs().size());
     }
 
     SECTION("intersect two highlight entities")
     {
-        bus.send<HighlightEntitySpawnedMessage>(HighlightEntitySpawnedMessage(eId1, loc1));
-        bus.send<HighlightEntitySpawnedMessage>(HighlightEntitySpawnedMessage(eId2, loc3));
+        bus.send<HighlightEntitySpawnedMessage>(HighlightEntitySpawnedMessage{eId1, loc1});
+        bus.send<HighlightEntitySpawnedMessage>(HighlightEntitySpawnedMessage{eId2, loc3});
 
         REQUIRE(244 == receiver.getHighlightedLocs().size());
     }
 
     SECTION("intersect two highlight entities and despawn one")
     {
-        bus.send<HighlightEntitySpawnedMessage>(HighlightEntitySpawnedMessage(eId1, loc1));
-        bus.send<HighlightEntitySpawnedMessage>(HighlightEntitySpawnedMessage(eId2, loc3));
-        bus.send<HighlightEntityDespawnedMessage>(HighlightEntityDespawnedMessage(eId1));
+        bus.send<HighlightEntitySpawnedMessage>(HighlightEntitySpawnedMessage{eId1, loc1});
+        bus.send<HighlightEntitySpawnedMessage>(HighlightEntitySpawnedMessage{eId2, loc3});
+        bus.send<HighlightEntityDespawnedMessage>(HighlightEntityDespawnedMessage{eId1});
         
         REQUIRE(121 == receiver.getDehighlightedLocs().size());        
     }

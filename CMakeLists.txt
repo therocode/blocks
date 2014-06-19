@@ -257,13 +257,15 @@ set(header_files
     src/world/generation/regiongenerator.h
 )
 
-find_package(Featherkit REQUIRED COMPONENTS entity structure ui messaging)
+find_package(Featherkit REQUIRED COMPONENTS entity structure ui sdl2 rendering messaging)
 find_package(GLM)
 find_package(SDL2)
-find_package(GLEW)
 find_package(OpenGL REQUIRED)
 find_package(ENet)
 find_package(angelscript)
+
+find_package(JsonCpp REQUIRED)
+
 
 include_directories(src)
 
@@ -370,6 +372,11 @@ if(BUILD_GAME)
     else(GLEW_FOUND)
     	# target_link_libraries(${project_name} glew32)
     endif(GLEW_FOUND)
+        
+    if(JSONCPP_FOUND)
+        include_directories(${JSONCPP_INCLUDE_DIRS})
+        target_link_libraries(${project_name} ${JSONCPP_LIBRARIES})
+    endif()
     
     
     if(OPENGL_FOUND)

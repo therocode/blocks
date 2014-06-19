@@ -1,7 +1,7 @@
-#include <featherkit/userinterface.h>
-#include <featherkit/util/window/sfml/sfmlwindowbackend.h>
-#include <featherkit/util/input/sfml/sfmlinputbackend.h>
-#include <featherkit/render2d.h>
+#include <fea/userinterface.hpp>
+#include <fea/ui/sfmlwindowbackend.hpp>
+#include <fea/ui/sfmlinputbackend.hpp>
+#include <fea/render2d.hpp>
 #include "../../src/utilities/noise.h"
 #include <SFML/Graphics/Image.hpp>
 #include <iostream>
@@ -98,7 +98,7 @@ class IntensityMap
             {
                 for(int y = 0; y < partSize; y++)
                 {
-                    texture.setPixel(x, y, getUnit(x, y), getUnit(x, y), getUnit(x, y));
+                    texture.setPixel(x, y, {getUnit(x, y), getUnit(x, y), getUnit(x, y)});
                 }
             }
             texture.update();
@@ -129,11 +129,11 @@ class BiomeGenerator
                         if(height < 0.7f)
                             height = 0.7f;
 
-                        texture.setPixel(x, y, biome->r * height, biome->g * height, biome->b * height);
+                        texture.setPixel(x, y, {biome->r * height, biome->g * height, biome->b * height});
                     }
                     else
                     {
-                        texture.setPixel(x, y, 0.0f, 0.0f, 0.0f);
+                        texture.setPixel(x, y, {0.0f, 0.0f, 0.0f});
                     }
                 }
             }
@@ -303,26 +303,26 @@ class WorldPart
 int main()
 {
     sf::Window sfWindow;
-    fea::Window window(new fea::util::SFMLWindowBackend(sfWindow));
-    fea::InputHandler input(new fea::util::SFMLInputBackend(sfWindow));
+    fea::Window window(new fea::SFMLWindowBackend(sfWindow));
+    fea::InputHandler input(new fea::SFMLInputBackend(sfWindow));
 
     window.create(fea::VideoMode(768, 768, 32), "Window and user input");
     window.setFramerateLimit(60);
 
-    fea::Renderer2D renderer(fea::Viewport(768, 768, 0, 0, fea::Camera(768.0f / 2.0f, 768.0f / 2.0f)));
+    fea::Renderer2D renderer(fea::Viewport({768, 768}, {0, 0}, fea::Camera({768.0f / 2.0f, 768.0f / 2.0f})));
 
     renderer.setup();
 
     bool shutDown = false;
 
     fea::Texture texture1;
-    texture1.create(partSize, partSize, glm::vec3(1.0f, 0.0f, 1.0f), false, true);
+    texture1.create(partSize, partSize, fea::Color(1.0f, 0.0f, 1.0f), false, true);
     fea::Texture texture2;
-    texture2.create(partSize, partSize, glm::vec3(1.0f, 0.0f, 1.0f), false, true);
+    texture2.create(partSize, partSize, fea::Color(1.0f, 0.0f, 1.0f), false, true);
     fea::Texture texture3;
-    texture3.create(partSize, partSize, glm::vec3(1.0f, 0.0f, 1.0f), false, true);
+    texture3.create(partSize, partSize, fea::Color(1.0f, 0.0f, 1.0f), false, true);
     fea::Texture texture4;
-    texture4.create(partSize, partSize, glm::vec3(1.0f, 0.0f, 1.0f), false, true);
+    texture4.create(partSize, partSize, fea::Color(1.0f, 0.0f, 1.0f), false, true);
 
     BiomeStorage storage;
                                                                     //temp             //rain
@@ -357,14 +357,14 @@ int main()
     storage.addBiome(new Biome("ocean", 0.0f, 0.0f, 1.0f,           Range(0.2f, 1.0f), Range(0.0f, 1.0f),  Range(0.0f, 0.2f)));
     storage.addBiome(new Biome("arctic ocean", 0.0f, 0.9f, 1.0f,    Range(0.0f, 0.2f), Range(0.0f, 1.0f),  Range(0.0f, 0.2f)));
 
-    fea::Quad square1(partSize, partSize);
-    square1.setPosition(0.0f, 0.0f);
-    fea::Quad square2(partSize, partSize);
-    square2.setPosition(partSize, 0.0f);
-    fea::Quad square3(partSize, partSize);
-    square3.setPosition(0.0f, partSize);
-    fea::Quad square4(partSize, partSize);
-    square4.setPosition(partSize, partSize);
+    fea::Quad square1({partSize, partSize});
+    square1.setPosition({0.0f, 0.0f});
+    fea::Quad square2({partSize, partSize});
+    square2.setPosition({partSize, 0.0f});
+    fea::Quad square3({partSize, partSize});
+    square3.setPosition({0.0f, partSize});
+    fea::Quad square4({partSize, partSize});
+    square4.setPosition({partSize, partSize});
 
 
     WorldPart part1(0, 0, storage);
@@ -387,8 +387,6 @@ int main()
 
     while(!shutDown)
     {
-        input.processEvents();
-        
         fea::Event event;
         while(input.pollEvent(event))
         {
@@ -405,85 +403,85 @@ int main()
                 else if(event.key.code == fea::Keyboard::Z)
                 {
                     part1.getHeightTexture(texture1);
-                    square1.setColour(1.0f, 1.0f, 1.0f);
+                    square1.setColor({1.0f, 1.0f, 1.0f});
                     part2.getHeightTexture(texture2);
-                    square2.setColour(1.0f, 1.0f, 1.0f);
+                    square2.setColor({1.0f, 1.0f, 1.0f});
                     part3.getHeightTexture(texture3);
-                    square3.setColour(1.0f, 1.0f, 1.0f);
+                    square3.setColor({1.0f, 1.0f, 1.0f});
                     part4.getHeightTexture(texture4);
-                    square4.setColour(1.0f, 1.0f, 1.0f);
+                    square4.setColor({1.0f, 1.0f, 1.0f});
                 }
                 else if(event.key.code == fea::Keyboard::A)
                 {
                     part1.getRainfallTexture(texture1);
-                    square1.setColour(0.0f, 0.6f, 1.0f);
+                    square1.setColor({0.0f, 0.6f, 1.0f});
                     part2.getRainfallTexture(texture2);
-                    square2.setColour(0.0f, 0.6f, 1.0f);
+                    square2.setColor({0.0f, 0.6f, 1.0f});
                     part3.getRainfallTexture(texture3);
-                    square3.setColour(0.0f, 0.6f, 1.0f);
+                    square3.setColor({0.0f, 0.6f, 1.0f});
                     part4.getRainfallTexture(texture4);
-                    square4.setColour(0.0f, 0.6f, 1.0f);
+                    square4.setColor({0.0f, 0.6f, 1.0f});
                 }
                 else if(event.key.code == fea::Keyboard::S)
                 {
                     part1.getTemperatureTexture(texture1);
-                    square1.setColour(1.0f, 0.3f, 0.0f);
+                    square1.setColor({1.0f, 0.3f, 0.0f});
                     part2.getTemperatureTexture(texture2);
-                    square2.setColour(1.0f, 0.3f, 0.0f);
+                    square2.setColor({1.0f, 0.3f, 0.0f});
                     part3.getTemperatureTexture(texture3);
-                    square3.setColour(1.0f, 0.3f, 0.0f);
+                    square3.setColor({1.0f, 0.3f, 0.0f});
                     part4.getTemperatureTexture(texture4);
-                    square4.setColour(1.0f, 0.3f, 0.0f);
+                    square4.setColor({1.0f, 0.3f, 0.0f});
                 }
                 else if(event.key.code == fea::Keyboard::D)
                 {
                     part1.getBiomeSelectorTexture(texture1);
-                    square1.setColour(1.0f, 1.0f, 1.0f);
+                    square1.setColor({1.0f, 1.0f, 1.0f});
                     part2.getBiomeSelectorTexture(texture2);
-                    square2.setColour(1.0f, 1.0f, 1.0f);
+                    square2.setColor({1.0f, 1.0f, 1.0f});
                     part3.getBiomeSelectorTexture(texture3);
-                    square3.setColour(1.0f, 1.0f, 1.0f);
+                    square3.setColor({1.0f, 1.0f, 1.0f});
                     part4.getBiomeSelectorTexture(texture4);
-                    square4.setColour(1.0f, 1.0f, 1.0f);
+                    square4.setColor({1.0f, 1.0f, 1.0f});
                 }
                 else if(event.key.code == fea::Keyboard::F)
                 {
                     part1.getBiomeTexture(texture1);
-                    square1.setColour(1.0f, 1.0f, 1.0f);
+                    square1.setColor({1.0f, 1.0f, 1.0f});
                     part2.getBiomeTexture(texture2);
-                    square2.setColour(1.0f, 1.0f, 1.0f);
+                    square2.setColor({1.0f, 1.0f, 1.0f});
                     part3.getBiomeTexture(texture3);
-                    square3.setColour(1.0f, 1.0f, 1.0f);
+                    square3.setColor({1.0f, 1.0f, 1.0f});
                     part4.getBiomeTexture(texture4);
-                    square4.setColour(1.0f, 1.0f, 1.0f);
+                    square4.setColor({1.0f, 1.0f, 1.0f});
                 }
                 else if(event.key.code == fea::Keyboard::UP)
                 {
-                    square1.translate(0.0f, 5.0f);
-                    square2.translate(0.0f, 5.0f);
-                    square3.translate(0.0f, 5.0f);
-                    square4.translate(0.0f, 5.0f);
+                    square1.translate({0.0f, 5.0f});
+                    square2.translate({0.0f, 5.0f});
+                    square3.translate({0.0f, 5.0f});
+                    square4.translate({0.0f, 5.0f});
                 }
                 else if(event.key.code == fea::Keyboard::DOWN)
                 {
-                    square1.translate(0.0f, -5.0f);
-                    square2.translate(0.0f, -5.0f);
-                    square3.translate(0.0f, -5.0f);
-                    square4.translate(0.0f, -5.0f);
+                    square1.translate({0.0f, -5.0f});
+                    square2.translate({0.0f, -5.0f});
+                    square3.translate({0.0f, -5.0f});
+                    square4.translate({0.0f, -5.0f});
                 }
                 else if(event.key.code == fea::Keyboard::LEFT)
                 {
-                    square1.translate(5.0f, 0.0f);
-                    square2.translate(5.0f, 0.0f);
-                    square3.translate(5.0f, 0.0f);
-                    square4.translate(5.0f, 0.0f);
+                    square1.translate({5.0f, 0.0f});
+                    square2.translate({5.0f, 0.0f});
+                    square3.translate({5.0f, 0.0f});
+                    square4.translate({5.0f, 0.0f});
                 }
                 else if(event.key.code == fea::Keyboard::RIGHT)
                 {
-                    square1.translate(-5.0f, 0.0f);
-                    square2.translate(-5.0f, 0.0f);
-                    square3.translate(-5.0f, 0.0f);
-                    square4.translate(-5.0f, 0.0f);
+                    square1.translate({-5.0f, 0.0f});
+                    square2.translate({-5.0f, 0.0f});
+                    square3.translate({-5.0f, 0.0f});
+                    square4.translate({-5.0f, 0.0f});
                 }
             }
         }
@@ -491,26 +489,26 @@ int main()
         if(square1.getPosition().x < 0.0f)
         {
             currentX++;
-            square1.translate(partSize * 2.0f, 0.0f);
+            square1.translate({partSize * 2.0f, 0.0f});
             part1.setXPosition(currentX + 1);
             part1.getBiomeTexture(texture1);
         }
         if(square2.getPosition().x < 0.0f)
         {
             currentX++;
-            square2.translate(partSize * 2.0f, 0.0f);
+            square2.translate({partSize * 2.0f, 0.0f});
             part2.setXPosition(currentX + 1);
             part2.getBiomeTexture(texture2);
         }
         if(square3.getPosition().x < 0.0f)
         {
-            square3.translate(partSize * 2.0f, 0.0f);
+            square3.translate({partSize * 2.0f, 0.0f});
             part3.setXPosition(currentX + 1);
             part3.getBiomeTexture(texture3);
         }
         if(square4.getPosition().x < 0.0f)
         {
-            square4.translate(partSize * 2.0f, 0.0f);
+            square4.translate({partSize * 2.0f, 0.0f});
             part4.setXPosition(currentX + 1);
             part4.getBiomeTexture(texture4);
         }
@@ -518,26 +516,26 @@ int main()
         if(square1.getPosition().x > partSize * 2)
         {
             currentX--;
-            square1.translate(-partSize * 2.0f, 0.0f);
+            square1.translate({-partSize * 2.0f, 0.0f});
             part1.setXPosition(currentX);
             part1.getBiomeTexture(texture1);
         }
         if(square2.getPosition().x > partSize * 2)
         {
             currentX--;
-            square2.translate(-partSize * 2.0f, 0.0f);
+            square2.translate({-partSize * 2.0f, 0.0f});
             part2.setXPosition(currentX);
             part2.getBiomeTexture(texture2);
         }
         if(square3.getPosition().x > partSize * 2)
         {
-            square3.translate(-partSize * 2.0f, 0.0f);
+            square3.translate({-partSize * 2.0f, 0.0f});
             part3.setXPosition(currentX);
             part3.getBiomeTexture(texture3);
         }
         if(square4.getPosition().x > partSize * 2)
         {
-            square4.translate(-partSize * 2.0f, 0.0f);
+            square4.translate({-partSize * 2.0f, 0.0f});
             part4.setXPosition(currentX);
             part4.getBiomeTexture(texture4);
         }
@@ -545,26 +543,26 @@ int main()
         if(square1.getPosition().y < 0.0f)
         {
             currentY++;
-            square1.translate(0.0f, partSize * 2.0f);
+            square1.translate({0.0f, partSize * 2.0f});
             part1.setYPosition(currentY + 1);
             part1.getBiomeTexture(texture1);
         }
         if(square2.getPosition().y < 0.0f)
         {
-            square2.translate(0.0f, partSize * 2.0f);
+            square2.translate({0.0f, partSize * 2.0f});
             part2.setYPosition(currentY + 1);
             part2.getBiomeTexture(texture2);
         }
         if(square3.getPosition().y < 0.0f)
         {
             currentY++;
-            square3.translate(0.0f, partSize * 2.0f);
+            square3.translate({0.0f, partSize * 2.0f});
             part3.setYPosition(currentY + 1);
             part3.getBiomeTexture(texture3);
         }
         if(square4.getPosition().y < 0.0f)
         {
-            square4.translate(0.0f, partSize * 2.0f);
+            square4.translate({0.0f, partSize * 2.0f});
             part4.setYPosition(currentY + 1);
             part4.getBiomeTexture(texture4);
         }
@@ -572,26 +570,26 @@ int main()
         if(square1.getPosition().y > partSize * 2)
         {
             currentY--;
-            square1.translate(0.0f, -partSize * 2.0f);
+            square1.translate({0.0f, -partSize * 2.0f});
             part1.setYPosition(currentY);
             part1.getBiomeTexture(texture1);
         }
         if(square2.getPosition().y > partSize * 2)
         {
-            square2.translate(0.0f, -partSize * 2.0f);
+            square2.translate({0.0f, -partSize * 2.0f});
             part2.setYPosition(currentY);
             part2.getBiomeTexture(texture2);
         }
         if(square3.getPosition().y > partSize * 2)
         {
             currentY--;
-            square3.translate(0.0f, -partSize * 2.0f);
+            square3.translate({0.0f, -partSize * 2.0f});
             part3.setYPosition(currentY);
             part3.getBiomeTexture(texture3);
         }
         if(square4.getPosition().y > partSize * 2)
         {
-            square4.translate(0.0f, -partSize * 2.0f);
+            square4.translate({0.0f, -partSize * 2.0f});
             part4.setYPosition(currentY);
             part4.getBiomeTexture(texture4);
         }

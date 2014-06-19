@@ -6,7 +6,7 @@
 #include <string>
 #include <tuple>
 
-#include <featherkit/messaging.h>
+#include <fea/messaging.hpp>
 
 #include <glm/gtx/string_cast.hpp>
 
@@ -34,7 +34,8 @@ class TestReceiver :
     private:
         virtual void handleMessage(const ChunkModdedMessage& msg)
         {
-            std::tie(chunk, timestamp) = msg.data; 
+            chunk = msg.chunk;
+            timestamp = msg.timestamp;
         } 
 };
 

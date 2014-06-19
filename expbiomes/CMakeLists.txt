@@ -16,7 +16,7 @@ set(extra_sources  "../src/utilities/simplexnoise.cpp" "../src/utilities/noise.c
 
 add_executable(${project_name} ${header_files} ${source_files} "../src/utilities/simplexnoise.cpp" "../src/utilities/whitenoise.cpp" "../src/utilities/noise.cpp" "../src/utilities/asmnoise.asm" "../src/utilities/voronoinoise.cpp")
 
-find_package(Featherkit COMPONENTS rendering ui messaging structure entity REQUIRED)
+find_package(Featherkit COMPONENTS rendering ui messaging structure entity sfml REQUIRED)
 
 if(FEATHERKIT_FOUND)
     include_directories(${FEATHERKIT_INCLUDE_DIRS})

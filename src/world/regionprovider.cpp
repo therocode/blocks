@@ -38,9 +38,7 @@ RegionProvider::~RegionProvider()
 
 void RegionProvider::handleMessage(const RegionNeededMessage& received)
 {
-    RegionCoord coordinate;
-
-    std::tie(coordinate) = received.data;
+    RegionCoord coordinate = received.region;
 
     IntensityMap height = mRegionGenerator.generateHeightmap(coordinate);
     Region newRegion(height, mRegionGenerator.generateRainfall(coordinate), mRegionGenerator.generateTemperature(coordinate, height), mRegionGenerator.generateBiomeSelector(coordinate));
@@ -103,7 +101,7 @@ void RegionProvider::handleMessage(const RegionNeededMessage& received)
 
     newRegion.setBiomes(biomeIndices, usedBiomesFlipped);
 
-    mBus.send(RegionDeliverMessage(coordinate, newRegion));
+    mBus.send(RegionDeliverMessage{coordinate, newRegion});
 
     //lodepng_encode32_file(std::string("regiona" + std::to_string(coordinate.x) + "_" + std::to_string(coordinate.y) + ".png").c_str(), (uint8_t*) mImage.data(), regionVoxelWidth, regionVoxelWidth);
     //lodepng_encode32_file(std::string("regionr" + std::to_string(coordinate.x) + "_" + std::to_string(coordinate.y) + ".png").c_str(), (uint8_t*) mRain.data(), regionVoxelWidth, regionVoxelWidth);

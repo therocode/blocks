@@ -31,7 +31,7 @@ asIScriptObject* EntityInterface::createEntity(const std::string& type, float x,
 
     if(createdEntity.expired())
     {
-        mBus.send<LogMessage>(LogMessage("Script runtime error: Id of created entity of type '" + type + "' is invalid. Abandoning script initialisation", mLogName, LogLevel::ERR));
+        mBus.send<LogMessage>(LogMessage{"Script runtime error: Id of created entity of type '" + type + "' is invalid. Abandoning script initialisation", mLogName, LogLevel::ERR});
         return nullptr;
     }
 
@@ -51,7 +51,7 @@ asIScriptObject* EntityInterface::createEntity(const std::string& type, float x,
 
 void EntityInterface::removeEntityFromId(size_t id)
 {
-    mBus.send<RemoveEntityMessage>(RemoveEntityMessage(id));   
+    mBus.send<RemoveEntityMessage>(RemoveEntityMessage{id});   
 }
 
 void EntityInterface::setEntityCreator(EntityCreator creator)

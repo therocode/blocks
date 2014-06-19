@@ -12,9 +12,8 @@ HighlightManager::HighlightManager(fea::MessageBus& bus, int highlightRadius)
 
 void HighlightManager::handleMessage(const HighlightEntitySpawnedMessage& msg)
 {
-    fea::EntityId id;
-    ChunkCoord loc;
-    tie(id, loc) = msg.data; 
+    fea::EntityId id = msg.id;
+    ChunkCoord loc = msg.coordinate;
 
     EntityMap::const_iterator got = mEntityMap.find(id);
     if(got != mEntityMap.end())
@@ -28,8 +27,7 @@ void HighlightManager::handleMessage(const HighlightEntitySpawnedMessage& msg)
 
 void HighlightManager::handleMessage(const HighlightEntityDespawnedMessage& msg)
 {
-    fea::EntityId id;
-    tie(id) = msg.data;
+    fea::EntityId id = msg.id;
 
     EntityMap::const_iterator got = mEntityMap.find(id);
     if(got == mEntityMap.end())
@@ -43,9 +41,8 @@ void HighlightManager::handleMessage(const HighlightEntityDespawnedMessage& msg)
 
 void HighlightManager::handleMessage(const HighlightEntityMovedMessage& msg)
 {
-    fea::EntityId id;
-    ChunkCoord loc;
-    tie(id, loc) = msg.data;
+    fea::EntityId id = msg.id;
+    ChunkCoord loc = msg.coordinate;
 
     EntityMap::const_iterator got = mEntityMap.find(id);
     if(got == mEntityMap.end())
@@ -108,7 +105,7 @@ void HighlightManager::highlightChunk(const ChunkCoord& coord)
 
     if(mRefCounts[coord] == 1) 
     {
-        mBus.send<ChunkHighlightedMessage>(ChunkHighlightedMessage(coord));    
+        mBus.send<ChunkHighlightedMessage>(ChunkHighlightedMessage{coord});    
     }
 }
 
@@ -129,6 +126,6 @@ void HighlightManager::dehighlightChunk(const ChunkCoord& coord)
 
     if(mRefCounts[coord] == 0)
     {
-        mBus.send<ChunkDehighlightedMessage>(ChunkDehighlightedMessage(coord));
+        mBus.send<ChunkDehighlightedMessage>(ChunkDehighlightedMessage{coord});
     }
 }
