@@ -1,7 +1,7 @@
 #pragma once
 #include "../blockstd.h"
 #include "serverclientbridge.h"
-#include "enet/enet.h"
+//#include "enet/enet.h"
 #include <thread>
 #include <atomic>
 #include <fea/messaging.hpp>
@@ -24,18 +24,18 @@ class RemoteServerBridge : public ServerClientBridge
         std::string mLogName;
 		bool mConnected;
 		void createClient();
-		ENetAddress mAddress;
-		ENetHost*	mHost;
+		//ENetAddress mAddress;
+		//ENetHost*	mHost;
 		int			mPort;
 		//At the moment the host is putinto here for clients.
-		ENetPeer*	mHostPeer;
-		std::thread mThread;
-        void acceptEnetPacket(ENetPacket* packet);
+		//ENetPeer*	mHostPeer;
+		//std::thread mThread;
+        //void acceptEnetPacket(ENetPacket* packet);
         void deserialiseAndReceive(const std::vector<uint8_t>& data, BasePackage* package);
 	protected:
         int  mChannelCount;
 		void mListenerFunction();
-		std::atomic<bool> mStop;
+		//std::atomic<bool> mStop;
 
-        std::atomic<bool> mGotPackagesToSend;
+        //std::atomic<bool> mGotPackagesToSend;
 };
