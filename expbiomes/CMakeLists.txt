@@ -10,17 +10,15 @@ project(${project_name})
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -O3")
 
 file(GLOB_RECURSE source_files "src/*.cpp")
-file(GLOB_RECURSE header_files "src/*.h")
+file(GLOB_RECURSE header_files "src/*.hpp")
 
 set(extra_sources  "../src/utilities/simplexnoise.cpp" "../src/utilities/noise.cpp" "../src/utilities/asmnoise.asm")
 
 add_executable(${project_name} ${header_files} ${source_files} "../src/utilities/simplexnoise.cpp" "../src/utilities/whitenoise.cpp" "../src/utilities/noise.cpp" "../src/utilities/asmnoise.asm" "../src/utilities/voronoinoise.cpp")
 
-find_package(Featherkit COMPONENTS rendering ui messaging structure entity sfml REQUIRED)
+find_package(Featherkit COMPONENTS rendering ui util messaging structure entity sdl REQUIRED)
 
 if(FEATHERKIT_FOUND)
     include_directories(${FEATHERKIT_INCLUDE_DIRS})
     target_link_libraries(${project_name} ${FEATHERKIT_LIBRARIES})
 endif()
-
-target_link_libraries(${project_name} GL GLU GLEW sfml-window sfml-system sfml-graphics)
