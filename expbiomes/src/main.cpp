@@ -8,6 +8,21 @@
 #include "biomestorage.hpp"
 #include "generator.hpp"
 #include "mapchunk.hpp"
+#include <fea/structure.hpp>
+
+class BiomeApp : public fea::Application
+{
+    public:
+        void setup(const std::vector<std::string>& arg) override;
+        void loop() override;
+        void destroy() override{};
+};
+
+int main()
+{
+    BiomeApp app;
+    app.run();
+}
 
 namespace std 
 {
@@ -62,31 +77,51 @@ namespace std
 const int seed = 19;
 const int32_t partSize = 512;
 
-int main()
-{
     fea::Window window(new fea::SDLWindowBackend());
     fea::InputHandler input(new fea::SDLInputBackend());
+
+    fea::Renderer2D renderer(fea::Viewport({512, 512}, {0, 0}, fea::Camera({512.0f / 2.0f, 512.0f / 2.0f})));
+
+    fea::Texture texture1;
+    fea::Texture texture2;
+    fea::Texture texture3;
+    fea::Texture texture4;
+
+    BiomeStorage storage;
+
+    fea::Quad square1({partSize, partSize});
+    fea::Quad square2({partSize, partSize});
+    fea::Quad square3({partSize, partSize});
+    fea::Quad square4({partSize, partSize});
+
+    std::array<fea::Quad*, 4> quads;
+    std::array<glm::vec2, 4 > coords;
+    std::array<glm::vec4, 5461> rectQueue;
+
+    Generator generator;
+
+
+    std::unordered_map<glm::ivec2, MapChunk> mapChunks;
+
+
+void BiomeApp::setup(const std::vector<std::string>& args)
+{
+
+    MapChunk::generator = &generator;
+    MapChunk::storage = &storage;
+    MapChunk::queue = &rectQueue;
 
     window.create(fea::VideoMode(512, 512, 32), "Window and user input");
     window.setFramerateLimit(60);
     window.setVSyncEnabled(true);
 
-    fea::Renderer2D renderer(fea::Viewport({512, 512}, {0, 0}, fea::Camera({512.0f / 2.0f, 512.0f / 2.0f})));
-
     renderer.setup();
 
-    bool shutDown = false;
-
-    fea::Texture texture1;
     texture1.create(partSize, partSize, fea::Color(1.0f, 0.0f, 1.0f), false, true);
-    fea::Texture texture2;
     texture2.create(partSize, partSize, fea::Color(1.0f, 0.0f, 1.0f), false, true);
-    fea::Texture texture3;
     texture3.create(partSize, partSize, fea::Color(1.0f, 0.0f, 1.0f), false, true);
-    fea::Texture texture4;
     texture4.create(partSize, partSize, fea::Color(1.0f, 0.0f, 1.0f), false, true);
-
-    BiomeStorage storage;
+    //
     //temp             //rain
     //storage.addBiome(new Biome("forest", 0.1f, 0.5f, 0.0f,          Range(0.3f, 0.8f), Range(0.4f, 1.0f),  Range(0.2f, 1.0f)));
     //storage.addBiome(new Biome("coniferousforest", 0.0f, 0.5f, 0.3f,Range(0.0f, 0.5f), Range(0.4f, 1.0f),  Range(0.2f, 1.0f)));
@@ -119,26 +154,21 @@ int main()
     storage.addBiome(new Biome("ocean", 0.0f, 0.0f, 1.0f,           Range(0.2f, 1.0f), Range(0.0f, 1.0f),  Range(0.0f, 0.2f)));
     storage.addBiome(new Biome("arctic ocean", 0.0f, 0.9f, 1.0f,    Range(0.0f, 0.2f), Range(0.0f, 1.0f),  Range(0.0f, 0.2f)));
 
-    fea::Quad square1({partSize, partSize});
     square1.setPosition({0.0f, 0.0f});
     square1.setColor(fea::Color::Blue); 
-    fea::Quad square2({partSize, partSize});
     square2.setPosition({partSize, 0.0f});
     square2.setColor(fea::Color::Yellow); 
-    fea::Quad square3({partSize, partSize});
     square3.setPosition({0.0f, partSize});
     square3.setColor(fea::Color::Red); 
-    fea::Quad square4({partSize, partSize});
     square4.setPosition({partSize, partSize});
     square4.setColor(fea::Color::Green); 
 
-    std::array<fea::Quad*, 4> quads = {&square1, &square2, &square3, &square4};
-    std::array<glm::vec2, 4 > coords= {square1.getPosition(),
+    quads = {&square1, &square2, &square3, &square4};
+    coords= {square1.getPosition(),
         square2.getPosition(),
         square3.getPosition(),
         square4.getPosition()};
 
-    std::array<glm::vec4, 5461> rectQueue;
     int32_t rectQueueIterator = 0;
 
     for(int32_t i = 0; i < 7; i++)
@@ -159,14 +189,6 @@ int main()
         }
     }
 
-    Generator generator;
-
-    MapChunk::generator = &generator;
-    MapChunk::storage = &storage;
-    MapChunk::queue = &rectQueue;
-
-    std::unordered_map<glm::ivec2, MapChunk> mapChunks;
-
     for(int32_t y = 0; y < 8; y++)
     {
         float yy = (float) y / 8.0f;
@@ -184,20 +206,22 @@ int main()
     square1.setTexture(texture1);
     square1.setColor(fea::Color::White);
 
-    while(!shutDown)
-    {
+}
+
+void BiomeApp::loop()
+{
         fea::Event event;
         while(input.pollEvent(event))
         {
             if(event.type == fea::Event::CLOSED)
             {
-                shutDown = true;
+                quit();
             }
             else if(event.type == fea::Event::KEYPRESSED)
             {
                 if(event.key.code == fea::Keyboard::Q || event.key.code == fea::Keyboard::ESCAPE)
                 {
-                    shutDown = true;
+                    quit();
                 }
                 else if(event.key.code == fea::Keyboard::UP)
                 {
@@ -274,6 +298,4 @@ int main()
         renderer.queue(square4);
         renderer.render();
         window.swapBuffers();
-    }
-    window.close();
 }
