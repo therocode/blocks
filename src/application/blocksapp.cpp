@@ -1,8 +1,11 @@
 #include "blocksapp.h"
 #include "../input/inputactions.h"
 #include "../networking/localserverclientbridge.h"
+//#include "../networking/remoteserverbridge.h"
 #include "../networking/localclientconnectionlistener.h"
+//#include "../networking/remoteclientconnectionlistener.h"
 #include <iostream>
+//#include <thread>
 
 BlocksApplication::BlocksApplication()
 {
@@ -127,12 +130,12 @@ void BlocksApplication::setupDedicatedServer(int32_t port)
 
     //if(enet_initialize() < 0)
     //{
-    //    server->getBus().send<LogMessage>(LogMessage{"Couldn't initialise enet", "network", LogLevel::ERR});
+        //server->getBus().send<LogMessage>(LogMessage{"Couldn't initialise enet", "network", LogLevel::ERR});
     //}
     //else
     //{
-    //    remoteListener->startListening(port);
-    //    server->setClientListener(std::unique_ptr<RemoteClientConnectionListener>(remoteListener));
+        //remoteListener->startListening(port);
+        //server->setClientListener(std::unique_ptr<RemoteClientConnectionListener>(remoteListener));
     //}
 }
 
@@ -143,13 +146,13 @@ void BlocksApplication::joinServer(const std::string& address, int32_t port)
 
     //if(enet_initialize() < 0)
     //{
-    //    client->getBus().send<LogMessage>(LogMessage{"Couldn't initialise enet", "network", LogLevel::ERR});
+        //client->getBus().send<LogMessage>(LogMessage{"Couldn't initialise enet", "network", LogLevel::ERR});
     //}
     //else
     //{
-    //    client->setServerBridge(std::unique_ptr<RemoteServerBridge>(serverBidge));
-    //    serverBidge->connectToAddress(address, port);
-    //    serverBidge->startListening();
+        ////client->setServerBridge(std::unique_ptr<RemoteServerBridge>(serverBidge));
+        //serverBidge->connectToAddress(address, port);
+        //serverBidge->startListening();
     //}
-	//client->setup();
+	client->setup();
 }

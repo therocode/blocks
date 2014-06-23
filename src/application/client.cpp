@@ -1,14 +1,14 @@
 #include "client.h"
 #include <iostream>
-#include <fea/ui/sdl2windowbackend.hpp>
-#include <fea/ui/sdl2inputbackend.hpp>
+#include <fea/ui/sdlwindowbackend.hpp>
+#include <fea/ui/sdlinputbackend.hpp>
 #include "../networking/packages.h"
 #include "../application/applicationmessages.h"
 
 
 Client::Client() :
     mLogger(mBus, LogLevel::VERB),
-	mWindow(new fea::SDL2WindowBackend()),
+	mWindow(new fea::SDLWindowBackend()),
 	mRenderer(mBus),
 	mInputAdaptor(mBus),
 	mQuit(false),

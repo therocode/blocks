@@ -2,12 +2,12 @@
 #include "../script/scriptmessages.h"
 #include "inputadaptor.h"
 #include "inputactions.h"
-#include <fea/ui/sdl2inputbackend.hpp>
+#include <fea/ui/sdlinputbackend.hpp>
 #include <fea/ui/jsonactioniohandler.hpp>
 #include "zlib.h"
 
 InputAdaptor::InputAdaptor(fea::MessageBus& b):
-    inputHandler(new fea::SDL2InputBackend),
+    inputHandler(new fea::SDLInputBackend),
     mPlayerId(-1),
     mBus(b),
     mHoldingForwards(false),

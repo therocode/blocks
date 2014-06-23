@@ -4,12 +4,15 @@
 
 IntensityMap RegionGenerator::generateHeightmap(const RegionCoord& regionCoordinate) const
 {
+    std::cout << "lalal\n";
     IntensityMap heightmap;
+    std::cout << "lalgl\n";
     Noise simplex(globalSeed + 3);
     Noise simplex2(globalSeed + 17);
 
     glm::vec3 regionPos = regionToWorld(regionCoordinate);
 
+    std::cout << "halgl\n";
     for(size_t y = 0; y < regionVoxelWidth; y++)
     for(size_t x = 0; x < regionVoxelWidth; x++)
     {
@@ -26,6 +29,7 @@ IntensityMap RegionGenerator::generateHeightmap(const RegionCoord& regionCoordin
         heightmap.setUnit(x, y, value);
     }
 
+    std::cout << "talgl\n";
     return heightmap;
 }
 

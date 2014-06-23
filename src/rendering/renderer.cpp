@@ -1,5 +1,4 @@
 #include "renderer.h"
-#include <fea/rendering/opengl.hpp>
 #include <iostream>
 #include "../utilities/lodepng.h"
 
@@ -67,15 +66,6 @@ void Renderer::setup()
 {
     //std::cout << "hoj: " << glGetError() << "\n";
     //glewExperimental = GL_FALSE;
-    auto glStatus = feaogl_LoadFunctions();
-
-	if(feaogl_LOAD_FAILED != glStatus)
-	{
-		fprintf(stderr, "Error: when inisitailingin gl\n");
-	}else
-	{
-		//fprintf(stdout, "Status: Using GLEW %s\n", glewGetString(GLEW_VERSION));
-	}
 	//glEnable(GL_LIGHTING);
 	//glEnable(GL_LIGHT0);
 	//GLfloat lightpos[] = {100.f, 100.f, 100.f};

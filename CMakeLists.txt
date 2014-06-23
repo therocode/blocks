@@ -55,91 +55,81 @@ set(source_files
 
     src/input/inputadaptor.cpp
 
-    src/math/mathutils.h
-
-    src/networking/clientconnection.cpp
-    src/networking/clientconnectionlistener.cpp
-    src/networking/localclientconnectionlistener.cpp
-    src/networking/localserverclientbridge.cpp
-    src/networking/package.cpp
-	src/networking/remoteclientbridge.cpp
-	src/networking/remoteserverbridge.cpp
-    src/networking/remoteclientconnectionlistener.cpp
-    src/networking/serverclientbridge.cpp
-
-    src/rendering/chunkgeneratorqueue.cpp
-	src/rendering/debugrenderer.cpp
-	src/rendering/billboard.cpp
-	src/rendering/camera.cpp
-    src/rendering/frustum.cpp
-	src/rendering/meshwalker.cpp
-	src/rendering/renderer.cpp
-	src/rendering/shader.cpp
-	src/rendering/shaderprogram.cpp
-    src/rendering/surfacemerger.cpp
-    src/rendering/texture.cpp
-	src/rendering/vbo.cpp
-	src/rendering/vbocreator.cpp
-    src/rendering/marchingcubegenerator.cpp
-
-    src/script/scriptcallback.cpp
-    src/script/scriptengine.cpp
-    src/script/scriptentity.cpp
-    src/script/scriptentitycore.cpp
-    src/script/scripthandler.cpp
-    src/script/scriptmodule.cpp
-    src/script/asaddons/scriptarray.cpp
-    src/script/asaddons/scriptmath.cpp
-    src/script/asaddons/scriptvectors.cpp
-    src/script/asaddons/scriptbuilder.cpp
-    src/script/asaddons/scriptstdstring.cpp
-    src/script/asaddons/scriptstdstring_utils.cpp
-    src/script/callers/scriptcaller.cpp
-    src/script/callers/frametimecaller.cpp
-    src/script/callers/gameeventcaller.cpp
-    src/script/callers/ongroundcaller.cpp
-    src/script/interfaces/entityinterface.cpp
-    src/script/interfaces/landscapeinterface.cpp
-    src/script/interfaces/mathsinterface.cpp
-    src/script/interfaces/physicsinterface.cpp
-    src/script/interfaces/printinterface.cpp
-    src/script/interfaces/randominterface.cpp
-    src/script/interfaces/scriptinterface.cpp
-    src/script/interfaces/stringinterface.cpp
-
-	src/utilities/asmnoise.asm
-    src/utilities/folderexploder.cpp
-    src/utilities/fpscontroller.cpp
-    src/utilities/lodepng.cpp
-    src/utilities/logger.cpp
-    src/utilities/noise.cpp
-	src/utilities/random.cpp
-    src/utilities/simplexnoise.cpp
-	src/utilities/timer.cpp
-    src/utilities/voronoinoise.cpp
-    src/utilities/whitenoise.cpp
-
-	src/world/biome.cpp
-	src/world/biomestorage.cpp
-	src/world/chunk.cpp
-    src/world/chunkprovider.cpp
-    src/world/highlightmanager.cpp
-    src/world/modmanager.cpp
-    src/world/region.cpp
-    src/world/regionprovider.cpp
-    src/world/regionlodmanager.cpp
-    src/world/worldstd.cpp
-	src/world/universe.cpp
-    src/world/world.cpp
-    src/world/worldinterface.cpp
-    src/world/generation/worldgenerator.cpp
-    src/world/generation/regiongenerator.cpp
-)
+        src/networking/serverclientbridge.cpp
+    
+        src/rendering/chunkgeneratorqueue.cpp
+           src/rendering/debugrenderer.cpp
+           src/rendering/billboard.cpp
+           src/rendering/camera.cpp
+        src/rendering/frustum.cpp
+           src/rendering/meshwalker.cpp
+           src/rendering/renderer.cpp
+           src/rendering/shader.cpp
+           src/rendering/shaderprogram.cpp
+        src/rendering/surfacemerger.cpp
+        src/rendering/texture.cpp
+           src/rendering/vbo.cpp
+           src/rendering/vbocreator.cpp
+        src/rendering/marchingcubegenerator.cpp
+    
+        src/script/scriptcallback.cpp
+        src/script/scriptengine.cpp
+        src/script/scriptentity.cpp
+        src/script/scriptentitycore.cpp
+        src/script/scripthandler.cpp
+        src/script/scriptmodule.cpp
+        src/script/asaddons/scriptarray.cpp
+        src/script/asaddons/scriptmath.cpp
+        src/script/asaddons/scriptvectors.cpp
+        src/script/asaddons/scriptbuilder.cpp
+        src/script/asaddons/scriptstdstring.cpp
+        src/script/asaddons/scriptstdstring_utils.cpp
+        src/script/callers/scriptcaller.cpp
+        src/script/callers/frametimecaller.cpp
+        src/script/callers/gameeventcaller.cpp
+        src/script/callers/ongroundcaller.cpp
+        src/script/interfaces/entityinterface.cpp
+        src/script/interfaces/landscapeinterface.cpp
+        src/script/interfaces/mathsinterface.cpp
+        src/script/interfaces/physicsinterface.cpp
+        src/script/interfaces/printinterface.cpp
+        src/script/interfaces/randominterface.cpp
+        src/script/interfaces/scriptinterface.cpp
+        src/script/interfaces/stringinterface.cpp
+    
+           src/utilities/asmnoise.asm
+        src/utilities/folderexploder.cpp
+        src/utilities/fpscontroller.cpp
+        src/utilities/lodepng.cpp
+        src/utilities/logger.cpp
+        src/utilities/noise.cpp
+           src/utilities/random.cpp
+        src/utilities/simplexnoise.cpp
+           src/utilities/timer.cpp
+        src/utilities/voronoinoise.cpp
+        src/utilities/whitenoise.cpp
+    
+           src/world/biome.cpp
+           src/world/biomestorage.cpp
+           src/world/chunk.cpp
+        src/world/chunkprovider.cpp
+        src/world/highlightmanager.cpp
+        src/world/modmanager.cpp
+        src/world/region.cpp
+        src/world/regionprovider.cpp
+        src/world/regionlodmanager.cpp
+        src/world/worldstd.cpp
+           src/world/universe.cpp
+        src/world/world.cpp
+        src/world/worldinterface.cpp
+        src/world/generation/worldgenerator.cpp
+        src/world/generation/regiongenerator.cpp
+    )
 
 set(header_files
-	src/blockstd.h
-	src/application/applicationmessages.h
-	src/application/blocksapp.h
+       src/blockstd.h
+       src/application/applicationmessages.h
+       src/application/blocksapp.h
     src/application/client.h
     src/application/server.h
 
@@ -147,7 +137,7 @@ set(header_files
     src/console/console.h
     src/console/keys.h
 
-	src/entity/entitymessages.h
+       src/entity/entitymessages.h
     src/entity/defaultsetters.h
     src/entity/entitycreator.h
     src/entity/entityfactory.h
@@ -164,7 +154,7 @@ set(header_files
     src/entity/controllers/physicstype.h
     src/entity/controllers/playercontroller.h
 
-	src/input/inputmessages.h
+       src/input/inputmessages.h
     src/input/inputactions.h
     src/input/inputadaptor.h
 
@@ -176,9 +166,14 @@ set(header_files
     src/networking/localserverclientbridge.h
     src/networking/package.h
     src/networking/packagetype.h
-	src/networking/remoteclientbridge.h
-	src/networking/remoteserverbridge.h
-    src/networking/remoteclientconnectionlistener.h
+
+    src/math/mathutils.h
+
+    src/networking/clientconnection.cpp
+    src/networking/clientconnectionlistener.cpp
+    src/networking/localclientconnectionlistener.cpp
+    src/networking/localserverclientbridge.cpp
+    src/networking/package.cpp
     src/networking/serverclientbridge.h
 
     src/rendering/chunkgeneratorqueue.h
@@ -261,7 +256,7 @@ find_package(Featherkit REQUIRED COMPONENTS entity structure ui sdl2 rendering m
 find_package(GLM)
 find_package(SDL2)
 find_package(OpenGL REQUIRED)
-find_package(ENet)
+#find_package(ENet)
 find_package(angelscript)
 
 find_package(JsonCpp REQUIRED)
@@ -270,13 +265,6 @@ find_package(JsonCpp REQUIRED)
 include_directories(src)
 
 #This has to be done before add_executable. I'm adding source files.
-if(NOT GLEW_FOUND)
-	include_directories(${CMAKE_CURRENT_SOURCE_DIR}/extlibs/glew/include)
-	link_directories(${CMAKE_CURRENT_SOURCE_DIR}/extlibs/glew/lib)
-	set(source_files ${CMAKE_CURRENT_SOURCE_DIR}/extlibs/glew/glew.c ${source_files})
-	add_definitions(-DGLEW_STATIC)
-	message("GLEW NOT FOUND SO WE ADDED IT")
-endif()
 
 if(WIN32)
     message("Added windows resource.")
@@ -314,22 +302,22 @@ if(BUILD_GAME)
     	add_definitions(-O4)
     endif(WIN32)
     
-    if(ENET_FOUND)
-    	include_directories(${ENet_INCLUDE_DIRS})
-    	target_link_libraries(${project_name} ${ENet_LIBRARIES})
-    else(ENET_FOUND)
-    	subdirs(extlibs/enet)
-    	include_directories(${CMAKE_CURRENT_SOURCE_DIR}/extlibs/enet/include)
-    	link_directories(${CMAKE_CURRENT_SOURCE_DIR}/extlibs/enet)
-    	SET(ELIBS enet)
-    	IF(WIN32)
-            SET(WINDOWS_ENET_DEPENDENCIES "ws2_32;winmm")
-            SET(ELIBS ${ELIBS} ${WINDOWS_ENET_DEPENDENCIES})
-        ELSE(WIN32)
-            SET(ELIBS ${ELIBS})
-        ENDIF(WIN32)
-    	target_link_libraries(${project_name} ${ELIBS})
-    endif(ENET_FOUND)
+    #if(ENET_FOUND)
+    #	include_directories(${ENet_INCLUDE_DIRS})
+    #	target_link_libraries(${project_name} ${ENet_LIBRARIES})
+    #else(ENET_FOUND)
+    #	subdirs(extlibs/enet)
+    #	include_directories(${CMAKE_CURRENT_SOURCE_DIR}/extlibs/enet/include)
+    #	link_directories(${CMAKE_CURRENT_SOURCE_DIR}/extlibs/enet)
+    #	SET(ELIBS enet)
+    #	IF(WIN32)
+    #        SET(WINDOWS_ENET_DEPENDENCIES "ws2_32;winmm")
+    #        SET(ELIBS ${ELIBS} ${WINDOWS_ENET_DEPENDENCIES})
+    #    ELSE(WIN32)
+    #        SET(ELIBS ${ELIBS})
+    #    ENDIF(WIN32)
+    #	target_link_libraries(${project_name} ${ELIBS})
+    #endif(ENET_FOUND)
     if(ZLIB_FOUND)
         include_directories(${ZLib_INCLUDE_DIRS})
         target_link_libraries(${project_name} ${ZLib_LIBRARIES})
@@ -366,13 +354,6 @@ if(BUILD_GAME)
     	include_directories(${CMAKE_CURRENT_SOURCE_DIR}/extlibs/glm)
     endif(GLM_FOUND)
     
-    if(GLEW_FOUND)
-    	include_directories(${GLEW_INCLUDE_DIR})
-    	target_link_libraries(${project_name} ${GLEW_LIBRARIES})
-    else(GLEW_FOUND)
-    	# target_link_libraries(${project_name} glew32)
-    endif(GLEW_FOUND)
-        
     if(JSONCPP_FOUND)
         include_directories(${JSONCPP_INCLUDE_DIRS})
         target_link_libraries(${project_name} ${JSONCPP_LIBRARIES})
