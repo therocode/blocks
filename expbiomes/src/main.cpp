@@ -118,7 +118,9 @@ std::string biomeName("none");
 
 fea::Font font;
 fea::TextSurface text;
-int32_t mOO = 0;
+int32_t elevation = 0;
+int32_t degrees = 0;
+int32_t rainfall = 0;
 
 fea::Quad textBg;
 
@@ -129,9 +131,18 @@ void updateText(const glm::ivec2& position)
     text.setPosition((glm::vec2)position);
     text.setPenFont(font);
     text.clear();
+    
+    text.setLineHeight(14.0f);
+    text.setPenColor(fea::Color::White);
     text.setPenPosition({0.0f, 12.0f});
     text.write(biomeName);
 
+    text.newLine();
+    text.write("Elevation: " + std::to_string(elevation));
+    text.newLine();
+    text.write("Temperature: " + std::to_string(degrees) + " C");
+    text.newLine();
+    text.write("Rainfall: " + std::to_string(rainfall) + " mm");
     textBg.setPosition((glm::vec2)position);
     textBg.setSize(text.getSize());
 }
@@ -151,6 +162,8 @@ void BiomeApp::setup(const std::vector<std::string>& args)
     renderer.setup();
 
     font = fea::Font("data/arial.ttf", 14);
+
+    textBg.setColor(fea::Color::Gray);
 
     texture1.create(partSize, partSize, fea::Color(1.0f, 0.0f, 1.0f), false, true);
     texture2.create(partSize, partSize, fea::Color(1.0f, 0.0f, 1.0f), false, true);
@@ -367,17 +380,15 @@ void BiomeApp::loop()
                     float height = data.rAsFloat();
                     float selector = data.aAsFloat(); 
 
-                    int32_t metres = 6000 * height- 1200;
-                    int32_t rainfall = 400 * rain;
-                    int32_t degree = 90 * temp - 40;
-                    const std::string& name = storage.getBiome(temp, rain, height, selector)->name;
+                    elevation = 6000 * height- 1200;
+                    rainfall = 400 * rain;
+                    degrees = 90 * temp - 40;
+                    biomeName = storage.getBiome(temp, rain, height, selector)->name;
 
                     //std::cout << "this place is " << metres << " metres above ocean level\n";
                     //std::cout << "this place has " << rainfall << " cm annual precipitation\n";
                     //std::cout << "this place has the average temperature of " << degree << " degrees celcius during daytime\n";
                     //std::cout << "this biome is " << name << "\n";
-
-                    biomeName = name;
 
                     updateText({event.mouseButton.x, event.mouseButton.y});
                 }
@@ -406,17 +417,15 @@ void BiomeApp::loop()
                         float height = data.rAsFloat();
                         float selector = data.aAsFloat(); 
 
-                        int32_t metres = 6000 * height- 1200;
-                        int32_t rainfall = 400 * rain;
-                        int32_t degree = 90 * temp - 40;
-                        const std::string& name = storage.getBiome(temp, rain, height, selector)->name;
+                        elevation = 6000 * height- 1200;
+                        rainfall = 400 * rain;
+                        degrees = 90 * temp - 40;
+                        biomeName = storage.getBiome(temp, rain, height, selector)->name;
 
                         //std::cout << "this place is " << metres << " metres above ocean level\n";
                         //std::cout << "this place has " << rainfall << " cm annual precipitation\n";
                         //std::cout << "this place has the average temperature of " << degree << " degrees celcius during daytime\n";
                         //std::cout << "this biome is " << name << "\n";
-
-                        biomeName = name;
 
                         updateText({event.mouseMove.x, event.mouseMove.y});
                     }
