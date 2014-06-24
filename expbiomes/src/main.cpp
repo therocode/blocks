@@ -3,7 +3,6 @@
 #include <fea/ui/sdlinputbackend.hpp>
 #include <fea/render2d.hpp>
 #include "../../src/utilities/noise.h"
-#include <SFML/Graphics/Image.hpp>
 #include <iostream>
 #include "biomestorage.hpp"
 #include "generator.hpp"
@@ -158,9 +157,9 @@ void BiomeApp::setup(const std::vector<std::string>& args)
 
     square1.setPosition({0.0f, 0.0f});
     square1.setColor(fea::Color::Blue); 
-    square2.setPosition({partSize, 0.0f});
+    square2.setPosition(glm::vec2(partSize, 0.0f));
     square2.setColor(fea::Color::Yellow); 
-    square3.setPosition({0.0f, partSize});
+    square3.setPosition(glm::vec2(0.0f, partSize));
     square3.setColor(fea::Color::Red); 
     square4.setPosition({partSize, partSize});
     square4.setColor(fea::Color::Green); 

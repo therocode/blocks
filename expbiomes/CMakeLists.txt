@@ -18,5 +18,11 @@ if(FEATHERKIT_FOUND)
     include_directories(${FEATHERKIT_INCLUDE_DIRS})
 endif()
 
+find_package(GLM)
+
+if(GLM_FOUND)
+    include_directories(${GLM_INCLUDE_DIR})
+endif()
+
 add_executable(${project_name} ${header_files} ${source_files})
 target_link_libraries(${project_name} ${FEATHERKIT_LIBRARIES})
