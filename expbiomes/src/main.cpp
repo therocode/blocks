@@ -211,7 +211,7 @@ void BiomeApp::setup(const std::vector<std::string>& args)
     //}
     for(auto& quad : quads)
     {
-                glm::ivec2 gridPosition = coords[quad] / 64.0f;
+                glm::ivec2 gridPosition = (glm::ivec2)(coords[quad] / 64.0f);
 
                 for(int32_t y = 0; y < 8; y++)
                 {
@@ -329,7 +329,7 @@ void BiomeApp::loop()
 
                 squareChunks[quad].clear();
 
-                glm::ivec2 gridPosition = coords[quad] / 64.0f;
+                glm::ivec2 gridPosition = (glm::ivec2)(coords[quad] / 64.0f);
 
                 for(int32_t y = 0; y < 8; y++)
                 {
