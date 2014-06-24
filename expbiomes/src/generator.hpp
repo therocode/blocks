@@ -6,6 +6,7 @@ class Generator
     public:
         Generator();
         void generateCoordinate(float x, float y, float& height, float& rain, float& temperature, float& biome);
+        static float* zoom;
     private:
         fea::Noise noise0;
         fea::Noise noise1;

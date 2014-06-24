@@ -78,6 +78,11 @@ const glm::vec2& MapChunk::getTexturePosition() const
     return texturePosition;
 }
 
+void MapChunk::reset()
+{
+    next = 0;
+}
+
 Generator* MapChunk::generator = nullptr;
 BiomeStorage* MapChunk::storage = nullptr;
 std::array<glm::vec4, 5461>* MapChunk::queue = nullptr;

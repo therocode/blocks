@@ -106,12 +106,15 @@ const int32_t partSize = 512;
 
     std::unordered_map<fea::Quad*, std::vector<glm::ivec2>> squareChunks;
 
+    float zoom = 1.0f;
+
 void BiomeApp::setup(const std::vector<std::string>& args)
 {
 
     MapChunk::generator = &generator;
     MapChunk::storage = &storage;
     MapChunk::queue = &rectQueue;
+    Generator::zoom = &zoom;
 
     window.create(fea::VideoMode(512, 512, 32), "Window and user input");
     window.setFramerateLimit(60);
@@ -292,6 +295,20 @@ void BiomeApp::loop()
                     square2.translate({-5.0f, 0.0f});
                     square3.translate({-5.0f, 0.0f});
                     square4.translate({-5.0f, 0.0f});
+                }
+                else if(event.key.code == fea::Keyboard::Z)
+                {
+                    zoom *= 0.9f;
+
+                    for(auto& chunk : mapChunks)
+                        chunk.second.reset();
+                }
+                else if(event.key.code == fea::Keyboard::X)
+                {
+                    zoom /= 0.9f;
+
+                    for(auto& chunk : mapChunks)
+                        chunk.second.reset();
                 }
             }
         }

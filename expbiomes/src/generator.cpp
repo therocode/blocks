@@ -1,7 +1,5 @@
 #include "generator.hpp"
 
-float factor = 1.0f;
-
 Generator::Generator() :
     noise0(0),
     noise1(1),
@@ -16,6 +14,7 @@ Generator::Generator() :
 
 void Generator::generateCoordinate(float x, float y, float& height, float& rain, float& temperature, float& biome)
 {
+    float factor = *zoom;
     float simplexAX = (x / 200.0f) * factor;
     float simplexAY = (y / 200.0f) * factor;
     float simplexBX = (x / 800.0f) * factor;
@@ -47,3 +46,5 @@ void Generator::generateCoordinate(float x, float y, float& height, float& rain,
     float yTurbulence = noise7.simplexOctave2D(simplexCX,  simplexCY, 0.6f, 6, 0.5f);
     biome = noise0.voronoi2D((x / 60.0f + xTurbulence * 0.25f) * factor, (y / 60.0f + yTurbulence * 0.25f) * factor);
 }
+
+float* Generator::zoom = nullptr;
