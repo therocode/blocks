@@ -8,6 +8,7 @@
 #include "generator.hpp"
 #include "mapchunk.hpp"
 #include <fea/structure.hpp>
+#include <algorithm>
 
 class BiomeApp : public fea::Application
 {
@@ -193,6 +194,13 @@ void BiomeApp::setup(const std::vector<std::string>& args)
             }
         }
     }
+
+    std::random_shuffle(rectQueue.begin() + 1, rectQueue.begin()    + 1    + 4);
+    std::random_shuffle(rectQueue.begin() + 5, rectQueue.begin()    + 5    + 16);
+    std::random_shuffle(rectQueue.begin() + 21, rectQueue.begin()   + 21   + 64);
+    std::random_shuffle(rectQueue.begin() + 85, rectQueue.begin()   + 85   + 256);
+    std::random_shuffle(rectQueue.begin() + 341, rectQueue.begin()  + 341  + 1024);
+    std::random_shuffle(rectQueue.begin() + 1365, rectQueue.begin() + 1365 + 4096);
 
     //for(int32_t y = 0; y < 8; y++)
     //{
