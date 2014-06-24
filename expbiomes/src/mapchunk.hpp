@@ -9,7 +9,7 @@ class MapChunk
 {
     public:
         MapChunk();
-        void setTexture(fea::Texture* tex);
+        void setTexture(fea::Texture* tex, fea::Texture* dataText);
         void setTexturePosition(const glm::vec2& pos);
         const glm::vec2& getTexturePosition() const;
         void setQuad(fea::Quad* q);
@@ -22,6 +22,7 @@ class MapChunk
     private:
         int32_t next;
         fea::Texture* texture;
+        fea::Texture* dataTexture;
         fea::Quad* quad;
         glm::vec2 texturePosition;
 };

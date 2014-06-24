@@ -6,9 +6,10 @@ MapChunk::MapChunk() :
 {
 }
 
-void MapChunk::setTexture(fea::Texture* tex)
+void MapChunk::setTexture(fea::Texture* tex, fea::Texture* dataText)
 {
     texture = tex;
+    dataTexture = dataText;
 }
 
 void MapChunk::setTexturePosition(const glm::vec2& pos)
@@ -62,12 +63,19 @@ void MapChunk::generate(const glm::vec2& position, const glm::vec2& textureStart
             glm::ivec2 end   = (glm::ivec2)(texturePosition + (glm::vec2(region.z, region.w) * 64.0f));
             //std::cout << "start: " << start.x << " " << start.y << "\n";
             //std::cout << "end: " << end.x << " " << end.y << "\n";
+            int32_t realX, realY = 0;
             for(int32_t y = start.y; y < end.y; y++)
             {
                 for(int32_t x = start.x; x < end.x; x++)
                 {
+                    int32_t index = realX + realY * 64;
                     texture->setPixel(x, y, col);
+                    //dataTexture->
+                    //std::cout << height << " " << rain << " " << temperature << " " << biome << "\n";
+                    dataTexture->setPixel(x, y, {height, rain, temperature, biome});
+                    realX++;
                 }
+                realY++;
             }
         }
     }

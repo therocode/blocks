@@ -86,6 +86,10 @@ const int32_t partSize = 512;
     fea::Texture texture2;
     fea::Texture texture3;
     fea::Texture texture4;
+    fea::Texture dataTexture1;
+    fea::Texture dataTexture2;
+    fea::Texture dataTexture3;
+    fea::Texture dataTexture4;
 
     BiomeStorage storage;
 
@@ -97,6 +101,7 @@ const int32_t partSize = 512;
     std::array<fea::Quad*, 4> quads;
     std::unordered_map<fea::Quad*, glm::vec2> coords;
     std::unordered_map<fea::Quad*, fea::Texture*> textures;
+    std::unordered_map<fea::Quad*, fea::Texture*> dataTextures;
     std::array<glm::vec4, 5461> rectQueue;
 
     Generator generator;
@@ -126,6 +131,10 @@ void BiomeApp::setup(const std::vector<std::string>& args)
     texture2.create(partSize, partSize, fea::Color(1.0f, 0.0f, 1.0f), false, true);
     texture3.create(partSize, partSize, fea::Color(1.0f, 0.0f, 1.0f), false, true);
     texture4.create(partSize, partSize, fea::Color(1.0f, 0.0f, 1.0f), false, true);
+    dataTexture1.create(partSize, partSize, fea::Color(1.0f, 0.0f, 1.0f), false, true);
+    dataTexture2.create(partSize, partSize, fea::Color(1.0f, 0.0f, 1.0f), false, true);
+    dataTexture3.create(partSize, partSize, fea::Color(1.0f, 0.0f, 1.0f), false, true);
+    dataTexture4.create(partSize, partSize, fea::Color(1.0f, 0.0f, 1.0f), false, true);
     //
     //temp             //rain
     //storage.addBiome(new Biome("forest", 0.1f, 0.5f, 0.0f,          Range(0.3f, 0.8f), Range(0.4f, 1.0f),  Range(0.2f, 1.0f)));
@@ -177,6 +186,10 @@ void BiomeApp::setup(const std::vector<std::string>& args)
     textures[&square2] = &texture2;
     textures[&square3] = &texture3;
     textures[&square4] = &texture4;
+    dataTextures[&square1] = &dataTexture1;
+    dataTextures[&square2] = &dataTexture2;
+    dataTextures[&square3] = &dataTexture3;
+    dataTextures[&square4] = &dataTexture4;
 
     int32_t rectQueueIterator = 0;
 
@@ -232,7 +245,7 @@ void BiomeApp::setup(const std::vector<std::string>& args)
                         float xx = (float) x / 8.0f;
 
                         MapChunk chunk;
-                        chunk.setTexture(textures[quad]);
+                        chunk.setTexture(textures[quad], dataTextures[quad]);
                         chunk.setTexturePosition({(float) x * 64.0f, (float) y * 64.0f});
                         chunk.setQuad(quad);
                         mapChunks.emplace(gridPosition + glm::ivec2(x,y), chunk);
@@ -365,7 +378,7 @@ void BiomeApp::loop()
                         float xx = (float) x / 8.0f;
 
                         MapChunk chunk;
-                        chunk.setTexture(textures[quad]);
+                        chunk.setTexture(textures[quad], dataTextures[quad]);
                         chunk.setTexturePosition({(float) x * 64.0f, (float) y * 64.0f});
                         chunk.setQuad(quad);
                         mapChunks.emplace(gridPosition + glm::ivec2(x,y), chunk);
