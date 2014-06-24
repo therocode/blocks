@@ -55,8 +55,8 @@ void MapChunk::generate(const glm::vec2& position, const glm::vec2& textureStart
 
             if(biomePtr != nullptr)
             {
-                height = std::max(0.7f, height);
-                col = fea::Color(biomePtr->r * height, biomePtr->g * height, biomePtr->b * height);
+                float h = std::max(0.7f, height);
+                col = fea::Color(biomePtr->r * h, biomePtr->g * h, biomePtr->b * h);
             }
 
             glm::ivec2 start = (glm::ivec2)(texturePosition + (glm::vec2(region.x, region.y) * 64.0f));
