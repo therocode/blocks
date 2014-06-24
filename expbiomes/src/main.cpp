@@ -195,20 +195,39 @@ void BiomeApp::setup(const std::vector<std::string>& args)
         }
     }
 
-    for(int32_t y = 0; y < 8; y++)
-    {
-        float yy = (float) y / 8.0f;
-        for(int32_t x = 0; x < 8; x++)
-        {
-            float xx = (float) x / 8.0f;
+    //for(int32_t y = 0; y < 8; y++)
+    //{
+    //    float yy = (float) y / 8.0f;
+    //    for(int32_t x = 0; x < 8; x++)
+    //    {
+    //        float xx = (float) x / 8.0f;
 
-            MapChunk chunk;
-            chunk.setTexture(&texture1);
-            chunk.setTexturePosition({(float) x * 64.0f, (float) y * 64.0f});
-            chunk.generate(glm::vec2(xx, yy) * 512.0f, {xx, yy}, {xx + 1.0f / 8.0f, yy + 1.0f / 8.0f}, 1);
-            mapChunks.emplace(glm::ivec2(x,y), chunk);
-            squareChunks[&square1].push_back(glm::ivec2(x,y));
-        }
+    //        MapChunk chunk;
+    //        chunk.setTexture(&texture1);
+    //        chunk.setTexturePosition({(float) x * 64.0f, (float) y * 64.0f});
+    //        chunk.generate(glm::vec2(xx, yy) * 512.0f, {xx, yy}, {xx + 1.0f / 8.0f, yy + 1.0f / 8.0f}, 1);
+    //        mapChunks.emplace(glm::ivec2(x,y), chunk);
+    //        squareChunks[&square1].push_back(glm::ivec2(x,y));
+    //    }
+    //}
+    for(auto& quad : quads)
+    {
+                glm::ivec2 gridPosition = coords[quad] / 64.0f;
+
+                for(int32_t y = 0; y < 8; y++)
+                {
+                    float yy = (float) y / 8.0f;
+                    for(int32_t x = 0; x < 8; x++)
+                    {
+                        float xx = (float) x / 8.0f;
+
+                        MapChunk chunk;
+                        chunk.setTexture(textures[quad]);
+                        chunk.setTexturePosition({(float) x * 64.0f, (float) y * 64.0f});
+                        mapChunks.emplace(gridPosition + glm::ivec2(x,y), chunk);
+                        squareChunks[quad].push_back(gridPosition + glm::ivec2(x,y));
+                    }
+                }
     }
 
     texture1.update();
@@ -273,13 +292,39 @@ void BiomeApp::loop()
         {
             const glm::vec2& position = quad->getPosition();
 
+            bool removed = false;
+
             if(position.x < -512.0f)
             {
                 quad->translate({1024.0f, 0.0f});
                 coords[quad] += glm::vec2(1024.0f, 0.0f);
 
-                bool removed = squareChunks[quad].size() > 0;
+                removed = true;
+            }
+            if(position.x > 512.0f)
+            {
+                quad->translate({-1024.0f, 0.0f});
+                coords[quad] += glm::vec2(-1024.0f, 0.0f);
 
+                removed = true;
+            }
+            if(position.y < -512.0f)
+            {
+                quad->translate({0.0f, 1024.0f});
+                coords[quad] += glm::vec2(0.0f, 1024.0f);
+
+                removed = true;
+            }
+            if(position.y > 512.0f)
+            {
+                quad->translate({0.0f, -1024.0f});
+                coords[quad] += glm::vec2(0.0f, -1024.0f);
+
+                removed = true;
+            }
+
+            if(removed)
+            {
                 for(auto& chunk : squareChunks[quad])
                     mapChunks.erase(chunk);
 
@@ -302,28 +347,13 @@ void BiomeApp::loop()
                     }
                 }
             }
-            if(position.x > 512.0f)
-            {
-                quad->translate({-1024.0f, 0.0f});
-                coords[quad] += glm::vec2(-1024.0f, 0.0f);
-            }
-            if(position.y < -512.0f)
-            {
-                quad->translate({0.0f, 1024.0f});
-                coords[quad] += glm::vec2(0.0f, 1024.0f);
-            }
-            if(position.y > 512.0f)
-            {
-                quad->translate({0.0f, -1024.0f});
-                coords[quad] += glm::vec2(0.0f, -1024.0f);
-            }
         }
 
         for(auto& chunk : mapChunks)
         {
             float xx = (float) chunk.first.x / 8.0f;
             float yy = (float) chunk.first.y / 8.0f;
-            chunk.second.generate(glm::vec2(xx, yy) * 512.0f, {xx, yy}, {xx + 1.0f / 8.0f, yy + 1.0f / 8.0f}, 1);
+            chunk.second.generate(glm::vec2(xx, yy) * 512.0f, {xx, yy}, {xx + 1.0f / 8.0f, yy + 1.0f / 8.0f}, 15);
         }
 
         texture1.update();
