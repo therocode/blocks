@@ -231,6 +231,7 @@ void BiomeApp::setup(const std::vector<std::string>& args)
                         MapChunk chunk;
                         chunk.setTexture(textures[quad]);
                         chunk.setTexturePosition({(float) x * 64.0f, (float) y * 64.0f});
+                        chunk.setQuad(quad);
                         mapChunks.emplace(gridPosition + glm::ivec2(x,y), chunk);
                         squareChunks[quad].push_back(gridPosition + glm::ivec2(x,y));
                     }
@@ -295,7 +296,7 @@ void BiomeApp::loop()
             }
         }
 
-        for(auto quad : quads)
+        for(auto& quad : quads)
         {
             const glm::vec2& position = quad->getPosition();
 
@@ -349,6 +350,7 @@ void BiomeApp::loop()
                         MapChunk chunk;
                         chunk.setTexture(textures[quad]);
                         chunk.setTexturePosition({(float) x * 64.0f, (float) y * 64.0f});
+                        chunk.setQuad(quad);
                         mapChunks.emplace(gridPosition + glm::ivec2(x,y), chunk);
                         squareChunks[quad].push_back(gridPosition + glm::ivec2(x,y));
                     }
@@ -360,7 +362,11 @@ void BiomeApp::loop()
         {
             float xx = (float) chunk.first.x / 8.0f;
             float yy = (float) chunk.first.y / 8.0f;
-            chunk.second.generate(glm::vec2(xx, yy) * 512.0f, {xx, yy}, {xx + 1.0f / 8.0f, yy + 1.0f / 8.0f}, 10);
+
+            glm::vec2 screenPos((glm::vec2)chunk.second.getTexturePosition() + chunk.second.getQuad()->getPosition());
+
+            if(screenPos.x > -64.0f && screenPos.y > -64.0f && screenPos.x < 512.0f && screenPos.y < 512.0f)
+                chunk.second.generate(glm::vec2(xx, yy) * 512.0f, {xx, yy}, {xx + 1.0f / 8.0f, yy + 1.0f / 8.0f}, 30);
         }
 
         texture1.update();

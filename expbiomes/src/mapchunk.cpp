@@ -16,6 +16,16 @@ void MapChunk::setTexturePosition(const glm::vec2& pos)
     texturePosition = pos;
 }
 
+void MapChunk::setQuad(fea::Quad* q)
+{
+    quad = q;
+}
+        
+fea::Quad* MapChunk::getQuad()
+{
+    return quad;
+}
+
 void MapChunk::generate(const glm::vec2& position, const glm::vec2& textureStart, const glm::vec2& textureEnd, int32_t amount)
 {
     if(next < 5460)
@@ -61,6 +71,11 @@ void MapChunk::generate(const glm::vec2& position, const glm::vec2& textureStart
             }
         }
     }
+}
+
+const glm::vec2& MapChunk::getTexturePosition() const
+{
+    return texturePosition;
 }
 
 Generator* MapChunk::generator = nullptr;
