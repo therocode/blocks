@@ -6,7 +6,17 @@ MapChunk::MapChunk() :
 {
 }
 
-void MapChunk::generate(const glm::vec2& position, const glm::vec2& textureStart, const glm::vec2& textureEnd, fea::Texture& output, int32_t amount)
+void MapChunk::setTexture(fea::Texture* tex)
+{
+    texture = tex;
+}
+
+void MapChunk::setTexturePosition(const glm::vec2& pos)
+{
+    texturePosition = pos;
+}
+
+void MapChunk::generate(const glm::vec2& position, const glm::vec2& textureStart, const glm::vec2& textureEnd, int32_t amount)
 {
     if(next != 5460)
     {
@@ -38,15 +48,15 @@ void MapChunk::generate(const glm::vec2& position, const glm::vec2& textureStart
                 col = fea::Color(biomePtr->r * height, biomePtr->g * height, biomePtr->b * height);
             }
 
-            glm::ivec2 start = (glm::ivec2)(position + (glm::vec2(region.x, region.y) * 64.0f));
-            glm::ivec2 end   = (glm::ivec2)(position + (glm::vec2(region.z, region.w) * 64.0f));
+            glm::ivec2 start = (glm::ivec2)(texturePosition + (glm::vec2(region.x, region.y) * 64.0f));
+            glm::ivec2 end   = (glm::ivec2)(texturePosition + (glm::vec2(region.z, region.w) * 64.0f));
             //std::cout << "start: " << start.x << " " << start.y << "\n";
             //std::cout << "end: " << end.x << " " << end.y << "\n";
             for(int32_t y = start.y; y < end.y; y++)
             {
                 for(int32_t x = start.x; x < end.x; x++)
                 {
-                    output.setPixel(x, y, col);
+                    texture->setPixel(x, y, col);
                 }
             }
         }

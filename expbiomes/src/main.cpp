@@ -95,7 +95,8 @@ const int32_t partSize = 512;
     fea::Quad square4({partSize, partSize});
 
     std::array<fea::Quad*, 4> quads;
-    std::array<glm::vec2, 4 > coords;
+    std::unordered_map<fea::Quad*, glm::vec2> coords;
+    std::unordered_map<fea::Quad*, fea::Texture*> textures;
     std::array<glm::vec4, 5461> rectQueue;
 
     Generator generator;
@@ -103,6 +104,7 @@ const int32_t partSize = 512;
 
     std::unordered_map<glm::ivec2, MapChunk> mapChunks;
 
+    std::unordered_map<fea::Quad*, std::vector<glm::ivec2>> squareChunks;
 
 void BiomeApp::setup(const std::vector<std::string>& args)
 {
@@ -164,10 +166,14 @@ void BiomeApp::setup(const std::vector<std::string>& args)
     square4.setColor(fea::Color::Green); 
 
     quads = {&square1, &square2, &square3, &square4};
-    coords= {square1.getPosition(),
-        square2.getPosition(),
-        square3.getPosition(),
-        square4.getPosition()};
+    coords[&square1] = square1.getPosition();
+    coords[&square2] = square2.getPosition();
+    coords[&square3] = square3.getPosition();
+    coords[&square4] = square4.getPosition();
+    textures[&square1] = &texture1;
+    textures[&square2] = &texture2;
+    textures[&square3] = &texture3;
+    textures[&square4] = &texture4;
 
     int32_t rectQueueIterator = 0;
 
@@ -197,14 +203,23 @@ void BiomeApp::setup(const std::vector<std::string>& args)
             float xx = (float) x / 8.0f;
 
             MapChunk chunk;
-            chunk.generate(glm::vec2(xx, yy) * 512.0f, {xx, yy}, {xx + 1.0f / 8.0f, yy + 1.0f / 8.0f}, texture1, 1);
+            chunk.setTexture(&texture1);
+            chunk.setTexturePosition({(float) x * 64.0f, (float) y * 64.0f});
+            chunk.generate(glm::vec2(xx, yy) * 512.0f, {xx, yy}, {xx + 1.0f / 8.0f, yy + 1.0f / 8.0f}, 1);
             mapChunks.emplace(glm::ivec2(x,y), chunk);
+            squareChunks[&square1].push_back(glm::ivec2(x,y));
         }
     }
 
     texture1.update();
     square1.setTexture(texture1);
     square1.setColor(fea::Color::White);
+    square2.setTexture(texture2);
+    square2.setColor(fea::Color::White);
+    square3.setTexture(texture3);
+    square3.setColor(fea::Color::White);
+    square4.setTexture(texture4);
+    square4.setColor(fea::Color::White);
 
 }
 
@@ -254,7 +269,6 @@ void BiomeApp::loop()
             }
         }
 
-        int32_t i = 0;
         for(auto quad : quads)
         {
             const glm::vec2& position = quad->getPosition();
@@ -262,34 +276,60 @@ void BiomeApp::loop()
             if(position.x < -512.0f)
             {
                 quad->translate({1024.0f, 0.0f});
-                coords[i] += glm::vec2(1024.0f, 0.0f);
+                coords[quad] += glm::vec2(1024.0f, 0.0f);
+
+                bool removed = squareChunks[quad].size() > 0;
+
+                for(auto& chunk : squareChunks[quad])
+                    mapChunks.erase(chunk);
+
+                squareChunks[quad].clear();
+
+                glm::ivec2 gridPosition = coords[quad] / 64.0f;
+
+                for(int32_t y = 0; y < 8; y++)
+                {
+                    float yy = (float) y / 8.0f;
+                    for(int32_t x = 0; x < 8; x++)
+                    {
+                        float xx = (float) x / 8.0f;
+
+                        MapChunk chunk;
+                        chunk.setTexture(textures[quad]);
+                        chunk.setTexturePosition({(float) x * 64.0f, (float) y * 64.0f});
+                        mapChunks.emplace(gridPosition + glm::ivec2(x,y), chunk);
+                        squareChunks[quad].push_back(gridPosition + glm::ivec2(x,y));
+                    }
+                }
             }
             if(position.x > 512.0f)
             {
                 quad->translate({-1024.0f, 0.0f});
-                coords[i] += glm::vec2(-1024.0f, 0.0f);
+                coords[quad] += glm::vec2(-1024.0f, 0.0f);
             }
             if(position.y < -512.0f)
             {
                 quad->translate({0.0f, 1024.0f});
-                coords[i] += glm::vec2(0.0f, 1024.0f);
+                coords[quad] += glm::vec2(0.0f, 1024.0f);
             }
             if(position.y > 512.0f)
             {
                 quad->translate({0.0f, -1024.0f});
-                coords[i] += glm::vec2(0.0f, -1024.0f);
+                coords[quad] += glm::vec2(0.0f, -1024.0f);
             }
-            i++;
         }
 
         for(auto& chunk : mapChunks)
         {
             float xx = (float) chunk.first.x / 8.0f;
             float yy = (float) chunk.first.y / 8.0f;
-            chunk.second.generate(glm::vec2(xx, yy) * 512.0f, {xx, yy}, {xx + 1.0f / 8.0f, yy + 1.0f / 8.0f}, texture1, 51);
+            chunk.second.generate(glm::vec2(xx, yy) * 512.0f, {xx, yy}, {xx + 1.0f / 8.0f, yy + 1.0f / 8.0f}, 1);
         }
 
         texture1.update();
+        texture2.update();
+        texture3.update();
+        texture4.update();
 
         renderer.clear();
         renderer.queue(square1);
