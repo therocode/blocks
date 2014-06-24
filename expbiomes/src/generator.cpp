@@ -16,10 +16,12 @@ Generator::Generator() :
 
 void Generator::generateCoordinate(float x, float y, float& height, float& rain, float& temperature, float& biome)
 {
-    float simplexAX = x / 200.0f;
-    float simplexAY =  y / 200.0f;
-    float simplexBX = x / 800.0f;
-    float simplexBY =  y / 800.0f;
+    float simplexAX = (x / 200.0f) * factor;
+    float simplexAY = (y / 200.0f) * factor;
+    float simplexBX = (x / 800.0f) * factor;
+    float simplexBY = (y / 800.0f) * factor;
+    float simplexCX = (x / 40.0f ) * factor;
+    float simplexCY = (y / 40.0f ) * factor;
     
     height =  noise0.simplexOctave2D(simplexAX, simplexAY, 0.6, 6, 0.5f);
     height += noise1.simplexOctave2D(simplexBX, simplexBY, 0.6f, 6); //big rain difference
@@ -41,7 +43,7 @@ void Generator::generateCoordinate(float x, float y, float& height, float& rain,
     temperature = temperature - height / 2.0f;
     temperature = std::max(0.0f, std::min(temperature, 1.0f));
 
-    float xTurbulence = noise6.simplexOctave2D(x / 40.0f,  y / 40.0f, 0.6f, 6, 0.5f);
-    float yTurbulence = noise7.simplexOctave2D(x / 40.0f,  y / 40.0f, 0.6f, 6, 0.5f);
-    biome = noise0.voronoi2D(x / 60.0f + xTurbulence * 0.25f, y / 60.0f + yTurbulence * 0.25f);
+    float xTurbulence = noise6.simplexOctave2D(simplexCX,  simplexCY, 0.6f, 6, 0.5f);
+    float yTurbulence = noise7.simplexOctave2D(simplexCX,  simplexCY, 0.6f, 6, 0.5f);
+    biome = noise0.voronoi2D((x / 60.0f + xTurbulence * 0.25f) * factor, (y / 60.0f + yTurbulence * 0.25f) * factor);
 }
