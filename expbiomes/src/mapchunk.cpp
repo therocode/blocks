@@ -18,7 +18,7 @@ void MapChunk::setTexturePosition(const glm::vec2& pos)
 
 void MapChunk::generate(const glm::vec2& position, const glm::vec2& textureStart, const glm::vec2& textureEnd, int32_t amount)
 {
-    if(next != 5460)
+    if(next < 5460)
     {
         for(int32_t i = 0; i < amount; i++)
         {

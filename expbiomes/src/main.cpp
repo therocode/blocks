@@ -360,7 +360,7 @@ void BiomeApp::loop()
         {
             float xx = (float) chunk.first.x / 8.0f;
             float yy = (float) chunk.first.y / 8.0f;
-            chunk.second.generate(glm::vec2(xx, yy) * 512.0f, {xx, yy}, {xx + 1.0f / 8.0f, yy + 1.0f / 8.0f}, 15);
+            chunk.second.generate(glm::vec2(xx, yy) * 512.0f, {xx, yy}, {xx + 1.0f / 8.0f, yy + 1.0f / 8.0f}, 10);
         }
 
         texture1.update();

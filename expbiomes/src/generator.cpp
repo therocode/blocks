@@ -16,21 +16,26 @@ Generator::Generator() :
 
 void Generator::generateCoordinate(float x, float y, float& height, float& rain, float& temperature, float& biome)
 {
-    height =  noise0.simplexOctave2D(x / 200.0f, y / 200.0f, 0.6, 6, 0.5f);
-    height += noise1.simplexOctave2D(x / 800.0f, y / 800.0f, 0.6f, 6); //big rain difference
+    float simplexAX = x / 200.0f;
+    float simplexAY =  y / 200.0f;
+    float simplexBX = x / 800.0f;
+    float simplexBY =  y / 800.0f;
+    
+    height =  noise0.simplexOctave2D(simplexAX, simplexAY, 0.6, 6, 0.5f);
+    height += noise1.simplexOctave2D(simplexBX, simplexBY, 0.6f, 6); //big rain difference
     height = height * 1.8f;
     height = (height + 1.0f) / 2.0f;
     height = std::max(0.0f, std::min(height, 1.0f));
 
-    rain =  noise2.simplexOctave2D(x / 200.0f, y / 200.0f, 0.6f, 6, 0.5f);
-    rain += noise3.simplexOctave2D(x / 800.0f, y / 800.0f, 0.6f, 6); //big rain difference
+    rain =  noise2.simplexOctave2D(simplexAX, simplexAY, 0.6f, 6, 0.5f);
+    rain += noise3.simplexOctave2D(simplexBX, simplexBY, 0.6f, 6); //big rain difference
     rain = rain * 1.8f;
     rain = (rain + 1.0f) / 2.0f;
     rain = rain - height / 4.0f;
     rain = std::max(0.0f, std::min(rain, 1.0f));
 
-    temperature =  noise4.simplexOctave2D(x / 200.0f, y / 200.0f, 0.6f, 6);
-    temperature += noise5.simplexOctave2D(x / 800.0f, y / 800.0f, 0.6f, 6); //big temperature difference
+    temperature =  noise4.simplexOctave2D(simplexAX, simplexAY, 0.6f, 6);
+    temperature += noise5.simplexOctave2D(simplexBX, simplexBY, 0.6f, 6); //big temperature difference
     temperature = temperature * 1.2f + 0.2f;
     temperature = (temperature + 1.0f) / 2.0f;
     temperature = temperature - height / 2.0f;
