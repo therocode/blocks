@@ -533,7 +533,8 @@ void BiomeApp::loop()
 
         glm::vec2 screenPos((glm::vec2)chunk.second.getTexturePosition() + chunk.second.getQuad()->getPosition());
 
-        if(screenPos.x > -64.0f && screenPos.y > -64.0f && screenPos.x < 512.0f && screenPos.y < 512.0f)
+        //if(screenPos.x > -64.0f && screenPos.y > -64.0f && screenPos.x < 512.0f && screenPos.y < 512.0f) //screen is border
+        if(screenPos.x > -128.0f && screenPos.y > -128.0f && screenPos.x < 576.0f && screenPos.y < 576.0f)
             chunk.second.generate(glm::vec2(xx, yy) * 512.0f, {xx, yy}, {xx + 1.0f / 8.0f, yy + 1.0f / 8.0f}, 30);
     }
 
