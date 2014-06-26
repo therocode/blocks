@@ -4,6 +4,7 @@
 #include <fea/render2d.hpp>
 #include <fea/rendering/textsurface.hpp>
 #include "../../src/utilities/noise.h"
+#include "texturemaker.hpp"
 #include <iostream>
 #include "biomestorage.hpp"
 #include "generator.hpp"
@@ -122,29 +123,41 @@ int32_t elevation = 0;
 int32_t degrees = 0;
 int32_t rainfall = 0;
 
+fea::Texture frameTexture;
+fea::Texture iconTexture;
+
 fea::Quad textBg;
+fea::Quad textFrame;
+fea::SubrectQuad eIcon;
+fea::SubrectQuad tIcon;
+fea::SubrectQuad rIcon;
 
 bool displayText = false;
 
 void updateText(const glm::ivec2& position)
 {
-    text.setPosition((glm::vec2)position);
+    glm::vec2 pos = (glm::vec2)position + glm::vec2(12.0f, 0.0f);
+    text.setPosition(pos);
     text.setPenFont(font);
     text.clear();
     
     text.setLineHeight(14.0f);
     text.setPenColor(fea::Color::White);
-    text.setPenPosition({0.0f, 12.0f});
+    text.setPenPosition({5.0f, 15.0f});
     text.write(biomeName);
 
-    text.newLine();
-    text.write("Elevation: " + std::to_string(elevation));
-    text.newLine();
-    text.write("Temperature: " + std::to_string(degrees) + " C");
-    text.newLine();
-    text.write("Rainfall: " + std::to_string(rainfall) + " mm");
-    textBg.setPosition((glm::vec2)position);
-    textBg.setSize(text.getSize());
+    text.setPenPosition({19.0f, 33.0f});
+    text.write(std::to_string(elevation) + " m");
+    text.setPenPosition({19.0f, 48.0f});
+    text.write(std::to_wstring(degrees) + L"°");
+    text.setPenPosition({19.0f, 63.0f});
+    text.write(std::to_string(rainfall) + " mm");
+    textBg.setPosition(pos + glm::vec2(1.0f, 1.0f));
+    textFrame.setPosition(pos);
+
+    eIcon.setPosition(pos + glm::vec2(4.0f, 22.0f));
+    tIcon.setPosition(pos + glm::vec2(4.0f, 37.0f));
+    rIcon.setPosition(pos + glm::vec2(4.0f, 52.0f));
 }
 
 void BiomeApp::setup(const std::vector<std::string>& args)
@@ -163,7 +176,24 @@ void BiomeApp::setup(const std::vector<std::string>& args)
 
     font = fea::Font("data/arial.ttf", 14);
 
-    textBg.setColor(fea::Color::Gray);
+    textBg.setSize({117, 101});
+    textBg.setColor(0x464646);
+
+    frameTexture = makeTexture("data/frame.png");
+    iconTexture = makeTexture("data/icons.png");
+
+    textFrame.setSize({119, 103});
+    textFrame.setTexture(frameTexture);
+
+    eIcon.setSize({11.0f, 11.0f});
+    eIcon.setSubrect({0.0f, 0.0f}, {11.0f / 33.0f, 11.0f / 11.0f});
+    eIcon.setTexture(iconTexture);
+    tIcon.setSubrect({11.0f / 33.0f, 0.0f}, {22.0f / 33.0f, 11.0f / 11.0f});
+    tIcon.setSize({11.0f, 11.0f});
+    tIcon.setTexture(iconTexture);
+    rIcon.setSubrect({22.0f / 33.0f, 0.0f}, {33.0f / 33.0f, 11.0f / 11.0f});
+    rIcon.setSize({11.0f, 11.0f});
+    rIcon.setTexture(iconTexture);
 
     texture1.create(partSize, partSize, fea::Color(1.0f, 0.0f, 1.0f), false, true);
     texture2.create(partSize, partSize, fea::Color(1.0f, 0.0f, 1.0f), false, true);
@@ -521,7 +551,11 @@ void BiomeApp::loop()
     if(displayText)
     {
         renderer.queue(textBg);
+        renderer.queue(textFrame);
         renderer.queue(text);
+        renderer.queue(eIcon);
+        renderer.queue(tIcon);
+        renderer.queue(rIcon);
     }
 
     renderer.render();
