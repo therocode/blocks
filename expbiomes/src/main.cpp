@@ -138,6 +138,12 @@ bool displayText = false;
 void updateText(const glm::ivec2& position)
 {
     glm::vec2 pos = (glm::vec2)position + glm::vec2(12.0f, 0.0f);
+
+    if(pos.x > 512.0f - 120.0f)
+        pos.x -= 135.0f;
+    if(pos.y > 512.0f - 140.0f)
+        pos.y -= 145.0f;
+
     text.setPosition(pos);
     text.setPenFont(font);
     text.clear();
@@ -413,6 +419,9 @@ void BiomeApp::loop()
                 glm::vec2 pos = quad->getPosition();
                 if(event.mouseButton.x > pos.x && event.mouseButton.y > pos.y && event.mouseButton.x < pos.x + 512.0f && event.mouseButton.y < pos.y + 512.0f)
                 {
+                    if(event.mouseButton.x < 0 || event.mouseButton.y < 0 || event.mouseButton.x > 511 || event.mouseButton.y > 511)
+                        return;
+
                     quad->setColor(fea::Color::White);
                     glm::ivec2 pixelCoord(event.mouseButton.x - pos.x, event.mouseButton.y - pos.y);
 
@@ -451,6 +460,8 @@ void BiomeApp::loop()
                     glm::vec2 pos = quad->getPosition();
                     if(event.mouseMove.x > pos.x && event.mouseMove.y > pos.y && event.mouseMove.x < pos.x + 512.0f && event.mouseMove.y < pos.y + 512.0f)
                     {
+                        if(event.mouseMove.x < 0 || event.mouseMove.y < 0 || event.mouseMove.x > 511 || event.mouseMove.y > 511)
+                            return;
                         quad->setColor(fea::Color::White);
                         glm::ivec2 pixelCoord(event.mouseMove.x - pos.x, event.mouseMove.y - pos.y);
 
