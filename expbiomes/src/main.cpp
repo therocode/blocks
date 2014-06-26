@@ -228,26 +228,26 @@ void BiomeApp::setup(const std::vector<std::string>& args)
     //storage.addBiome(new Biome("sandydesert", 1.0f, 0.8f, 0.0f,     Range(0.3f, 1.0f), Range(0.0f, 0.2f),  Range(0.2f, 1.0f)));
     //storage.addBiome(new Biome("arcticdesert", 1.0f, 0.8f, 0.5f,    Range(0.0f, 0.3f), Range(0.0f, 0.2f),  Range(0.2f, 1.0f)));
 
-    storage.addBiome(new Biome("Snowy peak", 1.0f, 1.0f, 1.0f,        Range(0.0f, 0.1f), Range(0.0f, 1.0f),  Range(0.9f, 1.0f), ""));
-    storage.addBiome(new Biome("Peak", 0.6f, 0.6f, 0.6f,            Range(0.1f, 1.0f), Range(0.0f, 1.0f),  Range(0.9f, 1.0f)));
+    storage.addBiome(new Biome("Snowy peak", 1.0f, 1.0f, 1.0f,        Range(0.0f, 0.1f), Range(0.0f, 1.0f),  Range(0.9f, 1.0f), "A high-reaching snow covered point. Very hostile."));
+    storage.addBiome(new Biome("Peak", 0.6f, 0.6f, 0.6f,            Range(0.1f, 1.0f), Range(0.0f, 1.0f),  Range(0.9f, 1.0f), "The atmosphere is thin and the winds are strong."));
 
-    storage.addBiome(new Biome("Bare mountain", 0.5f, 0.5f, 0.5f,    Range(0.0f, 1.0f), Range(0.0f, 1.0f),  Range(0.7f, 0.9f)));
-    storage.addBiome(new Biome("Grass mountain", 0.4f, 0.6f, 0.4f,   Range(0.3f, 1.0f), Range(0.3f, 1.0f),  Range(0.7f, 0.9f)));
-    storage.addBiome(new Biome("Snowy mountain", 1.0f, 1.0f, 1.0f,   Range(0.0f, 0.3f), Range(0.4f, 1.0f),  Range(0.7f, 0.9f)));
+    storage.addBiome(new Biome("Bare mountain", 0.5f, 0.5f, 0.5f,    Range(0.0f, 1.0f), Range(0.0f, 1.0f),  Range(0.7f, 0.9f), "Rocky and uneven terrain makes it hard to live here."));
+    storage.addBiome(new Biome("Forest mountain", 0.4f, 0.6f, 0.4f,   Range(0.3f, 1.0f), Range(0.3f, 1.0f),  Range(0.7f, 0.9f), "Exceptional conditions allow vegetation to grow up here."));
+    storage.addBiome(new Biome("Snowy mountain", 1.0f, 1.0f, 1.0f,   Range(0.0f, 0.3f), Range(0.4f, 1.0f),  Range(0.7f, 0.9f), "A cold and harsh environment with little if any life."));
 
-    storage.addBiome(new Biome("Forest", 0.0f, 0.4f, 0.0f,         Range(0.35f, 1.0f),Range(0.60f, 1.0f),  Range(0.2f, 0.7f)));
-    storage.addBiome(new Biome("Taiga", 0.0f, 0.6f, 0.3f,          Range(0.1f, 0.5f), Range(0.60f, 1.0f),  Range(0.2f, 0.7f)));
-    storage.addBiome(new Biome("Plains", 0.2f, 0.7f, 0.0f,          Range(0.25f, 1.0f),Range(0.50f, 0.7f),  Range(0.2f, 0.7f)));
-    storage.addBiome(new Biome("Steppe", 0.3f, 0.6f, 0.0f,          Range(0.25f, 1.0f), Range(0.20f, 0.60f), Range(0.2f, 0.7f)));
-    storage.addBiome(new Biome("Snowy field", 1.3f, 1.3f, 1.3f,       Range(0.1f, 0.3f), Range(0.20f, 1.0f),  Range(0.2f, 0.7f)));
-    storage.addBiome(new Biome("Arctic field", 1.42f, 1.42f, 1.42f,  Range(0.0f, 0.13f), Range(0.20f, 1.0f),  Range(0.2f, 0.7f)));
-    storage.addBiome(new Biome("Xeric shrubland", 1.0f, 0.8f, 0.2f,           Range(0.35f, 1.0f), Range(0.05f, 0.25f), Range(0.2f, 0.7f)));
-    storage.addBiome(new Biome("Desert", 1.3f, 1.3f, 0.2f,          Range(0.35f, 1.0f), Range(0.0f, 0.15f),  Range(0.2f, 0.7f)));
-    storage.addBiome(new Biome("Frozen shrubland", 1.f, 0.7f, 0.4f,       Range(0.0f, 0.4f), Range(0.05f, 0.25f),  Range(0.2f, 0.7f)));
-    storage.addBiome(new Biome("Cold desert", 1.2f, 0.9f, 0.5f,      Range(0.0f, 0.4f), Range(0.0f, 0.15f),  Range(0.2f, 0.7f)));
+    storage.addBiome(new Biome("Forest", 0.0f, 0.4f, 0.0f,         Range(0.35f, 1.0f),Range(0.60f, 1.0f),  Range(0.2f, 0.7f), "Lush forest with rich flora and fauna. Plenty of wood to gather."));
+    storage.addBiome(new Biome("Taiga", 0.0f, 0.6f, 0.3f,          Range(0.1f, 0.5f), Range(0.60f, 1.0f),  Range(0.2f, 0.7f), "Pine thrives in this environment. Gets lots of snow during winter."));
+    storage.addBiome(new Biome("Plains", 0.2f, 0.7f, 0.0f,          Range(0.25f, 1.0f),Range(0.50f, 0.7f),  Range(0.2f, 0.7f), "Empty stretches of grass and bushes. Home to many animals."));
+    storage.addBiome(new Biome("Steppe", 0.3f, 0.6f, 0.0f,          Range(0.25f, 1.0f), Range(0.20f, 0.60f), Range(0.2f, 0.7f), "Dry grassy lands which lack regular rainfall."));
+    storage.addBiome(new Biome("Snowy field", 1.3f, 1.3f, 1.3f,       Range(0.1f, 0.3f), Range(0.20f, 1.0f),  Range(0.2f, 0.7f), "A bright white landscape during daytime. Freezing winds."));
+    storage.addBiome(new Biome("Arctic field", 1.42f, 1.42f, 1.42f,  Range(0.0f, 0.13f), Range(0.20f, 1.0f),  Range(0.2f, 0.7f), "Few places experience this cold. Nothing lives here."));
+    storage.addBiome(new Biome("Xeric shrubland", 1.0f, 0.8f, 0.2f,           Range(0.35f, 1.0f), Range(0.05f, 0.25f), Range(0.2f, 0.7f), "Only bushes and some trees can live through the drought."));
+    storage.addBiome(new Biome("Desert", 1.3f, 1.3f, 0.2f,          Range(0.35f, 1.0f), Range(0.0f, 0.15f),  Range(0.2f, 0.7f), "Extreme lack of rain and intense temperatures are found here."));
+    storage.addBiome(new Biome("Frozen shrubland", 1.f, 0.7f, 0.4f,       Range(0.0f, 0.4f), Range(0.05f, 0.25f),  Range(0.2f, 0.7f), "Snow blows between the scarce vegetation."));
+    storage.addBiome(new Biome("Cold desert", 1.2f, 0.9f, 0.5f,      Range(0.0f, 0.4f), Range(0.0f, 0.15f),  Range(0.2f, 0.7f), "Without water and warmth, travelling here is a quick death."));
 
-    storage.addBiome(new Biome("Ocean", 0.0f, 0.0f, 1.0f,           Range(0.2f, 1.0f), Range(0.0f, 1.0f),  Range(0.0f, 0.2f)));
-    storage.addBiome(new Biome("Arctic ocean", 0.0f, 0.9f, 1.0f,    Range(0.0f, 0.2f), Range(0.0f, 1.0f),  Range(0.0f, 0.2f)));
+    storage.addBiome(new Biome("Ocean", 0.0f, 0.0f, 1.0f,           Range(0.2f, 1.0f), Range(0.0f, 1.0f),  Range(0.0f, 0.2f), "Many aquatic animals swim under the big waves."));
+    storage.addBiome(new Biome("Arctic ocean", 0.0f, 0.9f, 1.0f,    Range(0.0f, 0.2f), Range(0.0f, 1.0f),  Range(0.0f, 0.2f), "Partly covered with ice, these waters are deadly."));
 
     square1.setPosition({0.0f, 0.0f});
     square1.setColor(fea::Color::Blue); 
