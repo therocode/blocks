@@ -116,6 +116,7 @@ std::unordered_map<fea::Quad*, std::vector<glm::ivec2>> squareChunks;
 float zoom = 1.0f;
 
 std::string biomeName("none");
+std::string biomeDescription("");
 
 fea::Font font;
 fea::TextSurface text;
@@ -148,12 +149,24 @@ void updateText(const glm::ivec2& position)
 
     text.setPenPosition({19.0f, 33.0f});
     text.write(std::to_string(elevation) + " m");
+
     text.setPenPosition({19.0f, 48.0f});
+    fea::Color tempColor = degrees < 0 ? fea::Color(0x25a6e8) : (degrees > 25 ? fea::Color(0xd72f22) : fea::Color::White);
+    text.setPenColor(tempColor);
     text.write(std::to_wstring(degrees) + L"°");
+    text.setPenColor(fea::Color::White);
+
     text.setPenPosition({19.0f, 63.0f});
     text.write(std::to_string(rainfall) + " mm");
+
     textBg.setPosition(pos + glm::vec2(1.0f, 1.0f));
     textFrame.setPosition(pos);
+
+    text.setPenPosition({5.0f, 83.0f});
+    text.setLineWidth(109.0f);
+    text.enableWordWrap(true);
+    text.setHorizontalAlign(5.0f);
+    text.write(biomeDescription);
 
     eIcon.setPosition(pos + glm::vec2(4.0f, 22.0f));
     tIcon.setPosition(pos + glm::vec2(4.0f, 37.0f));
@@ -176,13 +189,13 @@ void BiomeApp::setup(const std::vector<std::string>& args)
 
     font = fea::Font("data/arial.ttf", 14);
 
-    textBg.setSize({117, 101});
+    textBg.setSize({117, 131});
     textBg.setColor(0x464646);
 
     frameTexture = makeTexture("data/frame.png");
     iconTexture = makeTexture("data/icons.png");
 
-    textFrame.setSize({119, 103});
+    textFrame.setSize({119, 133});
     textFrame.setTexture(frameTexture);
 
     eIcon.setSize({11.0f, 11.0f});
@@ -215,7 +228,7 @@ void BiomeApp::setup(const std::vector<std::string>& args)
     //storage.addBiome(new Biome("sandydesert", 1.0f, 0.8f, 0.0f,     Range(0.3f, 1.0f), Range(0.0f, 0.2f),  Range(0.2f, 1.0f)));
     //storage.addBiome(new Biome("arcticdesert", 1.0f, 0.8f, 0.5f,    Range(0.0f, 0.3f), Range(0.0f, 0.2f),  Range(0.2f, 1.0f)));
 
-    storage.addBiome(new Biome("Snowy peak", 1.0f, 1.0f, 1.0f,        Range(0.0f, 0.1f), Range(0.0f, 1.0f),  Range(0.9f, 1.0f)));
+    storage.addBiome(new Biome("Snowy peak", 1.0f, 1.0f, 1.0f,        Range(0.0f, 0.1f), Range(0.0f, 1.0f),  Range(0.9f, 1.0f), ""));
     storage.addBiome(new Biome("Peak", 0.6f, 0.6f, 0.6f,            Range(0.1f, 1.0f), Range(0.0f, 1.0f),  Range(0.9f, 1.0f)));
 
     storage.addBiome(new Biome("Bare mountain", 0.5f, 0.5f, 0.5f,    Range(0.0f, 1.0f), Range(0.0f, 1.0f),  Range(0.7f, 0.9f)));
@@ -414,6 +427,7 @@ void BiomeApp::loop()
                     rainfall = 400 * rain;
                     degrees = 90 * temp - 40;
                     biomeName = storage.getBiome(temp, rain, height, selector)->name;
+                    biomeDescription = storage.getBiome(temp, rain, height, selector)->description;
 
                     //std::cout << "this place is " << metres << " metres above ocean level\n";
                     //std::cout << "this place has " << rainfall << " cm annual precipitation\n";
@@ -451,6 +465,7 @@ void BiomeApp::loop()
                         rainfall = 400 * rain;
                         degrees = 90 * temp - 40;
                         biomeName = storage.getBiome(temp, rain, height, selector)->name;
+                        biomeDescription = storage.getBiome(temp, rain, height, selector)->description;
 
                         //std::cout << "this place is " << metres << " metres above ocean level\n";
                         //std::cout << "this place has " << rainfall << " cm annual precipitation\n";
@@ -533,8 +548,8 @@ void BiomeApp::loop()
 
         glm::vec2 screenPos((glm::vec2)chunk.second.getTexturePosition() + chunk.second.getQuad()->getPosition());
 
-        //if(screenPos.x > -64.0f && screenPos.y > -64.0f && screenPos.x < 512.0f && screenPos.y < 512.0f) //screen is border
-        if(screenPos.x > -128.0f && screenPos.y > -128.0f && screenPos.x < 576.0f && screenPos.y < 576.0f)
+        if(screenPos.x > -64.0f && screenPos.y > -64.0f && screenPos.x < 512.0f && screenPos.y < 512.0f) //screen is border
+        //if(screenPos.x > -128.0f && screenPos.y > -128.0f && screenPos.x < 576.0f && screenPos.y < 576.0f) //meganomic
             chunk.second.generate(glm::vec2(xx, yy) * 512.0f, {xx, yy}, {xx + 1.0f / 8.0f, yy + 1.0f / 8.0f}, 30);
     }
 

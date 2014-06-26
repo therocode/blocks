@@ -14,8 +14,9 @@ struct Range
 
 struct Biome
 {
-    Biome(const std::string& n, float red, float green, float blue, Range temp, Range rain, Range height) : name(n), r(red), g(green), b(blue), temperatureRange(temp), rainfallRange(rain), heightRange(height) {};
+    Biome(const std::string& n, float red, float green, float blue, Range temp, Range rain, Range height, const std::string& desc = "") : name(n), r(red), g(green), b(blue), temperatureRange(temp), rainfallRange(rain), heightRange(height), description(desc) {};
     std::string name;
+    std::string description;
     float r;
     float g;
     float b;
