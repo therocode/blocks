@@ -149,7 +149,7 @@ Interpolator interpolator({0.0f, 0.0f});
 
 const float startVelocity = 1.0f;
 const float maxVelocity = 80.0f;
-const float acceleration = 0.3f;
+const float acceleration = 0.5f;
 float velocity = startVelocity;
 
 void updateText(const glm::ivec2& position)
