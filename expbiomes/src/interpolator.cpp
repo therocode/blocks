@@ -24,3 +24,9 @@ void Interpolator::setPosition(const glm::vec2& position)
 {
         mTargetPos = position;
 }
+
+void Interpolator::forcePosition(const glm::vec2& position)
+{
+    mTargetPos = position;
+    mCurrentPos = position;
+}

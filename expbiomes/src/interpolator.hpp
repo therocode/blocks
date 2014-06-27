@@ -8,6 +8,7 @@ class Interpolator
         void update();
         const glm::vec2& getPosition() const;
         void setPosition(const glm::vec2& position);
+        void forcePosition(const glm::vec2& position);
     private:
         glm::vec2 mCurrentPos;
         glm::vec2 mTargetPos;

@@ -405,12 +405,40 @@ void BiomeApp::loop()
             {
                 zoom *= 0.9f;
 
+                currentPosition /= 0.9f;
+                currentPosition -= glm::vec2(32.0f, 32.0f);
+                targetPosition /= 0.9f;
+                targetPosition -= glm::vec2(32.0f, 32.0f);
+                interpolator.forcePosition(targetPosition);
+                if(glm::length(currentPosition - actualPosition) > 0.0f)
+                {
+                    square1.translate(currentPosition - actualPosition);
+                    square2.translate(currentPosition - actualPosition);
+                    square3.translate(currentPosition - actualPosition);
+                    square4.translate(currentPosition - actualPosition);
+                    actualPosition = currentPosition;
+                }
+
                 for(auto& chunk : mapChunks)
                     chunk.second.reset();
             }
             else if(event.key.code == fea::Keyboard::X)
             {
                 zoom /= 0.9f;
+
+                currentPosition *= 0.9f;
+                currentPosition += glm::vec2(32.0f, 32.0f);
+                targetPosition *= 0.9f;
+                targetPosition += glm::vec2(32.0f, 32.0f);
+                interpolator.forcePosition(targetPosition);
+                if(glm::length(currentPosition - actualPosition) > 0.0f)
+                {
+                    square1.translate(currentPosition - actualPosition);
+                    square2.translate(currentPosition - actualPosition);
+                    square3.translate(currentPosition - actualPosition);
+                    square4.translate(currentPosition - actualPosition);
+                    actualPosition = currentPosition;
+                }
 
                 for(auto& chunk : mapChunks)
                     chunk.second.reset();
