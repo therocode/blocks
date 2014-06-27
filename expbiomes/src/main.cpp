@@ -11,6 +11,7 @@
 #include "mapchunk.hpp"
 #include <fea/structure.hpp>
 #include <algorithm>
+#include "interpolator.hpp"
 
 class BiomeApp : public fea::Application
 {
@@ -134,6 +135,22 @@ fea::SubrectQuad tIcon;
 fea::SubrectQuad rIcon;
 
 bool displayText = false;
+
+bool up = false;
+bool down = false;
+bool left = false;
+bool right = false;
+
+glm::vec2 currentPosition;
+glm::vec2 targetPosition;
+glm::vec2 actualPosition;
+
+Interpolator interpolator({0.0f, 0.0f});
+
+const float startVelocity = 1.0f;
+const float maxVelocity = 80.0f;
+const float acceleration = 0.3f;
+float velocity = startVelocity;
 
 void updateText(const glm::ivec2& position)
 {
@@ -370,31 +387,19 @@ void BiomeApp::loop()
             }
             else if(event.key.code == fea::Keyboard::UP)
             {
-                square1.translate({0.0f, 5.0f});
-                square2.translate({0.0f, 5.0f});
-                square3.translate({0.0f, 5.0f});
-                square4.translate({0.0f, 5.0f});
+                up = true;
             }
             else if(event.key.code == fea::Keyboard::DOWN)
             {
-                square1.translate({0.0f, -5.0f});
-                square2.translate({0.0f, -5.0f});
-                square3.translate({0.0f, -5.0f});
-                square4.translate({0.0f, -5.0f});
+                down = true;
             }
             else if(event.key.code == fea::Keyboard::LEFT)
             {
-                square1.translate({5.0f, 0.0f});
-                square2.translate({5.0f, 0.0f});
-                square3.translate({5.0f, 0.0f});
-                square4.translate({5.0f, 0.0f});
+                left = true;
             }
             else if(event.key.code == fea::Keyboard::RIGHT)
             {
-                square1.translate({-5.0f, 0.0f});
-                square2.translate({-5.0f, 0.0f});
-                square3.translate({-5.0f, 0.0f});
-                square4.translate({-5.0f, 0.0f});
+                right = true;
             }
             else if(event.key.code == fea::Keyboard::Z)
             {
@@ -409,6 +414,25 @@ void BiomeApp::loop()
 
                 for(auto& chunk : mapChunks)
                     chunk.second.reset();
+            }
+        }
+        else if(event.type == fea::Event::KEYRELEASED)
+        {
+            if(event.key.code == fea::Keyboard::UP)
+            {
+                up = false;
+            }
+            else if(event.key.code == fea::Keyboard::DOWN)
+            {
+                down = false;
+            }
+            else if(event.key.code == fea::Keyboard::LEFT)
+            {
+                left = false;
+            }
+            else if(event.key.code == fea::Keyboard::RIGHT)
+            {
+                right = false;
             }
         }
         else if(event.type == fea::Event::MOUSEBUTTONPRESSED)
@@ -488,6 +512,49 @@ void BiomeApp::loop()
                 }
             }
         }
+    }
+
+    if(up)
+    {
+        targetPosition += glm::vec2({0.0f, velocity});
+        interpolator.setPosition(targetPosition);
+    }
+    if(down)
+    {
+        targetPosition += glm::vec2({0.0f, -velocity});
+        interpolator.setPosition(targetPosition);
+    }
+    if(left)
+    {
+        targetPosition += glm::vec2({velocity, 0.0f});
+        interpolator.setPosition(targetPosition);
+    }
+    if(right)
+    {
+        targetPosition += glm::vec2({-velocity, 0.0f});
+        interpolator.setPosition(targetPosition);
+    }
+    if(up || down || left || right)
+    {
+        velocity += acceleration;
+        velocity = std::min(maxVelocity, velocity);
+    }
+    else
+    {
+        velocity = startVelocity;
+    }
+
+    interpolator.update();
+
+    currentPosition = interpolator.getPosition();
+
+    if(glm::length(currentPosition - actualPosition) > 0.0f)
+    {
+        square1.translate(currentPosition - actualPosition);
+        square2.translate(currentPosition - actualPosition);
+        square3.translate(currentPosition - actualPosition);
+        square4.translate(currentPosition - actualPosition);
+        actualPosition = currentPosition;
     }
 
     for(auto& quad : quads)
