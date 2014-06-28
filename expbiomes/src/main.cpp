@@ -6,6 +6,7 @@
 #include "../../src/utilities/noise.h"
 #include "texturemaker.hpp"
 #include <iostream>
+#include <chrono>
 #include "biomestorage.hpp"
 #include "generator.hpp"
 #include "mapchunk.hpp"
@@ -151,6 +152,9 @@ const float startVelocity = 1.0f;
 const float maxVelocity = 80.0f;
 const float acceleration = 0.5f;
 float velocity = startVelocity;
+
+std::chrono::high_resolution_clock timer;
+int32_t generateAmount = 30;
 
 void updateText(const glm::ivec2& position)
 {
@@ -651,6 +655,7 @@ void BiomeApp::loop()
         }
     }
 
+    auto start = timer.now();
     for(auto& chunk : mapChunks)
     {
         float xx = (float) chunk.first.x / 8.0f;
@@ -659,8 +664,24 @@ void BiomeApp::loop()
         glm::vec2 screenPos((glm::vec2)chunk.second.getTexturePosition() + chunk.second.getQuad()->getPosition());
 
         if(screenPos.x > -64.0f && screenPos.y > -64.0f && screenPos.x < 512.0f && screenPos.y < 512.0f) //screen is border
-        //if(screenPos.x > -128.0f && screenPos.y > -128.0f && screenPos.x < 576.0f && screenPos.y < 576.0f) //meganomic
-            chunk.second.generate(glm::vec2(xx, yy) * 512.0f, {xx, yy}, {xx + 1.0f / 8.0f, yy + 1.0f / 8.0f}, 30);
+            //if(screenPos.x > -128.0f && screenPos.y > -128.0f && screenPos.x < 576.0f && screenPos.y < 576.0f) //meganomic
+            chunk.second.generate(glm::vec2(xx, yy) * 512.0f, {xx, yy}, {xx + 1.0f / 8.0f, yy + 1.0f / 8.0f}, generateAmount);
+
+        auto end = timer.now();
+        auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+
+        if(elapsed.count() > 16 && generateAmount > 1)
+        {
+            generateAmount--;
+            break;
+        }
+    }
+
+    auto end = timer.now();
+    auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+    if(elapsed.count() < 16 && generateAmount < 50)
+    {
+        generateAmount++;
     }
 
     texture1.update();
