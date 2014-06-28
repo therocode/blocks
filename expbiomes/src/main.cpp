@@ -544,22 +544,22 @@ void BiomeApp::loop()
 
     if(up)
     {
-        targetPosition += glm::vec2({0.0f, velocity});
+        targetPosition += glm::vec2({0.0f, std::floor(velocity)});
         interpolator.setPosition(targetPosition);
     }
     if(down)
     {
-        targetPosition += glm::vec2({0.0f, -velocity});
+        targetPosition += glm::vec2({0.0f, -std::floor(velocity)});
         interpolator.setPosition(targetPosition);
     }
     if(left)
     {
-        targetPosition += glm::vec2({velocity, 0.0f});
+        targetPosition += glm::vec2({std::floor(velocity), 0.0f});
         interpolator.setPosition(targetPosition);
     }
     if(right)
     {
-        targetPosition += glm::vec2({-velocity, 0.0f});
+        targetPosition += glm::vec2({-std::floor(velocity), 0.0f});
         interpolator.setPosition(targetPosition);
     }
     if(up || down || left || right)
