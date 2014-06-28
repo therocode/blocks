@@ -401,48 +401,48 @@ void BiomeApp::loop()
             {
                 right = true;
             }
-            else if(event.key.code == fea::Keyboard::Z)
-            {
-                zoom *= 0.9f;
+            //else if(event.key.code == fea::Keyboard::Z)
+            //{
+            //    zoom *= 0.9f;
 
-                currentPosition /= 0.9f;
-                currentPosition -= glm::vec2(32.0f, 32.0f);
-                targetPosition /= 0.9f;
-                targetPosition -= glm::vec2(32.0f, 32.0f);
-                interpolator.forcePosition(targetPosition);
-                if(glm::length(currentPosition - actualPosition) > 0.0f)
-                {
-                    square1.translate(currentPosition - actualPosition);
-                    square2.translate(currentPosition - actualPosition);
-                    square3.translate(currentPosition - actualPosition);
-                    square4.translate(currentPosition - actualPosition);
-                    actualPosition = currentPosition;
-                }
+            //    currentPosition /= 0.9f;
+            //    currentPosition -= glm::vec2(32.0f, 32.0f);
+            //    targetPosition /= 0.9f;
+            //    targetPosition -= glm::vec2(32.0f, 32.0f);
+            //    interpolator.forcePosition(targetPosition);
+            //    if(glm::length(currentPosition - actualPosition) > 0.0f)
+            //    {
+            //        square1.translate(currentPosition - actualPosition);
+            //        square2.translate(currentPosition - actualPosition);
+            //        square3.translate(currentPosition - actualPosition);
+            //        square4.translate(currentPosition - actualPosition);
+            //        actualPosition = currentPosition;
+            //    }
 
-                for(auto& chunk : mapChunks)
-                    chunk.second.reset();
-            }
-            else if(event.key.code == fea::Keyboard::X)
-            {
-                zoom /= 0.9f;
+            //    for(auto& chunk : mapChunks)
+            //        chunk.second.reset();
+            //}
+            //else if(event.key.code == fea::Keyboard::X)
+            //{
+            //    zoom /= 0.9f;
 
-                currentPosition *= 0.9f;
-                currentPosition += glm::vec2(32.0f, 32.0f);
-                targetPosition *= 0.9f;
-                targetPosition += glm::vec2(32.0f, 32.0f);
-                interpolator.forcePosition(targetPosition);
-                if(glm::length(currentPosition - actualPosition) > 0.0f)
-                {
-                    square1.translate(currentPosition - actualPosition);
-                    square2.translate(currentPosition - actualPosition);
-                    square3.translate(currentPosition - actualPosition);
-                    square4.translate(currentPosition - actualPosition);
-                    actualPosition = currentPosition;
-                }
+            //    currentPosition *= 0.9f;
+            //    currentPosition += glm::vec2(32.0f, 32.0f);
+            //    targetPosition *= 0.9f;
+            //    targetPosition += glm::vec2(32.0f, 32.0f);
+            //    interpolator.forcePosition(targetPosition);
+            //    if(glm::length(currentPosition - actualPosition) > 0.0f)
+            //    {
+            //        square1.translate(currentPosition - actualPosition);
+            //        square2.translate(currentPosition - actualPosition);
+            //        square3.translate(currentPosition - actualPosition);
+            //        square4.translate(currentPosition - actualPosition);
+            //        actualPosition = currentPosition;
+            //    }
 
-                for(auto& chunk : mapChunks)
-                    chunk.second.reset();
-            }
+            //    for(auto& chunk : mapChunks)
+            //        chunk.second.reset();
+            //}
         }
         else if(event.type == fea::Event::KEYRELEASED)
         {
@@ -594,6 +594,7 @@ void BiomeApp::loop()
         if(position.x < -512.0f)
         {
             quad->translate({1024.0f, 0.0f});
+            //quad->setPosition({512.0f - (fmod(fabs(position.x), 512.0f)), position.y});
             coords[quad] += glm::vec2(1024.0f, 0.0f);
 
             removed = true;
@@ -601,6 +602,7 @@ void BiomeApp::loop()
         if(position.x > 512.0f)
         {
             quad->translate({-1024.0f, 0.0f});
+            //quad->setPosition({-512.0f + (fmod(fabs(position.x), 512.0f)), position.y});
             coords[quad] += glm::vec2(-1024.0f, 0.0f);
 
             removed = true;
@@ -608,6 +610,7 @@ void BiomeApp::loop()
         if(position.y < -512.0f)
         {
             quad->translate({0.0f, 1024.0f});
+            //quad->setPosition({position.x, 512.0f - (fmod(fabs(position.y), 512.0f))});
             coords[quad] += glm::vec2(0.0f, 1024.0f);
 
             removed = true;
@@ -615,6 +618,7 @@ void BiomeApp::loop()
         if(position.y > 512.0f)
         {
             quad->translate({0.0f, -1024.0f});
+            //quad->setPosition({position.x, -512.0f + (fmod(fabs(position.y), 512.0f))});
             coords[quad] += glm::vec2(0.0f, -1024.0f);
 
             removed = true;
