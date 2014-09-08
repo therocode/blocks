@@ -252,7 +252,7 @@ set(header_files
     src/world/generation/regiongenerator.h
 )
 
-find_package(Featherkit REQUIRED COMPONENTS entity structure ui sdl2 rendering messaging)
+find_package(Featherkit REQUIRED COMPONENTS entity structure ui sdl2 rendering util)
 find_package(GLM)
 find_package(SDL2)
 find_package(OpenGL REQUIRED)
