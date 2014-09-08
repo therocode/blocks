@@ -1,5 +1,5 @@
 #pragma once
-#include <fea/messaging.hpp>
+#include <fea/util.hpp>
 #include "world/chunk.h"
 
 FEA_DECLARE_MESSAGE(ClientChunkDeletedMessage, const ChunkCoord& coordinate;);

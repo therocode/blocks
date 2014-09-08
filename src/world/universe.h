@@ -3,7 +3,7 @@
 #include "world.h"
 #include "worldinterface.h"
 #include "../entity/entitysystem.h"
-#include <fea/messaging.hpp>
+#include <fea/util.hpp>
 #include "../rendering/renderingmessages.h"
 #include "worldmessages.h"
 #include "chunkprovider.h"

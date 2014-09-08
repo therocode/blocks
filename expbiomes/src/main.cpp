@@ -235,14 +235,14 @@ void BiomeApp::setup(const std::vector<std::string>& args)
     rIcon.setSize({11.0f, 11.0f});
     rIcon.setTexture(iconTexture);
 
-    texture1.create(partSize, partSize, fea::Color(1.0f, 0.0f, 1.0f), false, true);
-    texture2.create(partSize, partSize, fea::Color(1.0f, 0.0f, 1.0f), false, true);
-    texture3.create(partSize, partSize, fea::Color(1.0f, 0.0f, 1.0f), false, true);
-    texture4.create(partSize, partSize, fea::Color(1.0f, 0.0f, 1.0f), false, true);
-    dataTexture1.create(partSize, partSize, fea::Color(1.0f, 0.0f, 1.0f), false, true);
-    dataTexture2.create(partSize, partSize, fea::Color(1.0f, 0.0f, 1.0f), false, true);
-    dataTexture3.create(partSize, partSize, fea::Color(1.0f, 0.0f, 1.0f), false, true);
-    dataTexture4.create(partSize, partSize, fea::Color(1.0f, 0.0f, 1.0f), false, true);
+    texture1.create(partSize, partSize, fea::Color(0.0f, 0.0f, 0.0f), false, true);
+    texture2.create(partSize, partSize, fea::Color(0.0f, 0.0f, 0.0f), false, true);
+    texture3.create(partSize, partSize, fea::Color(0.0f, 0.0f, 0.0f), false, true);
+    texture4.create(partSize, partSize, fea::Color(0.0f, 0.0f, 0.0f), false, true);
+    dataTexture1.create(partSize, partSize, fea::Color(0.0f, 0.0f, 0.0f), false, true);
+    dataTexture2.create(partSize, partSize, fea::Color(0.0f, 0.0f, 0.0f), false, true);
+    dataTexture3.create(partSize, partSize, fea::Color(0.0f, 0.0f, 0.0f), false, true);
+    dataTexture4.create(partSize, partSize, fea::Color(0.0f, 0.0f, 0.0f), false, true);
     //
     //temp             //rain
     //storage.addBiome(new Biome("forest", 0.1f, 0.5f, 0.0f,          Range(0.3f, 0.8f), Range(0.4f, 1.0f),  Range(0.2f, 1.0f)));

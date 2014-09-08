@@ -1,5 +1,5 @@
 #pragma once
-#include <fea/messaging.hpp>
+#include <fea/util.hpp>
 #include "worldmessages.h"
 #include "generation/regiongenerator.h"
 #include "biomestorage.h"

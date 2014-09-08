@@ -1,7 +1,7 @@
 #pragma once
 #include <stdint.h>
 #include <string>
-#include <fea/messaging.hpp>
+#include <fea/util.hpp>
 #include "../world/worldinterface.h"
 
 class ScriptEntityCore

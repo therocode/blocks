@@ -3,7 +3,7 @@
 #include "../world/chunk.h"
 #include "controllers/movedirection.h"
 #include "controllers/moveaction.h"
-#include <fea/messaging.hpp>
+#include <fea/util.hpp>
 #include <fea/entitysystem.hpp>
 
 FEA_DECLARE_MESSAGE(EntityMoveRequestedMessage, fea::EntityId id; const glm::vec3& newPosition;);

@@ -1,4 +1,4 @@
 #pragma once
-#include <fea/messaging.hpp>
+#include <fea/util.hpp>
 
 FEA_DECLARE_MESSAGE(RebuildScriptsRequestedMessage);

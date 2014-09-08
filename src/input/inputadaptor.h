@@ -1,6 +1,6 @@
 #pragma once
 #include <fea/userinterface.hpp>
-#include <fea/messaging.hpp>
+#include <fea/util.hpp>
 #include "../entity/entitymessages.h"
 #include "../entity/controllers/movedirection.h"
 #include "application/applicationmessages.h"
