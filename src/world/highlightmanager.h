@@ -4,7 +4,6 @@
 #include <unordered_map>
 
 #include <fea/util.hpp>
-#include <glm/gtx/string_cast.hpp>
 
 #include "chunk.h"
 #include "worldmessages.h"

@@ -4,8 +4,6 @@
 #include <iostream>
 #include <string>
 
-#include <glm/gtx/string_cast.hpp>
-
 #include <fea/util.hpp>
 
 #include "world/chunk.h"

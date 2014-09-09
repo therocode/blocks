@@ -8,8 +8,6 @@
 
 #include <fea/util.hpp>
 
-#include <glm/gtx/string_cast.hpp>
-
 #include "world/chunk.h"
 #include "world/modmanager.h"
 #include "world/worldmessages.h"
