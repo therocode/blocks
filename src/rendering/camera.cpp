@@ -150,7 +150,6 @@ void Camera::Update()
 
 void Camera::LookAt(float eyeX, float eyeY, float eyeZ, float centerX, float centerY, float centerZ, float upX, float upY, float upZ)
 {
-
 	SetPosition(glm::vec3(eyeX,eyeY,eyeZ));
 	SetDirection(glm::vec3(centerX-eyeX,centerY-eyeY,centerZ-eyeZ));
 	SetUpDir(glm::vec3(upX,upY,upZ));

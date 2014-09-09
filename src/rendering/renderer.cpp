@@ -83,7 +83,7 @@ void Renderer::setup()
 	//glMatrixMode(GL_PROJECTION);
 	//glLoadIdentity();
 	//I create a projection matrix, instead of gluproejction.
-	projectionMatrix = glm::perspective(80.f, 1.f, 0.1f, 1000.f);
+	projectionMatrix = glm::perspective(glm::radians(80.f), 1.f, 0.1f, 1000.f);
     mFrustum.setCamInternals(80.f, 1.f, 0.1f, 1000.f);
 	//glMultMatrixf(glm::value_ptr(projectionMatrix));
 	//glMatrixMode(GL_MODELVIEW);
@@ -94,6 +94,7 @@ void Renderer::setup()
 	cam.SetPosition(glm::vec3(0.0f, 50.0f, -50.0f));
 	mShaderProgram.setShaderPaths("data/vert", "data/frag");	
 }
+
 void Renderer::setCameraMatrix(const glm::mat4& m){
 
 	//glMatrixMode(GL_MODELVIEW);
@@ -148,7 +149,7 @@ void Renderer::handleMessage(const WindowResizeMessage& received)
 	uint32_t width = received.width;
 	uint32_t height = received.height;
 	//I create a projection matrix, instead of gluproejction.
-	projectionMatrix = glm::perspective(80.f, ((float)width)/((float)height), 0.1f, 1000.f);
+	projectionMatrix = glm::perspective(glm::radians(80.f), ((float)width)/((float)height), 0.1f, 1000.f);
     mFrustum.setCamInternals(80.f, ((float)width)/((float)height), 0.1f, 1000.f);
 
 	mScreenSize = glm::vec2((float)width, (float)height);
@@ -160,8 +161,6 @@ void Renderer::handleMessage(const WindowResizeMessage& received)
 	//gluPerspective(70.0f, ((float)width)/((float)height), 0.1f, 100.0f);
 	//glMatrixMode(GL_MODELVIEW);
 	glViewport(0, 0, width, height);
-
-
 }
 
 void Renderer::handleMessage(const PlayerIdMessage& received)
