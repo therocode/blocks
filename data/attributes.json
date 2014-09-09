@@ -12,7 +12,7 @@
     "on_ground":"bool",
 
     "current_chunk":"i64vec3",
-    "block_facing":"uvec3",
+    "block_facing":"i64vec3",
 	"is_facing_block":"bool",
 	"block_facing_face":"uint32",
 
