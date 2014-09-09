@@ -6,7 +6,7 @@
 #include <string>
 #include <tuple>
 
-#include <fea/messaging.hpp>
+#include <fea/util.hpp>
 
 #include <glm/gtx/string_cast.hpp>
 

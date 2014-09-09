@@ -4,7 +4,7 @@
 #include <iostream>
 #include <tuple>
 
-#include <fea/messaging.hpp>
+#include <fea/util.hpp>
 
 #include "world/highlightmanager.h"
 #include "world/worldmessages.h"
