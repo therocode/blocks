@@ -13,5 +13,4 @@ void LocalClientConnectionListener::createClientConnection(LocalServerClientBrid
 
     std::lock_guard<std::mutex> lock(mIncomingConnectionsMutex);
     mIncomingConnections.push(clientConnection);
-    mIncomingConnectionsMutex.unlock();
 }
