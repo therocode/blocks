@@ -215,7 +215,6 @@ set(header_files
     src/world/highlightmanager.hpp
     src/world/modmanager.hpp
     src/world/region.hpp
-    src/world/regionstorageinterface.hpp
     src/world/regionlodmanager.hpp
     src/world/worldstd.hpp
 	src/world/universe.hpp
