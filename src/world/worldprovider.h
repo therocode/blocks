@@ -3,6 +3,7 @@
 #include "regionstorageinterface.h"
 #include "modmanager.h"
 #include "generation/regiongenerator.h"
+#include "generation/chunkgenerator.h"
 
 class Region;
 
@@ -20,4 +21,5 @@ class WorldProvider :
         RegionStorageInterface& mRegionStorage;
         ModManager& mModManager;
         RegionGenerator mRegionGenerator;
+        ChunkGenerator mChunkGenerator;
 };

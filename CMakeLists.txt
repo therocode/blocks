@@ -101,6 +101,7 @@ set(source_files
            src/world/universe.cpp
         src/world/world.cpp
         src/world/worldinterface.cpp
+        src/world/generation/chunkgenerator.cpp
         src/world/generation/regiondatagenerator.cpp
         src/world/generation/regiongenerator.cpp
     )
@@ -221,6 +222,7 @@ set(header_files
     src/world/world.h
     src/world/worldinterface.h
     src/world/worldprovider.h
+    src/world/generation/chunkgenerator.h
     src/world/generation/regiondatagenerator.h
     src/world/generation/regiongenerator.h
 )
