@@ -1,8 +1,8 @@
-#include "vbocreator.h"
+#include "vbocreator.hpp"
 #include <vector>
 #include <chrono>
-#include "meshwalker.h"
-#include "marchingcubegenerator.h"
+#include "meshwalker.hpp"
+#include "marchingcubegenerator.hpp"
 
 using std::chrono::duration_cast;
 using std::chrono::microseconds;

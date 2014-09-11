@@ -1,4 +1,4 @@
-#include "scriptcaller.h"
+#include "scriptcaller.hpp"
 
 ScriptCaller::ScriptCaller(fea::MessageBus& bus, ScriptEngine& engine, ScriptEntityMap& scriptEntities) : mBus(bus), mEngine(engine), mActive(false), mScriptEntities(scriptEntities)
 {

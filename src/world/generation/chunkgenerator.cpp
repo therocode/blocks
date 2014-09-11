@@ -1,5 +1,5 @@
-#include "chunkgenerator.h"
-#include "../biome.h"
+#include "chunkgenerator.hpp"
+#include "../biome.hpp"
 
 Chunk ChunkGenerator::generateChunk(const ChunkCoord& chunkCoordinate, const Region& region) const
 {

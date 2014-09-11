@@ -1,4 +1,4 @@
-#include "gameeventcaller.h"
+#include "gameeventcaller.hpp"
 
 GameEventCaller::GameEventCaller(fea::MessageBus& bus, ScriptEngine& engine, ScriptEntityMap& scriptEntities) : ScriptCaller(bus, engine, scriptEntities)
 {

@@ -107,124 +107,124 @@ set(source_files
     )
 
 set(header_files
-       src/blockstd.h
-       src/application/applicationmessages.h
-       src/application/blocksapp.h
-    src/application/client.h
-    src/application/server.h
+       src/blockstd.hpp
+       src/application/applicationmessages.hpp
+       src/application/blocksapp.hpp
+    src/application/client.hpp
+    src/application/server.hpp
 
-    src/console/consolecolor.h
-    src/console/console.h
-    src/console/keys.h
+    src/console/consolecolor.hpp
+    src/console/console.hpp
+    src/console/keys.hpp
 
-       src/entity/entitymessages.h
-    src/entity/defaultsetters.h
-    src/entity/entitycreator.h
-    src/entity/entityfactory.h
-    src/entity/entitydefinition.h
-    src/entity/entitydefinitionloader.h
-    src/entity/entitysystem.h
-    src/entity/controllers/collisioncontroller.h
-    src/entity/controllers/entitycontroller.h
-    src/entity/controllers/gfxcontroller.h
-    src/entity/controllers/moveaction.h
-    src/entity/controllers/movedirection.h
-    src/entity/controllers/movementcontroller.h
-    src/entity/controllers/physicscontroller.h
-    src/entity/controllers/physicstype.h
-    src/entity/controllers/playercontroller.h
+       src/entity/entitymessages.hpp
+    src/entity/defaultsetters.hpp
+    src/entity/entitycreator.hpp
+    src/entity/entityfactory.hpp
+    src/entity/entitydefinition.hpp
+    src/entity/entitydefinitionloader.hpp
+    src/entity/entitysystem.hpp
+    src/entity/controllers/collisioncontroller.hpp
+    src/entity/controllers/entitycontroller.hpp
+    src/entity/controllers/gfxcontroller.hpp
+    src/entity/controllers/moveaction.hpp
+    src/entity/controllers/movedirection.hpp
+    src/entity/controllers/movementcontroller.hpp
+    src/entity/controllers/physicscontroller.hpp
+    src/entity/controllers/physicstype.hpp
+    src/entity/controllers/playercontroller.hpp
 
-       src/input/inputmessages.h
-    src/input/inputactions.h
-    src/input/inputadaptor.h
+       src/input/inputmessages.hpp
+    src/input/inputactions.hpp
+    src/input/inputadaptor.hpp
 
     src/math/mathutils.cpp
 
-    src/networking/clientconnection.h
-    src/networking/clientconnectionlistener.h
-    src/networking/localclientconnectionlistener.h
-    src/networking/localserverclientbridge.h
-    src/networking/package.h
-    src/networking/packagetype.h
+    src/networking/clientconnection.hpp
+    src/networking/clientconnectionlistener.hpp
+    src/networking/localclientconnectionlistener.hpp
+    src/networking/localserverclientbridge.hpp
+    src/networking/package.hpp
+    src/networking/packagetype.hpp
 
-    src/math/mathutils.h
+    src/math/mathutils.hpp
 
     src/networking/clientconnection.cpp
     src/networking/clientconnectionlistener.cpp
     src/networking/localclientconnectionlistener.cpp
     src/networking/localserverclientbridge.cpp
     src/networking/package.cpp
-    src/networking/serverclientbridge.h
+    src/networking/serverclientbridge.hpp
 
-    src/rendering/chunkgeneratorqueue.h
-	src/rendering/debugrenderer.h
-	src/rendering/renderingmessages.h
-	src/rendering/billboard.h
-	src/rendering/camera.h
-    src/rendering/frustum.h
-	src/rendering/mesh.h
-	src/rendering/meshwalker.h
-	src/rendering/renderer.h
-	src/rendering/shader.h
-	src/rendering/shaderprogram.h
-    src/rendering/surfacemerger.h
-    src/rendering/texture.h
-	src/rendering/vbo.h
-	src/rendering/vbocreator.h
-    src/rendering/marchingcubegenerator.h
+    src/rendering/chunkgeneratorqueue.hpp
+	src/rendering/debugrenderer.hpp
+	src/rendering/renderingmessages.hpp
+	src/rendering/billboard.hpp
+	src/rendering/camera.hpp
+    src/rendering/frustum.hpp
+	src/rendering/mesh.hpp
+	src/rendering/meshwalker.hpp
+	src/rendering/renderer.hpp
+	src/rendering/shader.hpp
+	src/rendering/shaderprogram.hpp
+    src/rendering/surfacemerger.hpp
+    src/rendering/texture.hpp
+	src/rendering/vbo.hpp
+	src/rendering/vbocreator.hpp
+    src/rendering/marchingcubegenerator.hpp
 
-	src/script/scriptmessages.h
-    src/script/scriptcallback.h
-    src/script/scriptengine.h
-    src/script/scriptentity.h
-    src/script/scriptentitycore.h
-    src/script/scripthandler.h
-    src/script/scriptmodule.h
-    src/script/scriptstd.h
-    src/script/asaddons/scriptarray.h
-    src/script/asaddons/scriptmath.h
-    src/script/asaddons/scriptvectors.h
-    src/script/asaddons/scriptbuilder.h
-    src/script/asaddons/scriptstdstring.h
-    src/script/callers/scriptcaller.h
-    src/script/callers/frametimecaller.h
-    src/script/callers/gameeventcaller.h
-    src/script/callers/ongroundcaller.h
-    src/script/interfaces/entityinterface.h
-    src/script/interfaces/landscapeinterface.h
-    src/script/interfaces/mathsinterface.h
-    src/script/interfaces/physicsinterface.h
-    src/script/interfaces/printinterface.h
-    src/script/interfaces/randominterface.h
-    src/script/interfaces/scriptinterface.h
-    src/script/interfaces/stringinterface.h
+	src/script/scriptmessages.hpp
+    src/script/scriptcallback.hpp
+    src/script/scriptengine.hpp
+    src/script/scriptentity.hpp
+    src/script/scriptentitycore.hpp
+    src/script/scripthandler.hpp
+    src/script/scriptmodule.hpp
+    src/script/scriptstd.hpp
+    src/script/asaddons/scriptarray.hpp
+    src/script/asaddons/scriptmath.hpp
+    src/script/asaddons/scriptvectors.hpp
+    src/script/asaddons/scriptbuilder.hpp
+    src/script/asaddons/scriptstdstring.hpp
+    src/script/callers/scriptcaller.hpp
+    src/script/callers/frametimecaller.hpp
+    src/script/callers/gameeventcaller.hpp
+    src/script/callers/ongroundcaller.hpp
+    src/script/interfaces/entityinterface.hpp
+    src/script/interfaces/landscapeinterface.hpp
+    src/script/interfaces/mathsinterface.hpp
+    src/script/interfaces/physicsinterface.hpp
+    src/script/interfaces/printinterface.hpp
+    src/script/interfaces/randominterface.hpp
+    src/script/interfaces/scriptinterface.hpp
+    src/script/interfaces/stringinterface.hpp
 
-    src/utilities/folderexploder.h
-    src/utilities/fpscontroller.h
-    src/utilities/lodepng.h
-    src/utilities/logger.h
-	src/utilities/random.h
-	src/utilities/timer.h
-	src/utilities/tinydir.h
+    src/utilities/folderexploder.hpp
+    src/utilities/fpscontroller.hpp
+    src/utilities/lodepng.hpp
+    src/utilities/logger.hpp
+	src/utilities/random.hpp
+	src/utilities/timer.hpp
+	src/utilities/tinydir.hpp
 
-	src/world/worldmessages.h
-	src/world/biome.h
-	src/world/biomestorage.h
-	src/world/chunk.h
-    src/world/valuemap.h
-    src/world/highlightmanager.h
-    src/world/modmanager.h
-    src/world/region.h
-    src/world/regionstorageinterface.h
-    src/world/regionlodmanager.h
-    src/world/worldstd.h
-	src/world/universe.h
-    src/world/world.h
-    src/world/worldinterface.h
-    src/world/worldprovider.h
-    src/world/generation/chunkgenerator.h
-    src/world/generation/regiondatagenerator.h
-    src/world/generation/regiongenerator.h
+	src/world/worldmessages.hpp
+	src/world/biome.hpp
+	src/world/biomestorage.hpp
+	src/world/chunk.hpp
+    src/world/valuemap.hpp
+    src/world/highlightmanager.hpp
+    src/world/modmanager.hpp
+    src/world/region.hpp
+    src/world/regionstorageinterface.hpp
+    src/world/regionlodmanager.hpp
+    src/world/worldstd.hpp
+	src/world/universe.hpp
+    src/world/world.hpp
+    src/world/worldinterface.hpp
+    src/world/worldprovider.hpp
+    src/world/generation/chunkgenerator.hpp
+    src/world/generation/regiondatagenerator.hpp
+    src/world/generation/regiongenerator.hpp
 )
 
 find_package(Featherkit REQUIRED COMPONENTS entity structure ui sdl2 rendering util)

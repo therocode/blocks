@@ -1,5 +1,5 @@
-#include "folderexploder.h"
-#include "tinydir.h"
+#include "folderexploder.hpp"
+#include "tinydir.hpp"
 #include <regex>
 
 void FolderExploder::explodeFolder(const std::string& directory, const std::string regex, std::vector<std::string>& result)

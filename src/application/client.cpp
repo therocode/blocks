@@ -1,9 +1,9 @@
-#include "client.h"
+#include "client.hpp"
 #include <iostream>
 #include <fea/ui/sdl2windowbackend.hpp>
 #include <fea/ui/sdl2inputbackend.hpp>
-#include "../networking/packages.h"
-#include "../application/applicationmessages.h"
+#include "../networking/packages.hpp"
+#include "../application/applicationmessages.hpp"
 
 
 Client::Client() :

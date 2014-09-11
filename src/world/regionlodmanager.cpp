@@ -1,4 +1,4 @@
-#include "regionlodmanager.h"
+#include "regionlodmanager.hpp"
 
 RegionLodManager::RegionLodManager(fea::MessageBus& bus) : mBus(bus)
 {

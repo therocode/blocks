@@ -1,4 +1,4 @@
-#include "mathutils.h"
+#include "mathutils.hpp"
 
 float AABB::min(const int& axis)const{
     if(axis == 0){

@@ -1,5 +1,5 @@
-#include "worldinterface.h"
-#include "rendering/renderer.h"
+#include "worldinterface.hpp"
+#include "rendering/renderer.hpp"
     WorldInterface::WorldInterface(World& dimension, EntitySystem& entitySystem)
 :   mWorld(dimension),
     mEntitySystem(entitySystem)

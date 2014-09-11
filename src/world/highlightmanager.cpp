@@ -1,4 +1,4 @@
-#include "highlightmanager.h"
+#include "highlightmanager.hpp"
 
 using namespace std;
 

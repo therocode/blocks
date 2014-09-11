@@ -2,7 +2,7 @@
 #include <string.h> // strstr
 #include <new> // new()
 #include <math.h>
-#include "scriptmathcomplex.h"
+#include "scriptmathcomplex.hpp"
 
 #ifdef __BORLANDC__
 // C++Builder doesn't define a non-standard "sqrtf" function but rather an overload of "sqrt"

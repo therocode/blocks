@@ -1,4 +1,4 @@
-#include "meshwalker.h"
+#include "meshwalker.hpp"
 #include <iostream>
 
 void MeshWalker::NeighbourWalker::setIterator(RleIterator iterator)

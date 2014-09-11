@@ -1,6 +1,6 @@
-#include "scriptmodule.h"
-#include "scriptengine.h"
-#include "asaddons/scriptbuilder.h"
+#include "scriptmodule.hpp"
+#include "scriptengine.hpp"
+#include "asaddons/scriptbuilder.hpp"
 #include <assert.h>
 #include <iostream>
 

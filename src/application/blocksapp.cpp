@@ -1,9 +1,9 @@
-#include "blocksapp.h"
-#include "../input/inputactions.h"
-#include "../networking/localserverclientbridge.h"
-//#include "../networking/remoteserverbridge.h"
-#include "../networking/localclientconnectionlistener.h"
-//#include "../networking/remoteclientconnectionlistener.h"
+#include "blocksapp.hpp"
+#include "../input/inputactions.hpp"
+#include "../networking/localserverclientbridge.hpp"
+//#include "../networking/remoteserverbridge.hpp"
+#include "../networking/localclientconnectionlistener.hpp"
+//#include "../networking/remoteclientconnectionlistener.hpp"
 #include <iostream>
 //#include <thread>
 

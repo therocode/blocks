@@ -1,4 +1,4 @@
-#include "biomestorage.h"
+#include "biomestorage.hpp"
 #include <algorithm>
 
 Biome* BiomeStorage::getBiome(float temperature, float rainfall, float height, float selector)

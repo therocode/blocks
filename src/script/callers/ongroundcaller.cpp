@@ -1,4 +1,4 @@
-#include "ongroundcaller.h"
+#include "ongroundcaller.hpp"
 
 OnGroundCaller::OnGroundCaller(fea::MessageBus& bus, ScriptEngine& engine, ScriptEntityMap& scriptEntities) : ScriptCaller(bus, engine, scriptEntities)
 {

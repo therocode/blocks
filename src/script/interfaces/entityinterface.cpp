@@ -1,7 +1,7 @@
-#include "entityinterface.h"
+#include "entityinterface.hpp"
 #include <angelscript.h>
 #include <assert.h>
-#include "../scriptentitycore.h"
+#include "../scriptentitycore.hpp"
 
 EntityInterface::EntityInterface(fea::MessageBus& bus, WorldInterface& worldInterface, std::map<size_t, ScriptEntity>& scriptEntities) : ScriptInterface(bus, worldInterface),
     mEntityCreator([] (const std::string& type, const glm::vec3& position) { return fea::EntityPtr(nullptr); }),

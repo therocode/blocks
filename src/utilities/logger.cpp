@@ -1,8 +1,8 @@
-#include "logger.h"
-#include "../application/applicationmessages.h"
+#include "logger.hpp"
+#include "../application/applicationmessages.hpp"
 #include <chrono>
 #include <iostream>
-#include "../console/console.h"
+#include "../console/console.hpp"
 
 Logger::Logger(fea::MessageBus& bus, uint32_t logLevel) : mBus(bus),
                                        mLogLevel(logLevel)

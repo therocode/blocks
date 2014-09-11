@@ -1,9 +1,9 @@
-#include "scriptengine.h"
+#include "scriptengine.hpp"
 #include <iostream>
 #include <assert.h>
-#include "asaddons/scriptstdstring.h"
-#include "asaddons/scriptarray.h"
-#include "../application/applicationmessages.h"
+#include "asaddons/scriptstdstring.hpp"
+#include "asaddons/scriptarray.hpp"
+#include "../application/applicationmessages.hpp"
 
 ScriptEngine::ScriptEngine(fea::MessageBus& bus) : 
     mBus(bus),

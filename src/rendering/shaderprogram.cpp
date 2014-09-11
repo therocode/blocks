@@ -1,4 +1,4 @@
-#include "shaderprogram.h"
+#include "shaderprogram.hpp"
 
 ShaderProgram::ShaderProgram()
 {

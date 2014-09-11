@@ -1,4 +1,4 @@
-#include "movedirection.h"
+#include "movedirection.hpp"
 
 MoveDirection::MoveDirection()
 {

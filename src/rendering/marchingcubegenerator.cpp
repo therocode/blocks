@@ -1,4 +1,4 @@
-#include "marchingcubegenerator.h"
+#include "marchingcubegenerator.hpp"
 
 void MarchingCubeGenerator::generateMesh(VBO& vbo, Chunk* mainChunk, Chunk* topChunk, Chunk* bottomChunk, Chunk* leftChunk, Chunk* rightChunk, Chunk* frontChunk, Chunk* backChunk)
 {

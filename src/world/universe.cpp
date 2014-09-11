@@ -1,9 +1,9 @@
-#include "universe.h"
-#include "../entity/controllers/playercontroller.h"
-#include "../entity/controllers/physicscontroller.h"
-#include "../entity/controllers/collisioncontroller.h"
-#include "../entity/controllers/gfxcontroller.h"
-#include "../entity/controllers/movementcontroller.h"
+#include "universe.hpp"
+#include "../entity/controllers/playercontroller.hpp"
+#include "../entity/controllers/physicscontroller.hpp"
+#include "../entity/controllers/collisioncontroller.hpp"
+#include "../entity/controllers/gfxcontroller.hpp"
+#include "../entity/controllers/movementcontroller.hpp"
 #include <fea/util.hpp>
 
 Universe::Universe(fea::MessageBus& messageBus) 

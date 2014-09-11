@@ -1,4 +1,4 @@
-#include "scriptbuilder.h"
+#include "scriptbuilder.hpp"
 #include <vector>
 using namespace std;
 

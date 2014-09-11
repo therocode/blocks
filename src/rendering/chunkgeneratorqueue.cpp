@@ -1,4 +1,4 @@
-#include "chunkgeneratorqueue.h"
+#include "chunkgeneratorqueue.hpp"
 void ChunkGeneratorQueue::addToQueue(Chunk* mainChunk, Chunk* topChunk, Chunk* bottomChunk, Chunk* frontChunk, Chunk* backChunk, Chunk* leftChunk, Chunk* rightChunk){
     auto main = mQueue.find(mainChunk->getLocation());
     ChunkQueueThing t;

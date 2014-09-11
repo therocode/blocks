@@ -1,8 +1,8 @@
-#include "playercontroller.h"
-#include "../../world/worldinterface.h"
-#include "../../rendering/renderingmessages.h"
-#include "world/worldmessages.h"
-#include "moveaction.h"
+#include "playercontroller.hpp"
+#include "../../world/worldinterface.hpp"
+#include "../../rendering/renderingmessages.hpp"
+#include "world/worldmessages.hpp"
+#include "moveaction.hpp"
 #include <iostream>
 
 PlayerController::PlayerController(fea::MessageBus& bus, WorldInterface& worldInterface) : EntityController(bus, worldInterface)

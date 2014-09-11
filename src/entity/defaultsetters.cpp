@@ -1,4 +1,4 @@
-#include "defaultsetters.h"
+#include "defaultsetters.hpp"
 
 void vec3Setter(std::string attribute, std::vector<std::string>& arguments, fea::WeakEntityPtr entity)
 {

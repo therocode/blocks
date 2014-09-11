@@ -1,5 +1,5 @@
-#include "gfxcontroller.h"
-#include "../../rendering/renderingmessages.h"
+#include "gfxcontroller.hpp"
+#include "../../rendering/renderingmessages.hpp"
 #include <iostream>
 
 GfxController::GfxController(fea::MessageBus& bus, WorldInterface& worldInterface) : EntityController(bus, worldInterface)

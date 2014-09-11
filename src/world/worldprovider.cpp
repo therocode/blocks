@@ -1,6 +1,6 @@
-#include "worldprovider.h"
-#include "region.h"
-#include "../application/applicationmessages.h"
+#include "worldprovider.hpp"
+#include "region.hpp"
+#include "../application/applicationmessages.hpp"
 
 WorldProvider::WorldProvider(fea::MessageBus& b, RegionStorageInterface& mRegionGenerator, ModManager& modManager)
     :

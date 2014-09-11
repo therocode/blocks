@@ -1,4 +1,4 @@
-#include "randominterface.h"
+#include "randominterface.hpp"
 #include <angelscript.h>
 #include <assert.h>
 

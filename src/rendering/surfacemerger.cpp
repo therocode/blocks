@@ -1,4 +1,4 @@
-#include "surfacemerger.h"
+#include "surfacemerger.hpp"
 #include <algorithm>
 #include <iostream>
 

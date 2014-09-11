@@ -1,4 +1,4 @@
-#include "regiondatagenerator.h"
+#include "regiondatagenerator.hpp"
 #include <fea/util.hpp>
 
 const int globalSeed = 12312;

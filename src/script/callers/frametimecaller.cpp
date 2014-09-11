@@ -1,4 +1,4 @@
-#include "frametimecaller.h"
+#include "frametimecaller.hpp"
 #include <iostream>
 
 FrameTimeCaller::FrameTimeCaller(fea::MessageBus& bus, ScriptEngine& engine, ScriptEntityMap& scriptEntities) : ScriptCaller(bus, engine, scriptEntities),

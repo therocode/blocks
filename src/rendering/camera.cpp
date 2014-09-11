@@ -1,4 +1,4 @@
-#include "camera.h"
+#include "camera.hpp"
 Camera::Camera()
 {
 	position[0]=position[1]=position[2]=0;

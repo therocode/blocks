@@ -1,5 +1,5 @@
-#include "server.h"
-#include "../networking/packages.h"
+#include "server.hpp"
+#include "../networking/packages.hpp"
 
 Server::Server() : mUniverse(mBus),
     mLogger(mBus, LogLevel::VERB),

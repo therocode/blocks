@@ -1,4 +1,4 @@
-#include "serverclientbridge.h"
+#include "serverclientbridge.hpp"
 
 bool ServerClientBridge::pollPackage(std::shared_ptr<BasePackage>& package)
 {

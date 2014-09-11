@@ -1,4 +1,4 @@
-#include "debugrenderer.h"
+#include "debugrenderer.hpp"
 #include <GL/gl.h>
 
 void DebugRenderer::drawBox(float x, float y, float z, float sx, float sy, float sz, int color)

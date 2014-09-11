@@ -1,5 +1,5 @@
-#include "landscapeinterface.h"
-#include "world/worldmessages.h"
+#include "landscapeinterface.hpp"
+#include "world/worldmessages.hpp"
 #include <angelscript.h>
 #include <assert.h>
 

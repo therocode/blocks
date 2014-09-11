@@ -1,4 +1,4 @@
-#include "biomegenerator.h"
+#include "biomegenerator.hpp"
 
 BiomeGenerator::BiomeGenerator(IntensityMap* h, IntensityMap* r, IntensityMap* t, IntensityMap* b, BiomeStorage& s) : heightmap(h), rainfall(r), temperature(t), biomeSelector(b), storage(s)
 {

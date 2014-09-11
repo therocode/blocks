@@ -1,5 +1,5 @@
-#include "localchunkprovider.h"
-#include "utilities/simplexnoise.h"
+#include "localchunkprovider.hpp"
+#include "utilities/simplexnoise.hpp"
 
 LocalChunkProvider::LocalChunkProvider() : mNoise(11)
 {

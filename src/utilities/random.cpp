@@ -1,4 +1,4 @@
-#include "random.h"
+#include "random.hpp"
 
 Random::Random() : generator(randomDevice())
 {

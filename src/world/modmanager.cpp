@@ -1,4 +1,4 @@
-#include "modmanager.h"
+#include "modmanager.hpp"
 
 using namespace std;
 

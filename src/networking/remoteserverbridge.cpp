@@ -1,8 +1,8 @@
-//#include "remoteserverbridge.h"
+//#include "remoteserverbridge.hpp"
 //#include <iostream>
-//#include "packages.h"
-//#include "application/applicationmessages.h"
-//#include "networkstd.h"
+//#include "packages.hpp"
+//#include "application/applicationmessages.hpp"
+//#include "networkstd.hpp"
 //
 //RemoteServerBridge::RemoteServerBridge(fea::MessageBus& bus) : mBus(bus), mLogName("network"), mGotPackagesToSend(false)
 //{

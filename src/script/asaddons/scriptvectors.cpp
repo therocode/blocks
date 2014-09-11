@@ -1,4 +1,4 @@
-#include "scriptvectors.h"
+#include "scriptvectors.hpp"
 #include <new>
 
 void registerGlmVectors(asIScriptEngine* engine)

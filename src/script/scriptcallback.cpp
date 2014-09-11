@@ -1,4 +1,4 @@
-#include "scriptcallback.h"
+#include "scriptcallback.hpp"
 
 void parameterFunction(asIScriptContext* context, std::size_t index, int value) 
 {

@@ -1,4 +1,4 @@
-#include "localserverclientbridge.h"
+#include "localserverclientbridge.hpp"
 
 LocalServerClientBridge::LocalServerClientBridge() : mOther(nullptr)
 {

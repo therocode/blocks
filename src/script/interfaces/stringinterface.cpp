@@ -1,4 +1,4 @@
-#include "stringinterface.h"
+#include "stringinterface.hpp"
 #include <angelscript.h>
 #include <assert.h>
 

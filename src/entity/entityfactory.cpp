@@ -1,9 +1,9 @@
 #include <iostream>
-#include "../blockstd.h"
-#include "entityfactory.h"
-#include "../world/chunk.h"
-#include "controllers/moveaction.h"
-#include "controllers/movedirection.h"
+#include "../blockstd.hpp"
+#include "entityfactory.hpp"
+#include "../world/chunk.hpp"
+#include "controllers/moveaction.hpp"
+#include "controllers/movedirection.hpp"
 #include <fea/entity/jsonentityloader.hpp>
 #include <fea/entity/glmtypeadder.hpp>
 

@@ -1,8 +1,8 @@
-#include "mathsinterface.h"
+#include "mathsinterface.hpp"
 #include <angelscript.h>
 #include <assert.h>
-#include "../asaddons/scriptmath.h"
-#include "../asaddons/scriptvectors.h"
+#include "../asaddons/scriptmath.hpp"
+#include "../asaddons/scriptvectors.hpp"
 
 MathsInterface::MathsInterface(fea::MessageBus& bus, WorldInterface& worldInterface) : ScriptInterface(bus, worldInterface)
 {

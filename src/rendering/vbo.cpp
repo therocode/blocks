@@ -1,4 +1,4 @@
-#include "vbo.h"
+#include "vbo.hpp"
 
 size_t VertexElement::getElementByteSize(unsigned int element){
     switch(element){

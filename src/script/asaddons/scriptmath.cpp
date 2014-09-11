@@ -1,7 +1,7 @@
 #include <assert.h>
 #include <math.h>
 #include <string.h>
-#include "scriptmath.h"
+#include "scriptmath.hpp"
 
 #ifdef __BORLANDC__
 #include <cmath>

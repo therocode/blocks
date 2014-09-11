@@ -1,4 +1,4 @@
-#include "printinterface.h"
+#include "printinterface.hpp"
 #include <angelscript.h>
 #include <assert.h>
 

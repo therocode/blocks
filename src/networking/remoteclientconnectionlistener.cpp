@@ -1,5 +1,5 @@
-#include "remoteclientconnectionlistener.h"
-#include "application/applicationmessages.h"
+#include "remoteclientconnectionlistener.hpp"
+#include "application/applicationmessages.hpp"
 
 RemoteClientConnectionListener::RemoteClientConnectionListener(fea::MessageBus& bus) : mBus(bus), mLogName("network"), mNextClientId(0)
 {

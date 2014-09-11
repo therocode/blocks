@@ -1,7 +1,7 @@
-#include "inputmessages.h"
-#include "../script/scriptmessages.h"
-#include "inputadaptor.h"
-#include "inputactions.h"
+#include "inputmessages.hpp"
+#include "../script/scriptmessages.hpp"
+#include "inputadaptor.hpp"
+#include "inputactions.hpp"
 #include <fea/ui/sdl2inputbackend.hpp>
 #include <fea/ui/jsonactioniohandler.hpp>
 #include "zlib.h"

@@ -1,4 +1,4 @@
-#include "biome.h"
+#include "biome.hpp"
 
 Range::Range(float mi, float ma) : min(mi), max(ma)
 {

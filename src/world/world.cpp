@@ -1,4 +1,4 @@
-#include "world.h"
+#include "world.hpp"
 
 ChunkReferenceMap World::getChunkMap() const
 {

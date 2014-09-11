@@ -1,8 +1,8 @@
-#include "renderer.h"
+#include "renderer.hpp"
 #include <iostream>
 #include <fea/assert.hpp>
-#include "../utilities/lodepng.h"
-//#include "gl_core_3_2.h"
+#include "../utilities/lodepng.hpp"
+//#include "gl_core_3_2.hpp"
 #include <fea/rendering/gl_core_3_2.h>
 
 

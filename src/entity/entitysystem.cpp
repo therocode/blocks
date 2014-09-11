@@ -1,9 +1,9 @@
-#include "entitysystem.h"
-#include "../blockstd.h"
-#include "entitymessages.h"
-#include "../application/applicationmessages.h"
-#include "entitydefinitionloader.h"
-#include "../utilities/folderexploder.h"
+#include "entitysystem.hpp"
+#include "../blockstd.hpp"
+#include "entitymessages.hpp"
+#include "../application/applicationmessages.hpp"
+#include "entitydefinitionloader.hpp"
+#include "../utilities/folderexploder.hpp"
 
 EntitySystem::EntitySystem(fea::MessageBus& bus) : 
     mBus(bus), 

@@ -1,6 +1,6 @@
-#include "regiongenerator.h"
-#include "../region.h"
-#include "../../utilities/lodepng.h"
+#include "regiongenerator.hpp"
+#include "../region.hpp"
+#include "../../utilities/lodepng.hpp"
 #include <unordered_map>
 
 RegionGenerator::RegionGenerator()

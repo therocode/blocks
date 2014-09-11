@@ -1,4 +1,4 @@
-#include "physicsinterface.h"
+#include "physicsinterface.hpp"
 #include <angelscript.h>
 #include <assert.h>
 
