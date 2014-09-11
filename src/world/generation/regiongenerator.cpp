@@ -1,113 +1,74 @@
 #include "regiongenerator.h"
-#include "utilities/noise.h"
-#include <iostream>
+#include "../region.h"
+#include "../../utilities/lodepng.h"
+#include <unordered_map>
 
-IntensityMap RegionGenerator::generateHeightmap(const RegionCoord& regionCoordinate) const
+RegionGenerator::RegionGenerator()
 {
-    std::cout << "lalal\n";
-    IntensityMap heightmap;
-    std::cout << "lalgl\n";
-    Noise simplex(globalSeed + 3);
-    Noise simplex2(globalSeed + 17);
+    //                                                                   temp              rain                 height
+    mStorage.addBiome(new Biome("snowpeak", 24, 1.0f, 1.0f, 1.0f,        Range(0.0f, 0.1f), Range(0.0f, 1.0f),  Range(0.85f, 1.0f)));
+    mStorage.addBiome(new Biome("peak", 6, 0.6f, 0.6f, 0.6f,            Range(0.1f, 1.0f), Range(0.0f, 1.0f),  Range(0.85f, 1.0f)));
 
-    glm::vec3 regionPos = regionToWorld(regionCoordinate);
+    mStorage.addBiome(new Biome("baremountain", 6, 0.5f, 0.5f, 0.5f,    Range(0.0f, 1.0f), Range(0.0f, 1.0f),  Range(0.68f, 0.93f)));
+    mStorage.addBiome(new Biome("grassmountain", 25, 0.4f, 0.6f, 0.4f,   Range(0.3f, 1.0f), Range(0.3f, 1.0f),  Range(0.68f, 0.93f)));
+    mStorage.addBiome(new Biome("snowymountain", 24, 1.0f, 1.0f, 1.0f,   Range(0.0f, 0.3f), Range(0.4f, 1.0f),  Range(0.68f, 0.93f)));
 
-    std::cout << "halgl\n";
-    for(size_t y = 0; y < regionVoxelWidth; y++)
-    for(size_t x = 0; x < regionVoxelWidth; x++)
-    {
-        //float value = raw_noise_3d((float) x / 800.0f, (float) y / 800.0f, 10.5);
-        float value = simplex.simplexOctave2D((float) (x + regionPos.x) / 800.0f, (float) (y + regionPos.z) / 800.0f, 0.6f, 6);
-        value +=      simplex2.simplexOctave2D((float) (x + regionPos.x) / 3800.0f, (float) (y + regionPos.z) / 3800.0f, 0.6f, 6); //big height difference
-        //value = simplex.white2D((float) x / 2.0f, (float) y / 2.0f);
+    mStorage.addBiome(new Biome("forest", 26, 0.0f, 0.4f, 0.0f,         Range(0.35f, 1.0f),Range(0.60f, 1.0f),  Range(0.2f, 0.73f)));
+    mStorage.addBiome(new Biome("taiga", 27, 0.0f, 0.6f, 0.3f,          Range(0.1f, 0.5f), Range(0.60f, 1.0f),  Range(0.2f, 0.73f)));
+    mStorage.addBiome(new Biome("plains", 1, 0.2f, 0.7f, 0.0f,          Range(0.25f, 1.0f),Range(0.50f, 0.7f),  Range(0.2f, 0.73f)));
+    mStorage.addBiome(new Biome("steppe", 28, 0.3f, 0.6f, 0.0f,          Range(0.25f, 1.0f), Range(0.20f, 0.60f), Range(0.2f, 0.73f)));
+    mStorage.addBiome(new Biome("snowfield", 29, 1.3f, 1.3f, 1.3f,       Range(0.1f, 0.3f), Range(0.20f, 1.0f),  Range(0.2f, 0.73f)));
+    mStorage.addBiome(new Biome("arcticfield", 30, 1.42f, 1.42f, 1.42f,  Range(0.0f, 0.13f), Range(0.20f, 1.0f),  Range(0.2f, 0.73f)));
+    mStorage.addBiome(new Biome("xeric", 31, 1.0f, 0.8f, 0.2f,           Range(0.35f, 1.0f), Range(0.05f, 0.25f), Range(0.2f, 0.73f)));
+    mStorage.addBiome(new Biome("desert", 32, 1.3f, 1.3f, 0.2f,          Range(0.35f, 1.0f), Range(0.0f, 0.15f),  Range(0.2f, 0.73f)));
+    mStorage.addBiome(new Biome("coldxeric", 33, 1.f, 0.7f, 0.4f,       Range(0.0f, 0.4f), Range(0.05f, 0.25f),  Range(0.2f, 0.73f)));
+    mStorage.addBiome(new Biome("colddesert", 34, 1.2f, 0.9f, 0.5f,      Range(0.0f, 0.4f), Range(0.0f, 0.15f),  Range(0.2f, 0.73f)));
 
-        //float value = (perlin.GetValue((float) x / 800.0f, (float) y / 800.0f, 1000.5));
-        //std::cout << "value: " << value << "\n";
-        value = value * 1.8f;
-        value = (value + 1.0f) / 2.0f;
-        value = std::max(0.0f, std::min(value, 1.0f));
-        heightmap.setUnit(x, y, value);
-    }
-
-    std::cout << "talgl\n";
-    return heightmap;
+    mStorage.addBiome(new Biome("ocean", 35, 0.0f, 0.0f, 1.0f,           Range(0.2f, 1.0f), Range(0.0f, 1.0f),  Range(0.0f, 0.2f)));
+    mStorage.addBiome(new Biome("arctic ocean", 36, 0.0f, 0.9f, 1.0f,    Range(0.0f, 0.2f), Range(0.0f, 1.0f),  Range(0.0f, 0.2f)));
 }
 
-IntensityMap RegionGenerator::generateRainfall(const RegionCoord& regionCoordinate) const
+Region RegionGenerator::generateRegion(const RegionCoord& coordinate)
 {
-    IntensityMap rainmap;
-    Noise simplex(globalSeed + 9);
-    Noise simplex2(globalSeed + 41234);
+    IntensityMap height = mRegionDataGenerator.generateHeightmap(coordinate);
+    Region newRegion(height, mRegionDataGenerator.generateRainfall(coordinate), mRegionDataGenerator.generateTemperature(coordinate, height), mRegionDataGenerator.generateBiomeSelector(coordinate));
 
-    glm::vec3 regionPos = regionToWorld(regionCoordinate);
 
-    for(size_t y = 0; y < regionVoxelWidth; y++)
-    for(size_t x = 0; x < regionVoxelWidth; x++)
+    ValueMap<uint16_t> biomeIndices;
+    uint16_t nextBiomeIndex = 0;
+    std::unordered_map<Biome*, uint16_t> usedBiomes;
+
+    for(int32_t y = 0; y < regionVoxelWidth; y++)
+    for(int32_t x = 0; x < regionVoxelWidth; x++)
     {
-        //float value = raw_noise_3d((float) x / 800.0f, (float) y / 800.0f, 10.5);
-        float value = simplex.simplexOctave2D((float) (x + regionPos.x) / 800.0f, (float) (y + regionPos.z) / 800.0f, 0.6f, 6);
-        value +=      simplex2.simplexOctave2D((float) (x + regionPos.x) / 3800.0f, (float) (y + regionPos.z) / 3800.0f, 0.6f, 6); //big height difference
-        //value = simplex.white2D((float) x / 2.0f, (float) y / 2.0f);
+        float height = newRegion.getHeightmap().getUnit(x, y);
+        float rain = newRegion.getRainmap().getUnit(x, y);
+        float temperature = newRegion.getTemperaturemap().getUnit(x, y);
+        float selector = newRegion.getBiomeSelector().getUnit(x, y);
 
-        //float value = (perlin.GetValue((float) x / 800.0f, (float) y / 800.0f, 1000.5));
-        //std::cout << "value: " << value << "\n";
-        value = value * 1.8f;
-        value = (value + 1.0f) / 2.0f;
-        value = value;// - rainmap.getUnit(x, y) / 4.0f;  dunno what goes here
-        value = std::max(0.0f, std::min(value, 1.0f));
-        rainmap.setUnit(x, y, value);
+        Biome* biome = mStorage.getBiome(temperature, rain, height, selector);
+        
+        auto content = usedBiomes.find(biome);
+        if(content == usedBiomes.end())
+        {
+            usedBiomes.emplace(biome, nextBiomeIndex);
+            biomeIndices.setUnit(x, y, nextBiomeIndex);
+            nextBiomeIndex++;
+        }
+        else
+        {
+            biomeIndices.setUnit(x, y, content->second);
+        }
     }
 
-    return rainmap;
-}
+    std::unordered_map<uint16_t, Biome*> usedBiomesFlipped;
 
-IntensityMap RegionGenerator::generateTemperature(const RegionCoord& regionCoordinate, const IntensityMap& height) const
-{
-    IntensityMap temperaturemap;
-    Noise simplex(globalSeed + 123412);
-    Noise simplex2(globalSeed + 1723);
-
-    glm::vec3 regionPos = regionToWorld(regionCoordinate);
-
-    for(size_t y = 0; y < regionVoxelWidth; y++)
-    for(size_t x = 0; x < regionVoxelWidth; x++)
+    for(auto entry : usedBiomes)
     {
-        //float value = raw_noise_3d((float) x / 800.0f, (float) y / 800.0f, 10.5);
-        float value = simplex.simplexOctave2D((float) (x + regionPos.x) / 800.0f, (float) (y + regionPos.z) / 800.0f, 0.6f, 6);
-        //float value = simplex.simplex2D((float) (x + regionPos.x) / 80.0f, (float) (y + regionPos.z) / 80.0f);
-        value +=      simplex2.simplexOctave2D((float) (x + regionPos.x) / 3800.0f, (float) (y + regionPos.z) / 3800.0f, 0.6f, 6); //big height difference
-        //value = simplex.white2D((float) x / 2.0f, (float) y / 2.0f);
-
-        //float value = (perlin.GetValue((float) x / 800.0f, (float) y / 800.0f, 1000.5));
-        //std::cout << "value: " << value << "\n";
-        value = value * 1.8f;
-        value = (value + 1.0f) / 2.0f;
-        value = value - height.getUnit(x, y) / 2.0f;
-        value = std::max(0.0f, std::min(value, 1.0f));
-        temperaturemap.setUnit(x, y, value);
+        usedBiomesFlipped.emplace(entry.second, entry.first);
     }
 
-    return temperaturemap;
-}
+    newRegion.setBiomes(biomeIndices, usedBiomesFlipped);
 
-IntensityMap RegionGenerator::generateBiomeSelector(const RegionCoord& regionCoordinate) const
-{
-    IntensityMap biomSelectorMap;
-    Noise simplex(globalSeed + 9123);
-    Noise simplex2(globalSeed + 23423);
-
-    glm::vec3 regionPos = regionToWorld(regionCoordinate);
-
-    for(size_t y = 0; y < regionVoxelWidth; y++)
-    for(size_t x = 0; x < regionVoxelWidth; x++)
-    {
-        float xTurbulence = simplex.simplexOctave2D((float) (x + regionPos.x) / 80.0f, (float) (y + regionPos.z) / 80.0f, 0.6f, 6);
-        float yTurbulence = simplex2.simplexOctave2D((float) (x + regionPos.x) / 80.0f, (float) (y + regionPos.z) / 80.0f, 0.6f, 6); //big height difference
-
-        //float value = (voronoi.GetValue(((float) x / 70.0f) + xTurbulence * 0.3f, ((float) y / 70.0f) + yTurbulence * 0.3f, 0.5) + 2.0f) / 3.7f;
-        float value = simplex.voronoi2D((x + regionPos.x) / 80.0f + xTurbulence * 0.25f, (y + regionPos.z) / 80.0f + yTurbulence * 0.25f);
-        biomSelectorMap.setUnit(x, y, value);
-    }
-
-    return biomSelectorMap;
+    return newRegion;
 }

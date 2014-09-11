@@ -6,8 +6,7 @@
 #include <fea/util.hpp>
 #include "../rendering/renderingmessages.h"
 #include "worldmessages.h"
-#include "chunkprovider.h"
-#include "regionprovider.h"
+#include "worldprovider.h"
 #include "highlightmanager.h"
 #include "regionlodmanager.h"
 
@@ -38,8 +37,7 @@ class Universe :
         World mStandardWorld;
         EntitySystem mEntitySystem;
         WorldInterface mWorldInterface;
-        RegionProvider mRegionProvider;
-        ChunkProvider mChunkProvider;
+        WorldProvider mWorldProvider;
         HighlightManager mHighlightManager;
         ModManager mModManager;
         RegionLodManager mLodManager;

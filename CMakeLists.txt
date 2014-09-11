@@ -9,21 +9,6 @@ set(BUILD_EXPBIOMES FALSE CACHE BOOL "build the biome experiment application")
 set(BUILD_TESTS TRUE CACHE BOOL "build the tests")
 set(BUILD_GAME TRUE CACHE BOOL "build the actual game")
 
-set(ASM_OPTIMISATIONS FALSE CACHE BOOL "use assembler optimisation for noise generation")
-set(ASM_COMPILER_PATH "" CACHE PATH "select asm compiler to use")
-
-if(ASM_OPTIMISATIONS) #if this option is chosen, then it #ifdef NOISE_ASM in the code will be run
-	set(64_BIT_ASM TRUE CACHE BOOL "Generate 64 or 32 bit asm.")
-
-	if(64_BIT_ASM)
-        set(YASM_PATH ${ASM_COMPILER_PATH})
-		enable_language(ASM-NASM)
-		add_definitions(-DNOISE_ASM)
-	else()
-		message("There is no 32 bit asm written! Using default codepaths...")
-	endif()
-endif(ASM_OPTIMISATIONS)
-
 #project name
 set(project_name blocks)
 project(${project_name})
@@ -97,32 +82,26 @@ set(source_files
         src/script/interfaces/scriptinterface.cpp
         src/script/interfaces/stringinterface.cpp
     
-           src/utilities/asmnoise.asm
         src/utilities/folderexploder.cpp
         src/utilities/fpscontroller.cpp
         src/utilities/lodepng.cpp
         src/utilities/logger.cpp
-        src/utilities/noise.cpp
            src/utilities/random.cpp
-        src/utilities/simplexnoise.cpp
            src/utilities/timer.cpp
-        src/utilities/voronoinoise.cpp
-        src/utilities/whitenoise.cpp
     
            src/world/biome.cpp
            src/world/biomestorage.cpp
            src/world/chunk.cpp
-        src/world/chunkprovider.cpp
+        src/world/worldprovider.cpp
         src/world/highlightmanager.cpp
         src/world/modmanager.cpp
         src/world/region.cpp
-        src/world/regionprovider.cpp
         src/world/regionlodmanager.cpp
         src/world/worldstd.cpp
            src/world/universe.cpp
         src/world/world.cpp
         src/world/worldinterface.cpp
-        src/world/generation/worldgenerator.cpp
+        src/world/generation/regiondatagenerator.cpp
         src/world/generation/regiongenerator.cpp
     )
 
@@ -219,36 +198,30 @@ set(header_files
     src/script/interfaces/scriptinterface.h
     src/script/interfaces/stringinterface.h
 
-    src/utilities/asmnoise.h
     src/utilities/folderexploder.h
     src/utilities/fpscontroller.h
     src/utilities/lodepng.h
     src/utilities/logger.h
-    src/utilities/noise.h
 	src/utilities/random.h
-    src/utilities/simplexnoise.h
 	src/utilities/timer.h
 	src/utilities/tinydir.h
-    src/utilities/voronoinoise.h
-    src/utilities/whitenoise.h
 
 	src/world/worldmessages.h
 	src/world/biome.h
 	src/world/biomestorage.h
 	src/world/chunk.h
-    src/world/chunkprovider.h
     src/world/valuemap.h
     src/world/highlightmanager.h
     src/world/modmanager.h
     src/world/region.h
     src/world/regionstorageinterface.h
-    src/world/regionprovider.h
     src/world/regionlodmanager.h
     src/world/worldstd.h
 	src/world/universe.h
     src/world/world.h
     src/world/worldinterface.h
-    src/world/generation/worldgenerator.h
+    src/world/worldprovider.h
+    src/world/generation/regiondatagenerator.h
     src/world/generation/regiongenerator.h
 )
 
@@ -370,11 +343,6 @@ endif(BUILD_GAME)
 
 #tests
 if(BUILD_TESTS)
-    if(ASM_OPTIMISATIONS)
-        add_executable(test_noise "test/noise/asmnoise.cpp" "src/utilities/asmnoise.asm" "src/utilities/simplexnoise.cpp" "src/utilities/whitenoise.cpp" "src/utilities/noise.cpp" "src/utilities/voronoinoise.cpp")
-        set_target_properties(test_noise PROPERTIES COMPILE_FLAGS "-std=c++11 -pthread")
-    endif()
-    
     add_executable(test_modmanager "test/world/modmanagertest.cpp" "src/world/modmanager.cpp" "src/world/chunk.cpp" "src/world/worldstd.cpp")
     target_link_libraries(test_modmanager ${FEATHERKIT_LIBRARIES})
     set_target_properties(test_modmanager PROPERTIES COMPILE_FLAGS "-std=c++11")

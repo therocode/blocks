@@ -1,13 +1,26 @@
 #pragma once
-#include "../valuemap.h"
-#include "../worldstd.h"
-#include "../region.h"
+#include <fea/util.hpp>
+#include "regiondatagenerator.h"
+#include "../biomestorage.h"
+
+struct Pixel
+{
+    uint8_t r;
+    uint8_t g;
+    uint8_t b;
+    uint8_t a;
+};
 
 class RegionGenerator
 {
     public:
-        IntensityMap generateHeightmap(const RegionCoord& regionCoordinate) const;
-        IntensityMap generateRainfall(const RegionCoord& regionCoordinate) const;
-        IntensityMap generateTemperature(const RegionCoord& regionCoordinate, const IntensityMap& height) const;
-        IntensityMap generateBiomeSelector(const RegionCoord& regionCoordinate) const;
+        RegionGenerator();
+        Region generateRegion(const RegionCoord& coordinate);
+    private:
+        RegionDataGenerator mRegionDataGenerator;
+        BiomeStorage mStorage;
+        std::array<Pixel, regionVoxelWidthx2> mImage;
+        std::array<Pixel, regionVoxelWidthx2> mRain;
+        std::array<Pixel, regionVoxelWidthx2> mTemp;
+        std::array<Pixel, regionVoxelWidthx2> mHeight;
 };

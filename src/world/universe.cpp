@@ -4,15 +4,14 @@
 #include "../entity/controllers/collisioncontroller.h"
 #include "../entity/controllers/gfxcontroller.h"
 #include "../entity/controllers/movementcontroller.h"
-#include "utilities/simplexnoise.h"
+#include <fea/util.hpp>
 
 Universe::Universe(fea::MessageBus& messageBus) 
 :   mBus(messageBus),
 	mEntitySystem(messageBus),
 	mWorldInterface(mStandardWorld, mEntitySystem),
-    mRegionProvider(mBus),
-    mChunkProvider(mBus, mStandardWorld, mModManager),
-    mHighlightManager(mBus, 17),
+    mWorldProvider(mBus, mStandardWorld, mModManager),
+    mHighlightManager(mBus, 5),
     mModManager(mBus),
     mLodManager(mBus)
 {
@@ -77,7 +76,7 @@ void Universe::handleMessage(const RegionDeliverMessage& received)
     Region region = received.newRegion;
 
     mStandardWorld.addRegion(coordinate, region);
-    std::cout << "region created: " << glm::to_string((glm::ivec2)coordinate) << "\n";
+    mBus.send(LogMessage{"region created" + glm::to_string((glm::ivec2)coordinate), "landscape", LogLevel::VERB});
 }
 
 void Universe::handleMessage(const ChunkHighlightedMessage& received)
