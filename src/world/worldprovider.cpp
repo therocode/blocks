@@ -32,6 +32,13 @@ WorldProvider::~WorldProvider()
 void WorldProvider::handleMessage(const ChunkRequestedMessage& received)
 {
     ChunkCoord chunkCoordinate = received.coordinate;
+    
+    //add chunk to load to other thread
+    {
+        std::lock_guard<std::mutex> lock(mThreadInputMutex);
+        mChunksToGenerate.push_back(received.coordinate);       
+    }
+
     RegionCoord regionCoordinate = chunkToRegion(chunkCoordinate);
 
     if(mRegions.count(regionCoordinate) == 0)
@@ -58,6 +65,8 @@ void WorldProvider::handleMessage(const RegionDeletedMessage& received)
 
 void WorldProvider::handleMessage(const FrameMessage& received)
 {
+    std::lock_guard<std::mutex> lock(mThreadOutputMutex);
+
     if(mRegionsToDeliver.size() > 0)
     {
         for(const auto& region : mRegionsToDeliver)
@@ -84,6 +93,22 @@ void WorldProvider::generatorLoop()
 {
     while(mGenThreadActive)
     {
-        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+        std::this_thread::sleep_for(std::chrono::milliseconds(mThreadSleepInterval));
+
+        //check for new chunks to generate
+        {
+            std::lock_guard<std::mutex> lock(mThreadInputMutex);
+            mChunkQueue.insert(mChunkQueue.end(), mChunksToGenerate.begin(), mChunksToGenerate.end());
+            mChunksToGenerate.clear();
+        }
+
+        
+        
+        //deliver finished chunks
+        {
+            std::lock_guard<std::mutex> lock(mThreadOutputMutex);
+            mChunksToDeliver.insert(mChunksToDeliver.end(), mFinishedChunks.begin(), mFinishedChunks.end());
+            mFinishedChunks.clear();
+        }
     }
 }

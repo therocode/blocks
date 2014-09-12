@@ -30,6 +30,7 @@ class WorldProvider :
 
         //thread
         std::thread mGeneratorThread;
+        int32_t mThreadSleepInterval;
         void generatorLoop();
 
         //thread input
@@ -39,6 +40,7 @@ class WorldProvider :
 
         //thread storage
         std::vector<ChunkCoord> mChunkQueue;
+        std::vector<std::pair<ChunkCoord, Chunk>> mFinishedChunks;
 
         //thread output
         std::vector<std::pair<RegionCoord, Region>> mRegionsToDeliver;
