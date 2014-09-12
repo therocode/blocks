@@ -1,4 +1,5 @@
 #include "world.hpp"
+#include <iostream>
 
 ChunkReferenceMap World::getChunkMap() const
 {
@@ -22,6 +23,7 @@ void World::addRegion(const RegionCoord& coordinate, const Region& region)
 
 void World::addChunk(const ChunkCoord& coordinate, const Chunk& chunk)
 {
+    std::cout << "got a chunk " << glm::to_string((glm::ivec3)coordinate) << " in the world\n";
     RegionCoord region = chunkToRegion(coordinate);
 
     mRegions.at(region).addChunk(chunkToRegionChunk(coordinate), chunk);
@@ -29,6 +31,7 @@ void World::addChunk(const ChunkCoord& coordinate, const Chunk& chunk)
 
 bool World::removeChunk(const ChunkCoord& coordinate)
 {
+    std::cout << "removing a chunk " << glm::to_string((glm::ivec3)coordinate) << " from the world";
     RegionCoord regionCoord = chunkToRegion(coordinate);
 
     Region& region = mRegions.at(regionCoord);
@@ -36,10 +39,11 @@ bool World::removeChunk(const ChunkCoord& coordinate)
 
     if(region.getLoadedChunkAmount() == 0)
     {
+        std::cout << " this also removed a region\n";
         mRegions.erase(regionCoord);
         return true;
     }
-
+    std::cout << "\n";
     return false;
 }
 
