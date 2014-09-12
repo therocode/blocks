@@ -21,7 +21,6 @@ WorldProvider::~WorldProvider()
 
 void WorldProvider::handleMessage(const ChunkRequestedMessage& received)
 {
-    std::cout << "requesting chunk " << glm::to_string((glm::ivec3)received.coordinate) << "\n";
     ChunkCoord chunkCoordinate = received.coordinate;
     RegionCoord regionCoordinate = chunkToRegion(chunkCoordinate);
 

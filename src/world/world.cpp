@@ -1,5 +1,12 @@
 #include "world.hpp"
 #include <iostream>
+#include <fea/assert.hpp>
+#include "worldmessages.hpp"
+
+World::World(fea::MessageBus& b) :
+    mBus(b)
+{
+}
 
 ChunkReferenceMap World::getChunkMap() const
 {
@@ -23,7 +30,6 @@ void World::addRegion(const RegionCoord& coordinate, const Region& region)
 
 void World::addChunk(const ChunkCoord& coordinate, const Chunk& chunk)
 {
-    std::cout << "got a chunk " << glm::to_string((glm::ivec3)coordinate) << " in the world\n";
     RegionCoord region = chunkToRegion(coordinate);
 
     mRegions.at(region).addChunk(chunkToRegionChunk(coordinate), chunk);
@@ -31,20 +37,24 @@ void World::addChunk(const ChunkCoord& coordinate, const Chunk& chunk)
 
 bool World::removeChunk(const ChunkCoord& coordinate)
 {
-    std::cout << "removing a chunk " << glm::to_string((glm::ivec3)coordinate) << " from the world";
     RegionCoord regionCoord = chunkToRegion(coordinate);
 
     Region& region = mRegions.at(regionCoord);
     region.removeChunk(chunkToRegionChunk(coordinate));
 
-    if(region.getLoadedChunkAmount() == 0)
-    {
-        std::cout << " this also removed a region\n";
-        mRegions.erase(regionCoord);
-        return true;
-    }
-    std::cout << "\n";
+    //if(region.getLoadedChunkAmount() == 0)
+    //{
+    //    std::cout << " this also removed a region\n";
+    //    mRegions.erase(regionCoord);
+    //    return true;
+    //}
     return false;
+}
+
+void World::removeRegion(const RegionCoord& coordinate)
+{
+    FEA_ASSERT(mRegions.size() == 0, "This region which is about to be removed is actually not empty which is bad");
+    mRegions.erase(coordinate);
 }
 
 VoxelType World::getVoxelType(const VoxelCoord& voxelCoordinate) const
@@ -82,4 +92,38 @@ bool World::setVoxelType(const VoxelCoord& voxelCoordinate, VoxelType type)
     }
     else
         return false;
+}
+
+void World::activateChunk(const ChunkCoord& coordinate)
+{
+    RegionCoord regionCoord = chunkToRegion(coordinate);
+
+    if(mActiveRegions.count(regionCoord) == 0)
+    {
+        mActiveRegions.emplace(regionCoord, std::unordered_set<ChunkCoord>{coordinate});
+    }
+    else
+    {
+        mActiveRegions.at(regionCoord).insert(coordinate);
+    }
+}
+
+void World::deactivateChunk(const ChunkCoord& coordinate)
+{
+    RegionCoord regionCoord = chunkToRegion(coordinate);
+
+    FEA_ASSERT(mActiveRegions.count(regionCoord) == 1, "If the region of the chunk to be removed does not exist, something is wrong");
+
+    auto& region = mActiveRegions.at(regionCoord);
+
+    FEA_ASSERT(region.count(coordinate) == 1, "The deactivated chunk has not been activated. this is bad");
+
+    region.erase(coordinate);
+
+    if(region.size() == 0)
+    {
+        mActiveRegions.erase(regionCoord);
+
+        mBus.send(RegionDeletedMessage{regionCoord});
+    }
 }

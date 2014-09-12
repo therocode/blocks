@@ -8,6 +8,7 @@
 
 Universe::Universe(fea::MessageBus& messageBus) 
 :   mBus(messageBus),
+    mStandardWorld(messageBus),
 	mEntitySystem(messageBus),
 	mWorldInterface(mStandardWorld, mEntitySystem),
     mWorldProvider(mBus, mModManager),
@@ -81,20 +82,17 @@ void Universe::handleMessage(const RegionDeliverMessage& received)
 
 void Universe::handleMessage(const ChunkHighlightedMessage& received)
 {
+    mStandardWorld.activateChunk(received.coordinate);
     mBus.send(ChunkRequestedMessage{received.coordinate});
 }
 
 void Universe::handleMessage(const ChunkDehighlightedMessage& received)
 {
     mModManager.recordTimestamp(received.coordinate, 0);
-    bool regionDeleted = mStandardWorld.removeChunk(received.coordinate);
+    mStandardWorld.removeChunk(received.coordinate);
     mBus.send(ChunkDeletedMessage{received.coordinate});
-    
-    if(regionDeleted)
-    {
-        mBus.send(RegionDeletedMessage{chunkToRegion(received.coordinate)});
-        std::cout << "region deleted: " << glm::to_string(glm::ivec2(chunkToRegion(received.coordinate))) << "\n";
-    }
+
+    mStandardWorld.deactivateChunk(received.coordinate);
 }
 
 void Universe::handleMessage(const ChunkDeliverMessage& received)
