@@ -44,7 +44,6 @@ void WorldProvider::handleMessage(const ChunkRequestedMessage& received)
 void WorldProvider::handleMessage(const RegionDeletedMessage& received)
 {
     mRegions.erase(received.coordinate);
-    std::cout << "region erased in worldprovider\n";
 }
 
 void WorldProvider::handleMessage(const FrameMessage& received)
