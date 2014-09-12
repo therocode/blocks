@@ -9,6 +9,7 @@ WorldProvider::WorldProvider(fea::MessageBus& b, ModManager& modManager)
     mBus(b),
     mModManager(modManager),
     mGeneratorThread(&WorldProvider::generatorLoop, this),
+    mThreadSleepInterval(50),
     mGenThreadActive(true)
 {
     mBus.send(LogMessage{"Started world generation thread", logName, LogLevel::INFO});
@@ -31,61 +32,50 @@ WorldProvider::~WorldProvider()
 
 void WorldProvider::handleMessage(const ChunkRequestedMessage& received)
 {
-    ChunkCoord chunkCoordinate = received.coordinate;
-    
     //add chunk to load to other thread
-    {
-        std::lock_guard<std::mutex> lock(mThreadInputMutex);
-        mChunksToGenerate.push_back(received.coordinate);       
-    }
-
-    RegionCoord regionCoordinate = chunkToRegion(chunkCoordinate);
-
-    if(mRegions.count(regionCoordinate) == 0)
-    {
-        Region newRegion = mRegionGenerator.generateRegion(regionCoordinate);
-        mRegions.emplace(regionCoordinate, newRegion);
-        mRegionsToDeliver.push_back({regionCoordinate, newRegion});
-    }
-
-    const Region& region = mRegions.at(regionCoordinate);
-
-    Chunk newChunk = mChunkGenerator.generateChunk(chunkCoordinate, region);
-
-    //mBus.send(LogMessage("loading modifications for chunk" + glm::to_string((glm::ivec3)chunkCoordinate), "file", LogLevel::VERB));
-    mModManager.loadMods(newChunk);
-
-    mChunksToDeliver.push_back({chunkCoordinate, newChunk});
+    std::lock_guard<std::mutex> lock(mThreadInputMutex);
+    mChunksToGenerate.push_back(received.coordinate);       
 }
 
 void WorldProvider::handleMessage(const RegionDeletedMessage& received)
 {
-    mRegions.erase(received.coordinate);
+    mRegions.erase(received.coordinate); //this is not thread safe, must hax
 }
 
 void WorldProvider::handleMessage(const FrameMessage& received)
 {
-    std::lock_guard<std::mutex> lock(mThreadOutputMutex);
+    std::vector<std::pair<RegionCoord, Region>> regions;
+    std::vector<std::pair<ChunkCoord, Chunk>> chunks;
 
-    if(mRegionsToDeliver.size() > 0)
+    //prevent thread collision
     {
-        for(const auto& region : mRegionsToDeliver)
+        std::lock_guard<std::mutex> lock(mThreadOutputMutex);
+        regions = mRegionsToDeliver;
+        chunks = mChunksToDeliver;
+
+        //std::cout << "fetched done stuff! had " << mRegionsToDeliver.size() << " regions to deliver and " << mChunksToDeliver.size() << " chunks\n";
+
+        mRegionsToDeliver.clear();
+        mChunksToDeliver.clear();
+    }
+
+    if(regions.size() > 0)
+    {
+        for(const auto& region : regions)
         {
             mBus.send(RegionDeliverMessage{region.first, std::move(region.second)});
         }
-        mRegionsToDeliver.clear();
     }
 
-    if(mChunksToDeliver.size() > 0)
+    if(chunks.size() > 0)
     {
-        for(const auto& chunk : mChunksToDeliver)
+        for(const auto& chunk : chunks)
         {
             mBus.send(ChunkDeliverMessage{chunk.first, std::move(chunk.second)}); //sends the finished chunk to be kept by whatever system
 
             uint64_t timestamp = 0; //get proper timestamp later
             mBus.send(ChunkLoadedMessage{chunk.first, timestamp}); //the now fully initialised chunk is announced to the rest of the game. should it be here?
         }
-        mChunksToDeliver.clear();
     }
 }
 
@@ -99,16 +89,43 @@ void WorldProvider::generatorLoop()
         {
             std::lock_guard<std::mutex> lock(mThreadInputMutex);
             mChunkQueue.insert(mChunkQueue.end(), mChunksToGenerate.begin(), mChunksToGenerate.end());
+            //std::cout << "fetching new jobs, I had " << mChunksToGenerate.size() << " to fetch\n";
             mChunksToGenerate.clear();
         }
 
-        
-        
+
+        //perform generation
+        for(const auto& chunkCoordinate : mChunkQueue)
+        {
+            //std::cout << "making a chunk\n";
+            RegionCoord regionCoordinate = chunkToRegion(chunkCoordinate);
+
+            if(mRegions.count(regionCoordinate) == 0)
+            {
+                Region newRegion = mRegionGenerator.generateRegion(regionCoordinate);
+                mRegions.emplace(regionCoordinate, newRegion);
+                mFinishedRegions.push_back({regionCoordinate, newRegion});
+            }
+
+            const Region& region = mRegions.at(regionCoordinate);
+
+            Chunk newChunk = mChunkGenerator.generateChunk(chunkCoordinate, region);
+
+            mModManager.loadMods(newChunk);
+
+            mFinishedChunks.push_back({chunkCoordinate, newChunk});
+        }
+
+        mChunkQueue.clear();
+
         //deliver finished chunks
         {
             std::lock_guard<std::mutex> lock(mThreadOutputMutex);
             mChunksToDeliver.insert(mChunksToDeliver.end(), mFinishedChunks.begin(), mFinishedChunks.end());
+            mRegionsToDeliver.insert(mRegionsToDeliver.end(), mFinishedRegions.begin(), mFinishedRegions.end());
             mFinishedChunks.clear();
+            mFinishedRegions.clear();
+            //std::cout << "delivering. will deliver " << mChunksToDeliver.size() << " chinks and " << mRegionsToDeliver.size() << " regions\n";
         }
     }
 }

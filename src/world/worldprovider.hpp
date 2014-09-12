@@ -26,10 +26,10 @@ class WorldProvider :
         ModManager& mModManager;
         RegionGenerator mRegionGenerator;
         ChunkGenerator mChunkGenerator;
-        std::unordered_map<RegionCoord, Region> mRegions; //thread local copy of regions
 
         //thread
         std::thread mGeneratorThread;
+        std::unordered_map<RegionCoord, Region> mRegions; //thread local copy of regions
         int32_t mThreadSleepInterval;
         void generatorLoop();
 
@@ -41,6 +41,7 @@ class WorldProvider :
         //thread storage
         std::vector<ChunkCoord> mChunkQueue;
         std::vector<std::pair<ChunkCoord, Chunk>> mFinishedChunks;
+        std::vector<std::pair<RegionCoord, Region>> mFinishedRegions;
 
         //thread output
         std::vector<std::pair<RegionCoord, Region>> mRegionsToDeliver;
