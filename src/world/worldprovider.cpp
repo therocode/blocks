@@ -2,11 +2,16 @@
 #include "region.hpp"
 #include "../application/applicationmessages.hpp"
 
+const std::string logName = "world_gen";
+
 WorldProvider::WorldProvider(fea::MessageBus& b, ModManager& modManager)
     :
     mBus(b),
-    mModManager(modManager)
+    mModManager(modManager),
+    mGeneratorThread(&WorldProvider::generatorLoop, this),
+    mGenThreadActive(true)
 {
+    mBus.send(LogMessage{"Started world generation thread", logName, LogLevel::INFO});
     mBus.addSubscriber<ChunkRequestedMessage>(*this);
     mBus.addSubscriber<RegionDeletedMessage>(*this);
     mBus.addSubscriber<FrameMessage>(*this);
@@ -14,6 +19,11 @@ WorldProvider::WorldProvider(fea::MessageBus& b, ModManager& modManager)
 
 WorldProvider::~WorldProvider()
 {
+    mGenThreadActive = false;
+    mBus.send(LogMessage{"Shutting down world generation thread...", logName, LogLevel::INFO});
+    mGeneratorThread.join();
+    mBus.send(LogMessage{"World generation thread shut down", logName, LogLevel::INFO});
+
     mBus.removeSubscriber<ChunkRequestedMessage>(*this);
     mBus.removeSubscriber<RegionDeletedMessage>(*this);
     mBus.removeSubscriber<FrameMessage>(*this);
@@ -67,5 +77,13 @@ void WorldProvider::handleMessage(const FrameMessage& received)
             mBus.send(ChunkLoadedMessage{chunk.first, timestamp}); //the now fully initialised chunk is announced to the rest of the game. should it be here?
         }
         mChunksToDeliver.clear();
+    }
+}
+
+void WorldProvider::generatorLoop()
+{
+    while(mGenThreadActive)
+    {
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
     }
 }

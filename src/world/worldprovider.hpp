@@ -4,6 +4,8 @@
 #include "generation/regiongenerator.hpp"
 #include "generation/chunkgenerator.hpp"
 #include "../application/applicationmessages.hpp"
+#include <thread>
+#include <mutex>
 
 class Region;
 
@@ -26,6 +28,20 @@ class WorldProvider :
         ChunkGenerator mChunkGenerator;
         std::unordered_map<RegionCoord, Region> mRegions; //thread local copy of regions
 
+        //thread
+        std::thread mGeneratorThread;
+        void generatorLoop();
+
+        //thread input
+        std::vector<ChunkCoord> mChunksToGenerate;
+        std::mutex              mThreadInputMutex;
+        bool                    mGenThreadActive;
+
+        //thread storage
+        std::vector<ChunkCoord> mChunkQueue;
+
+        //thread output
         std::vector<std::pair<RegionCoord, Region>> mRegionsToDeliver;
         std::vector<std::pair<ChunkCoord, Chunk>> mChunksToDeliver;
+        std::mutex              mThreadOutputMutex;
 };
