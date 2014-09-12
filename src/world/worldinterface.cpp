@@ -27,12 +27,12 @@ VoxelType WorldInterface::getVoxelType(const glm::vec3& position) const
 {
     return getVoxelType(worldToVoxel(position));
 }
-bool WorldInterface::getVoxelAtRay(const glm::vec3& position, const glm::vec3& direction, const float maxDistance, int& hitFace, VoxelCoord& hitBlock ) const
+bool WorldInterface::getVoxelAtRay(const glm::vec3& position, const glm::vec3& direction, const float maxDistance, uint32_t& hitFace, VoxelCoord& hitBlock ) const
 {
     return getVoxelAtRay(position.x, position.y, position.z, direction.x, direction.y, direction.z, maxDistance, hitFace, hitBlock);
 }
 
-bool WorldInterface::getVoxelAtRay(float ox, float oy, float oz, float dx, float dy, float dz, const float maxDistance, int& hitFace, VoxelCoord& hitBlock)  const
+bool WorldInterface::getVoxelAtRay(float ox, float oy, float oz, float dx, float dy, float dz, const float maxDistance, uint32_t& hitFace, VoxelCoord& hitBlock)  const
 {
     int ip[3];
     ip[0] = glm::floor(ox);

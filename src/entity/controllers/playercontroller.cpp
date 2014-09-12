@@ -96,7 +96,7 @@ void PlayerController::handleMessage(const PlayerActionMessage& received)
         // glm::vec3 worldPos = mPlayerEntities.at(playerId).lock()->getAttribute<VoxelWorldCoord>("block_facing");
 		if(mPlayerEntities.at(playerId).lock()->getAttribute<bool>("is_facing_block")){
 			VoxelCoord voxel = mPlayerEntities.at(playerId).lock()->getAttribute<VoxelCoord>("block_facing");
-			int face = mPlayerEntities.at(playerId).lock()->getAttribute<int>("block_facing_face");
+			uint32_t face = mPlayerEntities.at(playerId).lock()->getAttribute<uint32_t>("block_facing_face");
 			ChunkCoord cc = voxelToChunk(voxel);
 			ChunkVoxelCoord vc = voxelToChunkVoxel(voxel);
 			// printf("ChunkCoord: %i, %i, %i. VoxelCoord: %i, %i, %i. World: %i, %i, %i\n", cc.x, cc.y, cc.z, vc.x, vc.y, vc.z, voxel.x, voxel.y, voxel.z);
@@ -215,7 +215,7 @@ void PlayerController::updateVoxelLookAt(size_t playerId)
 
 	glm::vec3 direction = glm::vec3(glm::cos(pitch) * glm::sin(yaw), glm::sin(pitch), glm::cos(pitch) * glm::cos(yaw));
 	VoxelCoord block;
-	int face;
+	uint32_t face;
 	bool f = mWorldInterface.getVoxelAtRay(position + glm::vec3(0, 0.6f, 0), direction, 200.f, face, block);
 
     if(entity)
