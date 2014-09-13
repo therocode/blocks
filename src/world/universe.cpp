@@ -89,9 +89,6 @@ void Universe::handleMessage(const ChunkHighlightedMessage& received)
 void Universe::handleMessage(const ChunkDehighlightedMessage& received)
 {
     mModManager.recordTimestamp(received.coordinate, 0);
-    mStandardWorld.removeChunk(received.coordinate);
-    mBus.send(ChunkDeletedMessage{received.coordinate});
-
     mStandardWorld.deactivateChunk(received.coordinate);
 }
 

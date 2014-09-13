@@ -35,20 +35,24 @@ void World::addChunk(const ChunkCoord& coordinate, const Chunk& chunk)
     mRegions.at(region).addChunk(chunkToRegionChunk(coordinate), chunk);
 }
 
-bool World::removeChunk(const ChunkCoord& coordinate)
+void World::removeChunk(const ChunkCoord& coordinate)
 {
     RegionCoord regionCoord = chunkToRegion(coordinate);
 
+    FEA_ASSERT(mRegions.count(regionCoord) != 0, "Removing chunk " + glm::to_string((glm::ivec3)coordinate) + " from the world in region " + glm::to_string((glm::ivec2)regionCoord) + " but that region has not been added");
+
     Region& region = mRegions.at(regionCoord);
+
+    FEA_ASSERT(region.hasChunk(chunkToRegionChunk(coordinate)), "Removing chunk " + glm::to_string((glm::ivec3)coordinate) + " from the world in region " + glm::to_string((glm::ivec2)regionCoord) + " but that chunk has not been added");
+
     region.removeChunk(chunkToRegionChunk(coordinate));
 
-    //if(region.getLoadedChunkAmount() == 0)
-    //{
-    //    std::cout << " this also removed a region\n";
-    //    mRegions.erase(regionCoord);
-    //    return true;
-    //}
-    return false;
+    if(region.getLoadedChunkAmount() == 0)
+    {
+        //std::cout << " this also removed a region\n";
+        mRegions.erase(regionCoord);
+        mBus.send(RegionDeletedMessage{regionCoord});
+    }
 }
 
 void World::removeRegion(const RegionCoord& coordinate)
@@ -110,22 +114,42 @@ void World::activateChunk(const ChunkCoord& coordinate)
 
 void World::deactivateChunk(const ChunkCoord& coordinate)
 {
-    //when a chunk is deactivated, if it doesn't exist the thread hasn't finished generating it. in that case, the thread needs to be notified of instant termination of its generation and any such generated chunk has to be deleted. in this case, don't send RegionDeletedMessage since the ChunkAddedMessage won't be sent either. Implement this.
-    std::cout << "want to delete chunk " << glm::to_string((glm::ivec3)coordinate) << "\n";
+    //std::cout << "want to delete chunk " << glm::to_string((glm::ivec3)coordinate) << "\n";
     RegionCoord regionCoord = chunkToRegion(coordinate);
 
-    FEA_ASSERT(mActiveRegions.count(regionCoord) == 1, "If the region of the chunk to be removed does not exist, something is wrong");
+    FEA_ASSERT(mActiveRegions.count(regionCoord) != 0, "Dehighlighting a region " + glm::to_string((glm::ivec2)regionCoord) + " which has not been highlighted. bad!");
 
-    auto& region = mActiveRegions.at(regionCoord);
+    auto& highlightRegion = mActiveRegions.at(regionCoord);
 
-    FEA_ASSERT(region.count(coordinate) == 1, "The deactivated chunk has not been activated. this is bad");
+    FEA_ASSERT(highlightRegion.count(coordinate) != 0, "Dehighlighting chunk " + glm::to_string((glm::ivec3)coordinate) + " which does not exist. bad!");
 
-    region.erase(coordinate);
+    mActiveRegions.at(regionCoord).erase(coordinate);
 
-    if(region.size() == 0)
+    bool regionCancelled = false;
+
+    if(mActiveRegions.at(regionCoord).size() == 0)
     {
         mActiveRegions.erase(regionCoord);
-
-        mBus.send(RegionDeletedMessage{regionCoord});
+        regionCancelled = true;
     }
+
+    //if a chunk is deactivated and there is no region for that chunk, it must mean that the region is about to be generated in the other thread but hasn't been finished yet. The thread must be notified that the region and chunk is not needed anymore. But only if it is not needed by another chunk
+    if(mRegions.count(regionCoord) == 0)
+    {
+        mBus.send(HaltChunkAndRegionGenerationMessage{coordinate, regionCancelled ? &regionCoord : nullptr});
+        return;
+    }
+
+    auto& region = mRegions.at(regionCoord);
+
+    //if a chunk is deactivated and doesn't exist, it has to be under generation in the other thread. notify the thread to stop generation
+    if(region.hasChunk(chunkToRegionChunk(coordinate)) == 0)
+    {
+        mBus.send(HaltChunkAndRegionGenerationMessage{coordinate, nullptr});
+        return;
+    }
+
+    removeChunk(coordinate);
+
+    mBus.send(ChunkDeletedMessage{coordinate});
 }

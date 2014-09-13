@@ -14,7 +14,7 @@ class World
         const Region& getRegion(const RegionCoord& coordinate) const;
         void addRegion(const RegionCoord& coordinate, const Region& region);
         void addChunk(const ChunkCoord& coordinate, const Chunk& chunk);
-        bool removeChunk(const ChunkCoord& coordinate);
+        void removeChunk(const ChunkCoord& coordinate);
         void removeRegion(const RegionCoord& coordinate);
         VoxelType getVoxelType(const VoxelCoord& voxelCoordinate) const;
         bool setVoxelType(const VoxelCoord& voxelCoord, VoxelType type);

@@ -116,7 +116,7 @@ void Renderer::handleMessage(const UpdateChunkVboMessage& received)
 
     auto vboEntry = vbos.find(mainChunk->getLocation());
 
-    std::cout << "adding client chunk " << glm::to_string((glm::ivec3)mainChunk->getLocation()) << "\n";
+    //std::cout << "adding client chunk " << glm::to_string((glm::ivec3)mainChunk->getLocation()) << "\n";
 
     if(vboEntry == vbos.end())
     {
@@ -134,7 +134,7 @@ void Renderer::handleMessage(const ClientChunkDeletedMessage& received)
 {
     ChunkCoord coordinate = received.coordinate;
 
-    std::cout << "destroying client chunk " << glm::to_string((glm::ivec3)received.coordinate) << "\n";
+    //std::cout << "destroying client chunk " << glm::to_string((glm::ivec3)received.coordinate) << "\n";
 
     FEA_ASSERT(vbos.count(coordinate) != 0, "Trying to erase a chunk that has not been added. Not good");
 

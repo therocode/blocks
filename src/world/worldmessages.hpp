@@ -20,3 +20,4 @@ FEA_DECLARE_MESSAGE(ChunkDehighlightedMessage, const ChunkCoord& coordinate;);
 FEA_DECLARE_MESSAGE(HighlightEntitySpawnedMessage, fea::EntityId id; const ChunkCoord& coordinate;);
 FEA_DECLARE_MESSAGE(HighlightEntityDespawnedMessage, fea::EntityId id;);
 FEA_DECLARE_MESSAGE(HighlightEntityMovedMessage, fea::EntityId id; const ChunkCoord& coordinate;);
+FEA_DECLARE_MESSAGE(HaltChunkAndRegionGenerationMessage, const ChunkCoord& chunkCoordinate; const RegionCoord* regionCoordinate;);
