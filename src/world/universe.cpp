@@ -14,7 +14,7 @@ Universe::Universe(fea::MessageBus& messageBus)
     mWorldProvider(mBus, mModManager),
     mHighlightManager(mBus, 5),
     mModManager(messageBus),
-    mLodManager(mBus)
+    mRegionManager(mBus)
 {
 	mBus.addSubscriber<SetVoxelMessage>(*this);
 	mBus.addSubscriber<RegionDeliverMessage>(*this);

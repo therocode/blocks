@@ -8,7 +8,7 @@
 #include "worldmessages.hpp"
 #include "worldprovider.hpp"
 #include "highlightmanager.hpp"
-#include "regionlodmanager.hpp"
+#include "regionmanager.hpp"
 
 class Universe : 
         public fea::MessageReceiver<SetVoxelMessage>,
@@ -40,5 +40,5 @@ class Universe :
         WorldProvider mWorldProvider;
         HighlightManager mHighlightManager;
         ModManager mModManager;
-        RegionLodManager mLodManager;
+        RegionManager mRegionManager;
 };

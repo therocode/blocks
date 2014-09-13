@@ -3,13 +3,13 @@
 #include "worldmessages.hpp"
 #include "region.hpp"
 
-class RegionLodManager : 
+class RegionManager : 
         public fea::MessageReceiver<RegionDeliverMessage>,
         public fea::MessageReceiver<RegionDeletedMessage>
 {
     public:
-        RegionLodManager(fea::MessageBus& bus);
-        ~RegionLodManager();
+        RegionManager(fea::MessageBus& bus);
+        ~RegionManager();
         void handleMessage(const RegionDeliverMessage& message);
         void handleMessage(const RegionDeletedMessage& message);
     private:

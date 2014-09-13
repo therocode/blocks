@@ -1,23 +1,23 @@
-#include "regionlodmanager.hpp"
+#include "regionmanager.hpp"
 
-RegionLodManager::RegionLodManager(fea::MessageBus& bus) : mBus(bus)
+RegionManager::RegionManager(fea::MessageBus& bus) : mBus(bus)
 {
     mBus.addSubscriber<RegionDeliverMessage>(*this);   
     mBus.addSubscriber<RegionDeletedMessage>(*this);   
 }
 
-RegionLodManager::~RegionLodManager()
+RegionManager::~RegionManager()
 {
     mBus.removeSubscriber<RegionDeliverMessage>(*this);   
     mBus.removeSubscriber<RegionDeletedMessage>(*this);   
 }
 
-void RegionLodManager::handleMessage(const RegionDeliverMessage& message)
+void RegionManager::handleMessage(const RegionDeliverMessage& message)
 {
     mRegions.emplace(message.coordinate, message.newRegion);
 }
 
-void RegionLodManager::handleMessage(const RegionDeletedMessage& message)
+void RegionManager::handleMessage(const RegionDeletedMessage& message)
 {
     mRegions.erase(message.coordinate);
 }
