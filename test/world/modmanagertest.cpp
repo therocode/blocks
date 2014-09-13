@@ -8,9 +8,9 @@
 
 #include <fea/util.hpp>
 
-#include "world/chunk.h"
-#include "world/modmanager.h"
-#include "world/worldmessages.h"
+#include "world/chunk.hpp"
+#include "world/modmanager.hpp"
+#include "world/worldmessages.hpp"
 
 #define PR(x) std::cerr << #x << " = " << (x) << std::endl;
 

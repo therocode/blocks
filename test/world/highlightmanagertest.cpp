@@ -6,8 +6,8 @@
 
 #include <fea/util.hpp>
 
-#include "world/highlightmanager.h"
-#include "world/worldmessages.h"
+#include "world/highlightmanager.hpp"
+#include "world/worldmessages.hpp"
 
 #define PR(x) std::cerr << #x << " = " << (x) << std::endl;
 

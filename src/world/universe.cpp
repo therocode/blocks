@@ -13,7 +13,7 @@ Universe::Universe(fea::MessageBus& messageBus)
 	mWorldInterface(mStandardWorld, mEntitySystem),
     mWorldProvider(mBus, mModManager),
     mHighlightManager(mBus, 5),
-    mModManager(mBus),
+    mModManager(messageBus),
     mLodManager(mBus)
 {
 	mBus.addSubscriber<SetVoxelMessage>(*this);

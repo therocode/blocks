@@ -6,8 +6,8 @@
 
 #include <fea/util.hpp>
 
-#include "world/chunk.h"
-#include "world/modmanager.h"
+#include "world/chunk.hpp"
+#include "world/modmanager.hpp"
 
 using namespace std;
 

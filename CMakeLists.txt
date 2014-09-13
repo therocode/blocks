@@ -271,13 +271,18 @@ if(BUILD_GAME)
     endif()
     
     #instead of setting compiler flags globally. SFML doesn't like building with this flag on.
-    set_target_properties(${project_name} PROPERTIES COMPILE_FLAGS "-std=c++11 -pthread")
+    #set_target_properties(${project_name} PROPERTIES COMPILE_FLAGS "-std=c++11 -pthread")
+    if(NOT MSVC)
+        set(CPP_11_FLAG -std=c++11)
+    endif()
+
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CPP_11_FLAG} -pthread")
     
     #But that doesn't work in windows.
-    if(WIN32)
-        add_definitions(-std=c++11 -pthread)
-    	add_definitions(-O4)
-    endif(WIN32)
+    #if(WIN32)
+        #    add_definitions(-std=c++11 -pthread)
+        #	add_definitions(-O4)
+        #endif(WIN32)
     
     #if(ENET_FOUND)
     #	include_directories(${ENet_INCLUDE_DIRS})
@@ -349,18 +354,18 @@ endif(BUILD_GAME)
 if(BUILD_TESTS)
     add_executable(test_modmanager "test/world/modmanagertest.cpp" "src/world/modmanager.cpp" "src/world/chunk.cpp" "src/world/worldstd.cpp")
     target_link_libraries(test_modmanager ${FEATHERKIT_LIBRARIES})
-    set_target_properties(test_modmanager PROPERTIES COMPILE_FLAGS "-std=c++11")
+    #set_target_properties(test_modmanager PROPERTIES COMPILE_FLAGS "-std=c++11")
     
     add_executable(test_highlightmanager "test/world/highlightmanagertest.cpp" "src/world/highlightmanager.cpp" "src/world/worldstd.cpp")
     target_link_libraries(test_highlightmanager ${FEATHERKIT_LIBRARIES})
-    set_target_properties(test_highlightmanager PROPERTIES COMPILE_FLAGS "-std=c++11")
+    #set_target_properties(test_highlightmanager PROPERTIES COMPILE_FLAGS "-std=c++11")
     
     add_executable(test_coordinate "test/world/coordinatetest.cpp" "src/world/worldstd.cpp")
     target_link_libraries(test_coordinate ${FEATHERKIT_LIBRARIES})
-    set_target_properties(test_coordinate PROPERTIES COMPILE_FLAGS "-std=c++11")
+    #set_target_properties(test_coordinate PROPERTIES COMPILE_FLAGS "-std=c++11")
     
     #profiling
     add_executable(profile_modmanager "profile/world/modmanagerprofile.cpp" "src/world/modmanager.cpp" "src/world/chunk.cpp" "src/world/worldstd.cpp")
     target_link_libraries(profile_modmanager ${FEATHERKIT_LIBRARIES})
-    set_target_properties(profile_modmanager PROPERTIES COMPILE_FLAGS "-std=c++11")
+    #set_target_properties(profile_modmanager PROPERTIES COMPILE_FLAGS "-std=c++11")
 endif(BUILD_TESTS)
