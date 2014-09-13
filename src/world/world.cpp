@@ -32,6 +32,7 @@ void World::addChunk(const ChunkCoord& coordinate, const Chunk& chunk)
 {
     RegionCoord region = chunkToRegion(coordinate);
 
+    FEA_ASSERT(mRegions.count(region) != 0, "Trying to add chunk " + glm::to_string((glm::ivec3)coordinate) + " to region " + glm::to_string((glm::ivec2)region) + " but that region doesn't exist!");
     mRegions.at(region).addChunk(chunkToRegionChunk(coordinate), chunk);
 }
 

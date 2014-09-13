@@ -181,37 +181,49 @@ void WorldProvider::generatorLoop()
         {
             std::lock_guard<std::mutex> lock(mThreadOutputMutex);
 
+            mChunksToDeliver.insert(mChunksToDeliver.end(), mFinishedChunks.begin(), mFinishedChunks.end());
+            mRegionsToDeliver.insert(mRegionsToDeliver.end(), mFinishedRegions.begin(), mFinishedRegions.end());
+            mFinishedChunks.clear();
+            mFinishedRegions.clear();
+
             for(const auto& chunk : mChunksToDiscard)
             {
-                for(size_t i = 0; i < mFinishedChunks.size(); i++)
+                for(size_t i = 0; i < mChunkQueue.size(); i++)
                 {
-                    if(mFinishedChunks[i].first == chunk)
+                    if(mChunkQueue[i] == chunk)
                     {
                         //std::cout << "successfully discarded chunk " << glm::to_string((glm::ivec3)chunk) << "\n";
-                        mFinishedChunks.erase(mFinishedChunks.begin() + i);
+                        mChunkQueue.erase(mChunkQueue.begin() + i);
+                        break;
+                    }
+                }
+            }
+            for(const auto& chunk : mChunksToDiscard)
+            {
+                for(size_t i = 0; i < mChunksToDeliver.size(); i++)
+                {
+                    if(mChunksToDeliver[i].first == chunk)
+                    {
+                        //std::cout << "successfully discarded chunk " << glm::to_string((glm::ivec3)chunk) << "\n";
+                        mChunksToDeliver.erase(mChunksToDeliver.begin() + i);
                         break;
                     }
                 }
             }
             for(const auto& region : mRegionsToDiscard)
             {
-                for(size_t i = 0; i < mFinishedRegions.size(); i++)
+                for(size_t i = 0; i < mRegionsToDeliver.size(); i++)
                 {
-                    if(mFinishedRegions[i].first == region)
+                    if(mRegionsToDeliver[i].first == region)
                     {
                         //std::cout << "successfully discarded region " << glm::to_string((glm::ivec2)region) << "\n";
-                        mFinishedRegions.erase(mFinishedRegions.begin() + i);
+                        mRegionsToDeliver.erase(mRegionsToDeliver.begin() + i);
                         break;
                     }
                 }
             }
             mChunksToDiscard.clear();
             mRegionsToDiscard.clear();
-
-            mChunksToDeliver.insert(mChunksToDeliver.end(), mFinishedChunks.begin(), mFinishedChunks.end());
-            mRegionsToDeliver.insert(mRegionsToDeliver.end(), mFinishedRegions.begin(), mFinishedRegions.end());
-            mFinishedChunks.clear();
-            mFinishedRegions.clear();
             //std::cout << "delivering. will deliver " << mChunksToDeliver.size() << " chinks and " << mRegionsToDeliver.size() << " regions\n";
         }
     }
