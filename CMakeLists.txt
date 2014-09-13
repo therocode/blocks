@@ -56,6 +56,7 @@ set(source_files
            src/rendering/vbo.cpp
            src/rendering/vbocreator.cpp
         src/rendering/marchingcubegenerator.cpp
+        src/rendering/gl_core_3_2.c
     
         src/script/scriptcallback.cpp
         src/script/scriptengine.cpp
@@ -172,6 +173,8 @@ set(header_files
 	src/rendering/vbo.hpp
 	src/rendering/vbocreator.hpp
     src/rendering/marchingcubegenerator.hpp
+    src/rendering/gl_core_3_2.h
+    src/rendering/opengl.hpp
 
 	src/script/scriptmessages.hpp
     src/script/scriptcallback.hpp
@@ -226,7 +229,7 @@ set(header_files
     src/world/generation/regiongenerator.hpp
 )
 
-find_package(Featherkit REQUIRED COMPONENTS entity structure ui sdl2 rendering util)
+find_package(Featherkit REQUIRED COMPONENTS entity structure ui sdl2 util)
 find_package(GLM)
 find_package(SDL2)
 find_package(OpenGL REQUIRED)

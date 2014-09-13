@@ -1,6 +1,6 @@
 #pragma once
 #include "../blockstd.hpp"
-#include <fea/rendering/opengl.hpp>
+#include "opengl.hpp"
 #include <fstream>
 #include <sstream>
 

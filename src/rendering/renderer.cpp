@@ -2,8 +2,8 @@
 #include <iostream>
 #include <fea/assert.hpp>
 #include "../utilities/lodepng.hpp"
-//#include "gl_core_3_2.hpp"
-#include <fea/rendering/gl_core_3_2.h>
+#include "opengl.hpp"
+//#include <fea/rendering/gl_core_3_2.h>
 
 
 DebugRenderer Renderer::sDebugRenderer;
@@ -67,8 +67,8 @@ void Renderer::makeTexture(const std::string& path, uint32_t width, uint32_t hei
 
 void Renderer::setup()
 {
-    auto glStatus = feaogl_LoadFunctions();
-    FEA_ASSERT(glStatus != feaogl_LOAD_FAILED, "Could not initialize the renderer! Make sure there is a valid OpenGL context!");
+    auto glStatus = blocksogl_LoadFunctions();
+    FEA_ASSERT(glStatus != blocksogl_LOAD_FAILED, "Could not initialize the renderer! Make sure there is a valid OpenGL context!");
     //std::cout << "hoj: " << glGetError() << "\n";
     //glewExperimental = GL_FALSE;
 	//glEnable(GL_LIGHTING);
