@@ -99,7 +99,7 @@ set(source_files
         src/world/region.cpp
         src/world/regionmanager.cpp
         src/world/worldstd.cpp
-           src/world/universe.cpp
+           src/world/worldholder.cpp
         src/world/world.cpp
         src/world/worldinterface.cpp
         src/world/generation/chunkgenerator.cpp
@@ -220,7 +220,7 @@ set(header_files
     src/world/region.hpp
     src/world/regionmanager.hpp
     src/world/worldstd.hpp
-	src/world/universe.hpp
+	src/world/worldholder.hpp
     src/world/world.hpp
     src/world/worldinterface.hpp
     src/world/worldprovider.hpp

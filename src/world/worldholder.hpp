@@ -10,7 +10,7 @@
 #include "highlightmanager.hpp"
 #include "regionmanager.hpp"
 
-class Universe : 
+class WorldHolder : 
         public fea::MessageReceiver<SetVoxelMessage>,
         public fea::MessageReceiver<RegionDeliverMessage>,
         public fea::MessageReceiver<ChunkDeliverMessage>,
@@ -19,8 +19,8 @@ class Universe :
         public fea::MessageReceiver<RegionDeletedMessage>
 {
     public:
-        Universe(fea::MessageBus& messageBus);
-		~Universe();
+        WorldHolder(fea::MessageBus& messageBus);
+		~WorldHolder();
         void setup();
         void update();
         void destroy();

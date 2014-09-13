@@ -1,4 +1,4 @@
-#include "universe.hpp"
+#include "worldholder.hpp"
 #include "../entity/controllers/playercontroller.hpp"
 #include "../entity/controllers/physicscontroller.hpp"
 #include "../entity/controllers/collisioncontroller.hpp"
@@ -6,7 +6,7 @@
 #include "../entity/controllers/movementcontroller.hpp"
 #include <fea/util.hpp>
 
-Universe::Universe(fea::MessageBus& messageBus) 
+WorldHolder::WorldHolder(fea::MessageBus& messageBus) 
 :   mBus(messageBus),
     mStandardWorld(messageBus),
 	mEntitySystem(messageBus),
@@ -24,7 +24,7 @@ Universe::Universe(fea::MessageBus& messageBus)
 	mBus.addSubscriber<RegionDeletedMessage>(*this);
 }
 
-Universe::~Universe()
+WorldHolder::~WorldHolder()
 {
 	mBus.removeSubscriber<SetVoxelMessage>(*this);
 	mBus.removeSubscriber<RegionDeliverMessage>(*this);
@@ -34,7 +34,7 @@ Universe::~Universe()
 	mBus.removeSubscriber<RegionDeletedMessage>(*this);
 }
 
-void Universe::setup()
+void WorldHolder::setup()
 {
     mEntitySystem.setup();
 
@@ -45,19 +45,19 @@ void Universe::setup()
 	mEntitySystem.addController(std::unique_ptr<EntityController>(new GfxController(mBus, mWorldInterface)));
 }
 
-void Universe::update()
+void WorldHolder::update()
 {
 	mEntitySystem.update();
 }
 
-void Universe::destroy()
+void WorldHolder::destroy()
 {
     mEntitySystem.destroy();
     mBus.send(LogMessage{std::string("saving modifications to disk for all regions"), "file", LogLevel::VERB});
     mModManager.saveMods();
 }
 
-void Universe::handleMessage(const SetVoxelMessage& received)
+void WorldHolder::handleMessage(const SetVoxelMessage& received)
 {
     VoxelCoord coordinate = received.voxel;
     VoxelType type = received.type;
@@ -71,7 +71,7 @@ void Universe::handleMessage(const SetVoxelMessage& received)
     }
 }
 
-void Universe::handleMessage(const RegionDeliverMessage& received)
+void WorldHolder::handleMessage(const RegionDeliverMessage& received)
 {
     RegionCoord coordinate = received.coordinate;
     Region region = received.newRegion;
@@ -80,19 +80,19 @@ void Universe::handleMessage(const RegionDeliverMessage& received)
     mBus.send(LogMessage{"region created" + glm::to_string((glm::ivec2)coordinate), "landscape", LogLevel::VERB});
 }
 
-void Universe::handleMessage(const ChunkHighlightedMessage& received)
+void WorldHolder::handleMessage(const ChunkHighlightedMessage& received)
 {
     mStandardWorld.activateChunk(received.coordinate);
     mBus.send(ChunkRequestedMessage{received.coordinate});
 }
 
-void Universe::handleMessage(const ChunkDehighlightedMessage& received)
+void WorldHolder::handleMessage(const ChunkDehighlightedMessage& received)
 {
     mModManager.recordTimestamp(received.coordinate, 0);
     mStandardWorld.deactivateChunk(received.coordinate);
 }
 
-void Universe::handleMessage(const ChunkDeliverMessage& received)
+void WorldHolder::handleMessage(const ChunkDeliverMessage& received)
 {
     ChunkCoord coordinate = received.coordinate;
     Chunk chunk = received.chunk;
@@ -100,13 +100,13 @@ void Universe::handleMessage(const ChunkDeliverMessage& received)
     mStandardWorld.addChunk(coordinate, chunk);
 }
 
-void Universe::handleMessage(const RegionDeletedMessage& received)
+void WorldHolder::handleMessage(const RegionDeletedMessage& received)
 {
     mBus.send(LogMessage{"saving modifications to disk for region" + glm::to_string((glm::ivec2)received.coordinate), "file", LogLevel::VERB});
     mModManager.saveMods(received.coordinate);
 }
 
-WorldInterface& Universe::getWorldInterface()
+WorldInterface& WorldHolder::getWorldInterface()
 {
     return mWorldInterface;
 }

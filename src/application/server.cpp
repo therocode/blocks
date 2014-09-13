@@ -1,9 +1,9 @@
 #include "server.hpp"
 #include "../networking/packages.hpp"
 
-Server::Server() : mUniverse(mBus),
+Server::Server() : mWorlds(mBus),
     mLogger(mBus, LogLevel::VERB),
-    mScriptHandler(mBus, mUniverse.getWorldInterface()),
+    mScriptHandler(mBus, mWorlds.getWorldInterface()),
     mLogName("server")
 {
     mBus.addSubscriber<FatalMessage>(*this);
@@ -35,7 +35,7 @@ Server::~Server()
 void Server::setup()
 {
     mScriptHandler.setup();
-    mUniverse.setup();
+    mWorlds.setup();
     mFPSController.setMaxFPS(60);
     mBus.send<LogMessage>(LogMessage{"Server initialised and ready to go", mLogName, LogLevel::INFO});
     mBus.send<GameStartMessage>(GameStartMessage{});
@@ -56,7 +56,7 @@ void Server::doLogic()
 
     mBus.send<FrameMessage>(FrameMessage{true});
 
-    mUniverse.update();
+    mWorlds.update();
 
     for(auto& client : mClients)
     {
@@ -70,7 +70,7 @@ void Server::doLogic()
 
 void Server::destroy()
 {
-    mUniverse.destroy();
+    mWorlds.destroy();
     mScriptHandler.destroy();
     mBus.send<LogMessage>(LogMessage{"Server destroyed", mLogName, LogLevel::INFO});
 }
@@ -204,7 +204,7 @@ void Server::acceptClientConnection(std::shared_ptr<ClientConnection> client)
     }
 
     //resend chunk created messages
-    for(const auto& chunk : mUniverse.getWorldInterface().getChunkMap())
+    for(const auto& chunk : mWorlds.getWorldInterface().getChunkMap())
     {
         std::shared_ptr<BasePackage> chunkAddedPackage(new ChunkLoadedPackage(chunk.first, chunk.second.getVoxelTypeData().mRleSegmentIndices, chunk.second.getVoxelTypeData().mRleSegments));
         client->enqueuePackage(chunkAddedPackage);
