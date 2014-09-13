@@ -6,6 +6,8 @@
 #include <fea/ui/jsonactioniohandler.hpp>
 #include "zlib.h"
 
+const std::string logName = "input";
+
 InputAdaptor::InputAdaptor(fea::MessageBus& b):
     inputHandler(new fea::SDL2InputBackend),
     mPlayerId(-1),
@@ -148,7 +150,7 @@ void InputAdaptor::update()
     {
         if(action == "quit")
         {
-            printf("Hej, jag slutar nu. Hejdå.\n");
+            mBus.send(LogMessage{"Sending quit action.", logName, LogLevel::INFO});
             mBus.send<PlayerActionMessage>(PlayerActionMessage{mPlayerId, InputAction::QUIT});
         }
         else if(action == "forwards")
