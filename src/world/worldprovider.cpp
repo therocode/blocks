@@ -75,8 +75,9 @@ void WorldProvider::handleMessage(const FrameMessage& received)
 
     if(chunks.size() > 0)
     {
-        for(const auto& chunk : chunks)
+        for(auto& chunk : chunks)
         {
+            mModManager.loadMods(chunk.second);
             mBus.send(ChunkDeliverMessage{chunk.first, std::move(chunk.second)}); //sends the finished chunk to be kept by whatever system
             //std::cout << "done generating chunk " << glm::to_string((glm::ivec3)chunk.first) << "\n";
 
@@ -164,8 +165,6 @@ void WorldProvider::generatorLoop()
                 const Region& region = mRegions.at(regionCoordinate);
 
                 Chunk newChunk = mChunkGenerator.generateChunk(chunkCoordinate, region);
-
-                mModManager.loadMods(newChunk);
 
                 mFinishedChunks.push_back({chunkCoordinate, newChunk});
                 amountGenerated++;
