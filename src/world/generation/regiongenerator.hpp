@@ -1,7 +1,7 @@
 #pragma once
 #include <fea/util.hpp>
 #include "regiondatagenerator.hpp"
-#include "../biomestorage.hpp"
+#include "biomestorage.hpp"
 
 struct Pixel
 {

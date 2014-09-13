@@ -40,77 +40,77 @@ set(source_files
 
     src/input/inputadaptor.cpp
 
-        src/networking/serverclientbridge.cpp
+    src/networking/serverclientbridge.cpp
     
-        src/rendering/chunkgeneratorqueue.cpp
-           src/rendering/debugrenderer.cpp
-           src/rendering/billboard.cpp
-           src/rendering/camera.cpp
-        src/rendering/frustum.cpp
-           src/rendering/meshwalker.cpp
-           src/rendering/renderer.cpp
-           src/rendering/shader.cpp
-           src/rendering/shaderprogram.cpp
-        src/rendering/surfacemerger.cpp
-        src/rendering/texture.cpp
-           src/rendering/vbo.cpp
-           src/rendering/vbocreator.cpp
-        src/rendering/marchingcubegenerator.cpp
-        src/rendering/gl_core_3_2.c
-    
-        src/script/scriptcallback.cpp
-        src/script/scriptengine.cpp
-        src/script/scriptentity.cpp
-        src/script/scriptentitycore.cpp
-        src/script/scripthandler.cpp
-        src/script/scriptmodule.cpp
-        src/script/asaddons/scriptarray.cpp
-        src/script/asaddons/scriptmath.cpp
-        src/script/asaddons/scriptvectors.cpp
-        src/script/asaddons/scriptbuilder.cpp
-        src/script/asaddons/scriptstdstring.cpp
-        src/script/asaddons/scriptstdstring_utils.cpp
-        src/script/callers/scriptcaller.cpp
-        src/script/callers/frametimecaller.cpp
-        src/script/callers/gameeventcaller.cpp
-        src/script/callers/ongroundcaller.cpp
-        src/script/interfaces/entityinterface.cpp
-        src/script/interfaces/landscapeinterface.cpp
-        src/script/interfaces/mathsinterface.cpp
-        src/script/interfaces/physicsinterface.cpp
-        src/script/interfaces/printinterface.cpp
-        src/script/interfaces/randominterface.cpp
-        src/script/interfaces/scriptinterface.cpp
-        src/script/interfaces/stringinterface.cpp
-    
-        src/utilities/folderexploder.cpp
-        src/utilities/fpscontroller.cpp
-        src/utilities/lodepng.cpp
-        src/utilities/logger.cpp
-           src/utilities/random.cpp
-           src/utilities/timer.cpp
-    
-           src/world/biome.cpp
-           src/world/biomestorage.cpp
-           src/world/chunk.cpp
-        src/world/worldprovider.cpp
-        src/world/highlightmanager.cpp
-        src/world/modmanager.cpp
-        src/world/region.cpp
-        src/world/regionmanager.cpp
-        src/world/worldstd.cpp
-           src/world/worldholder.cpp
-        src/world/world.cpp
-        src/world/worldinterface.cpp
-        src/world/generation/chunkgenerator.cpp
-        src/world/generation/regiondatagenerator.cpp
-        src/world/generation/regiongenerator.cpp
+    src/rendering/chunkgeneratorqueue.cpp
+    src/rendering/debugrenderer.cpp
+    src/rendering/billboard.cpp
+    src/rendering/camera.cpp
+    src/rendering/frustum.cpp
+    src/rendering/meshwalker.cpp
+    src/rendering/renderer.cpp
+    src/rendering/shader.cpp
+    src/rendering/shaderprogram.cpp
+    src/rendering/surfacemerger.cpp
+    src/rendering/texture.cpp
+    src/rendering/vbo.cpp
+    src/rendering/vbocreator.cpp
+    src/rendering/marchingcubegenerator.cpp
+    src/rendering/gl_core_3_2.c
+
+    src/script/scriptcallback.cpp
+    src/script/scriptengine.cpp
+    src/script/scriptentity.cpp
+    src/script/scriptentitycore.cpp
+    src/script/scripthandler.cpp
+    src/script/scriptmodule.cpp
+    src/script/asaddons/scriptarray.cpp
+    src/script/asaddons/scriptmath.cpp
+    src/script/asaddons/scriptvectors.cpp
+    src/script/asaddons/scriptbuilder.cpp
+    src/script/asaddons/scriptstdstring.cpp
+    src/script/asaddons/scriptstdstring_utils.cpp
+    src/script/callers/scriptcaller.cpp
+    src/script/callers/frametimecaller.cpp
+    src/script/callers/gameeventcaller.cpp
+    src/script/callers/ongroundcaller.cpp
+    src/script/interfaces/entityinterface.cpp
+    src/script/interfaces/landscapeinterface.cpp
+    src/script/interfaces/mathsinterface.cpp
+    src/script/interfaces/physicsinterface.cpp
+    src/script/interfaces/printinterface.cpp
+    src/script/interfaces/randominterface.cpp
+    src/script/interfaces/scriptinterface.cpp
+    src/script/interfaces/stringinterface.cpp
+
+    src/utilities/folderexploder.cpp
+    src/utilities/fpscontroller.cpp
+    src/utilities/lodepng.cpp
+    src/utilities/logger.cpp
+    src/utilities/random.cpp
+    src/utilities/timer.cpp
+
+    src/world/chunk.cpp
+    src/world/worldprovider.cpp
+    src/world/highlightmanager.cpp
+    src/world/modmanager.cpp
+    src/world/region.cpp
+    src/world/regionmanager.cpp
+    src/world/worldstd.cpp
+    src/world/worldholder.cpp
+    src/world/world.cpp
+    src/world/worldinterface.cpp
+    src/world/generation/biome.cpp
+    src/world/generation/biomestorage.cpp
+    src/world/generation/chunkgenerator.cpp
+    src/world/generation/regiondatagenerator.cpp
+    src/world/generation/regiongenerator.cpp
     )
 
 set(header_files
-       src/blockstd.hpp
-       src/application/applicationmessages.hpp
-       src/application/blocksapp.hpp
+    src/blockstd.hpp
+    src/application/applicationmessages.hpp
+    src/application/blocksapp.hpp
     src/application/client.hpp
     src/application/server.hpp
 
@@ -118,7 +118,7 @@ set(header_files
     src/console/console.hpp
     src/console/keys.hpp
 
-       src/entity/entitymessages.hpp
+    src/entity/entitymessages.hpp
     src/entity/defaultsetters.hpp
     src/entity/entitycreator.hpp
     src/entity/entityfactory.hpp
@@ -135,7 +135,7 @@ set(header_files
     src/entity/controllers/physicstype.hpp
     src/entity/controllers/playercontroller.hpp
 
-       src/input/inputmessages.hpp
+    src/input/inputmessages.hpp
     src/input/inputactions.hpp
     src/input/inputadaptor.hpp
 
@@ -158,25 +158,25 @@ set(header_files
     src/networking/serverclientbridge.hpp
 
     src/rendering/chunkgeneratorqueue.hpp
-	src/rendering/debugrenderer.hpp
-	src/rendering/renderingmessages.hpp
-	src/rendering/billboard.hpp
-	src/rendering/camera.hpp
+    src/rendering/debugrenderer.hpp
+    src/rendering/renderingmessages.hpp
+    src/rendering/billboard.hpp
+    src/rendering/camera.hpp
     src/rendering/frustum.hpp
-	src/rendering/mesh.hpp
-	src/rendering/meshwalker.hpp
-	src/rendering/renderer.hpp
-	src/rendering/shader.hpp
-	src/rendering/shaderprogram.hpp
+    src/rendering/mesh.hpp
+    src/rendering/meshwalker.hpp
+    src/rendering/renderer.hpp
+    src/rendering/shader.hpp
+    src/rendering/shaderprogram.hpp
     src/rendering/surfacemerger.hpp
     src/rendering/texture.hpp
-	src/rendering/vbo.hpp
-	src/rendering/vbocreator.hpp
+    src/rendering/vbo.hpp
+    src/rendering/vbocreator.hpp
     src/rendering/marchingcubegenerator.hpp
     src/rendering/gl_core_3_2.h
     src/rendering/opengl.hpp
 
-	src/script/scriptmessages.hpp
+    src/script/scriptmessages.hpp
     src/script/scriptcallback.hpp
     src/script/scriptengine.hpp
     src/script/scriptentity.hpp
@@ -211,8 +211,6 @@ set(header_files
 	src/utilities/tinydir.hpp
 
 	src/world/worldmessages.hpp
-	src/world/biome.hpp
-	src/world/biomestorage.hpp
 	src/world/chunk.hpp
     src/world/valuemap.hpp
     src/world/highlightmanager.hpp
@@ -224,6 +222,8 @@ set(header_files
     src/world/world.hpp
     src/world/worldinterface.hpp
     src/world/worldprovider.hpp
+	src/world/generation/biome.hpp
+	src/world/generation/biomestorage.hpp
     src/world/generation/chunkgenerator.hpp
     src/world/generation/regiondatagenerator.hpp
     src/world/generation/regiongenerator.hpp
