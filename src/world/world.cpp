@@ -110,6 +110,8 @@ void World::activateChunk(const ChunkCoord& coordinate)
 
 void World::deactivateChunk(const ChunkCoord& coordinate)
 {
+    //when a chunk is deactivated, if it doesn't exist the thread hasn't finished generating it. in that case, the thread needs to be notified of instant termination of its generation and any such generated chunk has to be deleted. in this case, don't send RegionDeletedMessage since the ChunkAddedMessage won't be sent either. Implement this.
+    std::cout << "want to delete chunk " << glm::to_string((glm::ivec3)coordinate) << "\n";
     RegionCoord regionCoord = chunkToRegion(coordinate);
 
     FEA_ASSERT(mActiveRegions.count(regionCoord) == 1, "If the region of the chunk to be removed does not exist, something is wrong");

@@ -9,7 +9,8 @@ WorldProvider::WorldProvider(fea::MessageBus& b, ModManager& modManager)
     mBus(b),
     mModManager(modManager),
     mGeneratorThread(&WorldProvider::generatorLoop, this),
-    mThreadSleepInterval(50),
+    mThreadSleepInterval(5),
+    mMaxChunkGenerationAmount(5),
     mGenThreadActive(true)
 {
     mBus.send(LogMessage{"Started world generation thread", logName, LogLevel::INFO});
@@ -32,6 +33,7 @@ WorldProvider::~WorldProvider()
 
 void WorldProvider::handleMessage(const ChunkRequestedMessage& received)
 {
+    std::cout << "requested new chunk " << glm::to_string((glm::ivec3)received.coordinate) << "\n";
     //add chunk to load to other thread
     std::lock_guard<std::mutex> lock(mThreadInputMutex);
     mChunksToGenerate.push_back(received.coordinate);       
@@ -95,8 +97,10 @@ void WorldProvider::generatorLoop()
 
 
         //perform generation
-        for(const auto& chunkCoordinate : mChunkQueue)
+        int32_t amountGenerated = 0;
+        for(size_t i = 0; i < mChunkQueue.size(); i++)
         {
+            const auto& chunkCoordinate = mChunkQueue[i];
             //std::cout << "making a chunk\n";
             RegionCoord regionCoordinate = chunkToRegion(chunkCoordinate);
 
@@ -114,9 +118,13 @@ void WorldProvider::generatorLoop()
             mModManager.loadMods(newChunk);
 
             mFinishedChunks.push_back({chunkCoordinate, newChunk});
+            amountGenerated++;
+            
+            if(amountGenerated == mMaxChunkGenerationAmount)
+                break;
         }
 
-        mChunkQueue.clear();
+        mChunkQueue.erase(mChunkQueue.begin(), mChunkQueue.begin() + amountGenerated);
 
         //deliver finished chunks
         {

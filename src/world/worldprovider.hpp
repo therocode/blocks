@@ -31,6 +31,7 @@ class WorldProvider :
         std::thread mGeneratorThread;
         std::unordered_map<RegionCoord, Region> mRegions; //thread local copy of regions
         int32_t mThreadSleepInterval;
+        int32_t mMaxChunkGenerationAmount;
         void generatorLoop();
 
         //thread input
