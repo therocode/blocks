@@ -9,11 +9,11 @@ class ValueMap
     public:
         ValueMap()
         {
-            units = std::unique_ptr<ValueType[]>(new ValueType[regionVoxelWidthx2]);
+            units = std::unique_ptr<ValueType[]>(new ValueType[regionVoxelWidthPow2]);
         }
         ValueMap(const ValueMap& other)
         {
-            size_t dataSize = regionVoxelWidthx2;
+            size_t dataSize = regionVoxelWidthPow2;
 
             units = std::unique_ptr<ValueType[]>(new ValueType[dataSize]);
 
@@ -26,7 +26,7 @@ class ValueMap
         }
         const ValueMap& operator=(const ValueMap& other)
         {
-            size_t dataSize = regionVoxelWidthx2;
+            size_t dataSize = regionVoxelWidthPow2;
 
             units = std::unique_ptr<ValueType[]>(new ValueType[dataSize]);
 

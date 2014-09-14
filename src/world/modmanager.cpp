@@ -55,7 +55,7 @@ void ModManager::loadMods(Chunk& chunk)
         VoxelTypeArray vta = chunk.getFlatVoxelTypeData();
         for(ChunkModMap::iterator it = mods.begin(); it != mods.end(); ++it) 
         {
-            vta[it->first.x + it->first.z*chunkWidth + it->first.y*chunkWidthx2] = it->second;
+            vta[it->first.x + it->first.z*chunkWidth + it->first.y*chunkWidthPow2] = it->second;
             //chunk.setVoxelType(it->first.x, it->first.y, it->first.z, it->second);
         }
         chunk.setVoxelData(vta);

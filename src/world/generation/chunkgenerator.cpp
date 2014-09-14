@@ -19,7 +19,7 @@ Chunk ChunkGenerator::generateChunk(const ChunkCoord& chunkCoordinate, const Reg
 
     for(int32_t y = 0; y < chunkWidth; y++)
     {
-        yIndex = y * chunkWidthx2;
+        yIndex = y * chunkWidthPow2;
         regionCoord.y = regionStart.y;
         for(int32_t z = 0; z < chunkWidth; z++)
         {

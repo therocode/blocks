@@ -15,12 +15,12 @@ int64_t wrapInt(int64_t kX, int64_t const kLowerBound, int64_t const kUpperBound
 
 const int32_t chunkWidth = 16;
 const int32_t regionChunkWidth = 32;
-const int32_t regionChunkWidthx2 = regionChunkWidth * regionChunkWidth;
+const int32_t regionChunkWidthPow2 = regionChunkWidth * regionChunkWidth;
 const int32_t regionVoxelWidth = regionChunkWidth * chunkWidth;
-const int32_t regionVoxelWidthx2 = regionVoxelWidth * regionVoxelWidth;
-const int32_t chunkWidthx2 = chunkWidth * chunkWidth;
-const int32_t chunkWidthx3 = chunkWidth * chunkWidth * chunkWidth;
-const int32_t voxelAmount = chunkWidthx3;
+const int32_t regionVoxelWidthPow2 = regionVoxelWidth * regionVoxelWidth;
+const int32_t chunkWidthPow2 = chunkWidth * chunkWidth;
+const int32_t chunkWidthPow3 = chunkWidth * chunkWidth * chunkWidth;
+const int32_t voxelAmount = chunkWidthPow3;
 
 //top/bottom: y, -y
 //left/right:-x,  x
@@ -43,7 +43,7 @@ struct RleSegmentInfo
 using VoxelType = uint16_t;
 using VoxelTypeArray = std::array<VoxelType, voxelAmount>;
 using VoxelSegmentTypeArray = std::array<VoxelType, chunkWidth>;
-using RleIndexArray = std::array<RleSegmentInfo, chunkWidthx2>;
+using RleIndexArray = std::array<RleSegmentInfo, chunkWidthPow2>;
 using RleSegmentArray = std::vector<uint16_t>;
 
 struct VoxelTypeData

@@ -19,8 +19,8 @@ class RegionGenerator
     private:
         RegionDataGenerator mRegionDataGenerator;
         BiomeStorage mStorage;
-        std::array<Pixel, regionVoxelWidthx2> mImage;
-        std::array<Pixel, regionVoxelWidthx2> mRain;
-        std::array<Pixel, regionVoxelWidthx2> mTemp;
-        std::array<Pixel, regionVoxelWidthx2> mHeight;
+        std::array<Pixel, regionVoxelWidthPow2> mImage;
+        std::array<Pixel, regionVoxelWidthPow2> mRain;
+        std::array<Pixel, regionVoxelWidthPow2> mTemp;
+        std::array<Pixel, regionVoxelWidthPow2> mHeight;
 };

@@ -99,7 +99,7 @@ void Chunk::setVoxelData(const VoxelTypeArray& types)
             size_t segmentIndex = z + y * chunkWidth;
             mRleSegmentIndices[segmentIndex].mSegmentStart = mRleSegments.size();
 
-            zyIndex = z * chunkWidth + y * chunkWidthx2;
+            zyIndex = z * chunkWidth + y * chunkWidthPow2;
             currentType = types[zyIndex];
             currentAmount = 1;
             for(uint32_t x = 1; x < chunkWidth; x++)
