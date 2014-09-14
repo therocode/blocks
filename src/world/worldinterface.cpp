@@ -144,3 +144,18 @@ EntityCreator WorldInterface::getEntityCreator() const
 {
     return mEntitySystem.getEntityCreator();
 }
+
+void WorldInterface::addHighlightEntity(const std::string& world, fea::EntityId id, const ChunkCoord& coordinate)
+{
+    mWorlds.at(world).addHighlightEntity(id, coordinate);
+}
+
+void WorldInterface::removeHighlightEntity(const std::string& world, fea::EntityId id)
+{
+    mWorlds.at(world).removeHighlightEntity(id);
+}
+
+void WorldInterface::moveHighlightEntity(const std::string& world, fea::EntityId id, const ChunkCoord& coordinate)
+{
+    mWorlds.at(world).moveHighlightEntity(id, coordinate);
+}

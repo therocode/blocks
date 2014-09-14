@@ -17,7 +17,4 @@ FEA_DECLARE_MESSAGE(ChunkLoadedMessage, const ChunkCoord& coordinate; uint64_t t
 FEA_DECLARE_MESSAGE(ChunkModdedMessage, const Chunk& chunk; uint64_t timestamp;);
 FEA_DECLARE_MESSAGE(ChunkHighlightedMessage, const ChunkCoord& coordinate;);
 FEA_DECLARE_MESSAGE(ChunkDehighlightedMessage, const ChunkCoord& coordinate;);
-FEA_DECLARE_MESSAGE(HighlightEntityAddedMessage, fea::EntityId id; const ChunkCoord& coordinate;);
-FEA_DECLARE_MESSAGE(HighlightEntityRemovedMessage, fea::EntityId id;);
-FEA_DECLARE_MESSAGE(HighlightEntityMovedMessage, fea::EntityId id; const ChunkCoord& coordinate;);
 FEA_DECLARE_MESSAGE(HaltChunkAndRegionGenerationMessage, const ChunkCoord& chunkCoordinate; const RegionCoord* regionCoordinate;);

@@ -1,6 +1,7 @@
 #pragma once
 #include "chunk.hpp"
 #include "region.hpp"
+#include "highlightmanager.hpp"
 #include <unordered_map>
 #include <unordered_set>
 #include <fea/util.hpp>
@@ -20,9 +21,15 @@ class World
         bool setVoxelType(const VoxelCoord& voxelCoord, VoxelType type);
         void activateChunk(const ChunkCoord& coordinate);
         void deactivateChunk(const ChunkCoord& coordinate);
+
+        void addHighlightEntity(fea::EntityId id, const ChunkCoord& coordinate);
+        void removeHighlightEntity(fea::EntityId id);
+        void moveHighlightEntity(fea::EntityId id, const ChunkCoord& coordinate);
     private:
         fea::MessageBus& mBus;
         std::unordered_map<RegionCoord, Region> mRegions;
 
         std::unordered_map<RegionCoord, std::unordered_set<ChunkCoord>> mActiveRegions;
+
+        HighlightManager mHighlightManager;
 };

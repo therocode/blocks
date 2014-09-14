@@ -11,7 +11,6 @@ WorldHolder::WorldHolder(fea::MessageBus& messageBus)
 	mEntitySystem(messageBus),
 	mWorldInterface(mWorlds, mEntitySystem),
     mWorldProvider(mBus, mModManager),
-    mHighlightManager(8),
     mModManager(messageBus),
     mRegionManager(mBus)
 {
@@ -21,9 +20,6 @@ WorldHolder::WorldHolder(fea::MessageBus& messageBus)
 	mBus.addSubscriber<ChunkHighlightedMessage>(*this);
 	mBus.addSubscriber<ChunkDehighlightedMessage>(*this);
 	mBus.addSubscriber<RegionDeletedMessage>(*this);
-	mBus.addSubscriber<HighlightEntityAddedMessage>(*this);
-	mBus.addSubscriber<HighlightEntityRemovedMessage>(*this);
-	mBus.addSubscriber<HighlightEntityMovedMessage>(*this);
 
     mWorlds.emplace("default", World(mBus));
     mModManager.setWorldName("default");
@@ -37,9 +33,6 @@ WorldHolder::~WorldHolder()
 	mBus.removeSubscriber<ChunkHighlightedMessage>(*this);
 	mBus.removeSubscriber<ChunkDehighlightedMessage>(*this);
 	mBus.removeSubscriber<RegionDeletedMessage>(*this);
-	mBus.removeSubscriber<HighlightEntityAddedMessage>(*this);
-	mBus.removeSubscriber<HighlightEntityRemovedMessage>(*this);
-	mBus.removeSubscriber<HighlightEntityMovedMessage>(*this);
 }
 
 void WorldHolder::setup()
@@ -112,33 +105,6 @@ void WorldHolder::handleMessage(const RegionDeletedMessage& received)
 {
     mBus.send(LogMessage{"saving modifications to disk for region" + glm::to_string((glm::ivec2)received.coordinate), "file", LogLevel::VERB});
     mModManager.saveMods(received.coordinate);
-}
-
-void WorldHolder::handleMessage(const HighlightEntityAddedMessage& received)
-{
-    ChunkHighlightList highlighted = mHighlightManager.addHighlightEntity(received.id, received.coordinate);
-
-    for(const auto& chunk : highlighted)
-        mBus.send(ChunkHighlightedMessage{chunk});
-}
-
-void WorldHolder::handleMessage(const HighlightEntityRemovedMessage& received)
-{
-    ChunkDehighlightList dehighlighted = mHighlightManager.removeHighlightEntity(received.id);
-
-    for(const auto& chunk : dehighlighted)
-        mBus.send(ChunkHighlightedMessage{chunk});
-}
-
-void WorldHolder::handleMessage(const HighlightEntityMovedMessage& received)
-{
-    std::pair<ChunkHighlightList, ChunkDehighlightList> highlightInfo = mHighlightManager.moveHighlightEntity(received.id, received.coordinate);
-
-    for(const auto& chunk : highlightInfo.first)
-        mBus.send(ChunkHighlightedMessage{chunk});
-
-    for(const auto& chunk : highlightInfo.second)
-        mBus.send(ChunkDehighlightedMessage{chunk});
 }
 
 WorldInterface& WorldHolder::getWorldInterface()

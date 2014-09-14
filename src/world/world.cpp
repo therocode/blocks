@@ -4,7 +4,8 @@
 #include "worldmessages.hpp"
 
 World::World(fea::MessageBus& b) :
-    mBus(b)
+    mBus(b),
+    mHighlightManager(8)
 {
 }
 
@@ -153,4 +154,31 @@ void World::deactivateChunk(const ChunkCoord& coordinate)
     removeChunk(coordinate);
 
     mBus.send(ChunkDeletedMessage{coordinate});
+}
+
+void World::addHighlightEntity(fea::EntityId id, const ChunkCoord& coordinate)
+{
+    ChunkHighlightList highlighted = mHighlightManager.addHighlightEntity(id, coordinate);
+
+    for(const auto& chunk : highlighted)
+        mBus.send(ChunkHighlightedMessage{chunk});
+}
+
+void World::removeHighlightEntity(fea::EntityId id)
+{
+    ChunkDehighlightList dehighlighted = mHighlightManager.removeHighlightEntity(id);
+
+    for(const auto& chunk : dehighlighted)
+        mBus.send(ChunkHighlightedMessage{chunk});
+}
+
+void World::moveHighlightEntity(fea::EntityId id, const ChunkCoord& coordinate)
+{
+    std::pair<ChunkHighlightList, ChunkDehighlightList> highlightInfo = mHighlightManager.moveHighlightEntity(id, coordinate);
+
+    for(const auto& chunk : highlightInfo.first)
+        mBus.send(ChunkHighlightedMessage{chunk});
+
+    for(const auto& chunk : highlightInfo.second)
+        mBus.send(ChunkDehighlightedMessage{chunk});
 }

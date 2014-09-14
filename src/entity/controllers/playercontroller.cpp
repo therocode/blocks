@@ -48,7 +48,7 @@ void PlayerController::handleMessage(const PlayerJoinedMessage& received)
     mPlayerEntities.emplace(playerId, playerEntity);
     playerEntity.lock()->setAttribute<ChunkCoord>("current_chunk", worldToChunk(position));
     mBus.send(PlayerEntersChunkMessage{playerId, worldToChunk(position)});
-    mBus.send(HighlightEntityAddedMessage{(fea::EntityId)playerId, worldToChunk(position)});
+    mWorldInterface.addHighlightEntity("default", (fea::EntityId)playerId, worldToChunk(position));
 
     ChunkCoord chunkAt = worldToChunk(position);
 
@@ -60,7 +60,7 @@ void PlayerController::handleMessage(const PlayerDisconnectedMessage& received)
     size_t playerId = received.playerId;
 
     mBus.send(RemoveEntityMessage{mPlayerEntities.at(playerId).lock()->getId()});
-    mBus.send(HighlightEntityRemovedMessage{(fea::EntityId)playerId});
+    mWorldInterface.removeHighlightEntity("default", (fea::EntityId)playerId);
     mPlayerEntities.erase(playerId);
 }
 
@@ -200,7 +200,7 @@ void PlayerController::handleMessage(const EntityMovedMessage& received)
 void PlayerController::playerEntersChunk(size_t playerId, const ChunkCoord& chunk)
 {
     mBus.send(PlayerEntersChunkMessage{(fea::EntityId)playerId, chunk});
-    mBus.send(HighlightEntityMovedMessage{(fea::EntityId)playerId, chunk});
+    mWorldInterface.moveHighlightEntity("default", (fea::EntityId)playerId, chunk);
     mPlayerEntities.at(playerId).lock()->setAttribute<ChunkCoord>("current_chunk", chunk);
 }
 

@@ -8,7 +8,6 @@
 #include "../rendering/renderingmessages.hpp"
 #include "worldmessages.hpp"
 #include "worldprovider.hpp"
-#include "highlightmanager.hpp"
 #include "regionmanager.hpp"
 
 class WorldHolder : 
@@ -17,10 +16,7 @@ class WorldHolder :
         public fea::MessageReceiver<ChunkDeliverMessage>,
         public fea::MessageReceiver<ChunkHighlightedMessage>,
         public fea::MessageReceiver<ChunkDehighlightedMessage>,
-        public fea::MessageReceiver<RegionDeletedMessage>,
-        public fea::MessageReceiver<HighlightEntityAddedMessage>,
-        public fea::MessageReceiver<HighlightEntityRemovedMessage>,
-        public fea::MessageReceiver<HighlightEntityMovedMessage>
+        public fea::MessageReceiver<RegionDeletedMessage>
 {
     public:
         WorldHolder(fea::MessageBus& messageBus);
@@ -34,9 +30,6 @@ class WorldHolder :
         virtual void handleMessage(const ChunkHighlightedMessage& received);
         virtual void handleMessage(const ChunkDehighlightedMessage& received);
         virtual void handleMessage(const RegionDeletedMessage& received);
-        virtual void handleMessage(const HighlightEntityAddedMessage& received);
-        virtual void handleMessage(const HighlightEntityRemovedMessage& received);
-        virtual void handleMessage(const HighlightEntityMovedMessage& received);
         WorldInterface& getWorldInterface();
     private:
 		glm::vec3 mCamPos, mCamDir;
@@ -45,7 +38,6 @@ class WorldHolder :
         EntitySystem mEntitySystem;
         WorldInterface mWorldInterface;
         WorldProvider mWorldProvider;
-        HighlightManager mHighlightManager;
         ModManager mModManager;
         RegionManager mRegionManager;
 };

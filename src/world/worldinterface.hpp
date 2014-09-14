@@ -25,6 +25,10 @@ class WorldInterface
             return mEntitySystem.getEntityAttribute<Type>(id, name);
         }
         EntityCreator getEntityCreator() const;
+
+        void addHighlightEntity(const std::string& world, fea::EntityId id, const ChunkCoord& coordinate);
+        void removeHighlightEntity(const std::string& world, fea::EntityId id);
+        void moveHighlightEntity(const std::string& world, fea::EntityId id, const ChunkCoord& coordinate);
     private:
         std::unordered_map<std::string, World>& mWorlds;
         EntitySystem& mEntitySystem;
