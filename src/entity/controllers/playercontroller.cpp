@@ -48,7 +48,7 @@ void PlayerController::handleMessage(const PlayerJoinedMessage& received)
     mPlayerEntities.emplace(playerId, playerEntity);
     playerEntity.lock()->setAttribute<ChunkCoord>("current_chunk", worldToChunk(position));
     mBus.send(PlayerEntersChunkMessage{playerId, worldToChunk(position)});
-    mBus.send(HighlightEntitySpawnedMessage{(fea::EntityId)playerId, worldToChunk(position)});
+    mBus.send(HighlightEntityAddedMessage{(fea::EntityId)playerId, worldToChunk(position)});
 
     ChunkCoord chunkAt = worldToChunk(position);
 
@@ -60,7 +60,7 @@ void PlayerController::handleMessage(const PlayerDisconnectedMessage& received)
     size_t playerId = received.playerId;
 
     mBus.send(RemoveEntityMessage{mPlayerEntities.at(playerId).lock()->getId()});
-    mBus.send(HighlightEntityDespawnedMessage{(fea::EntityId)playerId});
+    mBus.send(HighlightEntityRemovedMessage{(fea::EntityId)playerId});
     mPlayerEntities.erase(playerId);
 }
 

@@ -7,49 +7,10 @@
 #include <fea/util.hpp>
 
 #include "world/highlightmanager.hpp"
-#include "world/worldmessages.hpp"
 
 #define PR(x) std::cerr << #x << " = " << (x) << std::endl;
 
 using namespace std;
-
-class TestReceiver : 
-    public fea::MessageReceiver<ChunkHighlightedMessage>,
-    public fea::MessageReceiver<ChunkDehighlightedMessage>
-{
-    public:
-        vector<ChunkCoord> getHighlightedLocs()
-        {
-            return mHighlightedLocs;
-        }
-
-        vector<ChunkCoord> getDehighlightedLocs()
-        {
-            return mDehighlightedLocs;
-        }
-        
-        void clear()
-        {
-            mHighlightedLocs.clear();
-            mDehighlightedLocs.clear();
-        }
-    
-    private:
-        void handleMessage(const ChunkHighlightedMessage& message)
-        {
-            ChunkCoord loc = message.coordinate;
-            mHighlightedLocs.push_back(loc);
-        }
-
-        void handleMessage(const ChunkDehighlightedMessage& message)
-        {
-            ChunkCoord loc = message.coordinate;
-            mDehighlightedLocs.push_back(loc);
-        } 
-
-        vector<ChunkCoord> mHighlightedLocs;
-        vector<ChunkCoord> mDehighlightedLocs; 
-};
 
 TEST_CASE("", "[spawn][despawn][move]")
 {
@@ -61,14 +22,11 @@ TEST_CASE("", "[spawn][despawn][move]")
     int highlightRadius = 3;
 
     fea::MessageBus bus;
-    TestReceiver receiver;
-    bus.addSubscriber<ChunkHighlightedMessage>(receiver);
-    bus.addSubscriber<ChunkDehighlightedMessage>(receiver);
-    HighlightManager manager(bus, highlightRadius);
+    HighlightManager manager(highlightRadius);
 
     SECTION("spawn entity") 
     {
-        bus.send<HighlightEntitySpawnedMessage>(HighlightEntitySpawnedMessage{eId1, loc1});
+        vector<ChunkCoord> highlightedLocs = manager.addHighlightEntity(eId1, loc1);
 
         for(int64_t x = loc1.x - highlightRadius; x < loc1.x + highlightRadius + 1; ++x)
         {
@@ -77,7 +35,6 @@ TEST_CASE("", "[spawn][despawn][move]")
                 for(int64_t z = loc1.z - highlightRadius; z < loc1.z + highlightRadius + 1; ++z)
                 {
                     ChunkCoord loc(x, y, z); 
-                    vector<ChunkCoord> highlightedLocs = receiver.getHighlightedLocs();
                     vector<ChunkCoord>::const_iterator got = find(highlightedLocs.begin(), highlightedLocs.end(), loc);
                     if(got == highlightedLocs.end())
                     {
@@ -94,34 +51,34 @@ TEST_CASE("", "[spawn][despawn][move]")
 
     SECTION("spawn and despawn entity") 
     {
-        bus.send<HighlightEntitySpawnedMessage>(HighlightEntitySpawnedMessage{eId1, loc1});
-        bus.send<HighlightEntityDespawnedMessage>(HighlightEntityDespawnedMessage{eId1});
+        auto highlightedLocs = manager.addHighlightEntity(eId1, loc1);
+        auto dehighlightedLocs = manager.removeHighlightEntity(eId1);
 
-        REQUIRE(receiver.getHighlightedLocs().size() == receiver.getDehighlightedLocs().size());
+        REQUIRE(highlightedLocs.size() == dehighlightedLocs.size());
     }
 
     SECTION("spawn and move entity")
     {
-        bus.send<HighlightEntitySpawnedMessage>(HighlightEntitySpawnedMessage{eId1, loc1});
-        bus.send<HighlightEntityMovedMessage>(HighlightEntityMovedMessage{eId1, loc2});
+        auto highlightedLocs = manager.addHighlightEntity(eId1, loc1);
+        auto highlighted_dehighlightedLocs = manager.moveHighlightEntity(eId1, loc2);
 
-        REQUIRE(29 == receiver.getDehighlightedLocs().size());
+        REQUIRE(29 == highlighted_dehighlightedLocs.second.size());
     }
 
     SECTION("intersect two highlight entities")
     {
-        bus.send<HighlightEntitySpawnedMessage>(HighlightEntitySpawnedMessage{eId1, loc1});
-        bus.send<HighlightEntitySpawnedMessage>(HighlightEntitySpawnedMessage{eId2, loc3});
+        auto highlightedLocs1 = manager.addHighlightEntity(eId1, loc1);
+        auto highlightedLocs2 = manager.addHighlightEntity(eId2, loc3);
 
-        REQUIRE(244 == receiver.getHighlightedLocs().size());
+        REQUIRE(244 == highlightedLocs1.size() + highlightedLocs2.size());
     }
 
     SECTION("intersect two highlight entities and despawn one")
     {
-        bus.send<HighlightEntitySpawnedMessage>(HighlightEntitySpawnedMessage{eId1, loc1});
-        bus.send<HighlightEntitySpawnedMessage>(HighlightEntitySpawnedMessage{eId2, loc3});
-        bus.send<HighlightEntityDespawnedMessage>(HighlightEntityDespawnedMessage{eId1});
+        manager.addHighlightEntity(eId1, loc1);
+        manager.addHighlightEntity(eId2, loc3);
+        auto dehighlightedList = manager.removeHighlightEntity(eId1);
         
-        REQUIRE(121 == receiver.getDehighlightedLocs().size());        
+        REQUIRE(121 == dehighlightedList.size());        
     }
 }

@@ -2,61 +2,57 @@
 
 using namespace std;
 
-HighlightManager::HighlightManager(fea::MessageBus& bus, int highlightRadius)
-    : mBus(bus), mHighlightRadius(highlightRadius) 
+HighlightManager::HighlightManager(int highlightRadius)
+    : mHighlightRadius(highlightRadius) 
 {
-    mBus.addSubscriber<HighlightEntitySpawnedMessage>(*this);
-    mBus.addSubscriber<HighlightEntityDespawnedMessage>(*this);
-    mBus.addSubscriber<HighlightEntityMovedMessage>(*this);
 }
 
-void HighlightManager::handleMessage(const HighlightEntitySpawnedMessage& msg)
-{
-    fea::EntityId id = msg.id;
-    ChunkCoord loc = msg.coordinate;
 
+ChunkHighlightList HighlightManager::addHighlightEntity(fea::EntityId id, const ChunkCoord& coordinate)
+{
     EntityMap::const_iterator got = mEntityMap.find(id);
     if(got != mEntityMap.end())
     {
         throw HighlightManagerException("Entity already spawned.");
     }
 
-    mEntityMap[id] = loc;
-    highlightShape(loc); 
+    mEntityMap[id] = coordinate;
+    
+    return highlightShape(coordinate); 
 }
 
-void HighlightManager::handleMessage(const HighlightEntityDespawnedMessage& msg)
+ChunkDehighlightList HighlightManager::removeHighlightEntity(fea::EntityId id)
 {
-    fea::EntityId id = msg.id;
-
     EntityMap::const_iterator got = mEntityMap.find(id);
     if(got == mEntityMap.end())
     {
         throw HighlightManagerException("Entity hasn't spawned.");
     }
 
-    dehighlightShape(mEntityMap[id]);
+    ChunkDehighlightList dehighlightList = dehighlightShape(mEntityMap[id]);
     mEntityMap.erase(got);
+
+    return dehighlightList;
 }
 
-void HighlightManager::handleMessage(const HighlightEntityMovedMessage& msg)
+std::pair<ChunkHighlightList, ChunkDehighlightList> HighlightManager::moveHighlightEntity(fea::EntityId id, const ChunkCoord& coordinate)
 {
-    fea::EntityId id = msg.id;
-    ChunkCoord loc = msg.coordinate;
-
     EntityMap::const_iterator got = mEntityMap.find(id);
     if(got == mEntityMap.end())
     {
         throw HighlightManagerException("Entity hasn't spawned.");
     }
 
-    highlightShape(loc);
-    dehighlightShape(mEntityMap[id]);
-    mEntityMap[id] = loc;
+    ChunkHighlightList highlightList = highlightShape(coordinate);
+    ChunkDehighlightList dehighlightList = dehighlightShape(mEntityMap[id]);
+    mEntityMap[id] = coordinate;
+    return {highlightList, dehighlightList};
 }
 
-void HighlightManager::highlightShape(const ChunkCoord& loc)
+ChunkHighlightList HighlightManager::highlightShape(const ChunkCoord& loc)
 {
+    ChunkHighlightList highlightList;
+
     for(int64_t x = loc.x - mHighlightRadius; x < loc.x + mHighlightRadius + 1; ++x)
     {
         for(int64_t y = loc.y - mHighlightRadius; y < loc.y + mHighlightRadius + 1; ++y)
@@ -67,15 +63,22 @@ void HighlightManager::highlightShape(const ChunkCoord& loc)
 
                 if(glm::distance(glm::dvec3(loc), glm::dvec3(subLoc)) <= (double)mHighlightRadius)
                 {
-                    highlightChunk(subLoc);
+                    if(highlightChunk(subLoc))
+                    {
+                        highlightList.push_back(subLoc);
+                    }
                 }
             }
         }
     }
+
+    return highlightList;
 }
 
-void HighlightManager::dehighlightShape(const ChunkCoord& loc)
+ChunkDehighlightList HighlightManager::dehighlightShape(const ChunkCoord& loc)
 {
+    ChunkDehighlightList dehighlightList;
+
     for(int64_t x = loc.x - mHighlightRadius; x < loc.x + mHighlightRadius + 1; ++x)
     {
         for(int64_t y = loc.y - mHighlightRadius; y < loc.y + mHighlightRadius + 1; ++y)
@@ -86,16 +89,22 @@ void HighlightManager::dehighlightShape(const ChunkCoord& loc)
 
                 if(glm::distance(glm::dvec3(loc), glm::dvec3(subLoc)) <= (double)mHighlightRadius)
                 {
-                    dehighlightChunk(subLoc);
+                    if(dehighlightChunk(subLoc))
+                    {
+                        dehighlightList.push_back(subLoc);
+                    }
                 }
             }
         }
     }
+
+    return dehighlightList;
 }
 
-void HighlightManager::highlightChunk(const ChunkCoord& coord)
+bool HighlightManager::highlightChunk(const ChunkCoord& coord)
 {
     RefMap::const_iterator got = mRefCounts.find(coord);
+
     if(got == mRefCounts.end())
     {
         mRefCounts[coord] = 0;
@@ -105,13 +114,18 @@ void HighlightManager::highlightChunk(const ChunkCoord& coord)
 
     if(mRefCounts[coord] == 1) 
     {
-        mBus.send<ChunkHighlightedMessage>(ChunkHighlightedMessage{coord});    
+        return true;
+    }
+    else
+    {
+        return false;
     }
 }
 
-void HighlightManager::dehighlightChunk(const ChunkCoord& coord)
+bool HighlightManager::dehighlightChunk(const ChunkCoord& coord)
 {
     RefMap::const_iterator got = mRefCounts.find(coord);
+
     if(got == mRefCounts.end())
     {
         throw HighlightManagerException("Chunk has not been highlighted");
@@ -126,6 +140,10 @@ void HighlightManager::dehighlightChunk(const ChunkCoord& coord)
 
     if(mRefCounts[coord] == 0)
     {
-        mBus.send<ChunkDehighlightedMessage>(ChunkDehighlightedMessage{coord});
+        return true;
+    }
+    else
+    {
+        return false;
     }
 }

@@ -2,11 +2,9 @@
 
 #include <iostream>
 #include <unordered_map>
-
-#include <fea/util.hpp>
+#include <fea/entitysystem.hpp>
 
 #include "chunk.hpp"
-#include "worldmessages.hpp"
 #include "worldstd.hpp"
 
 #define PR(x) std::cerr << #x << " = " << (x) << std::endl;
@@ -22,24 +20,23 @@ struct HighlightManagerException : public std::exception
     const char* what() const throw() { return s.c_str(); }
 };
 
-class HighlightManager : 
-    public fea::MessageReceiver<HighlightEntitySpawnedMessage>,
-    public fea::MessageReceiver<HighlightEntityDespawnedMessage>,
-    public fea::MessageReceiver<HighlightEntityMovedMessage>
+using ChunkHighlightList = std::vector<ChunkCoord>;
+using ChunkDehighlightList = std::vector<ChunkCoord>;
+
+class HighlightManager
 {
     public:
-        HighlightManager(fea::MessageBus& bus, int highlightRadius);
+        HighlightManager(int highlightRadius);
+        ChunkHighlightList addHighlightEntity(fea::EntityId id, const ChunkCoord& coordinate);
+        ChunkDehighlightList removeHighlightEntity(fea::EntityId id);
+        std::pair<ChunkHighlightList, ChunkDehighlightList> moveHighlightEntity(fea::EntityId id, const ChunkCoord& coordinate);
 
     private:
-        virtual void handleMessage(const HighlightEntitySpawnedMessage& msg);
-        virtual void handleMessage(const HighlightEntityDespawnedMessage& msg);
-        virtual void handleMessage(const HighlightEntityMovedMessage& msg);
-        void highlightShape(const ChunkCoord& coord);
-        void dehighlightShape(const ChunkCoord& coord);
-        void highlightChunk(const ChunkCoord& coord);
-        void dehighlightChunk(const ChunkCoord& coord);
+        ChunkHighlightList highlightShape(const ChunkCoord& coord);
+        ChunkDehighlightList dehighlightShape(const ChunkCoord& coord);
+        bool highlightChunk(const ChunkCoord& coord);
+        bool dehighlightChunk(const ChunkCoord& coord);
 
-        fea::MessageBus& mBus;
         RefMap mRefCounts;
         EntityMap mEntityMap;
         int mHighlightRadius;
