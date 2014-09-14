@@ -23,6 +23,7 @@ WorldHolder::WorldHolder(fea::MessageBus& messageBus)
 	mBus.addSubscriber<RegionDeletedMessage>(*this);
 
     mWorlds.emplace("default", World(mBus));
+    mModManager.setWorldName("default");
 }
 
 WorldHolder::~WorldHolder()

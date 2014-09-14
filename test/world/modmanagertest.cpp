@@ -48,6 +48,8 @@ TEST_CASE("set and get", "[set][get]")
     fea::MessageBus bus;
     ModManager manager(bus);
 
+    manager.setWorldName("default");
+
     SECTION("set and get one voxel")
     {
         manager.setMod(loc, voxLoc, type);

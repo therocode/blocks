@@ -211,6 +211,11 @@ void ModManager::recordTimestamp(ChunkCoord loc, uint64_t timestamp)
     mTimestamps[regionLoc][chunkLoc] = timestamp;
 }
 
+void ModManager::setWorldName(const std::string& name)
+{
+    mWorldName = name;
+}
+
 ChunkIndex ModManager::getChunkIndex(RegionCoord regionLoc, RegionChunkCoord chunkLoc)
 {
     hash<RegionChunkCoord> crcHash;
@@ -266,5 +271,5 @@ std::string ModManager::getFilename(RegionCoord regionLoc)
     if(yPart[0] == '-')
         yPart[0] = '_';
 
-    return regionDir + pathSep + xPart + "_" + yPart;  //NOTE: not sure why this needs to be casted... not good.
+    return regionDir + pathSep + mWorldName + pathSep + xPart + "_" + yPart;  //NOTE: not sure why this needs to be casted... not good.
 }

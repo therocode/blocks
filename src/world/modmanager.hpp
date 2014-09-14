@@ -67,6 +67,7 @@ class ModManager
         VoxelType getMod(ChunkCoord loc, ChunkVoxelCoord voxLoc);
         void deleteRegionFile(const RegionCoord& regionLoc);
         void recordTimestamp(ChunkCoord loc, uint64_t timestamp);
+        void setWorldName(const std::string& name);
 
     private:
         ChunkIndex getChunkIndex(RegionCoord regionLoc, RegionChunkCoord chunkLoc);
@@ -80,6 +81,5 @@ class ModManager
         std::string mDataPath;
         WorldModMap mMods;
         WorldTimestampMap mTimestamps;
+        std::string mWorldName;
 };
-
-
