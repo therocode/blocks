@@ -8,7 +8,7 @@ class asIScriptObject;
 class WorldInterface
 {
     public:
-        WorldInterface(World& dimension, EntitySystem& entitySystem);
+        WorldInterface(std::unordered_map<std::string, World>& worlds, EntitySystem& entitySystem);
 		VoxelType getVoxelTypeInt(int x, int y, int z) const;
         VoxelType getVoxelType(float x, float y, float z) const; 
         VoxelType getVoxelType(const glm::vec3& position) const; 
@@ -26,6 +26,6 @@ class WorldInterface
         }
         EntityCreator getEntityCreator() const;
     private:
-        World& mWorld;
+        std::unordered_map<std::string, World>& mWorlds;
         EntitySystem& mEntitySystem;
 };

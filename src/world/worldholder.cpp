@@ -8,9 +8,8 @@
 
 WorldHolder::WorldHolder(fea::MessageBus& messageBus) 
 :   mBus(messageBus),
-    mStandardWorld(messageBus),
 	mEntitySystem(messageBus),
-	mWorldInterface(mStandardWorld, mEntitySystem),
+	mWorldInterface(mWorlds, mEntitySystem),
     mWorldProvider(mBus, mModManager),
     mHighlightManager(mBus, 8),
     mModManager(messageBus),
@@ -22,6 +21,8 @@ WorldHolder::WorldHolder(fea::MessageBus& messageBus)
 	mBus.addSubscriber<ChunkHighlightedMessage>(*this);
 	mBus.addSubscriber<ChunkDehighlightedMessage>(*this);
 	mBus.addSubscriber<RegionDeletedMessage>(*this);
+
+    mWorlds.emplace("default", World(mBus));
 }
 
 WorldHolder::~WorldHolder()
@@ -62,7 +63,7 @@ void WorldHolder::handleMessage(const SetVoxelMessage& received)
     VoxelCoord coordinate = received.voxel;
     VoxelType type = received.type;
 
-    bool succeeded = mStandardWorld.setVoxelType(coordinate, type);
+    bool succeeded = mWorlds.at("default").setVoxelType(coordinate, type);
 
     if(succeeded)
     {
@@ -76,20 +77,20 @@ void WorldHolder::handleMessage(const RegionDeliverMessage& received)
     RegionCoord coordinate = received.coordinate;
     Region region = received.newRegion;
 
-    mStandardWorld.addRegion(coordinate, region);
+    mWorlds.at("default").addRegion(coordinate, region);
     mBus.send(LogMessage{"region created" + glm::to_string((glm::ivec2)coordinate), "landscape", LogLevel::VERB});
 }
 
 void WorldHolder::handleMessage(const ChunkHighlightedMessage& received)
 {
-    mStandardWorld.activateChunk(received.coordinate);
+    mWorlds.at("default").activateChunk(received.coordinate);
     mBus.send(ChunkRequestedMessage{received.coordinate});
 }
 
 void WorldHolder::handleMessage(const ChunkDehighlightedMessage& received)
 {
     mModManager.recordTimestamp(received.coordinate, 0);
-    mStandardWorld.deactivateChunk(received.coordinate);
+    mWorlds.at("default").deactivateChunk(received.coordinate);
 }
 
 void WorldHolder::handleMessage(const ChunkDeliverMessage& received)
@@ -97,7 +98,7 @@ void WorldHolder::handleMessage(const ChunkDeliverMessage& received)
     ChunkCoord coordinate = received.coordinate;
     Chunk chunk = received.chunk;
 
-    mStandardWorld.addChunk(coordinate, chunk);
+    mWorlds.at("default").addChunk(coordinate, chunk);
 }
 
 void WorldHolder::handleMessage(const RegionDeletedMessage& received)

@@ -1,7 +1,7 @@
 #include "worldinterface.hpp"
 #include "rendering/renderer.hpp"
-    WorldInterface::WorldInterface(World& dimension, EntitySystem& entitySystem)
-:   mWorld(dimension),
+    WorldInterface::WorldInterface(std::unordered_map<std::string, World>& worlds, EntitySystem& entitySystem)
+:   mWorlds(worlds),
     mEntitySystem(entitySystem)
 {
 
@@ -9,7 +9,7 @@
 
 VoxelType WorldInterface::getVoxelTypeInt(int x, int y, int z) const
 {
-    return mWorld.getVoxelType(VoxelCoord(x, y, z));
+    return mWorlds.at("default").getVoxelType(VoxelCoord(x, y, z));
 }
 
 VoxelType WorldInterface::getVoxelType(const VoxelCoord coord) const
@@ -137,7 +137,7 @@ fea::WeakEntityPtr WorldInterface::createEntity(const std::string& scriptType, c
 
 ChunkReferenceMap WorldInterface::getChunkMap() const
 {
-    return mWorld.getChunkMap();
+    return mWorlds.at("default").getChunkMap();
 }
 
 EntityCreator WorldInterface::getEntityCreator() const

@@ -45,7 +45,6 @@ void PlayerController::handleMessage(const PlayerJoinedMessage& received)
     glm::vec3 position = received.position;
 
     fea::WeakEntityPtr playerEntity = mWorldInterface.createEntity("Player", position);
-    std::cout << "created player entity and it's id is " << playerEntity.lock()->getId() << "\n";
     mPlayerEntities.emplace(playerId, playerEntity);
     playerEntity.lock()->setAttribute<ChunkCoord>("current_chunk", worldToChunk(position));
     mBus.send(PlayerEntersChunkMessage{playerId, worldToChunk(position)});

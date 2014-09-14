@@ -1,4 +1,5 @@
 #pragma once
+#include <unordered_map>
 #include "../blockstd.hpp"
 #include "world.hpp"
 #include "worldinterface.hpp"
@@ -34,7 +35,7 @@ class WorldHolder :
     private:
 		glm::vec3 mCamPos, mCamDir;
         fea::MessageBus& mBus;
-        World mStandardWorld;
+        std::unordered_map<std::string, World> mWorlds;
         EntitySystem mEntitySystem;
         WorldInterface mWorldInterface;
         WorldProvider mWorldProvider;
