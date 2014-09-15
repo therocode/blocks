@@ -68,6 +68,7 @@ bool World::setVoxelType(const VoxelCoord& voxelCoordinate, VoxelType type)
         {
             region.getChunk(chunk).setVoxelType(voxelToChunkVoxel(voxelCoordinate), type);
             mModManager.setMod(voxelToChunk(voxelCoordinate), voxelToChunkVoxel(voxelCoordinate), type);
+            //mBus.send(LogMessage{"Set voxel in chunk " + glm::to_string((glm::ivec3)voxelToChunk(voxelCoordinate)), "landscape", LogLevel::VERB});
             return true;
         }
         else
@@ -111,6 +112,8 @@ bool World::hasRegion(const RegionCoord& coordinate) const
 
 void World::activateChunk(const ChunkCoord& coordinate)
 {
+    //mBus.send(LogMessage{"Highlighted chunk " + glm::to_string((glm::ivec3)coordinate), "landscape", LogLevel::VERB});
+
     RegionCoord regionCoord = chunkToRegion(coordinate);
 
     if(mHighlightedRegions.count(regionCoord) == 0)
@@ -119,6 +122,7 @@ void World::activateChunk(const ChunkCoord& coordinate)
     }
     else
     {
+        FEA_ASSERT(mHighlightedRegions.at(regionCoord).count(coordinate) == 0, "Trying to activate chunk " + glm::to_string((glm::ivec3)coordinate) + " but it is already activated");
         mHighlightedRegions.at(regionCoord).insert(coordinate);
     }
 
@@ -127,6 +131,7 @@ void World::activateChunk(const ChunkCoord& coordinate)
 
 void World::deactivateChunk(const ChunkCoord& coordinate)
 {
+    //mBus.send(LogMessage{"Dehighlighted chunk " + glm::to_string((glm::ivec3)coordinate), "landscape", LogLevel::VERB});
     RegionCoord regionCoord = chunkToRegion(coordinate);
 
     FEA_ASSERT(mHighlightedRegions.count(regionCoord) != 0, "Dehighlighting a region " + glm::to_string((glm::ivec2)regionCoord) + " which has not been highlighted. bad!");
@@ -150,6 +155,7 @@ void World::deactivateChunk(const ChunkCoord& coordinate)
     if(mRegions.count(regionCoord) == 0)
     {
         mBus.send(HaltChunkAndRegionGenerationMessage{coordinate, regionRemoved ? &regionCoord : nullptr});
+        //mBus.send(LogMessage{"Haltting generation of " + glm::to_string((glm::ivec3)coordinate), "landscape", LogLevel::VERB});
         return; //return, because there is nothing to remove
     }
 
@@ -159,6 +165,7 @@ void World::deactivateChunk(const ChunkCoord& coordinate)
     if(region.hasChunk(chunkToRegionChunk(coordinate)) == 0)
     {
         mBus.send(HaltChunkAndRegionGenerationMessage{coordinate, nullptr});
+        //mBus.send(LogMessage{"Halting generation of " + glm::to_string((glm::ivec3)coordinate), "landscape", LogLevel::VERB});
         return; //return, because there is nothing to remove
     }
 

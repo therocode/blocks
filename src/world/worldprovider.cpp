@@ -76,6 +76,7 @@ void WorldProvider::handleMessage(const FrameMessage& received)
     {
         for(auto& chunk : chunks)
         {
+            //std::cout << "delivering finished chunk " + glm::to_string((glm::ivec3)chunk.first) + "\n";
             mBus.send(ChunkDeliverMessage{chunk.first, std::move(chunk.second)}); //sends the finished chunk to be kept by whatever system
         }
     }
@@ -92,7 +93,11 @@ void WorldProvider::handleMessage(const HaltChunkAndRegionGenerationMessage& rec
         std::lock_guard<std::mutex> inLock(mThreadInputMutex);
         std::lock_guard<std::mutex> outLock(mThreadOutputMutex);
 
-        std::find(mChunksToGenerate.begin(), mChunksToGenerate.end(), received.chunkCoordinate);
+        for(size_t i = 0; i < mChunksToGenerate.size(); i++)
+        {
+            if(mChunksToGenerate[i] == received.chunkCoordinate)
+                mChunksToGenerate.erase(mChunksToGenerate.begin() + i);
+        }
 
         for(size_t i = 0; i < mChunksToDeliver.size(); i++)
         {
