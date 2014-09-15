@@ -30,7 +30,6 @@ class WorldHolder :
         virtual void handleMessage(const ChunkDehighlightedMessage& received);
         WorldInterface& getWorldInterface();
     private:
-		glm::vec3 mCamPos, mCamDir;
         fea::MessageBus& mBus;
         std::unordered_map<std::string, World> mWorlds;
         EntitySystem mEntitySystem;
