@@ -8,7 +8,6 @@
 #include "../rendering/renderingmessages.hpp"
 #include "worldmessages.hpp"
 #include "worldprovider.hpp"
-#include "regionmanager.hpp"
 
 class WorldHolder : 
         public fea::MessageReceiver<SetVoxelMessage>,
@@ -35,5 +34,4 @@ class WorldHolder :
         EntitySystem mEntitySystem;
         WorldInterface mWorldInterface;
         WorldProvider mWorldProvider;
-        RegionManager mRegionManager;
 };

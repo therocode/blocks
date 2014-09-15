@@ -95,7 +95,6 @@ set(source_files
     src/world/highlightmanager.cpp
     src/world/modmanager.cpp
     src/world/region.cpp
-    src/world/regionmanager.cpp
     src/world/worldstd.cpp
     src/world/worldholder.cpp
     src/world/world.cpp
@@ -216,7 +215,6 @@ set(header_files
     src/world/highlightmanager.hpp
     src/world/modmanager.hpp
     src/world/region.hpp
-    src/world/regionmanager.hpp
     src/world/worldstd.hpp
 	src/world/worldholder.hpp
     src/world/world.hpp

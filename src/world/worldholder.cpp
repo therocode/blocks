@@ -10,8 +10,7 @@ WorldHolder::WorldHolder(fea::MessageBus& messageBus)
 :   mBus(messageBus),
 	mEntitySystem(messageBus),
 	mWorldInterface(mWorlds, mEntitySystem),
-    mWorldProvider(mBus),
-    mRegionManager(mBus)
+    mWorldProvider(mBus)
 {
 	mBus.addSubscriber<SetVoxelMessage>(*this);
 	mBus.addSubscriber<RegionDeliverMessage>(*this);
