@@ -34,7 +34,6 @@ WorldProvider::~WorldProvider()
 
 void WorldProvider::handleMessage(const ChunkRequestedMessage& received)
 {
-    //std::cout << "requested new chunk " << glm::to_string((glm::ivec3)received.coordinate) << "\n";
     //add chunk to load to other thread
     std::lock_guard<std::mutex> lock(mThreadInputMutex);
     mChunksToGenerate.push_back(received.coordinate);       
@@ -57,8 +56,6 @@ void WorldProvider::handleMessage(const FrameMessage& received)
         regions = mRegionsToDeliver;
         chunks = mChunksToDeliver;
 
-        //std::cout << "fetched done stuff! had " << mRegionsToDeliver.size() << " regions to deliver and " << mChunksToDeliver.size() << " chunks\n";
-
         mRegionsToDeliver.clear();
         mChunksToDeliver.clear();
     }
@@ -68,7 +65,6 @@ void WorldProvider::handleMessage(const FrameMessage& received)
         for(const auto& region : regions)
         {
             mBus.send(RegionDeliverMessage{region.first, std::move(region.second)});
-            //std::cout << "done generating region " << glm::to_string((glm::ivec2)region.first) << "\n";
         }
     }
 
@@ -76,7 +72,6 @@ void WorldProvider::handleMessage(const FrameMessage& received)
     {
         for(auto& chunk : chunks)
         {
-            //std::cout << "delivering finished chunk " + glm::to_string((glm::ivec3)chunk.first) + "\n";
             mBus.send(ChunkDeliverMessage{chunk.first, std::move(chunk.second)}); //sends the finished chunk to be kept by whatever system
         }
     }
@@ -84,11 +79,6 @@ void WorldProvider::handleMessage(const FrameMessage& received)
 
 void WorldProvider::handleMessage(const HaltChunkAndRegionGenerationMessage& received)
 {
-    //if(received.regionCoordinate)
-        //std::cout << "Has to stop generating " << glm::to_string((glm::ivec3)received.chunkCoordinate) << " and region " << glm::to_string((glm::ivec2)*received.regionCoordinate) << "\n";
-    //else
-        //std::cout << "Has to stop generating " << glm::to_string((glm::ivec3)received.chunkCoordinate) << "\n";
-
     {
         std::lock_guard<std::mutex> inLock(mThreadInputMutex);
         std::lock_guard<std::mutex> outLock(mThreadOutputMutex);
@@ -103,7 +93,6 @@ void WorldProvider::handleMessage(const HaltChunkAndRegionGenerationMessage& rec
         {
             if(mChunksToDeliver[i].first == received.chunkCoordinate)
             {
-                //std::cout << "successfully removed chunk " << glm::to_string((glm::ivec3)received.chunkCoordinate) << " from generation queue\n";
                 mChunksToDeliver.erase(mChunksToDeliver.begin() + i);
                 break;
             }
@@ -118,7 +107,6 @@ void WorldProvider::handleMessage(const HaltChunkAndRegionGenerationMessage& rec
             {
                 if(mRegionsToDeliver[i].first == *received.regionCoordinate)
                 {
-                    //std::cout << "successfully removed region " << glm::to_string((glm::ivec2)*received.regionCoordinate) << " from generation queue\n";
                     mRegionsToDeliver.erase(mRegionsToDeliver.begin() + i);
                     break;
                 }
@@ -139,7 +127,6 @@ void WorldProvider::generatorLoop()
         {
             std::lock_guard<std::mutex> lock(mThreadInputMutex);
             mChunkQueue.insert(mChunkQueue.end(), mChunksToGenerate.begin(), mChunksToGenerate.end());
-            //std::cout << "fetching new jobs, I had " << mChunksToGenerate.size() << " to fetch\n";
             mChunksToGenerate.clear();
         }
 
@@ -151,7 +138,6 @@ void WorldProvider::generatorLoop()
             for(size_t i = 0; i < mChunkQueue.size(); i++)
             {
                 const auto& chunkCoordinate = mChunkQueue[i];
-                //std::cout << "making a chunk\n";
                 RegionCoord regionCoordinate = chunkToRegion(chunkCoordinate);
 
                 if(mRegions.count(regionCoordinate) == 0)
@@ -190,7 +176,6 @@ void WorldProvider::generatorLoop()
                 {
                     if(mChunkQueue[i] == chunk)
                     {
-                        //std::cout << "successfully discarded chunk " << glm::to_string((glm::ivec3)chunk) << "\n";
                         mChunkQueue.erase(mChunkQueue.begin() + i);
                         break;
                     }
@@ -202,7 +187,6 @@ void WorldProvider::generatorLoop()
                 {
                     if(mChunksToDeliver[i].first == chunk)
                     {
-                        //std::cout << "successfully discarded chunk " << glm::to_string((glm::ivec3)chunk) << "\n";
                         mChunksToDeliver.erase(mChunksToDeliver.begin() + i);
                         break;
                     }
@@ -214,7 +198,6 @@ void WorldProvider::generatorLoop()
                 {
                     if(mRegionsToDeliver[i].first == region)
                     {
-                        //std::cout << "successfully discarded region " << glm::to_string((glm::ivec2)region) << "\n";
                         mRegionsToDeliver.erase(mRegionsToDeliver.begin() + i);
                         break;
                     }
@@ -222,7 +205,6 @@ void WorldProvider::generatorLoop()
             }
             mChunksToDiscard.clear();
             mRegionsToDiscard.clear();
-            //std::cout << "delivering. will deliver " << mChunksToDeliver.size() << " chinks and " << mRegionsToDeliver.size() << " regions\n";
         }
     }
 }
