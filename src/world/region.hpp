@@ -21,7 +21,7 @@ class Region
         bool hasChunk(const RegionChunkCoord& location) const;
         const Chunk& getChunk(const RegionChunkCoord& location) const;
         Chunk& getChunk(const RegionChunkCoord& location);
-        ChunkReferenceMap getChunkList() const;
+        ChunkReferenceMap getChunkList() const;  //implement this for real. it just returns ChunkReferenceMap() right now!
         void addChunk(const RegionChunkCoord& coordinate, const Chunk& chunk);
         void removeChunk(const RegionChunkCoord& coordinate);
         size_t getLoadedChunkAmount() const;

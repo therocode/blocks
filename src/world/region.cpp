@@ -55,7 +55,7 @@ void Region::removeChunk(const RegionChunkCoord& coordinate)
 
 size_t Region::getLoadedChunkAmount() const
 {
-    return mChunks.size();
+   return mChunks.size();
 }
 
 const IntensityMap& Region::getHeightmap() const

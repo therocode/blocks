@@ -93,11 +93,11 @@ VBO VBOCreator::generateChunkVBO(Chunk* mainChunk, Chunk* topChunk, Chunk* botto
 
             if(leftChunk)
             {
-                walker.setLeftType(leftChunk->getVoxelType(chunkWidth - 1, y, z));
+                walker.setLeftType(leftChunk->getVoxelType({chunkWidth - 1, y, z}));
             }
             if(rightChunk)
             {
-                walker.setRightType(rightChunk->getVoxelType(0, y, z));
+                walker.setRightType(rightChunk->getVoxelType({0, y, z}));
             }
 
             walker.walk();

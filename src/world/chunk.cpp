@@ -66,21 +66,16 @@ Chunk::Chunk(const ChunkCoord& loc, const RleIndexArray& indices, const RleSegme
 //ab
 //b
 
-void Chunk::setVoxelType(uint32_t x, uint32_t y, uint32_t z, VoxelType type)
-{
-    if(x >= chunkWidth || y >= chunkWidth || z >= chunkWidth)
-        return;
-
-    VoxelSegmentTypeArray uncompressed = getUncompressedTypeSegment(y, z);
-
-    uncompressed[x] = type;
-
-    setSegmentTypeFromArray(y, z, uncompressed);
-}
-
 void Chunk::setVoxelType(const ChunkVoxelCoord& voxel, VoxelType type)
 {
-    setVoxelType(voxel.x, voxel.y, voxel.z, type);
+    if(voxel.x >= chunkWidth || voxel.y >= chunkWidth || voxel.z >= chunkWidth)
+        return;
+
+    VoxelSegmentTypeArray uncompressed = getUncompressedTypeSegment(voxel.y, voxel.z);
+
+    uncompressed[voxel.x] = type;
+
+    setSegmentTypeFromArray(voxel.y, voxel.z, uncompressed);
 }
 
 void Chunk::setVoxelData(const VoxelTypeArray& types)
@@ -131,26 +126,21 @@ void Chunk::setVoxelData(const VoxelTypeArray& types)
 }
 
 //these should be optimised in the future using binary trees
-VoxelType Chunk::getVoxelType(uint32_t x, uint32_t y, uint32_t z) const
+VoxelType Chunk::getVoxelType(const ChunkVoxelCoord& voxel) const
 {
-	if(x >= chunkWidth || y >= chunkWidth || z >= chunkWidth)return 0;
-    size_t segmentIterator = mRleSegmentIndices[z + y * chunkWidth].mSegmentStart;
+	if(voxel.x >= chunkWidth || voxel.y >= chunkWidth || voxel.z >= chunkWidth)return 0;
+    size_t segmentIterator = mRleSegmentIndices[voxel.z + voxel.y * chunkWidth].mSegmentStart;
     size_t walked = 0;
 
-    while(walked < x)
+    while(walked < voxel.x)
     {
         walked += mRleSegments[segmentIterator];
 
-        if(walked <= x)
+        if(walked <= voxel.x)
             segmentIterator += 2;
     }
     
     return mRleSegments[segmentIterator + 1];
-}
-
-VoxelType Chunk::getVoxelType(const ChunkVoxelCoord& voxel) const
-{
-    return getVoxelType(voxel.x, voxel.y, voxel.z);
 }
 
 VoxelTypeData Chunk::getVoxelTypeData() const
