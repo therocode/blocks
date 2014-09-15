@@ -9,8 +9,6 @@ WorldHolder::WorldHolder(fea::MessageBus& messageBus, EntitySystem& entitySystem
 	mBus.addSubscriber<SetVoxelMessage>(*this);
 	mBus.addSubscriber<RegionDeliverMessage>(*this);
 	mBus.addSubscriber<ChunkDeliverMessage>(*this);
-	mBus.addSubscriber<ChunkHighlightedMessage>(*this);
-	mBus.addSubscriber<ChunkDehighlightedMessage>(*this);
 
     mWorlds.emplace("default", World(mBus, "default"));
 }
@@ -20,8 +18,6 @@ WorldHolder::~WorldHolder()
 	mBus.removeSubscriber<SetVoxelMessage>(*this);
 	mBus.removeSubscriber<RegionDeliverMessage>(*this);
 	mBus.removeSubscriber<ChunkDeliverMessage>(*this);
-	mBus.removeSubscriber<ChunkHighlightedMessage>(*this);
-	mBus.removeSubscriber<ChunkDehighlightedMessage>(*this);
 }
 
 void WorldHolder::handleMessage(const SetVoxelMessage& received)
@@ -44,17 +40,6 @@ void WorldHolder::handleMessage(const RegionDeliverMessage& received)
 
     mWorlds.at("default").addRegion(coordinate, region);
     mBus.send(LogMessage{"region created" + glm::to_string((glm::ivec2)coordinate), "landscape", LogLevel::VERB});
-}
-
-void WorldHolder::handleMessage(const ChunkHighlightedMessage& received)
-{
-    mWorlds.at("default").activateChunk(received.coordinate);
-    mBus.send(ChunkRequestedMessage{"default", received.coordinate});
-}
-
-void WorldHolder::handleMessage(const ChunkDehighlightedMessage& received)
-{
-    mWorlds.at("default").deactivateChunk(received.coordinate);
 }
 
 void WorldHolder::handleMessage(const ChunkDeliverMessage& received)

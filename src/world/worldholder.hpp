@@ -10,9 +10,7 @@
 class WorldHolder : 
         public fea::MessageReceiver<SetVoxelMessage>,
         public fea::MessageReceiver<RegionDeliverMessage>,
-        public fea::MessageReceiver<ChunkDeliverMessage>,
-        public fea::MessageReceiver<ChunkHighlightedMessage>,
-        public fea::MessageReceiver<ChunkDehighlightedMessage>
+        public fea::MessageReceiver<ChunkDeliverMessage>
 {
     public:
         WorldHolder(fea::MessageBus& messageBus, EntitySystem& entitySystem);
@@ -20,8 +18,6 @@ class WorldHolder :
         virtual void handleMessage(const SetVoxelMessage& received);
         virtual void handleMessage(const RegionDeliverMessage& received);
         virtual void handleMessage(const ChunkDeliverMessage& received);
-        virtual void handleMessage(const ChunkHighlightedMessage& received);
-        virtual void handleMessage(const ChunkDehighlightedMessage& received);
         WorldInterface& getWorldInterface();
     private:
         fea::MessageBus& mBus;

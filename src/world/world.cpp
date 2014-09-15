@@ -129,6 +129,8 @@ void World::activateChunk(const ChunkCoord& coordinate)
     {
         mActiveRegions.at(regionCoord).insert(coordinate);
     }
+
+    mBus.send(ChunkRequestedMessage{mIdentifier, coordinate});
 }
 
 void World::deactivateChunk(const ChunkCoord& coordinate)
@@ -179,7 +181,7 @@ void World::addHighlightEntity(fea::EntityId id, const ChunkCoord& coordinate)
     ChunkHighlightList highlighted = mHighlightManager.addHighlightEntity(id, coordinate);
 
     for(const auto& chunk : highlighted)
-        mBus.send(ChunkHighlightedMessage{chunk});
+        activateChunk(chunk);
 }
 
 void World::removeHighlightEntity(fea::EntityId id)
@@ -187,7 +189,7 @@ void World::removeHighlightEntity(fea::EntityId id)
     ChunkDehighlightList dehighlighted = mHighlightManager.removeHighlightEntity(id);
 
     for(const auto& chunk : dehighlighted)
-        mBus.send(ChunkHighlightedMessage{chunk});
+        deactivateChunk(chunk);
 }
 
 void World::moveHighlightEntity(fea::EntityId id, const ChunkCoord& coordinate)
@@ -195,8 +197,8 @@ void World::moveHighlightEntity(fea::EntityId id, const ChunkCoord& coordinate)
     std::pair<ChunkHighlightList, ChunkDehighlightList> highlightInfo = mHighlightManager.moveHighlightEntity(id, coordinate);
 
     for(const auto& chunk : highlightInfo.first)
-        mBus.send(ChunkHighlightedMessage{chunk});
+        activateChunk(chunk);
 
     for(const auto& chunk : highlightInfo.second)
-        mBus.send(ChunkDehighlightedMessage{chunk});
+        deactivateChunk(chunk);
 }

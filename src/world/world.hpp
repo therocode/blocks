@@ -21,13 +21,13 @@ class World
         void removeRegion(const RegionCoord& coordinate);
         VoxelType getVoxelType(const VoxelCoord& voxelCoordinate) const;
         bool setVoxelType(const VoxelCoord& voxelCoord, VoxelType type);
-        void activateChunk(const ChunkCoord& coordinate);
-        void deactivateChunk(const ChunkCoord& coordinate);
 
         void addHighlightEntity(fea::EntityId id, const ChunkCoord& coordinate);
         void removeHighlightEntity(fea::EntityId id);
         void moveHighlightEntity(fea::EntityId id, const ChunkCoord& coordinate);
     private:
+        void activateChunk(const ChunkCoord& coordinate);
+        void deactivateChunk(const ChunkCoord& coordinate);
         fea::MessageBus& mBus;
 
         std::string mIdentifier;
