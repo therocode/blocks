@@ -163,7 +163,8 @@ void WorldProvider::generatorLoop()
 
         //deliver finished chunks
         {
-            std::lock_guard<std::mutex> lock(mThreadOutputMutex);
+            std::lock_guard<std::mutex> lock1(mThreadOutputMutex);
+            std::lock_guard<std::mutex> lock2(mThreadMainMutex);   //this is needed for mRegions to be able to remove regions from it
 
             mChunksToDeliver.insert(mChunksToDeliver.end(), mFinishedChunks.begin(), mFinishedChunks.end());
             mRegionsToDeliver.insert(mRegionsToDeliver.end(), mFinishedRegions.begin(), mFinishedRegions.end());
@@ -199,6 +200,7 @@ void WorldProvider::generatorLoop()
                     if(mRegionsToDeliver[i].first == region)
                     {
                         mRegionsToDeliver.erase(mRegionsToDeliver.begin() + i);
+                        mRegions.erase(region);
                         break;
                     }
                 }

@@ -26,12 +26,15 @@ ChunkReferenceMap World::getChunkMap() const
 void World::deliverRegion(const RegionCoord& coordinate, const Region& region)
 {
     mRegions.emplace(coordinate, std::move(region));
+    mBus.send(LogMessage{"Region " + glm::to_string((glm::ivec2)coordinate) + " loaded", "file", LogLevel::VERB});
 }
 
 void World::deliverChunk(const ChunkCoord& coordinate, Chunk& chunk)
 {
     RegionCoord region = chunkToRegion(coordinate);
 
+    FEA_ASSERT(mHighlightedRegions.count(region) != 0, "Trying to deliver chunk " + glm::to_string((glm::ivec3)coordinate) + " which  belongs to region " + glm::to_string((glm::ivec2)region) + " but that region is not highlighted!");
+    FEA_ASSERT(mHighlightedRegions.at(region).count(coordinate) != 0, "Got chunk " + glm::to_string((glm::ivec3)coordinate) + " delivered but that chunk is not highlighted!");
     FEA_ASSERT(mRegions.count(region) != 0, "Trying to deliver chunk " + glm::to_string((glm::ivec3)coordinate) + " which belongs to region " + glm::to_string((glm::ivec2)region) + " but that region doesn't exist!");
 
     mModManager.loadMods(chunk);
