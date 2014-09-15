@@ -23,10 +23,9 @@ class World
         void moveHighlightEntity(fea::EntityId id, const ChunkCoord& coordinate);
     private:
         bool hasRegion(const RegionCoord& coordinate) const;
-        void removeChunk(const ChunkCoord& coordinate);
-        void removeRegion(const RegionCoord& coordinate);
         void activateChunk(const ChunkCoord& coordinate);
         void deactivateChunk(const ChunkCoord& coordinate);
+        void removeChunk(const ChunkCoord& coordinate);
 
         fea::MessageBus& mBus;
 

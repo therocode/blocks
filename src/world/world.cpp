@@ -106,36 +106,7 @@ void World::moveHighlightEntity(fea::EntityId id, const ChunkCoord& coordinate)
 
 bool World::hasRegion(const RegionCoord& coordinate) const
 {
-    return mRegions.find(coordinate) != mRegions.end();
-}
-
-void World::removeChunk(const ChunkCoord& coordinate)
-{
-    RegionCoord regionCoord = chunkToRegion(coordinate);
-
-    FEA_ASSERT(mRegions.count(regionCoord) != 0, "Removing chunk " + glm::to_string((glm::ivec3)coordinate) + " from the world in region " + glm::to_string((glm::ivec2)regionCoord) + " but that region has not been added");
-
-    Region& region = mRegions.at(regionCoord);
-
-    FEA_ASSERT(region.hasChunk(chunkToRegionChunk(coordinate)), "Removing chunk " + glm::to_string((glm::ivec3)coordinate) + " from the world in region " + glm::to_string((glm::ivec2)regionCoord) + " but that chunk has not been added");
-
-    region.removeChunk(chunkToRegionChunk(coordinate));
-
-    if(region.getLoadedChunkAmount() == 0)
-    {
-        //std::cout << " this also removed a region\n";
-        mRegions.erase(regionCoord);
-        mBus.send(RegionDeletedMessage{regionCoord});
-
-        mBus.send(LogMessage{"saving modifications to disk for region" + glm::to_string((glm::ivec2)regionCoord), "file", LogLevel::VERB});
-        mModManager.saveMods(regionCoord);
-    }
-}
-
-void World::removeRegion(const RegionCoord& coordinate)
-{
-    FEA_ASSERT(mRegions.size() == 0, "This region which is about to be removed is actually not empty which is bad");
-    mRegions.erase(coordinate);
+    return mRegions.count(coordinate) != 0;
 }
 
 void World::activateChunk(const ChunkCoord& coordinate)
@@ -162,23 +133,24 @@ void World::deactivateChunk(const ChunkCoord& coordinate)
 
     auto& highlightRegion = mHighlightedRegions.at(regionCoord);
 
-    FEA_ASSERT(highlightRegion.count(coordinate) != 0, "Dehighlighting chunk " + glm::to_string((glm::ivec3)coordinate) + " which does not exist. bad!");
+    FEA_ASSERT(highlightRegion.count(coordinate) != 0, "Dehighlighting chunk " + glm::to_string((glm::ivec3)coordinate) + " which has not been highlighted. bad!");
 
+    //dehighlight, and remove the region if it is empty afterwards
     mHighlightedRegions.at(regionCoord).erase(coordinate);
 
-    bool regionCancelled = false;
+    bool regionRemoved = false;
 
     if(mHighlightedRegions.at(regionCoord).size() == 0)
     {
         mHighlightedRegions.erase(regionCoord);
-        regionCancelled = true;
+        regionRemoved = true;
     }
 
-    //if a chunk is deactivated and there is no region for that chunk, it must mean that the region is about to be generated in the other thread but hasn't been finished yet. The thread must be notified that the region and chunk is not needed anymore. But only if it is not needed by another chunk
+    //if a chunk is dehighlighted and there is no region for that chunk, it must mean that the region is about to be generated in the other thread but hasn't been finished yet. The thread must be notified that the region and chunk is not needed anymore. But only if it is not needed by another chunk
     if(mRegions.count(regionCoord) == 0)
     {
-        mBus.send(HaltChunkAndRegionGenerationMessage{coordinate, regionCancelled ? &regionCoord : nullptr});
-        return;
+        mBus.send(HaltChunkAndRegionGenerationMessage{coordinate, regionRemoved ? &regionCoord : nullptr});
+        return; //return, because there is nothing to remove
     }
 
     auto& region = mRegions.at(regionCoord);
@@ -187,11 +159,33 @@ void World::deactivateChunk(const ChunkCoord& coordinate)
     if(region.hasChunk(chunkToRegionChunk(coordinate)) == 0)
     {
         mBus.send(HaltChunkAndRegionGenerationMessage{coordinate, nullptr});
-        return;
+        return; //return, because there is nothing to remove
     }
 
-    mModManager.recordTimestamp(coordinate, 0);
+    mModManager.recordTimestamp(coordinate, 0); //timestamp must be fixed
     removeChunk(coordinate);
 
     mBus.send(ChunkDeletedMessage{coordinate});
+}
+
+void World::removeChunk(const ChunkCoord& coordinate)
+{
+    RegionCoord regionCoord = chunkToRegion(coordinate);
+
+    FEA_ASSERT(mRegions.count(regionCoord) != 0, "Removing chunk " + glm::to_string((glm::ivec3)coordinate) + " from the world in region " + glm::to_string((glm::ivec2)regionCoord) + " but that region has not been added");
+
+    Region& region = mRegions.at(regionCoord);
+
+    FEA_ASSERT(region.hasChunk(chunkToRegionChunk(coordinate)), "Removing chunk " + glm::to_string((glm::ivec3)coordinate) + " from the world in region " + glm::to_string((glm::ivec2)regionCoord) + " but that chunk has not been added");
+
+    region.removeChunk(chunkToRegionChunk(coordinate));
+
+    if(region.getLoadedChunkAmount() == 0)
+    {
+        mRegions.erase(regionCoord);
+        mBus.send(RegionDeletedMessage{regionCoord});
+
+        mBus.send(LogMessage{"saving modifications to disk for region" + glm::to_string((glm::ivec2)regionCoord), "file", LogLevel::VERB});
+        mModManager.saveMods(regionCoord);
+    }
 }
