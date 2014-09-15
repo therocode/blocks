@@ -38,7 +38,7 @@ void WorldHolder::handleMessage(const RegionDeliverMessage& received)
     RegionCoord coordinate = received.coordinate;
     Region region = received.newRegion;
 
-    mWorlds.at("default").addRegion(coordinate, region);
+    mWorlds.at("default").deliverRegion(coordinate, region);
     mBus.send(LogMessage{"region created" + glm::to_string((glm::ivec2)coordinate), "landscape", LogLevel::VERB});
 }
 
@@ -47,7 +47,7 @@ void WorldHolder::handleMessage(const ChunkDeliverMessage& received)
     ChunkCoord coordinate = received.coordinate;
     Chunk chunk = received.chunk;
 
-    mWorlds.at("default").addChunk(coordinate, chunk);
+    mWorlds.at("default").deliverChunk(coordinate, chunk);
 
     uint64_t timestamp = 0; //get proper timestamp later
     mBus.send(ChunkLoadedMessage{chunk, timestamp}); //the now fully initialised chunk is announced to the rest of the game. should it be here?

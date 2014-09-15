@@ -13,12 +13,8 @@ class World
         World(fea::MessageBus& b, const std::string& identifier);
         ~World();
         ChunkReferenceMap getChunkMap() const;
-        bool hasRegion(const RegionCoord& coordinate) const;
-        const Region& getRegion(const RegionCoord& coordinate) const;
-        void addRegion(const RegionCoord& coordinate, const Region& region);
-        void addChunk(const ChunkCoord& coordinate, Chunk& chunk);
-        void removeChunk(const ChunkCoord& coordinate);
-        void removeRegion(const RegionCoord& coordinate);
+        void deliverRegion(const RegionCoord& coordinate, const Region& region);
+        void deliverChunk(const ChunkCoord& coordinate, Chunk& chunk);
         VoxelType getVoxelType(const VoxelCoord& voxelCoordinate) const;
         bool setVoxelType(const VoxelCoord& voxelCoord, VoxelType type);
 
@@ -26,15 +22,22 @@ class World
         void removeHighlightEntity(fea::EntityId id);
         void moveHighlightEntity(fea::EntityId id, const ChunkCoord& coordinate);
     private:
+        bool hasRegion(const RegionCoord& coordinate) const;
+        void removeChunk(const ChunkCoord& coordinate);
+        void removeRegion(const RegionCoord& coordinate);
         void activateChunk(const ChunkCoord& coordinate);
         void deactivateChunk(const ChunkCoord& coordinate);
+
         fea::MessageBus& mBus;
 
+        //world information
         std::string mIdentifier;
+        std::string mTitle;  //unused right now
 
         std::unordered_map<RegionCoord, Region> mRegions;
-        std::unordered_map<RegionCoord, std::unordered_set<ChunkCoord>> mActiveRegions;
 
+        //highlight management
         HighlightManager mHighlightManager;
         ModManager mModManager;
+        std::unordered_map<RegionCoord, std::unordered_set<ChunkCoord>> mHighlightedRegions;
 };
