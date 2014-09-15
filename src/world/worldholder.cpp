@@ -1,15 +1,10 @@
 #include "worldholder.hpp"
-#include "../entity/controllers/playercontroller.hpp"
-#include "../entity/controllers/physicscontroller.hpp"
-#include "../entity/controllers/collisioncontroller.hpp"
-#include "../entity/controllers/gfxcontroller.hpp"
-#include "../entity/controllers/movementcontroller.hpp"
 #include <fea/util.hpp>
+#include "../application/applicationmessages.hpp"
 
-WorldHolder::WorldHolder(fea::MessageBus& messageBus) 
+WorldHolder::WorldHolder(fea::MessageBus& messageBus, EntitySystem& entitySystem) 
 :   mBus(messageBus),
-	mEntitySystem(messageBus),
-	mWorldInterface(mWorlds, mEntitySystem)
+	mWorldInterface(mWorlds, entitySystem)
 {
 	mBus.addSubscriber<SetVoxelMessage>(*this);
 	mBus.addSubscriber<RegionDeliverMessage>(*this);
@@ -29,26 +24,8 @@ WorldHolder::~WorldHolder()
 	mBus.removeSubscriber<ChunkDehighlightedMessage>(*this);
 }
 
-void WorldHolder::setup()
-{
-    mEntitySystem.setup();
-
-	mEntitySystem.addController(std::unique_ptr<EntityController>(new PlayerController(mBus, mWorldInterface)));
-	mEntitySystem.addController(std::unique_ptr<EntityController>(new PhysicsController(mBus, mWorldInterface)));
-	mEntitySystem.addController(std::unique_ptr<EntityController>(new CollisionController(mBus, mWorldInterface)));
-	mEntitySystem.addController(std::unique_ptr<EntityController>(new MovementController(mBus, mWorldInterface)));
-	mEntitySystem.addController(std::unique_ptr<EntityController>(new GfxController(mBus, mWorldInterface)));
-}
-
-void WorldHolder::update()
-{
-	mEntitySystem.update();
-}
-
 void WorldHolder::destroy()
 {
-    mEntitySystem.destroy();
-
     for(auto& world : mWorlds)
         world.second.destroy();
 }

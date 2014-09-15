@@ -1,8 +1,14 @@
 #include "server.hpp"
 #include "../networking/packages.hpp"
+#include "../entity/controllers/playercontroller.hpp"
+#include "../entity/controllers/physicscontroller.hpp"
+#include "../entity/controllers/collisioncontroller.hpp"
+#include "../entity/controllers/gfxcontroller.hpp"
+#include "../entity/controllers/movementcontroller.hpp"
 
 Server::Server() : 
-    mWorlds(mBus),
+	mEntitySystem(mBus),
+    mWorlds(mBus, mEntitySystem),
     mWorldProvider(mBus),
     mLogger(mBus, LogLevel::VERB),
     mScriptHandler(mBus, mWorlds.getWorldInterface()),
@@ -37,7 +43,14 @@ Server::~Server()
 void Server::setup()
 {
     mScriptHandler.setup();
-    mWorlds.setup();
+
+    mEntitySystem.setup();
+	mEntitySystem.addController(std::unique_ptr<EntityController>(new PlayerController(mBus, mWorlds.getWorldInterface())));
+	mEntitySystem.addController(std::unique_ptr<EntityController>(new PhysicsController(mBus, mWorlds.getWorldInterface())));
+	mEntitySystem.addController(std::unique_ptr<EntityController>(new CollisionController(mBus, mWorlds.getWorldInterface())));
+	mEntitySystem.addController(std::unique_ptr<EntityController>(new MovementController(mBus, mWorlds.getWorldInterface())));
+	mEntitySystem.addController(std::unique_ptr<EntityController>(new GfxController(mBus, mWorlds.getWorldInterface())));
+
     mFPSController.setMaxFPS(60);
     mBus.send<LogMessage>(LogMessage{"Server initialised and ready to go", mLogName, LogLevel::INFO});
     mBus.send<GameStartMessage>(GameStartMessage{});
@@ -58,7 +71,7 @@ void Server::doLogic()
 
     mBus.send<FrameMessage>(FrameMessage{true});
 
-    mWorlds.update();
+	mEntitySystem.update();
 
     for(auto& client : mClients)
     {
@@ -72,6 +85,7 @@ void Server::doLogic()
 
 void Server::destroy()
 {
+    mEntitySystem.destroy();
     mWorlds.destroy();
     mScriptHandler.destroy();
     mBus.send<LogMessage>(LogMessage{"Server destroyed", mLogName, LogLevel::INFO});

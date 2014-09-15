@@ -9,6 +9,7 @@
 #include "../utilities/fpscontroller.hpp"
 #include "../utilities/logger.hpp"
 #include "../world/worldprovider.hpp"
+#include "../entity/entitysystem.hpp"
 
 class Server : public fea::MessageReceiver<FatalMessage>,
                public fea::MessageReceiver<AddGfxEntityMessage>,
@@ -46,6 +47,7 @@ class Server : public fea::MessageReceiver<FatalMessage>,
         void checkForDisconnectedClients();
         fea::MessageBus mBus;
         Logger mLogger;
+        EntitySystem mEntitySystem;
         WorldHolder mWorlds;
         WorldProvider mWorldProvider;
         ScriptHandler mScriptHandler;

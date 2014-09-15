@@ -3,7 +3,6 @@
 #include "../blockstd.hpp"
 #include "world.hpp"
 #include "worldinterface.hpp"
-#include "../entity/entitysystem.hpp"
 #include <fea/util.hpp>
 #include "../rendering/renderingmessages.hpp"
 #include "worldmessages.hpp"
@@ -16,10 +15,8 @@ class WorldHolder :
         public fea::MessageReceiver<ChunkDehighlightedMessage>
 {
     public:
-        WorldHolder(fea::MessageBus& messageBus);
+        WorldHolder(fea::MessageBus& messageBus, EntitySystem& entitySystem);
 		~WorldHolder();
-        void setup();
-        void update();
         void destroy();
         virtual void handleMessage(const SetVoxelMessage& received);
         virtual void handleMessage(const RegionDeliverMessage& received);
@@ -30,6 +27,5 @@ class WorldHolder :
     private:
         fea::MessageBus& mBus;
         std::unordered_map<std::string, World> mWorlds;
-        EntitySystem mEntitySystem;
         WorldInterface mWorldInterface;
 };
