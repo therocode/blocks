@@ -7,7 +7,6 @@
 #include <fea/util.hpp>
 #include "../rendering/renderingmessages.hpp"
 #include "worldmessages.hpp"
-#include "worldprovider.hpp"
 
 class WorldHolder : 
         public fea::MessageReceiver<SetVoxelMessage>,
@@ -33,5 +32,4 @@ class WorldHolder :
         std::unordered_map<std::string, World> mWorlds;
         EntitySystem mEntitySystem;
         WorldInterface mWorldInterface;
-        WorldProvider mWorldProvider;
 };

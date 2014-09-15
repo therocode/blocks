@@ -1,7 +1,9 @@
 #include "server.hpp"
 #include "../networking/packages.hpp"
 
-Server::Server() : mWorlds(mBus),
+Server::Server() : 
+    mWorlds(mBus),
+    mWorldProvider(mBus),
     mLogger(mBus, LogLevel::VERB),
     mScriptHandler(mBus, mWorlds.getWorldInterface()),
     mLogName("server")
