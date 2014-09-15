@@ -16,7 +16,7 @@ class WorldProvider :
     public HaltChunkAndRegionGenerationMessageReceiver
 {
     public:
-        WorldProvider(fea::MessageBus& b, ModManager& modManager);
+        WorldProvider(fea::MessageBus& b);
         ~WorldProvider();
         void handleMessage(const ChunkRequestedMessage& received) override;
         void handleMessage(const RegionDeletedMessage& received) override;
@@ -25,7 +25,6 @@ class WorldProvider :
     private:
         Chunk generateChunk(const ChunkCoord& chunkCoordinate, const Region& region) const;
         fea::MessageBus& mBus;
-        ModManager& mModManager;
         RegionGenerator mRegionGenerator;
         ChunkGenerator mChunkGenerator;
 

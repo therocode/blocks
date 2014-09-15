@@ -10,8 +10,7 @@ WorldHolder::WorldHolder(fea::MessageBus& messageBus)
 :   mBus(messageBus),
 	mEntitySystem(messageBus),
 	mWorldInterface(mWorlds, mEntitySystem),
-    mWorldProvider(mBus, mModManager),
-    mModManager(messageBus, "default"),
+    mWorldProvider(mBus),
     mRegionManager(mBus)
 {
 	mBus.addSubscriber<SetVoxelMessage>(*this);
@@ -19,9 +18,8 @@ WorldHolder::WorldHolder(fea::MessageBus& messageBus)
 	mBus.addSubscriber<ChunkDeliverMessage>(*this);
 	mBus.addSubscriber<ChunkHighlightedMessage>(*this);
 	mBus.addSubscriber<ChunkDehighlightedMessage>(*this);
-	mBus.addSubscriber<RegionDeletedMessage>(*this);
 
-    mWorlds.emplace("default", World(mBus));
+    mWorlds.emplace("default", World(mBus, "default"));
 }
 
 WorldHolder::~WorldHolder()
@@ -31,7 +29,6 @@ WorldHolder::~WorldHolder()
 	mBus.removeSubscriber<ChunkDeliverMessage>(*this);
 	mBus.removeSubscriber<ChunkHighlightedMessage>(*this);
 	mBus.removeSubscriber<ChunkDehighlightedMessage>(*this);
-	mBus.removeSubscriber<RegionDeletedMessage>(*this);
 }
 
 void WorldHolder::setup()
@@ -53,8 +50,9 @@ void WorldHolder::update()
 void WorldHolder::destroy()
 {
     mEntitySystem.destroy();
-    mBus.send(LogMessage{std::string("saving modifications to disk for all regions"), "file", LogLevel::VERB});
-    mModManager.saveMods();
+
+    for(auto& world : mWorlds)
+        world.second.destroy();
 }
 
 void WorldHolder::handleMessage(const SetVoxelMessage& received)
@@ -67,7 +65,6 @@ void WorldHolder::handleMessage(const SetVoxelMessage& received)
     if(succeeded)
     {
         mBus.send<VoxelSetMessage>(VoxelSetMessage{coordinate, type});
-        mModManager.setMod(voxelToChunk(coordinate), voxelToChunkVoxel(coordinate), type);
     }
 }
 
@@ -83,12 +80,11 @@ void WorldHolder::handleMessage(const RegionDeliverMessage& received)
 void WorldHolder::handleMessage(const ChunkHighlightedMessage& received)
 {
     mWorlds.at("default").activateChunk(received.coordinate);
-    mBus.send(ChunkRequestedMessage{received.coordinate});
+    mBus.send(ChunkRequestedMessage{"default", received.coordinate});
 }
 
 void WorldHolder::handleMessage(const ChunkDehighlightedMessage& received)
 {
-    mModManager.recordTimestamp(received.coordinate, 0);
     mWorlds.at("default").deactivateChunk(received.coordinate);
 }
 
@@ -98,12 +94,9 @@ void WorldHolder::handleMessage(const ChunkDeliverMessage& received)
     Chunk chunk = received.chunk;
 
     mWorlds.at("default").addChunk(coordinate, chunk);
-}
 
-void WorldHolder::handleMessage(const RegionDeletedMessage& received)
-{
-    mBus.send(LogMessage{"saving modifications to disk for region" + glm::to_string((glm::ivec2)received.coordinate), "file", LogLevel::VERB});
-    mModManager.saveMods(received.coordinate);
+    uint64_t timestamp = 0; //get proper timestamp later
+    mBus.send(ChunkLoadedMessage{chunk, timestamp}); //the now fully initialised chunk is announced to the rest of the game. should it be here?
 }
 
 WorldInterface& WorldHolder::getWorldInterface()

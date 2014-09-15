@@ -2,11 +2,20 @@
 #include <iostream>
 #include <fea/assert.hpp>
 #include "worldmessages.hpp"
+#include "../application/applicationmessages.hpp"
 
-World::World(fea::MessageBus& b) :
+World::World(fea::MessageBus& b, const std::string& identifier) :
     mBus(b),
-    mHighlightManager(8)
+    mIdentifier(identifier),
+    mHighlightManager(8),
+    mModManager(b, identifier)
 {
+}
+
+void World::destroy()
+{
+    mModManager.saveMods();
+    mBus.send(LogMessage{std::string("saving modifications to disk for all regions in world " + mIdentifier), "file", LogLevel::VERB});
 }
 
 ChunkReferenceMap World::getChunkMap() const
@@ -29,12 +38,16 @@ void World::addRegion(const RegionCoord& coordinate, const Region& region)
     mRegions.emplace(coordinate, std::move(region));
 }
 
-void World::addChunk(const ChunkCoord& coordinate, const Chunk& chunk)
+void World::addChunk(const ChunkCoord& coordinate, Chunk& chunk)
 {
     RegionCoord region = chunkToRegion(coordinate);
 
     FEA_ASSERT(mRegions.count(region) != 0, "Trying to add chunk " + glm::to_string((glm::ivec3)coordinate) + " to region " + glm::to_string((glm::ivec2)region) + " but that region doesn't exist!");
+
+    mModManager.loadMods(chunk);
+
     mRegions.at(region).addChunk(chunkToRegionChunk(coordinate), chunk);
+
 }
 
 void World::removeChunk(const ChunkCoord& coordinate)
@@ -54,6 +67,9 @@ void World::removeChunk(const ChunkCoord& coordinate)
         //std::cout << " this also removed a region\n";
         mRegions.erase(regionCoord);
         mBus.send(RegionDeletedMessage{regionCoord});
+
+        mBus.send(LogMessage{"saving modifications to disk for region" + glm::to_string((glm::ivec2)regionCoord), "file", LogLevel::VERB});
+        mModManager.saveMods(regionCoord);
     }
 }
 
@@ -91,6 +107,7 @@ bool World::setVoxelType(const VoxelCoord& voxelCoordinate, VoxelType type)
         if(region.hasChunk(chunk))
         {
             region.getChunk(chunk).setVoxelType(voxelToChunkVoxel(voxelCoordinate), type);
+            mModManager.setMod(voxelToChunk(voxelCoordinate), voxelToChunkVoxel(voxelCoordinate), type);
             return true;
         }
         else
@@ -151,6 +168,7 @@ void World::deactivateChunk(const ChunkCoord& coordinate)
         return;
     }
 
+    mModManager.recordTimestamp(coordinate, 0);
     removeChunk(coordinate);
 
     mBus.send(ChunkDeletedMessage{coordinate});

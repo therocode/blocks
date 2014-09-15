@@ -13,7 +13,7 @@ Server::Server() : mWorlds(mBus),
     mBus.addSubscriber<RemoveGfxEntityMessage>(*this);
     mBus.addSubscriber<PlayerConnectedToEntityMessage>(*this);
     mBus.addSubscriber<PlayerFacingBlockMessage>(*this);
-    mBus.addSubscriber<ChunkDeliverMessage>(*this);
+    mBus.addSubscriber<ChunkLoadedMessage>(*this);
     mBus.addSubscriber<ChunkDeletedMessage>(*this);
     mBus.addSubscriber<VoxelSetMessage>(*this);
 }
@@ -27,7 +27,7 @@ Server::~Server()
     mBus.removeSubscriber<RemoveGfxEntityMessage>(*this);
     mBus.removeSubscriber<PlayerConnectedToEntityMessage>(*this);
     mBus.removeSubscriber<PlayerFacingBlockMessage>(*this);
-    mBus.removeSubscriber<ChunkDeliverMessage>(*this);
+    mBus.removeSubscriber<ChunkLoadedMessage>(*this);
     mBus.removeSubscriber<ChunkDeletedMessage>(*this);
     mBus.removeSubscriber<VoxelSetMessage>(*this);
 }
@@ -81,9 +81,9 @@ void Server::handleMessage(const FatalMessage& received)
     exit(4);
 }
 
-void Server::handleMessage(const ChunkDeliverMessage& received)
+void Server::handleMessage(const ChunkLoadedMessage& received)
 {
-    const ChunkCoord& coordinate = received.coordinate;
+    const ChunkCoord& coordinate = received.chunk.getLocation();
     const Chunk& chunk = received.chunk;
 
     VoxelTypeData typeData = chunk.getVoxelTypeData();

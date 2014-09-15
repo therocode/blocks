@@ -4,10 +4,9 @@
 
 const std::string logName = "world_gen";
 
-WorldProvider::WorldProvider(fea::MessageBus& b, ModManager& modManager)
+WorldProvider::WorldProvider(fea::MessageBus& b)
     :
     mBus(b),
-    mModManager(modManager),
     mGeneratorThread(&WorldProvider::generatorLoop, this),
     mThreadSleepInterval(5),
     mMaxChunkGenerationAmount(5),
@@ -77,12 +76,7 @@ void WorldProvider::handleMessage(const FrameMessage& received)
     {
         for(auto& chunk : chunks)
         {
-            mModManager.loadMods(chunk.second);
             mBus.send(ChunkDeliverMessage{chunk.first, std::move(chunk.second)}); //sends the finished chunk to be kept by whatever system
-            //std::cout << "done generating chunk " << glm::to_string((glm::ivec3)chunk.first) << "\n";
-
-            uint64_t timestamp = 0; //get proper timestamp later
-            mBus.send(ChunkLoadedMessage{chunk.first, timestamp}); //the now fully initialised chunk is announced to the rest of the game. should it be here?
         }
     }
 }

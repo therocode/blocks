@@ -16,7 +16,7 @@ class Server : public fea::MessageReceiver<FatalMessage>,
                public fea::MessageReceiver<RemoveGfxEntityMessage>,
                public fea::MessageReceiver<PlayerConnectedToEntityMessage>,
                public fea::MessageReceiver<PlayerFacingBlockMessage>,
-               public fea::MessageReceiver<ChunkDeliverMessage>,
+               public fea::MessageReceiver<ChunkLoadedMessage>,
                public fea::MessageReceiver<ChunkDeletedMessage>,
                public fea::MessageReceiver<VoxelSetMessage>
 {
@@ -33,7 +33,7 @@ class Server : public fea::MessageReceiver<FatalMessage>,
         void handleMessage(const RemoveGfxEntityMessage& received);
         void handleMessage(const PlayerConnectedToEntityMessage& received);
         void handleMessage(const PlayerFacingBlockMessage& received);
-        void handleMessage(const ChunkDeliverMessage& received);
+        void handleMessage(const ChunkLoadedMessage& received);
         void handleMessage(const ChunkDeletedMessage& received);
         void handleMessage(const VoxelSetMessage& received);
         void setClientListener(std::unique_ptr<ClientConnectionListener> clientListener);

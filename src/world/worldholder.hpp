@@ -15,8 +15,7 @@ class WorldHolder :
         public fea::MessageReceiver<RegionDeliverMessage>,
         public fea::MessageReceiver<ChunkDeliverMessage>,
         public fea::MessageReceiver<ChunkHighlightedMessage>,
-        public fea::MessageReceiver<ChunkDehighlightedMessage>,
-        public fea::MessageReceiver<RegionDeletedMessage>
+        public fea::MessageReceiver<ChunkDehighlightedMessage>
 {
     public:
         WorldHolder(fea::MessageBus& messageBus);
@@ -29,7 +28,6 @@ class WorldHolder :
         virtual void handleMessage(const ChunkDeliverMessage& received);
         virtual void handleMessage(const ChunkHighlightedMessage& received);
         virtual void handleMessage(const ChunkDehighlightedMessage& received);
-        virtual void handleMessage(const RegionDeletedMessage& received);
         WorldInterface& getWorldInterface();
     private:
 		glm::vec3 mCamPos, mCamDir;
@@ -38,6 +36,5 @@ class WorldHolder :
         EntitySystem mEntitySystem;
         WorldInterface mWorldInterface;
         WorldProvider mWorldProvider;
-        ModManager mModManager;
         RegionManager mRegionManager;
 };
