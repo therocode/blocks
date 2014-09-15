@@ -29,7 +29,6 @@ class Client :
         void setup();
         void handleInput();
         void render();
-        void destroy();
         virtual void handleMessage(const PlayerActionMessage& received);
         virtual void handleMessage(const PlayerMoveDirectionMessage& received);
         virtual void handleMessage(const PlayerMoveActionMessage& received);

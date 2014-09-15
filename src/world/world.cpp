@@ -12,7 +12,7 @@ World::World(fea::MessageBus& b, const std::string& identifier) :
 {
 }
 
-void World::destroy()
+World::~World()
 {
     mModManager.saveMods();
     mBus.send(LogMessage{std::string("saving modifications to disk for all regions in world " + mIdentifier), "file", LogLevel::VERB});

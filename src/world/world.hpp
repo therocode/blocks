@@ -11,7 +11,7 @@ class World
 {
     public:
         World(fea::MessageBus& b, const std::string& identifier);
-        void destroy();
+        ~World();
         ChunkReferenceMap getChunkMap() const;
         bool hasRegion(const RegionCoord& coordinate) const;
         const Region& getRegion(const RegionCoord& coordinate) const;

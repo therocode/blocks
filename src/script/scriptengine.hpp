@@ -9,7 +9,6 @@ class ScriptEngine
         ScriptEngine(fea::MessageBus& bus);
         ~ScriptEngine();
         void setup();
-        void destroy();
         ScriptModule createModule(const std::string& name);
         void destroyModule(ScriptModule& module);
         asIScriptContext* requestContext();

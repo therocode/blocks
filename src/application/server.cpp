@@ -28,6 +28,8 @@ Server::Server() :
 
 Server::~Server()
 {
+    mBus.send<LogMessage>(LogMessage{"Server destroyed", mLogName, LogLevel::INFO});
+
     mBus.removeSubscriber<FatalMessage>(*this);
     mBus.removeSubscriber<AddGfxEntityMessage>(*this);
     mBus.removeSubscriber<MoveGfxEntityMessage>(*this);
@@ -55,10 +57,12 @@ void Server::setup()
     mBus.send<LogMessage>(LogMessage{"Server initialised and ready to go", mLogName, LogLevel::INFO});
     mBus.send<GameStartMessage>(GameStartMessage{});
 }
+
 fea::MessageBus& Server::getBus()
 {
     return mBus;
 }
+
 void Server::doLogic()
 {
     //mFPSController.frameBegin();
@@ -81,14 +85,6 @@ void Server::doLogic()
     pollNewClients();
 
     mFPSController.frameEnd();
-}
-
-void Server::destroy()
-{
-    mEntitySystem.destroy();
-    mWorlds.destroy();
-    mScriptHandler.destroy();
-    mBus.send<LogMessage>(LogMessage{"Server destroyed", mLogName, LogLevel::INFO});
 }
 
 void Server::handleMessage(const FatalMessage& received)

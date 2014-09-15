@@ -27,7 +27,6 @@ class Server : public fea::MessageReceiver<FatalMessage>,
         ~Server();
         void setup();
         void doLogic();
-        void destroy();
         void handleMessage(const FatalMessage& received);
         void handleMessage(const AddGfxEntityMessage& received);
         void handleMessage(const MoveGfxEntityMessage& received);

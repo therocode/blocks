@@ -30,6 +30,9 @@ ScriptHandler::ScriptHandler(fea::MessageBus& bus, WorldInterface& worldInterfac
 
 ScriptHandler::~ScriptHandler()
 {
+    scriptEntities.clear();
+    mEngine.destroyModule(mScripts);
+
     mBus.removeSubscriber<RebuildScriptsRequestedMessage>(*this);
     mBus.removeSubscriber<EntityCreatedMessage>(*this);
     mBus.removeSubscriber<EntityRemovedMessage>(*this);
@@ -79,13 +82,6 @@ void ScriptHandler::setup()
             caller->setActive(true);
         }
     }
-}
-
-void ScriptHandler::destroy()
-{
-    scriptEntities.clear();
-    mEngine.destroyModule(mScripts);
-    mEngine.destroy();
 }
 
 void ScriptHandler::handleMessage(const RebuildScriptsRequestedMessage& received)

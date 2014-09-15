@@ -13,6 +13,11 @@ ScriptEngine::ScriptEngine(fea::MessageBus& bus) :
 
 ScriptEngine::~ScriptEngine()
 {
+    for(auto context : mContexts)
+    {
+        context->Release();
+    }
+    mEngine->Release();
 }
 
 void ScriptEngine::setup()
@@ -26,15 +31,6 @@ void ScriptEngine::setup()
     RegisterStdStringUtils(mEngine);
 
     int32_t r = mEngine->SetMessageCallback(asMETHOD(ScriptEngine, messageCallback), this, asCALL_THISCALL); assert( r >= 0 );
-}
-
-void ScriptEngine::destroy()
-{
-    for(auto context : mContexts)
-    {
-        context->Release();
-    }
-    mEngine->Release();
 }
 
 ScriptModule ScriptEngine::createModule(const std::string& name)

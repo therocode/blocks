@@ -18,6 +18,14 @@ EntitySystem::EntitySystem(fea::MessageBus& bus) :
 
 EntitySystem::~EntitySystem()
 {
+    mBus.send<LogMessage>(LogMessage{"Removing all entities", mLogName, LogLevel::VERB});
+    fea::EntitySet entities = mManager.getAll();
+
+    for(auto entity : entities)
+    {
+        removeEntity(entity.lock()->getId());
+    }
+
     mBus.removeSubscriber<CreateEntityMessage>(*this);
     mBus.removeSubscriber<RemoveEntityMessage>(*this);
 }
@@ -58,17 +66,6 @@ void EntitySystem::update()
     for(auto& controller : mControllers)
     {
         controller->onFrame(dt);
-    }
-}
-
-void EntitySystem::destroy()
-{
-    mBus.send<LogMessage>(LogMessage{"Removing all entities", mLogName, LogLevel::VERB});
-    fea::EntitySet entities = mManager.getAll();
-
-    for(auto entity : entities)
-    {
-        removeEntity(entity.lock()->getId());
     }
 }
 

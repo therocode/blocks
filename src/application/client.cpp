@@ -26,6 +26,9 @@ Client::Client() :
 
 Client::~Client()
 {
+	mWindow.close();
+	mBus.send<LogMessage>(LogMessage{"client destroyed", mLogName, LogLevel::INFO});
+
 	mBus.removeSubscriber<PlayerActionMessage>(*this);
 	mBus.removeSubscriber<PlayerMoveDirectionMessage>(*this);
 	mBus.removeSubscriber<PlayerMoveActionMessage>(*this);
@@ -90,12 +93,6 @@ void Client::render()
     mFPSCounter.frameEnd();
     if(mFrame++ % 60 == 0)
     mWindow.setTitle("Blocks | FPS:" + std::to_string((int)mFPSCounter.getAverageFPS()));
-}
-
-void Client::destroy()
-{
-	mWindow.close();
-	mBus.send<LogMessage>(LogMessage{"client destroyed", mLogName, LogLevel::INFO});
 }
 
 void Client::handleMessage(const PlayerActionMessage& received)

@@ -78,11 +78,11 @@ void BlocksApplication::destroy()
 {
     if(client)
     {
-        client->destroy();
+        client = std::unique_ptr<Client>();
     }
     if(server)
     {
-        server->destroy();
+        server = std::unique_ptr<Server>();
     }
 }
 

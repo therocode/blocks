@@ -24,12 +24,6 @@ WorldHolder::~WorldHolder()
 	mBus.removeSubscriber<ChunkDehighlightedMessage>(*this);
 }
 
-void WorldHolder::destroy()
-{
-    for(auto& world : mWorlds)
-        world.second.destroy();
-}
-
 void WorldHolder::handleMessage(const SetVoxelMessage& received)
 {
     VoxelCoord coordinate = received.voxel;

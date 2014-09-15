@@ -18,7 +18,6 @@ class ScriptHandler :
         ScriptHandler(fea::MessageBus& bus, WorldInterface& worldInterface);
         ~ScriptHandler();
         void setup();
-        void destroy();
         void handleMessage(const RebuildScriptsRequestedMessage& message);
         void handleMessage(const EntityCreatedMessage& message);
         void handleMessage(const EntityRemovedMessage& message);
