@@ -14,6 +14,8 @@ class Logger : public fea::MessageReceiver<LogMessage>,
         void printLine(const std::string& lineStart, const std::string& message, uint32_t level) const;
         std::vector<std::string> explode(const std::string& str, const char& ch) const;
     private:
+        std::string spaces(int32_t amount);
         fea::MessageBus& mBus;
         uint32_t mLogLevel;
+        int32_t mLongestCategory;
 };

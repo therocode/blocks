@@ -4,8 +4,10 @@
 #include <iostream>
 #include "../console/console.hpp"
 
-Logger::Logger(fea::MessageBus& bus, uint32_t logLevel) : mBus(bus),
-                                       mLogLevel(logLevel)
+Logger::Logger(fea::MessageBus& bus, uint32_t logLevel) :
+    mBus(bus),
+    mLogLevel(logLevel),
+    mLongestCategory(0)
 {
     Console::Initialise();
     mBus.addSubscriber<LogMessage>(*this);
@@ -25,11 +27,13 @@ void Logger::handleMessage(const LogMessage& received)
     std::string component = received.component;
     uint32_t level = received.level;
 
+    mLongestCategory = std::max((int32_t)component.size(), mLongestCategory);
+
     if(level <= mLogLevel)
     {
         for(auto& line : explode(message, '\n'))
         {
-            printLine("[" + getTimeString() + "|" + component + "|", line, level);
+            printLine("[" + getTimeString() + "|" + component + spaces(mLongestCategory - component.size()) + "|", line, level);
         }
     }
 }
@@ -63,7 +67,7 @@ void Logger::printLine(const std::string& lineStart, const std::string& message,
     {
         case LogLevel::ERR:
             Console::SetFGColor(ConsoleColour::RED);
-            Console::Write(std::string("ERROR"));
+            Console::Write(std::string("ERROR  "));
             Console::ResetColor();
             break;
         case LogLevel::WARN:
@@ -72,7 +76,7 @@ void Logger::printLine(const std::string& lineStart, const std::string& message,
             Console::ResetColor();
             break;
         case LogLevel::INFO:
-            Console::Write(std::string("INFO"));
+            Console::Write(std::string("INFO   "));
             break;
         case LogLevel::VERB:
             Console::SetFGColor(ConsoleColour::CYAN);
@@ -113,5 +117,15 @@ std::vector<std::string> Logger::explode(const std::string& str, const char& ch)
     }
     if (!next.empty())
         result.push_back(next);
+    return result;
+}
+
+std::string Logger::spaces(int32_t amount)
+{
+    std::string result;
+
+    for(int32_t i = 0; i < amount; i++)
+        result.push_back(' ');
+
     return result;
 }
