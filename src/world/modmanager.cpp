@@ -2,8 +2,11 @@
 
 using namespace std;
 
-ModManager::ModManager(fea::MessageBus& bus) 
-    : mBus(bus) {}
+ModManager::ModManager(fea::MessageBus& bus, const std::string& worldName) :
+    mBus(bus),
+    mWorldName(worldName)
+{
+}
 
 void ModManager::loadMods(Chunk& chunk)
 {

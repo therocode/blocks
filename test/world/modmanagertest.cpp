@@ -46,9 +46,7 @@ TEST_CASE("set and get", "[set][get]")
     VoxelType type = 12;
 
     fea::MessageBus bus;
-    ModManager manager(bus);
-
-    manager.setWorldName("default");
+    ModManager manager(bus, "default");
 
     SECTION("set and get one voxel")
     {
@@ -81,8 +79,8 @@ TEST_CASE("save and load", "[save][load]")
     Chunk chunk(loc, voxelData);
     Chunk chunk2(loc2, voxelData);
     Chunk chunkClone(loc, voxelData);
-    ModManager manager(bus);
-    ModManager manager2(bus);
+    ModManager manager(bus, "default");
+    ModManager manager2(bus, "default");
     manager.deleteRegionFile(regionLoc);
     manager.deleteRegionFile(regionLoc2);
     TestReceiver receiver;

@@ -59,7 +59,7 @@ struct ModManagerException : public std::exception
 class ModManager 
 {
     public:
-        ModManager(fea::MessageBus& bus);
+        ModManager(fea::MessageBus& bus, const std::string& worldName);
         void loadMods(Chunk& chunk);
         void saveMods();
         void saveMods(RegionCoord regionLoc);
@@ -67,7 +67,7 @@ class ModManager
         VoxelType getMod(ChunkCoord loc, ChunkVoxelCoord voxLoc);
         void deleteRegionFile(const RegionCoord& regionLoc);
         void recordTimestamp(ChunkCoord loc, uint64_t timestamp);
-        void setWorldName(const std::string& name);
+        void setWorldName(const std::string& worldName);
 
     private:
         ChunkIndex getChunkIndex(RegionCoord regionLoc, RegionChunkCoord chunkLoc);

@@ -11,7 +11,7 @@ WorldHolder::WorldHolder(fea::MessageBus& messageBus)
 	mEntitySystem(messageBus),
 	mWorldInterface(mWorlds, mEntitySystem),
     mWorldProvider(mBus, mModManager),
-    mModManager(messageBus),
+    mModManager(messageBus, "default"),
     mRegionManager(mBus)
 {
 	mBus.addSubscriber<SetVoxelMessage>(*this);
@@ -22,7 +22,6 @@ WorldHolder::WorldHolder(fea::MessageBus& messageBus)
 	mBus.addSubscriber<RegionDeletedMessage>(*this);
 
     mWorlds.emplace("default", World(mBus));
-    mModManager.setWorldName("default");
 }
 
 WorldHolder::~WorldHolder()
