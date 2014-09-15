@@ -7,10 +7,23 @@
 #include <unordered_set>
 #include <fea/util.hpp>
 
+using IntRange = std::pair<int32_t, int32_t>;
+
+struct Ranges
+{
+    static int32_t MAX;
+    static int32_t MIN;
+    Ranges(const IntRange& x, const IntRange& y, const IntRange& z);
+    bool isWithin(const glm::ivec3& coordinate) const;
+    IntRange xRange;
+    IntRange yRange;
+    IntRange zRange;
+};
+
 class World
 {
     public:
-        World(fea::MessageBus& b, const std::string& identifier);
+        World(fea::MessageBus& b, const std::string& identifier, const Ranges& ranges);
         ~World();
         ChunkReferenceMap getChunkMap() const;
         void deliverRegion(const RegionCoord& coordinate, const Region& region);
@@ -32,6 +45,8 @@ class World
         //world information
         std::string mIdentifier;
         std::string mTitle;  //unused right now
+
+        Ranges mWorldRange;
 
         std::unordered_map<RegionCoord, Region> mRegions;
 

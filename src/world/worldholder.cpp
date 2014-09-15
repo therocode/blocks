@@ -10,7 +10,7 @@ WorldHolder::WorldHolder(fea::MessageBus& messageBus, EntitySystem& entitySystem
 	mBus.addSubscriber<RegionDeliverMessage>(*this);
 	mBus.addSubscriber<ChunkDeliverMessage>(*this);
 
-    mWorlds.emplace("default", World(mBus, "default"));
+    mWorlds.emplace("default", World(mBus, "default", {{Ranges::MIN, Ranges::MAX}, {Ranges::MIN, Ranges::MAX}, {Ranges::MIN, Ranges::MAX}}));
 }
 
 WorldHolder::~WorldHolder()

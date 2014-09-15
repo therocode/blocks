@@ -3,11 +3,33 @@
 #include <fea/assert.hpp>
 #include "worldmessages.hpp"
 #include "../application/applicationmessages.hpp"
+#include <limits>
 
-World::World(fea::MessageBus& b, const std::string& identifier) :
+int32_t Ranges::MAX = std::numeric_limits<int32_t>::max();
+int32_t Ranges::MIN = std::numeric_limits<int32_t>::min();
+
+Ranges::Ranges(const IntRange& x, const IntRange& y, const IntRange& z) :
+    xRange(x),
+    yRange(y),
+    zRange(z)
+{
+    FEA_ASSERT(x.first <= x.second, "Invalid X range in range!");
+    FEA_ASSERT(y.first <= y.second, "Invalid Y range in range!");
+    FEA_ASSERT(z.first <= z.second, "Invalid Z range in range!");
+}
+
+bool Ranges::isWithin(const glm::ivec3& coordinate) const
+{
+    return (coordinate.x >= xRange.first && coordinate.x <= xRange.second &&
+            coordinate.y >= yRange.first && coordinate.y <= yRange.second &&
+            coordinate.z >= zRange.first && coordinate.z <= zRange.second);   
+}
+
+World::World(fea::MessageBus& b, const std::string& identifier, const Ranges& ranges) :
     mBus(b),
     mIdentifier(identifier),
     mHighlightManager(8),
+    mWorldRange(ranges),
     mModManager(b, identifier)
 {
 }
@@ -85,7 +107,10 @@ void World::addHighlightEntity(fea::EntityId id, const ChunkCoord& coordinate)
     ChunkHighlightList highlighted = mHighlightManager.addHighlightEntity(id, coordinate);
 
     for(const auto& chunk : highlighted)
-        activateChunk(chunk);
+    {
+        if(mWorldRange.isWithin((glm::ivec3)chunk))
+            activateChunk(chunk);
+    }
 }
 
 void World::removeHighlightEntity(fea::EntityId id)
@@ -93,7 +118,10 @@ void World::removeHighlightEntity(fea::EntityId id)
     ChunkDehighlightList dehighlighted = mHighlightManager.removeHighlightEntity(id);
 
     for(const auto& chunk : dehighlighted)
-        deactivateChunk(chunk);
+    {
+        if(mWorldRange.isWithin((glm::ivec3)chunk))
+            deactivateChunk(chunk);
+    }
 }
 
 void World::moveHighlightEntity(fea::EntityId id, const ChunkCoord& coordinate)
@@ -101,10 +129,16 @@ void World::moveHighlightEntity(fea::EntityId id, const ChunkCoord& coordinate)
     std::pair<ChunkHighlightList, ChunkDehighlightList> highlightInfo = mHighlightManager.moveHighlightEntity(id, coordinate);
 
     for(const auto& chunk : highlightInfo.first)
-        activateChunk(chunk);
+    {
+        if(mWorldRange.isWithin((glm::ivec3)chunk))
+            activateChunk(chunk);
+    }
 
     for(const auto& chunk : highlightInfo.second)
-        deactivateChunk(chunk);
+    {
+        if(mWorldRange.isWithin((glm::ivec3)chunk))
+            deactivateChunk(chunk);
+    }
 }
 
 bool World::hasRegion(const RegionCoord& coordinate) const
