@@ -1,7 +1,8 @@
 #include "worldinterface.hpp"
 #include "rendering/renderer.hpp"
-    WorldInterface::WorldInterface(std::unordered_map<WorldId, World>& worlds, EntitySystem& entitySystem)
-:   mWorlds(worlds),
+
+WorldInterface::WorldInterface(std::unordered_map<WorldId, World>& worlds, EntitySystem& entitySystem) :
+    mWorlds(worlds),
     mEntitySystem(entitySystem)
 {
 
@@ -28,7 +29,7 @@ VoxelType WorldInterface::getVoxelType(WorldId worldId, const glm::vec3& positio
     return getVoxelType(worldId, worldToVoxel(position));
 }
 
-bool WorldInterface::getVoxelAtRay(WorldId worldId, const glm::vec3& position, const glm::vec3& direction, const float maxDistance, uint32_t& hitFace, VoxelCoord& hitBlock ) const
+bool WorldInterface::getVoxelAtRay(WorldId worldId, const glm::vec3& position, const glm::vec3& direction, const float maxDistance, uint32_t& hitFace, VoxelCoord& hitBlock) const
 {
     return getVoxelAtRay(worldId, position.x, position.y, position.z, direction.x, direction.y, direction.z, maxDistance, hitFace, hitBlock);
 }
