@@ -42,9 +42,9 @@ bool WorldInterface::getVoxelAtRay(WorldId worldId, float ox, float oy, float oz
 
     glm::vec3 bp = glm::fract(glm::vec3(ox, oy, oz));
     ChunkVoxelCoord chunkCoordinate = voxelToChunkVoxel(worldToVoxel(glm::vec3(ip[0], ip[1], ip[2])));
-    // printf("ip:%i, %i, %i\n", ip[0], ip[1], ip[2]);
-    // printf("ip:%i, %i, %i\n", chunkCoordinate[0], chunkCoordinate[1], chunkCoordinate[2]);
-    // printf("rp:%f, %f, %f\n", ox, oy, oz);
+    //printf("ip:%i, %i, %i\n", ip[0], ip[1], ip[2]);
+    //printf("ip:%i, %i, %i\n", chunkCoordinate[0], chunkCoordinate[1], chunkCoordinate[2]);
+    //printf("rp:%f, %f, %f\n", ox, oy, oz);
     //glm::vec3 ip = glm::vec3((int), (int)oy, (int)oz);
 
     glm::vec3 d = glm::vec3(dx, dy, dz);
@@ -60,26 +60,36 @@ bool WorldInterface::getVoxelAtRay(WorldId worldId, float ox, float oy, float oz
     uint16_t vtype = 0;
     glm::vec3 bounds = glm::vec3(0,0,0);
     int enterFaces[3];
-    if(dx > 0){
+    if(dx > 0)
+    {
         bounds.x = 1.0f;
         enterFaces[0] = FACE_LEFT;
-    }else{
+    }
+    else
+    {
         enterFaces[0] = FACE_RIGHT;
     }
-    if(dy > 0){
+    if(dy > 0)
+    {
         bounds.y = 1.0f;
         enterFaces[1] = FACE_BOTTOM;
-    }else{
+    }
+    else
+    {
         enterFaces[1] = FACE_TOP;
     }
-    if(dz > 0){
+    if(dz > 0)
+    {
         bounds.z = 1.0f;
         enterFaces[2] = FACE_FRONT;
-    }else{
+    }
+    else
+    {
         enterFaces[2] = FACE_BACK;
     }
     float ix, iy, iz;
-    while(steps < 256){//Able to look 256 blocks away!
+    while(steps < 256)
+    {//Able to look 256 blocks away!
         glm::vec3 distInBlock = bounds - bp;
 
         glm::vec3 poop = distInBlock / d;
@@ -87,11 +97,13 @@ bool WorldInterface::getVoxelAtRay(WorldId worldId, float ox, float oy, float oz
         int mini = 0;
         float mind = poop.x;
 
-        if(mind > poop.y){
+        if(mind > poop.y)
+        {
             mind = poop.y;
             mini = 1;
         }
-        if(mind > poop.z){
+        if(mind > poop.z)
+        {
             mind = poop.z;
             mini = 2;
         }
@@ -109,10 +121,13 @@ bool WorldInterface::getVoxelAtRay(WorldId worldId, float ox, float oy, float oz
 
         bp += d * lengthToNextBlock;
         distanceTravelled += lengthToNextBlock;
-        if(bp[mini] >= 1.f){
+        if(bp[mini] >= 1.f)
+        {
             ip[mini] ++;
             bp[mini] = 0.f;
-        }else{
+        }
+        else
+        {
             ip[mini] --;
             bp[mini] = 1.f;
         }
@@ -120,13 +135,17 @@ bool WorldInterface::getVoxelAtRay(WorldId worldId, float ox, float oy, float oz
         hitFace = enterFaces[mini];
         steps ++;
 
-        if(distanceTravelled > maxDistance){
+        if(distanceTravelled > maxDistance)
+        {
             return false;
         }
     }
 
     glm::vec3 block = glm::vec3(ip[0] , ip[1] , ip[2]);
-    if(steps == 256){ return false; }
+    if(steps == 256)
+    { 
+        return false;
+    }
     hitBlock = VoxelCoord(ip[0], ip[1],  ip[2]);
     return true;
 }
