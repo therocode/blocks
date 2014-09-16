@@ -72,7 +72,7 @@ void WorldProvider::handleMessage(const FrameMessage& received)
     {
         for(auto& chunk : chunks)
         {
-            mBus.send(ChunkDeliverMessage{chunk.second.first, std::move(chunk.second.second)}); //sends the finished chunk to be kept by whatever system
+            mBus.send(ChunkDeliverMessage{chunk.first, chunk.second.first, std::move(chunk.second.second)}); //sends the finished chunk to be kept by whatever system
         }
     }
 }

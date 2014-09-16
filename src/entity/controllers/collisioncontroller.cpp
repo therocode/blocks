@@ -30,6 +30,7 @@ void CollisionController::onFrame(int dt)
     for(auto wEntity : mEntities)
     {
         fea::EntityPtr entity = wEntity.second.lock();
+        WorldId worldId = entity->getAttribute<WorldId>("current_world");
         bool isOnGround = entity->getAttribute<bool>("on_ground");
         glm::vec3 position = entity->getAttribute<glm::vec3>("position");
         glm::vec3 size = entity->getAttribute<glm::vec3>("hitbox");
@@ -46,12 +47,12 @@ void CollisionController::onFrame(int dt)
         a.depth = size.z;
 
         if(isOnGround){
-            if(!AABBOnGround(a)){
+            if(!AABBOnGround(worldId, a)){
                 entity->setAttribute<bool>("on_ground", false);
                 mBus.send(EntityOnGroundMessage{entity->getId(), false});
             }
         }else{
-            if(AABBOnGround(a) && glm::abs(velocity.y) <= 0.001f){
+            if(AABBOnGround(worldId, a) && glm::abs(velocity.y) <= 0.001f){
                 entity->setAttribute<bool>("on_ground", true);
                 mBus.send(EntityOnGroundMessage{entity->getId(), true});
             }
@@ -72,6 +73,7 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& receiv
     float moveZ = 999;
 
     fea::EntityPtr entity =  mEntities.at(id).lock();
+    WorldId worldId = entity->getAttribute<WorldId>("current_world");
     glm::vec3 oldPosition = entity->getAttribute<glm::vec3>("position");
     glm::vec3 size = entity->getAttribute<glm::vec3>("hitbox");
     AABB a;
@@ -84,7 +86,7 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& receiv
     a.x = oldPosition.x - size.x * 0.5f;
     a.y = oldPosition.y - size.y * 0.5f;
     a.z = oldPosition.z - size.z * 0.5f;
-    oldPosition += pushOutFromBlocks(a, 0.05f);
+    oldPosition += pushOutFromBlocks(worldId, a, 0.05f);
 
     glm::vec3 v = approvedPosition - oldPosition;
 
@@ -102,12 +104,12 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& receiv
         a.y = oldPosition.y - size.y * 0.5f;
         a.z = oldPosition.z - size.z * 0.5f;
         glm::vec3 c(0);
-        n = sweepAroundAABB(a, v, normal, currentHitBlock, c);
+        n = sweepAroundAABB(worldId, a, v, normal, currentHitBlock, c);
         //Renderer::sDebugRenderer.drawBox(a.x + a.width*0.5f, a.y + a.height*0.5f, a.z + a.depth*0.5f, a.width  + 0.001f, a.height + 0.001f, a.depth + 0.001f, DebugRenderer::ORANGE);
 
         if(n < 1.f )
         {
-            int32_t blockType = mWorldInterface.getVoxelType(currentHitBlock);
+            int32_t blockType = mWorldInterface.getVoxelType(worldId, currentHitBlock);
             float moveLen = glm::length(approvedPosition - oldPosition);
 
             b.x = currentHitBlock.x;
@@ -135,7 +137,7 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& receiv
                     b.height = 1.0f;
 
                 if(b.max(1) - a.min(1) <= 1.0f){
-                    if(AABBOnGround(a))
+                    if(AABBOnGround(worldId, a))
                     {
                         AABB aa = a;
                         float newY = b.max(1) + 0.01f;// + size.y * 0.5f
@@ -147,7 +149,7 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& receiv
                             aa.z += v.z;
                         }
                         aa.y = newY;
-                        if(!testAABBWorld(aa)){
+                        if(!testAABBWorld(worldId, aa)){
                             if(normal.x != 0)
                                 oldPosition.x += v.x * 0.1f;
                             else
@@ -224,7 +226,8 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& receiv
     entity->setAttribute<glm::vec3>("position", approvedPosition);
     mBus.send(EntityMovedMessage{id, requestedPosition, approvedPosition});
 }
-bool CollisionController::testAABBWorld(const AABB& a) const{
+
+bool CollisionController::testAABBWorld(WorldId worldId, const AABB& a) const{
     AABB b;
     b.width = b.depth = 1.0f;
     int sx = a.width*2.f + 0.5f, sy = a.height*2.f + 0.5f, sz = a.depth*2.f + 0.5f;
@@ -243,7 +246,7 @@ bool CollisionController::testAABBWorld(const AABB& a) const{
 
                 VoxelCoord coord(b.x, b.y, b.z);
 
-                int blockType = mWorldInterface.getVoxelType(coord);
+                int blockType = mWorldInterface.getVoxelType(worldId, coord);
 
                 if(blockType != 0)
                 {
@@ -264,7 +267,7 @@ bool CollisionController::testAABBWorld(const AABB& a) const{
 
 }
 
-glm::vec3 CollisionController::pushOutFromBlocks(const AABB& _a, float maxMove)
+glm::vec3 CollisionController::pushOutFromBlocks(WorldId worldId, const AABB& _a, float maxMove)
 {
     AABB a, b;
     a = _a;
@@ -291,7 +294,7 @@ glm::vec3 CollisionController::pushOutFromBlocks(const AABB& _a, float maxMove)
                 b.y -= _a.y;
                 b.z -= _a.z;
 
-                int blockType = mWorldInterface.getVoxelType(coord);
+                int blockType = mWorldInterface.getVoxelType(worldId, coord);
 
                 if(blockType != 0)
                 {
@@ -317,7 +320,7 @@ glm::vec3 CollisionController::pushOutFromBlocks(const AABB& _a, float maxMove)
     return resultVec;
 }
 
-float CollisionController::sweepAroundAABB(const AABB _a, glm::vec3 velocity, glm::ivec3& outNormal, VoxelCoord& hitBlock, const glm::vec3 ignoreAxis)
+float CollisionController::sweepAroundAABB(WorldId worldId, const AABB _a, glm::vec3 velocity, glm::ivec3& outNormal, VoxelCoord& hitBlock, const glm::vec3 ignoreAxis)
 {
     AABB a, b;
     a = _a;
@@ -346,7 +349,7 @@ float CollisionController::sweepAroundAABB(const AABB _a, glm::vec3 velocity, gl
                 b.y -= _a.y;
                 b.z -= _a.z;
 
-                int blockType = mWorldInterface.getVoxelType(coord);
+                int blockType = mWorldInterface.getVoxelType(worldId, coord);
 
                 if(blockType != 0)
                 {
@@ -378,7 +381,7 @@ float CollisionController::sweepAroundAABB(const AABB _a, glm::vec3 velocity, gl
                             nc[axis] += 1;
                         else
                             nc[axis] -= 1;
-                        if(mWorldInterface.getVoxelType(nc) != 0){
+                        if(mWorldInterface.getVoxelType(worldId, nc) != 0){
                         }
                         hitBlock = coord;
                         n = nn;
@@ -399,7 +402,7 @@ float CollisionController::sweepAroundAABB(const AABB _a, glm::vec3 velocity, gl
     return 1.0;
 }
 
-bool CollisionController::AABBOnGround(AABB a)
+bool CollisionController::AABBOnGround(WorldId worldId, AABB a)
 {
     float s = 0.05f;
     AABB b;
@@ -417,7 +420,7 @@ bool CollisionController::AABBOnGround(AABB a)
         {
             pos.x = x + a.x;
             pos.z = z + a.z;
-            int32_t voxelType = mWorldInterface.getVoxelType(pos);
+            int32_t voxelType = mWorldInterface.getVoxelType(worldId, pos);
             if(voxelType != 0){
                 b.x = glm::floor(pos.x);
                 b.y = glm::floor(pos.y);

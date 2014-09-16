@@ -7,32 +7,33 @@
 
 }
 
-VoxelType WorldInterface::getVoxelTypeInt(int x, int y, int z) const
+VoxelType WorldInterface::getVoxelTypeInt(WorldId worldId, int x, int y, int z) const
 {
-    return mWorlds.at(0).getVoxelType(VoxelCoord(x, y, z));//BLAPP
+    return mWorlds.at(worldId).getVoxelType(VoxelCoord(x, y, z));
 }
 
-VoxelType WorldInterface::getVoxelType(const VoxelCoord coord) const
+VoxelType WorldInterface::getVoxelType(WorldId worldId, const VoxelCoord coord) const
 {
-    return getVoxelTypeInt(coord.x, coord.y, coord.z);
+    return getVoxelTypeInt(worldId, coord.x, coord.y, coord.z);
 }
 
 
-VoxelType WorldInterface::getVoxelType(float x, float y, float z) const
+VoxelType WorldInterface::getVoxelType(WorldId worldId, float x, float y, float z) const
 {
-    return getVoxelType(worldToVoxel(glm::vec3(x, y, z)));
+    return getVoxelType(worldId, worldToVoxel(glm::vec3(x, y, z)));
 }
 
-VoxelType WorldInterface::getVoxelType(const glm::vec3& position) const
+VoxelType WorldInterface::getVoxelType(WorldId worldId, const glm::vec3& position) const
 {
-    return getVoxelType(worldToVoxel(position));
-}
-bool WorldInterface::getVoxelAtRay(const glm::vec3& position, const glm::vec3& direction, const float maxDistance, uint32_t& hitFace, VoxelCoord& hitBlock ) const
-{
-    return getVoxelAtRay(position.x, position.y, position.z, direction.x, direction.y, direction.z, maxDistance, hitFace, hitBlock);
+    return getVoxelType(worldId, worldToVoxel(position));
 }
 
-bool WorldInterface::getVoxelAtRay(float ox, float oy, float oz, float dx, float dy, float dz, const float maxDistance, uint32_t& hitFace, VoxelCoord& hitBlock)  const
+bool WorldInterface::getVoxelAtRay(WorldId worldId, const glm::vec3& position, const glm::vec3& direction, const float maxDistance, uint32_t& hitFace, VoxelCoord& hitBlock ) const
+{
+    return getVoxelAtRay(worldId, position.x, position.y, position.z, direction.x, direction.y, direction.z, maxDistance, hitFace, hitBlock);
+}
+
+bool WorldInterface::getVoxelAtRay(WorldId worldId, float ox, float oy, float oz, float dx, float dy, float dz, const float maxDistance, uint32_t& hitFace, VoxelCoord& hitBlock)  const
 {
     int ip[3];
     ip[0] = glm::floor(ox);
@@ -98,7 +99,7 @@ bool WorldInterface::getVoxelAtRay(float ox, float oy, float oz, float dx, float
         float lengthToNextBlock = 0.1f;
         lengthToNextBlock = mind + 0.01f;
 
-        vtype = getVoxelTypeInt(
+        vtype = getVoxelTypeInt(worldId,
                 ip[0], 
                 ip[1], 
                 ip[2]);
@@ -135,9 +136,9 @@ fea::WeakEntityPtr WorldInterface::createEntity(const std::string& scriptType, c
     return mEntitySystem.createEntity(scriptType, position);
 }
 
-ChunkReferenceMap WorldInterface::getChunkMap() const
+ChunkReferenceMap WorldInterface::getChunkMap(WorldId worldId) const
 {
-    return mWorlds.at(0).getChunkMap();//BLAPP
+    return mWorlds.at(worldId).getChunkMap();
 }
 
 EntityCreator WorldInterface::getEntityCreator() const

@@ -29,7 +29,7 @@ class Player : Entity
             position.y -= 1.0f;
             position.x = originalPos.x + 0.25;
             position.z = originalPos.z + 0.25;
-            uint16 type = getVoxelType(position);
+            uint16 type = getVoxelType(0, position);
 
             //consolePrint("stepped on a " + type);
             bool bounce = false;
@@ -54,7 +54,7 @@ class Player : Entity
 
             position.x = originalPos.x - 0.25;
             position.z = originalPos.z + 0.25;
-            type = getVoxelType(position);
+            type = getVoxelType(0, position);
             if(type == 12)
             {
                 setVoxelType(0, position, 13);
@@ -76,7 +76,7 @@ class Player : Entity
 
             position.x = originalPos.x - 0.25;
             position.z = originalPos.z - 0.25;
-            type = getVoxelType(position);
+            type = getVoxelType(0, position);
             if(type == 12)
             {
                 setVoxelType(0, position, 13);
@@ -98,7 +98,7 @@ class Player : Entity
 
             position.x = originalPos.x + 0.25;
             position.z = originalPos.z - 0.25;
-            type = getVoxelType(position);
+            type = getVoxelType(0, position);
             if(type == 12)
             {
                 setVoxelType(0, position, 13);
