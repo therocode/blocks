@@ -25,19 +25,20 @@ bool Ranges::isWithin(const glm::ivec3& coordinate) const
             coordinate.z >= zRange.first && coordinate.z <= zRange.second);   
 }
 
-World::World(fea::MessageBus& b, const std::string& identifier, const Ranges& ranges) :
+World::World(fea::MessageBus& b, WorldId id, const std::string& textIdentifier, const Ranges& ranges) :
     mBus(b),
-    mIdentifier(identifier),
+    mId(id),
+    mTextIdentifier(textIdentifier),
     mHighlightManager(8),
     mWorldRange(ranges),
-    mModManager(b, identifier)
+    mModManager(b, textIdentifier)
 {
 }
 
 World::~World()
 {
     mModManager.saveMods();
-    mBus.send(LogMessage{std::string("saving modifications to disk for all regions in world " + mIdentifier), "file", LogLevel::VERB});
+    mBus.send(LogMessage{std::string("saving modifications to disk for all regions in world " + mTextIdentifier), "file", LogLevel::VERB});
 }
 
 ChunkReferenceMap World::getChunkMap() const
@@ -160,7 +161,7 @@ void World::activateChunk(const ChunkCoord& coordinate)
         mHighlightedRegions.at(regionCoord).insert(coordinate);
     }
 
-    mBus.send(ChunkRequestedMessage{mIdentifier, coordinate});
+    mBus.send(ChunkRequestedMessage{mId, coordinate});
 }
 
 void World::deactivateChunk(const ChunkCoord& coordinate)

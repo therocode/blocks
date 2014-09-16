@@ -1,6 +1,6 @@
 #include "worldinterface.hpp"
 #include "rendering/renderer.hpp"
-    WorldInterface::WorldInterface(std::unordered_map<std::string, World>& worlds, EntitySystem& entitySystem)
+    WorldInterface::WorldInterface(std::unordered_map<WorldId, World>& worlds, EntitySystem& entitySystem)
 :   mWorlds(worlds),
     mEntitySystem(entitySystem)
 {
@@ -9,7 +9,7 @@
 
 VoxelType WorldInterface::getVoxelTypeInt(int x, int y, int z) const
 {
-    return mWorlds.at("default").getVoxelType(VoxelCoord(x, y, z));
+    return mWorlds.at(0).getVoxelType(VoxelCoord(x, y, z));//BLAPP
 }
 
 VoxelType WorldInterface::getVoxelType(const VoxelCoord coord) const
@@ -137,7 +137,7 @@ fea::WeakEntityPtr WorldInterface::createEntity(const std::string& scriptType, c
 
 ChunkReferenceMap WorldInterface::getChunkMap() const
 {
-    return mWorlds.at("default").getChunkMap();
+    return mWorlds.at(0).getChunkMap();//BLAPP
 }
 
 EntityCreator WorldInterface::getEntityCreator() const
@@ -145,17 +145,17 @@ EntityCreator WorldInterface::getEntityCreator() const
     return mEntitySystem.getEntityCreator();
 }
 
-void WorldInterface::addHighlightEntity(const std::string& world, fea::EntityId id, const ChunkCoord& coordinate)
+void WorldInterface::addHighlightEntity(WorldId worldId, fea::EntityId id, const ChunkCoord& coordinate)
 {
-    mWorlds.at(world).addHighlightEntity(id, coordinate);
+    mWorlds.at(worldId).addHighlightEntity(id, coordinate);
 }
 
-void WorldInterface::removeHighlightEntity(const std::string& world, fea::EntityId id)
+void WorldInterface::removeHighlightEntity(WorldId worldId, fea::EntityId id)
 {
-    mWorlds.at(world).removeHighlightEntity(id);
+    mWorlds.at(worldId).removeHighlightEntity(id);
 }
 
-void WorldInterface::moveHighlightEntity(const std::string& world, fea::EntityId id, const ChunkCoord& coordinate)
+void WorldInterface::moveHighlightEntity(WorldId worldId, fea::EntityId id, const ChunkCoord& coordinate)
 {
-    mWorlds.at(world).moveHighlightEntity(id, coordinate);
+    mWorlds.at(worldId).moveHighlightEntity(id, coordinate);
 }

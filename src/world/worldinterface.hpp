@@ -8,7 +8,7 @@ class asIScriptObject;
 class WorldInterface
 {
     public:
-        WorldInterface(std::unordered_map<std::string, World>& worlds, EntitySystem& entitySystem);
+        WorldInterface(std::unordered_map<WorldId, World>& worlds, EntitySystem& entitySystem);
 		VoxelType getVoxelTypeInt(int x, int y, int z) const;
         VoxelType getVoxelType(float x, float y, float z) const; 
         VoxelType getVoxelType(const glm::vec3& position) const; 
@@ -26,10 +26,10 @@ class WorldInterface
         }
         EntityCreator getEntityCreator() const;
 
-        void addHighlightEntity(const std::string& world, fea::EntityId id, const ChunkCoord& coordinate);
-        void removeHighlightEntity(const std::string& world, fea::EntityId id);
-        void moveHighlightEntity(const std::string& world, fea::EntityId id, const ChunkCoord& coordinate);
+        void addHighlightEntity(WorldId worldId, fea::EntityId id, const ChunkCoord& coordinate);
+        void removeHighlightEntity(WorldId worldId, fea::EntityId id);
+        void moveHighlightEntity(WorldId worldId, fea::EntityId id, const ChunkCoord& coordinate);
     private:
-        std::unordered_map<std::string, World>& mWorlds;
+        std::unordered_map<WorldId, World>& mWorlds;
         EntitySystem& mEntitySystem;
 };

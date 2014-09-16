@@ -21,6 +21,7 @@ class WorldHolder :
         WorldInterface& getWorldInterface();
     private:
         fea::MessageBus& mBus;
-        std::unordered_map<std::string, World> mWorlds;
+        std::unordered_map<WorldId, World> mWorlds;
+        std::unordered_map<std::string, WorldId> mWorldIds;
         WorldInterface mWorldInterface;
 };

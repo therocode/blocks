@@ -3,7 +3,8 @@
 #include <vector>
 #include <array>
 
-//new
+using WorldId = uint32_t;
+
 using VoxelCoord       = glm::i64vec3;
 using ChunkCoord       = glm::i64vec3; 
 using RegionCoord      = glm::i64vec2;

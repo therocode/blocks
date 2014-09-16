@@ -23,7 +23,7 @@ struct Ranges
 class World
 {
     public:
-        World(fea::MessageBus& b, const std::string& identifier, const Ranges& ranges);
+        World(fea::MessageBus& b, WorldId id, const std::string& textIdentifier, const Ranges& ranges);
         ~World();
         ChunkReferenceMap getChunkMap() const;
         void deliverRegion(const RegionCoord& coordinate, const Region& region);
@@ -43,7 +43,8 @@ class World
         fea::MessageBus& mBus;
 
         //world information
-        std::string mIdentifier;
+        WorldId     mId;
+        std::string mTextIdentifier;
         std::string mTitle;  //unused right now
 
         Ranges mWorldRange;

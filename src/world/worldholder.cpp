@@ -10,7 +10,8 @@ WorldHolder::WorldHolder(fea::MessageBus& messageBus, EntitySystem& entitySystem
 	mBus.addSubscriber<RegionDeliverMessage>(*this);
 	mBus.addSubscriber<ChunkDeliverMessage>(*this);
 
-    mWorlds.emplace("default", World(mBus, "default", {{Ranges::MIN, Ranges::MAX}, {Ranges::MIN, Ranges::MAX}, {Ranges::MIN, Ranges::MAX}}));
+    mWorldIds.emplace("default", 0);
+    mWorlds.emplace(0, World(mBus, 0, "default", {{Ranges::MIN, Ranges::MAX}, {Ranges::MIN, Ranges::MAX}, {Ranges::MIN, Ranges::MAX}}));
 }
 
 WorldHolder::~WorldHolder()
@@ -25,7 +26,7 @@ void WorldHolder::handleMessage(const SetVoxelMessage& received)
     VoxelCoord coordinate = received.voxel;
     VoxelType type = received.type;
 
-    bool succeeded = mWorlds.at("default").setVoxelType(coordinate, type);
+    bool succeeded = mWorlds.at(0).setVoxelType(coordinate, type); //BLAPP
 
     if(succeeded)
     {
@@ -38,7 +39,7 @@ void WorldHolder::handleMessage(const RegionDeliverMessage& received)
     RegionCoord coordinate = received.coordinate;
     Region region = received.newRegion;
 
-    mWorlds.at("default").deliverRegion(coordinate, region);
+    mWorlds.at(0).deliverRegion(coordinate, region); //BLAPP
     mBus.send(LogMessage{"region created" + glm::to_string((glm::ivec2)coordinate), "landscape", LogLevel::VERB});
 }
 
@@ -47,7 +48,7 @@ void WorldHolder::handleMessage(const ChunkDeliverMessage& received)
     ChunkCoord coordinate = received.coordinate;
     Chunk chunk = received.chunk;
 
-    mWorlds.at("default").deliverChunk(coordinate, chunk);
+    mWorlds.at(0).deliverChunk(coordinate, chunk);//BLAPP
 
     uint64_t timestamp = 0; //get proper timestamp later
     mBus.send(ChunkLoadedMessage{chunk, timestamp}); //the now fully initialised chunk is announced to the rest of the game. should it be here?
