@@ -110,7 +110,7 @@ void World::addHighlightEntity(fea::EntityId id, const ChunkCoord& coordinate)
     for(const auto& chunk : highlighted)
     {
         if(mWorldRange.isWithin((glm::ivec3)chunk))
-            activateChunk(chunk);
+            activateChunk(chunk, (int32_t)glm::distance((glm::vec3)coordinate, (glm::vec3)chunk));
     }
 }
 
@@ -132,7 +132,7 @@ void World::moveHighlightEntity(fea::EntityId id, const ChunkCoord& coordinate)
     for(const auto& chunk : highlightInfo.first)
     {
         if(mWorldRange.isWithin((glm::ivec3)chunk))
-            activateChunk(chunk);
+            activateChunk(chunk, (int32_t)glm::distance((glm::vec3)coordinate, (glm::vec3)chunk));
     }
 
     for(const auto& chunk : highlightInfo.second)
@@ -147,7 +147,7 @@ bool World::hasRegion(const RegionCoord& coordinate) const
     return mRegions.count(coordinate) != 0;
 }
 
-void World::activateChunk(const ChunkCoord& coordinate)
+void World::activateChunk(const ChunkCoord& coordinate, int32_t priority)
 {
     RegionCoord regionCoord = chunkToRegion(coordinate);
 
@@ -161,7 +161,7 @@ void World::activateChunk(const ChunkCoord& coordinate)
         mHighlightedRegions.at(regionCoord).insert(coordinate);
     }
 
-    mBus.send(ChunkRequestedMessage{mId, coordinate});
+    mBus.send(ChunkRequestedMessage{priority, mId, coordinate});
 }
 
 void World::deactivateChunk(const ChunkCoord& coordinate)

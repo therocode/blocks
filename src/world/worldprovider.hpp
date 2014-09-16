@@ -53,13 +53,13 @@ class WorldProvider :
         void generatorLoop();
 
         //thread input
-        std::vector<std::pair<WorldId, ChunkCoord>> mChunksToGenerate;
+        std::vector<std::pair<int32_t, std::pair<WorldId, ChunkCoord>>> mChunksToGenerate;
         std::mutex              mThreadInputMutex;
         bool                    mGenThreadActive;
 
         //thread storage
         std::mutex              mThreadMainMutex;
-        std::vector<std::pair<WorldId, ChunkCoord>> mChunkQueue;
+        std::vector<std::pair<int32_t, std::pair<WorldId, ChunkCoord>>> mChunkQueue;
         std::vector<ChunkEntry> mFinishedChunks;
         std::vector<RegionEntry> mFinishedRegions;
 

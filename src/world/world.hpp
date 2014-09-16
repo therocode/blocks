@@ -36,7 +36,7 @@ class World
         void moveHighlightEntity(fea::EntityId id, const ChunkCoord& coordinate);
     private:
         bool hasRegion(const RegionCoord& coordinate) const;
-        void activateChunk(const ChunkCoord& coordinate);
+        void activateChunk(const ChunkCoord& coordinate, int32_t priority);
         void deactivateChunk(const ChunkCoord& coordinate);
         void removeChunk(const ChunkCoord& coordinate);
 

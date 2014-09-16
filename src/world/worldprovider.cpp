@@ -36,7 +36,7 @@ void WorldProvider::handleMessage(const ChunkRequestedMessage& received)
 {
     //add chunk to load to other thread
     std::lock_guard<std::mutex> lock(mThreadInputMutex);
-    mChunksToGenerate.push_back({received.worldId, received.coordinate});       
+    mChunksToGenerate.push_back(std::pair<int32_t, std::pair<WorldId, ChunkCoord>>(received.prio, {received.worldId, received.coordinate}));       
 }
 
 void WorldProvider::handleMessage(const RegionDeletedMessage& received)
@@ -85,7 +85,7 @@ void WorldProvider::handleMessage(const HaltChunkAndRegionGenerationMessage& rec
 
         for(size_t i = 0; i < mChunksToGenerate.size(); i++)
         {
-            if(mChunksToGenerate[i] == std::pair<WorldId, ChunkCoord>(received.worldId, received.chunkCoordinate))
+            if(mChunksToGenerate[i].second == std::pair<WorldId, ChunkCoord>(received.worldId, received.chunkCoordinate))
                 mChunksToGenerate.erase(mChunksToGenerate.begin() + i);
         }
 
@@ -134,11 +134,18 @@ void WorldProvider::generatorLoop()
         //perform generation
         {
             std::lock_guard<std::mutex> lock(mThreadMainMutex);
+
+            std::sort(mChunkQueue.begin(), mChunkQueue.end(), [] 
+                    (const std::pair<int32_t, std::pair<WorldId, ChunkCoord>>& a, const std::pair<int32_t, std::pair<WorldId, ChunkCoord>>& b)
+                    {
+                        return a.first < b.first;
+                    });
+
             int32_t amountGenerated = 0;
             for(size_t i = 0; i < mChunkQueue.size(); i++)
             {
-                WorldId worldId = mChunkQueue[i].first;
-                const auto& chunkCoordinate = mChunkQueue[i].second;
+                WorldId worldId = mChunkQueue[i].second.first;
+                const auto& chunkCoordinate = mChunkQueue[i].second.second;
                 RegionCoord regionCoordinate = chunkToRegion(chunkCoordinate);
 
                 if(mRegions.count({worldId, regionCoordinate}) == 0)
@@ -176,7 +183,7 @@ void WorldProvider::generatorLoop()
             {
                 for(size_t i = 0; i < mChunkQueue.size(); i++)
                 {
-                    if(mChunkQueue[i] == chunk)
+                    if(mChunkQueue[i].second == chunk)
                     {
                         mChunkQueue.erase(mChunkQueue.begin() + i);
                         break;
