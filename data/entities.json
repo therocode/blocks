@@ -14,6 +14,7 @@
         "hitbox":"0.5f,1.6f,0.5f",
         "on_ground":"false",
 		"jumping":"false",
+        "current_world":"",
         "current_chunk":"",
         "block_facing":"0,0,0",
 		"block_facing_face":"0",

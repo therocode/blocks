@@ -188,7 +188,7 @@ void World::deactivateChunk(const ChunkCoord& coordinate)
     //if a chunk is dehighlighted and there is no region for that chunk, it must mean that the region is about to be generated in the other thread but hasn't been finished yet. The thread must be notified that the region and chunk is not needed anymore. But only if it is not needed by another chunk
     if(mRegions.count(regionCoord) == 0)
     {
-        mBus.send(HaltChunkAndRegionGenerationMessage{coordinate, regionRemoved ? &regionCoord : nullptr});
+        mBus.send(HaltChunkAndRegionGenerationMessage{mId, coordinate, regionRemoved ? &regionCoord : nullptr});
         return; //return, because there is nothing to remove
     }
 
@@ -197,7 +197,7 @@ void World::deactivateChunk(const ChunkCoord& coordinate)
     //if a chunk is deactivated and doesn't exist, it has to be under generation in the other thread. notify the thread to stop generation
     if(region.hasChunk(chunkToRegionChunk(coordinate)) == 0)
     {
-        mBus.send(HaltChunkAndRegionGenerationMessage{coordinate, nullptr});
+        mBus.send(HaltChunkAndRegionGenerationMessage{mId, coordinate, nullptr});
         return; //return, because there is nothing to remove
     }
 
@@ -222,7 +222,7 @@ void World::removeChunk(const ChunkCoord& coordinate)
     if(region.getLoadedChunkAmount() == 0)
     {
         mRegions.erase(regionCoord);
-        mBus.send(RegionDeletedMessage{regionCoord});
+        mBus.send(RegionDeletedMessage{mId, regionCoord});
 
         mBus.send(LogMessage{"saving modifications to disk for region" + glm::to_string((glm::ivec2)regionCoord), "file", LogLevel::VERB});
         mModManager.saveMods(regionCoord);

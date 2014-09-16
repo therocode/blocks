@@ -23,14 +23,11 @@ WorldHolder::~WorldHolder()
 
 void WorldHolder::handleMessage(const SetVoxelMessage& received)
 {
-    VoxelCoord coordinate = received.voxel;
-    VoxelType type = received.type;
-
-    bool succeeded = mWorlds.at(0).setVoxelType(coordinate, type); //BLAPP
+    bool succeeded = mWorlds.at(received.worldId).setVoxelType(received.voxel, received.type);
 
     if(succeeded)
     {
-        mBus.send<VoxelSetMessage>(VoxelSetMessage{coordinate, type});
+        mBus.send<VoxelSetMessage>(VoxelSetMessage{received.voxel, received.type});
     }
 }
 

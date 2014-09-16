@@ -222,7 +222,7 @@ void Server::acceptClientConnection(std::shared_ptr<ClientConnection> client)
         client->enqueuePackage(chunkAddedPackage);
     }
 
-    mBus.send<PlayerJoinedMessage>(PlayerJoinedMessage{newClientId, glm::vec3(0.0f, 45.0f, 0.0f)}); //position could be loaded from file or at spawn
+    mBus.send<PlayerJoinedMessage>(PlayerJoinedMessage{newClientId, 0, glm::vec3(0.0f, 45.0f, 0.0f)}); //position and world could be loaded from file or at spawn
 }
 
 void Server::pollNewClients()

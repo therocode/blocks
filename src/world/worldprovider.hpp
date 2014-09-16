@@ -7,7 +7,24 @@
 #include <thread>
 #include <mutex>
 
+namespace std 
+{
+    template<>
+    struct hash<std::pair<WorldId, RegionCoord>>
+    {   
+        public:
+            std::size_t operator()(std::pair<WorldId, RegionCoord> const& worldRegion) const 
+            {   
+                return (worldRegion.second.x | (worldRegion.second.y << 1) | worldRegion.first << 1); 
+            }
+    };
+}
+
+
 class Region;
+
+using ChunkEntry = std::pair<WorldId, std::pair<ChunkCoord, Chunk>>;
+using RegionEntry = std::pair<WorldId, std::pair<RegionCoord, Region>>;
 
 class WorldProvider :
     public ChunkRequestedMessageReceiver,
@@ -30,26 +47,26 @@ class WorldProvider :
 
         //thread
         std::thread mGeneratorThread;
-        std::unordered_map<RegionCoord, Region> mRegions; //thread local copy of regions
+        std::unordered_map<std::pair<WorldId, RegionCoord>, Region> mRegions; //thread local copy of regions
         int32_t mThreadSleepInterval;
         int32_t mMaxChunkGenerationAmount;
         void generatorLoop();
 
         //thread input
-        std::vector<ChunkCoord> mChunksToGenerate;
+        std::vector<std::pair<WorldId, ChunkCoord>> mChunksToGenerate;
         std::mutex              mThreadInputMutex;
         bool                    mGenThreadActive;
 
         //thread storage
         std::mutex              mThreadMainMutex;
-        std::vector<ChunkCoord> mChunkQueue;
-        std::vector<std::pair<ChunkCoord, Chunk>> mFinishedChunks;
-        std::vector<std::pair<RegionCoord, Region>> mFinishedRegions;
+        std::vector<std::pair<WorldId, ChunkCoord>> mChunkQueue;
+        std::vector<ChunkEntry> mFinishedChunks;
+        std::vector<RegionEntry> mFinishedRegions;
 
         //thread output
-        std::vector<ChunkCoord> mChunksToDiscard;
-        std::vector<RegionCoord> mRegionsToDiscard;
-        std::vector<std::pair<RegionCoord, Region>> mRegionsToDeliver;
-        std::vector<std::pair<ChunkCoord, Chunk>> mChunksToDeliver;
+        std::vector<std::pair<WorldId, ChunkCoord>> mChunksToDiscard;
+        std::vector<std::pair<WorldId, RegionCoord>> mRegionsToDiscard;
+        std::vector<RegionEntry> mRegionsToDeliver;
+        std::vector<ChunkEntry> mChunksToDeliver;
         std::mutex              mThreadOutputMutex;
 };

@@ -36,19 +36,19 @@ void WorldProvider::handleMessage(const ChunkRequestedMessage& received)
 {
     //add chunk to load to other thread
     std::lock_guard<std::mutex> lock(mThreadInputMutex);
-    mChunksToGenerate.push_back(received.coordinate);       
+    mChunksToGenerate.push_back({received.worldId, received.coordinate});       
 }
 
 void WorldProvider::handleMessage(const RegionDeletedMessage& received)
 {
     std::lock_guard<std::mutex> lock(mThreadMainMutex);
-    mRegions.erase(received.coordinate); 
+    mRegions.erase({received.worldId, received.coordinate}); 
 }
 
 void WorldProvider::handleMessage(const FrameMessage& received)
 {
-    std::vector<std::pair<RegionCoord, Region>> regions;
-    std::vector<std::pair<ChunkCoord, Chunk>> chunks;
+    std::vector<RegionEntry> regions;
+    std::vector<ChunkEntry> chunks;
 
     //prevent thread collision
     {
@@ -64,7 +64,7 @@ void WorldProvider::handleMessage(const FrameMessage& received)
     {
         for(const auto& region : regions)
         {
-            mBus.send(RegionDeliverMessage{region.first, std::move(region.second)});
+            mBus.send(RegionDeliverMessage{region.first, region.second.first, std::move(region.second.second)});
         }
     }
 
@@ -72,7 +72,7 @@ void WorldProvider::handleMessage(const FrameMessage& received)
     {
         for(auto& chunk : chunks)
         {
-            mBus.send(ChunkDeliverMessage{chunk.first, std::move(chunk.second)}); //sends the finished chunk to be kept by whatever system
+            mBus.send(ChunkDeliverMessage{chunk.second.first, std::move(chunk.second.second)}); //sends the finished chunk to be kept by whatever system
         }
     }
 }
@@ -85,34 +85,34 @@ void WorldProvider::handleMessage(const HaltChunkAndRegionGenerationMessage& rec
 
         for(size_t i = 0; i < mChunksToGenerate.size(); i++)
         {
-            if(mChunksToGenerate[i] == received.chunkCoordinate)
+            if(mChunksToGenerate[i] == std::pair<WorldId, ChunkCoord>(received.worldId, received.chunkCoordinate))
                 mChunksToGenerate.erase(mChunksToGenerate.begin() + i);
         }
 
         for(size_t i = 0; i < mChunksToDeliver.size(); i++)
         {
-            if(mChunksToDeliver[i].first == received.chunkCoordinate)
+            if(mChunksToDeliver[i].second.first == received.chunkCoordinate)
             {
                 mChunksToDeliver.erase(mChunksToDeliver.begin() + i);
                 break;
             }
         }
 
-        mChunksToDiscard.push_back(received.chunkCoordinate);
+        mChunksToDiscard.push_back({received.worldId, received.chunkCoordinate});
 
         if(received.regionCoordinate)
         {
 
             for(size_t i = 0; i < mRegionsToDeliver.size(); i++)
             {
-                if(mRegionsToDeliver[i].first == *received.regionCoordinate)
+                if(mRegionsToDeliver[i].second.first == *received.regionCoordinate)
                 {
                     mRegionsToDeliver.erase(mRegionsToDeliver.begin() + i);
                     break;
                 }
             }
 
-            mRegionsToDiscard.push_back(*received.regionCoordinate);
+            mRegionsToDiscard.push_back({received.worldId, *received.regionCoordinate});
         }
     }
 }
@@ -137,21 +137,22 @@ void WorldProvider::generatorLoop()
             int32_t amountGenerated = 0;
             for(size_t i = 0; i < mChunkQueue.size(); i++)
             {
-                const auto& chunkCoordinate = mChunkQueue[i];
+                WorldId worldId = mChunkQueue[i].first;
+                const auto& chunkCoordinate = mChunkQueue[i].second;
                 RegionCoord regionCoordinate = chunkToRegion(chunkCoordinate);
 
-                if(mRegions.count(regionCoordinate) == 0)
+                if(mRegions.count({worldId, regionCoordinate}) == 0)
                 {
                     Region newRegion = mRegionGenerator.generateRegion(regionCoordinate);
-                    mRegions.emplace(regionCoordinate, newRegion);
-                    mFinishedRegions.push_back({regionCoordinate, newRegion});
+                    mRegions.emplace(std::pair<WorldId, RegionCoord>(worldId, regionCoordinate), newRegion);
+                    mFinishedRegions.push_back({worldId, {regionCoordinate, newRegion}});
                 }
 
-                const Region& region = mRegions.at(regionCoordinate);
+                const Region& region = mRegions.at({worldId, regionCoordinate});
 
                 Chunk newChunk = mChunkGenerator.generateChunk(chunkCoordinate, region);
 
-                mFinishedChunks.push_back({chunkCoordinate, newChunk});
+                mFinishedChunks.push_back({worldId, {chunkCoordinate, newChunk}});
                 amountGenerated++;
 
                 if(amountGenerated == mMaxChunkGenerationAmount)
@@ -186,7 +187,7 @@ void WorldProvider::generatorLoop()
             {
                 for(size_t i = 0; i < mChunksToDeliver.size(); i++)
                 {
-                    if(mChunksToDeliver[i].first == chunk)
+                    if(mChunksToDeliver[i].first == chunk.first && mChunksToDeliver[i].second.first == chunk.second)
                     {
                         mChunksToDeliver.erase(mChunksToDeliver.begin() + i);
                         break;
@@ -197,7 +198,7 @@ void WorldProvider::generatorLoop()
             {
                 for(size_t i = 0; i < mRegionsToDeliver.size(); i++)
                 {
-                    if(mRegionsToDeliver[i].first == region)
+                    if(mRegionsToDeliver[i].first == region.first && mRegionsToDeliver[i].second.first == region.second)
                     {
                         mRegionsToDeliver.erase(mRegionsToDeliver.begin() + i);
                         mRegions.erase(region);

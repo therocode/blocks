@@ -11,6 +11,7 @@
     "hitbox":"vec3",
     "on_ground":"bool",
 
+    "current_world":"uint32",
     "current_chunk":"i64vec3",
     "block_facing":"i64vec3",
 	"is_facing_block":"bool",

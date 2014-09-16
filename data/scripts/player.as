@@ -35,21 +35,21 @@ class Player : Entity
             bool bounce = false;
             if(type == 12)
             {
-                setVoxelType(position, 13);
+                setVoxelType(0, position, 13);
                 bounce = true;
                 //applyImpulse(0.0f, 5.0f, 0.0f);
             }
             else if(type == 21)
             {
-                setVoxelType(position, 22);
+                setVoxelType(0, position, 22);
             }
             else if(type == 22)
             {
-                setVoxelType(position, 23);
+                setVoxelType(0, position, 23);
             }
             else if(type == 23)
             {
-                setVoxelType(position, 21);
+                setVoxelType(0, position, 21);
             }
 
             position.x = originalPos.x - 0.25;
@@ -57,21 +57,21 @@ class Player : Entity
             type = getVoxelType(position);
             if(type == 12)
             {
-                setVoxelType(position, 13);
+                setVoxelType(0, position, 13);
               //  applyImpulse(0.0f, 5.0f, 0.0f);
               bounce = true;
             }
             else if(type == 21)
             {
-                setVoxelType(position, 22);
+                setVoxelType(0, position, 22);
             }
             else if(type == 22)
             {
-                setVoxelType(position, 23);
+                setVoxelType(0, position, 23);
             }
             else if(type == 23)
             {
-                setVoxelType(position, 21);
+                setVoxelType(0, position, 21);
             }
 
             position.x = originalPos.x - 0.25;
@@ -79,21 +79,21 @@ class Player : Entity
             type = getVoxelType(position);
             if(type == 12)
             {
-                setVoxelType(position, 13);
+                setVoxelType(0, position, 13);
               //  applyImpulse(0.0f, 5.0f, 0.0f);
                bounce = true;
             }
             else if(type == 21)
             {
-                setVoxelType(position, 22);
+                setVoxelType(0, position, 22);
             }
             else if(type == 22)
             {
-                setVoxelType(position, 23);
+                setVoxelType(0, position, 23);
             }
             else if(type == 23)
             {
-                setVoxelType(position, 21);
+                setVoxelType(0, position, 21);
             }
 
             position.x = originalPos.x + 0.25;
@@ -101,20 +101,20 @@ class Player : Entity
             type = getVoxelType(position);
             if(type == 12)
             {
-                setVoxelType(position, 13);
+                setVoxelType(0, position, 13);
                bounce = true;
             }
             else if(type == 21)
             {
-                setVoxelType(position, 22);
+                setVoxelType(0, position, 22);
             }
             else if(type == 22)
             {
-                setVoxelType(position, 23);
+                setVoxelType(0, position, 23);
             }
             else if(type == 23)
             {
-                setVoxelType(position, 21);
+                setVoxelType(0, position, 21);
             }
 
             if(bounce){

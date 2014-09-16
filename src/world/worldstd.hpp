@@ -2,8 +2,7 @@
 #include "../blockstd.hpp"
 #include <vector>
 #include <array>
-
-using WorldId = uint32_t;
+#include "worldid.hpp"
 
 using VoxelCoord       = glm::i64vec3;
 using ChunkCoord       = glm::i64vec3; 
