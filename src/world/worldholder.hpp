@@ -6,6 +6,7 @@
 #include <fea/util.hpp>
 #include "../rendering/renderingmessages.hpp"
 #include "worldmessages.hpp"
+#include "worldparameters.hpp"
 
 class WorldHolder : 
         public fea::MessageReceiver<SetVoxelMessage>,
@@ -19,6 +20,7 @@ class WorldHolder :
         virtual void handleMessage(const RegionDeliverMessage& received);
         virtual void handleMessage(const ChunkDeliverMessage& received);
         WorldInterface& getWorldInterface();
+        void addWorld(const WorldParameters& worldParameters);
     private:
         fea::MessageBus& mBus;
         std::unordered_map<WorldId, World> mWorlds;

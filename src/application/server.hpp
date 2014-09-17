@@ -9,6 +9,7 @@
 #include "../utilities/fpscontroller.hpp"
 #include "../utilities/logger.hpp"
 #include "../world/worldprovider.hpp"
+#include "../world/worldloader.hpp"
 #include "../entity/entitysystem.hpp"
 
 class Server : public fea::MessageReceiver<FatalMessage>,

@@ -53,6 +53,23 @@ void Server::setup()
 	mEntitySystem.addController(std::unique_ptr<EntityController>(new MovementController(mBus, mWorlds.getWorldInterface())));
 	mEntitySystem.addController(std::unique_ptr<EntityController>(new GfxController(mBus, mWorlds.getWorldInterface())));
 
+    WorldLoader mWorldLoader;
+
+    mWorldLoader.loadWorldFile("data/worlds/default.json");
+
+    if(!mWorldLoader.hasError())
+    {
+        for(const auto& worldParameters : mWorldLoader.getLoadedWorlds())
+        {
+            mWorlds.addWorld(worldParameters);
+        }
+    }
+    else
+    {
+        mBus.send<LogMessage>(LogMessage{"World loading error: " + mWorldLoader.getErrorString(), mLogName, LogLevel::ERR});
+    }
+    
+
     mFPSController.setMaxFPS(60);
     mBus.send<LogMessage>(LogMessage{"Server initialised and ready to go", mLogName, LogLevel::INFO});
     mBus.send<GameStartMessage>(GameStartMessage{});

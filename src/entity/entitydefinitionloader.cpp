@@ -19,13 +19,14 @@ EntityDefinition EntityDefinitionLoader::loadFromJSONFile(const std::string& pat
 
     if(!file)
     {
-        mErrorString = "Error, file '" + path + "' could not be found!";
+        mErrorString = "Error, entity file '" + path + "' could not be found!";
         mError = true;
         return definition;
     }
 
     json::Value root;
     root.SetObject();
+
     json::read(file, root);
 
     json::Member entity = root.GetMember(0);

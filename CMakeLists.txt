@@ -94,11 +94,13 @@ set(source_files
     src/world/worldprovider.cpp
     src/world/highlightmanager.cpp
     src/world/modmanager.cpp
+    src/world/ranges.cpp
     src/world/region.cpp
+    src/world/world.cpp
     src/world/worldstd.cpp
     src/world/worldholder.cpp
-    src/world/world.cpp
     src/world/worldinterface.cpp
+    src/world/worldloader.cpp
     src/world/generation/biome.cpp
     src/world/generation/biomestorage.cpp
     src/world/generation/chunkgenerator.cpp
@@ -209,16 +211,17 @@ set(header_files
 	src/utilities/timer.hpp
 	src/utilities/tinydir.hpp
 
-	src/world/worldmessages.hpp
 	src/world/chunk.hpp
     src/world/valuemap.hpp
     src/world/highlightmanager.hpp
     src/world/modmanager.hpp
     src/world/region.hpp
+    src/world/world.hpp
     src/world/worldstd.hpp
 	src/world/worldholder.hpp
-    src/world/world.hpp
     src/world/worldinterface.hpp
+    src/world/worldloader.hpp
+	src/world/worldmessages.hpp
     src/world/worldprovider.hpp
 	src/world/generation/biome.hpp
 	src/world/generation/biomestorage.hpp

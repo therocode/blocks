@@ -25,10 +25,11 @@ bool Ranges::isWithin(const glm::ivec3& coordinate) const
             coordinate.z >= zRange.first && coordinate.z <= zRange.second);   
 }
 
-World::World(fea::MessageBus& b, WorldId id, const std::string& textIdentifier, const Ranges& ranges) :
+World::World(fea::MessageBus& b, WorldId id, const std::string& textIdentifier, const std::string& title, const Ranges& ranges) :
     mBus(b),
     mId(id),
     mTextIdentifier(textIdentifier),
+    mTitle(title),
     mHighlightManager(8),
     mWorldRange(ranges),
     mModManager(b, textIdentifier)

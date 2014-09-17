@@ -1,0 +1,9 @@
+{   "worlds":
+    [{
+        "identifier":"default",
+        "title":"Overworld",
+        "x_range":"MIN..MAX",
+        "y_range":"MIN..MAX",
+        "z_range":"MIN..MAX"
+    }]
+}

@@ -9,9 +9,6 @@ WorldHolder::WorldHolder(fea::MessageBus& messageBus, EntitySystem& entitySystem
 	mBus.addSubscriber<SetVoxelMessage>(*this);
 	mBus.addSubscriber<RegionDeliverMessage>(*this);
 	mBus.addSubscriber<ChunkDeliverMessage>(*this);
-
-    mWorldIds.emplace("default", 0);
-    mWorlds.emplace(0, World(mBus, 0, "default", {{Ranges::MIN, Ranges::MAX}, {Ranges::MIN, Ranges::MAX}, {Ranges::MIN, Ranges::MAX}}));
 }
 
 WorldHolder::~WorldHolder()
@@ -54,4 +51,10 @@ void WorldHolder::handleMessage(const ChunkDeliverMessage& received)
 WorldInterface& WorldHolder::getWorldInterface()
 {
     return mWorldInterface;
+}
+
+void WorldHolder::addWorld(const WorldParameters& worldParameters)
+{
+    mWorldIds.emplace(worldParameters.identifier, 0);
+    mWorlds.emplace(0, World(mBus, 0, worldParameters.identifier, worldParameters.title, worldParameters.ranges));
 }
