@@ -16,10 +16,10 @@ class RegionGenerator
     public:
         RegionGenerator();
         Region generateRegion(const RegionCoord& coordinate);
+        void setSeed(int32_t seed);
     private:
         RegionDataGenerator mRegionDataGenerator;
         BiomeStorage mStorage;
-        std::array<Pixel, regionVoxelWidthPow2> mImage;
         std::array<Pixel, regionVoxelWidthPow2> mRain;
         std::array<Pixel, regionVoxelWidthPow2> mTemp;
         std::array<Pixel, regionVoxelWidthPow2> mHeight;

@@ -204,6 +204,8 @@ void InputAdaptor::update()
             mBus.send<PlayerActionMessage>(PlayerActionMessage{mPlayerId, InputAction::STOPJUMP});
         else if(action == "stopcrouch")
             mBus.send<PlayerActionMessage>(PlayerActionMessage{mPlayerId, InputAction::STOPCROUCH});
+        else if(action == "warp")
+            mBus.send(PlayerActionMessage{mPlayerId, InputAction::WARP});
     }
 }
 

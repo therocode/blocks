@@ -72,3 +72,8 @@ Region RegionGenerator::generateRegion(const RegionCoord& coordinate)
 
     return newRegion;
 }
+
+void RegionGenerator::setSeed(int32_t seed)
+{
+    mRegionDataGenerator.setSeed(seed);
+}

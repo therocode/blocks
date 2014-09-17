@@ -17,5 +17,6 @@ enum InputAction
     MOUSELEFT,
     STOPMOUSELEFT,
     DIG,
-    BUILD
+    BUILD,
+    WARP
 };

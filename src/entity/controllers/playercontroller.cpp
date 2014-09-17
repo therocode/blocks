@@ -97,7 +97,8 @@ void PlayerController::handleMessage(const PlayerActionMessage& received)
     else if(action == BUILD)
     {
         // glm::vec3 worldPos = mPlayerEntities.at(playerId).lock()->getAttribute<VoxelWorldCoord>("block_facing");
-		if(entity->getAttribute<bool>("is_facing_block")){
+		if(entity->getAttribute<bool>("is_facing_block"))
+        {
 			VoxelCoord voxel = entity->getAttribute<VoxelCoord>("block_facing");
 			uint32_t face = entity->getAttribute<uint32_t>("block_facing_face");
 			ChunkCoord cc = voxelToChunk(voxel);
@@ -133,6 +134,15 @@ void PlayerController::handleMessage(const PlayerActionMessage& received)
 
 			mBus.send<SetVoxelMessage>(SetVoxelMessage{entity->getAttribute<WorldId>("current_world"), voxel, 21});//rand()%4 + 17));// (playerId + 1) % 20));
 		}
+    }
+    else if(action == WARP)
+    {
+        WorldId oldWorld = entity->getAttribute<WorldId>("current_world");
+        WorldId nextWorld = oldWorld == 0 ? 1 : 0;
+
+        mWorldInterface.removeHighlightEntity(oldWorld, (fea::EntityId)playerId);
+        entity->setAttribute("current_world", nextWorld);
+        mWorldInterface.addHighlightEntity(nextWorld, (fea::EntityId)playerId, worldToChunk(entity->getAttribute<glm::vec3>("position")));
     }
 }
 

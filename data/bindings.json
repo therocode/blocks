@@ -71,6 +71,11 @@
           ,"key" : "92"
           ,"action" : "rebuild_scripts"
         }
+      , {
+           "type" : "keypress"
+          ,"key" : "5"
+          ,"action" : "warp"
+        }
     ]
 }
 

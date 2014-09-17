@@ -5,5 +5,12 @@
         "x_range":"MIN..MAX",
         "y_range":"MIN..MAX",
         "z_range":"MIN..MAX"
+    },
+    {
+        "identifier":"test",
+        "title":"Test world",
+        "x_range":"-10..10",
+        "y_range":"-10..10",
+        "z_range":"-10..10"
     }]
 }

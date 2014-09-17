@@ -4,7 +4,8 @@
 
 WorldHolder::WorldHolder(fea::MessageBus& messageBus, EntitySystem& entitySystem) 
 :   mBus(messageBus),
-	mWorldInterface(mWorlds, entitySystem)
+	mWorldInterface(mWorlds, entitySystem),
+    mNextId(0)
 {
 	mBus.addSubscriber<SetVoxelMessage>(*this);
 	mBus.addSubscriber<RegionDeliverMessage>(*this);
@@ -55,6 +56,8 @@ WorldInterface& WorldHolder::getWorldInterface()
 
 void WorldHolder::addWorld(const WorldParameters& worldParameters)
 {
-    mWorldIds.emplace(worldParameters.identifier, 0);
-    mWorlds.emplace(0, World(mBus, 0, worldParameters.identifier, worldParameters.title, worldParameters.ranges));
+    mWorldIds.emplace(worldParameters.identifier, mNextId);
+    mWorlds.emplace(mNextId, World(mBus, mNextId, worldParameters.identifier, worldParameters.title, worldParameters.ranges));
+
+    mNextId++;
 }

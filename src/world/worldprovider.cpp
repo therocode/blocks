@@ -150,6 +150,7 @@ void WorldProvider::generatorLoop()
 
                 if(mRegions.count({worldId, regionCoordinate}) == 0)
                 {
+                    mRegionGenerator.setSeed(worldId + 50);
                     Region newRegion = mRegionGenerator.generateRegion(regionCoordinate);
                     mRegions.emplace(std::pair<WorldId, RegionCoord>(worldId, regionCoordinate), newRegion);
                     mFinishedRegions.push_back({worldId, {regionCoordinate, newRegion}});

@@ -1,13 +1,16 @@
 #include "regiondatagenerator.hpp"
 #include <fea/util.hpp>
 
-const int globalSeed = 12312;
+void RegionDataGenerator::setSeed(int32_t seed)
+{
+    mSeed = seed;
+}
 
 IntensityMap RegionDataGenerator::generateHeightmap(const RegionCoord& regionCoordinate) const
 {
     IntensityMap heightmap;
-    fea::Noise simplex(globalSeed + 3);
-    fea::Noise simplex2(globalSeed + 17);
+    fea::Noise simplex(mSeed + 3);
+    fea::Noise simplex2(mSeed + 17);
 
     glm::vec3 regionPos = regionToWorld(regionCoordinate);
 
@@ -33,8 +36,8 @@ IntensityMap RegionDataGenerator::generateHeightmap(const RegionCoord& regionCoo
 IntensityMap RegionDataGenerator::generateRainfall(const RegionCoord& regionCoordinate) const
 {
     IntensityMap rainmap;
-    fea::Noise simplex(globalSeed + 9);
-    fea::Noise simplex2(globalSeed + 41234);
+    fea::Noise simplex(mSeed + 9);
+    fea::Noise simplex2(mSeed + 41234);
 
     glm::vec3 regionPos = regionToWorld(regionCoordinate);
 
@@ -61,8 +64,8 @@ IntensityMap RegionDataGenerator::generateRainfall(const RegionCoord& regionCoor
 IntensityMap RegionDataGenerator::generateTemperature(const RegionCoord& regionCoordinate, const IntensityMap& height) const
 {
     IntensityMap temperaturemap;
-    fea::Noise simplex(globalSeed + 123412);
-    fea::Noise simplex2(globalSeed + 1723);
+    fea::Noise simplex(mSeed + 123412);
+    fea::Noise simplex2(mSeed + 1723);
 
     glm::vec3 regionPos = regionToWorld(regionCoordinate);
 
@@ -90,8 +93,8 @@ IntensityMap RegionDataGenerator::generateTemperature(const RegionCoord& regionC
 IntensityMap RegionDataGenerator::generateBiomeSelector(const RegionCoord& regionCoordinate) const
 {
     IntensityMap biomSelectorMap;
-    fea::Noise simplex(globalSeed + 9123);
-    fea::Noise simplex2(globalSeed + 23423);
+    fea::Noise simplex(mSeed + 9123);
+    fea::Noise simplex2(mSeed + 23423);
 
     glm::vec3 regionPos = regionToWorld(regionCoordinate);
 
