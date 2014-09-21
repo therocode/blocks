@@ -11,6 +11,7 @@ WorldProvider::WorldProvider(fea::MessageBus& b)
     mThreadSleepInterval(5),
     mMaxChunkGenerationAmount(5),
     mGenThreadActive(true)
+
 {
     mBus.send(LogMessage{"Started world generation thread", logName, LogLevel::INFO});
     mBus.addSubscriber<ChunkRequestedMessage>(*this);
@@ -35,6 +36,7 @@ WorldProvider::~WorldProvider()
 void WorldProvider::handleMessage(const ChunkRequestedMessage& received)
 {
     //add chunk to load to other thread
+    std::cout << "requesting chunk " << glm::to_string((glm::ivec3)received.coordinate) << " to world " << received.worldId << "\n";
     std::lock_guard<std::mutex> lock(mThreadInputMutex);
     mChunksToGenerate.push_back(std::pair<int32_t, std::pair<WorldId, ChunkCoord>>(received.prio, {received.worldId, received.coordinate}));       
 }
@@ -42,6 +44,7 @@ void WorldProvider::handleMessage(const ChunkRequestedMessage& received)
 void WorldProvider::handleMessage(const RegionDeletedMessage& received)
 {
     std::lock_guard<std::mutex> lock(mThreadMainMutex);
+    std::cout << "region " << glm::to_string((glm::ivec2)received.coordinate) << " actually deleted from generator regarding world " << received.worldId << "\n";
     mRegions.erase({received.worldId, received.coordinate}); 
 }
 
@@ -64,6 +67,7 @@ void WorldProvider::handleMessage(const FrameMessage& received)
     {
         for(const auto& region : regions)
         {
+            std::cout << "Region delivered " << glm::to_string((glm::ivec2)region.second.first) << " to world " << region.first << "\n";
             mBus.send(RegionDeliverMessage{region.first, region.second.first, std::move(region.second.second)});
         }
     }
@@ -72,6 +76,7 @@ void WorldProvider::handleMessage(const FrameMessage& received)
     {
         for(auto& chunk : chunks)
         {
+            std::cout << "Chunk delivered" << glm::to_string((glm::ivec3)chunk.second.first) << " to world " << chunk.first << "\n";
             mBus.send(ChunkDeliverMessage{chunk.first, chunk.second.first, std::move(chunk.second.second)}); //sends the finished chunk to be kept by whatever system
         }
     }
@@ -85,13 +90,15 @@ void WorldProvider::handleMessage(const HaltChunkAndRegionGenerationMessage& rec
 
         for(size_t i = 0; i < mChunksToGenerate.size(); i++)
         {
+            std::cout << "Discarding chunk " << glm::to_string((glm::ivec3) received.chunkCoordinate) << " to world " << received.worldId << "\n";
             if(mChunksToGenerate[i].second == std::pair<WorldId, ChunkCoord>(received.worldId, received.chunkCoordinate))
                 mChunksToGenerate.erase(mChunksToGenerate.begin() + i);
         }
 
         for(size_t i = 0; i < mChunksToDeliver.size(); i++)
         {
-            if(mChunksToDeliver[i].second.first == received.chunkCoordinate)
+            std::cout << "Discarding chunk " << glm::to_string((glm::ivec3) received.chunkCoordinate) << " to world " << received.worldId << "\n";
+            if(mChunksToDeliver[i].second.first == received.chunkCoordinate && mChunksToDeliver[i].first == received.worldId)
             {
                 mChunksToDeliver.erase(mChunksToDeliver.begin() + i);
                 break;
@@ -105,8 +112,9 @@ void WorldProvider::handleMessage(const HaltChunkAndRegionGenerationMessage& rec
 
             for(size_t i = 0; i < mRegionsToDeliver.size(); i++)
             {
-                if(mRegionsToDeliver[i].second.first == *received.regionCoordinate)
+                if(mRegionsToDeliver[i].second.first == *received.regionCoordinate && mRegionsToDeliver[i].first == received.worldId)
                 {
+                    std::cout << "Disccccccarded region " << glm::to_string((glm::ivec2)*received.regionCoordinate) << " to world " << mRegionsToDeliver[i].first << "\n";
                     mRegionsToDeliver.erase(mRegionsToDeliver.begin() + i);
                     break;
                 }
@@ -135,11 +143,11 @@ void WorldProvider::generatorLoop()
         {
             std::lock_guard<std::mutex> lock(mThreadMainMutex);
 
-            std::sort(mChunkQueue.begin(), mChunkQueue.end(), [] 
-                    (const std::pair<int32_t, std::pair<WorldId, ChunkCoord>>& a, const std::pair<int32_t, std::pair<WorldId, ChunkCoord>>& b)
-                    {
-                        return a.first < b.first;
-                    });
+            //std::sort(mChunkQueue.begin(), mChunkQueue.end(), [] 
+            //        (const std::pair<int32_t, std::pair<WorldId, ChunkCoord>>& a, const std::pair<int32_t, std::pair<WorldId, ChunkCoord>>& b)
+            //        {
+            //            return a.first < b.first;
+            //        });
 
             int32_t amountGenerated = 0;
             for(size_t i = 0; i < mChunkQueue.size(); i++)
@@ -150,11 +158,16 @@ void WorldProvider::generatorLoop()
 
                 if(mRegions.count({worldId, regionCoordinate}) == 0)
                 {
+                    std::cout << "Will make region " << glm::to_string((glm::ivec2)regionCoordinate) << " to world " << worldId << " triggered by chunk " << glm::to_string((glm::ivec3)chunkCoordinate) << "\n";
                     mRegionGenerator.setSeed(worldId + 50);
                     Region newRegion = mRegionGenerator.generateRegion(regionCoordinate);
                     mRegions.emplace(std::pair<WorldId, RegionCoord>(worldId, regionCoordinate), newRegion);
                     mFinishedRegions.push_back({worldId, {regionCoordinate, newRegion}});
                 }
+//                else
+ //               {
+  //                  std::cout << "won't make region because " << glm::to_string((glm::ivec2)regionCoordinate) << " in world " << worldId << " already exists\n";
+   //             }
 
                 const Region& region = mRegions.at({worldId, regionCoordinate});
 
@@ -204,16 +217,31 @@ void WorldProvider::generatorLoop()
             }
             for(const auto& region : mRegionsToDiscard)
             {
+                std::cout << "looking to discard region " << glm::to_string((glm::ivec2)region.second) << "\n";
                 for(size_t i = 0; i < mRegionsToDeliver.size(); i++)
                 {
                     if(mRegionsToDeliver[i].first == region.first && mRegionsToDeliver[i].second.first == region.second)
                     {
+                        std::cout << "Discarrrrrrded region " << glm::to_string((glm::ivec2)region.second) << " to world " << region.first << "\n";
                         mRegionsToDeliver.erase(mRegionsToDeliver.begin() + i);
                         mRegions.erase(region);
+                        //print chunk queue and their regions
                         break;
                     }
+                    else
+                    {
+                        std::cout << "didn't discard it\n";
+                    }
+                }
+
+                if(mRegions.count(region) != 0)
+                {
+                    std::cout << "erased it internally\n";
+                    mRegions.erase(region);
+                    //print chunk queue and their regions
                 }
             }
+
             mChunksToDiscard.clear();
             mRegionsToDiscard.clear();
         }

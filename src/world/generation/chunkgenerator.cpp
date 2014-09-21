@@ -32,7 +32,10 @@ Chunk ChunkGenerator::generateChunk(const ChunkCoord& chunkCoordinate, const Reg
                 const Biome* biome = region.getBiome(regionCoord);
                 VoxelType biomeType = biome->mType;
 
-                voxelData[zIndex + yIndex + x] = (worldY < threshold) ? biomeType : 0;
+                //bool cave = mNoise.simplex3D((((float)x) + chunkWidth * chunkCoordinate.x) * 0.02f, (((float)y) + chunkWidth * chunkCoordinate.y) * 0.02f, (((float)z) + chunkWidth * chunkCoordinate.z) * 0.02f) > 0.0f;
+                bool cave = false;
+
+                voxelData[zIndex + yIndex + x] = ((worldY < threshold) && !cave) ? biomeType : 0;
 
                 regionCoord.x++;
             }
