@@ -9,7 +9,6 @@
 class Biome;
 
 using ChunkRegionMap = std::unordered_map<RegionChunkCoord, Chunk>;
-using FloatMap = ValueMap<float>;
 
 class Region
 {
@@ -32,10 +31,10 @@ class Region
         //const Biome* getBiome(const RegionVoxelCoord& coordinate) const;
         RegionDataFragment getDataFragment(const glm::uvec2& start, const glm::uvec2& end);
     private:
+        FloatMap getMapFragment(const glm::uvec2& start, const glm::uvec2& end, const FloatMap& map);
         ChunkRegionMap mChunks;
         FloatMap mHeightmap;
         FloatMap mRainmap;
         FloatMap mTemperaturemap;
         FloatMap mBiomeSelector;
-        FloatMap mBiomeIndices;
 };

@@ -5,8 +5,7 @@ Region::Region() :
     mHeightmap(regionVoxelWidth, regionVoxelWidth),
     mRainmap(regionVoxelWidth, regionVoxelWidth),
     mTemperaturemap(regionVoxelWidth, regionVoxelWidth),
-    mBiomeSelector(regionVoxelWidth, regionVoxelWidth),
-    mBiomeIndices(regionVoxelWidth, regionVoxelWidth)
+    mBiomeSelector(regionVoxelWidth, regionVoxelWidth)
 {
 
 }
@@ -15,8 +14,7 @@ Region::Region(const FloatMap& heightmap, const FloatMap& rainmap, const FloatMa
     mHeightmap(heightmap),
     mRainmap(rainmap),
     mTemperaturemap(temperaturemap),
-    mBiomeSelector(biomeSelector),
-    mBiomeIndices(regionVoxelWidth, regionVoxelWidth)
+    mBiomeSelector(biomeSelector)
 {
 }
 
@@ -24,8 +22,7 @@ Region::Region(FloatMap&& heightmap, FloatMap&& rainmap, FloatMap&& temperaturem
     mHeightmap(std::move(heightmap)),
     mRainmap(std::move(rainmap)),
     mTemperaturemap(std::move(temperaturemap)),
-    mBiomeSelector(std::move(biomeSelector)),
-    mBiomeIndices(regionVoxelWidth, regionVoxelWidth)
+    mBiomeSelector(std::move(biomeSelector))
 {
 }
 
@@ -84,16 +81,25 @@ const FloatMap& Region::getBiomeSelector() const
     return mBiomeSelector;
 }
 
-void Region::setBiomes(const FloatMap& biomeIndices)
-{
-    mBiomeIndices = biomeIndices;
-}
-
-//const Biome* Region::getBiome(const RegionVoxelCoord& coordinate) const
-//{
-//    return mBiomeMap.at(mBiomeIndices.getUnit(coordinate.x, coordinate.y));
-//}
-
 RegionDataFragment Region::getDataFragment(const glm::uvec2& start, const glm::uvec2& end)
 {
+    return RegionDataFragment(getMapFragment(start, end, mHeightmap),
+                              getMapFragment(start, end, mTemperaturemap),
+                              getMapFragment(start, end, mRainmap),
+                              getMapFragment(start, end, mBiomeSelector));
+}
+
+FloatMap Region::getMapFragment(const glm::uvec2& start, const glm::uvec2& end, const FloatMap& map)
+{
+    FloatMap result(end.x, end.y);
+
+    for(uint32_t y = 0; y < end.y; y++)
+    {
+        for(uint32_t x = 0; x < end.x; x++)
+        {
+            result.setUnit(x, y, map.getUnit(x + start.x, y + start.y));
+        }
+    }
+
+    return result;
 }
