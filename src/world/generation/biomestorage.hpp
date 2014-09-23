@@ -5,7 +5,7 @@ class BiomeStorage
 {
     public:
         const Biome* findBiome(float temperature, float rainfall, float height, float selector) const;
-        void addBiome(Biome biome);
+        void addBiome(const Biome& biome);
     private:
-        std::vector<Biome> biomes; 
+        std::vector<Biome> mBiomes; 
 };
