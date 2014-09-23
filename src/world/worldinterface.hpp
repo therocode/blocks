@@ -1,14 +1,15 @@
 #pragma once
-#include "world.hpp"
 #include "../entity/entitysystem.hpp"
 #include "chunk.hpp"
+#include <memory>
 
 class asIScriptObject;
+class World;
 
 class WorldInterface
 {
     public:
-        WorldInterface(std::unordered_map<WorldId, World>& worlds, EntitySystem& entitySystem);
+        WorldInterface(std::unordered_map<WorldId, std::unique_ptr<World>>& worlds, EntitySystem& entitySystem);
 		VoxelType getVoxelTypeInt(WorldId worldId, int x, int y, int z) const;
         VoxelType getVoxelType(WorldId worldId, float x, float y, float z) const; 
         VoxelType getVoxelType(WorldId worldId, const glm::vec3& position) const; 
@@ -30,6 +31,6 @@ class WorldInterface
         void removeHighlightEntity(WorldId worldId, fea::EntityId id);
         void moveHighlightEntity(WorldId worldId, fea::EntityId id, const ChunkCoord& coordinate);
     private:
-        std::unordered_map<WorldId, World>& mWorlds;
+        std::unordered_map<WorldId, std::unique_ptr<World>>& mWorlds;
         EntitySystem& mEntitySystem;
 };

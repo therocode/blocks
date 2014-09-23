@@ -1,7 +1,8 @@
 #include "worldinterface.hpp"
 #include "rendering/renderer.hpp"
+#include "world.hpp"
 
-WorldInterface::WorldInterface(std::unordered_map<WorldId, World>& worlds, EntitySystem& entitySystem) :
+WorldInterface::WorldInterface(std::unordered_map<WorldId, std::unique_ptr<World>>& worlds, EntitySystem& entitySystem) :
     mWorlds(worlds),
     mEntitySystem(entitySystem)
 {
@@ -10,7 +11,7 @@ WorldInterface::WorldInterface(std::unordered_map<WorldId, World>& worlds, Entit
 
 VoxelType WorldInterface::getVoxelTypeInt(WorldId worldId, int x, int y, int z) const
 {
-    return mWorlds.at(worldId).getVoxelType(VoxelCoord(x, y, z));
+    return mWorlds.at(worldId)->getVoxelType(VoxelCoord(x, y, z));
 }
 
 VoxelType WorldInterface::getVoxelType(WorldId worldId, const VoxelCoord coord) const
@@ -158,7 +159,7 @@ fea::WeakEntityPtr WorldInterface::createEntity(const std::string& scriptType, c
 
 ChunkReferenceMap WorldInterface::getChunkMap(WorldId worldId) const
 {
-    return mWorlds.at(worldId).getChunkMap();
+    return mWorlds.at(worldId)->getChunkMap();
 }
 
 EntityCreator WorldInterface::getEntityCreator() const
@@ -168,15 +169,15 @@ EntityCreator WorldInterface::getEntityCreator() const
 
 void WorldInterface::addHighlightEntity(WorldId worldId, fea::EntityId id, const ChunkCoord& coordinate)
 {
-    mWorlds.at(worldId).addHighlightEntity(id, coordinate);
+    mWorlds.at(worldId)->addHighlightEntity(id, coordinate);
 }
 
 void WorldInterface::removeHighlightEntity(WorldId worldId, fea::EntityId id)
 {
-    mWorlds.at(worldId).removeHighlightEntity(id);
+    mWorlds.at(worldId)->removeHighlightEntity(id);
 }
 
 void WorldInterface::moveHighlightEntity(WorldId worldId, fea::EntityId id, const ChunkCoord& coordinate)
 {
-    mWorlds.at(worldId).moveHighlightEntity(id, coordinate);
+    mWorlds.at(worldId)->moveHighlightEntity(id, coordinate);
 }

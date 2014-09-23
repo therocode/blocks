@@ -1,10 +1,15 @@
 #pragma once
-#include "worldstd.hpp"
 #include <fea/entitysystem.hpp>
 #include <fea/util.hpp>
 
 class Region;
 class Chunk;
+using VoxelCoord       = glm::i64vec3;
+using ChunkCoord       = glm::i64vec3; 
+using RegionCoord      = glm::i64vec2;
+using ChunkVoxelCoord  = glm::u8vec3;
+using RegionChunkCoord = glm::u8vec3;
+using RegionVoxelCoord = glm::u16vec2;
 
 FEA_DECLARE_MESSAGE(SetVoxelMessage, WorldId worldId; const VoxelCoord& voxel; VoxelType type;);
 FEA_DECLARE_MESSAGE(VoxelSetMessage, const VoxelCoord& voxel; VoxelType type;);

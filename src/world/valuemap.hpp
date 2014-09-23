@@ -60,13 +60,13 @@ class ValueMap
         ValueType getUnit(uint32_t x, uint32_t y) const
         {
             FEA_ASSERT(x < mWidth && y < mHeight, "Coordinates must be within x range 0.." + std::to_string(x) + " and y range 0.." + std::to_string(y) + " but the given coordinate was " + std::to_string(x) + ", " + std::to_string(y));
-            return units[x + y * regionVoxelWidth];
+            return units[x + y * mWidth];
         }
 
         void setUnit(uint32_t x, uint32_t y, ValueType value)
         {
             FEA_ASSERT(x < mWidth && y < mHeight, "Coordinates must be within x range 0.." + std::to_string(x) + " and y range 0.." + std::to_string(y) + " but the given coordinate was " + std::to_string(x) + ", " + std::to_string(y));
-            units[x + y * regionVoxelWidth] = value;
+            units[x + y * mWidth] = value;
         }
         //void toTexture(fea::Texture& texture);
     private:
@@ -74,3 +74,5 @@ class ValueMap
         uint32_t mHeight;
         std::unique_ptr<ValueType[]> units;
 };
+
+using FloatMap = ValueMap<float>;
