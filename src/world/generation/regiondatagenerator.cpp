@@ -6,9 +6,9 @@ void RegionDataGenerator::setSeed(int32_t seed)
     mSeed = seed;
 }
 
-IntensityMap RegionDataGenerator::generateHeightmap(const RegionCoord& regionCoordinate) const
+FloatMap RegionDataGenerator::generateHeightmap(const RegionCoord& regionCoordinate) const
 {
-    IntensityMap heightmap;
+    FloatMap heightmap(regionVoxelWidth, regionVoxelWidth);
     fea::Noise simplex(mSeed + 3);
     fea::Noise simplex2(mSeed + 17);
 
@@ -33,9 +33,9 @@ IntensityMap RegionDataGenerator::generateHeightmap(const RegionCoord& regionCoo
     return heightmap;
 }
 
-IntensityMap RegionDataGenerator::generateRainfall(const RegionCoord& regionCoordinate) const
+FloatMap RegionDataGenerator::generateRainfall(const RegionCoord& regionCoordinate) const
 {
-    IntensityMap rainmap;
+    FloatMap rainmap(regionVoxelWidth, regionVoxelWidth);
     fea::Noise simplex(mSeed + 9);
     fea::Noise simplex2(mSeed + 41234);
 
@@ -61,9 +61,9 @@ IntensityMap RegionDataGenerator::generateRainfall(const RegionCoord& regionCoor
     return rainmap;
 }
 
-IntensityMap RegionDataGenerator::generateTemperature(const RegionCoord& regionCoordinate, const IntensityMap& height) const
+FloatMap RegionDataGenerator::generateTemperature(const RegionCoord& regionCoordinate, const FloatMap& height) const
 {
-    IntensityMap temperaturemap;
+    FloatMap temperaturemap(regionVoxelWidth, regionVoxelWidth);
     fea::Noise simplex(mSeed + 123412);
     fea::Noise simplex2(mSeed + 1723);
 
@@ -90,9 +90,9 @@ IntensityMap RegionDataGenerator::generateTemperature(const RegionCoord& regionC
     return temperaturemap;
 }
 
-IntensityMap RegionDataGenerator::generateBiomeSelector(const RegionCoord& regionCoordinate) const
+FloatMap RegionDataGenerator::generateBiomeSelector(const RegionCoord& regionCoordinate) const
 {
-    IntensityMap biomSelectorMap;
+    FloatMap biomSelectorMap(regionVoxelWidth, regionVoxelWidth);
     fea::Noise simplex(mSeed + 9123);
     fea::Noise simplex2(mSeed + 23423);
 

@@ -4,6 +4,7 @@
 #include "generation/regiongenerator.hpp"
 #include "generation/chunkgenerator.hpp"
 #include "../application/applicationmessages.hpp"
+#include "../utilities/threadpool.hpp"
 #include <thread>
 #include <mutex>
 
@@ -27,6 +28,7 @@ using ChunkEntry = std::pair<WorldId, std::pair<ChunkCoord, Chunk>>;
 using RegionEntry = std::pair<WorldId, std::pair<RegionCoord, Region>>;
 
 class WorldProvider :
+    public RegionRequestedMessageReceiver,
     public ChunkRequestedMessageReceiver,
     public RegionDeletedMessageReceiver,
     public FrameMessageReceiver,
@@ -35,6 +37,7 @@ class WorldProvider :
     public:
         WorldProvider(fea::MessageBus& b);
         ~WorldProvider();
+        void handleMessage(const RegionRequestedMessage& received) override;
         void handleMessage(const ChunkRequestedMessage& received) override;
         void handleMessage(const RegionDeletedMessage& received) override;
         void handleMessage(const FrameMessage& received) override;
@@ -51,15 +54,18 @@ class WorldProvider :
         int32_t mThreadSleepInterval;
         int32_t mMaxChunkGenerationAmount;
         void generatorLoop();
+        BiomeStorage mBiomes;
 
         //thread input
+        std::vector<std::pair<WorldId, RegionCoord>> mRegionsToGenerate;
         std::vector<std::pair<int32_t, std::pair<WorldId, ChunkCoord>>> mChunksToGenerate;
         std::mutex              mThreadInputMutex;
         bool                    mGenThreadActive;
 
         //thread storage
-        std::mutex              mThreadMainMutex;
+        std::vector<std::pair<WorldId, RegionCoord>> mRegionQueue;
         std::vector<std::pair<int32_t, std::pair<WorldId, ChunkCoord>>> mChunkQueue;
+        std::vector<std::pair<WorldId, RegionCoord>> mRegionsToDelete;
         std::vector<ChunkEntry> mFinishedChunks;
         std::vector<RegionEntry> mFinishedRegions;
 

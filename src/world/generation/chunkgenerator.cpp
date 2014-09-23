@@ -1,7 +1,7 @@
 #include "chunkgenerator.hpp"
 #include "biome.hpp"
 
-Chunk ChunkGenerator::generateChunk(const ChunkCoord& chunkCoordinate, const Region& region) const
+Chunk ChunkGenerator::generateChunk(const ChunkCoord& chunkCoordinate, const Region& region, const BiomeStorage& biomes) const
 {
     Chunk newChunk(chunkCoordinate);
 
@@ -28,8 +28,12 @@ Chunk ChunkGenerator::generateChunk(const ChunkCoord& chunkCoordinate, const Reg
             for(int32_t x = 0; x < chunkWidth; x++)
             {
                 float worldY = (float)(chunkY + y);
-                float threshold = region.getHeightmap().getUnit(regionCoord.x, regionCoord.y) * 100.f;
-                const Biome* biome = region.getBiome(regionCoord);
+                float height = region.getHeightmap().getUnit(regionCoord.x, regionCoord.y);
+                float rain = region.getRainmap().getUnit(regionCoord.x, regionCoord.y);
+                float temperature = region.getTemperaturemap().getUnit(regionCoord.x, regionCoord.y);
+                float biomeSelector = region.getBiomeSelector().getUnit(regionCoord.x, regionCoord.y);
+                float threshold = height * 100.f;
+                const Biome* biome = biomes.findBiome(height, rain, temperature, biomeSelector);
                 VoxelType biomeType = biome->mType;
 
                 //bool cave = mNoise.simplex3D((((float)x) + chunkWidth * chunkCoordinate.x) * 0.02f, (((float)y) + chunkWidth * chunkCoordinate.y) * 0.02f, (((float)z) + chunkWidth * chunkCoordinate.z) * 0.02f) > 0.0f;

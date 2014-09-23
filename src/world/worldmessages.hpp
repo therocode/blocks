@@ -8,6 +8,7 @@ class Chunk;
 
 FEA_DECLARE_MESSAGE(SetVoxelMessage, WorldId worldId; const VoxelCoord& voxel; VoxelType type;);
 FEA_DECLARE_MESSAGE(VoxelSetMessage, const VoxelCoord& voxel; VoxelType type;);
+FEA_DECLARE_MESSAGE(RegionRequestedMessage, WorldId worldId; const RegionCoord& coordinate;);
 FEA_DECLARE_MESSAGE(RegionDeliverMessage, WorldId worldId; const RegionCoord& coordinate; const Region& newRegion;);
 FEA_DECLARE_MESSAGE(RegionDeletedMessage, WorldId worldId; const RegionCoord& coordinate;);
 FEA_DECLARE_MESSAGE(ChunkRequestedMessage, int32_t prio; WorldId worldId; const ChunkCoord& coordinate;);

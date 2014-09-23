@@ -132,7 +132,7 @@ void PlayerController::handleMessage(const PlayerActionMessage& received)
 					break;
 			}
 
-			mBus.send<SetVoxelMessage>(SetVoxelMessage{entity->getAttribute<WorldId>("current_world"), voxel, 21});//rand()%4 + 17));// (playerId + 1) % 20));
+			mBus.send<SetVoxelMessage>(SetVoxelMessage{entity->getAttribute<WorldId>("current_world"), voxel, (VoxelType)(rand() % 21 + 1)});//rand()%4 + 17));// (playerId + 1) % 20));
 		}
     }
     else if(action == WARP)

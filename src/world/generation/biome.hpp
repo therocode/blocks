@@ -5,7 +5,7 @@
 struct Range
 {
     Range(float mi, float ma);
-    bool isWithin(float v);
+    bool isWithin(float v) const;
     float min;
     float max;
 };

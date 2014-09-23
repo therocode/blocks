@@ -1,26 +1,32 @@
 #include "region.hpp"
 #include <iostream>
 
-Region::Region()
+Region::Region() :
+    mHeightmap(regionVoxelWidth, regionVoxelWidth),
+    mRainmap(regionVoxelWidth, regionVoxelWidth),
+    mTemperaturemap(regionVoxelWidth, regionVoxelWidth),
+    mBiomeSelector(regionVoxelWidth, regionVoxelWidth),
+    mBiomeIndices(regionVoxelWidth, regionVoxelWidth)
 {
 
 }
 
-Region::Region(const IntensityMap& heightmap, const IntensityMap& rainmap, const IntensityMap& temperaturemap, const IntensityMap& biomeSelector)
+Region::Region(const FloatMap& heightmap, const FloatMap& rainmap, const FloatMap& temperaturemap, const FloatMap& biomeSelector) :
+    mHeightmap(heightmap),
+    mRainmap(rainmap),
+    mTemperaturemap(temperaturemap),
+    mBiomeSelector(biomeSelector),
+    mBiomeIndices(regionVoxelWidth, regionVoxelWidth)
 {
-    mHeightmap = heightmap;
-    mRainmap = rainmap;
-    mTemperaturemap = temperaturemap;
-    mBiomeSelector = biomeSelector;
 }
 
-Region::Region(IntensityMap&& heightmap, IntensityMap&& rainmap, IntensityMap&& temperaturemap, IntensityMap&& biomeSelector)
+Region::Region(FloatMap&& heightmap, FloatMap&& rainmap, FloatMap&& temperaturemap, FloatMap&& biomeSelector) :
+    mHeightmap(std::move(heightmap)),
+    mRainmap(std::move(rainmap)),
+    mTemperaturemap(std::move(temperaturemap)),
+    mBiomeSelector(std::move(biomeSelector)),
+    mBiomeIndices(regionVoxelWidth, regionVoxelWidth)
 {
-    std::swap(mHeightmap, heightmap);
-    std::swap(mRainmap, rainmap);
-    std::swap(mTemperaturemap, temperaturemap);
-    std::swap(mBiomeSelector, biomeSelector);
-
 }
 
 bool Region::hasChunk(const RegionChunkCoord& location) const
@@ -58,33 +64,36 @@ size_t Region::getLoadedChunkAmount() const
    return mChunks.size();
 }
 
-const IntensityMap& Region::getHeightmap() const
+const FloatMap& Region::getHeightmap() const
 {
     return mHeightmap;
 }
 
-const IntensityMap& Region::getRainmap() const
+const FloatMap& Region::getRainmap() const
 {
     return mRainmap;
 }
 
-const IntensityMap& Region::getTemperaturemap() const
+const FloatMap& Region::getTemperaturemap() const
 {
     return mTemperaturemap;
 }
 
-const IntensityMap& Region::getBiomeSelector() const
+const FloatMap& Region::getBiomeSelector() const
 {
     return mBiomeSelector;
 }
 
-void Region::setBiomes(const BiomeIndices& biomeIndices, const BiomeIndexMap& biomeMap)
+void Region::setBiomes(const FloatMap& biomeIndices)
 {
     mBiomeIndices = biomeIndices;
-    mBiomeMap = biomeMap;
 }
 
-const Biome* Region::getBiome(const RegionVoxelCoord& coordinate) const
+//const Biome* Region::getBiome(const RegionVoxelCoord& coordinate) const
+//{
+//    return mBiomeMap.at(mBiomeIndices.getUnit(coordinate.x, coordinate.y));
+//}
+
+RegionDataFragment Region::getDataFragment(const glm::uvec2& start, const glm::uvec2& end)
 {
-    return mBiomeMap.at(mBiomeIndices.getUnit(coordinate.x, coordinate.y));
 }

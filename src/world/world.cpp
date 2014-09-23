@@ -155,6 +155,7 @@ void World::activateChunk(const ChunkCoord& coordinate, int32_t priority)
     if(mHighlightedRegions.count(regionCoord) == 0)
     {
         mHighlightedRegions.emplace(regionCoord, std::unordered_set<ChunkCoord>{coordinate});
+        mBus.send(RegionRequestedMessage{mId, regionCoord});
     }
     else
     {

@@ -1,7 +1,6 @@
 #pragma once
 #include <fea/util.hpp>
 #include "regiondatagenerator.hpp"
-#include "biomestorage.hpp"
 
 struct Pixel
 {
@@ -19,8 +18,4 @@ class RegionGenerator
         void setSeed(int32_t seed);
     private:
         RegionDataGenerator mRegionDataGenerator;
-        BiomeStorage mStorage;
-        std::array<Pixel, regionVoxelWidthPow2> mRain;
-        std::array<Pixel, regionVoxelWidthPow2> mTemp;
-        std::array<Pixel, regionVoxelWidthPow2> mHeight;
 };

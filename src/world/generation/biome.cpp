@@ -4,7 +4,7 @@ Range::Range(float mi, float ma) : min(mi), max(ma)
 {
 }
 
-bool Range::isWithin(float v) 
+bool Range::isWithin(float v) const
 {
     return v >= min && v <= max;
 }

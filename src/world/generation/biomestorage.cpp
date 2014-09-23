@@ -1,13 +1,17 @@
 #include "biomestorage.hpp"
 #include <algorithm>
 
-Biome* BiomeStorage::getBiome(float temperature, float rainfall, float height, float selector)
+const Biome* BiomeStorage::findBiome(float temperature, float rainfall, float height, float selector) const
 {
-    std::vector<Biome*> possibleBiomes(biomes.size(), nullptr);
+    std::vector<const Biome*> possibleBiomes(biomes.size(), nullptr);
 
     if(biomes.size() > 0)
     {
-        std::copy_if(biomes.begin(), biomes.end(), possibleBiomes.begin(), [=] (Biome* biome) {return biome->temperatureRange.isWithin(temperature) && biome->rainfallRange.isWithin(rainfall) && biome->heightRange.isWithin(height);});
+        for(const auto& biome : biomes)
+        {
+            if(biome.temperatureRange.isWithin(temperature) && biome.rainfallRange.isWithin(rainfall) && biome.heightRange.isWithin(height))
+                possibleBiomes.push_back(&biome);
+        }
 
         for(uint32_t i = 0; i < possibleBiomes.size(); i++)
         {
@@ -31,7 +35,7 @@ Biome* BiomeStorage::getBiome(float temperature, float rainfall, float height, f
     return nullptr;
 }
 
-void BiomeStorage::addBiome(Biome* biome)
+void BiomeStorage::addBiome(Biome biome)
 {
     biomes.push_back(biome);
 }
