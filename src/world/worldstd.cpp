@@ -15,6 +15,11 @@ VoxelTypeData::VoxelTypeData(const RleIndexArray& rleSegmentIndices, const RleSe
 
 }
 
+VoxelCoord chunkToVoxel(const ChunkCoord& chunkCoordinate)
+{
+    return (VoxelCoord)(chunkCoordinate * (int64_t)chunkWidth);
+}
+
 VoxelCoord worldToVoxel(const glm::vec3& worldCoordinate)
 {
     return (VoxelCoord)glm::floor(worldCoordinate);

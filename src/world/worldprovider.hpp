@@ -5,8 +5,6 @@
 #include "generation/chunkgenerator.hpp"
 #include "../application/applicationmessages.hpp"
 #include "../utilities/threadpool.hpp"
-#include <thread>
-#include <mutex>
 
 namespace std 
 {
@@ -27,52 +25,39 @@ class Region;
 using ChunkEntry = std::pair<WorldId, std::pair<ChunkCoord, Chunk>>;
 using RegionEntry = std::pair<WorldId, std::pair<RegionCoord, Region>>;
 
+struct RegionDelivery
+{
+    WorldId id;
+    RegionCoord coordinate;
+    Region region;
+};
+
+struct ChunkDelivery
+{
+    WorldId id;
+    ChunkCoord coordinate;
+    Chunk chunk;
+};
+
 class WorldProvider :
     public RegionRequestedMessageReceiver,
     public ChunkRequestedMessageReceiver,
-    public RegionDeletedMessageReceiver,
-    public FrameMessageReceiver,
-    public HaltChunkAndRegionGenerationMessageReceiver
+    public FrameMessageReceiver
 {
     public:
         WorldProvider(fea::MessageBus& b);
         ~WorldProvider();
         void handleMessage(const RegionRequestedMessage& received) override;
         void handleMessage(const ChunkRequestedMessage& received) override;
-        void handleMessage(const RegionDeletedMessage& received) override;
         void handleMessage(const FrameMessage& received) override;
-        void handleMessage(const HaltChunkAndRegionGenerationMessage& received) override;
     private:
-        Chunk generateChunk(const ChunkCoord& chunkCoordinate, const Region& region) const;
         fea::MessageBus& mBus;
         RegionGenerator mRegionGenerator;
         ChunkGenerator mChunkGenerator;
 
-        //thread
-        std::thread mGeneratorThread;
-        std::unordered_map<std::pair<WorldId, RegionCoord>, Region> mRegions; //thread local copy of regions
-        int32_t mThreadSleepInterval;
-        int32_t mMaxChunkGenerationAmount;
-        void generatorLoop();
         BiomeStorage mBiomes;
+        ThreadPool mWorkerPool;
 
-        //thread input
-        std::vector<std::pair<WorldId, RegionCoord>> mRegionsToGenerate;
-        std::vector<std::pair<int32_t, std::pair<WorldId, ChunkCoord>>> mChunksToGenerate;
-        std::mutex              mThreadInputMutex;
-        bool                    mGenThreadActive;
-
-        //thread storage
-        std::vector<std::pair<WorldId, RegionCoord>> mRegionQueue;
-        std::vector<std::pair<int32_t, std::pair<WorldId, ChunkCoord>>> mChunkQueue;
-        std::vector<std::pair<WorldId, RegionCoord>> mRegionsToDelete;
-        std::vector<ChunkEntry> mFinishedChunks;
-        std::vector<RegionEntry> mFinishedRegions;
-
-        //thread output
-        std::vector<std::pair<WorldId, ChunkCoord>> mChunksToDiscard;
-        std::vector<std::pair<WorldId, RegionCoord>> mRegionsToDiscard;
-        std::vector<RegionEntry> mRegionsToDeliver;
-        std::vector<ChunkEntry> mChunksToDeliver;
-        std::mutex              mThreadOutputMutex;
+        std::vector<std::future<RegionDelivery>> mRegionsToDeliver;
+        std::vector<std::future<ChunkDelivery>> mChunksToDeliver;
 };

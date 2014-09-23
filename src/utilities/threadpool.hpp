@@ -17,6 +17,7 @@ public:
     template<class F, class... Args>
     auto enqueue(F&& f, Args&&... args) 
         -> std::future<typename std::result_of<F(Args...)>::type>;
+    std::vector<std::thread::id> getThreadIds();
     ~ThreadPool();
 private:
     // need to keep track of threads so we can join them
@@ -52,6 +53,17 @@ inline ThreadPool::ThreadPool(size_t threads)
                 }
             }
         );
+}
+
+inline std::vector<std::thread::id> ThreadPool::getThreadIds()
+{
+    std::lock_guard<std::mutex> lock(queue_mutex);
+    std::vector<std::thread::id> result;
+
+    for(const auto& thread : workers)
+        result.push_back(thread.get_id());
+
+    return result;
 }
 
 // add new work item to the pool

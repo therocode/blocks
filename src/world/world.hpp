@@ -26,7 +26,6 @@ class World
         bool hasRegion(const RegionCoord& coordinate) const;
         void activateChunk(const ChunkCoord& coordinate, int32_t priority);
         void deactivateChunk(const ChunkCoord& coordinate);
-        void removeChunk(const ChunkCoord& coordinate);
 
         fea::MessageBus& mBus;
 

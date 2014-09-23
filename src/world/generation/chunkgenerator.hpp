@@ -7,7 +7,6 @@
 class ChunkGenerator
 {
     public:
-        Chunk generateChunk(const ChunkCoord& chunkCoordinate, const Region& region, const BiomeStorage& biomes) const;
+        Chunk generateChunk(const ChunkCoord& chunkCoordinate, const RegionDataFragment& regionFragment, const BiomeStorage& biomes) const;
     private:
-        fea::Noise mNoise;
 };

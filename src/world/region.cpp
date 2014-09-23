@@ -41,9 +41,9 @@ Chunk& Region::getChunk(const RegionChunkCoord& location)
     return mChunks.at(location);
 }
 
-ChunkReferenceMap Region::getChunkList() const
+const ChunkRegionMap& Region::getChunkList() const
 {
-    return ChunkReferenceMap();
+    return mChunks;
 }
 
 void Region::addChunk(const RegionChunkCoord& coordinate, const Chunk& chunk)
@@ -81,7 +81,7 @@ const FloatMap& Region::getBiomeSelector() const
     return mBiomeSelector;
 }
 
-RegionDataFragment Region::getDataFragment(const glm::uvec2& start, const glm::uvec2& end)
+RegionDataFragment Region::getDataFragment(const glm::uvec2& start, const glm::uvec2& end) const
 {
     return RegionDataFragment(getMapFragment(start, end, mHeightmap),
                               getMapFragment(start, end, mTemperaturemap),
@@ -89,7 +89,7 @@ RegionDataFragment Region::getDataFragment(const glm::uvec2& start, const glm::u
                               getMapFragment(start, end, mBiomeSelector));
 }
 
-FloatMap Region::getMapFragment(const glm::uvec2& start, const glm::uvec2& end, const FloatMap& map)
+FloatMap Region::getMapFragment(const glm::uvec2& start, const glm::uvec2& end, const FloatMap& map) const
 {
     FloatMap result(end.x, end.y);
 

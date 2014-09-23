@@ -18,6 +18,17 @@ TEST_CASE("wrap", "[wrap]")
     REQUIRE(wrapInt(5, 0, 3) == 1);
 }
 
+TEST_CASE("chunkToVoxel", "[coord]")
+{
+    REQUIRE(chunkToVoxel(ChunkCoord(0, 0, 0)) ==       VoxelCoord(0, 0, 0));
+    REQUIRE(chunkToVoxel(ChunkCoord(1, 1, 1)) ==       VoxelCoord(16, 16, 16));
+    REQUIRE(chunkToVoxel(ChunkCoord(-1, -1, -1)) ==    VoxelCoord(-16, -16, -16));
+
+    REQUIRE(chunkToVoxel(ChunkCoord(30, 30, 30)) ==    VoxelCoord(480, 480, 480));
+
+    REQUIRE(chunkToVoxel(ChunkCoord(-30, -30, -30)) == VoxelCoord(-480, -480, -480));
+}
+
 TEST_CASE("worldToVoxel", "[coord]")
 {
     REQUIRE(worldToVoxel(glm::vec3(0.0f, 0.0f, 0.0f)) == VoxelCoord(0, 0, 0));

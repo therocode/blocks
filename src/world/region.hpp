@@ -19,7 +19,7 @@ class Region
         bool hasChunk(const RegionChunkCoord& location) const;
         const Chunk& getChunk(const RegionChunkCoord& location) const;
         Chunk& getChunk(const RegionChunkCoord& location);
-        ChunkReferenceMap getChunkList() const;  //implement this for real. it just returns ChunkReferenceMap() right now!
+        const ChunkRegionMap& getChunkList() const;  //implement this for real. it just returns ChunkReferenceMap() right now!
         void addChunk(const RegionChunkCoord& coordinate, const Chunk& chunk);
         void removeChunk(const RegionChunkCoord& coordinate);
         size_t getLoadedChunkAmount() const;
@@ -29,9 +29,9 @@ class Region
         const FloatMap& getBiomeSelector() const;
         void setBiomes(const FloatMap& biomeIndices);
         //const Biome* getBiome(const RegionVoxelCoord& coordinate) const;
-        RegionDataFragment getDataFragment(const glm::uvec2& start, const glm::uvec2& end);
+        RegionDataFragment getDataFragment(const glm::uvec2& start, const glm::uvec2& end) const;
     private:
-        FloatMap getMapFragment(const glm::uvec2& start, const glm::uvec2& end, const FloatMap& map);
+        FloatMap getMapFragment(const glm::uvec2& start, const glm::uvec2& end, const FloatMap& map) const;
         ChunkRegionMap mChunks;
         FloatMap mHeightmap;
         FloatMap mRainmap;
