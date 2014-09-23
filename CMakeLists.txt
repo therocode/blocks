@@ -96,6 +96,7 @@ set(source_files
     src/world/modmanager.cpp
     src/world/ranges.cpp
     src/world/region.cpp
+    src/world/regiondatafragment.cpp
     src/world/world.cpp
     src/world/worldstd.cpp
     src/world/worldholder.cpp
@@ -216,6 +217,7 @@ set(header_files
     src/world/highlightmanager.hpp
     src/world/modmanager.hpp
     src/world/region.hpp
+    src/world/regiondatafragment.hpp
     src/world/world.hpp
     src/world/worldstd.hpp
 	src/world/worldholder.hpp
@@ -362,6 +364,10 @@ if(BUILD_TESTS)
     #set_target_properties(test_highlightmanager PROPERTIES COMPILE_FLAGS "-std=c++11")
     
     add_executable(test_coordinate "test/world/coordinatetest.cpp" "src/world/worldstd.cpp")
+    target_link_libraries(test_coordinate ${FEATHERKIT_LIBRARIES})
+    #set_target_properties(test_coordinate PROPERTIES COMPILE_FLAGS "-std=c++11")
+    
+    add_executable(test_world_misc "test/world/misctest.cpp" "src/world/worldstd.cpp" "src/world/region.cpp" "src/world/regiondatafragment.cpp")
     target_link_libraries(test_coordinate ${FEATHERKIT_LIBRARIES})
     #set_target_properties(test_coordinate PROPERTIES COMPILE_FLAGS "-std=c++11")
     
