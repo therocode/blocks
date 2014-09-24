@@ -13,7 +13,7 @@
 
 auto comp = [] (const std::pair<int32_t, std::function<void()>>& a, const std::pair<int32_t, std::function<void()>>& b)
         {
-            return a.first < b.first;
+            return a.first > b.first;
         };
 
 
