@@ -57,8 +57,8 @@ class WorldProvider :
         RegionGenerator mRegionGenerator;
         ChunkGenerator mChunkGenerator;
 
-        BiomeStorage mBiomes;
         ThreadPool mWorkerPool;
+        std::unordered_map<std::thread::id, BiomeStorage> mThreadStorage;
 
         std::vector<std::future<RegionDelivery>> mRegionsToDeliver;
         std::vector<std::future<ChunkDelivery>> mChunksToDeliver;
