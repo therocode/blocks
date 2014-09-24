@@ -59,7 +59,7 @@ void World::deliverRegion(const RegionCoord& coordinate, const Region& region)
 
         for(const auto& chunkToRequest : mHighlightedRegions.at(coordinate))
         {
-            mBus.send(ChunkRequestedMessage{(int32_t)chunkToRequest.z, mId, chunkToRequest, region.getDataFragment(voxelToRegionVoxel(chunkToVoxel(chunkToRequest)), {chunkWidth, chunkWidth})});
+            mBus.send(ChunkRequestedMessage{0, mId, chunkToRequest, region.getDataFragment(voxelToRegionVoxel(chunkToVoxel(chunkToRequest)), {chunkWidth, chunkWidth})});
         }
     }
 }
