@@ -28,10 +28,10 @@ Chunk ChunkGenerator::generateChunk(const ChunkCoord& chunkCoordinate, const Reg
             for(int32_t x = 0; x < chunkWidth; x++)
             {
                 float worldY = (float)(chunkY + y);
-                float height = regionFragment.getHeightData().getUnit(x, y);
-                float rain = regionFragment.getRainData().getUnit(x, y);
-                float temperature = regionFragment.getTemperatureData().getUnit(x, y);
-                float biomeSelector = regionFragment.getBiomeSelectorData().getUnit(x, y);
+                float height = regionFragment.getHeightData().getUnit(x, z);
+                float rain = regionFragment.getRainData().getUnit(x, z);
+                float temperature = regionFragment.getTemperatureData().getUnit(x, z);
+                float biomeSelector = regionFragment.getBiomeSelectorData().getUnit(x, z);
                 float threshold = height * 100.f;
                 const Biome* biome = biomes.findBiome(height, rain, temperature, biomeSelector);
                 VoxelType biomeType = biome->mType;

@@ -3,7 +3,7 @@
 #include "../application/applicationmessages.hpp"
 
 const std::string logName = "world_gen";
-const int32_t threadAmount = 1;
+const int32_t threadAmount = 3;
 
 std::unordered_map<std::thread::id, BiomeStorage> mThreadStorage;
 
@@ -85,7 +85,6 @@ WorldProvider::~WorldProvider()
 void WorldProvider::handleMessage(const RegionRequestedMessage& received)
 {
     //add region to load to other thread
-    std::cout << "requesting region " << glm::to_string((glm::ivec2)received.coordinate) << " to world " << received.worldId << "\n";
 
     mRegionsToDeliver.push_back(mWorkerPool.enqueue(generateRegion, received.worldId, received.coordinate));
 
@@ -94,7 +93,7 @@ void WorldProvider::handleMessage(const RegionRequestedMessage& received)
 void WorldProvider::handleMessage(const ChunkRequestedMessage& received)
 {
     //add chunk to load to other thread
-    std::cout << "requesting chunk " << glm::to_string((glm::ivec3)received.coordinate) << " to world " << received.worldId << "\n";
+    //std::cout << "requesting chunk " << glm::to_string((glm::ivec3)received.coordinate) << " to world " << received.worldId << "\n";
     mChunksToDeliver.push_back(mWorkerPool.enqueue(generateChunk, received.worldId, received.coordinate, received.regionData));
 }
 

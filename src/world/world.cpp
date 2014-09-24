@@ -8,6 +8,9 @@
 int32_t Ranges::MAX = std::numeric_limits<int32_t>::max();
 int32_t Ranges::MIN = std::numeric_limits<int32_t>::min();
 
+int32_t added = 0;
+int32_t deleted = 0;
+
 Ranges::Ranges(const IntRange& x, const IntRange& y, const IntRange& z) :
     xRange(x),
     yRange(y),
@@ -52,7 +55,7 @@ void World::deliverRegion(const RegionCoord& coordinate, const Region& region)
     if(mHighlightedRegions.count(coordinate) != 0)
     {
         mRegions.emplace(coordinate, std::move(region));
-        mBus.send(LogMessage{"Region " + glm::to_string((glm::ivec2)coordinate) + " loaded", "file", LogLevel::VERB});
+        mBus.send(LogMessage{"Region " + glm::to_string((glm::ivec2)coordinate) + " loaded", "landscape", LogLevel::VERB});
 
         for(const auto& chunkToRequest : mHighlightedRegions.at(coordinate))
         {
@@ -74,6 +77,9 @@ void World::deliverChunk(const ChunkCoord& coordinate, Chunk& chunk)
             if(mRegions.count(region) != 0)
             {
                 mRegions.at(region).addChunk(chunkToRegionChunk(coordinate), chunk);
+
+                uint64_t timestamp = 0; //get proper timestamp later
+                mBus.send(ChunkLoadedMessage{chunk, timestamp}); //the now fully initialised chunk is announced to the rest of the game. should it be here?
             }
         }
     }
@@ -137,6 +143,7 @@ void World::removeHighlightEntity(fea::EntityId id)
         if(mWorldRange.isWithin((glm::ivec3)chunk))
             deactivateChunk(chunk);
     }
+
 }
 
 void World::moveHighlightEntity(fea::EntityId id, const ChunkCoord& coordinate)
@@ -154,6 +161,13 @@ void World::moveHighlightEntity(fea::EntityId id, const ChunkCoord& coordinate)
         if(mWorldRange.isWithin((glm::ivec3)chunk))
             deactivateChunk(chunk);
     }
+
+    int32_t highlighted = 0;
+
+    for(const auto& region : mHighlightedRegions)
+        for(const auto& chunk : region.second)
+            highlighted++;
+
 }
 
 bool World::hasRegion(const RegionCoord& coordinate) const
@@ -195,10 +209,12 @@ void World::deactivateChunk(const ChunkCoord& coordinate)
 
     mHighlightedRegions.at(regionCoord).erase(coordinate);
 
+    bool regionDehighlighted = false;
     //dehighlight, and remove the region if it is empty afterwards
     if(mHighlightedRegions.at(regionCoord).size() == 0)
     {
         mHighlightedRegions.erase(regionCoord);
+        regionDehighlighted = true;
     }
 
     if(mRegions.count(regionCoord) != 0)
@@ -210,14 +226,16 @@ void World::deactivateChunk(const ChunkCoord& coordinate)
             region.removeChunk(chunkToRegionChunk(coordinate));
 
             mBus.send(ChunkDeletedMessage{coordinate});
+            deleted++;
+        }
 
-            if(region.getLoadedChunkAmount() == 0)
-            {
-                mRegions.erase(regionCoord);
+        if(regionDehighlighted)
+        {
+            FEA_ASSERT(region.getLoadedChunkAmount() == 0, "Removing a dehighlighted region, but the region contains chunks that haven't been unloaded!\n");
+            mBus.send(LogMessage{"saving modifications to disk for region" + glm::to_string((glm::ivec2)regionCoord), "file", LogLevel::VERB});
+            mModManager.saveMods(regionCoord);
 
-                mBus.send(LogMessage{"saving modifications to disk for region" + glm::to_string((glm::ivec2)regionCoord), "file", LogLevel::VERB});
-                mModManager.saveMods(regionCoord);
-            }
+            mRegions.erase(regionCoord);
         }
     }
 }

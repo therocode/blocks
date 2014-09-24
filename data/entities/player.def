@@ -4,7 +4,7 @@
         "category":"living",
         "physics_type":"FLOATING",
         "drag":0.01,
-        "walk_speed":0.19,
+        "walk_speed":1.19,
         "run_speed":0.2,
         "jump_strength":18.3,
     }
