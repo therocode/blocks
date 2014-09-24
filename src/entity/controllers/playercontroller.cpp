@@ -141,8 +141,8 @@ void PlayerController::handleMessage(const PlayerActionMessage& received)
         WorldId nextWorld = oldWorld == 0 ? 1 : 0;
 
         mWorldInterface.removeHighlightEntity(oldWorld, (fea::EntityId)playerId);
-        entity->setAttribute("current_world", oldWorld);
-        mWorldInterface.addHighlightEntity(oldWorld, (fea::EntityId)playerId, worldToChunk(entity->getAttribute<glm::vec3>("position")));
+        entity->setAttribute("current_world", nextWorld);
+        mWorldInterface.addHighlightEntity(nextWorld, (fea::EntityId)playerId, worldToChunk(entity->getAttribute<glm::vec3>("position")));
     }
 }
 
