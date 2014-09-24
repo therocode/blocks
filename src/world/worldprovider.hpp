@@ -51,6 +51,8 @@ class WorldProvider :
         void handleMessage(const ChunkRequestedMessage& received) override;
         void handleMessage(const FrameMessage& received) override;
     private:
+        RegionDelivery generateRegion(WorldId worldId, const RegionCoord& coordinate);
+        ChunkDelivery generateChunk(WorldId worldId, const ChunkCoord& coordinate, const RegionDataFragment& regionFragment);
         fea::MessageBus& mBus;
         RegionGenerator mRegionGenerator;
         ChunkGenerator mChunkGenerator;

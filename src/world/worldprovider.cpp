@@ -7,35 +7,6 @@ const int32_t threadAmount = 3;
 
 std::unordered_map<std::thread::id, BiomeStorage> mThreadStorage;
 
-RegionDelivery generateRegion(WorldId worldId, RegionCoord coordinate)
-{
-    RegionDelivery delivery;
-    RegionGenerator regionGenerator;
-
-    regionGenerator.setSeed(worldId + 50);
-
-    delivery.id = worldId;
-    delivery.coordinate = coordinate;
-    delivery.region = regionGenerator.generateRegion(coordinate);
-
-    return delivery;
-}
-
-ChunkDelivery generateChunk(WorldId worldId, ChunkCoord coordinate, RegionDataFragment regionFragment)
-{
-    ChunkDelivery delivery;
-    ChunkGenerator generator;
-    
-    RegionCoord regionCoordinate = chunkToRegion(coordinate);
-
-    delivery.id = worldId;
-    delivery.coordinate = coordinate;
-
-    delivery.chunk = generator.generateChunk(coordinate, regionFragment, mThreadStorage.at(std::this_thread::get_id()));
-
-    return delivery;
-}
-
 WorldProvider::WorldProvider(fea::MessageBus& b)
     :
     mBus(b),
@@ -86,7 +57,8 @@ void WorldProvider::handleMessage(const RegionRequestedMessage& received)
 {
     //add region to load to other thread
 
-    mRegionsToDeliver.push_back(mWorkerPool.enqueue(generateRegion, received.worldId, received.coordinate));
+    auto bound = std::bind(&WorldProvider::generateRegion, this, received.worldId, received.coordinate);
+    mRegionsToDeliver.push_back(mWorkerPool.enqueue(bound));
 
 }
 
@@ -94,7 +66,8 @@ void WorldProvider::handleMessage(const ChunkRequestedMessage& received)
 {
     //add chunk to load to other thread
     //std::cout << "requesting chunk " << glm::to_string((glm::ivec3)received.coordinate) << " to world " << received.worldId << "\n";
-    mChunksToDeliver.push_back(mWorkerPool.enqueue(generateChunk, received.worldId, received.coordinate, received.regionData));
+    auto bound = std::bind(&WorldProvider::generateChunk, this, received.worldId, received.coordinate, received.regionData);
+    mChunksToDeliver.push_back(mWorkerPool.enqueue(bound));
 }
 
 void WorldProvider::handleMessage(const FrameMessage& received)
@@ -126,4 +99,33 @@ void WorldProvider::handleMessage(const FrameMessage& received)
             iter++;
         }
     }
+}
+
+RegionDelivery WorldProvider::generateRegion(WorldId worldId, const RegionCoord& coordinate)
+{
+    RegionDelivery delivery;
+    RegionGenerator regionGenerator;
+
+    regionGenerator.setSeed(worldId + 50);
+
+    delivery.id = worldId;
+    delivery.coordinate = coordinate;
+    delivery.region = regionGenerator.generateRegion(coordinate);
+
+    return delivery;
+}
+
+ChunkDelivery WorldProvider::generateChunk(WorldId worldId, const ChunkCoord& coordinate, const RegionDataFragment& regionFragment)
+{
+    ChunkDelivery delivery;
+    ChunkGenerator generator;
+    
+    RegionCoord regionCoordinate = chunkToRegion(coordinate);
+
+    delivery.id = worldId;
+    delivery.coordinate = coordinate;
+
+    delivery.chunk = generator.generateChunk(coordinate, regionFragment, mThreadStorage.at(std::this_thread::get_id()));
+
+    return delivery;
 }
