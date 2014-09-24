@@ -57,8 +57,7 @@ void WorldProvider::handleMessage(const RegionRequestedMessage& received)
     //add region to load to other thread
 
     auto bound = std::bind(&WorldProvider::generateRegion, this, received.worldId, received.coordinate);
-    mRegionsToDeliver.push_back(mWorkerPool.enqueue(bound));
-
+    mRegionsToDeliver.push_back(mWorkerPool.enqueue(bound, 0));
 }
 
 void WorldProvider::handleMessage(const ChunkRequestedMessage& received)
@@ -66,7 +65,7 @@ void WorldProvider::handleMessage(const ChunkRequestedMessage& received)
     //add chunk to load to other thread
     //std::cout << "requesting chunk " << glm::to_string((glm::ivec3)received.coordinate) << " to world " << received.worldId << "\n";
     auto bound = std::bind(&WorldProvider::generateChunk, this, received.worldId, received.coordinate, received.regionData);
-    mChunksToDeliver.push_back(mWorkerPool.enqueue(bound));
+    mChunksToDeliver.push_back(mWorkerPool.enqueue(bound, received.prio));
 }
 
 void WorldProvider::handleMessage(const FrameMessage& received)

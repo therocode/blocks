@@ -11,11 +11,17 @@
 #include <functional>
 #include <stdexcept>
 
+auto comp = [] (const std::pair<int32_t, std::function<void()>>& a, const std::pair<int32_t, std::function<void()>>& b)
+        {
+            return a.first < b.first;
+        };
+
+
 class ThreadPool {
 public:
     ThreadPool(size_t);
     template<class F, class... Args>
-    auto enqueue(F&& f, Args&&... args) 
+    auto enqueue(F&& f, int32_t priority, Args&&... args) 
         -> std::future<typename std::result_of<F(Args...)>::type>;
     std::vector<std::thread::id> getThreadIds();
     ~ThreadPool();
@@ -23,7 +29,9 @@ private:
     // need to keep track of threads so we can join them
     std::vector< std::thread > workers;
     // the task queue
-    std::queue< std::function<void()> > tasks;
+    std::priority_queue<std::pair<int32_t, std::function<void()>>, 
+                        std::vector<std::pair<int32_t, std::function<void()>>>,
+                        decltype(comp)> tasks;
     
     // synchronization
     std::mutex queue_mutex;
@@ -32,8 +40,9 @@ private:
 };
  
 // the constructor just launches some amount of workers
-inline ThreadPool::ThreadPool(size_t threads)
-    :   stop(false)
+inline ThreadPool::ThreadPool(size_t threads) :
+    tasks(comp),
+    stop(false)
 {
     for(size_t i = 0;i<threads;++i)
         workers.emplace_back(
@@ -46,7 +55,7 @@ inline ThreadPool::ThreadPool(size_t threads)
                         this->condition.wait(lock);
                     if(this->stop && this->tasks.empty())
                         return;
-                    std::function<void()> task(this->tasks.front());
+                    std::function<void()> task(this->tasks.top().second);
                     this->tasks.pop();
                     lock.unlock();
                     task();
@@ -68,7 +77,7 @@ inline std::vector<std::thread::id> ThreadPool::getThreadIds()
 
 // add new work item to the pool
 template<class F, class... Args>
-auto ThreadPool::enqueue(F&& f, Args&&... args) 
+auto ThreadPool::enqueue(F&& f, int32_t priority, Args&&... args) 
     -> std::future<typename std::result_of<F(Args...)>::type>
 {
     typedef typename std::result_of<F(Args...)>::type return_type;
@@ -84,7 +93,7 @@ auto ThreadPool::enqueue(F&& f, Args&&... args)
     std::future<return_type> res = task->get_future();
     {
         std::unique_lock<std::mutex> lock(queue_mutex);
-        tasks.push([task](){ (*task)(); });
+        tasks.push({priority, [task](){ (*task)(); }});
     }
     condition.notify_one();
     return res;
