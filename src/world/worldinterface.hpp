@@ -25,7 +25,6 @@ class WorldInterface
         {
             return mEntitySystem.getEntityAttribute<Type>(id, name);
         }
-        EntityCreator getEntityCreator() const;
 
         void addHighlightEntity(WorldId worldId, fea::EntityId id, const ChunkCoord& coordinate);
         void removeHighlightEntity(WorldId worldId, fea::EntityId id);

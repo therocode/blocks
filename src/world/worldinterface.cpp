@@ -165,11 +165,6 @@ ChunkReferenceMap WorldInterface::getChunkMap(WorldId worldId) const
     return mWorlds.at(worldId)->getChunkMap();
 }
 
-EntityCreator WorldInterface::getEntityCreator() const
-{
-    return mEntitySystem.getEntityCreator();
-}
-
 void WorldInterface::addHighlightEntity(WorldId worldId, fea::EntityId id, const ChunkCoord& coordinate)
 {
     mWorlds.at(worldId)->addHighlightEntity(id, coordinate);

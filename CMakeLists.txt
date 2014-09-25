@@ -122,7 +122,6 @@ set(header_files
 
     src/entity/entitymessages.hpp
     src/entity/defaultsetters.hpp
-    src/entity/entitycreator.hpp
     src/entity/entityfactory.hpp
     src/entity/entitydefinition.hpp
     src/entity/entitydefinitionloader.hpp

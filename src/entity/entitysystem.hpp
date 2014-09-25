@@ -3,7 +3,6 @@
 #include <memory>
 #include <fea/entitysystem.hpp>
 #include "entityfactory.hpp"
-#include "entitycreator.hpp"
 #include "entitymessages.hpp"
 #include "utilities/timer.hpp"
 
@@ -29,7 +28,6 @@ class EntitySystem :
         {
             return mManager.findEntity(id).lock()->getAttribute<Type>(name);
         }
-        EntityCreator getEntityCreator();
     private:
         void attachEntity(fea::WeakEntityPtr entity);
         void removeEntity(fea::EntityId id);

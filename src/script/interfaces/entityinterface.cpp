@@ -4,11 +4,12 @@
 #include "../scriptentitycore.hpp"
 #include "../../world/worldinterface.hpp"
 
-EntityInterface::EntityInterface(fea::MessageBus& bus, WorldInterface& worldInterface, std::unordered_map<size_t, ScriptEntity>& scriptEntities) : ScriptInterface(bus, worldInterface),
-    mEntityCreator([] (const std::string& type, std::function<void(fea::EntityPtr)> initializer) { return fea::EntityPtr(nullptr); }),
+EntityInterface::EntityInterface(fea::MessageBus& bus, WorldInterface& worldInterface, std::unordered_map<size_t, ScriptEntity>& scriptEntities) : 
+    ScriptInterface(bus, worldInterface),
+    mBus(bus),
     mScriptEntities(scriptEntities)
 {
-    setEntityCreator(mWorldInterface.getEntityCreator());
+    subscribe(mBus, *this);
 }
 
 void EntityInterface::registerInterface(asIScriptEngine* engine)
@@ -28,11 +29,17 @@ void EntityInterface::registerInterface(asIScriptEngine* engine)
 
 asIScriptObject* EntityInterface::createEntity(const std::string& type, float x, float y, float z)
 {
-    fea::WeakEntityPtr createdEntity = mEntityCreator(type, [&] (fea::EntityPtr e) {e->setAttribute("position", glm::vec3(x, y, z));});
+    mBus.send(CreateEntityMessage{type, [&] (fea::EntityPtr e)
+            {
+                e->setAttribute("position", glm::vec3(x, y, z));
+                e->setAttribute("current_world", 0u); //default world!?
+            }});
+    fea::WeakEntityPtr createdEntity;
+    std::swap(createdEntity, mNewlyCreated);
 
     if(createdEntity.expired())
     {
-        mBus.send<LogMessage>(LogMessage{"Script runtime error: Id of created entity of type '" + type + "' is invalid. Abandoning script initialisation", mLogName, LogLevel::ERR});
+        mBus.send<LogMessage>(LogMessage{"Script runtime error: Id of created entity of type '" + type + "' is invalid", mLogName, LogLevel::ERR});
         return nullptr;
     }
 
@@ -55,7 +62,7 @@ void EntityInterface::removeEntityFromId(size_t id)
     mBus.send<RemoveEntityMessage>(RemoveEntityMessage{id});   
 }
 
-void EntityInterface::setEntityCreator(EntityCreator creator)
+void EntityInterface::handleMessage(const EntityCreatedMessage& message)
 {
-    mEntityCreator = creator;
+    mNewlyCreated = message.entity;
 }
