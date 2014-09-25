@@ -1,4 +1,5 @@
 #include "fpscontroller.hpp"
+#include <thread>
 
 FPSController::FPSController(){
     mSampleTime = std::chrono::milliseconds(1000);

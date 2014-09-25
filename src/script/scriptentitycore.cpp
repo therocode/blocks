@@ -1,5 +1,6 @@
 #include "scriptentitycore.hpp"
 #include "../entity/entitymessages.hpp"
+#include "../world/worldinterface.hpp"
 
 WorldInterface* ScriptEntityCore::sWorldInterface = nullptr;
 fea::MessageBus* ScriptEntityCore::sBus = nullptr;

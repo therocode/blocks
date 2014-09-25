@@ -2,11 +2,12 @@
 #include <vector>
 #include <memory>
 #include <fea/entitysystem.hpp>
-#include "controllers/entitycontroller.hpp"
 #include "entityfactory.hpp"
 #include "entitycreator.hpp"
 #include "entitymessages.hpp"
 #include "utilities/timer.hpp"
+
+class EntityController;
 
 class asIScriptObject;
 

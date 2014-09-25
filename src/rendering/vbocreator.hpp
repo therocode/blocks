@@ -1,8 +1,11 @@
 #pragma once
-#include "blockstd.hpp"
-#include "../world/chunk.hpp"
+#include "../blockstd.hpp"
 #include <chrono>
 #include "vbo.hpp"
+
+class Chunk;
+struct VoxelTypeData;
+using ChunkCoord = glm::i64vec3; 
 
 /* Vertex with bounds.*/
 struct ChunkVertex{

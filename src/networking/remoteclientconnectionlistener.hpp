@@ -1,11 +1,11 @@
 #pragma once
 #include "clientconnectionlistener.hpp"
 #include "remoteclientbridge.hpp"
-#include "enet/enet.hpp"
 #include <thread>
 #include <atomic>
 #include <fea/messaging.hpp>
 #include "packages.hpp"
+#include "enet/enet.hpp"
 
 class RemoteClientConnectionListener : public ClientConnectionListener
 {

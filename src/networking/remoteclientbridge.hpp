@@ -1,8 +1,9 @@
 #pragma once
 #include "../blockstd.hpp"
 #include "serverclientbridge.hpp"
-#include "enet/enet.hpp"
 #include <atomic>
+
+class ENetPeer;
 
 class RemoteClientBridge : public ServerClientBridge
 {

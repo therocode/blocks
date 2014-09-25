@@ -1,4 +1,6 @@
 #include "localclientconnectionlistener.hpp"
+#include "localserverclientbridge.hpp"
+#include "clientconnection.hpp"
 
 void LocalClientConnectionListener::createClientConnection(LocalServerClientBridge* clientBridge)
 {

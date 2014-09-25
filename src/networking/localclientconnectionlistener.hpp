@@ -1,6 +1,7 @@
 #pragma once
 #include "clientconnectionlistener.hpp"
-#include "localserverclientbridge.hpp"
+
+class LocalServerClientBridge;
 
 class LocalClientConnectionListener : public ClientConnectionListener
 {

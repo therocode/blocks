@@ -3,7 +3,6 @@
 #include "../../rendering/renderingmessages.hpp"
 #include "world/worldmessages.hpp"
 #include "moveaction.hpp"
-#include <iostream>
 
 PlayerController::PlayerController(fea::MessageBus& bus, WorldInterface& worldInterface) : EntityController(bus, worldInterface)
 {

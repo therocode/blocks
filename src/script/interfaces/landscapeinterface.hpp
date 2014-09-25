@@ -2,7 +2,10 @@
 #include "blockstd.hpp"
 #include "scriptinterface.hpp"
 #include "utilities/random.hpp"
-#include "world/chunk.hpp"
+#include "world/worldid.hpp"
+
+class WorldInterface;
+using VoxelType = uint16_t;
 
 class LandscapeInterface : public ScriptInterface
 {

@@ -1,9 +1,9 @@
 #pragma once
 #include <cstddef>
 #include <memory>
-#include "package.hpp"
-#include "serverclientbridge.hpp"
 
+class ServerClientBridge;
+class BasePackage;
 using ClientId = size_t;
 
 class ClientConnection

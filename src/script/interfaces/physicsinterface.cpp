@@ -1,4 +1,5 @@
 #include "physicsinterface.hpp"
+#include "../../entity/entitymessages.hpp"
 #include <angelscript.h>
 #include <assert.h>
 

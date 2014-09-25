@@ -2,7 +2,6 @@
 #include "scriptengine.hpp"
 #include "asaddons/scriptbuilder.hpp"
 #include <assert.h>
-#include <iostream>
 
 ScriptModule::ScriptModule(const std::string& name, ScriptEngine& engine) : 
     mName(name),

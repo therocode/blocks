@@ -1,13 +1,14 @@
 #pragma once
 #include "scriptengine.hpp"
-#include "../world/worldinterface.hpp"
 #include "scriptmessages.hpp"
 #include "../application/applicationmessages.hpp"
 #include "scriptstd.hpp"
 #include "scriptcallback.hpp"//temp
+#include "../entity/entitymessages.hpp"
 
 class ScriptInterface;
 class ScriptCaller;
+class WorldInterface;
 
 class ScriptHandler :
     public fea::MessageReceiver<RebuildScriptsRequestedMessage,

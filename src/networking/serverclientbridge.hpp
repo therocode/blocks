@@ -1,8 +1,9 @@
 #pragma once
-#include "package.hpp"
 #include <deque>
 #include <memory>
 #include <mutex>
+
+class BasePackage;
 
 class ServerClientBridge
 {

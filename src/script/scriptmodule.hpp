@@ -17,7 +17,7 @@ class ScriptModule
         std::vector<asIObjectType*> getObjectTypes() const;
         bool hasErrors() const;
     private:
-        const std::string mName;
+        std::string mName;
         ScriptEngine& mEngine;
         asIScriptModule* mAsModule;
         bool mHasErrors;

@@ -3,6 +3,7 @@
 #include <chrono>
 #include "meshwalker.hpp"
 #include "marchingcubegenerator.hpp"
+#include "../world/chunk.hpp"
 
 using std::chrono::duration_cast;
 using std::chrono::microseconds;

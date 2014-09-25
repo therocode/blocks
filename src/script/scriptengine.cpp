@@ -1,5 +1,4 @@
 #include "scriptengine.hpp"
-#include <iostream>
 #include <assert.h>
 #include "asaddons/scriptstdstring.hpp"
 #include "asaddons/scriptarray.hpp"

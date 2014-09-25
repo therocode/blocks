@@ -2,8 +2,9 @@
 #include <angelscript.h>
 #include <assert.h>
 #include "../scriptentitycore.hpp"
+#include "../../world/worldinterface.hpp"
 
-EntityInterface::EntityInterface(fea::MessageBus& bus, WorldInterface& worldInterface, std::map<size_t, ScriptEntity>& scriptEntities) : ScriptInterface(bus, worldInterface),
+EntityInterface::EntityInterface(fea::MessageBus& bus, WorldInterface& worldInterface, std::unordered_map<size_t, ScriptEntity>& scriptEntities) : ScriptInterface(bus, worldInterface),
     mEntityCreator([] (const std::string& type, std::function<void(fea::EntityPtr)> initializer) { return fea::EntityPtr(nullptr); }),
     mScriptEntities(scriptEntities)
 {

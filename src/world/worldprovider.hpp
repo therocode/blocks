@@ -5,6 +5,8 @@
 #include "generation/chunkgenerator.hpp"
 #include "../application/applicationmessages.hpp"
 #include "../utilities/threadpool.hpp"
+#include "generation/biomestorage.hpp"
+#include "region.hpp"
 
 namespace std 
 {
@@ -19,8 +21,6 @@ namespace std
     };
 }
 
-
-class Region;
 
 using ChunkEntry = std::pair<WorldId, std::pair<ChunkCoord, Chunk>>;
 using RegionEntry = std::pair<WorldId, std::pair<RegionCoord, Region>>;

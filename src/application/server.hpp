@@ -1,8 +1,6 @@
 #pragma once
 #include "../world/worldholder.hpp"
 #include "../networking/serverclientbridge.hpp"
-#include "../networking/clientconnection.hpp"
-#include "../networking/clientconnectionlistener.hpp"
 #include "../world/worldmessages.hpp"
 #include "../rendering/renderingmessages.hpp"
 #include "../script/scripthandler.hpp"
@@ -11,6 +9,10 @@
 #include "../world/worldprovider.hpp"
 #include "../world/worldloader.hpp"
 #include "../entity/entitysystem.hpp"
+
+class ClientConnection;
+class ClientConnectionListener;
+using ClientId = size_t;
 
 class Server : public fea::MessageReceiver<FatalMessage,
                                            AddGfxEntityMessage,

@@ -12,6 +12,7 @@
 #include "callers/ongroundcaller.hpp"
 #include "callers/gameeventcaller.hpp"
 #include "callers/frametimecaller.hpp"
+#include "../world/worldinterface.hpp"
 
 ScriptHandler::ScriptHandler(fea::MessageBus& bus, WorldInterface& worldInterface) : 
     mEngine(bus),

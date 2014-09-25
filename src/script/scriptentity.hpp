@@ -1,6 +1,7 @@
 #pragma once
 #include <fea/entitysystem.hpp>
-#include <angelscript.h>
+
+class asIScriptObject;
 
 class ScriptEntity
 {

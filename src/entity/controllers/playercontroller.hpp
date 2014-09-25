@@ -3,7 +3,8 @@
 #include "../../application/applicationmessages.hpp"
 #include "../../input/inputmessages.hpp"
 #include "../entitymessages.hpp"
-#include "../../world/chunk.hpp"
+
+using ChunkCoord = glm::i64vec3;
 
 class PlayerController : 
     public EntityController,

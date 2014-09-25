@@ -1,4 +1,5 @@
 #include "clientconnection.hpp"
+#include "serverclientbridge.hpp"
 
 //ClientConnection::ClientConnection() : mId(-1)
 //{

@@ -2,7 +2,6 @@
 #include "blockstd.hpp"
 #include "timer.hpp"
 #include <chrono>
-#include <thread>
 
 using namespace std::chrono;
 class FPSController{

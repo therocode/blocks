@@ -1,8 +1,9 @@
 #pragma once
 #include <queue>
 #include <memory>
-#include "clientconnection.hpp"
 #include <mutex>
+
+class ClientConnection;
 
 class ClientConnectionListener
 {

@@ -1,17 +1,20 @@
 #pragma once
 #include <fea/userinterface.hpp>
 #include "../input/inputmessages.hpp"
+#include "../entity/entitymessages.hpp"
 #include "../rendering/renderingmessages.hpp"
 #include "../script/scriptmessages.hpp"
-#include "../rendering/renderer.hpp"
-#include "../input/inputadaptor.hpp"
-#include "../networking/serverclientbridge.hpp"
+#include "../world/chunk.hpp"
 
-#include "utilities/lodepng.hpp"
-#include "utilities/logger.hpp"
-#include "application/applicationmessages.hpp"
+#include "../utilities/lodepng.hpp"
+#include "../utilities/logger.hpp"
+#include "applicationmessages.hpp"
 
-#include "utilities/fpscontroller.hpp"
+#include "../utilities/fpscontroller.hpp"
+
+class Renderer;
+class InputAdaptor;
+class ServerClientBridge;
 
 class Client :
     public fea::MessageReceiver<PlayerActionMessage,
@@ -48,8 +51,8 @@ class Client :
         fea::MessageBus mBus;
         Logger mLogger;
         fea::Window mWindow;
-        Renderer mRenderer;
-        InputAdaptor mInputAdaptor;
+        std::unique_ptr<Renderer> mRenderer;
+        std::unique_ptr<InputAdaptor> mInputAdaptor;
         bool mQuit;
         std::string mLogName;
 

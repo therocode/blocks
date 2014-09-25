@@ -1,6 +1,9 @@
 #pragma once
 #include <fea/util.hpp>
 #include "regiondatagenerator.hpp"
+#include "../region.hpp"
+
+using RegionCoord = glm::i64vec2;
 
 struct Pixel
 {

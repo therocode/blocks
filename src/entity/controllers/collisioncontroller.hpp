@@ -3,6 +3,7 @@
 #include "entitycontroller.hpp"
 #include "../entitymessages.hpp"
 #include "math/mathutils.hpp"
+#include "../../world/worldid.hpp"
 
 class CollisionController : public EntityController,
                             public fea::MessageReceiver<EntityMoveRequestedMessage>

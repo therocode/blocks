@@ -1,8 +1,10 @@
 #pragma once
-#include "../chunk.hpp"
-#include "../region.hpp"
-#include "biomestorage.hpp"
 #include <fea/util.hpp>
+#include "../../blockstd.hpp"
+#include "../chunk.hpp"
+
+class RegionDataFragment;
+class BiomeStorage;
 
 class ChunkGenerator
 {

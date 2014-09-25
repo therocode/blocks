@@ -1,7 +1,6 @@
 #pragma once
 #include <climits>
 #include "blockstd.hpp"
-#include "rendering/renderer.hpp"
 
 ///This struct contains various geometrical types, like AABB, and AABB. currently only contains AABB.
 struct AABB 

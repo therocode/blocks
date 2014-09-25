@@ -2,7 +2,9 @@
 #include <stdint.h>
 #include <string>
 #include <fea/util.hpp>
-#include "../world/worldinterface.hpp"
+#include "../blockstd.hpp"
+
+class WorldInterface;
 
 class ScriptEntityCore
 {

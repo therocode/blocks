@@ -4,13 +4,16 @@
 #include <fea/ui/sdl2inputbackend.hpp>
 #include "../networking/packages.hpp"
 #include "../application/applicationmessages.hpp"
+#include "../rendering/renderer.hpp"
+#include "../input/inputadaptor.hpp"
+#include "../networking/serverclientbridge.hpp"
 
 
 Client::Client() :
     mLogger(mBus, LogLevel::VERB),
 	mWindow(new fea::SDL2WindowBackend()),
-	mRenderer(mBus),
-	mInputAdaptor(mBus),
+	mRenderer(std::unique_ptr<Renderer>(new Renderer(mBus))),
+	mInputAdaptor(std::unique_ptr<InputAdaptor>(new InputAdaptor(mBus))),
 	mQuit(false),
 	mLogName("client"),
 	mBridge(nullptr)
@@ -42,7 +45,7 @@ void Client::setup()
     mLockedMouse = true;
 	mWindow.lockCursor(true);
 	mWindow.setVSyncEnabled(false);
-	mRenderer.setup();
+	mRenderer->setup();
 	//mWindow.setFramerateLimit(30);
 
 	mBus.send<WindowResizeMessage>(WindowResizeMessage{800, 600});
@@ -63,7 +66,7 @@ void Client::handleInput()
 		fetchServerData();
 	}
 
-	mInputAdaptor.update();
+	mInputAdaptor->update();
 
 	if(mBridge)
 	{
@@ -74,7 +77,7 @@ void Client::handleInput()
 void Client::render()
 {
     mFPSCounter.frameBegin();
-	mRenderer.render();
+	mRenderer->render();
 	mWindow.swapBuffers();
     mFPSCounter.frameEnd();
     if(mFrame++ % 60 == 0)

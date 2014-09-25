@@ -1,6 +1,13 @@
 #pragma once
 #include <fea/util.hpp>
-#include "world/chunk.hpp"
+
+class Chunk;
+using VoxelCoord       = glm::i64vec3;
+using ChunkCoord       = glm::i64vec3; 
+using RegionCoord      = glm::i64vec2;
+using ChunkVoxelCoord  = glm::u8vec3;
+using RegionChunkCoord = glm::u8vec3;
+using RegionVoxelCoord = glm::u16vec2;
 
 struct ClientChunkDeletedMessage
 {

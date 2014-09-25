@@ -3,7 +3,7 @@
 #include <fea/util.hpp>
 #include "../entity/entitymessages.hpp"
 #include "../entity/controllers/movedirection.hpp"
-#include "application/applicationmessages.hpp"
+#include "../application/applicationmessages.hpp"
 
 class InputAdaptor : public fea::MessageReceiver<PlayerIdMessage>
 {

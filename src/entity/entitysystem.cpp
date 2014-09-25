@@ -4,6 +4,7 @@
 #include "../application/applicationmessages.hpp"
 #include "entitydefinitionloader.hpp"
 #include "../utilities/folderexploder.hpp"
+#include "controllers/entitycontroller.hpp"
 
 EntitySystem::EntitySystem(fea::MessageBus& bus) : 
     mBus(bus), 

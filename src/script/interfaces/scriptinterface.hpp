@@ -1,8 +1,8 @@
 #pragma once
 #include <fea/util.hpp>
-#include "world/worldinterface.hpp"
 #include "utilities/logger.hpp"
 
+class WorldInterface;
 class asIScriptEngine;
 
 class ScriptInterface

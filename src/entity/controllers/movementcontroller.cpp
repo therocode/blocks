@@ -1,6 +1,5 @@
 #include "movementcontroller.hpp"
 #include "moveaction.hpp"
-#include <iostream>
 
 MovementController::MovementController(fea::MessageBus& bus, WorldInterface& worldInterface) : EntityController(bus, worldInterface)
 {

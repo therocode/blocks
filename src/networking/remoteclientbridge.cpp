@@ -1,5 +1,6 @@
 #include "remoteclientbridge.hpp"
 #include "packages.hpp"
+#include "enet/enet.hpp"
 
 RemoteClientBridge::RemoteClientBridge(ENetPeer* peer) : mPeer(peer), mGotPackagesToSend(false)
 {

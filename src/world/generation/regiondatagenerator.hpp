@@ -1,7 +1,7 @@
 #pragma once
 #include "../valuemap.hpp"
-#include "../worldstd.hpp"
-#include "../region.hpp"
+
+using RegionCoord = glm::i64vec2;
 
 class RegionDataGenerator
 {

@@ -1,6 +1,7 @@
 #pragma once
 #include <fea/util.hpp>
 #include "../../world/worldinterface.hpp"
+#include "entitycontroller.hpp"
 
 class MovementController : 
     public EntityController,

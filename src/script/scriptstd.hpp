@@ -1,5 +1,5 @@
 #pragma once
-#include <map>
+#include <unordered_map>
 #include "scriptentity.hpp"
 
-using ScriptEntityMap = std::map<size_t, ScriptEntity>;
+using ScriptEntityMap = std::unordered_map<size_t, ScriptEntity>;

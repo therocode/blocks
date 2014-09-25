@@ -1,7 +1,6 @@
 #include "logger.hpp"
 #include "../application/applicationmessages.hpp"
 #include <chrono>
-#include <iostream>
 #include "../console/console.hpp"
 
 Logger::Logger(fea::MessageBus& bus, uint32_t logLevel) :

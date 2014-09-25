@@ -1,6 +1,5 @@
 #include "collisioncontroller.hpp"
 #include "../../world/worldinterface.hpp"
-#include <iostream>
 
 CollisionController::CollisionController(fea::MessageBus& bus, WorldInterface& worldInterface) : EntityController(bus, worldInterface), mBus(bus)
 {

@@ -2,6 +2,8 @@
 #include "scriptinterface.hpp"
 #include "utilities/random.hpp"
 
+class WorldInterface;
+
 class StringInterface : public ScriptInterface
 {
     public:
