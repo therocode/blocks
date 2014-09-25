@@ -4,7 +4,7 @@
 #include "../scriptentitycore.hpp"
 
 EntityInterface::EntityInterface(fea::MessageBus& bus, WorldInterface& worldInterface, std::map<size_t, ScriptEntity>& scriptEntities) : ScriptInterface(bus, worldInterface),
-    mEntityCreator([] (const std::string& type, const glm::vec3& position) { return fea::EntityPtr(nullptr); }),
+    mEntityCreator([] (const std::string& type, std::function<void(fea::EntityPtr)> initializer) { return fea::EntityPtr(nullptr); }),
     mScriptEntities(scriptEntities)
 {
     setEntityCreator(mWorldInterface.getEntityCreator());
@@ -27,7 +27,7 @@ void EntityInterface::registerInterface(asIScriptEngine* engine)
 
 asIScriptObject* EntityInterface::createEntity(const std::string& type, float x, float y, float z)
 {
-    fea::WeakEntityPtr createdEntity = mEntityCreator(type, glm::vec3(x, y, z));
+    fea::WeakEntityPtr createdEntity = mEntityCreator(type, [&] (fea::EntityPtr e) {e->setAttribute("position", glm::vec3(x, y, z));});
 
     if(createdEntity.expired())
     {

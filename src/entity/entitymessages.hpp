@@ -9,7 +9,7 @@
 FEA_DECLARE_MESSAGE(EntityMoveRequestedMessage, fea::EntityId id; const glm::vec3& newPosition;);
 FEA_DECLARE_MESSAGE(EntityMovedMessage, fea::EntityId id; const glm::vec3& oldPosition; const glm::vec3& newPosition;);
 FEA_DECLARE_MESSAGE(GravityRequestedMessage, float gravityConstant;);
-FEA_DECLARE_MESSAGE(CreateEntityMessage, const std::string& type; const glm::vec3& position;);
+FEA_DECLARE_MESSAGE(CreateEntityMessage, const std::string& type; std::function<void(fea::EntityPtr)> initializer;);
 FEA_DECLARE_MESSAGE(EntityCreatedMessage, fea::WeakEntityPtr entity; const std::string& type;);
 FEA_DECLARE_MESSAGE(EntityJumpMessage, size_t id; const bool jumping;);
 FEA_DECLARE_MESSAGE(EntityOnGroundMessage, fea::EntityId id; bool landed;);

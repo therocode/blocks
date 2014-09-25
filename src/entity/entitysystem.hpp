@@ -20,7 +20,7 @@ class EntitySystem :
         void addController(std::unique_ptr<EntityController> controller);
         void setup();
         void update();
-        fea::WeakEntityPtr createEntity(const std::string& scriptType, const glm::vec3& position);
+        fea::WeakEntityPtr createEntity(const std::string& scriptType, std::function<void(fea::EntityPtr)> initializer);
         void handleMessage(const CreateEntityMessage& received);
         void handleMessage(const RemoveEntityMessage& received);
 

@@ -154,7 +154,10 @@ bool WorldInterface::getVoxelAtRay(WorldId worldId, float ox, float oy, float oz
 
 fea::WeakEntityPtr WorldInterface::createEntity(const std::string& scriptType, const glm::vec3& position)
 {
-    return mEntitySystem.createEntity(scriptType, position);
+    return mEntitySystem.createEntity(scriptType, [&] (fea::EntityPtr e) 
+            {
+                e->setAttribute("position", position);
+            });
 }
 
 ChunkReferenceMap WorldInterface::getChunkMap(WorldId worldId) const

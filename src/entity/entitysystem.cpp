@@ -69,11 +69,11 @@ void EntitySystem::update()
     }
 }
 
-fea::WeakEntityPtr EntitySystem::createEntity(const std::string& type, const glm::vec3& position)
+fea::WeakEntityPtr EntitySystem::createEntity(const std::string& type, std::function<void(fea::EntityPtr)> initializer)
 {
     fea::WeakEntityPtr entity = mFactory.spawnEntity(type);
 
-    entity.lock()->setAttribute<glm::vec3>("position", position);
+    initializer(entity.lock());
 
     mBus.send<EntityCreatedMessage>(EntityCreatedMessage{entity, type});
 
@@ -84,7 +84,7 @@ fea::WeakEntityPtr EntitySystem::createEntity(const std::string& type, const glm
 
 void EntitySystem::handleMessage(const CreateEntityMessage& received) 
 {
-    createEntity(received.type, received.position);
+    createEntity(received.type, received.initializer);
 }
 
 void EntitySystem::handleMessage(const RemoveEntityMessage& received)
