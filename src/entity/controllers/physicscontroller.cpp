@@ -6,14 +6,7 @@ PhysicsController::PhysicsController(fea::MessageBus& bus, WorldInterface& world
 {
     mTimer.start();
     accumulator = 0;
-    mBus.addSubscriber<GravityRequestedMessage>(*this);
-    mBus.addSubscriber<PhysicsImpulseMessage>(*this);
-}
-
-PhysicsController::~PhysicsController()
-{
-    mBus.removeSubscriber<GravityRequestedMessage>(*this);
-    mBus.removeSubscriber<PhysicsImpulseMessage>(*this);
+    subscribe(mBus, *this);
 }
 
 void PhysicsController::inspectEntity(fea::WeakEntityPtr entity)

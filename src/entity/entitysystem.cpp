@@ -11,8 +11,7 @@ EntitySystem::EntitySystem(fea::MessageBus& bus) :
     mFactory(mManager),
     mLogName("entity")
 {
-    mBus.addSubscriber<CreateEntityMessage>(*this);
-    mBus.addSubscriber<RemoveEntityMessage>(*this);
+    subscribe(mBus, *this);
     mTimer.start();
 }
 
@@ -25,9 +24,6 @@ EntitySystem::~EntitySystem()
     {
         removeEntity(entity.lock()->getId());
     }
-
-    mBus.removeSubscriber<CreateEntityMessage>(*this);
-    mBus.removeSubscriber<RemoveEntityMessage>(*this);
 }
 
 void EntitySystem::addController(std::unique_ptr<EntityController> controller)

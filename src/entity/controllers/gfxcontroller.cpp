@@ -4,12 +4,7 @@
 
 GfxController::GfxController(fea::MessageBus& bus, WorldInterface& worldInterface) : EntityController(bus, worldInterface)
 {
-    mBus.addSubscriber<EntityMovedMessage>(*this);
-}
-
-GfxController::~GfxController()
-{
-    mBus.removeSubscriber<EntityMovedMessage>(*this);
+    subscribe(mBus, *this);
 }
 
 void GfxController::inspectEntity(fea::WeakEntityPtr entity)

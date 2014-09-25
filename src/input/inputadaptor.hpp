@@ -9,7 +9,6 @@ class InputAdaptor : public fea::MessageReceiver<PlayerIdMessage>
 {
     public:
         InputAdaptor(fea::MessageBus& b);
-        ~InputAdaptor();
         void update();
         void handleMessage(const PlayerIdMessage& received) override;
 

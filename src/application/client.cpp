@@ -15,27 +15,13 @@ Client::Client() :
 	mLogName("client"),
 	mBridge(nullptr)
 {
-	mBus.addSubscriber<PlayerActionMessage>(*this);
-	mBus.addSubscriber<PlayerMoveDirectionMessage>(*this);
-	mBus.addSubscriber<PlayerMoveActionMessage>(*this);
-	mBus.addSubscriber<PlayerPitchYawMessage>(*this);
-	mBus.addSubscriber<RebuildScriptsRequestedMessage>(*this);
-    mBus.addSubscriber<WindowFocusLostMessage>(*this);
-    mBus.addSubscriber<WindowInputMessage>(*this);
+    subscribe(mBus, *this, false);
 }
 
 Client::~Client()
 {
 	mWindow.close();
 	mBus.send<LogMessage>(LogMessage{"client destroyed", mLogName, LogLevel::INFO});
-
-	mBus.removeSubscriber<PlayerActionMessage>(*this);
-	mBus.removeSubscriber<PlayerMoveDirectionMessage>(*this);
-	mBus.removeSubscriber<PlayerMoveActionMessage>(*this);
-	mBus.removeSubscriber<PlayerPitchYawMessage>(*this);
-	mBus.removeSubscriber<RebuildScriptsRequestedMessage>(*this);
-    mBus.removeSubscriber<WindowFocusLostMessage>(*this);
-    mBus.removeSubscriber<WindowInputMessage>(*this);
 }
 
 bool Client::loadTexture(const std::string& path, uint32_t width, uint32_t height, std::vector<unsigned char>& result)

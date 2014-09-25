@@ -10,14 +10,11 @@ Logger::Logger(fea::MessageBus& bus, uint32_t logLevel) :
     mLongestCategory(0)
 {
     Console::Initialise();
-    mBus.addSubscriber<LogMessage>(*this);
-    mBus.addSubscriber<LogLevelMessage>(*this);
+    subscribe(mBus, *this);
 }
 
 Logger::~Logger()
 {
-    mBus.removeSubscriber<LogMessage>(*this);
-    mBus.removeSubscriber<LogLevelMessage>(*this);
     Console::ResetColor();
 }
 

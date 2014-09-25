@@ -6,18 +6,16 @@
 #include "../rendering/renderingmessages.hpp"
 #include "worldmessages.hpp"
 #include "worldparameters.hpp"
+#include "world.hpp"
 #include <memory>
 
-class World;
-
 class WorldHolder : 
-        public fea::MessageReceiver<SetVoxelMessage>,
-        public fea::MessageReceiver<RegionDeliverMessage>,
-        public fea::MessageReceiver<ChunkDeliverMessage>
+        public fea::MessageReceiver<SetVoxelMessage,
+                                    RegionDeliverMessage,
+                                    ChunkDeliverMessage>
 {
     public:
         WorldHolder(fea::MessageBus& messageBus, EntitySystem& entitySystem);
-		~WorldHolder();
         virtual void handleMessage(const SetVoxelMessage& received);
         virtual void handleMessage(const RegionDeliverMessage& received);
         virtual void handleMessage(const ChunkDeliverMessage& received);

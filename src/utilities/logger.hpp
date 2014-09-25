@@ -2,8 +2,8 @@
 #include "../application/applicationmessages.hpp"
 #include "loglevel.hpp"
 
-class Logger : public fea::MessageReceiver<LogMessage>,
-               public fea::MessageReceiver<LogLevelMessage>
+class Logger : public fea::MessageReceiver<LogMessage,
+                                           LogLevelMessage>
 {
     public:
         Logger(fea::MessageBus& bus, uint32_t = LogLevel::INFO);

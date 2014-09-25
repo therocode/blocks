@@ -12,16 +12,16 @@
 #include "../world/worldloader.hpp"
 #include "../entity/entitysystem.hpp"
 
-class Server : public fea::MessageReceiver<FatalMessage>,
-               public fea::MessageReceiver<AddGfxEntityMessage>,
-               public fea::MessageReceiver<MoveGfxEntityMessage>,
-               public fea::MessageReceiver<RotateGfxEntityMessage>,
-               public fea::MessageReceiver<RemoveGfxEntityMessage>,
-               public fea::MessageReceiver<PlayerConnectedToEntityMessage>,
-               public fea::MessageReceiver<PlayerFacingBlockMessage>,
-               public fea::MessageReceiver<ChunkLoadedMessage>,
-               public fea::MessageReceiver<ChunkDeletedMessage>,
-               public fea::MessageReceiver<VoxelSetMessage>
+class Server : public fea::MessageReceiver<FatalMessage,
+                                           AddGfxEntityMessage,
+                                           MoveGfxEntityMessage,
+                                           RotateGfxEntityMessage,
+                                           RemoveGfxEntityMessage,
+                                           PlayerConnectedToEntityMessage,
+                                           PlayerFacingBlockMessage,
+                                           ChunkLoadedMessage,
+                                           ChunkDeletedMessage,
+                                           VoxelSetMessage>
 {
     public:
         Server();

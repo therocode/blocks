@@ -29,13 +29,8 @@ InputAdaptor::InputAdaptor(fea::MessageBus& b):
     first = true;
     mouseDown = false;
     windowFocus = true;
-    mBus.addSubscriber<PlayerIdMessage>(*this);
     mNewPitch = mNewYaw = 0;
-}
-
-InputAdaptor::~InputAdaptor()
-{
-    mBus.removeSubscriber<PlayerIdMessage>(*this);
+    subscribe(mBus, *this);
 }
 
 void InputAdaptor::update()

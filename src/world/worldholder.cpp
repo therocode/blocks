@@ -8,16 +8,7 @@ WorldHolder::WorldHolder(fea::MessageBus& messageBus, EntitySystem& entitySystem
 	mWorldInterface(mWorlds, entitySystem),
     mNextId(0)
 {
-	mBus.addSubscriber<SetVoxelMessage>(*this);
-	mBus.addSubscriber<RegionDeliverMessage>(*this);
-	mBus.addSubscriber<ChunkDeliverMessage>(*this);
-}
-
-WorldHolder::~WorldHolder()
-{
-	mBus.removeSubscriber<SetVoxelMessage>(*this);
-	mBus.removeSubscriber<RegionDeliverMessage>(*this);
-	mBus.removeSubscriber<ChunkDeliverMessage>(*this);
+    subscribe(mBus, *this);
 }
 
 void WorldHolder::handleMessage(const SetVoxelMessage& received)

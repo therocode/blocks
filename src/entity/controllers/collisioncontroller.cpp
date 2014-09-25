@@ -4,12 +4,7 @@
 
 CollisionController::CollisionController(fea::MessageBus& bus, WorldInterface& worldInterface) : EntityController(bus, worldInterface), mBus(bus)
 {
-    mBus.addSubscriber<EntityMoveRequestedMessage>(*this);
-}
-
-CollisionController::~CollisionController()
-{
-    mBus.removeSubscriber<EntityMoveRequestedMessage>(*this);
+    subscribe(mBus, *this);
 }
 
 void CollisionController::inspectEntity(fea::WeakEntityPtr entity)

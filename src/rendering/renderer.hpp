@@ -20,22 +20,21 @@
 //#include "chunkgeneratorqueue.hpp"
 
 class Renderer
-    :   public fea::MessageReceiver<UpdateChunkVboMessage>,
-        public fea::MessageReceiver<ClientChunkDeletedMessage>,
-        public fea::MessageReceiver<WindowResizeMessage>,
-        public fea::MessageReceiver<AddGfxEntityMessage>,
-        public fea::MessageReceiver<MoveGfxEntityMessage>,
-        public fea::MessageReceiver<RotateGfxEntityMessage>,
-        public fea::MessageReceiver<PlayerFacingBlockMessage>,
-        public fea::MessageReceiver<RemoveGfxEntityMessage>,
-        public fea::MessageReceiver<PlayerIdMessage>,
-        public fea::MessageReceiver<PlayerConnectedToEntityMessage>
+    :   public fea::MessageReceiver<UpdateChunkVboMessage,
+                                    ClientChunkDeletedMessage,
+                                    WindowResizeMessage,
+                                    AddGfxEntityMessage,
+                                    MoveGfxEntityMessage,
+                                    RotateGfxEntityMessage,
+                                    PlayerFacingBlockMessage,
+                                    RemoveGfxEntityMessage,
+                                    PlayerIdMessage,
+                                    PlayerConnectedToEntityMessage>
                 
 {
     public:
 		static DebugRenderer sDebugRenderer;
         Renderer(fea::MessageBus& messageBus);
-        ~Renderer();
         
         //temporary thingy
       

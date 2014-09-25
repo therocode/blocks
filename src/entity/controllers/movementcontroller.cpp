@@ -4,12 +4,7 @@
 
 MovementController::MovementController(fea::MessageBus& bus, WorldInterface& worldInterface) : EntityController(bus, worldInterface)
 {
-    mBus.addSubscriber<EntityJumpMessage>(*this);
-}
-
-MovementController::~MovementController()
-{
-    mBus.removeSubscriber<EntityJumpMessage>(*this);
+    subscribe(mBus, *this);
 }
 
 void MovementController::inspectEntity(fea::WeakEntityPtr entity)

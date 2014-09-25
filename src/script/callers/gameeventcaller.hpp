@@ -9,6 +9,5 @@ class GameEventCaller :
 {
     public:
         GameEventCaller(fea::MessageBus& bus, ScriptEngine& engine, ScriptEntityMap& scriptEntities);
-        ~GameEventCaller() override;
         void handleMessage(const GameStartMessage& received);
 };

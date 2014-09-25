@@ -4,13 +4,48 @@
 #include "../utilities/loglevel.hpp"
 #include "../world/worldid.hpp"
 
-FEA_DECLARE_MESSAGE(FrameMessage, bool beginning;);
-FEA_DECLARE_MESSAGE(LogMessage, const std::string& message; const std::string& component; uint32_t level;);
-FEA_DECLARE_MESSAGE(LogLevelMessage, uint32_t level;);
-FEA_DECLARE_MESSAGE(FatalMessage, const std::string& message;);
-FEA_DECLARE_MESSAGE(PlayerJoinedMessage, size_t playerId; WorldId worldId; const::glm::vec3& position;);
-FEA_DECLARE_MESSAGE(PlayerDisconnectedMessage, size_t playerId;);
-FEA_DECLARE_MESSAGE(GameStartMessage);
-FEA_DECLARE_MESSAGE(WindowFocusLostMessage);
-FEA_DECLARE_MESSAGE(FocusGainedMessage);
-FEA_DECLARE_MESSAGE(WindowInputMessage);
+struct FrameMessage
+{
+    bool beginning;
+};
+
+struct LogMessage
+{
+    const std::string& message; const std::string& component; uint32_t level;
+};
+
+struct LogLevelMessage
+{
+    uint32_t level;
+};
+
+struct FatalMessage
+{
+    const std::string& message;
+};
+
+struct PlayerJoinedMessage
+{
+    size_t playerId; WorldId worldId; const::glm::vec3& position;
+};
+
+struct PlayerDisconnectedMessage
+{
+    size_t playerId;
+};
+
+struct GameStartMessage
+{
+};
+
+struct WindowFocusLostMessage
+{
+};
+
+struct FocusGainedMessage
+{
+};
+
+struct WindowInputMessage
+{
+};

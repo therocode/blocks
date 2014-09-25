@@ -14,13 +14,13 @@
 #include "utilities/fpscontroller.hpp"
 
 class Client :
-    public fea::MessageReceiver<PlayerActionMessage>,
-    public fea::MessageReceiver<PlayerMoveDirectionMessage>,
-    public fea::MessageReceiver<PlayerMoveActionMessage>,
-    public fea::MessageReceiver<PlayerPitchYawMessage>,
-    public fea::MessageReceiver<RebuildScriptsRequestedMessage>,
-    public fea::MessageReceiver<WindowFocusLostMessage>,
-    public fea::MessageReceiver<WindowInputMessage>
+    public fea::MessageReceiver<PlayerActionMessage,
+                                PlayerMoveDirectionMessage,
+                                PlayerMoveActionMessage,
+                                PlayerPitchYawMessage,
+                                RebuildScriptsRequestedMessage,
+                                WindowFocusLostMessage,
+                                WindowInputMessage>
 {
     public:
         Client();

@@ -7,17 +7,16 @@
 
 class PlayerController : 
     public EntityController,
-    public fea::MessageReceiver<PlayerJoinedMessage>,
-    public fea::MessageReceiver<PlayerDisconnectedMessage>,
-    public fea::MessageReceiver<PlayerActionMessage>,
-    public fea::MessageReceiver<PlayerMoveDirectionMessage>,
-    public fea::MessageReceiver<PlayerMoveActionMessage>,
-    public fea::MessageReceiver<PlayerPitchYawMessage>,
-    public fea::MessageReceiver<EntityMovedMessage>
+    public fea::MessageReceiver<PlayerJoinedMessage,
+                                PlayerDisconnectedMessage,
+                                PlayerActionMessage,
+                                PlayerMoveDirectionMessage,
+                                PlayerMoveActionMessage,
+                                PlayerPitchYawMessage,
+                                EntityMovedMessage>
 {
     public:
         PlayerController(fea::MessageBus& bus, WorldInterface& worldInterface);
-        ~PlayerController();
         virtual void inspectEntity(fea::WeakEntityPtr entity);
         virtual void removeEntity(fea::EntityId id);
         virtual void onFrame(int dt) override;

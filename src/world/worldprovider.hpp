@@ -40,9 +40,9 @@ struct ChunkDelivery
 };
 
 class WorldProvider :
-    public RegionRequestedMessageReceiver,
-    public ChunkRequestedMessageReceiver,
-    public FrameMessageReceiver
+    public fea::MessageReceiver<RegionRequestedMessage,
+                                ChunkRequestedMessage,
+                                FrameMessage>
 {
     public:
         WorldProvider(fea::MessageBus& b);

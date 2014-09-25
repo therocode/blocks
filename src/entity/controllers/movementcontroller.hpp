@@ -7,7 +7,6 @@ class MovementController :
     public fea::MessageReceiver<EntityJumpMessage>
 {
     public:
-        ~MovementController();
         MovementController(fea::MessageBus& bus, WorldInterface& worldInterface);
         virtual void inspectEntity(fea::WeakEntityPtr entity) override;
         virtual void removeEntity(fea::EntityId id) override;

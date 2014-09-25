@@ -34,9 +34,8 @@ WorldProvider::WorldProvider(fea::MessageBus& b)
     biomes.addBiome(Biome("arctic ocean", 36, 0.0f, 0.9f, 1.0f,    Range(0.0f, 0.2f), Range(0.0f, 1.0f),  Range(0.0f, 0.2f)));
 
     mBus.send(LogMessage{"Started world generation thread pool with " + std::to_string(threadAmount) + " threads", logName, LogLevel::INFO});
-    mBus.addSubscriber<RegionRequestedMessage>(*this);
-    mBus.addSubscriber<ChunkRequestedMessage>(*this);
-    mBus.addSubscriber<FrameMessage>(*this);
+
+    fea::subscribe(mBus, *this);
 
     //set up thread storages
     for(const auto& id : mWorkerPool.getThreadIds())
@@ -46,10 +45,6 @@ WorldProvider::WorldProvider(fea::MessageBus& b)
 WorldProvider::~WorldProvider()
 {
     mBus.send(LogMessage{"Shutting down world generation thread pool", logName, LogLevel::INFO});
-
-    mBus.removeSubscriber<RegionRequestedMessage>(*this);
-    mBus.removeSubscriber<ChunkRequestedMessage>(*this);
-    mBus.removeSubscriber<FrameMessage>(*this);
 }
 
 void WorldProvider::handleMessage(const RegionRequestedMessage& received)

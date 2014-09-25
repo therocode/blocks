@@ -14,32 +14,12 @@ Server::Server() :
     mScriptHandler(mBus, mWorlds.getWorldInterface()),
     mLogName("server")
 {
-    mBus.addSubscriber<FatalMessage>(*this);
-    mBus.addSubscriber<AddGfxEntityMessage>(*this);
-    mBus.addSubscriber<MoveGfxEntityMessage>(*this);
-    mBus.addSubscriber<RotateGfxEntityMessage>(*this);
-    mBus.addSubscriber<RemoveGfxEntityMessage>(*this);
-    mBus.addSubscriber<PlayerConnectedToEntityMessage>(*this);
-    mBus.addSubscriber<PlayerFacingBlockMessage>(*this);
-    mBus.addSubscriber<ChunkLoadedMessage>(*this);
-    mBus.addSubscriber<ChunkDeletedMessage>(*this);
-    mBus.addSubscriber<VoxelSetMessage>(*this);
+    subscribe(mBus, *this);
 }
 
 Server::~Server()
 {
     mBus.send<LogMessage>(LogMessage{"Server destroyed", mLogName, LogLevel::INFO});
-
-    mBus.removeSubscriber<FatalMessage>(*this);
-    mBus.removeSubscriber<AddGfxEntityMessage>(*this);
-    mBus.removeSubscriber<MoveGfxEntityMessage>(*this);
-    mBus.removeSubscriber<RotateGfxEntityMessage>(*this);
-    mBus.removeSubscriber<RemoveGfxEntityMessage>(*this);
-    mBus.removeSubscriber<PlayerConnectedToEntityMessage>(*this);
-    mBus.removeSubscriber<PlayerFacingBlockMessage>(*this);
-    mBus.removeSubscriber<ChunkLoadedMessage>(*this);
-    mBus.removeSubscriber<ChunkDeletedMessage>(*this);
-    mBus.removeSubscriber<VoxelSetMessage>(*this);
 }
 
 void Server::setup()

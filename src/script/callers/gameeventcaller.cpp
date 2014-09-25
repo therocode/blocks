@@ -2,12 +2,7 @@
 
 GameEventCaller::GameEventCaller(fea::MessageBus& bus, ScriptEngine& engine, ScriptEntityMap& scriptEntities) : ScriptCaller(bus, engine, scriptEntities)
 {
-    mBus.addSubscriber<GameStartMessage>(*this);
-}
-
-GameEventCaller::~GameEventCaller()
-{
-    mBus.removeSubscriber<GameStartMessage>(*this);
+    subscribe(mBus, *this);
 }
 
 void GameEventCaller::handleMessage(const GameStartMessage& received)

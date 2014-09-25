@@ -5,12 +5,11 @@
 
 class PhysicsController : 
     public EntityController,
-    public fea::MessageReceiver<GravityRequestedMessage>,
-    public fea::MessageReceiver<PhysicsImpulseMessage>
+    public fea::MessageReceiver<GravityRequestedMessage,
+                                PhysicsImpulseMessage>
 {
     public:
         PhysicsController(fea::MessageBus& bus, WorldInterface& worldInterface);
-        ~PhysicsController();
         virtual void inspectEntity(fea::WeakEntityPtr entity);
         virtual void onFrame(int dt) override;
         void handleMessage(const GravityRequestedMessage& received);

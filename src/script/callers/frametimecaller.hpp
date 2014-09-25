@@ -9,7 +9,6 @@ class FrameTimeCaller :
 {
     public:
         FrameTimeCaller(fea::MessageBus& bus, ScriptEngine& engine, ScriptEntityMap& scriptEntities);
-        ~FrameTimeCaller() override;
         void handleMessage(const FrameMessage& received);
     private:
         int32_t frameTick;

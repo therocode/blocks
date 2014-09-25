@@ -10,32 +10,9 @@ DebugRenderer Renderer::sDebugRenderer;
 Renderer::Renderer(fea::MessageBus& messageBus) : bus(messageBus), mPlayerId(-1)
 {
 	mTimer.start();
-	bus.addSubscriber<UpdateChunkVboMessage>(*this);
-	bus.addSubscriber<ClientChunkDeletedMessage>(*this);
-	bus.addSubscriber<WindowResizeMessage>(*this);
-	bus.addSubscriber<AddGfxEntityMessage>(*this);
-	bus.addSubscriber<MoveGfxEntityMessage>(*this);
-	bus.addSubscriber<RotateGfxEntityMessage>(*this);
-	bus.addSubscriber<RemoveGfxEntityMessage>(*this);
-	bus.addSubscriber<PlayerFacingBlockMessage>(*this);
-	bus.addSubscriber<PlayerIdMessage>(*this);
-	bus.addSubscriber<PlayerConnectedToEntityMessage>(*this);
+    subscribe(messageBus, *this);
 	mCameraPitch = 0;
 	mCameraYaw = 0;
-}
-
-Renderer::~Renderer()
-{
-	bus.removeSubscriber<UpdateChunkVboMessage>(*this);
-	bus.removeSubscriber<ClientChunkDeletedMessage>(*this);
-	bus.removeSubscriber<WindowResizeMessage>(*this);
-	bus.removeSubscriber<AddGfxEntityMessage>(*this);
-	bus.removeSubscriber<MoveGfxEntityMessage>(*this);
-	bus.removeSubscriber<RotateGfxEntityMessage>(*this);
-	bus.removeSubscriber<RemoveGfxEntityMessage>(*this);
-	bus.removeSubscriber<PlayerFacingBlockMessage>(*this);
-	bus.removeSubscriber<PlayerIdMessage>(*this);
-	bus.removeSubscriber<PlayerConnectedToEntityMessage>(*this);
 }
 
 void Renderer::makeTexture(const std::string& path, uint32_t width, uint32_t height, GLuint& textureId)

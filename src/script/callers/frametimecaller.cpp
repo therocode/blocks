@@ -4,12 +4,7 @@
 FrameTimeCaller::FrameTimeCaller(fea::MessageBus& bus, ScriptEngine& engine, ScriptEntityMap& scriptEntities) : ScriptCaller(bus, engine, scriptEntities),
     frameTick(0)
 {
-    mBus.addSubscriber<FrameMessage>(*this);
-}
-
-FrameTimeCaller::~FrameTimeCaller()
-{
-    mBus.removeSubscriber<FrameMessage>(*this);
+    subscribe(mBus, *this);
 }
 
 void FrameTimeCaller::handleMessage(const FrameMessage& received)

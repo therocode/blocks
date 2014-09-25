@@ -10,9 +10,9 @@ class ScriptInterface;
 class ScriptCaller;
 
 class ScriptHandler :
-    public fea::MessageReceiver<RebuildScriptsRequestedMessage>,
-    public fea::MessageReceiver<EntityCreatedMessage>,
-    public fea::MessageReceiver<EntityRemovedMessage>
+    public fea::MessageReceiver<RebuildScriptsRequestedMessage,
+                                EntityCreatedMessage,
+                                EntityRemovedMessage>
 {
     public:
         ScriptHandler(fea::MessageBus& bus, WorldInterface& worldInterface);

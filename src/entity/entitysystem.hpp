@@ -11,8 +11,7 @@
 class asIScriptObject;
 
 class EntitySystem : 
-    public fea::MessageReceiver<CreateEntityMessage>,
-    public fea::MessageReceiver<RemoveEntityMessage>
+    public fea::MessageReceiver<CreateEntityMessage, RemoveEntityMessage>
 {
     public:
         EntitySystem(fea::MessageBus& bus);

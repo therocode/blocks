@@ -20,9 +20,7 @@ ScriptHandler::ScriptHandler(fea::MessageBus& bus, WorldInterface& worldInterfac
     mWorldInterface(worldInterface),
     logName("script")
 {
-    mBus.addSubscriber<RebuildScriptsRequestedMessage>(*this);
-    mBus.addSubscriber<EntityCreatedMessage>(*this);
-    mBus.addSubscriber<EntityRemovedMessage>(*this);
+    subscribe(mBus, *this);
 
     ScriptEntityCore::sWorldInterface = &worldInterface;
     ScriptEntityCore::sBus = &bus;
@@ -32,10 +30,6 @@ ScriptHandler::~ScriptHandler()
 {
     scriptEntities.clear();
     mEngine.destroyModule(mScripts);
-
-    mBus.removeSubscriber<RebuildScriptsRequestedMessage>(*this);
-    mBus.removeSubscriber<EntityCreatedMessage>(*this);
-    mBus.removeSubscriber<EntityRemovedMessage>(*this);
 }
 
 void ScriptHandler::setup()

@@ -7,24 +7,7 @@
 
 PlayerController::PlayerController(fea::MessageBus& bus, WorldInterface& worldInterface) : EntityController(bus, worldInterface)
 {
-    mBus.addSubscriber<PlayerJoinedMessage>(*this);
-    mBus.addSubscriber<PlayerDisconnectedMessage>(*this);
-    mBus.addSubscriber<PlayerActionMessage>(*this);
-    mBus.addSubscriber<PlayerMoveDirectionMessage>(*this);
-    mBus.addSubscriber<PlayerMoveActionMessage>(*this);
-    mBus.addSubscriber<PlayerPitchYawMessage>(*this);
-    mBus.addSubscriber<EntityMovedMessage>(*this);
-}
-
-PlayerController::~PlayerController()
-{
-    mBus.removeSubscriber<PlayerJoinedMessage>(*this);
-    mBus.removeSubscriber<PlayerDisconnectedMessage>(*this);
-    mBus.removeSubscriber<PlayerActionMessage>(*this);
-    mBus.removeSubscriber<PlayerMoveDirectionMessage>(*this);
-    mBus.removeSubscriber<PlayerMoveActionMessage>(*this);
-    mBus.removeSubscriber<PlayerPitchYawMessage>(*this);
-    mBus.removeSubscriber<EntityMovedMessage>(*this);
+    subscribe(mBus, *this);
 }
 
 void PlayerController::inspectEntity(fea::WeakEntityPtr entity)
