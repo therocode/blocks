@@ -17,7 +17,7 @@ class EntitySystem :
         ~EntitySystem();
         void addController(std::unique_ptr<EntityController> controller);
         void setup();
-        void update();
+        void update(int32_t deltaTime);
         fea::WeakEntityPtr createEntity(const std::string& scriptType, std::function<void(fea::EntityPtr)> initializer);
         void handleMessage(const EntityRequestedMessage& received);
         void handleMessage(const RemoveEntityMessage& received);
@@ -34,5 +34,4 @@ class EntitySystem :
         fea::EntityManager mManager;
         EntityFactory mFactory;
         std::vector<std::unique_ptr<EntityController> > mControllers;
-        Timer mTimer;
 };

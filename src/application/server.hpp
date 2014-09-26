@@ -44,6 +44,7 @@ class Server : public fea::MessageReceiver<AddGfxEntityMessage,
         void checkForDisconnectedClients();
         fea::MessageBus& mBus;
         Logger mLogger;
+        Timer mTimer;
         std::unordered_map<ClientId, std::shared_ptr<ClientConnection> > mClients;
         std::unique_ptr<ClientConnectionListener> mListener;
         WorldSystem mWorlds;

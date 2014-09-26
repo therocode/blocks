@@ -14,7 +14,6 @@ EntitySystem::EntitySystem(fea::MessageBus& bus) :
 {
     subscribe(mBus, *this);
     mBus.send(LogMessage{"Setting up entity system", entityName, LogLevel::INFO});
-    mTimer.start();
 
     mBus.send(LogMessage{"Loading entity definitions", entityName, LogLevel::INFO});
 
@@ -58,12 +57,11 @@ void EntitySystem::addController(std::unique_ptr<EntityController> controller)
     mControllers.push_back(std::move(controller));
 }
 
-void EntitySystem::update()
+void EntitySystem::update(int32_t deltaTime)
 {
-    int dt = mTimer.getDeltaTime();
     for(auto& controller : mControllers)
     {
-        controller->onFrame(dt);
+        controller->onFrame(deltaTime);
     }
 }
 

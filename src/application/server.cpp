@@ -16,6 +16,7 @@ Server::Server(fea::MessageBus& bus) :
     mLogger(mBus, LogLevel::VERB),
     mScriptSystem(mBus, mWorlds.getWorldInterface())
 {
+    mTimer.start();
     subscribe(mBus, *this);
     mBus.send(LogMessage{"Setting up server", serverName, LogLevel::INFO});
 
@@ -51,7 +52,7 @@ void Server::doLogic()
 
     mBus.send(FrameMessage{true});
 
-	mEntitySystem.update();
+	mEntitySystem.update(mTimer.getDeltaTime());
 
     for(auto& client : mClients)
     {
