@@ -15,7 +15,9 @@ void PhysicsController::inspectEntity(fea::WeakEntityPtr entity)
 
     if(locked->hasAttribute("position") &&
             locked->hasAttribute("velocity") &&
+            locked->hasAttribute("acceleration") &&
             locked->hasAttribute("drag") && 
+            locked->hasAttribute("on_ground") && 
             locked->hasAttribute("physics_type"))
     {
         mEntities.emplace(locked->getId(), entity);

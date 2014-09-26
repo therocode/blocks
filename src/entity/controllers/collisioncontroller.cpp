@@ -12,7 +12,9 @@ void CollisionController::inspectEntity(fea::WeakEntityPtr entity)
 
     if(locked->hasAttribute("position") &&
             locked->hasAttribute("velocity") &&
+            locked->hasAttribute("acceleration") &&
             locked->hasAttribute("on_ground") &&
+            locked->hasAttribute("current_world") &&
             locked->hasAttribute("hitbox"))
     {
         mEntities.emplace(locked->getId(), entity);

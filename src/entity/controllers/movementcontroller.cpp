@@ -13,9 +13,13 @@ void MovementController::inspectEntity(fea::WeakEntityPtr entity)
     if(locked->hasAttribute("walk_speed") &&
        locked->hasAttribute("run_speed") &&
        locked->hasAttribute("move_action") &&
-       locked->hasAttribute("on_ground") &&
+       locked->hasAttribute("move_direction") &&
        locked->hasAttribute("pitch") &&
        locked->hasAttribute("yaw") &&
+       locked->hasAttribute("jumping") &&
+       locked->hasAttribute("jump_strength") &&
+       locked->hasAttribute("physics_type") &&
+       locked->hasAttribute("on_ground") &&
        locked->hasAttribute("velocity") &&
        locked->hasAttribute("acceleration"))
     {

@@ -141,7 +141,7 @@ void PlayerController::handleMessage(const PlayerMoveDirectionMessage& received)
     size_t playerId = received.id;
     MoveDirection direction = received.direction;
 
-    mPlayerEntities.at(playerId).lock()->setAttribute<MoveDirection>("move_direction", direction);
+    mPlayerEntities.at(playerId).lock()->setAttribute("move_direction", direction);
 }
 
 void PlayerController::handleMessage(const PlayerMoveActionMessage& received)
@@ -149,7 +149,7 @@ void PlayerController::handleMessage(const PlayerMoveActionMessage& received)
     size_t playerId = received.id;
     MoveAction moveAction = received.action;
 
-    mPlayerEntities.at(playerId).lock()->setAttribute<MoveAction>("move_action", moveAction);
+    mPlayerEntities.at(playerId).lock()->setAttribute("move_action", moveAction);
 }
 
 void PlayerController::handleMessage(const PlayerPitchYawMessage& received) //movement controller ni the future
@@ -171,8 +171,8 @@ void PlayerController::handleMessage(const PlayerPitchYawMessage& received) //mo
 		if(newPitch <= -glm::pi<float>() * 0.5f)
 			newPitch = -glm::pi<float>() * 0.5f + 0.001f;
 
-        entity->setAttribute<float>("pitch", newPitch);
-        entity->addToAttribute<float>("yaw", glm::radians(yaw));
+        entity->setAttribute("pitch", newPitch);
+        entity->addToAttribute("yaw", glm::radians(yaw));
 
         float newYaw = entity->getAttribute<float>("yaw");
 		//printf("Pitch: %f, and yaw: %f\n", newPitch, newYaw);
@@ -206,7 +206,7 @@ void PlayerController::playerEntersChunk(size_t playerId, const ChunkCoord& chun
     fea::EntityPtr entity = mPlayerEntities.at(playerId).lock();
     mBus.send(PlayerEntersChunkMessage{(fea::EntityId)playerId, chunk});
     mBus.send(HighlightEntityMoveRequestedMessage{entity->getAttribute<WorldId>("current_world"), entity->getId(), chunk});
-    entity->setAttribute<ChunkCoord>("current_chunk", chunk);
+    entity->setAttribute("current_chunk", chunk);
 }
 
 void PlayerController::updateVoxelLookAt(size_t playerId)
@@ -226,13 +226,13 @@ void PlayerController::updateVoxelLookAt(size_t playerId)
     if(entity)
     {
         if(entity->getAttribute<uint32_t>("block_facing_face") != face){
-            entity->setAttribute<uint32_t>("block_facing_face", face);
+            entity->setAttribute("block_facing_face", face);
         }
         if(block != entity->getAttribute<VoxelCoord>("block_facing"))
         {
-            entity->setAttribute<bool>("is_facing_block", f);
-            entity->setAttribute<bool>("is_facing_block", f);
-            entity->setAttribute<VoxelCoord>("block_facing", block);
+            entity->setAttribute("is_facing_block", f);
+            entity->setAttribute("is_facing_block", f);
+            entity->setAttribute("block_facing", block);
             mBus.send(PlayerFacingBlockMessage{(fea::EntityId)playerId, block});
         }
     }
