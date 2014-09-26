@@ -13,27 +13,9 @@ EntitySystem::EntitySystem(fea::MessageBus& bus) :
     mLogName("entity")
 {
     subscribe(mBus, *this);
+    mBus.send(LogMessage{"Setting up entity system", mLogName, LogLevel::INFO});
     mTimer.start();
-}
 
-EntitySystem::~EntitySystem()
-{
-    mBus.send(LogMessage{"Removing all entities", mLogName, LogLevel::VERB});
-    fea::EntitySet entities = mManager.getAll();
-
-    for(auto entity : entities)
-    {
-        removeEntity(entity.lock()->getId());
-    }
-}
-
-void EntitySystem::addController(std::unique_ptr<EntityController> controller)
-{
-    mControllers.push_back(std::move(controller));
-}
-
-void EntitySystem::setup()
-{
     mBus.send(LogMessage{"Loading entity definitions", mLogName, LogLevel::INFO});
 
     EntityDefinitionLoader loader;
@@ -55,6 +37,23 @@ void EntitySystem::setup()
         mBus.send(LogMessage{"Added entity type '" + temp.name + "' to entity definitions", mLogName, LogLevel::VERB});
     }
     mBus.send(LogMessage{"Entity definitions loaded", mLogName, LogLevel::INFO});
+}
+
+EntitySystem::~EntitySystem()
+{
+    mBus.send(LogMessage{"Removing all entities", mLogName, LogLevel::VERB});
+    fea::EntitySet entities = mManager.getAll();
+
+    for(auto entity : entities)
+    {
+        removeEntity(entity.lock()->getId());
+    }
+    mBus.send(LogMessage{"Shutting down entity system", mLogName, LogLevel::INFO});
+}
+
+void EntitySystem::addController(std::unique_ptr<EntityController> controller)
+{
+    mControllers.push_back(std::move(controller));
 }
 
 void EntitySystem::update()

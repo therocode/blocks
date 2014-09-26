@@ -49,15 +49,14 @@ class Server : public fea::MessageReceiver<FatalMessage,
         void checkForDisconnectedClients();
         fea::MessageBus mBus;
         Logger mLogger;
-        EntitySystem mEntitySystem;
+        std::map<ClientId, std::shared_ptr<ClientConnection> > mClients;
+        std::unique_ptr<ClientConnectionListener> mListener;
         WorldHolder mWorlds;
         WorldProvider mWorldProvider;
         ScriptHandler mScriptHandler;
+        EntitySystem mEntitySystem;
         std::string mLogName;
         FPSController mFPSController;
-
-        std::map<ClientId, std::shared_ptr<ClientConnection> > mClients;
-        std::unique_ptr<ClientConnectionListener> mListener;
 
         std::set<size_t> graphicsEntities; //temporary solution on how to resend things
 };

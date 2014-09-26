@@ -16,7 +16,13 @@ Server::Server() :
     mScriptHandler(mBus, mWorlds.getWorldInterface()),
     mLogName("server")
 {
-    subscribe(mBus, *this);
+    subscribe(mBus, *this, false);
+
+	mEntitySystem.addController(std::unique_ptr<EntityController>(new PlayerController(mBus, mWorlds.getWorldInterface())));
+	mEntitySystem.addController(std::unique_ptr<EntityController>(new PhysicsController(mBus, mWorlds.getWorldInterface())));
+	mEntitySystem.addController(std::unique_ptr<EntityController>(new CollisionController(mBus, mWorlds.getWorldInterface())));
+	mEntitySystem.addController(std::unique_ptr<EntityController>(new MovementController(mBus, mWorlds.getWorldInterface())));
+	mEntitySystem.addController(std::unique_ptr<EntityController>(new GfxController(mBus, mWorlds.getWorldInterface())));
 }
 
 Server::~Server()
@@ -27,13 +33,6 @@ Server::~Server()
 void Server::setup()
 {
     mScriptHandler.setup();
-
-    mEntitySystem.setup();
-	mEntitySystem.addController(std::unique_ptr<EntityController>(new PlayerController(mBus, mWorlds.getWorldInterface())));
-	mEntitySystem.addController(std::unique_ptr<EntityController>(new PhysicsController(mBus, mWorlds.getWorldInterface())));
-	mEntitySystem.addController(std::unique_ptr<EntityController>(new CollisionController(mBus, mWorlds.getWorldInterface())));
-	mEntitySystem.addController(std::unique_ptr<EntityController>(new MovementController(mBus, mWorlds.getWorldInterface())));
-	mEntitySystem.addController(std::unique_ptr<EntityController>(new GfxController(mBus, mWorlds.getWorldInterface())));
 
     WorldLoader mWorldLoader;
 
