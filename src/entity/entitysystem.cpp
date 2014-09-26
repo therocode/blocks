@@ -86,7 +86,7 @@ fea::WeakEntityPtr EntitySystem::createEntity(const std::string& type, std::func
     return e;
 }
 
-void EntitySystem::handleMessage(const CreateEntityMessage& received) 
+void EntitySystem::handleMessage(const EntityRequestedMessage& received) 
 {
     createEntity(received.type, received.initializer);
 }

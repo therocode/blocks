@@ -27,7 +27,7 @@ struct GravityRequestedMessage
     float gravityConstant;
 };
 
-struct CreateEntityMessage
+struct EntityRequestedMessage
 {
     const std::string& type; std::function<void(fea::EntityPtr)> initializer;
 };

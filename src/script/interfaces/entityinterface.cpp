@@ -29,7 +29,7 @@ void EntityInterface::registerInterface(asIScriptEngine* engine)
 
 asIScriptObject* EntityInterface::createEntity(const std::string& type, float x, float y, float z)
 {
-    mBus.send(CreateEntityMessage{type, [&] (fea::EntityPtr e)
+    mBus.send(EntityRequestedMessage{type, [&] (fea::EntityPtr e)
             {
                 e->setAttribute("position", glm::vec3(x, y, z));
                 e->setAttribute("current_world", 0u); //default world!?

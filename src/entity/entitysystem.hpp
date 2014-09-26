@@ -7,11 +7,10 @@
 #include "utilities/timer.hpp"
 
 class EntityController;
-
 class asIScriptObject;
 
 class EntitySystem : 
-    public fea::MessageReceiver<CreateEntityMessage, RemoveEntityMessage>
+    public fea::MessageReceiver<EntityRequestedMessage, RemoveEntityMessage>
 {
     public:
         EntitySystem(fea::MessageBus& bus);
@@ -20,7 +19,7 @@ class EntitySystem :
         void setup();
         void update();
         fea::WeakEntityPtr createEntity(const std::string& scriptType, std::function<void(fea::EntityPtr)> initializer);
-        void handleMessage(const CreateEntityMessage& received);
+        void handleMessage(const EntityRequestedMessage& received);
         void handleMessage(const RemoveEntityMessage& received);
 
         template<class Type>
