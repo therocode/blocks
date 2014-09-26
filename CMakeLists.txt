@@ -111,6 +111,7 @@ set(source_files
 
 set(header_files
     src/blockstd.hpp
+    src/lognames.hpp
     src/application/applicationmessages.hpp
     src/application/blocksapp.hpp
     src/application/client.hpp

@@ -34,6 +34,5 @@ class EntitySystem :
         fea::EntityManager mManager;
         EntityFactory mFactory;
         std::vector<std::unique_ptr<EntityController> > mControllers;
-        std::string mLogName;
         Timer mTimer;
 };

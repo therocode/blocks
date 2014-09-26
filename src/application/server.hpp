@@ -14,8 +14,7 @@ class ClientConnection;
 class ClientConnectionListener;
 using ClientId = size_t;
 
-class Server : public fea::MessageReceiver<FatalMessage,
-                                           AddGfxEntityMessage,
+class Server : public fea::MessageReceiver<AddGfxEntityMessage,
                                            MoveGfxEntityMessage,
                                            RotateGfxEntityMessage,
                                            RemoveGfxEntityMessage,
@@ -30,7 +29,6 @@ class Server : public fea::MessageReceiver<FatalMessage,
         ~Server();
         void setup();
         void doLogic();
-        void handleMessage(const FatalMessage& received);
         void handleMessage(const AddGfxEntityMessage& received);
         void handleMessage(const MoveGfxEntityMessage& received);
         void handleMessage(const RotateGfxEntityMessage& received);
@@ -54,7 +52,6 @@ class Server : public fea::MessageReceiver<FatalMessage,
         WorldProvider mWorldProvider;
         ScriptHandler mScriptHandler;
         EntitySystem mEntitySystem;
-        std::string mLogName;
         FPSController mFPSController;
 
         std::set<size_t> graphicsEntities; //temporary solution on how to resend things

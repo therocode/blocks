@@ -1,4 +1,5 @@
 #include "server.hpp"
+#include "../lognames.hpp"
 #include "../networking/packages.hpp"
 #include "../networking/clientconnection.hpp"
 #include "../networking/clientconnectionlistener.hpp"
@@ -14,10 +15,10 @@ Server::Server(fea::MessageBus& bus) :
     mWorlds(mBus, mEntitySystem),
     mWorldProvider(mBus),
     mLogger(mBus, LogLevel::VERB),
-    mScriptHandler(mBus, mWorlds.getWorldInterface()),
-    mLogName("server")
+    mScriptHandler(mBus, mWorlds.getWorldInterface())
 {
     subscribe(mBus, *this);
+    mBus.send(LogMessage{"Setting up server", serverName, LogLevel::INFO});
 
 	mEntitySystem.addController(std::unique_ptr<EntityController>(new PlayerController(mBus, mWorlds.getWorldInterface())));
 	mEntitySystem.addController(std::unique_ptr<EntityController>(new PhysicsController(mBus, mWorlds.getWorldInterface())));
@@ -28,7 +29,7 @@ Server::Server(fea::MessageBus& bus) :
 
 Server::~Server()
 {
-    mBus.send(LogMessage{"Server destroyed", mLogName, LogLevel::INFO});
+    mBus.send(LogMessage{"Shutting down server", serverName, LogLevel::INFO});
 }
 
 void Server::setup()
@@ -48,12 +49,11 @@ void Server::setup()
     }
     else
     {
-        mBus.send(LogMessage{"World loading error: " + mWorldLoader.getErrorString(), mLogName, LogLevel::ERR});
+        mBus.send(LogMessage{"World loading error: " + mWorldLoader.getErrorString(), worldName, LogLevel::ERR});
     }
     
 
     mFPSController.setMaxFPS(60);
-    mBus.send(LogMessage{"Server initialised and ready to go", mLogName, LogLevel::INFO});
     mBus.send(GameStartMessage{});
 }
 
@@ -79,12 +79,6 @@ void Server::doLogic()
     pollNewClients();
 
     mFPSController.frameEnd();
-}
-
-void Server::handleMessage(const FatalMessage& received)
-{
-    mBus.send(LogMessage{received.message, mLogName, LogLevel::ERR});
-    exit(4);
 }
 
 void Server::handleMessage(const ChunkLoadedMessage& received)
@@ -197,7 +191,7 @@ void Server::acceptClientConnection(std::shared_ptr<ClientConnection> client)
 
     mClients.emplace(newClientId, client);
 
-    mBus.send(LogMessage{std::string("Client id ") + std::to_string(newClientId) + std::string(" connected"), mLogName, LogLevel::INFO});
+    mBus.send(LogMessage{std::string("Client id ") + std::to_string(newClientId) + std::string(" connected"), serverName, LogLevel::INFO});
 
     std::shared_ptr<BasePackage> playerIdPackage(new PlayerIdPackage(newClientId));
     client->enqueuePackage(playerIdPackage);

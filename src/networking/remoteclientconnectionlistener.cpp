@@ -1,7 +1,10 @@
 #include "remoteclientconnectionlistener.hpp"
 #include "application/applicationmessages.hpp"
+#include "../lognames.hpp"
 
-RemoteClientConnectionListener::RemoteClientConnectionListener(fea::MessageBus& bus) : mBus(bus), mLogName("network"), mNextClientId(0)
+RemoteClientConnectionListener::RemoteClientConnectionListener(fea::MessageBus& bus) :
+    mBus(bus),
+    mNextClientId(0)
 {
 }
 

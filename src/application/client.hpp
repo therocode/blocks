@@ -54,7 +54,6 @@ class Client :
         std::unique_ptr<Renderer> mRenderer;
         std::unique_ptr<InputAdaptor> mInputAdaptor;
         bool mQuit;
-        std::string mLogName;
 
         ChunkMap mLocalChunks;
 

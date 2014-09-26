@@ -16,6 +16,7 @@ class WorldHolder :
 {
     public:
         WorldHolder(fea::MessageBus& messageBus, EntitySystem& entitySystem);
+        ~WorldHolder();
         virtual void handleMessage(const SetVoxelMessage& received);
         virtual void handleMessage(const RegionDeliverMessage& received);
         virtual void handleMessage(const ChunkDeliverMessage& received);

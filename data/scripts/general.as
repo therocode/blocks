@@ -4,11 +4,11 @@ Entity@ created;
 
 void gameStarted()
 {
-    consolePrint("Verbose message from the script", VERBOSE);
-    consolePrint("Info message from the script", INFO);
-    consolePrint("Warning message from the script", WARNING);
-    consolePrint("Error message from the script", ERROR);
-    consolePrint("Game started!");
+    //consolePrint("Verbose message from the script", VERBOSE);
+    //consolePrint("Info message from the script", INFO);
+    //consolePrint("Warning message from the script", WARNING);
+    //consolePrint("Error message from the script", ERROR);
+    consolePrint("----------------Game started!---------------------");
 
 	for(int x = 0; x < 4; x++)
 	{

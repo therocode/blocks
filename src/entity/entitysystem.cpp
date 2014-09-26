@@ -5,18 +5,18 @@
 #include "entitydefinitionloader.hpp"
 #include "../utilities/folderexploder.hpp"
 #include "controllers/entitycontroller.hpp"
+#include "../lognames.hpp"
 
 EntitySystem::EntitySystem(fea::MessageBus& bus) : 
     mBus(bus), 
     mManager(),
-    mFactory(mManager),
-    mLogName("entity")
+    mFactory(mManager)
 {
     subscribe(mBus, *this);
-    mBus.send(LogMessage{"Setting up entity system", mLogName, LogLevel::INFO});
+    mBus.send(LogMessage{"Setting up entity system", entityName, LogLevel::INFO});
     mTimer.start();
 
-    mBus.send(LogMessage{"Loading entity definitions", mLogName, LogLevel::INFO});
+    mBus.send(LogMessage{"Loading entity definitions", entityName, LogLevel::INFO});
 
     EntityDefinitionLoader loader;
 
@@ -24,31 +24,33 @@ EntitySystem::EntitySystem(fea::MessageBus& bus) :
     std::vector<std::string> definitionFiles;
     exploder.explodeFolder("data", ".*\\.def", definitionFiles);
 
-    mBus.send(LogMessage{"Found " + std::to_string(definitionFiles.size()) + " entity definitions", mLogName, LogLevel::INFO});
+    mBus.send(LogMessage{"Found " + std::to_string(definitionFiles.size()) + " entity definitions", entityName, LogLevel::INFO});
     for(auto& fileName : definitionFiles)
     {
         EntityDefinition temp = loader.loadFromJSONFile(fileName);
         if(loader.errorOccurred())
         {
-            mBus.send(LogMessage{loader.getErrorString(), mLogName, LogLevel::ERR});
-            mBus.send(FatalMessage{std::string("Shutdown issued due to erroneous entity definition")});
+            mBus.send(LogMessage{loader.getErrorString(), entityName, LogLevel::ERR});
         }
-        mFactory.addDefinition(temp);
-        mBus.send(LogMessage{"Added entity type '" + temp.name + "' to entity definitions", mLogName, LogLevel::VERB});
+        else
+        {
+            mFactory.addDefinition(temp);
+            mBus.send(LogMessage{"Added entity type '" + temp.name + "' to entity definitions", entityName, LogLevel::VERB});
+        }
     }
-    mBus.send(LogMessage{"Entity definitions loaded", mLogName, LogLevel::INFO});
+    mBus.send(LogMessage{"Entity definitions loaded", entityName, LogLevel::INFO});
 }
 
 EntitySystem::~EntitySystem()
 {
-    mBus.send(LogMessage{"Removing all entities", mLogName, LogLevel::VERB});
+    mBus.send(LogMessage{"Removing all entities", entityName, LogLevel::VERB});
     fea::EntitySet entities = mManager.getAll();
 
     for(auto entity : entities)
     {
         removeEntity(entity.lock()->getId());
     }
-    mBus.send(LogMessage{"Shutting down entity system", mLogName, LogLevel::INFO});
+    mBus.send(LogMessage{"Shutting down entity system", entityName, LogLevel::INFO});
 }
 
 void EntitySystem::addController(std::unique_ptr<EntityController> controller)
@@ -79,7 +81,7 @@ fea::WeakEntityPtr EntitySystem::createEntity(const std::string& type, std::func
     }
     else
     {
-        mBus.send(LogMessage{"Trying to spawn entity of invalid type " + type, mLogName, LogLevel::ERR});
+        mBus.send(LogMessage{"Trying to spawn entity of invalid type " + type, entityName, LogLevel::ERR});
     }
 
     return e;

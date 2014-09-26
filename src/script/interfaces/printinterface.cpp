@@ -1,6 +1,7 @@
 #include "printinterface.hpp"
 #include <angelscript.h>
 #include <assert.h>
+#include "../../lognames.hpp"
 
 PrintInterface::PrintInterface(fea::MessageBus& bus, WorldInterface& worldInterface) : ScriptInterface(bus, worldInterface)
 {
@@ -15,10 +16,10 @@ void PrintInterface::registerInterface(asIScriptEngine* engine)
 
 void PrintInterface::scriptPrint(const std::string& text)
 {
-    mBus.send(LogMessage{text, mLogName, LogLevel::INFO});
+    mBus.send(LogMessage{text, scriptName, LogLevel::INFO});
 }
 
 void PrintInterface::scriptPrint(const std::string& text, uint32_t level)
 {
-    mBus.send(LogMessage{text, mLogName, level});
+    mBus.send(LogMessage{text, scriptName, level});
 }

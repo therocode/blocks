@@ -1,6 +1,7 @@
 #include "entityinterface.hpp"
 #include <angelscript.h>
 #include <assert.h>
+#include "../../lognames.hpp"
 #include "../scriptentitycore.hpp"
 #include "../../world/worldinterface.hpp"
 
@@ -40,7 +41,7 @@ asIScriptObject* EntityInterface::createEntity(const std::string& type, float x,
 
     if(createdEntity.expired())
     {
-        mBus.send(LogMessage{"Script runtime error: Id of created entity of type '" + type + "' is invalid", mLogName, LogLevel::ERR});
+        mBus.send(LogMessage{"Script runtime error: Id of created entity of type '" + type + "' is invalid", scriptName, LogLevel::ERR});
         return nullptr;
     }
 

@@ -13,6 +13,7 @@
 #include "callers/gameeventcaller.hpp"
 #include "callers/frametimecaller.hpp"
 #include "../world/worldinterface.hpp"
+#include "../lognames.hpp"
 
 ScriptHandler::ScriptHandler(fea::MessageBus& bus, WorldInterface& worldInterface) : 
     mEngine(bus),
@@ -22,6 +23,7 @@ ScriptHandler::ScriptHandler(fea::MessageBus& bus, WorldInterface& worldInterfac
     logName("script")
 {
     subscribe(mBus, *this);
+    mBus.send(LogMessage{"Setting up script system", scriptName, LogLevel::INFO});
 
     ScriptEntityCore::sWorldInterface = &worldInterface;
     ScriptEntityCore::sBus = &bus;
@@ -29,6 +31,7 @@ ScriptHandler::ScriptHandler(fea::MessageBus& bus, WorldInterface& worldInterfac
 
 ScriptHandler::~ScriptHandler()
 {
+    mBus.send(LogMessage{"Shutting down script system", scriptName, LogLevel::INFO});
     scriptEntities.clear();
     mEngine.destroyModule(mScripts);
 }
