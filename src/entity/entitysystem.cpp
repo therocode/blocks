@@ -70,7 +70,7 @@ void EntitySystem::handleMessage(const EntityRequestedMessage& received)
     createEntity(received.type, received.initializer);
 }
 
-void EntitySystem::handleMessage(const RemoveEntityMessage& received)
+void EntitySystem::handleMessage(const RemoveEntityRequestedMessage& received)
 {
     removeEntity(received.id);
 }

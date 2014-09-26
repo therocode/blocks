@@ -10,7 +10,7 @@ class EntityController;
 class asIScriptObject;
 
 class EntitySystem : 
-    public fea::MessageReceiver<EntityRequestedMessage, RemoveEntityMessage>
+    public fea::MessageReceiver<EntityRequestedMessage, RemoveEntityRequestedMessage>
 {
     public:
         EntitySystem(fea::MessageBus& bus);
@@ -19,7 +19,7 @@ class EntitySystem :
         void setup();
         void update(int32_t deltaTime);
         void handleMessage(const EntityRequestedMessage& received);
-        void handleMessage(const RemoveEntityMessage& received);
+        void handleMessage(const RemoveEntityRequestedMessage& received);
 
         template<class Type>
         Type getEntityAttribute(fea::EntityId id, const std::string& name)

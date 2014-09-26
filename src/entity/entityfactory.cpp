@@ -7,7 +7,7 @@
 #include <fea/entity/glmtypeadder.hpp>
 
 
-EntityFactory::EntityFactory(fea::EntityManager& manager) : mManager(manager), mFactory(manager)
+EntityFactory::EntityFactory(fea::EntityManager& manager) : mFactory(manager)
 {
     //register templates
     fea::JsonEntityLoader loader;

@@ -47,7 +47,7 @@ struct EntityOnGroundMessage
     fea::EntityId id; bool landed;
 };
 
-struct RemoveEntityMessage
+struct RemoveEntityRequestedMessage
 {
     size_t id;
 };

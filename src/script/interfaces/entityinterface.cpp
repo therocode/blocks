@@ -61,7 +61,7 @@ asIScriptObject* EntityInterface::createEntity(const std::string& type, float x,
 
 void EntityInterface::removeEntityFromId(size_t id)
 {
-    mBus.send(RemoveEntityMessage{id});   
+    mBus.send(RemoveEntityRequestedMessage{id});   
 }
 
 void EntityInterface::handleMessage(const EntityCreatedMessage& message)
