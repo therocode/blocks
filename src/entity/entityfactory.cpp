@@ -1,4 +1,3 @@
-#include <iostream>
 #include "../blockstd.hpp"
 #include "entityfactory.hpp"
 #include "../world/chunk.hpp"
@@ -31,7 +30,6 @@ fea::WeakEntityPtr EntityFactory::spawnEntity(const std::string& scriptType)
 {
     if(mEntityDefinitions.find(scriptType) == mEntityDefinitions.end())
     {
-        std::cout << "Error! Trying to spawn entity of type " << scriptType << " but it lacks a definition file\n";
         return fea::WeakEntityPtr();
     }
 

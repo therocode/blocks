@@ -68,15 +68,22 @@ void EntitySystem::update()
 
 fea::WeakEntityPtr EntitySystem::createEntity(const std::string& type, std::function<void(fea::EntityPtr)> initializer)
 {
-    fea::WeakEntityPtr entity = mFactory.spawnEntity(type);
+    fea::WeakEntityPtr e = mFactory.spawnEntity(type);
 
-    initializer(entity.lock());
+    if(fea::EntityPtr entity = e.lock())
+    {
+        initializer(entity);
 
-    mBus.send<EntityCreatedMessage>(EntityCreatedMessage{entity, type});
+        mBus.send<EntityCreatedMessage>(EntityCreatedMessage{entity, type});
 
-    attachEntity(entity);
+        attachEntity(entity);
+    }
+    else
+    {
+        mBus.send(LogMessage{"Trying to spawn entity of invalid type " + type, mLogName, LogLevel::ERR});
+    }
 
-    return entity;
+    return e;
 }
 
 void EntitySystem::handleMessage(const CreateEntityMessage& received) 

@@ -34,6 +34,7 @@ asIScriptObject* EntityInterface::createEntity(const std::string& type, float x,
                 e->setAttribute("position", glm::vec3(x, y, z));
                 e->setAttribute("current_world", 0u); //default world!?
             }});
+
     fea::WeakEntityPtr createdEntity;
     std::swap(createdEntity, mNewlyCreated);
 
