@@ -1,13 +1,11 @@
 #pragma once
-#include "../world/worldholder.hpp"
+#include "../world/worldsystem.hpp"
 #include "../networking/serverclientbridge.hpp"
 #include "../world/worldmessages.hpp"
 #include "../rendering/renderingmessages.hpp"
-#include "../script/scripthandler.hpp"
+#include "../script/scriptsystem.hpp"
 #include "../utilities/fpscontroller.hpp"
 #include "../utilities/logger.hpp"
-#include "../world/worldprovider.hpp"
-#include "../world/worldloader.hpp"
 #include "../entity/entitysystem.hpp"
 
 class ClientConnection;
@@ -48,9 +46,8 @@ class Server : public fea::MessageReceiver<AddGfxEntityMessage,
         Logger mLogger;
         std::map<ClientId, std::shared_ptr<ClientConnection> > mClients;
         std::unique_ptr<ClientConnectionListener> mListener;
-        WorldHolder mWorlds;
-        WorldProvider mWorldProvider;
-        ScriptHandler mScriptHandler;
+        WorldSystem mWorlds;
+        ScriptSystem mScriptSystem;
         EntitySystem mEntitySystem;
         FPSController mFPSController;
 

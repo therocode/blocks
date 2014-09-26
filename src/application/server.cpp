@@ -13,9 +13,8 @@ Server::Server(fea::MessageBus& bus) :
     mBus(bus),
 	mEntitySystem(mBus),
     mWorlds(mBus, mEntitySystem),
-    mWorldProvider(mBus),
     mLogger(mBus, LogLevel::VERB),
-    mScriptHandler(mBus, mWorlds.getWorldInterface())
+    mScriptSystem(mBus, mWorlds.getWorldInterface())
 {
     subscribe(mBus, *this);
     mBus.send(LogMessage{"Setting up server", serverName, LogLevel::INFO});
@@ -34,24 +33,7 @@ Server::~Server()
 
 void Server::setup()
 {
-    mScriptHandler.setup();
-
-    WorldLoader mWorldLoader;
-
-    mWorldLoader.loadWorldFile("data/worlds/default.json");
-
-    if(!mWorldLoader.hasError())
-    {
-        for(const auto& worldParameters : mWorldLoader.getLoadedWorlds())
-        {
-            mWorlds.addWorld(worldParameters);
-        }
-    }
-    else
-    {
-        mBus.send(LogMessage{"World loading error: " + mWorldLoader.getErrorString(), worldName, LogLevel::ERR});
-    }
-    
+    mScriptSystem.setup();
 
     mFPSController.setMaxFPS(60);
     mBus.send(GameStartMessage{});

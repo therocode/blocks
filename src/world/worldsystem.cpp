@@ -1,24 +1,43 @@
-#include "worldholder.hpp"
+#include "worldsystem.hpp"
 #include "world.hpp"
 #include <fea/util.hpp>
 #include "../application/applicationmessages.hpp"
 #include "../lognames.hpp"
+#include "../world/worldloader.hpp"
 
-WorldHolder::WorldHolder(fea::MessageBus& messageBus, EntitySystem& entitySystem) 
+WorldSystem::WorldSystem(fea::MessageBus& messageBus, EntitySystem& entitySystem) 
 :   mBus(messageBus),
 	mWorldInterface(mWorlds, entitySystem),
-    mNextId(0)
+    mNextId(0),
+    mWorldProvider(mBus)
 {
     mBus.send(LogMessage{"Setting up world system", worldName, LogLevel::INFO});
     subscribe(mBus, *this);
+
+    WorldLoader mWorldLoader;
+
+    mWorldLoader.loadWorldFile("data/worlds/default.json");
+
+    if(!mWorldLoader.hasError())
+    {
+        for(const auto& worldParameters : mWorldLoader.getLoadedWorlds())
+        {
+            addWorld(worldParameters);
+        }
+    }
+    else
+    {
+        mBus.send(LogMessage{"World loading error: " + mWorldLoader.getErrorString(), worldName, LogLevel::ERR});
+    }
+    
 }
 
-WorldHolder::~WorldHolder()
+WorldSystem::~WorldSystem()
 {
     mBus.send(LogMessage{"Shutting down world system", worldName, LogLevel::INFO});
 }
 
-void WorldHolder::handleMessage(const SetVoxelMessage& received)
+void WorldSystem::handleMessage(const SetVoxelMessage& received)
 {
     bool succeeded = mWorlds.at(received.worldId)->setVoxelType(received.voxel, received.type);
 
@@ -28,7 +47,7 @@ void WorldHolder::handleMessage(const SetVoxelMessage& received)
     }
 }
 
-void WorldHolder::handleMessage(const RegionDeliverMessage& received)
+void WorldSystem::handleMessage(const RegionDeliverMessage& received)
 {
     RegionCoord coordinate = received.coordinate;
     Region region = received.newRegion;
@@ -36,7 +55,7 @@ void WorldHolder::handleMessage(const RegionDeliverMessage& received)
     mWorlds.at(received.worldId)->deliverRegion(coordinate, region);
 }
 
-void WorldHolder::handleMessage(const ChunkDeliverMessage& received)
+void WorldSystem::handleMessage(const ChunkDeliverMessage& received)
 {
     ChunkCoord coordinate = received.coordinate;
     Chunk chunk = received.chunk;
@@ -44,12 +63,12 @@ void WorldHolder::handleMessage(const ChunkDeliverMessage& received)
     mWorlds.at(received.worldId)->deliverChunk(coordinate, chunk);
 }
 
-WorldInterface& WorldHolder::getWorldInterface()
+WorldInterface& WorldSystem::getWorldInterface()
 {
     return mWorldInterface;
 }
 
-void WorldHolder::addWorld(const WorldParameters& worldParameters)
+void WorldSystem::addWorld(const WorldParameters& worldParameters)
 {
     mBus.send(LogMessage{"Loading world " + worldParameters.identifier, worldName, LogLevel::INFO});
 

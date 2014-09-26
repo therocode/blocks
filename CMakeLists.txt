@@ -62,7 +62,7 @@ set(source_files
     src/script/scriptengine.cpp
     src/script/scriptentity.cpp
     src/script/scriptentitycore.cpp
-    src/script/scripthandler.cpp
+    src/script/scriptsystem.cpp
     src/script/scriptmodule.cpp
     src/script/asaddons/scriptarray.cpp
     src/script/asaddons/scriptmath.cpp
@@ -99,7 +99,7 @@ set(source_files
     src/world/regiondatafragment.cpp
     src/world/world.cpp
     src/world/worldstd.cpp
-    src/world/worldholder.cpp
+    src/world/worldsystem.cpp
     src/world/worldinterface.cpp
     src/world/worldloader.cpp
     src/world/generation/biome.cpp
@@ -183,7 +183,7 @@ set(header_files
     src/script/scriptengine.hpp
     src/script/scriptentity.hpp
     src/script/scriptentitycore.hpp
-    src/script/scripthandler.hpp
+    src/script/scriptsystem.hpp
     src/script/scriptmodule.hpp
     src/script/scriptstd.hpp
     src/script/asaddons/scriptarray.hpp
@@ -220,7 +220,7 @@ set(header_files
     src/world/regiondatafragment.hpp
     src/world/world.hpp
     src/world/worldstd.hpp
-	src/world/worldholder.hpp
+	src/world/worldsystem.hpp
     src/world/worldinterface.hpp
     src/world/worldloader.hpp
 	src/world/worldmessages.hpp
