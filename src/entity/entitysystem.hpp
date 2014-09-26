@@ -15,7 +15,6 @@ class EntitySystem :
         EntitySystem(fea::MessageBus& bus);
         ~EntitySystem();
         void addController(std::unique_ptr<EntityController> controller);
-        void setup();
         void update(int32_t deltaTime);
         void handleMessage(const EntityRequestedMessage& received);
         void handleMessage(const RemoveEntityRequestedMessage& received);
