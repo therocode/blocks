@@ -44,12 +44,12 @@ class Server : public fea::MessageReceiver<AddGfxEntityMessage,
         void checkForDisconnectedClients();
         fea::MessageBus& mBus;
         Logger mLogger;
-        std::map<ClientId, std::shared_ptr<ClientConnection> > mClients;
+        std::unordered_map<ClientId, std::shared_ptr<ClientConnection> > mClients;
         std::unique_ptr<ClientConnectionListener> mListener;
         WorldSystem mWorlds;
         ScriptSystem mScriptSystem;
         EntitySystem mEntitySystem;
         FPSController mFPSController;
 
-        std::set<size_t> graphicsEntities; //temporary solution on how to resend things
+        std::unordered_set<size_t> graphicsEntities; //temporary solution on how to resend things
 };
