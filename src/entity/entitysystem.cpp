@@ -65,6 +65,16 @@ void EntitySystem::update(int32_t deltaTime)
     }
 }
 
+void EntitySystem::handleMessage(const EntityRequestedMessage& received) 
+{
+    createEntity(received.type, received.initializer);
+}
+
+void EntitySystem::handleMessage(const RemoveEntityMessage& received)
+{
+    removeEntity(received.id);
+}
+
 fea::WeakEntityPtr EntitySystem::createEntity(const std::string& type, std::function<void(fea::EntityPtr)> initializer)
 {
     fea::WeakEntityPtr e = mFactory.spawnEntity(type);
@@ -83,16 +93,6 @@ fea::WeakEntityPtr EntitySystem::createEntity(const std::string& type, std::func
     }
 
     return e;
-}
-
-void EntitySystem::handleMessage(const EntityRequestedMessage& received) 
-{
-    createEntity(received.type, received.initializer);
-}
-
-void EntitySystem::handleMessage(const RemoveEntityMessage& received)
-{
-    removeEntity(received.id);
 }
 
 void EntitySystem::attachEntity(fea::WeakEntityPtr entity)
