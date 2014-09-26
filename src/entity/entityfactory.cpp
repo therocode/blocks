@@ -19,10 +19,10 @@ EntityFactory::EntityFactory(fea::EntityManager& manager) : mFactory(manager)
     mFactory.addDataType<MoveAction>("move_action");
     mFactory.addDataType<MoveDirection>("move_direction");
 
-    for(const auto& entityAttribute : loader.loadEntityAttributes("data/attributes.json"))
+    for(const auto& entityAttribute : loader.loadEntityAttributes("data/entities/attributes.json"))
         mFactory.registerAttribute(entityAttribute.first, entityAttribute.second);
 
-    for(const auto& entityTemplate : loader.loadEntityTemplates("data/entities.json"))
+    for(const auto& entityTemplate : loader.loadEntityTemplates("data/entities/entities.json"))
         mFactory.addTemplate(entityTemplate.first, entityTemplate.second);
 }
 
