@@ -65,7 +65,7 @@ void PhysicsController::onFrame(int dt)
             }
         }
         entity->setAttribute<glm::vec3>("velocity", newVelocity);
-        mBus.send<EntityMoveRequestedMessage>(EntityMoveRequestedMessage{entity->getId(), newPosition});
+        mBus.send(EntityMoveRequestedMessage{entity->getId(), newPosition});
     }
 }
 

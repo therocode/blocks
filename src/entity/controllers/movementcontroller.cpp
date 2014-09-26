@@ -137,8 +137,8 @@ void MovementController::onFrame(int dt)
 			float ySpeed = entity->getAttribute<glm::vec3>("velocity").y;
 			if(onGround)
 			{
-				mBus.send<PhysicsImpulseMessage>(PhysicsImpulseMessage{entity->getId(), glm::vec3(0.0f, jumpStrength / 8.0f, 0.0f)});
-				mBus.send<EntityOnGroundMessage>(EntityOnGroundMessage{entity->getId(), false});
+				mBus.send(PhysicsImpulseMessage{entity->getId(), glm::vec3(0.0f, jumpStrength / 8.0f, 0.0f)});
+				mBus.send(EntityOnGroundMessage{entity->getId(), false});
 				entity->setAttribute<bool>("on_ground", false);
 			}
 		}

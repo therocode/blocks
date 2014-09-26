@@ -61,11 +61,11 @@ void PlayerController::handleMessage(const PlayerActionMessage& received)
     }
     else if(action == JUMP)
     {
-        mBus.send<EntityJumpMessage>(EntityJumpMessage{entity->getId(), true});
+        mBus.send(EntityJumpMessage{entity->getId(), true});
     }
     else if(action == STOPJUMP)
 	{
-		mBus.send<EntityJumpMessage>(EntityJumpMessage{entity->getId(), false});
+		mBus.send(EntityJumpMessage{entity->getId(), false});
 	}
     else if(action == DIG)
     {
@@ -73,7 +73,7 @@ void PlayerController::handleMessage(const PlayerActionMessage& received)
 		if(entity->getAttribute<bool>("is_facing_block"))
         {
 			VoxelCoord voxel = entity->getAttribute<VoxelCoord>("block_facing");
-			mBus.send<SetVoxelMessage>(SetVoxelMessage{entity->getAttribute<WorldId>("current_world"), voxel, 0});
+			mBus.send(SetVoxelMessage{entity->getAttribute<WorldId>("current_world"), voxel, 0});
 		}
     }
     else if(action == BUILD)
@@ -114,7 +114,7 @@ void PlayerController::handleMessage(const PlayerActionMessage& received)
 					break;
 			}
 
-			mBus.send<SetVoxelMessage>(SetVoxelMessage{entity->getAttribute<WorldId>("current_world"), voxel, (VoxelType)(rand() % 21 + 1)});//rand()%4 + 17));// (playerId + 1) % 20));
+			mBus.send(SetVoxelMessage{entity->getAttribute<WorldId>("current_world"), voxel, (VoxelType)(rand() % 21 + 1)});//rand()%4 + 17));// (playerId + 1) % 20));
 		}
     }
     else if(action == WARP)

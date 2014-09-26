@@ -58,7 +58,7 @@ void ScriptEngine::messageCallback(const asSMessageInfo &msg)
         logLevel = LogLevel::INFO;
     }
 
-    mBus.send<LogMessage>(LogMessage{msg.section + std::string(" (") + std::to_string(msg.row) + std::string(", ") + std::to_string(msg.col) + std::string(") : ") + type + std::string(" : ") + msg.message, "script", logLevel});
+    mBus.send(LogMessage{msg.section + std::string(" (") + std::to_string(msg.row) + std::string(", ") + std::to_string(msg.col) + std::string(") : ") + type + std::string(" : ") + msg.message, "script", logLevel});
 
     if(msg.type == asMSGTYPE_ERROR)
     {

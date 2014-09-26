@@ -24,7 +24,7 @@ Client::Client() :
 Client::~Client()
 {
 	mWindow.close();
-	mBus.send<LogMessage>(LogMessage{"client destroyed", mLogName, LogLevel::INFO});
+	mBus.send(LogMessage{"client destroyed", mLogName, LogLevel::INFO});
 }
 
 bool Client::loadTexture(const std::string& path, uint32_t width, uint32_t height, std::vector<unsigned char>& result)
@@ -48,7 +48,7 @@ void Client::setup()
 	mRenderer->setup();
 	//mWindow.setFramerateLimit(30);
 
-	mBus.send<WindowResizeMessage>(WindowResizeMessage{800, 600});
+	mBus.send(WindowResizeMessage{800, 600});
 
 	std::vector<unsigned char> icon;
 	loadTexture("data/textures/icon16x16.png", 16, 16, icon);
@@ -142,7 +142,7 @@ bool Client::requestedQuit()
 void Client::setServerBridge(std::unique_ptr<ServerClientBridge> bridge)
 {
 	mBridge = std::move(bridge);
-	mBus.send<LogMessage>(LogMessage{"client connected to server", mLogName, LogLevel::INFO});
+	mBus.send(LogMessage{"client connected to server", mLogName, LogLevel::INFO});
 }
 
 fea::MessageBus& Client::getBus()
@@ -304,7 +304,7 @@ void Client::fetchServerData()
 
             std::tie(playerId, x, y, z) = playerFacingBlockPackage->getData();
 
-			mBus.send<PlayerFacingBlockMessage>(PlayerFacingBlockMessage{playerId, VoxelCoord(x, y, z)});
+			mBus.send(PlayerFacingBlockMessage{playerId, VoxelCoord(x, y, z)});
 		}
 	}
 }
@@ -339,5 +339,5 @@ void Client::updateChunk(const ChunkCoord& coordinate)
     if(right != mLocalChunks.end())
         rightChunk = &right->second;
 
-    mBus.send<UpdateChunkVboMessage>(UpdateChunkVboMessage{mainChunk, topChunk, bottomChunk, frontChunk, backChunk, leftChunk, rightChunk});
+    mBus.send(UpdateChunkVboMessage{mainChunk, topChunk, bottomChunk, frontChunk, backChunk, leftChunk, rightChunk});
 }

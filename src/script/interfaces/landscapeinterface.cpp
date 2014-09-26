@@ -19,7 +19,7 @@ void LandscapeInterface::registerInterface(asIScriptEngine* engine)
 
 void LandscapeInterface::setVoxelType(WorldId worldId, float x, float y, float z, uint16_t type)
 {
-    mBus.send<SetVoxelMessage>(SetVoxelMessage{worldId, VoxelCoord(floor(x), floor(y), floor(z)), type});
+    mBus.send(SetVoxelMessage{worldId, VoxelCoord(floor(x), floor(y), floor(z)), type});
 }
 
 void LandscapeInterface::setVoxelType(WorldId worldId, const glm::vec3& coordinate, uint16_t type)

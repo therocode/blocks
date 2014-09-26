@@ -18,7 +18,7 @@ EntitySystem::EntitySystem(fea::MessageBus& bus) :
 
 EntitySystem::~EntitySystem()
 {
-    mBus.send<LogMessage>(LogMessage{"Removing all entities", mLogName, LogLevel::VERB});
+    mBus.send(LogMessage{"Removing all entities", mLogName, LogLevel::VERB});
     fea::EntitySet entities = mManager.getAll();
 
     for(auto entity : entities)
@@ -34,7 +34,7 @@ void EntitySystem::addController(std::unique_ptr<EntityController> controller)
 
 void EntitySystem::setup()
 {
-    mBus.send<LogMessage>(LogMessage{"Loading entity definitions", mLogName, LogLevel::INFO});
+    mBus.send(LogMessage{"Loading entity definitions", mLogName, LogLevel::INFO});
 
     EntityDefinitionLoader loader;
 
@@ -42,7 +42,7 @@ void EntitySystem::setup()
     std::vector<std::string> definitionFiles;
     exploder.explodeFolder("data", ".*\\.def", definitionFiles);
 
-    mBus.send<LogMessage>(LogMessage{"Found " + std::to_string(definitionFiles.size()) + " entity definitions", mLogName, LogLevel::INFO});
+    mBus.send(LogMessage{"Found " + std::to_string(definitionFiles.size()) + " entity definitions", mLogName, LogLevel::INFO});
     for(auto& fileName : definitionFiles)
     {
         EntityDefinition temp = loader.loadFromJSONFile(fileName);
@@ -52,9 +52,9 @@ void EntitySystem::setup()
             mBus.send(FatalMessage{std::string("Shutdown issued due to erroneous entity definition")});
         }
         mFactory.addDefinition(temp);
-        mBus.send<LogMessage>(LogMessage{"Added entity type '" + temp.name + "' to entity definitions", mLogName, LogLevel::VERB});
+        mBus.send(LogMessage{"Added entity type '" + temp.name + "' to entity definitions", mLogName, LogLevel::VERB});
     }
-    mBus.send<LogMessage>(LogMessage{"Entity definitions loaded", mLogName, LogLevel::INFO});
+    mBus.send(LogMessage{"Entity definitions loaded", mLogName, LogLevel::INFO});
 }
 
 void EntitySystem::update()
@@ -74,7 +74,7 @@ fea::WeakEntityPtr EntitySystem::createEntity(const std::string& type, std::func
     {
         initializer(entity);
 
-        mBus.send<EntityCreatedMessage>(EntityCreatedMessage{entity, type});
+        mBus.send(EntityCreatedMessage{entity, type});
 
         attachEntity(entity);
     }
@@ -113,5 +113,5 @@ void EntitySystem::removeEntity(fea::EntityId id)
 
     mManager.removeEntity(id);
 
-    mBus.send<EntityRemovedMessage>(EntityRemovedMessage{id});
+    mBus.send(EntityRemovedMessage{id});
 }

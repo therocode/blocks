@@ -17,7 +17,7 @@ void WorldHolder::handleMessage(const SetVoxelMessage& received)
 
     if(succeeded)
     {
-        mBus.send<VoxelSetMessage>(VoxelSetMessage{received.voxel, received.type});
+        mBus.send(VoxelSetMessage{received.voxel, received.type});
     }
 }
 
