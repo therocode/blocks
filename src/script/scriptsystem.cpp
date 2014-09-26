@@ -1,4 +1,4 @@
-#include "scripthandler.hpp"
+#include "scriptsystem.hpp"
 #include "scriptmessages.hpp"
 #include "../utilities/folderexploder.hpp"
 #include "scriptentitycore.hpp"
@@ -13,8 +13,9 @@
 #include "callers/gameeventcaller.hpp"
 #include "callers/frametimecaller.hpp"
 #include "../world/worldinterface.hpp"
+#include "../lognames.hpp"
 
-ScriptHandler::ScriptHandler(fea::MessageBus& bus, WorldInterface& worldInterface) : 
+ScriptSystem::ScriptSystem(fea::MessageBus& bus, WorldInterface& worldInterface) : 
     mEngine(bus),
     mBus(bus),
     mScripts(mEngine.createModule("scripts")),
@@ -22,18 +23,20 @@ ScriptHandler::ScriptHandler(fea::MessageBus& bus, WorldInterface& worldInterfac
     logName("script")
 {
     subscribe(mBus, *this);
+    mBus.send(LogMessage{"Setting up script system", scriptName, LogLevel::INFO});
 
     ScriptEntityCore::sWorldInterface = &worldInterface;
     ScriptEntityCore::sBus = &bus;
 }
 
-ScriptHandler::~ScriptHandler()
+ScriptSystem::~ScriptSystem()
 {
+    mBus.send(LogMessage{"Shutting down script system", scriptName, LogLevel::INFO});
     scriptEntities.clear();
     mEngine.destroyModule(mScripts);
 }
 
-void ScriptHandler::setup()
+void ScriptSystem::setup()
 {
     mEngine.setup();
 
@@ -79,7 +82,7 @@ void ScriptHandler::setup()
     }
 }
 
-void ScriptHandler::handleMessage(const RebuildScriptsRequestedMessage& received)
+void ScriptSystem::handleMessage(const RebuildScriptsRequestedMessage& received)
 {
     mBus.send(LogMessage{"Compiling scripts...", logName, LogLevel::INFO});
     bool succeeded = mScripts.compileFromSourceList(sourceFiles);
@@ -105,7 +108,7 @@ void ScriptHandler::handleMessage(const RebuildScriptsRequestedMessage& received
     }
 }
 
-void ScriptHandler::handleMessage(const EntityCreatedMessage& received)
+void ScriptSystem::handleMessage(const EntityCreatedMessage& received)
 {
     fea::WeakEntityPtr wEntity = received.entity;
     std::string type = received.type;
@@ -152,7 +155,7 @@ void ScriptHandler::handleMessage(const EntityCreatedMessage& received)
     }
 }
 
-void ScriptHandler::handleMessage(const EntityRemovedMessage& received)
+void ScriptSystem::handleMessage(const EntityRemovedMessage& received)
 {
     size_t id = received.id;
 
@@ -164,7 +167,7 @@ void ScriptHandler::handleMessage(const EntityRemovedMessage& received)
     }
 }
 
-void ScriptHandler::registerInterface()
+void ScriptSystem::registerInterface()
 {
     for(auto& interface : mInterfaces)
     {
@@ -172,7 +175,7 @@ void ScriptHandler::registerInterface()
     }
 }
 
-void ScriptHandler::registerCallbacks(ScriptEntityMap& scriptEntities)
+void ScriptSystem::registerCallbacks(ScriptEntityMap& scriptEntities)
 {
     if(!mScripts.hasErrors())
     {

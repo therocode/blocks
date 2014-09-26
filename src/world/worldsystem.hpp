@@ -7,15 +7,17 @@
 #include "worldmessages.hpp"
 #include "worldparameters.hpp"
 #include "world.hpp"
+#include "worldprovider.hpp"
 #include <memory>
 
-class WorldHolder : 
+class WorldSystem : 
         public fea::MessageReceiver<SetVoxelMessage,
                                     RegionDeliverMessage,
                                     ChunkDeliverMessage>
 {
     public:
-        WorldHolder(fea::MessageBus& messageBus, EntitySystem& entitySystem);
+        WorldSystem(fea::MessageBus& messageBus, EntitySystem& entitySystem);
+        ~WorldSystem();
         virtual void handleMessage(const SetVoxelMessage& received);
         virtual void handleMessage(const RegionDeliverMessage& received);
         virtual void handleMessage(const ChunkDeliverMessage& received);
@@ -27,4 +29,5 @@ class WorldHolder :
         std::unordered_map<std::string, WorldId> mWorldIds;
         WorldId mNextId;
         WorldInterface mWorldInterface;
+        WorldProvider mWorldProvider;
 };

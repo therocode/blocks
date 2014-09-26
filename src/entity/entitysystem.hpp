@@ -17,8 +17,7 @@ class EntitySystem :
         ~EntitySystem();
         void addController(std::unique_ptr<EntityController> controller);
         void setup();
-        void update();
-        fea::WeakEntityPtr createEntity(const std::string& scriptType, std::function<void(fea::EntityPtr)> initializer);
+        void update(int32_t deltaTime);
         void handleMessage(const EntityRequestedMessage& received);
         void handleMessage(const RemoveEntityMessage& received);
 
@@ -28,12 +27,11 @@ class EntitySystem :
             return mManager.findEntity(id).lock()->getAttribute<Type>(name);
         }
     private:
+        fea::WeakEntityPtr createEntity(const std::string& scriptType, std::function<void(fea::EntityPtr)> initializer);
         void attachEntity(fea::WeakEntityPtr entity);
         void removeEntity(fea::EntityId id);
         fea::MessageBus& mBus;
         fea::EntityManager mManager;
         EntityFactory mFactory;
         std::vector<std::unique_ptr<EntityController> > mControllers;
-        std::string mLogName;
-        Timer mTimer;
 };

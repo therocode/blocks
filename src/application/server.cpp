@@ -1,4 +1,5 @@
 #include "server.hpp"
+#include "../lognames.hpp"
 #include "../networking/packages.hpp"
 #include "../networking/clientconnection.hpp"
 #include "../networking/clientconnectionlistener.hpp"
@@ -8,58 +9,35 @@
 #include "../entity/controllers/gfxcontroller.hpp"
 #include "../entity/controllers/movementcontroller.hpp"
 
-Server::Server() : 
+Server::Server(fea::MessageBus& bus) : 
+    mBus(bus),
 	mEntitySystem(mBus),
     mWorlds(mBus, mEntitySystem),
-    mWorldProvider(mBus),
     mLogger(mBus, LogLevel::VERB),
-    mScriptHandler(mBus, mWorlds.getWorldInterface()),
-    mLogName("server")
+    mScriptSystem(mBus, mWorlds.getWorldInterface())
 {
+    mTimer.start();
     subscribe(mBus, *this);
-}
+    mBus.send(LogMessage{"Setting up server", serverName, LogLevel::INFO});
 
-Server::~Server()
-{
-    mBus.send(LogMessage{"Server destroyed", mLogName, LogLevel::INFO});
-}
-
-void Server::setup()
-{
-    mScriptHandler.setup();
-
-    mEntitySystem.setup();
 	mEntitySystem.addController(std::unique_ptr<EntityController>(new PlayerController(mBus, mWorlds.getWorldInterface())));
 	mEntitySystem.addController(std::unique_ptr<EntityController>(new PhysicsController(mBus, mWorlds.getWorldInterface())));
 	mEntitySystem.addController(std::unique_ptr<EntityController>(new CollisionController(mBus, mWorlds.getWorldInterface())));
 	mEntitySystem.addController(std::unique_ptr<EntityController>(new MovementController(mBus, mWorlds.getWorldInterface())));
 	mEntitySystem.addController(std::unique_ptr<EntityController>(new GfxController(mBus, mWorlds.getWorldInterface())));
-
-    WorldLoader mWorldLoader;
-
-    mWorldLoader.loadWorldFile("data/worlds/default.json");
-
-    if(!mWorldLoader.hasError())
-    {
-        for(const auto& worldParameters : mWorldLoader.getLoadedWorlds())
-        {
-            mWorlds.addWorld(worldParameters);
-        }
-    }
-    else
-    {
-        mBus.send(LogMessage{"World loading error: " + mWorldLoader.getErrorString(), mLogName, LogLevel::ERR});
-    }
-    
-
-    mFPSController.setMaxFPS(60);
-    mBus.send(LogMessage{"Server initialised and ready to go", mLogName, LogLevel::INFO});
-    mBus.send(GameStartMessage{});
 }
 
-fea::MessageBus& Server::getBus()
+Server::~Server()
 {
-    return mBus;
+    mBus.send(LogMessage{"Shutting down server", serverName, LogLevel::INFO});
+}
+
+void Server::setup()
+{
+    mScriptSystem.setup();
+
+    mFPSController.setMaxFPS(60);
+    mBus.send(GameStartMessage{});
 }
 
 void Server::doLogic()
@@ -74,7 +52,7 @@ void Server::doLogic()
 
     mBus.send(FrameMessage{true});
 
-	mEntitySystem.update();
+	mEntitySystem.update(mTimer.getDeltaTime());
 
     for(auto& client : mClients)
     {
@@ -84,12 +62,6 @@ void Server::doLogic()
     pollNewClients();
 
     mFPSController.frameEnd();
-}
-
-void Server::handleMessage(const FatalMessage& received)
-{
-    mBus.send(LogMessage{received.message, mLogName, LogLevel::ERR});
-    exit(4);
 }
 
 void Server::handleMessage(const ChunkLoadedMessage& received)
@@ -202,7 +174,7 @@ void Server::acceptClientConnection(std::shared_ptr<ClientConnection> client)
 
     mClients.emplace(newClientId, client);
 
-    mBus.send(LogMessage{std::string("Client id ") + std::to_string(newClientId) + std::string(" connected"), mLogName, LogLevel::INFO});
+    mBus.send(LogMessage{std::string("Client id ") + std::to_string(newClientId) + std::string(" connected"), serverName, LogLevel::INFO});
 
     std::shared_ptr<BasePackage> playerIdPackage(new PlayerIdPackage(newClientId));
     client->enqueuePackage(playerIdPackage);

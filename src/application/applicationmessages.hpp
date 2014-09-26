@@ -19,11 +19,6 @@ struct LogLevelMessage
     uint32_t level;
 };
 
-struct FatalMessage
-{
-    const std::string& message;
-};
-
 struct PlayerJoinedMessage
 {
     size_t playerId; WorldId worldId; const::glm::vec3& position;

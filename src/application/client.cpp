@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fea/ui/sdl2windowbackend.hpp>
 #include <fea/ui/sdl2inputbackend.hpp>
+#include "../lognames.hpp"
 #include "../networking/packages.hpp"
 #include "../application/applicationmessages.hpp"
 #include "../rendering/renderer.hpp"
@@ -9,22 +10,23 @@
 #include "../networking/serverclientbridge.hpp"
 
 
-Client::Client() :
+Client::Client(fea::MessageBus& bus) :
+    mBus(bus),
     mLogger(mBus, LogLevel::VERB),
 	mWindow(new fea::SDL2WindowBackend()),
 	mRenderer(std::unique_ptr<Renderer>(new Renderer(mBus))),
 	mInputAdaptor(std::unique_ptr<InputAdaptor>(new InputAdaptor(mBus))),
 	mQuit(false),
-	mLogName("client"),
 	mBridge(nullptr)
 {
-    subscribe(mBus, *this, false);
+    subscribe(mBus, *this);
+	mBus.send(LogMessage{"Setting up client", clientName, LogLevel::INFO});
 }
 
 Client::~Client()
 {
 	mWindow.close();
-	mBus.send(LogMessage{"client destroyed", mLogName, LogLevel::INFO});
+	mBus.send(LogMessage{"Shutting down client", clientName, LogLevel::INFO});
 }
 
 bool Client::loadTexture(const std::string& path, uint32_t width, uint32_t height, std::vector<unsigned char>& result)
@@ -142,7 +144,7 @@ bool Client::requestedQuit()
 void Client::setServerBridge(std::unique_ptr<ServerClientBridge> bridge)
 {
 	mBridge = std::move(bridge);
-	mBus.send(LogMessage{"client connected to server", mLogName, LogLevel::INFO});
+	mBus.send(LogMessage{"client connected to server", clientName, LogLevel::INFO});
 }
 
 fea::MessageBus& Client::getBus()

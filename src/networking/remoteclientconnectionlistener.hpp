@@ -23,7 +23,6 @@ class RemoteClientConnectionListener : public ClientConnectionListener
     private:
         void createHost();
         fea::MessageBus& mBus;
-        std::string mLogName;
 		std::thread mListenerThread;
 		ENetAddress mAddress;
 		ENetHost* mHost;

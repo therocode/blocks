@@ -26,10 +26,17 @@ void PlayerController::handleMessage(const PlayerJoinedMessage& received)
     size_t playerId = received.playerId;
     glm::vec3 position = received.position;
 
-    fea::EntityPtr playerEntity = mWorldInterface.createEntity("Player", position).lock();
+    fea::EntityPtr playerEntity; 
+    
+    mBus.send(EntityRequestedMessage{"Player", [&] (fea::EntityPtr e) 
+            {
+                e->setAttribute("current_world", received.worldId);
+                e->setAttribute("current_chunk", worldToChunk(position));
+                e->setAttribute("position", position);
+                playerEntity = e;
+            }});
+
     mPlayerEntities.emplace(playerId, playerEntity);
-    playerEntity->setAttribute("current_world", received.worldId);
-    playerEntity->setAttribute<ChunkCoord>("current_chunk", worldToChunk(position));
     mBus.send(PlayerEntersChunkMessage{playerId, worldToChunk(position)});
     mWorldInterface.addHighlightEntity(received.worldId, (fea::EntityId)playerId, worldToChunk(position));
 

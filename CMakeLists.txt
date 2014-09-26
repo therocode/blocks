@@ -26,7 +26,6 @@ set(source_files
 
     src/console/console.cpp
 
-    src/entity/defaultsetters.cpp
     src/entity/entityfactory.cpp
     src/entity/entitydefinitionloader.cpp
     src/entity/entitysystem.cpp
@@ -62,7 +61,7 @@ set(source_files
     src/script/scriptengine.cpp
     src/script/scriptentity.cpp
     src/script/scriptentitycore.cpp
-    src/script/scripthandler.cpp
+    src/script/scriptsystem.cpp
     src/script/scriptmodule.cpp
     src/script/asaddons/scriptarray.cpp
     src/script/asaddons/scriptmath.cpp
@@ -99,7 +98,7 @@ set(source_files
     src/world/regiondatafragment.cpp
     src/world/world.cpp
     src/world/worldstd.cpp
-    src/world/worldholder.cpp
+    src/world/worldsystem.cpp
     src/world/worldinterface.cpp
     src/world/worldloader.cpp
     src/world/generation/biome.cpp
@@ -111,6 +110,7 @@ set(source_files
 
 set(header_files
     src/blockstd.hpp
+    src/lognames.hpp
     src/application/applicationmessages.hpp
     src/application/blocksapp.hpp
     src/application/client.hpp
@@ -121,7 +121,6 @@ set(header_files
     src/console/keys.hpp
 
     src/entity/entitymessages.hpp
-    src/entity/defaultsetters.hpp
     src/entity/entityfactory.hpp
     src/entity/entitydefinition.hpp
     src/entity/entitydefinitionloader.hpp
@@ -182,7 +181,7 @@ set(header_files
     src/script/scriptengine.hpp
     src/script/scriptentity.hpp
     src/script/scriptentitycore.hpp
-    src/script/scripthandler.hpp
+    src/script/scriptsystem.hpp
     src/script/scriptmodule.hpp
     src/script/scriptstd.hpp
     src/script/asaddons/scriptarray.hpp
@@ -219,7 +218,7 @@ set(header_files
     src/world/regiondatafragment.hpp
     src/world/world.hpp
     src/world/worldstd.hpp
-	src/world/worldholder.hpp
+	src/world/worldsystem.hpp
     src/world/worldinterface.hpp
     src/world/worldloader.hpp
 	src/world/worldmessages.hpp

@@ -4,7 +4,9 @@
 //#include "application/applicationmessages.hpp"
 //#include "networkstd.hpp"
 //
-//RemoteServerBridge::RemoteServerBridge(fea::MessageBus& bus) : mBus(bus), mLogName("network"), mGotPackagesToSend(false)
+//RemoteServerBridge::RemoteServerBridge(fea::MessageBus& bus) : 
+//    mBus(bus), 
+//    mGotPackagesToSend(false)
 //{
 //    mConnected = false;
 //    mPort = 56566;

@@ -21,7 +21,6 @@ class RemoteServerBridge : public ServerClientBridge
 		void stopListening();
     private:
         fea::MessageBus& mBus;
-        std::string mLogName;
 		bool mConnected;
 		void createClient();
 		//ENetAddress mAddress;

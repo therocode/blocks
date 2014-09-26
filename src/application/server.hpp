@@ -1,21 +1,18 @@
 #pragma once
-#include "../world/worldholder.hpp"
+#include "../world/worldsystem.hpp"
 #include "../networking/serverclientbridge.hpp"
 #include "../world/worldmessages.hpp"
 #include "../rendering/renderingmessages.hpp"
-#include "../script/scripthandler.hpp"
+#include "../script/scriptsystem.hpp"
 #include "../utilities/fpscontroller.hpp"
 #include "../utilities/logger.hpp"
-#include "../world/worldprovider.hpp"
-#include "../world/worldloader.hpp"
 #include "../entity/entitysystem.hpp"
 
 class ClientConnection;
 class ClientConnectionListener;
 using ClientId = size_t;
 
-class Server : public fea::MessageReceiver<FatalMessage,
-                                           AddGfxEntityMessage,
+class Server : public fea::MessageReceiver<AddGfxEntityMessage,
                                            MoveGfxEntityMessage,
                                            RotateGfxEntityMessage,
                                            RemoveGfxEntityMessage,
@@ -26,11 +23,10 @@ class Server : public fea::MessageReceiver<FatalMessage,
                                            VoxelSetMessage>
 {
     public:
-        Server();
+        Server(fea::MessageBus& bus);
         ~Server();
         void setup();
         void doLogic();
-        void handleMessage(const FatalMessage& received);
         void handleMessage(const AddGfxEntityMessage& received);
         void handleMessage(const MoveGfxEntityMessage& received);
         void handleMessage(const RotateGfxEntityMessage& received);
@@ -41,23 +37,20 @@ class Server : public fea::MessageReceiver<FatalMessage,
         void handleMessage(const ChunkDeletedMessage& received);
         void handleMessage(const VoxelSetMessage& received);
         void setClientListener(std::unique_ptr<ClientConnectionListener> clientListener);
-		fea::MessageBus& getBus();
     private:
         void acceptClientConnection(const std::shared_ptr<ClientConnection> client);
         void pollNewClients();
         void fetchClientData(std::weak_ptr<ClientConnection> client);
         void checkForDisconnectedClients();
-        fea::MessageBus mBus;
+        fea::MessageBus& mBus;
         Logger mLogger;
+        Timer mTimer;
+        std::unordered_map<ClientId, std::shared_ptr<ClientConnection> > mClients;
+        std::unique_ptr<ClientConnectionListener> mListener;
+        WorldSystem mWorlds;
+        ScriptSystem mScriptSystem;
         EntitySystem mEntitySystem;
-        WorldHolder mWorlds;
-        WorldProvider mWorldProvider;
-        ScriptHandler mScriptHandler;
-        std::string mLogName;
         FPSController mFPSController;
 
-        std::map<ClientId, std::shared_ptr<ClientConnection> > mClients;
-        std::unique_ptr<ClientConnectionListener> mListener;
-
-        std::set<size_t> graphicsEntities; //temporary solution on how to resend things
+        std::unordered_set<size_t> graphicsEntities; //temporary solution on how to resend things
 };

@@ -14,5 +14,4 @@ class ScriptInterface
     protected:
         fea::MessageBus& mBus;
         WorldInterface& mWorldInterface;
-        std::string mLogName; 
 };

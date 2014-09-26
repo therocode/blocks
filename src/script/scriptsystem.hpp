@@ -10,14 +10,14 @@ class ScriptInterface;
 class ScriptCaller;
 class WorldInterface;
 
-class ScriptHandler :
+class ScriptSystem :
     public fea::MessageReceiver<RebuildScriptsRequestedMessage,
                                 EntityCreatedMessage,
                                 EntityRemovedMessage>
 {
     public:
-        ScriptHandler(fea::MessageBus& bus, WorldInterface& worldInterface);
-        ~ScriptHandler();
+        ScriptSystem(fea::MessageBus& bus, WorldInterface& worldInterface);
+        ~ScriptSystem();
         void setup();
         void handleMessage(const RebuildScriptsRequestedMessage& message);
         void handleMessage(const EntityCreatedMessage& message);
