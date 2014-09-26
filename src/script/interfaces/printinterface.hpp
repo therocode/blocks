@@ -10,4 +10,5 @@ class PrintInterface : public ScriptInterface
     private:
         void scriptPrint(const std::string& text);
         void scriptPrint(const std::string& text, uint32_t level);
+		void scriptPrint(const std::string& text, const std::string& tag);
 };

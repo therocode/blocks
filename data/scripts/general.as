@@ -9,6 +9,7 @@ void gameStarted()
     //consolePrint("Warning message from the script", WARNING);
     //consolePrint("Error message from the script", ERROR);
     consolePrint("----------------Game started!---------------------");
+    consolePrint("<- script tag test", "Giraffe");
 
 	for(int x = 0; x < 4; x++)
 	{

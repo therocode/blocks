@@ -11,6 +11,7 @@ void PrintInterface::registerInterface(asIScriptEngine* engine)
 {
     int32_t r = engine->RegisterGlobalFunction("void consolePrint(string text)", asMETHODPR(PrintInterface, scriptPrint, (const std::string&), void), asCALL_THISCALL_ASGLOBAL, this); assert(r >= 0);
     r = engine->RegisterGlobalFunction("void consolePrint(string text, uint level)", asMETHODPR(PrintInterface, scriptPrint, (const std::string&, uint32_t), void), asCALL_THISCALL_ASGLOBAL, this); assert(r >= 0);
+    r = engine->RegisterGlobalFunction("void consolePrint(string text, string text)", asMETHODPR(PrintInterface, scriptPrint, (const std::string&, const std::string&), void), asCALL_THISCALL_ASGLOBAL, this); assert(r >= 0);
 
 }
 
@@ -22,4 +23,9 @@ void PrintInterface::scriptPrint(const std::string& text)
 void PrintInterface::scriptPrint(const std::string& text, uint32_t level)
 {
     mBus.send(LogMessage{text, scriptName, level});
+}
+
+void PrintInterface::scriptPrint(const std::string& text, const std::string& tag)
+{
+    mBus.send(LogMessage{text, tag, LogLevel::INFO});
 }
