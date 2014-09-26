@@ -47,10 +47,9 @@ class Server : public fea::MessageReceiver<AddGfxEntityMessage,
         Timer mTimer;
         std::unordered_map<ClientId, std::shared_ptr<ClientConnection> > mClients;
         std::unique_ptr<ClientConnectionListener> mListener;
+        std::unordered_set<size_t> graphicsEntities; //temporary solution on how to resend things
         WorldSystem mWorlds;
         ScriptSystem mScriptSystem;
         EntitySystem mEntitySystem;
         FPSController mFPSController;
-
-        std::set<size_t> graphicsEntities; //temporary solution on how to resend things
 };
