@@ -8,7 +8,8 @@
 #include "../entity/controllers/gfxcontroller.hpp"
 #include "../entity/controllers/movementcontroller.hpp"
 
-Server::Server() : 
+Server::Server(fea::MessageBus& bus) : 
+    mBus(bus),
 	mEntitySystem(mBus),
     mWorlds(mBus, mEntitySystem),
     mWorldProvider(mBus),
@@ -16,7 +17,7 @@ Server::Server() :
     mScriptHandler(mBus, mWorlds.getWorldInterface()),
     mLogName("server")
 {
-    subscribe(mBus, *this, false);
+    subscribe(mBus, *this);
 
 	mEntitySystem.addController(std::unique_ptr<EntityController>(new PlayerController(mBus, mWorlds.getWorldInterface())));
 	mEntitySystem.addController(std::unique_ptr<EntityController>(new PhysicsController(mBus, mWorlds.getWorldInterface())));
@@ -54,11 +55,6 @@ void Server::setup()
     mFPSController.setMaxFPS(60);
     mBus.send(LogMessage{"Server initialised and ready to go", mLogName, LogLevel::INFO});
     mBus.send(GameStartMessage{});
-}
-
-fea::MessageBus& Server::getBus()
-{
-    return mBus;
 }
 
 void Server::doLogic()

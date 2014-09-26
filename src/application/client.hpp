@@ -26,7 +26,7 @@ class Client :
                                 WindowInputMessage>
 {
     public:
-        Client();
+        Client(fea::MessageBus& bus);
         ~Client();
         bool loadTexture(const std::string& path, uint32_t width, uint32_t height, std::vector<unsigned char>& result);
         void setup();
@@ -48,7 +48,7 @@ class Client :
         void fetchServerData();
         void updateChunk(const ChunkCoord& coordinate);
         bool mLockedMouse;
-        fea::MessageBus mBus;
+        fea::MessageBus& mBus;
         Logger mLogger;
         fea::Window mWindow;
         std::unique_ptr<Renderer> mRenderer;

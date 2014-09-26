@@ -26,7 +26,7 @@ class Server : public fea::MessageReceiver<FatalMessage,
                                            VoxelSetMessage>
 {
     public:
-        Server();
+        Server(fea::MessageBus& bus);
         ~Server();
         void setup();
         void doLogic();
@@ -41,13 +41,12 @@ class Server : public fea::MessageReceiver<FatalMessage,
         void handleMessage(const ChunkDeletedMessage& received);
         void handleMessage(const VoxelSetMessage& received);
         void setClientListener(std::unique_ptr<ClientConnectionListener> clientListener);
-		fea::MessageBus& getBus();
     private:
         void acceptClientConnection(const std::shared_ptr<ClientConnection> client);
         void pollNewClients();
         void fetchClientData(std::weak_ptr<ClientConnection> client);
         void checkForDisconnectedClients();
-        fea::MessageBus mBus;
+        fea::MessageBus& mBus;
         Logger mLogger;
         std::map<ClientId, std::shared_ptr<ClientConnection> > mClients;
         std::unique_ptr<ClientConnectionListener> mListener;

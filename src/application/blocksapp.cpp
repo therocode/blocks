@@ -88,8 +88,8 @@ void BlocksApplication::destroy()
 
 void BlocksApplication::setupSinglePlayer()
 {
-    server = std::unique_ptr<Server>(new Server());
-    client = std::unique_ptr<Client>(new Client());
+    server = std::unique_ptr<Server>(new Server(mServerBus));
+    client = std::unique_ptr<Client>(new Client(mClientBus));
 
     //setup server and client separately
     server->setup();
@@ -123,7 +123,7 @@ void BlocksApplication::setupMultiPlayer()
 
 void BlocksApplication::setupDedicatedServer(int32_t port)
 {
-    server = std::unique_ptr<Server>(new Server());
+    server = std::unique_ptr<Server>(new Server(mServerBus));
 
     server->setup();
     //RemoteClientConnectionListener* remoteListener = new RemoteClientConnectionListener(server->getBus());
@@ -141,7 +141,7 @@ void BlocksApplication::setupDedicatedServer(int32_t port)
 
 void BlocksApplication::joinServer(const std::string& address, int32_t port)
 {
-	client = std::unique_ptr<Client>(new Client());
+	client = std::unique_ptr<Client>(new Client(mClientBus));
   	//RemoteServerBridge* serverBidge = new RemoteServerBridge(client->getBus());
 
     //if(enet_initialize() < 0)

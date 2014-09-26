@@ -9,7 +9,8 @@
 #include "../networking/serverclientbridge.hpp"
 
 
-Client::Client() :
+Client::Client(fea::MessageBus& bus) :
+    mBus(bus),
     mLogger(mBus, LogLevel::VERB),
 	mWindow(new fea::SDL2WindowBackend()),
 	mRenderer(std::unique_ptr<Renderer>(new Renderer(mBus))),
@@ -18,7 +19,7 @@ Client::Client() :
 	mLogName("client"),
 	mBridge(nullptr)
 {
-    subscribe(mBus, *this, false);
+    subscribe(mBus, *this);
 }
 
 Client::~Client()
