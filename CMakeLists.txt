@@ -26,7 +26,6 @@ set(source_files
 
     src/console/console.cpp
 
-    src/entity/defaultsetters.cpp
     src/entity/entityfactory.cpp
     src/entity/entitydefinitionloader.cpp
     src/entity/entitysystem.cpp
@@ -122,7 +121,6 @@ set(header_files
     src/console/keys.hpp
 
     src/entity/entitymessages.hpp
-    src/entity/defaultsetters.hpp
     src/entity/entityfactory.hpp
     src/entity/entitydefinition.hpp
     src/entity/entitydefinitionloader.hpp
