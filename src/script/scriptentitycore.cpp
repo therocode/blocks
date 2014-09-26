@@ -37,12 +37,12 @@ void ScriptEntityCore::setPosition(const glm::vec3& vec)
 
 glm::vec3 ScriptEntityCore::getPosition()
 {
-    return sWorldInterface->getEntityAttribute<glm::vec3>(mId, "position");
+    return sWorldInterface->findEntity(mId).lock()->getAttribute<glm::vec3>("position");
 }
 
 bool ScriptEntityCore::isOnGround()
 {
-    return sWorldInterface->getEntityAttribute<bool>(mId, "on_ground");
+    return sWorldInterface->findEntity(mId).lock()->getAttribute<bool>("on_ground");
 }
 
 void ScriptEntityCore::setId(size_t id)

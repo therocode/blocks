@@ -157,17 +157,7 @@ ChunkReferenceMap WorldInterface::getChunkMap(WorldId worldId) const
     return mWorlds.at(worldId)->getChunkMap();
 }
 
-void WorldInterface::addHighlightEntity(WorldId worldId, fea::EntityId id, const ChunkCoord& coordinate)
+const fea::WeakEntityPtr WorldInterface::findEntity(fea::EntityId id) const
 {
-    mWorlds.at(worldId)->addHighlightEntity(id, coordinate);
-}
-
-void WorldInterface::removeHighlightEntity(WorldId worldId, fea::EntityId id)
-{
-    mWorlds.at(worldId)->removeHighlightEntity(id);
-}
-
-void WorldInterface::moveHighlightEntity(WorldId worldId, fea::EntityId id, const ChunkCoord& coordinate)
-{
-    mWorlds.at(worldId)->moveHighlightEntity(id, coordinate);
+    return mEntitySystem.getEntityManager().findEntity(id);
 }

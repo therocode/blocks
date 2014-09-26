@@ -13,14 +13,20 @@
 class WorldSystem : 
         public fea::MessageReceiver<SetVoxelMessage,
                                     RegionDeliverMessage,
-                                    ChunkDeliverMessage>
+                                    ChunkDeliverMessage,
+                                    HighlightEntityAddRequestedMessage,
+                                    HighlightEntityMoveRequestedMessage,
+                                    HighlightEntityRemoveRequestedMessage>
 {
     public:
         WorldSystem(fea::MessageBus& messageBus, EntitySystem& entitySystem);
         ~WorldSystem();
-        virtual void handleMessage(const SetVoxelMessage& received);
-        virtual void handleMessage(const RegionDeliverMessage& received);
-        virtual void handleMessage(const ChunkDeliverMessage& received);
+        void handleMessage(const SetVoxelMessage& received) override;
+        void handleMessage(const RegionDeliverMessage& received) override;
+        void handleMessage(const ChunkDeliverMessage& received) override;
+        void handleMessage(const HighlightEntityAddRequestedMessage& received) override;
+        void handleMessage(const HighlightEntityMoveRequestedMessage& received) override;
+        void handleMessage(const HighlightEntityRemoveRequestedMessage& received) override;
         WorldInterface& getWorldInterface();
         void addWorld(const WorldParameters& worldParameters);
     private:

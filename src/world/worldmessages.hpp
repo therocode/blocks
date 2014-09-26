@@ -56,3 +56,23 @@ struct ChunkModdedMessage
 {
     const Chunk& chunk; uint64_t timestamp;
 };
+
+struct HighlightEntityAddRequestedMessage
+{
+    WorldId worldId;
+    fea::EntityId entityId;
+    const ChunkCoord& coordinate;
+};
+
+struct HighlightEntityMoveRequestedMessage
+{
+    WorldId worldId;
+    fea::EntityId entityId;
+    const ChunkCoord& coordinate;
+};
+
+struct HighlightEntityRemoveRequestedMessage
+{
+    WorldId worldId;
+    fea::EntityId entityId;
+};

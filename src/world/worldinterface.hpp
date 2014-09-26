@@ -17,18 +17,9 @@ class WorldInterface
 		bool getVoxelAtRay(WorldId worldId, const glm::vec3& position, const glm::vec3& direction, const float maxDistance, uint32_t& hitFace, VoxelCoord& hitBlock ) const;
 		bool getVoxelAtRay(WorldId worldId, float ox, float oy, float oz, float dx, float dy, float dz, const float maxDistance, uint32_t& hitFace, VoxelCoord& hitBlock) const;
 		
-        fea::WeakEntityPtr createEntity(const std::string& scriptType, const glm::vec3& position);
         ChunkReferenceMap getChunkMap(WorldId worldId) const;
 
-        template<class Type>
-        Type getEntityAttribute(fea::EntityId id, const std::string& name)
-        {
-            return mEntitySystem.getEntityAttribute<Type>(id, name);
-        }
-
-        void addHighlightEntity(WorldId worldId, fea::EntityId id, const ChunkCoord& coordinate);
-        void removeHighlightEntity(WorldId worldId, fea::EntityId id);
-        void moveHighlightEntity(WorldId worldId, fea::EntityId id, const ChunkCoord& coordinate);
+        const fea::WeakEntityPtr findEntity(fea::EntityId id) const;
     private:
         std::unordered_map<WorldId, std::unique_ptr<World>>& mWorlds;
         EntitySystem& mEntitySystem;

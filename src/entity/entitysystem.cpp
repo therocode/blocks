@@ -75,6 +75,11 @@ void EntitySystem::handleMessage(const RemoveEntityRequestedMessage& received)
     removeEntity(received.id);
 }
 
+const fea::EntityManager& EntitySystem::getEntityManager() const
+{
+    return mManager;
+}
+
 fea::WeakEntityPtr EntitySystem::createEntity(const std::string& type, std::function<void(fea::EntityPtr)> initializer)
 {
     fea::WeakEntityPtr e = mFactory.spawnEntity(type);

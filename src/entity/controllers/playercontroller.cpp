@@ -1,7 +1,7 @@
 #include "playercontroller.hpp"
 #include "../../world/worldinterface.hpp"
 #include "../../rendering/renderingmessages.hpp"
-#include "world/worldmessages.hpp"
+#include "../../world/worldmessages.hpp"
 #include "moveaction.hpp"
 
 PlayerController::PlayerController(fea::MessageBus& bus, WorldInterface& worldInterface) : EntityController(bus, worldInterface)
@@ -38,7 +38,7 @@ void PlayerController::handleMessage(const PlayerJoinedMessage& received)
 
     mPlayerEntities.emplace(playerId, playerEntity);
     mBus.send(PlayerEntersChunkMessage{playerId, worldToChunk(position)});
-    mWorldInterface.addHighlightEntity(received.worldId, (fea::EntityId)playerId, worldToChunk(position));
+    mBus.send(HighlightEntityAddRequestedMessage{received.worldId, playerEntity->getId(), worldToChunk(position)});
 
     ChunkCoord chunkAt = worldToChunk(position);
 
@@ -51,7 +51,7 @@ void PlayerController::handleMessage(const PlayerDisconnectedMessage& received)
 
     fea::EntityPtr entity = mPlayerEntities.at(playerId).lock();
     mBus.send(RemoveEntityRequestedMessage{entity->getId()});
-    mWorldInterface.removeHighlightEntity(entity->getAttribute<WorldId>("current_world"), (fea::EntityId)playerId);
+    mBus.send(HighlightEntityRemoveRequestedMessage{entity->getAttribute<WorldId>("current_world"), entity->getId()});
     mPlayerEntities.erase(playerId);
 }
 
@@ -128,10 +128,11 @@ void PlayerController::handleMessage(const PlayerActionMessage& received)
     {
         WorldId oldWorld = entity->getAttribute<WorldId>("current_world");
         WorldId nextWorld = oldWorld == 0 ? 1 : 0;
+        fea::EntityId entityId = entity->getId();
 
-        mWorldInterface.removeHighlightEntity(oldWorld, (fea::EntityId)playerId);
+        mBus.send(HighlightEntityRemoveRequestedMessage{oldWorld, entityId});
         entity->setAttribute("current_world", nextWorld);
-        mWorldInterface.addHighlightEntity(nextWorld, (fea::EntityId)playerId, worldToChunk(entity->getAttribute<glm::vec3>("position")));
+        mBus.send(HighlightEntityAddRequestedMessage{nextWorld, entityId, worldToChunk(entity->getAttribute<glm::vec3>("position"))});
     }
 }
 
@@ -204,7 +205,7 @@ void PlayerController::playerEntersChunk(size_t playerId, const ChunkCoord& chun
 {
     fea::EntityPtr entity = mPlayerEntities.at(playerId).lock();
     mBus.send(PlayerEntersChunkMessage{(fea::EntityId)playerId, chunk});
-    mWorldInterface.moveHighlightEntity(entity->getAttribute<WorldId>("current_world"), (fea::EntityId)playerId, chunk);
+    mBus.send(HighlightEntityMoveRequestedMessage{entity->getAttribute<WorldId>("current_world"), entity->getId(), chunk});
     entity->setAttribute<ChunkCoord>("current_chunk", chunk);
 }
 

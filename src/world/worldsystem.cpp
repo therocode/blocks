@@ -63,6 +63,24 @@ void WorldSystem::handleMessage(const ChunkDeliverMessage& received)
     mWorlds.at(received.worldId)->deliverChunk(coordinate, chunk);
 }
 
+void WorldSystem::handleMessage(const HighlightEntityAddRequestedMessage& received)
+{
+    FEA_ASSERT(mWorlds.count(received.worldId) != 0, "Trying to add a highlight entity to world " + std::to_string(received.worldId) + " but that world does not exist");
+    mWorlds.at(received.worldId)->addHighlightEntity(received.entityId, received.coordinate); 
+}
+
+void WorldSystem::handleMessage(const HighlightEntityMoveRequestedMessage& received)
+{
+    FEA_ASSERT(mWorlds.count(received.worldId) != 0, "Trying to move a highlight entity in world " + std::to_string(received.worldId) + " but that world does not exist");
+    mWorlds.at(received.worldId)->moveHighlightEntity(received.entityId, received.coordinate); 
+}
+
+void WorldSystem::handleMessage(const HighlightEntityRemoveRequestedMessage& received)
+{
+    FEA_ASSERT(mWorlds.count(received.worldId) != 0, "Trying to remove a highlight entity from world " + std::to_string(received.worldId) + " but that world does not exist");
+    mWorlds.at(received.worldId)->removeHighlightEntity(received.entityId); 
+}
+
 WorldInterface& WorldSystem::getWorldInterface()
 {
     return mWorldInterface;
