@@ -52,5 +52,5 @@ class Server : public fea::MessageReceiver<AddGfxEntityMessage,
         EntitySystem mEntitySystem;
         FPSController mFPSController;
 
-        std::unordered_set<size_t> graphicsEntities; //temporary solution on how to resend things
+        std::set<size_t> graphicsEntities; //temporary solution on how to resend things
 };
