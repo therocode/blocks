@@ -1,7 +1,12 @@
 #include "fpscontroller.hpp"
 #include <thread>
 
-FPSController::FPSController(){
+FPSController::FPSController() :
+    mFPS(0),
+    mFramesElapsed(0),
+    mFrameRate(0),
+    mBeginFrameCalled(false)
+{
     mSampleTime = std::chrono::milliseconds(1000);
     reset();
 }

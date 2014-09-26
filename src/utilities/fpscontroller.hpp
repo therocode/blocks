@@ -28,6 +28,6 @@ private:
     high_resolution_clock::time_point mFrameBeginTime;
     high_resolution_clock::time_point mLastFrameEnd;
     std::chrono::microseconds mFrameLength;
-    int   mFrameRate = 0;
-    bool  mBeginFrameCalled = false;
+    int   mFrameRate;
+    bool  mBeginFrameCalled;
 };
