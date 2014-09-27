@@ -97,6 +97,7 @@ set(source_files
     src/world/highlightmanager.cpp
     src/world/modmanager.cpp
     src/world/ranges.cpp
+    src/world/raycaster.cpp
     src/world/region.cpp
     src/world/regiondatafragment.cpp
     src/world/world.cpp
@@ -215,6 +216,7 @@ set(header_files
     src/world/valuemap.hpp
     src/world/highlightmanager.hpp
     src/world/modmanager.hpp
+    src/world/raycaster.hpp
     src/world/region.hpp
     src/world/regiondatafragment.hpp
     src/world/world.hpp
