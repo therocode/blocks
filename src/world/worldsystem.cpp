@@ -7,7 +7,7 @@
 
 WorldSystem::WorldSystem(fea::MessageBus& messageBus, EntitySystem& entitySystem) 
 :   mBus(messageBus),
-	mWorldInterface(mWorlds, entitySystem),
+	mGameInterface(mWorlds, entitySystem),
     mNextId(0),
     mWorldProvider(mBus)
 {
@@ -81,9 +81,9 @@ void WorldSystem::handleMessage(const HighlightEntityRemoveRequestedMessage& rec
     mWorlds.at(received.worldId)->removeHighlightEntity(received.entityId); 
 }
 
-WorldInterface& WorldSystem::getWorldInterface()
+GameInterface& WorldSystem::getGameInterface()
 {
-    return mWorldInterface;
+    return mGameInterface;
 }
 
 void WorldSystem::addWorld(const WorldParameters& worldParameters)

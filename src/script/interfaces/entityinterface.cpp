@@ -3,9 +3,9 @@
 #include <assert.h>
 #include "../../lognames.hpp"
 #include "../scriptentitycore.hpp"
-#include "../../world/worldinterface.hpp"
+#include "../../gameinterface.hpp"
 
-EntityInterface::EntityInterface(fea::MessageBus& bus, WorldInterface& worldInterface, std::unordered_map<size_t, ScriptEntity>& scriptEntities) : 
+EntityInterface::EntityInterface(fea::MessageBus& bus, GameInterface& worldInterface, std::unordered_map<size_t, ScriptEntity>& scriptEntities) : 
     ScriptInterface(bus, worldInterface),
     mBus(bus),
     mScriptEntities(scriptEntities)

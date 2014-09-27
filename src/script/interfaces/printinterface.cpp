@@ -3,7 +3,7 @@
 #include <assert.h>
 #include "../../lognames.hpp"
 
-PrintInterface::PrintInterface(fea::MessageBus& bus, WorldInterface& worldInterface) : ScriptInterface(bus, worldInterface)
+PrintInterface::PrintInterface(fea::MessageBus& bus, GameInterface& worldInterface) : ScriptInterface(bus, worldInterface)
 {
 }
 

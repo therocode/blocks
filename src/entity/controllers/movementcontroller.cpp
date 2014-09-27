@@ -1,7 +1,8 @@
 #include "movementcontroller.hpp"
 #include "moveaction.hpp"
+#include "physicstype.hpp"
 
-MovementController::MovementController(fea::MessageBus& bus, WorldInterface& worldInterface) : EntityController(bus, worldInterface)
+MovementController::MovementController(fea::MessageBus& bus, GameInterface& worldInterface) : EntityController(bus, worldInterface)
 {
     subscribe(mBus, *this);
 }

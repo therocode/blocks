@@ -9,7 +9,7 @@ class CollisionController : public EntityController,
                             public fea::MessageReceiver<EntityMoveRequestedMessage>
 {
 	public:
-        CollisionController(fea::MessageBus& bus, WorldInterface& worldInterface);
+        CollisionController(fea::MessageBus& bus, GameInterface& worldInterface);
         virtual void inspectEntity(fea::WeakEntityPtr entity) override;
         void onFrame(int dt) override;
         void handleMessage(const EntityMoveRequestedMessage& message) override;

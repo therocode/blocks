@@ -1,10 +1,10 @@
 #include "playercontroller.hpp"
-#include "../../world/worldinterface.hpp"
+#include "../../gameinterface.hpp"
 #include "../../rendering/renderingmessages.hpp"
 #include "../../world/worldmessages.hpp"
 #include "moveaction.hpp"
 
-PlayerController::PlayerController(fea::MessageBus& bus, WorldInterface& worldInterface) : EntityController(bus, worldInterface)
+PlayerController::PlayerController(fea::MessageBus& bus, GameInterface& worldInterface) : EntityController(bus, worldInterface)
 {
     subscribe(mBus, *this);
 }
@@ -221,7 +221,7 @@ void PlayerController::updateVoxelLookAt(size_t playerId)
 	glm::vec3 direction = glm::vec3(glm::cos(pitch) * glm::sin(yaw), glm::sin(pitch), glm::cos(pitch) * glm::cos(yaw));
 	VoxelCoord block;
 	uint32_t face;
-	bool f = mWorldInterface.getVoxelAtRay(worldId, position + glm::vec3(0, 0.6f, 0), direction, 200.f, face, block);
+	bool f = mGameInterface.getVoxelAtRay(worldId, position + glm::vec3(0, 0.6f, 0), direction, 200.f, face, block);
 
     if(entity)
     {

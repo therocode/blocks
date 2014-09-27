@@ -1,6 +1,6 @@
 #include "entitycontroller.hpp"
 
-EntityController::EntityController(fea::MessageBus& bus, WorldInterface& worldInterface) : mBus(bus), mWorldInterface(worldInterface)
+EntityController::EntityController(fea::MessageBus& bus, GameInterface& worldInterface) : mBus(bus), mGameInterface(worldInterface)
 {
 }
 

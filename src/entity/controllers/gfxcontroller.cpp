@@ -1,7 +1,7 @@
 #include "gfxcontroller.hpp"
 #include "../../rendering/renderingmessages.hpp"
 
-GfxController::GfxController(fea::MessageBus& bus, WorldInterface& worldInterface) : EntityController(bus, worldInterface)
+GfxController::GfxController(fea::MessageBus& bus, GameInterface& worldInterface) : EntityController(bus, worldInterface)
 {
     subscribe(mBus, *this);
 }

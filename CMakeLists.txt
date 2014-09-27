@@ -19,6 +19,7 @@ endif()
 
 #Set source files.
 set(source_files
+    src/gameinterface.cpp
 	src/application/blocksapp.cpp
     src/application/client.cpp
 	src/application/main.cpp
@@ -38,6 +39,8 @@ set(source_files
     src/entity/controllers/playercontroller.cpp
 
     src/input/inputadaptor.cpp
+
+    src/math/mathutils.cpp
 
     src/networking/serverclientbridge.cpp
     
@@ -99,7 +102,6 @@ set(source_files
     src/world/world.cpp
     src/world/worldstd.cpp
     src/world/worldsystem.cpp
-    src/world/worldinterface.cpp
     src/world/worldloader.cpp
     src/world/generation/biome.cpp
     src/world/generation/biomestorage.cpp
@@ -110,6 +112,7 @@ set(source_files
 
 set(header_files
     src/blockstd.hpp
+    src/gameinterface.hpp
     src/lognames.hpp
     src/application/applicationmessages.hpp
     src/application/blocksapp.hpp
@@ -139,7 +142,7 @@ set(header_files
     src/input/inputactions.hpp
     src/input/inputadaptor.hpp
 
-    src/math/mathutils.cpp
+    src/math/mathutils.hpp
 
     src/networking/clientconnection.hpp
     src/networking/clientconnectionlistener.hpp
@@ -147,8 +150,6 @@ set(header_files
     src/networking/localserverclientbridge.hpp
     src/networking/package.hpp
     src/networking/packagetype.hpp
-
-    src/math/mathutils.hpp
 
     src/networking/clientconnection.cpp
     src/networking/clientconnectionlistener.cpp
@@ -219,7 +220,6 @@ set(header_files
     src/world/world.hpp
     src/world/worldstd.hpp
 	src/world/worldsystem.hpp
-    src/world/worldinterface.hpp
     src/world/worldloader.hpp
 	src/world/worldmessages.hpp
     src/world/worldprovider.hpp

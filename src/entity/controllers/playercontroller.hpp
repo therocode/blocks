@@ -17,7 +17,7 @@ class PlayerController :
                                 EntityMovedMessage>
 {
     public:
-        PlayerController(fea::MessageBus& bus, WorldInterface& worldInterface);
+        PlayerController(fea::MessageBus& bus, GameInterface& worldInterface);
         virtual void inspectEntity(fea::WeakEntityPtr entity);
         virtual void removeEntity(fea::EntityId id);
         virtual void onFrame(int dt) override;

@@ -1,15 +1,16 @@
 #pragma once
-#include "../entity/entitysystem.hpp"
-#include "chunk.hpp"
+#include "world/chunk.hpp"
+#include <fea/entitysystem.hpp>
 #include <memory>
+#include <unordered_map>
 
-class asIScriptObject;
 class World;
+class EntitySystem;
 
-class WorldInterface
+class GameInterface
 {
     public:
-        WorldInterface(std::unordered_map<WorldId, std::unique_ptr<World>>& worlds, EntitySystem& entitySystem);
+        GameInterface(std::unordered_map<WorldId, std::unique_ptr<World>>& worlds, EntitySystem& entitySystem);
 		VoxelType getVoxelTypeInt(WorldId worldId, int x, int y, int z) const;
         VoxelType getVoxelType(WorldId worldId, float x, float y, float z) const; 
         VoxelType getVoxelType(WorldId worldId, const glm::vec3& position) const; 

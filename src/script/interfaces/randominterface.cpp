@@ -2,7 +2,7 @@
 #include <angelscript.h>
 #include <assert.h>
 
-RandomInterface::RandomInterface(fea::MessageBus& bus, WorldInterface& worldInterface) : ScriptInterface(bus, worldInterface)
+RandomInterface::RandomInterface(fea::MessageBus& bus, GameInterface& worldInterface) : ScriptInterface(bus, worldInterface)
 {
 }
 

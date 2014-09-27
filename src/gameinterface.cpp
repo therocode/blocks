@@ -1,41 +1,42 @@
-#include "worldinterface.hpp"
+#include "gameinterface.hpp"
 #include "rendering/renderer.hpp"
-#include "world.hpp"
+#include "entity/entitysystem.hpp"
+#include "world/world.hpp"
 
-WorldInterface::WorldInterface(std::unordered_map<WorldId, std::unique_ptr<World>>& worlds, EntitySystem& entitySystem) :
+GameInterface::GameInterface(std::unordered_map<WorldId, std::unique_ptr<World>>& worlds, EntitySystem& entitySystem) :
     mWorlds(worlds),
     mEntitySystem(entitySystem)
 {
 
 }
 
-VoxelType WorldInterface::getVoxelTypeInt(WorldId worldId, int x, int y, int z) const
+VoxelType GameInterface::getVoxelTypeInt(WorldId worldId, int x, int y, int z) const
 {
     return mWorlds.at(worldId)->getVoxelType(VoxelCoord(x, y, z));
 }
 
-VoxelType WorldInterface::getVoxelType(WorldId worldId, const VoxelCoord coord) const
+VoxelType GameInterface::getVoxelType(WorldId worldId, const VoxelCoord coord) const
 {
     return getVoxelTypeInt(worldId, coord.x, coord.y, coord.z);
 }
 
 
-VoxelType WorldInterface::getVoxelType(WorldId worldId, float x, float y, float z) const
+VoxelType GameInterface::getVoxelType(WorldId worldId, float x, float y, float z) const
 {
     return getVoxelType(worldId, worldToVoxel(glm::vec3(x, y, z)));
 }
 
-VoxelType WorldInterface::getVoxelType(WorldId worldId, const glm::vec3& position) const
+VoxelType GameInterface::getVoxelType(WorldId worldId, const glm::vec3& position) const
 {
     return getVoxelType(worldId, worldToVoxel(position));
 }
 
-bool WorldInterface::getVoxelAtRay(WorldId worldId, const glm::vec3& position, const glm::vec3& direction, const float maxDistance, uint32_t& hitFace, VoxelCoord& hitBlock) const
+bool GameInterface::getVoxelAtRay(WorldId worldId, const glm::vec3& position, const glm::vec3& direction, const float maxDistance, uint32_t& hitFace, VoxelCoord& hitBlock) const
 {
     return getVoxelAtRay(worldId, position.x, position.y, position.z, direction.x, direction.y, direction.z, maxDistance, hitFace, hitBlock);
 }
 
-bool WorldInterface::getVoxelAtRay(WorldId worldId, float ox, float oy, float oz, float dx, float dy, float dz, const float maxDistance, uint32_t& hitFace, VoxelCoord& hitBlock)  const
+bool GameInterface::getVoxelAtRay(WorldId worldId, float ox, float oy, float oz, float dx, float dy, float dz, const float maxDistance, uint32_t& hitFace, VoxelCoord& hitBlock)  const
 {
     int ip[3];
     ip[0] = glm::floor(ox);
@@ -152,12 +153,12 @@ bool WorldInterface::getVoxelAtRay(WorldId worldId, float ox, float oy, float oz
     return true;
 }
 
-ChunkReferenceMap WorldInterface::getChunkMap(WorldId worldId) const
+ChunkReferenceMap GameInterface::getChunkMap(WorldId worldId) const
 {
     return mWorlds.at(worldId)->getChunkMap();
 }
 
-const fea::WeakEntityPtr WorldInterface::findEntity(fea::EntityId id) const
+const fea::WeakEntityPtr GameInterface::findEntity(fea::EntityId id) const
 {
     return mEntitySystem.getEntityManager().findEntity(id);
 }

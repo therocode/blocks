@@ -9,7 +9,7 @@ class PhysicsController :
                                 PhysicsImpulseMessage>
 {
     public:
-        PhysicsController(fea::MessageBus& bus, WorldInterface& worldInterface);
+        PhysicsController(fea::MessageBus& bus, GameInterface& worldInterface);
         virtual void inspectEntity(fea::WeakEntityPtr entity);
         virtual void onFrame(int dt) override;
         void handleMessage(const GravityRequestedMessage& received);

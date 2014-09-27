@@ -5,7 +5,7 @@
 class RandomInterface : public ScriptInterface
 {
     public:
-        RandomInterface(fea::MessageBus& bus, WorldInterface& worldInterface);
+        RandomInterface(fea::MessageBus& bus, GameInterface& worldInterface);
         void registerInterface(asIScriptEngine* engine) override;
     private:
         Random random;

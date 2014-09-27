@@ -14,17 +14,17 @@ Server::Server(fea::MessageBus& bus) :
 	mEntitySystem(mBus),
     mWorlds(mBus, mEntitySystem),
     mLogger(mBus, LogLevel::VERB),
-    mScriptSystem(mBus, mWorlds.getWorldInterface())
+    mScriptSystem(mBus, mWorlds.getGameInterface())
 {
     mTimer.start();
     subscribe(mBus, *this);
     mBus.send(LogMessage{"Setting up server", serverName, LogLevel::INFO});
 
-	mEntitySystem.addController(std::unique_ptr<EntityController>(new PlayerController(mBus, mWorlds.getWorldInterface())));
-	mEntitySystem.addController(std::unique_ptr<EntityController>(new PhysicsController(mBus, mWorlds.getWorldInterface())));
-	mEntitySystem.addController(std::unique_ptr<EntityController>(new CollisionController(mBus, mWorlds.getWorldInterface())));
-	mEntitySystem.addController(std::unique_ptr<EntityController>(new MovementController(mBus, mWorlds.getWorldInterface())));
-	mEntitySystem.addController(std::unique_ptr<EntityController>(new GfxController(mBus, mWorlds.getWorldInterface())));
+	mEntitySystem.addController(std::unique_ptr<EntityController>(new PlayerController(mBus, mWorlds.getGameInterface())));
+	mEntitySystem.addController(std::unique_ptr<EntityController>(new PhysicsController(mBus, mWorlds.getGameInterface())));
+	mEntitySystem.addController(std::unique_ptr<EntityController>(new CollisionController(mBus, mWorlds.getGameInterface())));
+	mEntitySystem.addController(std::unique_ptr<EntityController>(new MovementController(mBus, mWorlds.getGameInterface())));
+	mEntitySystem.addController(std::unique_ptr<EntityController>(new GfxController(mBus, mWorlds.getGameInterface())));
 }
 
 Server::~Server()
@@ -187,7 +187,7 @@ void Server::acceptClientConnection(std::shared_ptr<ClientConnection> client)
     }
 
     //resend chunk created messages
-    for(const auto& chunk : mWorlds.getWorldInterface().getChunkMap(0))  //for world 0, thish shouldn't be hard coded
+    for(const auto& chunk : mWorlds.getGameInterface().getChunkMap(0))  //for world 0, thish shouldn't be hard coded
     {
         std::shared_ptr<BasePackage> chunkAddedPackage(new ChunkLoadedPackage(chunk.first, chunk.second.getVoxelTypeData().mRleSegmentIndices, chunk.second.getVoxelTypeData().mRleSegments));
         client->enqueuePackage(chunkAddedPackage);

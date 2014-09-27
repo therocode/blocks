@@ -2,12 +2,12 @@
 #include "scriptinterface.hpp"
 #include "utilities/random.hpp"
 
-class WorldInterface;
+class GameInterface;
 
 class StringInterface : public ScriptInterface
 {
     public:
-        StringInterface(fea::MessageBus& bus, WorldInterface& worldInterface);
+        StringInterface(fea::MessageBus& bus, GameInterface& worldInterface);
         void registerInterface(asIScriptEngine* engine) override;
     private:
 };

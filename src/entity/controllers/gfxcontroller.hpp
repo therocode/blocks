@@ -6,7 +6,7 @@ class GfxController : public EntityController,
                       public fea::MessageReceiver<EntityMovedMessage>
 {
     public:
-        GfxController(fea::MessageBus& bus, WorldInterface& worldinterface);
+        GfxController(fea::MessageBus& bus, GameInterface& worldinterface);
         virtual void inspectEntity(fea::WeakEntityPtr entity) override;
         void handleMessage(const EntityMovedMessage& message) override;
         virtual void removeEntity(fea::EntityId id) override;
