@@ -10,39 +10,32 @@ GameInterface::GameInterface(const WorldSystem& worldSystem, const EntitySystem&
 
 }
 
+//bool GameInterface::getVoxelAtRay(WorldId worldId, float ox, float oy, float oz, float dx, float dy, float dz, const float maxDistance, uint32_t& hitFace, VoxelCoord& hitBlock)  const
 bool GameInterface::getVoxelAtRay(WorldId worldId, const glm::vec3& position, const glm::vec3& direction, const float maxDistance, uint32_t& hitFace, VoxelCoord& hitBlock) const
 {
-    return getVoxelAtRay(worldId, position.x, position.y, position.z, direction.x, direction.y, direction.z, maxDistance, hitFace, hitBlock);
-}
+    VoxelCoord voxel = worldToVoxel(position);
 
-bool GameInterface::getVoxelAtRay(WorldId worldId, float ox, float oy, float oz, float dx, float dy, float dz, const float maxDistance, uint32_t& hitFace, VoxelCoord& hitBlock)  const
-{
-    int ip[3];
-    ip[0] = glm::floor(ox);
-    ip[1] = glm::floor(oy);
-    ip[2] = glm::floor(oz);
-
-    glm::vec3 bp = glm::fract(glm::vec3(ox, oy, oz));
-    ChunkVoxelCoord chunkCoordinate = voxelToChunkVoxel(worldToVoxel(glm::vec3(ip[0], ip[1], ip[2])));
+    glm::vec3 bp = glm::fract(position);
+    ChunkVoxelCoord chunkCoordinate = voxelToChunkVoxel(voxel);
     //printf("ip:%i, %i, %i\n", ip[0], ip[1], ip[2]);
     //printf("ip:%i, %i, %i\n", chunkCoordinate[0], chunkCoordinate[1], chunkCoordinate[2]);
     //printf("rp:%f, %f, %f\n", ox, oy, oz);
     //glm::vec3 ip = glm::vec3((int), (int)oy, (int)oz);
 
-    glm::vec3 d = glm::vec3(dx, dy, dz);
+    glm::vec3 p = position;
+
+    glm::vec3 d = direction;
     if(glm::length2(d) != 0)
         d = glm::normalize(d);
     else
         return false;
-
-    glm::vec3 p = glm::vec3(ox, oy, oz);
 
     float distanceTravelled = 0.f;
     int steps = 0;
     uint16_t vtype = 0;
     glm::vec3 bounds = glm::vec3(0,0,0);
     int enterFaces[3];
-    if(dx > 0)
+    if(d.x > 0)
     {
         bounds.x = 1.0f;
         enterFaces[0] = FACE_LEFT;
@@ -51,7 +44,7 @@ bool GameInterface::getVoxelAtRay(WorldId worldId, float ox, float oy, float oz,
     {
         enterFaces[0] = FACE_RIGHT;
     }
-    if(dy > 0)
+    if(d.y > 0)
     {
         bounds.y = 1.0f;
         enterFaces[1] = FACE_BOTTOM;
@@ -60,7 +53,7 @@ bool GameInterface::getVoxelAtRay(WorldId worldId, float ox, float oy, float oz,
     {
         enterFaces[1] = FACE_TOP;
     }
-    if(dz > 0)
+    if(d.z > 0)
     {
         bounds.z = 1.0f;
         enterFaces[2] = FACE_FRONT;
@@ -93,10 +86,7 @@ bool GameInterface::getVoxelAtRay(WorldId worldId, float ox, float oy, float oz,
         float lengthToNextBlock = 0.1f;
         lengthToNextBlock = mind + 0.01f;
 
-        vtype = mWorldSystem.getWorld(worldId).getVoxelType(glm::i64vec3(
-                ip[0], 
-                ip[1], 
-                ip[2]));
+        vtype = mWorldSystem.getWorld(worldId).getVoxelType(voxel);
 
         if(vtype != (uint16_t)0) 
             break;
@@ -105,12 +95,12 @@ bool GameInterface::getVoxelAtRay(WorldId worldId, float ox, float oy, float oz,
         distanceTravelled += lengthToNextBlock;
         if(bp[mini] >= 1.f)
         {
-            ip[mini] ++;
+            voxel[mini] ++;
             bp[mini] = 0.f;
         }
         else
         {
-            ip[mini] --;
+            voxel[mini] --;
             bp[mini] = 1.f;
         }
 
@@ -123,12 +113,11 @@ bool GameInterface::getVoxelAtRay(WorldId worldId, float ox, float oy, float oz,
         }
     }
 
-    glm::vec3 block = glm::vec3(ip[0] , ip[1] , ip[2]);
     if(steps == 256)
     { 
         return false;
     }
-    hitBlock = VoxelCoord(ip[0], ip[1],  ip[2]);
+    hitBlock = voxel;
     return true;
 }
 

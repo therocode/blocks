@@ -12,7 +12,6 @@ class GameInterface
     public:
         GameInterface(const WorldSystem& worldSystem, const EntitySystem& entitySystem);
 		bool getVoxelAtRay(WorldId worldId, const glm::vec3& position, const glm::vec3& direction, const float maxDistance, uint32_t& hitFace, VoxelCoord& hitBlock ) const;
-		bool getVoxelAtRay(WorldId worldId, float ox, float oy, float oz, float dx, float dy, float dz, const float maxDistance, uint32_t& hitFace, VoxelCoord& hitBlock) const;
 		
         const WorldSystem& getWorldSystem() const;
         const EntitySystem& getEntitySystem() const;
