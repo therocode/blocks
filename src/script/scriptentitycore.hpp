@@ -2,14 +2,13 @@
 #include <stdint.h>
 #include <string>
 #include <fea/util.hpp>
+#include <fea/entitysystem.hpp>
 #include "../blockstd.hpp"
-
-class GameInterface;
 
 class ScriptEntityCore
 {
     public:
-        ScriptEntityCore(size_t id);
+        ScriptEntityCore(fea::MessageBus& bus, fea::EntityPtr entity, size_t id);
         void addRef();
         void release();
         void setPosition(float x, float y, float z);
@@ -17,9 +16,9 @@ class ScriptEntityCore
         glm::vec3 getPosition();
         bool isOnGround();
         void setId(size_t id);
-        static GameInterface* sGameInterface;
-        static fea::MessageBus* sBus;
     private:
+        fea::MessageBus& mBus;
+        fea::EntityPtr mEntity;
         int32_t mRefCount;
         size_t mId;
 };

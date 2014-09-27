@@ -1,7 +1,6 @@
 #pragma once
 #include "scriptengine.hpp"
 #include "scriptmessages.hpp"
-#include "../application/applicationmessages.hpp"
 #include "scriptstd.hpp"
 #include "../entity/entitymessages.hpp"
 
@@ -25,12 +24,11 @@ class ScriptSystem :
         void registerInterface();
         void registerCallbacks(ScriptEntityMap& scriptEntities);
         fea::MessageBus& mBus;
+        GameInterface& mGameInterface;
         ScriptEngine mEngine;
         ScriptModule mScripts;
-        GameInterface& mGameInterface;
         std::vector<std::string> sourceFiles;
         ScriptEntityMap scriptEntities;
-        std::string logName;
 
         std::vector<std::unique_ptr<ScriptInterface>> mInterfaces;
         std::vector<std::unique_ptr<ScriptCaller>> mCallers;

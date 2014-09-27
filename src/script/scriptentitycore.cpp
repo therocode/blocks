@@ -1,15 +1,13 @@
 #include "scriptentitycore.hpp"
 #include "../entity/entitymessages.hpp"
-#include "../gameinterface.hpp"
 #include "../entity/entitysystem.hpp"
 
-GameInterface* ScriptEntityCore::sGameInterface = nullptr;
-fea::MessageBus* ScriptEntityCore::sBus = nullptr;
-
-ScriptEntityCore::ScriptEntityCore(size_t id)
+ScriptEntityCore::ScriptEntityCore(fea::MessageBus& bus, fea::EntityPtr entity, size_t id) :
+    mBus(bus),
+    mEntity(entity),
+    mRefCount(0),
+    mId(id)
 {
-    mRefCount = 0;
-    mId = id;
 }
 
 void ScriptEntityCore::addRef()
@@ -28,22 +26,22 @@ void ScriptEntityCore::release()
 
 void ScriptEntityCore::setPosition(float x, float y, float z)
 {
-    sBus->send<EntityMoveRequestedMessage>(EntityMoveRequestedMessage{(fea::EntityId)mId, glm::vec3(x, y, z)});
+    mBus.send<EntityMoveRequestedMessage>(EntityMoveRequestedMessage{mEntity->getId(), glm::vec3(x, y, z)});
 }
 
 void ScriptEntityCore::setPosition(const glm::vec3& vec)
 {
-    sBus->send<EntityMoveRequestedMessage>(EntityMoveRequestedMessage{(fea::EntityId)mId, vec});
+    mBus.send<EntityMoveRequestedMessage>(EntityMoveRequestedMessage{mEntity->getId(), vec});
 }
 
 glm::vec3 ScriptEntityCore::getPosition()
 {
-    return sGameInterface->getEntitySystem().getEntityManager().findEntity(mId).lock()->getAttribute<glm::vec3>("position");
+    return mEntity->getAttribute<glm::vec3>("position");
 }
 
 bool ScriptEntityCore::isOnGround()
 {
-    return sGameInterface->getEntitySystem().getEntityManager().findEntity(mId).lock()->getAttribute<bool>("on_ground");
+    return mEntity->getAttribute<bool>("on_ground");
 }
 
 void ScriptEntityCore::setId(size_t id)
