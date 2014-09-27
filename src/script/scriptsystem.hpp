@@ -27,8 +27,8 @@ class ScriptSystem :
         GameInterface& mGameInterface;
         ScriptEngine mEngine;
         ScriptModule mScripts;
-        std::vector<std::string> sourceFiles;
-        ScriptEntityMap scriptEntities;
+        std::vector<std::string> mSourceFiles;
+        ScriptEntityMap mScriptEntities;
 
         std::vector<std::unique_ptr<ScriptInterface>> mInterfaces;
         std::vector<std::unique_ptr<ScriptCaller>> mCallers;

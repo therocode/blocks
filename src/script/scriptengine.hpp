@@ -18,7 +18,7 @@ class ScriptEngine
         void messageCallback(const asSMessageInfo &msg);
         fea::MessageBus& mBus;
         asIScriptEngine* mEngine;
-        asIScriptContext* mContext;
+
         std::vector<asIScriptContext*> mContexts;
         uint32_t mContextsInUse;
 };

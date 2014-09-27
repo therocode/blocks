@@ -11,13 +11,6 @@ ScriptModule::ScriptModule(const std::string& name, ScriptEngine& engine) :
     
 }
 
-ScriptModule::ScriptModule(const ScriptModule&& other) : 
-    mName(other.mName),
-    mEngine(other.mEngine),
-    mAsModule(other.mAsModule)
-{
-}
-
 const std::string& ScriptModule::getName()
 {
     return mName;
