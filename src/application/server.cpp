@@ -188,7 +188,7 @@ void Server::acceptClientConnection(std::shared_ptr<ClientConnection> client)
     }
 
     //resend chunk created messages
-    for(const auto& chunk : mGameInterface.getChunkMap(0))  //for world 0, thish shouldn't be hard coded
+    for(const auto& chunk : mGameInterface.getWorldSystem().getWorld(0).getChunkMap())  //for world 0, thish shouldn't be hard coded
     {
         std::shared_ptr<BasePackage> chunkAddedPackage(new ChunkLoadedPackage(chunk.first, chunk.second.getVoxelTypeData().mRleSegmentIndices, chunk.second.getVoxelTypeData().mRleSegments));
         client->enqueuePackage(chunkAddedPackage);

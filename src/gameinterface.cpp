@@ -132,11 +132,6 @@ bool GameInterface::getVoxelAtRay(WorldId worldId, float ox, float oy, float oz,
     return true;
 }
 
-ChunkReferenceMap GameInterface::getChunkMap(WorldId worldId) const
-{
-    return mWorldSystem.getWorld(worldId).getChunkMap();
-}
-
 const WorldSystem& GameInterface::getWorldSystem() const
 {
     return mWorldSystem;
