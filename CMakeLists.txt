@@ -85,6 +85,7 @@ set(source_files
     src/script/interfaces/scriptinterface.cpp
     src/script/interfaces/stringinterface.cpp
 
+    src/utilities/directorycreator.cpp
     src/utilities/folderexploder.cpp
     src/utilities/fpscontroller.cpp
     src/utilities/lodepng.cpp
@@ -204,6 +205,7 @@ set(header_files
     src/script/interfaces/scriptinterface.hpp
     src/script/interfaces/stringinterface.hpp
 
+    src/utilities/directorycreator.hpp
     src/utilities/folderexploder.hpp
     src/utilities/fpscontroller.hpp
     src/utilities/lodepng.hpp
@@ -357,22 +359,20 @@ endif(BUILD_GAME)
 if(BUILD_TESTS)
     add_executable(test_modmanager "test/world/modmanagertest.cpp" "src/world/modmanager.cpp" "src/world/chunk.cpp" "src/world/worldstd.cpp")
     target_link_libraries(test_modmanager ${FEATHERKIT_LIBRARIES})
-    #set_target_properties(test_modmanager PROPERTIES COMPILE_FLAGS "-std=c++11")
     
     add_executable(test_highlightmanager "test/world/highlightmanagertest.cpp" "src/world/highlightmanager.cpp" "src/world/worldstd.cpp")
     target_link_libraries(test_highlightmanager ${FEATHERKIT_LIBRARIES})
-    #set_target_properties(test_highlightmanager PROPERTIES COMPILE_FLAGS "-std=c++11")
     
     add_executable(test_coordinate "test/world/coordinatetest.cpp" "src/world/worldstd.cpp")
     target_link_libraries(test_coordinate ${FEATHERKIT_LIBRARIES})
-    #set_target_properties(test_coordinate PROPERTIES COMPILE_FLAGS "-std=c++11")
     
     add_executable(test_world_misc "test/world/misctest.cpp" "src/world/worldstd.cpp" "src/world/region.cpp" "src/world/regiondatafragment.cpp")
-    target_link_libraries(test_coordinate ${FEATHERKIT_LIBRARIES})
-    #set_target_properties(test_coordinate PROPERTIES COMPILE_FLAGS "-std=c++11")
+    target_link_libraries(test_world_misc ${FEATHERKIT_LIBRARIES})
+    
+    add_executable(test_utilities "test/utilities/utilitiestest.cpp" "src/utilities/directorycreator.cpp")
+    target_link_libraries(test_utilities ${FEATHERKIT_LIBRARIES})
     
     #profiling
     add_executable(profile_modmanager "profile/world/modmanagerprofile.cpp" "src/world/modmanager.cpp" "src/world/chunk.cpp" "src/world/worldstd.cpp")
     target_link_libraries(profile_modmanager ${FEATHERKIT_LIBRARIES})
-    #set_target_properties(profile_modmanager PROPERTIES COMPILE_FLAGS "-std=c++11")
 endif(BUILD_TESTS)
