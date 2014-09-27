@@ -25,6 +25,12 @@ ScriptSystem::ScriptSystem(fea::MessageBus& bus, GameInterface& worldInterface) 
 {
     subscribe(mBus, *this);
     mBus.send(LogMessage{"Setting up script system", scriptName, LogLevel::INFO});
+    mBus.send(LogMessage{"Setting up interfaces", scriptName, LogLevel::VERB});
+    setupInterfaces();
+    mBus.send(LogMessage{"Setting up callbacks", scriptName, LogLevel::VERB});
+    setupCallbacks();
+    mBus.send(LogMessage{"Loading script sources", scriptName, LogLevel::VERB});
+    loadSources();
 }
 
 ScriptSystem::~ScriptSystem()
@@ -32,48 +38,6 @@ ScriptSystem::~ScriptSystem()
     mBus.send(LogMessage{"Shutting down script system", scriptName, LogLevel::INFO});
     mScriptEntities.clear();
     mEngine.destroyModule(mScripts);
-}
-
-void ScriptSystem::setup()
-{
-    mInterfaces.push_back(std::unique_ptr<ScriptInterface>(new MathsInterface(mBus, mGameInterface)));
-    mInterfaces.push_back(std::unique_ptr<ScriptInterface>(new StringInterface(mBus, mGameInterface)));
-    mInterfaces.push_back(std::unique_ptr<ScriptInterface>(new EntityInterface(mBus, mGameInterface, mScriptEntities)));
-    mInterfaces.push_back(std::unique_ptr<ScriptInterface>(new LandscapeInterface(mBus, mGameInterface)));
-    mInterfaces.push_back(std::unique_ptr<ScriptInterface>(new PhysicsInterface(mBus, mGameInterface)));
-    mInterfaces.push_back(std::unique_ptr<ScriptInterface>(new PrintInterface(mBus, mGameInterface)));
-    mInterfaces.push_back(std::unique_ptr<ScriptInterface>(new RandomInterface(mBus, mGameInterface)));
-
-    mCallers.push_back(std::unique_ptr<ScriptCaller>(new FrameTimeCaller(mBus, mEngine, mScriptEntities)));
-    mCallers.push_back(std::unique_ptr<ScriptCaller>(new GameEventCaller(mBus, mEngine, mScriptEntities)));
-    mCallers.push_back(std::unique_ptr<ScriptCaller>(new OnGroundCaller(mBus, mEngine, mScriptEntities)));
-
-    registerInterface();
-
-    FolderExploder exploder;
-
-    mSourceFiles.clear();
-
-    exploder.explodeFolder("data", ".*\\.as", mSourceFiles);
-    for(auto& string : mSourceFiles)
-    {
-        mBus.send(LogMessage{"Adding " + string + " for compilation.", scriptName, LogLevel::VERB});
-    }
-
-    mBus.send(LogMessage{"Compiling scripts...", scriptName, LogLevel::INFO});
-    bool succeeded = mScripts.compileFromSourceList(mSourceFiles);
-    mBus.send(LogMessage{"Compilation process over.", scriptName, LogLevel::INFO});
-
-    if(succeeded)
-    {
-        mBus.send(LogMessage{"Compilation process over.", scriptName, LogLevel::VERB});
-        mBus.send(LogMessage{"Done setting up callbacks.", scriptName, LogLevel::VERB});
-
-        for(auto& caller : mCallers)
-        {
-            caller->setActive(true);
-        }
-    }
 }
 
 void ScriptSystem::handleMessage(const RebuildScriptsRequestedMessage& received)
@@ -159,10 +123,58 @@ void ScriptSystem::handleMessage(const EntityRemovedMessage& received)
     }
 }
 
-void ScriptSystem::registerInterface()
+void ScriptSystem::setupInterfaces()
+{
+    mInterfaces.push_back(std::unique_ptr<ScriptInterface>(new MathsInterface(mBus, mGameInterface)));
+    mInterfaces.push_back(std::unique_ptr<ScriptInterface>(new StringInterface(mBus, mGameInterface)));
+    mInterfaces.push_back(std::unique_ptr<ScriptInterface>(new EntityInterface(mBus, mGameInterface, mScriptEntities)));
+    mInterfaces.push_back(std::unique_ptr<ScriptInterface>(new LandscapeInterface(mBus, mGameInterface)));
+    mInterfaces.push_back(std::unique_ptr<ScriptInterface>(new PhysicsInterface(mBus, mGameInterface)));
+    mInterfaces.push_back(std::unique_ptr<ScriptInterface>(new PrintInterface(mBus, mGameInterface)));
+    mInterfaces.push_back(std::unique_ptr<ScriptInterface>(new RandomInterface(mBus, mGameInterface)));
+
+    registerInterfaces();
+}
+
+void ScriptSystem::registerInterfaces()
 {
     for(auto& interface : mInterfaces)
     {
         interface->registerInterface(mEngine.getEngine());
+    }
+}
+
+void ScriptSystem::setupCallbacks()
+{
+    mCallers.push_back(std::unique_ptr<ScriptCaller>(new FrameTimeCaller(mBus, mEngine, mScriptEntities)));
+    mCallers.push_back(std::unique_ptr<ScriptCaller>(new GameEventCaller(mBus, mEngine, mScriptEntities)));
+    mCallers.push_back(std::unique_ptr<ScriptCaller>(new OnGroundCaller(mBus, mEngine, mScriptEntities)));
+}
+
+void ScriptSystem::loadSources()
+{
+    FolderExploder exploder;
+
+    mSourceFiles.clear();
+
+    exploder.explodeFolder("data", ".*\\.as", mSourceFiles);
+    for(auto& string : mSourceFiles)
+    {
+        mBus.send(LogMessage{"Adding " + string + " for compilation.", scriptName, LogLevel::VERB});
+    }
+
+    mBus.send(LogMessage{"Compiling scripts...", scriptName, LogLevel::INFO});
+    bool succeeded = mScripts.compileFromSourceList(mSourceFiles);
+    mBus.send(LogMessage{"Compilation process over.", scriptName, LogLevel::INFO});
+
+    if(succeeded)
+    {
+        mBus.send(LogMessage{"Compilation process over.", scriptName, LogLevel::VERB});
+        mBus.send(LogMessage{"Done setting up callbacks.", scriptName, LogLevel::VERB});
+
+        for(auto& caller : mCallers)
+        {
+            caller->setActive(true);
+        }
     }
 }

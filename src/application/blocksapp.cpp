@@ -91,8 +91,6 @@ void BlocksApplication::setupSinglePlayer()
     server = std::unique_ptr<Server>(new Server(mServerBus));
     client = std::unique_ptr<Client>(new Client(mClientBus));
 
-    //setup server and client separately
-    server->setup();
     client->setup();
 
     //setup client and server local connection
@@ -125,7 +123,6 @@ void BlocksApplication::setupDedicatedServer(int32_t port)
 {
     server = std::unique_ptr<Server>(new Server(mServerBus));
 
-    server->setup();
     //RemoteClientConnectionListener* remoteListener = new RemoteClientConnectionListener(server->getBus());
 
     //if(enet_initialize() < 0)

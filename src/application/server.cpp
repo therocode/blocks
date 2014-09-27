@@ -26,19 +26,14 @@ Server::Server(fea::MessageBus& bus) :
 	mEntitySystem.addController(std::unique_ptr<EntityController>(new CollisionController(mBus, mGameInterface)));
 	mEntitySystem.addController(std::unique_ptr<EntityController>(new MovementController(mBus, mGameInterface)));
 	mEntitySystem.addController(std::unique_ptr<EntityController>(new GfxController(mBus, mGameInterface)));
+
+    mFPSController.setMaxFPS(60);
+    mBus.send(GameStartMessage{});
 }
 
 Server::~Server()
 {
     mBus.send(LogMessage{"Shutting down server", serverName, LogLevel::INFO});
-}
-
-void Server::setup()
-{
-    mScriptSystem.setup();
-
-    mFPSController.setMaxFPS(60);
-    mBus.send(GameStartMessage{});
 }
 
 void Server::doLogic()

@@ -16,12 +16,14 @@ class ScriptSystem :
     public:
         ScriptSystem(fea::MessageBus& bus, GameInterface& worldInterface);
         ~ScriptSystem();
-        void setup();
         void handleMessage(const RebuildScriptsRequestedMessage& message);
         void handleMessage(const EntityCreatedMessage& message);
         void handleMessage(const EntityRemovedMessage& message);
     private:
-        void registerInterface();
+        void setupInterfaces();
+        void registerInterfaces();
+        void setupCallbacks();
+        void loadSources();
         fea::MessageBus& mBus;
         GameInterface& mGameInterface;
         ScriptEngine mEngine;

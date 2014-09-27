@@ -26,7 +26,6 @@ class Server : public fea::MessageReceiver<AddGfxEntityMessage,
     public:
         Server(fea::MessageBus& bus);
         ~Server();
-        void setup();
         void doLogic();
         void handleMessage(const AddGfxEntityMessage& received);
         void handleMessage(const MoveGfxEntityMessage& received);
