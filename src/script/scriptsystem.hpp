@@ -3,7 +3,6 @@
 #include "scriptmessages.hpp"
 #include "../application/applicationmessages.hpp"
 #include "scriptstd.hpp"
-#include "scriptcallback.hpp"//temp
 #include "../entity/entitymessages.hpp"
 
 class ScriptInterface;
