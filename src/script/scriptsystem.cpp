@@ -12,20 +12,20 @@
 #include "callers/ongroundcaller.hpp"
 #include "callers/gameeventcaller.hpp"
 #include "callers/frametimecaller.hpp"
-#include "../world/worldinterface.hpp"
+#include "../gameinterface.hpp"
 #include "../lognames.hpp"
 
-ScriptSystem::ScriptSystem(fea::MessageBus& bus, WorldInterface& worldInterface) : 
+ScriptSystem::ScriptSystem(fea::MessageBus& bus, GameInterface& worldInterface) : 
     mEngine(bus),
     mBus(bus),
     mScripts(mEngine.createModule("scripts")),
-    mWorldInterface(worldInterface),
+    mGameInterface(worldInterface),
     logName("script")
 {
     subscribe(mBus, *this);
     mBus.send(LogMessage{"Setting up script system", scriptName, LogLevel::INFO});
 
-    ScriptEntityCore::sWorldInterface = &worldInterface;
+    ScriptEntityCore::sGameInterface = &worldInterface;
     ScriptEntityCore::sBus = &bus;
 }
 
@@ -40,13 +40,13 @@ void ScriptSystem::setup()
 {
     mEngine.setup();
 
-    mInterfaces.push_back(std::unique_ptr<ScriptInterface>(new MathsInterface(mBus, mWorldInterface)));
-    mInterfaces.push_back(std::unique_ptr<ScriptInterface>(new StringInterface(mBus, mWorldInterface)));
-    mInterfaces.push_back(std::unique_ptr<ScriptInterface>(new EntityInterface(mBus, mWorldInterface, scriptEntities)));
-    mInterfaces.push_back(std::unique_ptr<ScriptInterface>(new LandscapeInterface(mBus, mWorldInterface)));
-    mInterfaces.push_back(std::unique_ptr<ScriptInterface>(new PhysicsInterface(mBus, mWorldInterface)));
-    mInterfaces.push_back(std::unique_ptr<ScriptInterface>(new PrintInterface(mBus, mWorldInterface)));
-    mInterfaces.push_back(std::unique_ptr<ScriptInterface>(new RandomInterface(mBus, mWorldInterface)));
+    mInterfaces.push_back(std::unique_ptr<ScriptInterface>(new MathsInterface(mBus, mGameInterface)));
+    mInterfaces.push_back(std::unique_ptr<ScriptInterface>(new StringInterface(mBus, mGameInterface)));
+    mInterfaces.push_back(std::unique_ptr<ScriptInterface>(new EntityInterface(mBus, mGameInterface, scriptEntities)));
+    mInterfaces.push_back(std::unique_ptr<ScriptInterface>(new LandscapeInterface(mBus, mGameInterface)));
+    mInterfaces.push_back(std::unique_ptr<ScriptInterface>(new PhysicsInterface(mBus, mGameInterface)));
+    mInterfaces.push_back(std::unique_ptr<ScriptInterface>(new PrintInterface(mBus, mGameInterface)));
+    mInterfaces.push_back(std::unique_ptr<ScriptInterface>(new RandomInterface(mBus, mGameInterface)));
 
     mCallers.push_back(std::unique_ptr<ScriptCaller>(new FrameTimeCaller(mBus, mEngine, scriptEntities)));
     mCallers.push_back(std::unique_ptr<ScriptCaller>(new GameEventCaller(mBus, mEngine, scriptEntities)));

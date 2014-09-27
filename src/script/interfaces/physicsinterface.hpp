@@ -5,7 +5,7 @@
 class PhysicsInterface : public ScriptInterface
 {
     public:
-        PhysicsInterface(fea::MessageBus& bus, WorldInterface& worldInterface);
+        PhysicsInterface(fea::MessageBus& bus, GameInterface& worldInterface);
         void registerInterface(asIScriptEngine* engine) override;
     private:
         void setGravity(float constant);

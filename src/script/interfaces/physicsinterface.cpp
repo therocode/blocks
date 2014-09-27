@@ -3,7 +3,7 @@
 #include <angelscript.h>
 #include <assert.h>
 
-PhysicsInterface::PhysicsInterface(fea::MessageBus& bus, WorldInterface& worldInterface) : ScriptInterface(bus, worldInterface)
+PhysicsInterface::PhysicsInterface(fea::MessageBus& bus, GameInterface& worldInterface) : ScriptInterface(bus, worldInterface)
 {
 }
 

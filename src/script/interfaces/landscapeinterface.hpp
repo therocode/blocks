@@ -4,13 +4,13 @@
 #include "utilities/random.hpp"
 #include "world/worldid.hpp"
 
-class WorldInterface;
+class GameInterface;
 using VoxelType = uint16_t;
 
 class LandscapeInterface : public ScriptInterface
 {
     public:
-        LandscapeInterface(fea::MessageBus& bus, WorldInterface& worldInterface);
+        LandscapeInterface(fea::MessageBus& bus, GameInterface& worldInterface);
         void registerInterface(asIScriptEngine* engine) override;
     private:
         void setVoxelType(WorldId id, float x, float y, float z, uint16_t type);

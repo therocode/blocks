@@ -3,9 +3,9 @@
 #include <assert.h>
 #include "../../lognames.hpp"
 #include "../scriptentitycore.hpp"
-#include "../../world/worldinterface.hpp"
+#include "../../gameinterface.hpp"
 
-EntityInterface::EntityInterface(fea::MessageBus& bus, WorldInterface& worldInterface, std::unordered_map<size_t, ScriptEntity>& scriptEntities) : 
+EntityInterface::EntityInterface(fea::MessageBus& bus, GameInterface& worldInterface, std::unordered_map<size_t, ScriptEntity>& scriptEntities) : 
     ScriptInterface(bus, worldInterface),
     mBus(bus),
     mScriptEntities(scriptEntities)
@@ -61,7 +61,7 @@ asIScriptObject* EntityInterface::createEntity(const std::string& type, float x,
 
 void EntityInterface::removeEntityFromId(size_t id)
 {
-    mBus.send(RemoveEntityMessage{id});   
+    mBus.send(RemoveEntityRequestedMessage{id});   
 }
 
 void EntityInterface::handleMessage(const EntityCreatedMessage& message)

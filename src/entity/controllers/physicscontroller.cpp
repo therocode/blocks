@@ -2,7 +2,7 @@
 #include "../../blockstd.hpp"
 #include "physicstype.hpp"
 
-PhysicsController::PhysicsController(fea::MessageBus& bus, WorldInterface& worldInterface) : EntityController(bus, worldInterface), gravityConstant(-0.003f)
+PhysicsController::PhysicsController(fea::MessageBus& bus, GameInterface& worldInterface) : EntityController(bus, worldInterface), gravityConstant(-0.003f)
 {
     mTimer.start();
     accumulator = 0;
@@ -15,7 +15,9 @@ void PhysicsController::inspectEntity(fea::WeakEntityPtr entity)
 
     if(locked->hasAttribute("position") &&
             locked->hasAttribute("velocity") &&
+            locked->hasAttribute("acceleration") &&
             locked->hasAttribute("drag") && 
+            locked->hasAttribute("on_ground") && 
             locked->hasAttribute("physics_type"))
     {
         mEntities.emplace(locked->getId(), entity);

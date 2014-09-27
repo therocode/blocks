@@ -5,9 +5,8 @@
 #include "../lognames.hpp"
 #include "../world/worldloader.hpp"
 
-WorldSystem::WorldSystem(fea::MessageBus& messageBus, EntitySystem& entitySystem) 
+WorldSystem::WorldSystem(fea::MessageBus& messageBus) 
 :   mBus(messageBus),
-	mWorldInterface(mWorlds, entitySystem),
     mNextId(0),
     mWorldProvider(mBus)
 {
@@ -63,9 +62,22 @@ void WorldSystem::handleMessage(const ChunkDeliverMessage& received)
     mWorlds.at(received.worldId)->deliverChunk(coordinate, chunk);
 }
 
-WorldInterface& WorldSystem::getWorldInterface()
+void WorldSystem::handleMessage(const HighlightEntityAddRequestedMessage& received)
 {
-    return mWorldInterface;
+    FEA_ASSERT(mWorlds.count(received.worldId) != 0, "Trying to add a highlight entity to world " + std::to_string(received.worldId) + " but that world does not exist");
+    mWorlds.at(received.worldId)->addHighlightEntity(received.entityId, received.coordinate); 
+}
+
+void WorldSystem::handleMessage(const HighlightEntityMoveRequestedMessage& received)
+{
+    FEA_ASSERT(mWorlds.count(received.worldId) != 0, "Trying to move a highlight entity in world " + std::to_string(received.worldId) + " but that world does not exist");
+    mWorlds.at(received.worldId)->moveHighlightEntity(received.entityId, received.coordinate); 
+}
+
+void WorldSystem::handleMessage(const HighlightEntityRemoveRequestedMessage& received)
+{
+    FEA_ASSERT(mWorlds.count(received.worldId) != 0, "Trying to remove a highlight entity from world " + std::to_string(received.worldId) + " but that world does not exist");
+    mWorlds.at(received.worldId)->removeHighlightEntity(received.entityId); 
 }
 
 void WorldSystem::addWorld(const WorldParameters& worldParameters)
@@ -76,4 +88,10 @@ void WorldSystem::addWorld(const WorldParameters& worldParameters)
     mWorlds.emplace(mNextId, std::unique_ptr<World>(new World(mBus, mNextId, worldParameters.identifier, worldParameters.title, worldParameters.ranges)));
 
     mNextId++;
+}
+
+const World& WorldSystem::getWorld(WorldId id) const
+{
+    FEA_ASSERT(mWorlds.count(id) != 0, "Trying to get world id " + std::to_string(id) + " but that world does not exist!");
+    return *mWorlds.at(id);
 }

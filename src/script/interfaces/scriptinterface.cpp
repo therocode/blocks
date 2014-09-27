@@ -1,8 +1,8 @@
 #include "scriptinterface.hpp"
 
-ScriptInterface::ScriptInterface(fea::MessageBus& bus, WorldInterface& worldInterface) : 
+ScriptInterface::ScriptInterface(fea::MessageBus& bus, GameInterface& worldInterface) : 
     mBus(bus),
-    mWorldInterface(worldInterface)
+    mGameInterface(worldInterface)
 {
 }
 

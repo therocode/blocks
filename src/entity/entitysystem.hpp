@@ -7,25 +7,18 @@
 #include "utilities/timer.hpp"
 
 class EntityController;
-class asIScriptObject;
 
 class EntitySystem : 
-    public fea::MessageReceiver<EntityRequestedMessage, RemoveEntityMessage>
+    public fea::MessageReceiver<EntityRequestedMessage, RemoveEntityRequestedMessage>
 {
     public:
         EntitySystem(fea::MessageBus& bus);
         ~EntitySystem();
         void addController(std::unique_ptr<EntityController> controller);
-        void setup();
         void update(int32_t deltaTime);
         void handleMessage(const EntityRequestedMessage& received);
-        void handleMessage(const RemoveEntityMessage& received);
-
-        template<class Type>
-        Type getEntityAttribute(fea::EntityId id, const std::string& name)
-        {
-            return mManager.findEntity(id).lock()->getAttribute<Type>(name);
-        }
+        void handleMessage(const RemoveEntityRequestedMessage& received);
+        const fea::EntityManager& getEntityManager() const;
     private:
         fea::WeakEntityPtr createEntity(const std::string& scriptType, std::function<void(fea::EntityPtr)> initializer);
         void attachEntity(fea::WeakEntityPtr entity);
@@ -33,5 +26,5 @@ class EntitySystem :
         fea::MessageBus& mBus;
         fea::EntityManager mManager;
         EntityFactory mFactory;
-        std::vector<std::unique_ptr<EntityController> > mControllers;
+        std::vector<std::unique_ptr<EntityController>> mControllers;
 };

@@ -5,6 +5,9 @@
 class Region;
 class Chunk;
 class RegionDataFragment;
+
+using WorldId = uint32_t;
+using VoxelType = uint16_t;
 using VoxelCoord       = glm::i64vec3;
 using ChunkCoord       = glm::i64vec3; 
 using RegionCoord      = glm::i64vec2;
@@ -55,4 +58,24 @@ struct ChunkLoadedMessage
 struct ChunkModdedMessage
 {
     const Chunk& chunk; uint64_t timestamp;
+};
+
+struct HighlightEntityAddRequestedMessage
+{
+    WorldId worldId;
+    fea::EntityId entityId;
+    const ChunkCoord& coordinate;
+};
+
+struct HighlightEntityMoveRequestedMessage
+{
+    WorldId worldId;
+    fea::EntityId entityId;
+    const ChunkCoord& coordinate;
+};
+
+struct HighlightEntityRemoveRequestedMessage
+{
+    WorldId worldId;
+    fea::EntityId entityId;
 };

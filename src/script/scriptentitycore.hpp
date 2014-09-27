@@ -4,7 +4,7 @@
 #include <fea/util.hpp>
 #include "../blockstd.hpp"
 
-class WorldInterface;
+class GameInterface;
 
 class ScriptEntityCore
 {
@@ -17,7 +17,7 @@ class ScriptEntityCore
         glm::vec3 getPosition();
         bool isOnGround();
         void setId(size_t id);
-        static WorldInterface* sWorldInterface;
+        static GameInterface* sGameInterface;
         static fea::MessageBus* sBus;
     private:
         int32_t mRefCount;

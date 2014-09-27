@@ -8,7 +8,7 @@
 
 class ScriptInterface;
 class ScriptCaller;
-class WorldInterface;
+class GameInterface;
 
 class ScriptSystem :
     public fea::MessageReceiver<RebuildScriptsRequestedMessage,
@@ -16,7 +16,7 @@ class ScriptSystem :
                                 EntityRemovedMessage>
 {
     public:
-        ScriptSystem(fea::MessageBus& bus, WorldInterface& worldInterface);
+        ScriptSystem(fea::MessageBus& bus, GameInterface& worldInterface);
         ~ScriptSystem();
         void setup();
         void handleMessage(const RebuildScriptsRequestedMessage& message);
@@ -28,7 +28,7 @@ class ScriptSystem :
         fea::MessageBus& mBus;
         ScriptEngine mEngine;
         ScriptModule mScripts;
-        WorldInterface& mWorldInterface;
+        GameInterface& mGameInterface;
         std::vector<std::string> sourceFiles;
         ScriptEntityMap scriptEntities;
         std::string logName;

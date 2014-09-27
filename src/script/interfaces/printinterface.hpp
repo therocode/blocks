@@ -5,7 +5,7 @@
 class PrintInterface : public ScriptInterface
 {
     public:
-        PrintInterface(fea::MessageBus& bus, WorldInterface& worldInterface);
+        PrintInterface(fea::MessageBus& bus, GameInterface& worldInterface);
         void registerInterface(asIScriptEngine* engine) override;
     private:
         void scriptPrint(const std::string& text);

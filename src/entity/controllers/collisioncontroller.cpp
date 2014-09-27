@@ -1,7 +1,8 @@
 #include "collisioncontroller.hpp"
-#include "../../world/worldinterface.hpp"
+#include "../../gameinterface.hpp"
+#include "../../world/worldsystem.hpp"
 
-CollisionController::CollisionController(fea::MessageBus& bus, WorldInterface& worldInterface) : EntityController(bus, worldInterface), mBus(bus)
+CollisionController::CollisionController(fea::MessageBus& bus, GameInterface& worldInterface) : EntityController(bus, worldInterface), mBus(bus)
 {
     subscribe(mBus, *this);
 }
@@ -12,7 +13,9 @@ void CollisionController::inspectEntity(fea::WeakEntityPtr entity)
 
     if(locked->hasAttribute("position") &&
             locked->hasAttribute("velocity") &&
+            locked->hasAttribute("acceleration") &&
             locked->hasAttribute("on_ground") &&
+            locked->hasAttribute("current_world") &&
             locked->hasAttribute("hitbox"))
     {
         mEntities.emplace(locked->getId(), entity);
@@ -103,7 +106,7 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& receiv
 
         if(n < 1.f )
         {
-            int32_t blockType = mWorldInterface.getVoxelType(worldId, currentHitBlock);
+            int32_t blockType = mGameInterface.getWorldSystem().getWorld(worldId).getVoxelType(currentHitBlock);
             float moveLen = glm::length(approvedPosition - oldPosition);
 
             b.x = currentHitBlock.x;
@@ -240,7 +243,7 @@ bool CollisionController::testAABBWorld(WorldId worldId, const AABB& a) const{
 
                 VoxelCoord coord(b.x, b.y, b.z);
 
-                int blockType = mWorldInterface.getVoxelType(worldId, coord);
+                int blockType = mGameInterface.getWorldSystem().getWorld(worldId).getVoxelType(coord);
 
                 if(blockType != 0)
                 {
@@ -288,7 +291,7 @@ glm::vec3 CollisionController::pushOutFromBlocks(WorldId worldId, const AABB& _a
                 b.y -= _a.y;
                 b.z -= _a.z;
 
-                int blockType = mWorldInterface.getVoxelType(worldId, coord);
+                int blockType = mGameInterface.getWorldSystem().getWorld(worldId).getVoxelType(coord);
 
                 if(blockType != 0)
                 {
@@ -343,7 +346,7 @@ float CollisionController::sweepAroundAABB(WorldId worldId, const AABB _a, glm::
                 b.y -= _a.y;
                 b.z -= _a.z;
 
-                int blockType = mWorldInterface.getVoxelType(worldId, coord);
+                int blockType = mGameInterface.getWorldSystem().getWorld(worldId).getVoxelType(coord);
 
                 if(blockType != 0)
                 {
@@ -375,7 +378,7 @@ float CollisionController::sweepAroundAABB(WorldId worldId, const AABB _a, glm::
                             nc[axis] += 1;
                         else
                             nc[axis] -= 1;
-                        if(mWorldInterface.getVoxelType(worldId, nc) != 0){
+                        if(mGameInterface.getWorldSystem().getWorld(worldId).getVoxelType(nc) != 0){
                         }
                         hitBlock = coord;
                         n = nn;
@@ -414,7 +417,7 @@ bool CollisionController::AABBOnGround(WorldId worldId, AABB a)
         {
             pos.x = x + a.x;
             pos.z = z + a.z;
-            int32_t voxelType = mWorldInterface.getVoxelType(worldId, pos);
+            int32_t voxelType = mGameInterface.getWorldSystem().getWorld(worldId).getVoxelType(worldToVoxel(pos));
             if(voxelType != 0){
                 b.x = glm::floor(pos.x);
                 b.y = glm::floor(pos.y);

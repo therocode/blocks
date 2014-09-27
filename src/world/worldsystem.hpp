@@ -1,7 +1,6 @@
 #pragma once
 #include <unordered_map>
 #include "../blockstd.hpp"
-#include "worldinterface.hpp"
 #include <fea/util.hpp>
 #include "../rendering/renderingmessages.hpp"
 #include "worldmessages.hpp"
@@ -13,21 +12,26 @@
 class WorldSystem : 
         public fea::MessageReceiver<SetVoxelMessage,
                                     RegionDeliverMessage,
-                                    ChunkDeliverMessage>
+                                    ChunkDeliverMessage,
+                                    HighlightEntityAddRequestedMessage,
+                                    HighlightEntityMoveRequestedMessage,
+                                    HighlightEntityRemoveRequestedMessage>
 {
     public:
-        WorldSystem(fea::MessageBus& messageBus, EntitySystem& entitySystem);
+        WorldSystem(fea::MessageBus& messageBus);
         ~WorldSystem();
-        virtual void handleMessage(const SetVoxelMessage& received);
-        virtual void handleMessage(const RegionDeliverMessage& received);
-        virtual void handleMessage(const ChunkDeliverMessage& received);
-        WorldInterface& getWorldInterface();
+        void handleMessage(const SetVoxelMessage& received) override;
+        void handleMessage(const RegionDeliverMessage& received) override;
+        void handleMessage(const ChunkDeliverMessage& received) override;
+        void handleMessage(const HighlightEntityAddRequestedMessage& received) override;
+        void handleMessage(const HighlightEntityMoveRequestedMessage& received) override;
+        void handleMessage(const HighlightEntityRemoveRequestedMessage& received) override;
         void addWorld(const WorldParameters& worldParameters);
+        const World& getWorld(WorldId id) const;
     private:
         fea::MessageBus& mBus;
         std::unordered_map<WorldId, std::unique_ptr<World>> mWorlds;
         std::unordered_map<std::string, WorldId> mWorldIds;
         WorldId mNextId;
-        WorldInterface mWorldInterface;
         WorldProvider mWorldProvider;
 };

@@ -19,6 +19,7 @@ endif()
 
 #Set source files.
 set(source_files
+    src/gameinterface.cpp
 	src/application/blocksapp.cpp
     src/application/client.cpp
 	src/application/main.cpp
@@ -38,6 +39,8 @@ set(source_files
     src/entity/controllers/playercontroller.cpp
 
     src/input/inputadaptor.cpp
+
+    src/math/mathutils.cpp
 
     src/networking/serverclientbridge.cpp
     
@@ -82,6 +85,7 @@ set(source_files
     src/script/interfaces/scriptinterface.cpp
     src/script/interfaces/stringinterface.cpp
 
+    src/utilities/directorycreator.cpp
     src/utilities/folderexploder.cpp
     src/utilities/fpscontroller.cpp
     src/utilities/lodepng.cpp
@@ -94,12 +98,12 @@ set(source_files
     src/world/highlightmanager.cpp
     src/world/modmanager.cpp
     src/world/ranges.cpp
+    src/world/raycaster.cpp
     src/world/region.cpp
     src/world/regiondatafragment.cpp
     src/world/world.cpp
     src/world/worldstd.cpp
     src/world/worldsystem.cpp
-    src/world/worldinterface.cpp
     src/world/worldloader.cpp
     src/world/generation/biome.cpp
     src/world/generation/biomestorage.cpp
@@ -110,6 +114,7 @@ set(source_files
 
 set(header_files
     src/blockstd.hpp
+    src/gameinterface.hpp
     src/lognames.hpp
     src/application/applicationmessages.hpp
     src/application/blocksapp.hpp
@@ -139,7 +144,7 @@ set(header_files
     src/input/inputactions.hpp
     src/input/inputadaptor.hpp
 
-    src/math/mathutils.cpp
+    src/math/mathutils.hpp
 
     src/networking/clientconnection.hpp
     src/networking/clientconnectionlistener.hpp
@@ -147,8 +152,6 @@ set(header_files
     src/networking/localserverclientbridge.hpp
     src/networking/package.hpp
     src/networking/packagetype.hpp
-
-    src/math/mathutils.hpp
 
     src/networking/clientconnection.cpp
     src/networking/clientconnectionlistener.cpp
@@ -202,6 +205,7 @@ set(header_files
     src/script/interfaces/scriptinterface.hpp
     src/script/interfaces/stringinterface.hpp
 
+    src/utilities/directorycreator.hpp
     src/utilities/folderexploder.hpp
     src/utilities/fpscontroller.hpp
     src/utilities/lodepng.hpp
@@ -214,12 +218,12 @@ set(header_files
     src/world/valuemap.hpp
     src/world/highlightmanager.hpp
     src/world/modmanager.hpp
+    src/world/raycaster.hpp
     src/world/region.hpp
     src/world/regiondatafragment.hpp
     src/world/world.hpp
     src/world/worldstd.hpp
 	src/world/worldsystem.hpp
-    src/world/worldinterface.hpp
     src/world/worldloader.hpp
 	src/world/worldmessages.hpp
     src/world/worldprovider.hpp
@@ -355,22 +359,20 @@ endif(BUILD_GAME)
 if(BUILD_TESTS)
     add_executable(test_modmanager "test/world/modmanagertest.cpp" "src/world/modmanager.cpp" "src/world/chunk.cpp" "src/world/worldstd.cpp")
     target_link_libraries(test_modmanager ${FEATHERKIT_LIBRARIES})
-    #set_target_properties(test_modmanager PROPERTIES COMPILE_FLAGS "-std=c++11")
     
     add_executable(test_highlightmanager "test/world/highlightmanagertest.cpp" "src/world/highlightmanager.cpp" "src/world/worldstd.cpp")
     target_link_libraries(test_highlightmanager ${FEATHERKIT_LIBRARIES})
-    #set_target_properties(test_highlightmanager PROPERTIES COMPILE_FLAGS "-std=c++11")
     
     add_executable(test_coordinate "test/world/coordinatetest.cpp" "src/world/worldstd.cpp")
     target_link_libraries(test_coordinate ${FEATHERKIT_LIBRARIES})
-    #set_target_properties(test_coordinate PROPERTIES COMPILE_FLAGS "-std=c++11")
     
     add_executable(test_world_misc "test/world/misctest.cpp" "src/world/worldstd.cpp" "src/world/region.cpp" "src/world/regiondatafragment.cpp")
-    target_link_libraries(test_coordinate ${FEATHERKIT_LIBRARIES})
-    #set_target_properties(test_coordinate PROPERTIES COMPILE_FLAGS "-std=c++11")
+    target_link_libraries(test_world_misc ${FEATHERKIT_LIBRARIES})
+    
+    add_executable(test_utilities "test/utilities/utilitiestest.cpp" "src/utilities/directorycreator.cpp")
+    target_link_libraries(test_utilities ${FEATHERKIT_LIBRARIES})
     
     #profiling
     add_executable(profile_modmanager "profile/world/modmanagerprofile.cpp" "src/world/modmanager.cpp" "src/world/chunk.cpp" "src/world/worldstd.cpp")
     target_link_libraries(profile_modmanager ${FEATHERKIT_LIBRARIES})
-    #set_target_properties(profile_modmanager PROPERTIES COMPILE_FLAGS "-std=c++11")
 endif(BUILD_TESTS)

@@ -4,7 +4,7 @@
 #include "../asaddons/scriptmath.hpp"
 #include "../asaddons/scriptvectors.hpp"
 
-MathsInterface::MathsInterface(fea::MessageBus& bus, WorldInterface& worldInterface) : ScriptInterface(bus, worldInterface)
+MathsInterface::MathsInterface(fea::MessageBus& bus, GameInterface& worldInterface) : ScriptInterface(bus, worldInterface)
 {
 }
 

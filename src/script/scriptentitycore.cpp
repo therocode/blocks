@@ -1,8 +1,9 @@
 #include "scriptentitycore.hpp"
 #include "../entity/entitymessages.hpp"
-#include "../world/worldinterface.hpp"
+#include "../gameinterface.hpp"
+#include "../entity/entitysystem.hpp"
 
-WorldInterface* ScriptEntityCore::sWorldInterface = nullptr;
+GameInterface* ScriptEntityCore::sGameInterface = nullptr;
 fea::MessageBus* ScriptEntityCore::sBus = nullptr;
 
 ScriptEntityCore::ScriptEntityCore(size_t id)
@@ -37,12 +38,12 @@ void ScriptEntityCore::setPosition(const glm::vec3& vec)
 
 glm::vec3 ScriptEntityCore::getPosition()
 {
-    return sWorldInterface->getEntityAttribute<glm::vec3>(mId, "position");
+    return sGameInterface->getEntitySystem().getEntityManager().findEntity(mId).lock()->getAttribute<glm::vec3>("position");
 }
 
 bool ScriptEntityCore::isOnGround()
 {
-    return sWorldInterface->getEntityAttribute<bool>(mId, "on_ground");
+    return sGameInterface->getEntitySystem().getEntityManager().findEntity(mId).lock()->getAttribute<bool>("on_ground");
 }
 
 void ScriptEntityCore::setId(size_t id)
