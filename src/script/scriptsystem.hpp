@@ -22,7 +22,6 @@ class ScriptSystem :
         void handleMessage(const EntityRemovedMessage& message);
     private:
         void registerInterface();
-        void registerCallbacks(ScriptEntityMap& scriptEntities);
         fea::MessageBus& mBus;
         GameInterface& mGameInterface;
         ScriptEngine mEngine;

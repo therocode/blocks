@@ -8,19 +8,6 @@ ScriptEngine::ScriptEngine(fea::MessageBus& bus) :
     mBus(bus),
     mContextsInUse(0)
 {
-};
-
-ScriptEngine::~ScriptEngine()
-{
-    for(auto context : mContexts)
-    {
-        context->Release();
-    }
-    mEngine->Release();
-}
-
-void ScriptEngine::setup()
-{
     mContextsInUse = 0;
 
     mEngine = asCreateScriptEngine(ANGELSCRIPT_VERSION);
@@ -30,6 +17,15 @@ void ScriptEngine::setup()
     RegisterStdStringUtils(mEngine);
 
     int32_t r = mEngine->SetMessageCallback(asMETHOD(ScriptEngine, messageCallback), this, asCALL_THISCALL); assert( r >= 0 );
+};
+
+ScriptEngine::~ScriptEngine()
+{
+    for(auto context : mContexts)
+    {
+        context->Release();
+    }
+    mEngine->Release();
 }
 
 ScriptModule ScriptEngine::createModule(const std::string& name)

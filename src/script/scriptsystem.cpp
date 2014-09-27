@@ -36,8 +36,6 @@ ScriptSystem::~ScriptSystem()
 
 void ScriptSystem::setup()
 {
-    mEngine.setup();
-
     mInterfaces.push_back(std::unique_ptr<ScriptInterface>(new MathsInterface(mBus, mGameInterface)));
     mInterfaces.push_back(std::unique_ptr<ScriptInterface>(new StringInterface(mBus, mGameInterface)));
     mInterfaces.push_back(std::unique_ptr<ScriptInterface>(new EntityInterface(mBus, mGameInterface, mScriptEntities)));
@@ -68,8 +66,6 @@ void ScriptSystem::setup()
 
     if(succeeded)
     {
-        mBus.send(LogMessage{"Setting up script callbacks...", scriptName, LogLevel::VERB});
-        registerCallbacks(mScriptEntities);
         mBus.send(LogMessage{"Compilation process over.", scriptName, LogLevel::VERB});
         mBus.send(LogMessage{"Done setting up callbacks.", scriptName, LogLevel::VERB});
 
@@ -88,8 +84,6 @@ void ScriptSystem::handleMessage(const RebuildScriptsRequestedMessage& received)
 
     if(succeeded)
     {
-        mBus.send(LogMessage{"Setting up script callbacks...", scriptName, LogLevel::VERB});
-        registerCallbacks(mScriptEntities);
         mBus.send(LogMessage{"Compilation process over.", scriptName, LogLevel::VERB});
         mBus.send(LogMessage{"Done setting up callbacks.", scriptName, LogLevel::VERB});
         for(auto& caller : mCallers)
@@ -170,12 +164,5 @@ void ScriptSystem::registerInterface()
     for(auto& interface : mInterfaces)
     {
         interface->registerInterface(mEngine.getEngine());
-    }
-}
-
-void ScriptSystem::registerCallbacks(ScriptEntityMap& scriptEntities)
-{
-    if(!mScripts.hasErrors())
-    {
     }
 }
