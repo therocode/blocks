@@ -1,7 +1,6 @@
 #pragma once
 #include <unordered_map>
 #include "../blockstd.hpp"
-#include "../gameinterface.hpp"
 #include <fea/util.hpp>
 #include "../rendering/renderingmessages.hpp"
 #include "worldmessages.hpp"
@@ -19,7 +18,7 @@ class WorldSystem :
                                     HighlightEntityRemoveRequestedMessage>
 {
     public:
-        WorldSystem(fea::MessageBus& messageBus, EntitySystem& entitySystem);
+        WorldSystem(fea::MessageBus& messageBus);
         ~WorldSystem();
         void handleMessage(const SetVoxelMessage& received) override;
         void handleMessage(const RegionDeliverMessage& received) override;
@@ -27,13 +26,12 @@ class WorldSystem :
         void handleMessage(const HighlightEntityAddRequestedMessage& received) override;
         void handleMessage(const HighlightEntityMoveRequestedMessage& received) override;
         void handleMessage(const HighlightEntityRemoveRequestedMessage& received) override;
-        GameInterface& getGameInterface();
         void addWorld(const WorldParameters& worldParameters);
+        const World& getWorld(WorldId id) const;
     private:
         fea::MessageBus& mBus;
         std::unordered_map<WorldId, std::unique_ptr<World>> mWorlds;
         std::unordered_map<std::string, WorldId> mWorldIds;
         WorldId mNextId;
-        GameInterface mGameInterface;
         WorldProvider mWorldProvider;
 };

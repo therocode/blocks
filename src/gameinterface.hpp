@@ -4,24 +4,20 @@
 #include <memory>
 #include <unordered_map>
 
-class World;
+class WorldSystem;
 class EntitySystem;
 
 class GameInterface
 {
     public:
-        GameInterface(std::unordered_map<WorldId, std::unique_ptr<World>>& worlds, EntitySystem& entitySystem);
-		VoxelType getVoxelTypeInt(WorldId worldId, int x, int y, int z) const;
-        VoxelType getVoxelType(WorldId worldId, float x, float y, float z) const; 
-        VoxelType getVoxelType(WorldId worldId, const glm::vec3& position) const; 
-        VoxelType getVoxelType(WorldId worldId, const VoxelCoord coord) const;
+        GameInterface(const WorldSystem& worldSystem, const EntitySystem& entitySystem);
 		bool getVoxelAtRay(WorldId worldId, const glm::vec3& position, const glm::vec3& direction, const float maxDistance, uint32_t& hitFace, VoxelCoord& hitBlock ) const;
 		bool getVoxelAtRay(WorldId worldId, float ox, float oy, float oz, float dx, float dy, float dz, const float maxDistance, uint32_t& hitFace, VoxelCoord& hitBlock) const;
 		
         ChunkReferenceMap getChunkMap(WorldId worldId) const;
-
-        const fea::WeakEntityPtr findEntity(fea::EntityId id) const;
+        const WorldSystem& getWorldSystem() const;
+        const EntitySystem& getEntitySystem() const;
     private:
-        std::unordered_map<WorldId, std::unique_ptr<World>>& mWorlds;
-        EntitySystem& mEntitySystem;
+        const WorldSystem&  mWorldSystem;
+        const EntitySystem& mEntitySystem;
 };

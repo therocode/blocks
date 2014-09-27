@@ -5,6 +5,9 @@
 class Region;
 class Chunk;
 class RegionDataFragment;
+
+using WorldId = uint32_t;
+using VoxelType = uint16_t;
 using VoxelCoord       = glm::i64vec3;
 using ChunkCoord       = glm::i64vec3; 
 using RegionCoord      = glm::i64vec2;

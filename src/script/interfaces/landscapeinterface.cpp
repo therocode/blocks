@@ -1,6 +1,7 @@
 #include "landscapeinterface.hpp"
 #include "../../gameinterface.hpp"
 #include "world/worldmessages.hpp"
+#include "world/worldsystem.hpp"
 #include <angelscript.h>
 #include <assert.h>
 
@@ -29,10 +30,10 @@ void LandscapeInterface::setVoxelType(WorldId worldId, const glm::vec3& coordina
 
 VoxelType LandscapeInterface::getVoxelType(WorldId id, float x, float y, float z)
 {
-    return mGameInterface.getVoxelType(id, x, y, z);
+    return mGameInterface.getWorldSystem().getWorld(id).getVoxelType(worldToVoxel(glm::vec3(x, y, z)));
 }
 
 VoxelType LandscapeInterface::getVoxelType(WorldId id, const glm::vec3& coordinate)
 {
-    return mGameInterface.getVoxelType(id, coordinate);
+    return mGameInterface.getWorldSystem().getWorld(id).getVoxelType(worldToVoxel(coordinate));
 }

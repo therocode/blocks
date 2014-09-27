@@ -5,9 +5,8 @@
 #include "../lognames.hpp"
 #include "../world/worldloader.hpp"
 
-WorldSystem::WorldSystem(fea::MessageBus& messageBus, EntitySystem& entitySystem) 
+WorldSystem::WorldSystem(fea::MessageBus& messageBus) 
 :   mBus(messageBus),
-	mGameInterface(mWorlds, entitySystem),
     mNextId(0),
     mWorldProvider(mBus)
 {
@@ -81,11 +80,6 @@ void WorldSystem::handleMessage(const HighlightEntityRemoveRequestedMessage& rec
     mWorlds.at(received.worldId)->removeHighlightEntity(received.entityId); 
 }
 
-GameInterface& WorldSystem::getGameInterface()
-{
-    return mGameInterface;
-}
-
 void WorldSystem::addWorld(const WorldParameters& worldParameters)
 {
     mBus.send(LogMessage{"Loading world " + worldParameters.identifier, worldName, LogLevel::INFO});
@@ -94,4 +88,10 @@ void WorldSystem::addWorld(const WorldParameters& worldParameters)
     mWorlds.emplace(mNextId, std::unique_ptr<World>(new World(mBus, mNextId, worldParameters.identifier, worldParameters.title, worldParameters.ranges)));
 
     mNextId++;
+}
+
+const World& WorldSystem::getWorld(WorldId id) const
+{
+    FEA_ASSERT(mWorlds.count(id) != 0, "Trying to get world id " + std::to_string(id) + " but that world does not exist!");
+    return *mWorlds.at(id);
 }

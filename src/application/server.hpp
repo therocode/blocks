@@ -7,6 +7,7 @@
 #include "../utilities/fpscontroller.hpp"
 #include "../utilities/logger.hpp"
 #include "../entity/entitysystem.hpp"
+#include "../gameinterface.hpp"
 
 class ClientConnection;
 class ClientConnectionListener;
@@ -48,8 +49,9 @@ class Server : public fea::MessageReceiver<AddGfxEntityMessage,
         std::unordered_map<ClientId, std::shared_ptr<ClientConnection> > mClients;
         std::unique_ptr<ClientConnectionListener> mListener;
         std::unordered_set<size_t> graphicsEntities; //temporary solution on how to resend things
-        WorldSystem mWorlds;
+        WorldSystem mWorldSystem;
         ScriptSystem mScriptSystem;
         EntitySystem mEntitySystem;
+        GameInterface mGameInterface;
         FPSController mFPSController;
 };

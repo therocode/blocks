@@ -1,34 +1,13 @@
 #include "gameinterface.hpp"
 #include "rendering/renderer.hpp"
 #include "entity/entitysystem.hpp"
-#include "world/world.hpp"
+#include "world/worldsystem.hpp"
 
-GameInterface::GameInterface(std::unordered_map<WorldId, std::unique_ptr<World>>& worlds, EntitySystem& entitySystem) :
-    mWorlds(worlds),
+GameInterface::GameInterface(const WorldSystem& worldSystem, const EntitySystem& entitySystem) :
+    mWorldSystem(worldSystem),
     mEntitySystem(entitySystem)
 {
 
-}
-
-VoxelType GameInterface::getVoxelTypeInt(WorldId worldId, int x, int y, int z) const
-{
-    return mWorlds.at(worldId)->getVoxelType(VoxelCoord(x, y, z));
-}
-
-VoxelType GameInterface::getVoxelType(WorldId worldId, const VoxelCoord coord) const
-{
-    return getVoxelTypeInt(worldId, coord.x, coord.y, coord.z);
-}
-
-
-VoxelType GameInterface::getVoxelType(WorldId worldId, float x, float y, float z) const
-{
-    return getVoxelType(worldId, worldToVoxel(glm::vec3(x, y, z)));
-}
-
-VoxelType GameInterface::getVoxelType(WorldId worldId, const glm::vec3& position) const
-{
-    return getVoxelType(worldId, worldToVoxel(position));
 }
 
 bool GameInterface::getVoxelAtRay(WorldId worldId, const glm::vec3& position, const glm::vec3& direction, const float maxDistance, uint32_t& hitFace, VoxelCoord& hitBlock) const
@@ -114,10 +93,10 @@ bool GameInterface::getVoxelAtRay(WorldId worldId, float ox, float oy, float oz,
         float lengthToNextBlock = 0.1f;
         lengthToNextBlock = mind + 0.01f;
 
-        vtype = getVoxelTypeInt(worldId,
+        vtype = mWorldSystem.getWorld(worldId).getVoxelType(glm::i64vec3(
                 ip[0], 
                 ip[1], 
-                ip[2]);
+                ip[2]));
 
         if(vtype != (uint16_t)0) 
             break;
@@ -155,10 +134,15 @@ bool GameInterface::getVoxelAtRay(WorldId worldId, float ox, float oy, float oz,
 
 ChunkReferenceMap GameInterface::getChunkMap(WorldId worldId) const
 {
-    return mWorlds.at(worldId)->getChunkMap();
+    return mWorldSystem.getWorld(worldId).getChunkMap();
 }
 
-const fea::WeakEntityPtr GameInterface::findEntity(fea::EntityId id) const
+const WorldSystem& GameInterface::getWorldSystem() const
 {
-    return mEntitySystem.getEntityManager().findEntity(id);
+    return mWorldSystem;
+}
+
+const EntitySystem& GameInterface::getEntitySystem() const
+{
+    return mEntitySystem;
 }
