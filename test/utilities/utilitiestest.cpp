@@ -55,4 +55,14 @@ SCENARIO("Directories can be created, checked for existence and removed","[utili
             CHECK(removedDirectoryDidNotExist);
         }
     }
+
+    WHEN("A non-existing directory is removed")
+    {
+        bool directoryRemoved = DirectoryCreator::removeDirectory("fantasy_directory_1");
+
+        THEN("The removal fails")
+        {
+            CHECK_FALSE(directoryRemoved);
+        }
+    }
 }
