@@ -3,9 +3,9 @@
 #include "remoteclientbridge.hpp"
 #include <thread>
 #include <atomic>
-#include <fea/messaging.hpp>
+#include <fea/util.hpp>
 #include "packages.hpp"
-#include "enet/enet.hpp"
+#include <enet/enet.h>
 
 class RemoteClientConnectionListener : public ClientConnectionListener
 {

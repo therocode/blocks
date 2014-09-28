@@ -4,7 +4,7 @@
 //#include "enet/enet.hpp"
 #include <thread>
 #include <atomic>
-#include <fea/messaging.hpp>
+#include <fea/util.hpp>
 
 class RemoteServerBridge : public ServerClientBridge
 {

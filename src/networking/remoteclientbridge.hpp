@@ -2,8 +2,7 @@
 #include "../blockstd.hpp"
 #include "serverclientbridge.hpp"
 #include <atomic>
-
-class ENetPeer;
+#include <enet/enet.h>
 
 class RemoteClientBridge : public ServerClientBridge
 {
