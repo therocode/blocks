@@ -118,7 +118,8 @@ class Player : Entity
             }
 
             if(bounce){
-                applyImpulse(0.0f, 3.0f, 0.0f);
+                applyImpulse(Vec3(0.0f, 3.0f, 0.0f));
+                setPosition(Vec3(10000.0f, 1000.0f, 20000.0f));
             }
 
         }

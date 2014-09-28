@@ -10,7 +10,7 @@ void gameStarted()
     //consolePrint("Error message from the script", ERROR);
     consolePrint("----------------Game started!---------------------");
     consolePrint("<- tag test", "Giraffe");
-    consolePrint("<- tag+level test " + toString(Vec3(0.0f, 1.0f, -1.0f)), " Giraffe", VERBOSE);
+    consolePrint("<- tag+level test " + toString(Vec3(0.0f, 1.0f, -1.0f)), "Giraffe", VERBOSE);
 
 	for(int x = 0; x < 4; x++)
 	{
