@@ -45,7 +45,7 @@ void onFrame(int frameNumber)
     if(frameNumber % 1 == 0)
     {
        //@created = createEntity("Elephant", randomFloatRange(-30.0f, 30.0f), 70.0f, randomFloatRange(-30.0f, 30.0f));
-       setVoxelType(0, randomFloatRange(-30.0f, 30.0f), 40.0f, randomFloatRange(-30.0f, 30.0f), 12);
+       setVoxelType(0, Vec3(randomFloatRange(-30.0f, 30.0f), 40.0f, randomFloatRange(-30.0f, 30.0f)), 12);
     }
     else if(frameNumber % 10 == 1)
     {

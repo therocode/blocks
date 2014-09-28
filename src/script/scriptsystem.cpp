@@ -44,12 +44,10 @@ void ScriptSystem::handleMessage(const RebuildScriptsRequestedMessage& received)
 {
     mBus.send(LogMessage{"Compiling scripts...", scriptName, LogLevel::INFO});
     bool succeeded = mScripts.compileFromSourceList(mSourceFiles);
-    mBus.send(LogMessage{"Compilation process over.", scriptName, LogLevel::INFO});
 
     if(succeeded)
     {
-        mBus.send(LogMessage{"Compilation process over.", scriptName, LogLevel::VERB});
-        mBus.send(LogMessage{"Done setting up callbacks.", scriptName, LogLevel::VERB});
+        mBus.send(LogMessage{"Compilation process over.", scriptName, LogLevel::INFO});
         for(auto& caller : mCallers)
         {
             caller->setActive(true);
@@ -67,7 +65,7 @@ void ScriptSystem::handleMessage(const RebuildScriptsRequestedMessage& received)
 void ScriptSystem::handleMessage(const EntityCreatedMessage& received)
 {
     fea::WeakEntityPtr wEntity = received.entity;
-    std::string type = received.type;
+    const std::string& type = received.type;
     
     asIObjectType* objectType = mScripts.getObjectTypeByDecl(type);
     if(!objectType)

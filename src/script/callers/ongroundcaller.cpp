@@ -1,6 +1,8 @@
 #include "ongroundcaller.hpp"
 
-OnGroundCaller::OnGroundCaller(fea::MessageBus& bus, ScriptEngine& engine, ScriptEntityMap& scriptEntities) : ScriptCaller(bus, engine, scriptEntities)
+OnGroundCaller::OnGroundCaller(fea::MessageBus& bus, ScriptEngine& engine, ScriptEntityMap& scriptEntities) :
+    ScriptCaller(bus, engine, scriptEntities),
+    mCallback(mEngine)
 {
     subscribe(mBus, *this);
 }
@@ -16,13 +18,13 @@ void OnGroundCaller::handleMessage(const EntityOnGroundMessage& received)
 
         if(entity != mScriptEntities.end())
         {
-            ScriptMemberCallback<bool> callback(mEngine);
             asIScriptObject* object = entity->second.getScriptObject();
+
             asIScriptFunction* function = object->GetObjectType()->GetMethodByDecl("void onGround(bool landed)");
             if(function)
             {
-                callback.setFunction(function);
-                callback.execute(object, landed);
+                mCallback.setFunction(function);
+                mCallback.execute(object, landed);
             }
         }
     }
