@@ -102,16 +102,16 @@ void BlocksApplication::setupSinglePlayer()
 
 void BlocksApplication::setupMultiPlayer()
 {
-    //server = std::unique_ptr<Server>(new Server(mServerBus));
-	//client = std::unique_ptr<Client>(new Client(mClientBus));
+    server = std::unique_ptr<Server>(new Server(mServerBus));
+	client = std::unique_ptr<Client>(new Client(mClientBus));
 
-    //RemoteServerBridge* serverToClient = new RemoteServerBridge();
-  	//RemoteServerBridge* clientToServer = new RemoteServerBridge(false);
+    RemoteServerBridge* serverToClient = new RemoteServerBridge(mServerBus);
+  	RemoteServerBridge* clientToServer = new RemoteServerBridge(mClientBus);
 
-	//serverToClient->startListening();
+	serverToClient->startListening();
 
-    //client->setServerBridge(std::unique_ptr<RemoteServerBridge>(clientToServer));
-	//clientToServer->connectToAddress("localhost");
+    client->setServerBridge(std::unique_ptr<RemoteServerBridge>(clientToServer));
+	clientToServer->connectToAddress("localhost");
 }
 
 void BlocksApplication::setupDedicatedServer(int32_t port)
@@ -134,15 +134,15 @@ void BlocksApplication::setupDedicatedServer(int32_t port)
 void BlocksApplication::joinServer(const std::string& address, int32_t port)
 {
 	client = std::unique_ptr<Client>(new Client(mClientBus));
-  	RemoteServerBridge* serverBidge = new RemoteServerBridge(client->getBus());
+  	RemoteServerBridge* serverBidge = new RemoteServerBridge(mClientBus);
 
     if(enet_initialize() < 0)
     {
-      client->getBus().send(LogMessage{"Couldn't initialise enet", "network", LogLevel::ERR});
+      mClientBus.send(LogMessage{"Couldn't initialise enet", "network", LogLevel::ERR});
     }
     else
     {
-      //client->setServerBridge(std::unique_ptr<RemoteServerBridge>(serverBidge));
+      client->setServerBridge(std::unique_ptr<RemoteServerBridge>(serverBidge));
       serverBidge->connectToAddress(address, port);
       serverBidge->startListening();
     }

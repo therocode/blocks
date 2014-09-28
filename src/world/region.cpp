@@ -41,7 +41,7 @@ Chunk& Region::getChunk(const RegionChunkCoord& location)
     return mChunks.at(location);
 }
 
-const ChunkRegionMap& Region::getChunkList() const
+const ChunkRegionMap& Region::getChunks() const
 {
     return mChunks;
 }

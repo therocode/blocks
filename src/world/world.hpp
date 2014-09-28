@@ -33,7 +33,6 @@ class World
         WorldId     mId;
         std::string mTextIdentifier;
         std::string mTitle;  //unused right now
-
         Ranges mWorldRange;
 
         std::unordered_map<RegionCoord, Region> mRegions;

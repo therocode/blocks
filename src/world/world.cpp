@@ -47,7 +47,17 @@ World::~World()
 
 ChunkReferenceMap World::getChunkMap() const
 {
-    return ChunkReferenceMap(); //this needs to be fixed for network chunks to be displayed
+    ChunkReferenceMap map;
+
+    for(const auto& region : mRegions)
+    {
+        for(const auto& chunk : region.second.getChunks())
+        {
+            map.emplace(chunk.second.getLocation(), chunk.second);
+        }
+    }
+
+    return map;
 }
 
 void World::deliverRegion(const RegionCoord& coordinate, const Region& region)

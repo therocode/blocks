@@ -40,7 +40,6 @@ class Client :
         virtual void handleMessage(const WindowInputMessage& received);
         bool requestedQuit();
         void setServerBridge(std::unique_ptr<ServerClientBridge> bridge);
-        fea::MessageBus& getBus();
     private:
         long mFrame = 0;
         FPSController mFPSCounter;
