@@ -29,7 +29,6 @@ class Client :
         Client(fea::MessageBus& bus);
         ~Client();
         bool loadTexture(const std::string& path, uint32_t width, uint32_t height, std::vector<unsigned char>& result);
-        void setup();
         void handleInput();
         void render();
         virtual void handleMessage(const PlayerActionMessage& received);

@@ -21,6 +21,23 @@ Client::Client(fea::MessageBus& bus) :
 {
     subscribe(mBus, *this);
 	mBus.send(LogMessage{"Setting up client", clientName, LogLevel::INFO});
+
+	mWindow.create(fea::VideoMode(800, 600, 32), "Blocky", fea::Style::Default, fea::ContextSettings(32));
+    mLockedMouse = true;
+	mWindow.lockCursor(true);
+	mWindow.setVSyncEnabled(false);
+	mRenderer->setup();
+	//mWindow.setFramerateLimit(30);
+
+	mBus.send(WindowResizeMessage{800, 600});
+
+	std::vector<unsigned char> icon;
+	loadTexture("data/textures/icon16x16.png", 16, 16, icon);
+	mWindow.setIcon(16, 16, icon.data());
+    mFPSCounter.setMaxFPS(0);
+    mFPSCounter.setSampleTime(0.5f);
+
+	//if there's an error, display it
 }
 
 Client::~Client()
@@ -40,25 +57,6 @@ bool Client::loadTexture(const std::string& path, uint32_t width, uint32_t heigh
 
 	return true;
 	//the pixels are now in the vector "image", 4 bytes per pixel, ordered RGBARGBA..., use it as texture, draw it, ...
-}
-void Client::setup()
-{
-	mWindow.create(fea::VideoMode(800, 600, 32), "Blocky", fea::Style::Default, fea::ContextSettings(32));
-    mLockedMouse = true;
-	mWindow.lockCursor(true);
-	mWindow.setVSyncEnabled(false);
-	mRenderer->setup();
-	//mWindow.setFramerateLimit(30);
-
-	mBus.send(WindowResizeMessage{800, 600});
-
-	std::vector<unsigned char> icon;
-	loadTexture("data/textures/icon16x16.png", 16, 16, icon);
-	mWindow.setIcon(16, 16, icon.data());
-    mFPSCounter.setMaxFPS(0);
-    mFPSCounter.setSampleTime(0.5f);
-
-	//if there's an error, display it
 }
 
 void Client::handleInput()

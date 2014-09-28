@@ -91,8 +91,6 @@ void BlocksApplication::setupSinglePlayer()
     server = std::unique_ptr<Server>(new Server(mServerBus));
     client = std::unique_ptr<Client>(new Client(mClientBus));
 
-    client->setup();
-
     //setup client and server local connection
     LocalServerClientBridge* clientToServer = new LocalServerClientBridge();
     LocalClientConnectionListener* localListener = new LocalClientConnectionListener();
@@ -151,5 +149,4 @@ void BlocksApplication::joinServer(const std::string& address, int32_t port)
         //serverBidge->connectToAddress(address, port);
         //serverBidge->startListening();
     //}
-	client->setup();
 }
