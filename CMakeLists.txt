@@ -42,6 +42,16 @@ set(source_files
 
     src/math/mathutils.cpp
 
+    src/networking/clientconnection.cpp
+    src/networking/clientconnectionlistener.cpp
+    src/networking/localclientconnectionlistener.cpp
+    src/networking/localserverclientbridge.cpp
+    src/networking/package.cpp
+    src/networking/serverclientbridge.hpp
+    src/networking/remoteclientconnectionlistener.cpp
+    src/networking/remoteclientbridge.cpp
+    src/networking/remoteclientconnectionlistener.cpp
+    src/networking/remoteserverbridge.cpp
     src/networking/serverclientbridge.cpp
     
     src/rendering/chunkgeneratorqueue.cpp
@@ -151,13 +161,12 @@ set(header_files
     src/networking/localclientconnectionlistener.hpp
     src/networking/localserverclientbridge.hpp
     src/networking/package.hpp
+    src/networking/packages.hpp
     src/networking/packagetype.hpp
-
-    src/networking/clientconnection.cpp
-    src/networking/clientconnectionlistener.cpp
-    src/networking/localclientconnectionlistener.cpp
-    src/networking/localserverclientbridge.cpp
-    src/networking/package.cpp
+    src/networking/remoteclientconnectionlistener.hpp
+    src/networking/remoteclientbridge.hpp
+    src/networking/remoteclientconnectionlistener.hpp
+    src/networking/remoteserverbridge.hpp
     src/networking/serverclientbridge.hpp
 
     src/rendering/chunkgeneratorqueue.hpp
@@ -238,7 +247,7 @@ find_package(Featherkit REQUIRED COMPONENTS entity structure ui sdl2 util)
 find_package(GLM)
 find_package(SDL2)
 find_package(OpenGL REQUIRED)
-#find_package(ENet)
+find_package(ENet)
 find_package(angelscript)
 
 find_package(JsonCpp REQUIRED)
@@ -289,22 +298,10 @@ if(BUILD_GAME)
         #	add_definitions(-O4)
         #endif(WIN32)
     
-    #if(ENET_FOUND)
-    #	include_directories(${ENet_INCLUDE_DIRS})
-    #	target_link_libraries(${project_name} ${ENet_LIBRARIES})
-    #else(ENET_FOUND)
-    #	subdirs(extlibs/enet)
-    #	include_directories(${CMAKE_CURRENT_SOURCE_DIR}/extlibs/enet/include)
-    #	link_directories(${CMAKE_CURRENT_SOURCE_DIR}/extlibs/enet)
-    #	SET(ELIBS enet)
-    #	IF(WIN32)
-    #        SET(WINDOWS_ENET_DEPENDENCIES "ws2_32;winmm")
-    #        SET(ELIBS ${ELIBS} ${WINDOWS_ENET_DEPENDENCIES})
-    #    ELSE(WIN32)
-    #        SET(ELIBS ${ELIBS})
-    #    ENDIF(WIN32)
-    #	target_link_libraries(${project_name} ${ELIBS})
-    #endif(ENET_FOUND)
+    if(ENET_FOUND)
+    	include_directories(${ENet_INCLUDE_DIRS})
+    	target_link_libraries(${project_name} ${ENet_LIBRARIES})
+    endif(ENET_FOUND)
     if(ZLIB_FOUND)
         include_directories(${ZLib_INCLUDE_DIRS})
         target_link_libraries(${project_name} ${ZLib_LIBRARIES})

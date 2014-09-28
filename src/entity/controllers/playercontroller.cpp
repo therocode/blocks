@@ -52,8 +52,8 @@ void PlayerController::handleMessage(const PlayerDisconnectedMessage& received)
     size_t playerId = received.playerId;
 
     fea::EntityPtr entity = mPlayerEntities.at(playerId).lock();
-    mBus.send(RemoveEntityRequestedMessage{entity->getId()});
     mBus.send(HighlightEntityRemoveRequestedMessage{entity->getAttribute<WorldId>("current_world"), entity->getId()});
+    mBus.send(RemoveEntityRequestedMessage{entity->getId()});
     mPlayerEntities.erase(playerId);
 }
 

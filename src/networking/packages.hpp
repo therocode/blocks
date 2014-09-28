@@ -4,6 +4,7 @@
 #include "input/inputmessages.hpp"
 #include "entity/entitymessages.hpp"
 #include "world/worldmessages.hpp"
+#include "../world/chunk.hpp"
 #include "rendering/renderingmessages.hpp"
 #include "networkstd.hpp"
 

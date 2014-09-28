@@ -3,6 +3,7 @@
 #include "packages.hpp"
 #include "application/applicationmessages.hpp"
 #include "networkstd.hpp"
+#include "../lognames.hpp"
 
 RemoteServerBridge::RemoteServerBridge(fea::MessageBus& bus) : 
     mBus(bus), 
@@ -20,7 +21,7 @@ RemoteServerBridge::~RemoteServerBridge()
 
 void RemoteServerBridge::connectToAddress(std::string address, int port)
 {
-    mBus.send(LogMessage{"Connecting to " + address, mLogName, LogLevel::INFO});
+    mBus.send(LogMessage{"Connecting to " + address, netName, LogLevel::INFO});
     if(!mConnected)
     {
         createClient();
@@ -35,14 +36,14 @@ void RemoteServerBridge::connectToAddress(std::string address, int port)
 
         if(mHostPeer == NULL)
         {
-            mBus.send(LogMessage{"Couldn't create connection peer", mLogName, LogLevel::ERR});
+            mBus.send(LogMessage{"Couldn't create connection peer", netName, LogLevel::ERR});
         }
 
         ENetEvent event;
         if(enet_host_service(mHost, &event, 5000) > 0 &&
                 event.type == ENET_EVENT_TYPE_CONNECT)
         {
-            mBus.send(LogMessage{"Successfully connected to " + address, mLogName, LogLevel::INFO});
+            mBus.send(LogMessage{"Successfully connected to " + address, netName, LogLevel::INFO});
             //When connected, greet the server!
             int i[4];
             for(int o = 1; o < 4; o++)i[o] = (int)(64 + rand()%26);
@@ -52,7 +53,7 @@ void RemoteServerBridge::connectToAddress(std::string address, int port)
             mConnected = true;
         }else
         {
-            mBus.send(LogMessage{"Couldn't connect to host", mLogName, LogLevel::ERR});
+            mBus.send(LogMessage{"Couldn't connect to host", netName, LogLevel::ERR});
             enet_peer_reset(mHostPeer);
         }
     }
