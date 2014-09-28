@@ -357,7 +357,7 @@ endif(BUILD_GAME)
 
 #tests
 if(BUILD_TESTS)
-    add_executable(test_modmanager "test/world/modmanagertest.cpp" "src/world/modmanager.cpp" "src/world/chunk.cpp" "src/world/worldstd.cpp")
+    add_executable(test_modmanager "test/world/modmanagertest.cpp" "src/world/modmanager.cpp" "src/world/chunk.cpp" "src/world/worldstd.cpp" "src/utilities/directorycreator.cpp")
     target_link_libraries(test_modmanager ${FEATHERKIT_LIBRARIES})
     
     add_executable(test_highlightmanager "test/world/highlightmanagertest.cpp" "src/world/highlightmanager.cpp" "src/world/worldstd.cpp")
@@ -373,6 +373,6 @@ if(BUILD_TESTS)
     target_link_libraries(test_utilities ${FEATHERKIT_LIBRARIES})
     
     #profiling
-    add_executable(profile_modmanager "profile/world/modmanagerprofile.cpp" "src/world/modmanager.cpp" "src/world/chunk.cpp" "src/world/worldstd.cpp")
+    add_executable(profile_modmanager "profile/world/modmanagerprofile.cpp" "src/world/modmanager.cpp" "src/world/chunk.cpp" "src/world/worldstd.cpp" "src/utilities/directorycreator.cpp")
     target_link_libraries(profile_modmanager ${FEATHERKIT_LIBRARIES})
 endif(BUILD_TESTS)

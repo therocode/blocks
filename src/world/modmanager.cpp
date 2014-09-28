@@ -1,4 +1,5 @@
 #include "modmanager.hpp"
+#include "../utilities/directorycreator.hpp"
 
 using namespace std;
 
@@ -77,6 +78,21 @@ void ModManager::saveMods()
 
 void ModManager::saveMods(RegionCoord regionLoc) 
 {
+	if(!DirectoryCreator::directoryExists(regionDir))
+	{
+		if(!DirectoryCreator::createDirectory(regionDir))
+		{
+			std::cout << regionDir << "didn't exist and failed to create it" << std::endl;
+		}
+	}
+	if(!DirectoryCreator::directoryExists(regionDir + pathSep + mWorldName))
+	{
+		if(!DirectoryCreator::createDirectory(regionDir + pathSep + mWorldName))
+		{
+			std::cout << regionDir + pathSep + mWorldName << "didn't exist and failed to create it" << std::endl;
+		}
+	}
+
     string dataFilename = getFilename(regionLoc) + dataExt;
     string indexFilename = getFilename(regionLoc) + indexExt;
 
