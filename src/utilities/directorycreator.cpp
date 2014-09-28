@@ -26,7 +26,22 @@ bool DirectoryCreator::removeDirectory(const std::string& path)
 
 #elif defined(__WIN32__)
 
-implementThis;
+#include <windows.h>
+
+bool DirectoryCreator::directoryExists(const std::string& path)
+{
+    return GetFileAttributes(path.c_str()) == FILE_ATTRIBUTE_DIRECTORY ? true : false;
+}
+
+bool DirectoryCreator::createDirectory(const std::string& path)
+{
+    return CreateDirectory(path.c_str(), NULL) != 0 ? true : false;
+}
+
+bool DirectoryCreator::removeDirectory(const std::string& path)
+{
+    return RemoveDirectory(path.c_str());
+}
 
 #else
 
