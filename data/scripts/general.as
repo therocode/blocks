@@ -10,13 +10,13 @@ void gameStarted()
     //consolePrint("Error message from the script", ERROR);
     consolePrint("----------------Game started!---------------------");
     consolePrint("<- tag test", "Giraffe");
-    consolePrint("<- tag+level test", "Giraffe", VERBOSE);
+    consolePrint("<- tag+level test " + toString(Vec3(0.0f, 1.0f, -1.0f)), " Giraffe", VERBOSE);
 
 	for(int x = 0; x < 4; x++)
 	{
 		for(int y = 0; y < 4; y++)
 		{
-            createEntity("Elephant", 1.0f * x + 0.5f, 100.0f + randomFloatRange(0.f, 80.f), 1.0f * y + 0.5f);
+            createEntity("Elephant", 0, Vec3(1.0f * x + 0.5f, 100.0f + randomFloatRange(0.f, 80.f), 1.0f * y + 0.5f));
 		}
 	}
 }

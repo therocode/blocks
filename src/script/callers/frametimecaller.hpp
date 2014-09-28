@@ -12,4 +12,5 @@ class FrameTimeCaller :
         void handleMessage(const FrameMessage& received);
     private:
         int32_t frameTick;
+        ScriptMemberCallback<int32_t> mCallback;
 };

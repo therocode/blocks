@@ -1,11 +1,6 @@
-Entity@ createEntity(const string type, float x, float y, float z)
+Entity@ createEntity(const string type, uint32 worldId, Vec3 position)
 {
-    return cast<Entity@>(createIEntity(type, x, y, z));
-}
-
-Entity@ createEntity(const string type, Vec3 position)
-{
-    return cast<Entity@>(createIEntity(type, position.x, position.y, position.z));
+    return cast<Entity@>(createIEntity(type, worldId, position));
 }
 
 void removeEntity(Entity@ entity)
@@ -24,14 +19,9 @@ shared class Entity : IEntity
     EntityCore @mCore;
     uint mId;
 
-    void setPosition(float x, float y, float z)
-    {
-        mCore.setPosition(x, y, z);
-    }
-
     void setPosition(const Vec3 vec)
     {
-        mCore.setPosition(vec.x, vec.y, vec.z);
+        mCore.setPosition(vec);
     }
 
     Vec3 getPosition()

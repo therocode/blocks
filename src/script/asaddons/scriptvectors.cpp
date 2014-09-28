@@ -115,5 +115,5 @@ glm::vec3 vec3Normalise(const glm::vec3& vec)
 
 std::string vec3ToString(const glm::vec3& vec)
 {
-    return std::to_string(vec.x) + ", " + std::to_string(vec.y) + ", " + std::to_string(vec.z);
+    return glm::to_string(vec);
 }
