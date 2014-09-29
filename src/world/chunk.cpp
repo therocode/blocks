@@ -77,9 +77,7 @@ void Chunk::setVoxelType(const ChunkVoxelCoord& voxel, VoxelType type)
 
     setSegmentTypeFromArray(voxel.y, voxel.z, uncompressed);
 
-
-	VoxelTypeArray types = getFlatVoxelTypeData();
-	solidityCheck(types);
+	solidityCheck();
 }
 
 void Chunk::setVoxelData(const VoxelTypeArray& types)
@@ -128,7 +126,7 @@ void Chunk::setVoxelData(const VoxelTypeArray& types)
         }
     }
 
-	solidityCheck(types);
+	solidityCheck();
 }
 
 //these should be optimised in the future using binary trees
@@ -282,8 +280,10 @@ void Chunk::setSegmentTypeFromArray(uint16_t y, uint16_t z, const VoxelSegmentTy
     }
 }
 
-void Chunk::solidityCheck(VoxelTypeArray types)
+void Chunk::solidityCheck()
 {
+	VoxelTypeArray types = getFlatVoxelTypeData();
+	
 	mSolidity = types[0] ? SOLID : EMPTY;
 	for(auto v : types)
 	{
