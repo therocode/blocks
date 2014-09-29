@@ -123,6 +123,17 @@ void Chunk::setVoxelData(const VoxelTypeArray& types)
             mRleSegmentIndices[segmentIndex].mSegmentSize = mRleSegments.size() - mRleSegmentIndices[segmentIndex].mSegmentStart;
         }
     }
+
+	mSolidity = types[0] ? SOLID : EMPTY;
+	for(auto v : types)
+	{
+		Solidity s = v ? SOLID : EMPTY;
+		if(mSolidity != s)
+		{
+			mSolidity = INBETWEEN;
+			break;
+		}
+	}
 }
 
 //these should be optimised in the future using binary trees
@@ -175,6 +186,16 @@ const ChunkCoord& Chunk::getLocation() const
 {
     return mLocation;
 }
+
+Solidity Chunk::getSolidity()
+{
+	return mSolidity;
+}
+
+// SideSolidity Chunk::getSideSolidity()
+// {
+	// return SOLID;
+// }
 
 VoxelSegmentTypeArray Chunk::getUncompressedTypeSegment(uint32_t y, uint32_t z) const
 {

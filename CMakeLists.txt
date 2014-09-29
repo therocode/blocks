@@ -372,6 +372,9 @@ if(BUILD_TESTS)
     add_executable(test_utilities "test/utilities/utilitiestest.cpp" "src/utilities/directorycreator.cpp")
     target_link_libraries(test_utilities ${FEATHERKIT_LIBRARIES})
     
+    add_executable(test_chunk "test/world/chunktest.cpp" "src/world/chunk.cpp" "src/world/worldstd.cpp")
+    target_link_libraries(test_chunk ${FEATHERKIT_LIBRARIES})
+	
     #profiling
     add_executable(profile_modmanager "profile/world/modmanagerprofile.cpp" "src/world/modmanager.cpp" "src/world/chunk.cpp" "src/world/worldstd.cpp" "src/utilities/directorycreator.cpp")
     target_link_libraries(profile_modmanager ${FEATHERKIT_LIBRARIES})

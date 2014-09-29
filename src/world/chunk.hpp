@@ -5,6 +5,9 @@
 #include "worldstd.hpp"
 #include "../utilities/glmhash.hpp"
 
+enum Solidity {EMPTY, SOLID, INBETWEEN};
+// enum SideSolidity {};
+
 class Chunk
 {
     public:
@@ -19,10 +22,13 @@ class Chunk
         VoxelTypeArray getFlatVoxelTypeData() const;
         uint32_t getWidth() const;
         const ChunkCoord& getLocation() const; //should probably be gone
+		Solidity getSolidity();
+		// Solidity getSideSolidity();
     private:
         VoxelSegmentTypeArray getUncompressedTypeSegment(uint32_t y, uint32_t z) const;
         void setSegmentTypeFromArray(uint16_t y, uint16_t z, const VoxelSegmentTypeArray& typeArray);
         ChunkCoord mLocation;
+		Solidity mSolidity;
 
         RleIndexArray mRleSegmentIndices;
         RleSegmentArray mRleSegments;
