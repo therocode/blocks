@@ -1,12 +1,6 @@
 #include "blocksapp.hpp"
-#include "../input/inputactions.hpp"
-#include "../networking/localserverclientbridge.hpp"
-#include "../networking/remoteserverbridge.hpp"
-#include "../networking/localclientconnectionlistener.hpp"
-#include "../networking/remoteclientconnectionlistener.hpp"
 #include "../networking/networkparameters.hpp"
 #include <iostream>
-//#include <thread>
 
 BlocksApplication::BlocksApplication()
 {
@@ -19,29 +13,29 @@ void BlocksApplication::setup(const std::vector<std::string>& args)
     {
         setupSinglePlayer();	//setup local server and local client and connect with LocalServerClientBridge
     }
-    else if(args[1] == "--dedicated" || args[1] == "dedicated")
+    else if(args[1] == "--dedicated" || args[1] == "-d")
     {
         setupDedicatedServer(56566);  //do not create a client and only initialise a server and give it a NetworkServerClientBridge
     }
-    else if(args[1] == "--join" || args[1] == "join")
+    else if(args[1] == "--join" || args[1] == "-d")
     {
 		if(args.size() > 2)
 		{
-			std::string address = args[2];
+			const std::string& address = args[2];
 			int32_t port = -1;
 			if(args.size() > 3)
 			{
 				port = std::stoi(args[3]);
 			}
 			joinServer(address, port);   //setup local client and do not setup a server. give client a NetworkServerClientBridge and connect it to remote
-		}else{
-		//sergveri isn't craeted
-			// server->getBus().send(LogMessage{"No address given. Good bye.", "Client", LogLevel::INFO});
-			printf("No server address specified. Quitting.\n");
+		}
+        else
+        {
+            std::cout << "No server address specified. Quitting.\n";
 			exit(3);
 		}
 	}
-	else if(args[1] == "--host" || args[1] == "host")
+	else if(args[1] == "--host" || args[1] == "-h")
 	{
 		setupMultiPlayer(56566);
 	}
