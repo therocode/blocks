@@ -8,19 +8,15 @@ TEST_CASE("solid", "[solid]")
 	VoxelTypeArray voxels;
 	Chunk chunk;
 
-	for(auto &v : voxels)
-		v = 0;
+	voxels.fill(0);
 	chunk.setVoxelData(voxels);
 	REQUIRE(chunk.getSolidity() == EMPTY);
 
-	for(auto &v : voxels)
-		v = rand() | 1;
+	voxels.fill(1);
+	voxels[5] = 3;
 	chunk.setVoxelData(voxels);
 	REQUIRE(chunk.getSolidity() == SOLID);
 
-	for(auto &v : voxels)
-		v = rand();
-	voxels[4] = 1;
 	voxels[200] = 0;
 	chunk.setVoxelData(voxels);
 	REQUIRE(chunk.getSolidity() == INBETWEEN);
