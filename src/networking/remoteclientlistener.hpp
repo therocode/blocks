@@ -1,5 +1,5 @@
 #pragma once
-#include "clientconnectionlistener.hpp"
+#include "listener.hpp"
 #include "remoteclientbridge.hpp"
 #include <thread>
 #include <atomic>
@@ -7,7 +7,7 @@
 #include "packages.hpp"
 #include <enet/enet.h>
 
-class RemoteClientConnectionListener : public ClientConnectionListener
+class RemoteClientListener : public Listener
 {
     struct Peer
     {
@@ -16,7 +16,7 @@ class RemoteClientConnectionListener : public ClientConnectionListener
     };
 
     public:
-        RemoteClientConnectionListener(fea::MessageBus& bus);
+        RemoteClientListener(fea::MessageBus& bus);
         void startListening(int32_t port);
         void listenerFunction();
         void stopListening();

@@ -1,6 +1,6 @@
-#include "clientconnectionlistener.hpp"
+#include "listener.hpp"
 
-std::shared_ptr<ClientConnection> ClientConnectionListener::fetchIncomingConnection()
+std::shared_ptr<ClientConnection> Listener::fetchIncomingConnection()
 {
    std::lock_guard<std::mutex> lock(mIncomingConnectionsMutex);
 

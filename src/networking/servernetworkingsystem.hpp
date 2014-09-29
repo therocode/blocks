@@ -4,7 +4,7 @@
 #include <vector>
 #include <unordered_map>
 #include "networkparameters.hpp"
-#include "clientconnectionlistener.hpp"
+#include "listener.hpp"
 #include "../rendering/renderingmessages.hpp"
 #include "../entity/entitymessages.hpp"
 #include "../world/worldmessages.hpp"
@@ -51,5 +51,5 @@ class ServerNetworkingSystem : public fea::MessageReceiver<LocalConnectionAttemp
         std::unordered_set<size_t> graphicsEntities; //temporary solution on how to resend things
 
         std::unordered_map<ClientId, std::shared_ptr<ClientConnection> > mClients;
-        std::vector<std::unique_ptr<ClientConnectionListener>> mListeners;
+        std::vector<std::unique_ptr<Listener>> mListeners;
 };

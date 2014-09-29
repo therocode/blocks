@@ -1,9 +1,9 @@
 #pragma once
-#include "clientconnectionlistener.hpp"
+#include "listener.hpp"
 
 class LocalServerClientBridge;
 
-class LocalClientConnectionListener : public ClientConnectionListener
+class LocalClientListener : public Listener
 {
     public:
         void createClientConnection(LocalServerClientBridge* clientBridge);

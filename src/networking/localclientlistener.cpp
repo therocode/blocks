@@ -1,8 +1,8 @@
-#include "localclientconnectionlistener.hpp"
+#include "localclientlistener.hpp"
 #include "localserverclientbridge.hpp"
 #include "clientconnection.hpp"
 
-void LocalClientConnectionListener::createClientConnection(LocalServerClientBridge* clientBridge)
+void LocalClientListener::createClientConnection(LocalServerClientBridge* clientBridge)
 {
     std::shared_ptr<ClientConnection> clientConnection = std::make_shared<ClientConnection>(0); //local client will always have id 0
 

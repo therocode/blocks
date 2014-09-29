@@ -2,8 +2,8 @@
 #include "../world/chunk.hpp"
 #include "packages.hpp"
 #include "clientconnection.hpp"
-#include "localclientconnectionlistener.hpp"
-#include "remoteclientconnectionlistener.hpp"
+#include "localclientlistener.hpp"
+#include "remoteclientlistener.hpp"
 #include "../lognames.hpp"
 
 ServerNetworkingSystem::ServerNetworkingSystem(fea::MessageBus& bus, const NetworkParameters& parameters) :
@@ -14,12 +14,12 @@ ServerNetworkingSystem::ServerNetworkingSystem(fea::MessageBus& bus, const Netwo
 
     if(parameters.mode == NetworkMode::SINGLE_PLAYER)
     {
-        LocalClientConnectionListener* listener = new LocalClientConnectionListener();
-        mListeners.push_back(std::unique_ptr<LocalClientConnectionListener>(listener));
+        LocalClientListener* listener = new LocalClientListener();
+        mListeners.push_back(std::unique_ptr<LocalClientListener>(listener));
     }
     else if(parameters.mode == NetworkMode::DEDICATED)
     {
-        RemoteClientConnectionListener* remoteListener = new RemoteClientConnectionListener(mBus);
+        RemoteClientListener* remoteListener = new RemoteClientListener(mBus);
 
         if(enet_initialize() < 0)
         {
@@ -28,15 +28,15 @@ ServerNetworkingSystem::ServerNetworkingSystem(fea::MessageBus& bus, const Netwo
         else
         {
             remoteListener->startListening(parameters.port);
-            mListeners.push_back(std::unique_ptr<RemoteClientConnectionListener>(remoteListener));
+            mListeners.push_back(std::unique_ptr<RemoteClientListener>(remoteListener));
         }
     }
     else if(parameters.mode == NetworkMode::COMBINED)
     {
-        LocalClientConnectionListener* listener = new LocalClientConnectionListener();
-        mListeners.push_back(std::unique_ptr<LocalClientConnectionListener>(listener));
+        LocalClientListener* listener = new LocalClientListener();
+        mListeners.push_back(std::unique_ptr<LocalClientListener>(listener));
 
-        RemoteClientConnectionListener* remoteListener = new RemoteClientConnectionListener(mBus);
+        RemoteClientListener* remoteListener = new RemoteClientListener(mBus);
 
         if(enet_initialize() < 0)
         {
@@ -45,7 +45,7 @@ ServerNetworkingSystem::ServerNetworkingSystem(fea::MessageBus& bus, const Netwo
         else
         {
             remoteListener->startListening(parameters.port);
-            mListeners.push_back(std::unique_ptr<RemoteClientConnectionListener>(remoteListener));
+            mListeners.push_back(std::unique_ptr<RemoteClientListener>(remoteListener));
         }
     }
 }
@@ -54,7 +54,7 @@ void ServerNetworkingSystem::handleMessage(const LocalConnectionAttemptMessage& 
 {
     if(mListeners.size() > 0)
     {
-        static_cast<LocalClientConnectionListener*>(mListeners[0].get())->createClientConnection(received.clientToServerBridge); //must be first one right now, a hack
+        static_cast<LocalClientListener*>(mListeners[0].get())->createClientConnection(received.clientToServerBridge); //must be first one right now, a hack
     }
 }
 

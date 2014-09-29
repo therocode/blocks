@@ -1,23 +1,23 @@
-#include "remoteclientconnectionlistener.hpp"
+#include "remoteclientlistener.hpp"
 #include "application/applicationmessages.hpp"
 #include "../lognames.hpp"
 #include "clientconnection.hpp"
 
-RemoteClientConnectionListener::RemoteClientConnectionListener(fea::MessageBus& bus) :
+RemoteClientListener::RemoteClientListener(fea::MessageBus& bus) :
     mBus(bus),
     mNextClientId(0)
 {
 }
 
-void RemoteClientConnectionListener::startListening(int32_t port)
+void RemoteClientListener::startListening(int32_t port)
 {
     mPort = port;
     mStop = false;
     createHost();
-	mListenerThread = std::thread(&RemoteClientConnectionListener::listenerFunction, this);
+	mListenerThread = std::thread(&RemoteClientListener::listenerFunction, this);
 }
 
-void RemoteClientConnectionListener::listenerFunction()
+void RemoteClientListener::listenerFunction()
 {
 	ENetEvent event;
     while(!mStop)
@@ -86,13 +86,13 @@ void RemoteClientConnectionListener::listenerFunction()
     }
 }
 
-void RemoteClientConnectionListener::stopListening()
+void RemoteClientListener::stopListening()
 {
     mStop = true;
     mListenerThread.join();
 }
 
-void RemoteClientConnectionListener::createHost()
+void RemoteClientListener::createHost()
 {
 	//	enet_address_set_host(&mAddress, "localhost");
 	mAddress.host = ENET_HOST_ANY;

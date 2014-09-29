@@ -5,7 +5,7 @@
 
 class ClientConnection;
 
-class ClientConnectionListener
+class Listener
 {
     public:
         std::shared_ptr<ClientConnection> fetchIncomingConnection();
