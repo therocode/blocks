@@ -1,5 +1,6 @@
 #include "clientnetworkingsystem.hpp"
 #include "localserverclientbridge.hpp"
+#include "remoteserverbridge.hpp"
 #include "networkingmessages.hpp"
 #include "packages.hpp"
 
@@ -13,6 +14,22 @@ ClientNetworkingSystem::ClientNetworkingSystem(fea::MessageBus& bus, const Netwo
     mBridge = std::unique_ptr<LocalServerClientBridge>(clientToServer);
 
     mBus.send(LocalConnectionAttemptMessage{clientToServer});
+    
+    if(parameters.mode == NetworkMode::JOIN)
+    {
+        RemoteServerBridge* serverBidge = new RemoteServerBridge(mBus);
+
+        if(enet_initialize() < 0)
+        {
+          mBus.send(LogMessage{"Couldn't initialise enet", "network", LogLevel::ERR});
+        }
+        else
+        {
+          mBridge = std::unique_ptr<RemoteServerBridge>(serverBidge);
+          serverBidge->connectToAddress(parameters.serverName, parameters.port);
+          serverBidge->startListening();
+        }
+    }
 }
 
 void ClientNetworkingSystem::handleMessage(const FrameMessage& received)

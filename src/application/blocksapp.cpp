@@ -127,17 +127,11 @@ void BlocksApplication::setupDedicatedServer(int32_t port)
 
 void BlocksApplication::joinServer(const std::string& address, int32_t port)
 {
-	//client = std::unique_ptr<Client>(new Client(mClientBus));
-  	//RemoteServerBridge* serverBidge = new RemoteServerBridge(mClientBus);
+    NetworkParameters parameters;
 
-    //if(enet_initialize() < 0)
-    //{
-    //  mClientBus.send(LogMessage{"Couldn't initialise enet", "network", LogLevel::ERR});
-    //}
-    //else
-    //{
-    //  client->setServerBridge(std::unique_ptr<RemoteServerBridge>(serverBidge));
-    //  serverBidge->connectToAddress(address, port);
-    //  serverBidge->startListening();
-    //}
+    parameters.mode = NetworkMode::JOIN;
+    parameters.serverName = address;
+    parameters.port = port;
+
+    client = std::unique_ptr<Client>(new Client(mClientBus, parameters));
 }
