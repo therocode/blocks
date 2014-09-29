@@ -3,6 +3,7 @@
 #include "packages.hpp"
 #include "clientconnection.hpp"
 #include "localclientconnectionlistener.hpp"
+#include "remoteclientconnectionlistener.hpp"
 #include "../lognames.hpp"
 
 ServerNetworkingSystem::ServerNetworkingSystem(fea::MessageBus& bus, const NetworkParameters& parameters) :
@@ -15,6 +16,20 @@ ServerNetworkingSystem::ServerNetworkingSystem(fea::MessageBus& bus, const Netwo
     {
         LocalClientConnectionListener* listener = new LocalClientConnectionListener();
         mListener = std::unique_ptr<LocalClientConnectionListener>(listener);
+    }
+    else if(parameters.mode == NetworkMode::DEDICATED)
+    {
+        RemoteClientConnectionListener* remoteListener = new RemoteClientConnectionListener(mBus);
+
+        if(enet_initialize() < 0)
+        {
+            mBus.send(LogMessage{"Couldn't initialise enet", "network", LogLevel::ERR});
+        }
+        else
+        {
+            remoteListener->startListening(parameters.port);
+            mListener = std::unique_ptr<RemoteClientConnectionListener>(remoteListener);
+        }
     }
 }
 

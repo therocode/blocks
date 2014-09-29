@@ -118,19 +118,11 @@ void BlocksApplication::setupMultiPlayer()
 
 void BlocksApplication::setupDedicatedServer(int32_t port)
 {
-    //server = std::unique_ptr<Server>(new Server(mServerBus));
+    NetworkParameters parameters;
 
-    //RemoteClientConnectionListener* remoteListener = new RemoteClientConnectionListener(mServerBus);
-
-    //if(enet_initialize() < 0)
-    //{
-    //  mServerBus.send(LogMessage{"Couldn't initialise enet", "network", LogLevel::ERR});
-    //}
-    //else
-    //{
-    //  remoteListener->startListening(port);
-    //  server->setClientListener(std::unique_ptr<RemoteClientConnectionListener>(remoteListener));
-    //}
+    parameters.mode = NetworkMode::DEDICATED;
+    parameters.port = port;
+    server = std::unique_ptr<Server>(new Server(mServerBus, parameters));
 }
 
 void BlocksApplication::joinServer(const std::string& address, int32_t port)
