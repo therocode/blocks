@@ -15,7 +15,7 @@ class BlocksApplication
         void destroy() override;
         void handleMessage(const LocalConnectionAttemptMessage& received) override;
     private:
-		void setupMultiPlayer();
+		void setupMultiPlayer(int32_t port);
         void setupSinglePlayer();
         void setupDedicatedServer(int32_t port);
         void joinServer(const std::string& address, int32_t port);

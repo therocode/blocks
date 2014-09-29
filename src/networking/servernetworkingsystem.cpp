@@ -15,7 +15,7 @@ ServerNetworkingSystem::ServerNetworkingSystem(fea::MessageBus& bus, const Netwo
     if(parameters.mode == NetworkMode::SINGLE_PLAYER)
     {
         LocalClientConnectionListener* listener = new LocalClientConnectionListener();
-        mListener = std::unique_ptr<LocalClientConnectionListener>(listener);
+        mListeners.push_back(std::unique_ptr<LocalClientConnectionListener>(listener));
     }
     else if(parameters.mode == NetworkMode::DEDICATED)
     {
@@ -28,14 +28,34 @@ ServerNetworkingSystem::ServerNetworkingSystem(fea::MessageBus& bus, const Netwo
         else
         {
             remoteListener->startListening(parameters.port);
-            mListener = std::unique_ptr<RemoteClientConnectionListener>(remoteListener);
+            mListeners.push_back(std::unique_ptr<RemoteClientConnectionListener>(remoteListener));
+        }
+    }
+    else if(parameters.mode == NetworkMode::COMBINED)
+    {
+        LocalClientConnectionListener* listener = new LocalClientConnectionListener();
+        mListeners.push_back(std::unique_ptr<LocalClientConnectionListener>(listener));
+
+        RemoteClientConnectionListener* remoteListener = new RemoteClientConnectionListener(mBus);
+
+        if(enet_initialize() < 0)
+        {
+            mBus.send(LogMessage{"Couldn't initialise enet", "network", LogLevel::ERR});
+        }
+        else
+        {
+            remoteListener->startListening(parameters.port);
+            mListeners.push_back(std::unique_ptr<RemoteClientConnectionListener>(remoteListener));
         }
     }
 }
 
 void ServerNetworkingSystem::handleMessage(const LocalConnectionAttemptMessage& received)
 {
-    static_cast<LocalClientConnectionListener*>(mListener.get())->createClientConnection(received.clientToServerBridge);
+    if(mListeners.size() > 0)
+    {
+        static_cast<LocalClientConnectionListener*>(mListeners[0].get())->createClientConnection(received.clientToServerBridge); //must be first one right now, a hack
+    }
 }
 
 void ServerNetworkingSystem::handleMessage(const FrameMessage& received)
@@ -187,9 +207,9 @@ void ServerNetworkingSystem::pollNewClients()
 {
     std::shared_ptr<ClientConnection> client;
 
-    if(mListener != nullptr)
+    for(auto& listener : mListeners)
     {
-        while((client = mListener->fetchIncomingConnection()))
+        while((client = listener->fetchIncomingConnection()))
         {
             acceptClientConnection(client);
         }

@@ -13,9 +13,11 @@ ClientNetworkingSystem::ClientNetworkingSystem(fea::MessageBus& bus, const Netwo
     LocalServerClientBridge* clientToServer = new LocalServerClientBridge();
     mBridge = std::unique_ptr<LocalServerClientBridge>(clientToServer);
 
-    mBus.send(LocalConnectionAttemptMessage{clientToServer});
-    
-    if(parameters.mode == NetworkMode::JOIN)
+    if(parameters.mode == NetworkMode::SINGLE_PLAYER)
+    {
+        mBus.send(LocalConnectionAttemptMessage{clientToServer});
+    }
+    else if(parameters.mode == NetworkMode::JOIN)
     {
         RemoteServerBridge* serverBidge = new RemoteServerBridge(mBus);
 
@@ -29,6 +31,10 @@ ClientNetworkingSystem::ClientNetworkingSystem(fea::MessageBus& bus, const Netwo
           serverBidge->connectToAddress(parameters.serverName, parameters.port);
           serverBidge->startListening();
         }
+    }
+    else if(parameters.mode == NetworkMode::COMBINED)
+    {
+        mBus.send(LocalConnectionAttemptMessage{clientToServer});
     }
 }
 

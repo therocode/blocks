@@ -1,6 +1,7 @@
 #pragma once
 #include <fea/util.hpp>
 #include <memory>
+#include <vector>
 #include <unordered_map>
 #include "networkparameters.hpp"
 #include "clientconnectionlistener.hpp"
@@ -50,5 +51,5 @@ class ServerNetworkingSystem : public fea::MessageReceiver<LocalConnectionAttemp
         std::unordered_set<size_t> graphicsEntities; //temporary solution on how to resend things
 
         std::unordered_map<ClientId, std::shared_ptr<ClientConnection> > mClients;
-        std::unique_ptr<ClientConnectionListener> mListener;
+        std::vector<std::unique_ptr<ClientConnectionListener>> mListeners;
 };

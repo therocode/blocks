@@ -43,7 +43,7 @@ void BlocksApplication::setup(const std::vector<std::string>& args)
 	}
 	else if(args[1] == "--host" || args[1] == "host")
 	{
-		setupMultiPlayer();
+		setupMultiPlayer(56566);
 	}
     else
     {
@@ -102,18 +102,15 @@ void BlocksApplication::setupSinglePlayer()
     client = std::unique_ptr<Client>(new Client(mClientBus, parameters));
 }
 
-void BlocksApplication::setupMultiPlayer()
+void BlocksApplication::setupMultiPlayer(int32_t port)
 {
-    //server = std::unique_ptr<Server>(new Server(mServerBus));
-	//client = std::unique_ptr<Client>(new Client(mClientBus));
+    NetworkParameters parameters;
 
-    //RemoteServerBridge* serverToClient = new RemoteServerBridge(mServerBus);
-  	//RemoteServerBridge* clientToServer = new RemoteServerBridge(mClientBus);
+    parameters.mode = NetworkMode::COMBINED;
+    parameters.port = port;
 
-	//serverToClient->startListening();
-
-    //client->setServerBridge(std::unique_ptr<RemoteServerBridge>(clientToServer));
-	//clientToServer->connectToAddress("localhost");
+    server = std::unique_ptr<Server>(new Server(mServerBus, parameters));
+	client = std::unique_ptr<Client>(new Client(mClientBus, parameters));
 }
 
 void BlocksApplication::setupDedicatedServer(int32_t port)
