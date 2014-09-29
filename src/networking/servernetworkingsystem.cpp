@@ -60,6 +60,8 @@ void ServerNetworkingSystem::handleMessage(const LocalConnectionAttemptMessage& 
 
 void ServerNetworkingSystem::handleMessage(const FrameMessage& received)
 {
+    checkForDisconnectedClients();
+
     for(auto& client : mClients)
     {
         fetchClientData(client.second);
@@ -260,22 +262,21 @@ void ServerNetworkingSystem::fetchClientData(std::weak_ptr<ClientConnection> cli
     }
 }
 
-//void ServerNetworkingSystemcheckForDisconnectedClients()
-//{
-//    std::vector<size_t> clientsToRemove;
-//
-//    for(auto& client : mClients)
-//    {
-//        if(client.second->isDisconnected())
-//        {
-//            clientsToRemove.push_back(client.first);
-//        }
-//    }
-//
-//    for(auto client : clientsToRemove)
-//    {
-//        mClients.erase(client);
-//        //send playerdisconnectedmessage
-//        mBus.send(PlayerDisconnectedMessage{client});
-//    }
-//}
+void ServerNetworkingSystem::checkForDisconnectedClients()
+{
+    std::vector<size_t> clientsToRemove;
+
+    for(auto& client : mClients)
+    {
+        if(client.second->isDisconnected())
+        {
+            clientsToRemove.push_back(client.first);
+        }
+    }
+
+    for(auto client : clientsToRemove)
+    {
+        mClients.erase(client);
+        mBus.send(PlayerDisconnectedMessage{client});
+    }
+}

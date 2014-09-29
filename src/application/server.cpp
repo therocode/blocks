@@ -1,8 +1,5 @@
 #include "server.hpp"
 #include "../lognames.hpp"
-#include "../networking/packages.hpp"
-#include "../networking/clientconnection.hpp"
-#include "../networking/clientconnectionlistener.hpp"
 #include "../entity/controllers/playercontroller.hpp"
 #include "../entity/controllers/physicscontroller.hpp"
 #include "../entity/controllers/collisioncontroller.hpp"
@@ -38,8 +35,6 @@ Server::~Server()
 
 void Server::doLogic()
 {
-    //mFPSController.frameBegin();
-
     mBus.send(FrameMessage{true});
 
 	mEntitySystem.update(mTimer.getDeltaTime());

@@ -43,7 +43,7 @@ class ServerNetworkingSystem : public fea::MessageReceiver<LocalConnectionAttemp
         void acceptClientConnection(const std::shared_ptr<ClientConnection> client);
         void pollNewClients();
         void fetchClientData(std::weak_ptr<ClientConnection> client);
-        void checkForDisconnectedClients();   //should be run periodically!
+        void checkForDisconnectedClients();
 
         fea::MessageBus& mBus;
         NetworkParameters mParameters;
