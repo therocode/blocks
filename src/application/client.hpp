@@ -1,16 +1,15 @@
 #pragma once
 #include <fea/userinterface.hpp>
-#include "../input/inputmessages.hpp"
-#include "../entity/entitymessages.hpp"
-#include "../rendering/renderingmessages.hpp"
-#include "../script/scriptmessages.hpp"
 #include "../world/chunk.hpp"
+#include "../networking/clientnetworkingsystem.hpp"
 
 #include "../utilities/lodepng.hpp"
 #include "../utilities/logger.hpp"
-#include "applicationmessages.hpp"
 
 #include "../utilities/fpscontroller.hpp"
+
+#include "../world/worldmessages.hpp"
+
 
 class Renderer;
 class InputAdaptor;
@@ -18,26 +17,22 @@ class ServerClientBridge;
 
 class Client :
     public fea::MessageReceiver<PlayerActionMessage,
-                                PlayerMoveDirectionMessage,
-                                PlayerMoveActionMessage,
-                                PlayerPitchYawMessage,
-                                RebuildScriptsRequestedMessage,
-                                WindowFocusLostMessage,
-                                WindowInputMessage>
+                                ChunkLoadedMessage,
+                                VoxelSetMessage,
+                                ClientChunkDeletedMessage,
+                                CursorLockedMessage>
 {
     public:
-        Client(fea::MessageBus& bus);
+        Client(fea::MessageBus& bus, const NetworkParameters& parameters);
         ~Client();
         bool loadTexture(const std::string& path, uint32_t width, uint32_t height, std::vector<unsigned char>& result);
-        void handleInput();
+        void update();
         void render();
-        virtual void handleMessage(const PlayerActionMessage& received);
-        virtual void handleMessage(const PlayerMoveDirectionMessage& received);
-        virtual void handleMessage(const PlayerMoveActionMessage& received);
-        virtual void handleMessage(const PlayerPitchYawMessage& received);
-        virtual void handleMessage(const RebuildScriptsRequestedMessage& received);
-        virtual void handleMessage(const WindowFocusLostMessage& received);
-        virtual void handleMessage(const WindowInputMessage& received);
+        void handleMessage(const PlayerActionMessage& received) override;
+        void handleMessage(const ChunkLoadedMessage& received) override;
+        void handleMessage(const VoxelSetMessage& received) override;
+        void handleMessage(const ClientChunkDeletedMessage& received) override;
+        void handleMessage(const CursorLockedMessage& received) override;
         bool requestedQuit();
         void setServerBridge(std::unique_ptr<ServerClientBridge> bridge);
     private:
@@ -55,5 +50,5 @@ class Client :
 
         ChunkMap mLocalChunks;
 
-        std::unique_ptr<ServerClientBridge> mBridge;
+        ClientNetworkingSystem mClientNetworkingSystem;
 };

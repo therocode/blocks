@@ -4,11 +4,13 @@
 #include "../networking/remoteserverbridge.hpp"
 #include "../networking/localclientconnectionlistener.hpp"
 #include "../networking/remoteclientconnectionlistener.hpp"
+#include "../networking/networkparameters.hpp"
 #include <iostream>
 //#include <thread>
 
 BlocksApplication::BlocksApplication()
 {
+    subscribe(mClientBus, *this, false);
 }
 
 void BlocksApplication::setup(const std::vector<std::string>& args)
@@ -54,7 +56,7 @@ void BlocksApplication::loop()
 {
     if(client)
     {
-        client->handleInput();
+        client->update();
     }
 
     if(server)
@@ -86,64 +88,64 @@ void BlocksApplication::destroy()
     }
 }
 
+void BlocksApplication::handleMessage(const LocalConnectionAttemptMessage& received)
+{
+    mServerBus.send(received);
+}
+
 void BlocksApplication::setupSinglePlayer()
 {
-    server = std::unique_ptr<Server>(new Server(mServerBus));
-    client = std::unique_ptr<Client>(new Client(mClientBus));
+    NetworkParameters parameters;
 
-    //setup client and server local connection
-    LocalServerClientBridge* clientToServer = new LocalServerClientBridge();
-    LocalClientConnectionListener* localListener = new LocalClientConnectionListener();
-
-    server->setClientListener(std::unique_ptr<LocalClientConnectionListener>(localListener));
-    client->setServerBridge(std::unique_ptr<LocalServerClientBridge>(clientToServer));
-    localListener->createClientConnection(clientToServer);
+    parameters.mode = NetworkMode::SINGLE_PLAYER;
+    server = std::unique_ptr<Server>(new Server(mServerBus, parameters));
+    client = std::unique_ptr<Client>(new Client(mClientBus, parameters));
 }
 
 void BlocksApplication::setupMultiPlayer()
 {
-    server = std::unique_ptr<Server>(new Server(mServerBus));
-	client = std::unique_ptr<Client>(new Client(mClientBus));
+    //server = std::unique_ptr<Server>(new Server(mServerBus));
+	//client = std::unique_ptr<Client>(new Client(mClientBus));
 
-    RemoteServerBridge* serverToClient = new RemoteServerBridge(mServerBus);
-  	RemoteServerBridge* clientToServer = new RemoteServerBridge(mClientBus);
+    //RemoteServerBridge* serverToClient = new RemoteServerBridge(mServerBus);
+  	//RemoteServerBridge* clientToServer = new RemoteServerBridge(mClientBus);
 
-	serverToClient->startListening();
+	//serverToClient->startListening();
 
-    client->setServerBridge(std::unique_ptr<RemoteServerBridge>(clientToServer));
-	clientToServer->connectToAddress("localhost");
+    //client->setServerBridge(std::unique_ptr<RemoteServerBridge>(clientToServer));
+	//clientToServer->connectToAddress("localhost");
 }
 
 void BlocksApplication::setupDedicatedServer(int32_t port)
 {
-    server = std::unique_ptr<Server>(new Server(mServerBus));
+    //server = std::unique_ptr<Server>(new Server(mServerBus));
 
-    RemoteClientConnectionListener* remoteListener = new RemoteClientConnectionListener(mServerBus);
+    //RemoteClientConnectionListener* remoteListener = new RemoteClientConnectionListener(mServerBus);
 
-    if(enet_initialize() < 0)
-    {
-      mServerBus.send(LogMessage{"Couldn't initialise enet", "network", LogLevel::ERR});
-    }
-    else
-    {
-      remoteListener->startListening(port);
-      server->setClientListener(std::unique_ptr<RemoteClientConnectionListener>(remoteListener));
-    }
+    //if(enet_initialize() < 0)
+    //{
+    //  mServerBus.send(LogMessage{"Couldn't initialise enet", "network", LogLevel::ERR});
+    //}
+    //else
+    //{
+    //  remoteListener->startListening(port);
+    //  server->setClientListener(std::unique_ptr<RemoteClientConnectionListener>(remoteListener));
+    //}
 }
 
 void BlocksApplication::joinServer(const std::string& address, int32_t port)
 {
-	client = std::unique_ptr<Client>(new Client(mClientBus));
-  	RemoteServerBridge* serverBidge = new RemoteServerBridge(mClientBus);
+	//client = std::unique_ptr<Client>(new Client(mClientBus));
+  	//RemoteServerBridge* serverBidge = new RemoteServerBridge(mClientBus);
 
-    if(enet_initialize() < 0)
-    {
-      mClientBus.send(LogMessage{"Couldn't initialise enet", "network", LogLevel::ERR});
-    }
-    else
-    {
-      client->setServerBridge(std::unique_ptr<RemoteServerBridge>(serverBidge));
-      serverBidge->connectToAddress(address, port);
-      serverBidge->startListening();
-    }
+    //if(enet_initialize() < 0)
+    //{
+    //  mClientBus.send(LogMessage{"Couldn't initialise enet", "network", LogLevel::ERR});
+    //}
+    //else
+    //{
+    //  client->setServerBridge(std::unique_ptr<RemoteServerBridge>(serverBidge));
+    //  serverBidge->connectToAddress(address, port);
+    //  serverBidge->startListening();
+    //}
 }

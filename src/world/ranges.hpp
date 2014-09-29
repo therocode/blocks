@@ -2,7 +2,7 @@
 #include <unordered_map>
 #include <glm/glm.hpp>
 
-using IntRange = std::pair<int32_t, int32_t>;
+using IntRange = std::pair<int64_t, int64_t>;
 
 struct Ranges
 {

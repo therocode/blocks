@@ -15,7 +15,8 @@ InputAdaptor::InputAdaptor(fea::MessageBus& b):
     mHoldingForwards(false),
     mHoldingBackwards(false),
     mHoldingLeft(false),
-    mHoldingRight(false)
+    mHoldingRight(false),
+    mMouseLocked(true)
 {
     fea::JsonActionIOHandler<std::string> jsonHandler;
     jsonHandler.loadBindingsFile("data/bindings.json");
@@ -28,10 +29,21 @@ InputAdaptor::InputAdaptor(fea::MessageBus& b):
     lastMouseY = 0;
     first = true;
     mouseDown = false;
-    windowFocus = true;
     mNewPitch = mNewYaw = 0;
     subscribe(mBus, *this);
 }
+
+//void Client::handleMessage(const WindowFocusLostMessage& received){
+//    mWindow.lockCursor(false);
+//    mMouseLocked = false;
+//}
+//
+//void Client::handleMessage(const WindowInputMessage& received){
+//    if(!mMouseLocked){
+//        mMouseLocked = true;
+//    }
+//}
+
 
 void InputAdaptor::update()
 {
@@ -44,12 +56,13 @@ void InputAdaptor::update()
 
         if(event.type == fea::Event::GAINEDFOCUS)
         {
-            windowFocus = true;
+            mMouseLocked = true;
         }
         else if(event.type == fea::Event::LOSTFOCUS)
         {
-            windowFocus = false;
-            mBus.send(WindowFocusLostMessage());
+            mMouseLocked = false;
+            mMouseLocked = false;
+            mBus.send(CursorLockedMessage{false});
         }
         else if(event.type == fea::Event::CLOSED)
         {
@@ -59,7 +72,7 @@ void InputAdaptor::update()
         {
             if(!first)
             {
-                if(windowFocus)
+                if(mMouseLocked)
                 {
                     float pitch = -event.mouseMove.rely;
                     float yaw   = -event.mouseMove.relx;
@@ -107,6 +120,8 @@ void InputAdaptor::update()
             if(event.mouseButton.y > 1 && event.mouseButton.x > 10)
             {
                 mBus.send(WindowInputMessage());
+                mMouseLocked = true;
+                mBus.send(CursorLockedMessage{true});
             }
         }
         else if(event.type == fea::Event::MOUSEWHEELMOVED)

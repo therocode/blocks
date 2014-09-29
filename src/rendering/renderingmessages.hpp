@@ -1,5 +1,6 @@
 #pragma once
 #include <fea/util.hpp>
+#include "../blockstd.hpp"
 
 class Chunk;
 using VoxelCoord       = glm::i64vec3;

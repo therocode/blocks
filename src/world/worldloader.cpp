@@ -59,7 +59,7 @@ IntRange WorldLoader::rangeParser(const std::string& rangeString)
         std::string second = rangeString.substr(dotPosition + 2);
 
         if(first == "MIN")
-            range.first = std::numeric_limits<int32_t>::min();
+            range.first = std::numeric_limits<int64_t>::min();
         else if(isNumber(first))
             range.first = std::stoi(first);
         else
@@ -70,7 +70,7 @@ IntRange WorldLoader::rangeParser(const std::string& rangeString)
         }
 
         if(second == "MAX")
-            range.second = std::numeric_limits<int32_t>::max();
+            range.second = std::numeric_limits<int64_t>::max();
         else if(isNumber(second))
             range.second = std::stoi(second);
         else

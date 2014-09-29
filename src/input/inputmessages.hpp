@@ -16,3 +16,8 @@ struct PlayerPitchYawMessage
 {
     size_t playerId; float pitch; float yaw;
 };
+
+struct CursorLockedMessage
+{
+    bool locked;
+};

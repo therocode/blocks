@@ -3,21 +3,20 @@
 #include <fea/ui/sdl2windowbackend.hpp>
 #include <fea/ui/sdl2inputbackend.hpp>
 #include "../lognames.hpp"
-#include "../networking/packages.hpp"
 #include "../application/applicationmessages.hpp"
 #include "../rendering/renderer.hpp"
 #include "../input/inputadaptor.hpp"
 #include "../networking/serverclientbridge.hpp"
 
 
-Client::Client(fea::MessageBus& bus) :
+Client::Client(fea::MessageBus& bus, const NetworkParameters& parameters) :
     mBus(bus),
     mLogger(mBus, LogLevel::VERB),
 	mWindow(new fea::SDL2WindowBackend()),
 	mRenderer(std::unique_ptr<Renderer>(new Renderer(mBus))),
 	mInputAdaptor(std::unique_ptr<InputAdaptor>(new InputAdaptor(mBus))),
 	mQuit(false),
-	mBridge(nullptr)
+    mClientNetworkingSystem(bus, parameters)
 {
     subscribe(mBus, *this);
 	mBus.send(LogMessage{"Setting up client", clientName, LogLevel::INFO});
@@ -36,7 +35,6 @@ Client::Client(fea::MessageBus& bus) :
 	mWindow.setIcon(16, 16, icon.data());
     mFPSCounter.setMaxFPS(0);
     mFPSCounter.setSampleTime(0.5f);
-
 	//if there's an error, display it
 }
 
@@ -59,19 +57,10 @@ bool Client::loadTexture(const std::string& path, uint32_t width, uint32_t heigh
 	//the pixels are now in the vector "image", 4 bytes per pixel, ordered RGBARGBA..., use it as texture, draw it, ...
 }
 
-void Client::handleInput()
+void Client::update()
 {
-	if(mBridge)
-	{
-		fetchServerData();
-	}
-
+    mBus.send(FrameMessage{});
 	mInputAdaptor->update();
-
-	if(mBridge)
-	{
-		mBridge->flush();
-	}
 }
 
 void Client::render()
@@ -90,122 +79,52 @@ void Client::handleMessage(const PlayerActionMessage& received)
 	{
 		mQuit = true;
 	}
-	else
-	{
-        if(!mLockedMouse)return;
-		mBridge->enqueuePackage(std::shared_ptr<BasePackage>(new PlayerActionPackage(received.playerId, received.action)));
-	}
 }
 
-void Client::handleMessage(const PlayerMoveDirectionMessage& received)
+void Client::handleMessage(const ChunkLoadedMessage& received)
 {
-    if(!mLockedMouse)return;
+    const ChunkCoord& coordinate = received.chunk.getLocation();
 
-    mBridge->enqueuePackage(std::shared_ptr<BasePackage>(new PlayerMoveDirectionPackage(received.id, received.direction.getForwardBack(), received.direction.getLeftRight())));
-}
+    mLocalChunks[coordinate] = received.chunk;
 
-void Client::handleMessage(const PlayerMoveActionMessage& received)
-{
-    if(!mLockedMouse)return;
-    mBridge->enqueuePackage(std::shared_ptr<BasePackage>(new PlayerMoveActionPackage(received.id, received.action)));
-}
+    updateChunk(coordinate);
 
-void Client::handleMessage(const PlayerPitchYawMessage& received)
-{
-    if(!mLockedMouse)return;
-
-	mBridge->enqueuePackage(std::shared_ptr<BasePackage>(new PlayerPitchYawPackage(received.playerId, received.pitch, received.yaw)));
-}
-
-void Client::handleMessage(const RebuildScriptsRequestedMessage& received)
-{
-	mBridge->enqueuePackage(std::shared_ptr<BasePackage>(new RebuildScriptsRequestedPackage('0')));
-}
-
-void Client::handleMessage(const WindowFocusLostMessage& received){
-    mWindow.lockCursor(false);
-    mLockedMouse = false;
-}
-
-void Client::handleMessage(const WindowInputMessage& received){
-    if(!mLockedMouse){
-        mLockedMouse = true;
-        mWindow.lockCursor(true);
+    if(mLocalChunks.find(ChunkCoord(coordinate.x + 1, coordinate.y, coordinate.z)) != mLocalChunks.end())
+    {
+        updateChunk(ChunkCoord(coordinate.x + 1, coordinate.y, coordinate.z));
+    }
+    if(mLocalChunks.find(ChunkCoord(coordinate.x - 1, coordinate.y, coordinate.z)) != mLocalChunks.end())
+    {
+        updateChunk(ChunkCoord(coordinate.x - 1, coordinate.y, coordinate.z));
+    }
+    if(mLocalChunks.find(ChunkCoord(coordinate.x, coordinate.y + 1, coordinate.z)) != mLocalChunks.end())
+    {
+        updateChunk(ChunkCoord(coordinate.x, coordinate.y + 1, coordinate.z));
+    }
+    if(mLocalChunks.find(ChunkCoord(coordinate.x, coordinate.y - 1, coordinate.z)) != mLocalChunks.end())
+    {
+        updateChunk(ChunkCoord(coordinate.x, coordinate.y - 1, coordinate.z));
+    }
+    if(mLocalChunks.find(ChunkCoord(coordinate.x, coordinate.y, coordinate.z + 1)) != mLocalChunks.end())
+    {
+        updateChunk(ChunkCoord(coordinate.x, coordinate.y, coordinate.z + 1));
+    }
+    if(mLocalChunks.find(ChunkCoord(coordinate.x, coordinate.y, coordinate.z - 1)) != mLocalChunks.end())
+    {
+        updateChunk(ChunkCoord(coordinate.x, coordinate.y, coordinate.z - 1));
     }
 }
 
-bool Client::requestedQuit()
+void Client::handleMessage(const VoxelSetMessage& received)
 {
-	return mQuit;
-}
-
-void Client::setServerBridge(std::unique_ptr<ServerClientBridge> bridge)
-{
-	mBridge = std::move(bridge);
-	mBus.send(LogMessage{"client connected to server", clientName, LogLevel::INFO});
-}
-
-void Client::fetchServerData()
-{
-	std::shared_ptr<BasePackage> package;
-	while(mBridge->pollPackage(package))
-	{
-		if(package->mType == PackageType::CHUNK_LOADED)
-		{
-			ChunkLoadedPackage* chunkPackage = (ChunkLoadedPackage*)package.get();
-			ChunkCoord coordinate;
-
-            RleIndexArray rleSegmentIndices;
-            RleSegmentArray rleSegments;
-
-			std::tie(coordinate, rleSegmentIndices, rleSegments) = chunkPackage->getData();
-
-            mLocalChunks[coordinate] = Chunk(coordinate, rleSegmentIndices, rleSegments);
-
-            updateChunk(coordinate);
-
-            if(mLocalChunks.find(ChunkCoord(coordinate.x + 1, coordinate.y, coordinate.z)) != mLocalChunks.end())
-            {
-                updateChunk(ChunkCoord(coordinate.x + 1, coordinate.y, coordinate.z));
-            }
-            if(mLocalChunks.find(ChunkCoord(coordinate.x - 1, coordinate.y, coordinate.z)) != mLocalChunks.end())
-            {
-                updateChunk(ChunkCoord(coordinate.x - 1, coordinate.y, coordinate.z));
-            }
-            if(mLocalChunks.find(ChunkCoord(coordinate.x, coordinate.y + 1, coordinate.z)) != mLocalChunks.end())
-            {
-                updateChunk(ChunkCoord(coordinate.x, coordinate.y + 1, coordinate.z));
-            }
-            if(mLocalChunks.find(ChunkCoord(coordinate.x, coordinate.y - 1, coordinate.z)) != mLocalChunks.end())
-            {
-                updateChunk(ChunkCoord(coordinate.x, coordinate.y - 1, coordinate.z));
-            }
-            if(mLocalChunks.find(ChunkCoord(coordinate.x, coordinate.y, coordinate.z + 1)) != mLocalChunks.end())
-            {
-                updateChunk(ChunkCoord(coordinate.x, coordinate.y, coordinate.z + 1));
-            }
-            if(mLocalChunks.find(ChunkCoord(coordinate.x, coordinate.y, coordinate.z - 1)) != mLocalChunks.end())
-            {
-                updateChunk(ChunkCoord(coordinate.x, coordinate.y, coordinate.z - 1));
-            }
-		}
-		else if(package->mType == PackageType::VOXEL_SET)
-		{
-			VoxelSetPackage* voxelSetPackage = (VoxelSetPackage*)package.get();
-
-            VoxelCoord voxelCoord;
-            VoxelType type;
-
-			std::tie(voxelCoord, type) = voxelSetPackage->getData();
-
-            ChunkCoord chunkCoord = voxelToChunk(voxelCoord);
-            ChunkVoxelCoord chunkVoxelCoord = voxelToChunkVoxel(voxelCoord);
+            ChunkCoord chunkCoord = voxelToChunk(received.voxel);
+            ChunkVoxelCoord chunkVoxelCoord = voxelToChunkVoxel(received.voxel);
 
             auto chunk = mLocalChunks.find(chunkCoord);
 
             if(chunk != mLocalChunks.end())
             {
-                chunk->second.setVoxelType(chunkVoxelCoord, type);
+                chunk->second.setVoxelType(chunkVoxelCoord, received.type);
                 updateChunk(chunkCoord);
             }
 
@@ -244,64 +163,21 @@ void Client::fetchServerData()
             {
                 updateChunk(backNeighbour);
             }
-        }
-		else if(package->mType == PackageType::CHUNK_DELETED)
-		{
-			ChunkDeletedPackage* chunkPackage = (ChunkDeletedPackage*)package.get();
+}
 
-            ChunkCoord coordinate;
+void Client::handleMessage(const ClientChunkDeletedMessage& received)
+{
+    mLocalChunks.erase(received.coordinate);
+}
 
-            std::tie(coordinate) = chunkPackage->getData();
+void Client::handleMessage(const CursorLockedMessage& received)
+{
+    mWindow.lockCursor(received.locked);
+}
 
-			mBus.send(ClientChunkDeletedMessage{std::get<0>(chunkPackage->getData())});
-
-            mLocalChunks.erase(coordinate);
-		}
-		else if(package->mType == PackageType::GFX_ENTITY_ADDED)
-		{
-			GfxEntityAddedPackage* gfxAddedPackage = (GfxEntityAddedPackage*)package.get();
-			mBus.send(AddGfxEntityMessage{std::get<0>(gfxAddedPackage->getData()), std::get<1>(gfxAddedPackage->getData())});
-		}
-		else if(package->mType == PackageType::GFX_ENTITY_MOVED)
-		{
-			GfxEntityMovedPackage* gfxMovedPackage = (GfxEntityMovedPackage*)package.get();
-			mBus.send(MoveGfxEntityMessage{std::get<0>(gfxMovedPackage->getData()), std::get<1>(gfxMovedPackage->getData())});
-		}
-		else if(package->mType == PackageType::GFX_ENTITY_ROTATED)
-		{
-			GfxEntityRotatedPackage* gfxEntityRotatedPackage = (GfxEntityRotatedPackage*)package.get();
-			mBus.send(RotateGfxEntityMessage{std::get<0>(gfxEntityRotatedPackage->getData()), std::get<1>(gfxEntityRotatedPackage->getData()), std::get<2>(gfxEntityRotatedPackage->getData())});
-		}
-		else if(package->mType == PackageType::GFX_ENTITY_REMOVED)
-		{
-			GfxEntityRemovedPackage* gfxRemovedPackage = (GfxEntityRemovedPackage*)package.get();
-			mBus.send(RemoveGfxEntityMessage{std::get<0>(gfxRemovedPackage->getData())});
-		}
-		else if(package->mType == PackageType::PLAYER_ID)
-		{
-			PlayerIdPackage* playerIdPackage = (PlayerIdPackage*)package.get();
-			mBus.send(PlayerIdMessage{std::get<0>(playerIdPackage->getData())});
-		}
-		else if(package->mType == PackageType::PLAYER_CONNECTED_TO_ENTITY)
-		{
-			PlayerConnectedToEntityPackage* playerConnectedToEntityPackage = (PlayerConnectedToEntityPackage*)package.get();
-			mBus.send(PlayerConnectedToEntityMessage{std::get<0>(playerConnectedToEntityPackage->getData()), std::get<1>(playerConnectedToEntityPackage->getData())});
-		}
-		else if(package->mType == PackageType::PLAYER_FACING_BLOCK)
-		{
-			PlayerFacingBlockPackage* playerFacingBlockPackage = (PlayerFacingBlockPackage*)package.get();
-
-            size_t playerId;
-
-            int x;
-            int y;
-            int z;
-
-            std::tie(playerId, x, y, z) = playerFacingBlockPackage->getData();
-
-			mBus.send(PlayerFacingBlockMessage{playerId, VoxelCoord(x, y, z)});
-		}
-	}
+bool Client::requestedQuit()
+{
+	return mQuit;
 }
 
 void Client::updateChunk(const ChunkCoord& coordinate)
