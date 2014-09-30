@@ -69,7 +69,7 @@ void RemoteClientBridge::receivePackage(std::weak_ptr<BasePackage> incoming)
 
 void RemoteClientBridge::deserialiseAndReceive(const std::vector<uint8_t>& data, BasePackage* package)
 {
-    package->deserialise(data);
+    package->setFromBytes(data);
     std::shared_ptr<BasePackage> packagePtr = std::shared_ptr<BasePackage>(package);
     receivePackage(packagePtr);
 }
@@ -87,7 +87,7 @@ void RemoteClientBridge::sendAwaiting()
     //grab packages from the outgoing queue, serialise and pack them up and send them to the enet peer
     for(auto package : toSend)
     {
-        std::vector<uint8_t> data = package->serialise();
+        std::vector<uint8_t> data = package->getAsBytes();
 
         ENetPacket* packet = enet_packet_create(&data[0], data.size(), package->mUnreliable ? ENET_PACKET_FLAG_UNSEQUENCED : ENET_PACKET_FLAG_RELIABLE);
         enet_peer_send(mPeer, package->mChannel, packet);

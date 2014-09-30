@@ -3,6 +3,7 @@
 #include "remoteserverbridge.hpp"
 #include "networkingmessages.hpp"
 #include "packages.hpp"
+#include "../world/worldmessages.hpp"
 
 ClientNetworkingSystem::ClientNetworkingSystem(fea::MessageBus& bus, const NetworkParameters& parameters) :
     mBus(bus),

@@ -123,7 +123,7 @@ void RemoteServerBridge::mListenerFunction()
             }
             for(auto package : toSend)
             {
-                std::vector<uint8_t> data = package->serialise();
+                std::vector<uint8_t> data = package->getAsBytes();
                 ENetPacket* packet = enet_packet_create(&data[0], data.size(), package->mUnreliable ? ENET_PACKET_FLAG_UNSEQUENCED : ENET_PACKET_FLAG_RELIABLE);
                 enet_peer_send(mHostPeer, package->mChannel, packet);
             }
@@ -238,7 +238,7 @@ void RemoteServerBridge::receivePackage(std::weak_ptr<BasePackage> incoming)
 }
 void RemoteServerBridge::deserialiseAndReceive(const std::vector<uint8_t>& data, BasePackage* package)
 {
-    package->deserialise(data);
+    package->setFromBytes(data);
     std::shared_ptr<BasePackage> packagePtr = std::shared_ptr<BasePackage>(package);
     receivePackage(packagePtr);
 }

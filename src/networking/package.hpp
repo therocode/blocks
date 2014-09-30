@@ -1,6 +1,6 @@
 #pragma once
 #include <vector>
-#include <stdint.h>
+#include <cstdint>
 #include <tuple>
 #include "../utilities/serialize.hpp"
 #include "packagetype.hpp"
@@ -10,11 +10,11 @@ class BasePackage
     public:
         BasePackage();
         BasePackage(PackageType type, bool unreliable = false, int channel = 0);
-        virtual std::vector<uint8_t> serialise() const = 0;
-        virtual void deserialise(const std::vector<uint8_t>& bytes) = 0;
+        virtual std::vector<uint8_t> getAsBytes() const = 0;
+        virtual void setFromBytes(const std::vector<uint8_t>& bytes) = 0;
         PackageType mType;
         bool mUnreliable;
-        int  mChannel = 0;
+        int  mChannel;
 };
 
 template<typename Tag, PackageType TypeId, bool Unreliable, int Channel, typename... Types>
@@ -23,14 +23,19 @@ class Package : public BasePackage
     public:
         Package()
         {
+            mUnreliable = false;
+            mChannel = 0;
         }
+
         Package(Types... values) : BasePackage(TypeId, Unreliable, Channel), data(values...)
         {
         }
+
         Package(std::tuple<Types...> value) : BasePackage(TypeId, Unreliable, Channel), data(value)
         {
         }
-        virtual std::vector<uint8_t> serialise() const override
+
+        virtual std::vector<uint8_t> getAsBytes() const override
         {
             std::vector<uint8_t> bytes;
             
@@ -44,7 +49,8 @@ class Package : public BasePackage
             serialize(data, bytes);
             return bytes;
         }
-        virtual void deserialise(const std::vector<uint8_t>& bytes) override
+
+        virtual void setFromBytes(const std::vector<uint8_t>& bytes) override
         {
             auto byteIterator = bytes.begin();
 
@@ -56,8 +62,9 @@ class Package : public BasePackage
                 typePointer++;
             }
 
-            data = deserialize<std::tuple<Types...> >(byteIterator, bytes.end());
+            data = deserialize<std::tuple<Types...>>(byteIterator, bytes.end());
         }
+
         std::tuple<Types...> getData()
         {
             return data;

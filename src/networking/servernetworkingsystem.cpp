@@ -5,6 +5,8 @@
 #include "localclientlistener.hpp"
 #include "remoteclientlistener.hpp"
 #include "../lognames.hpp"
+#include "../script/scriptmessages.hpp"
+#include "../input/inputmessages.hpp"
 
 ServerNetworkingSystem::ServerNetworkingSystem(fea::MessageBus& bus, const NetworkParameters& parameters) :
     mBus(bus),
