@@ -109,9 +109,6 @@ TEST_CASE("solidType", "[solidType]")
 	
 	ChunkVoxelCoord coords(1, 0, 0);
 
-	voxels.fill(0);
-	chunk.setVoxelData(voxels);
-
 	chunk.setVoxelType(coords, 1);
 	REQUIRE(chunk.getSolidity() == INBETWEEN);
 
