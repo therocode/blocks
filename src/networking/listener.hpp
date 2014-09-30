@@ -2,14 +2,13 @@
 #include <queue>
 #include <memory>
 #include <mutex>
-
-class ClientConnection;
+#include "clientconnection.hpp"
 
 class Listener
 {
     public:
-        std::shared_ptr<ClientConnection> fetchIncomingConnection();
+        std::unique_ptr<ClientConnection> fetchIncomingConnection();
     protected:
         std::mutex mIncomingConnectionsMutex;
-        std::queue<std::shared_ptr<ClientConnection> > mIncomingConnections;
+        std::queue<std::unique_ptr<ClientConnection>> mIncomingConnections;
 };

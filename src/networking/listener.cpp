@@ -1,12 +1,12 @@
 #include "listener.hpp"
 
-std::shared_ptr<ClientConnection> Listener::fetchIncomingConnection()
+std::unique_ptr<ClientConnection> Listener::fetchIncomingConnection()
 {
    std::lock_guard<std::mutex> lock(mIncomingConnectionsMutex);
 
    if(mIncomingConnections.size() > 0)
    {
-       std::shared_ptr<ClientConnection> returnVal = mIncomingConnections.front();
+       auto returnVal = std::move(mIncomingConnections.front());
        mIncomingConnections.pop();
        return returnVal;
    }

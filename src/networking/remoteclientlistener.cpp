@@ -40,10 +40,10 @@ void RemoteClientListener::listenerFunction()
 
                         mPeers.emplace(newClientId, (Peer*)event.peer->data);
 
-                        std::shared_ptr<ClientConnection> clientConnection = std::make_shared<ClientConnection>(newClientId);
+                        std::unique_ptr<ClientConnection> clientConnection = std::unique_ptr<ClientConnection>(new ClientConnection(newClientId));
                         clientConnection->setBridge(std::unique_ptr<RemoteClientBridge>(newClientBridge));
                         mIncomingConnectionsMutex.lock();
-                        mIncomingConnections.push(clientConnection);
+                        mIncomingConnections.push(std::move(clientConnection));
                         mIncomingConnectionsMutex.unlock();
                         break;
                     }

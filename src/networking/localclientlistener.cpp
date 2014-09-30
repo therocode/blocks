@@ -4,7 +4,7 @@
 
 void LocalClientListener::createClientConnection(LocalServerClientBridge* clientBridge)
 {
-    std::shared_ptr<ClientConnection> clientConnection = std::make_shared<ClientConnection>(0); //local client will always have id 0
+    std::unique_ptr<ClientConnection> clientConnection = std::unique_ptr<ClientConnection>(new ClientConnection(0)); //local client will always have id 0
 
     LocalServerClientBridge* serverBridge = new LocalServerClientBridge();
 
@@ -14,5 +14,5 @@ void LocalClientListener::createClientConnection(LocalServerClientBridge* client
     clientConnection->setBridge(std::unique_ptr<LocalServerClientBridge>(serverBridge));
 
     std::lock_guard<std::mutex> lock(mIncomingConnectionsMutex);
-    mIncomingConnections.push(clientConnection);
+    mIncomingConnections.push(std::move(clientConnection));
 }
