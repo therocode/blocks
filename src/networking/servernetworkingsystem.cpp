@@ -1,7 +1,6 @@
 #include "servernetworkingsystem.hpp"
 #include "../world/chunk.hpp"
 #include "packages.hpp"
-#include "clientconnection.hpp"
 #include "localclientlistener.hpp"
 #include "remoteclientlistener.hpp"
 #include "../lognames.hpp"
@@ -10,7 +9,8 @@
 
 ServerNetworkingSystem::ServerNetworkingSystem(fea::MessageBus& bus, const NetworkParameters& parameters) :
     mBus(bus),
-    mParameters(parameters)
+    mParameters(parameters),
+    mNextClientId(0)
 {
     subscribe(mBus, *this);
 
@@ -179,15 +179,13 @@ void ServerNetworkingSystem::handleMessage(const VoxelSetMessage& received)
 
 
 
-void ServerNetworkingSystem::acceptClientConnection(std::shared_ptr<ClientConnection> client)
+void ServerNetworkingSystem::acceptClientConnection(std::unique_ptr<ServerClientBridge> client)
 {
-    ClientId newClientId = client->getId();
+    uint32_t newId = mNextClientId++;
 
-    mClients.emplace(newClientId, client);
+    mBus.send(LogMessage{std::string("Client id ") + std::to_string(newId) + std::string(" connected"), netName, LogLevel::INFO});
 
-    mBus.send(LogMessage{std::string("Client id ") + std::to_string(newClientId) + std::string(" connected"), netName, LogLevel::INFO});
-
-    std::shared_ptr<BasePackage> playerIdPackage(new PlayerIdPackage(newClientId));
+    std::shared_ptr<BasePackage> playerIdPackage(new PlayerIdPackage(newId));
     client->enqueuePackage(playerIdPackage);
 
     //resend current gfx entities. this is a hack right now. in the futuer it probably has to send the whole game state or something, i dunno
@@ -204,23 +202,25 @@ void ServerNetworkingSystem::acceptClientConnection(std::shared_ptr<ClientConnec
     //    client->enqueuePackage(chunkAddedPackage);
     //}
 
-    mBus.send(PlayerJoinedMessage{newClientId, 0, glm::vec3(0.0f, 45.0f, 0.0f)}); //position and world could be loaded from file or at spawn
+    mBus.send(PlayerJoinedMessage{newId, 0, glm::vec3(0.0f, 45.0f, 0.0f)}); //position and world could be loaded from file or at spawn
+
+    mClients.emplace(newId, std::move(client));
 }
 
 void ServerNetworkingSystem::pollNewClients()
 {
-    std::shared_ptr<ClientConnection> client;
+    std::unique_ptr<ServerClientBridge> client;
 
     for(auto& listener : mListeners)
     {
         while((client = listener->fetchIncomingConnection()))
         {
-            acceptClientConnection(client);
+            acceptClientConnection(std::move(client));
         }
     }
 }
 
-void ServerNetworkingSystem::fetchClientData(std::weak_ptr<ClientConnection> client)
+void ServerNetworkingSystem::fetchClientData(std::unique_ptr<ServerClientBridge>& client)
 {
     std::shared_ptr<BasePackage> package;
 

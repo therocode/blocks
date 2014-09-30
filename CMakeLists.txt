@@ -42,7 +42,6 @@ set(source_files
 
     src/math/mathutils.cpp
 
-    src/networking/clientconnection.cpp
     src/networking/clientnetworkingsystem.cpp
     src/networking/listener.cpp
     src/networking/localclientlistener.cpp
@@ -156,7 +155,6 @@ set(header_files
 
     src/math/mathutils.hpp
 
-    src/networking/clientconnection.hpp
     src/networking/clientnetworkingsystem.hpp
     src/networking/listener.hpp
     src/networking/localclientlistener.hpp

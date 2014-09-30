@@ -1,7 +1,6 @@
 #include "remoteclientlistener.hpp"
 #include "application/applicationmessages.hpp"
 #include "../lognames.hpp"
-#include "clientconnection.hpp"
 
 RemoteClientListener::RemoteClientListener(fea::MessageBus& bus) :
     mBus(bus),
@@ -32,7 +31,9 @@ void RemoteClientListener::listenerFunction()
                         enet_address_get_host_ip(&event.peer->address, ipName, 16);
                         mBus.send(LogMessage{"A new client connected from " + std::string(ipName), netName, LogLevel::INFO});
                         /* Store any relevant client information here. */
-                        RemoteClientBridge* newClientBridge = new RemoteClientBridge(event.peer);
+                        
+                        std::unique_ptr<ServerClientBridge> clientConnection = std::unique_ptr<RemoteClientBridge>(new RemoteClientBridge(event.peer));
+                        RemoteClientBridge* newClientBridge = (RemoteClientBridge*)clientConnection.get();
                         size_t newClientId = mNextClientId;
                         mNextClientId++;
 
@@ -40,8 +41,6 @@ void RemoteClientListener::listenerFunction()
 
                         mPeers.emplace(newClientId, (Peer*)event.peer->data);
 
-                        std::unique_ptr<ClientConnection> clientConnection = std::unique_ptr<ClientConnection>(new ClientConnection(newClientId));
-                        clientConnection->setBridge(std::unique_ptr<RemoteClientBridge>(newClientBridge));
                         mIncomingConnectionsMutex.lock();
                         mIncomingConnections.push(std::move(clientConnection));
                         mIncomingConnectionsMutex.unlock();
@@ -68,7 +67,7 @@ void RemoteClientListener::listenerFunction()
                         ((Peer*)event.peer->data)->mBridge->disconnect();
                         //mDisconnectingmutex
                         //mDisconnecting.push()
-                        delete (Peer*)event.peer->data;
+                        delete (Peer*)event.peer->data; //////ALERT MEMORY LEAK MUST DELETE NEWCLIENTBRIDGE
                         event.peer->data = nullptr;
                         break;
                     }

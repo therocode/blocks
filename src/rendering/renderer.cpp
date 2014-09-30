@@ -434,6 +434,7 @@ void Renderer::handleMessage(const AddGfxEntityMessage& received)
 	size_t id = received.id;
 	glm::vec3 position = received.position;
 
+    std::cout << "add id was " << id << " \n";
 	VBOCreator vboCreator;
 
 	Billboard newBillboard(vboCreator.generateBoardVBO(glm::vec2(1.0f, 1.0f)), position);
@@ -446,6 +447,7 @@ void Renderer::handleMessage(const MoveGfxEntityMessage& received)
 	size_t id = received.id;
 	glm::vec3 position = received.position;
 
+    std::cout << "move id was " << id << " \n";
 	billboards.at(id).mPosition = position;
 
     if(id == mCameraEntity)

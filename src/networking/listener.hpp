@@ -2,13 +2,14 @@
 #include <queue>
 #include <memory>
 #include <mutex>
-#include "clientconnection.hpp"
+
+class ServerClientBridge;
 
 class Listener
 {
     public:
-        std::unique_ptr<ClientConnection> fetchIncomingConnection();
+        std::unique_ptr<ServerClientBridge> fetchIncomingConnection();
     protected:
         std::mutex mIncomingConnectionsMutex;
-        std::queue<std::unique_ptr<ClientConnection>> mIncomingConnections;
+        std::queue<std::unique_ptr<ServerClientBridge>> mIncomingConnections;
 };

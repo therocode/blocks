@@ -1,6 +1,7 @@
 #include "listener.hpp"
+#include "serverclientbridge.hpp"
 
-std::unique_ptr<ClientConnection> Listener::fetchIncomingConnection()
+std::unique_ptr<ServerClientBridge> Listener::fetchIncomingConnection()
 {
    std::lock_guard<std::mutex> lock(mIncomingConnectionsMutex);
 

@@ -11,7 +11,6 @@
 #include "../application/applicationmessages.hpp"
 #include "networkingmessages.hpp"
 
-class ClientConnection;
 using ClientId = size_t;
 
 class ServerNetworkingSystem : public fea::MessageReceiver<LocalConnectionAttemptMessage,
@@ -40,9 +39,9 @@ class ServerNetworkingSystem : public fea::MessageReceiver<LocalConnectionAttemp
         void handleMessage(const ChunkDeletedMessage& received);
         void handleMessage(const VoxelSetMessage& received);
     private:
-        void acceptClientConnection(const std::shared_ptr<ClientConnection> client);
+        void acceptClientConnection(std::unique_ptr<ServerClientBridge> client);
         void pollNewClients();
-        void fetchClientData(std::weak_ptr<ClientConnection> client);
+        void fetchClientData(std::unique_ptr<ServerClientBridge>& client);
         void checkForDisconnectedClients();
 
         fea::MessageBus& mBus;
@@ -50,6 +49,7 @@ class ServerNetworkingSystem : public fea::MessageReceiver<LocalConnectionAttemp
 
         std::unordered_set<size_t> graphicsEntities; //temporary solution on how to resend things
 
-        std::unordered_map<ClientId, std::shared_ptr<ClientConnection> > mClients;
+        std::unordered_map<uint32_t, std::unique_ptr<ServerClientBridge>> mClients;
+        uint32_t mNextClientId;
         std::vector<std::unique_ptr<Listener>> mListeners;
 };
