@@ -1,9 +1,10 @@
 #include "enet.hpp"
 #include <enet/enet.h>
 
-ENet::ENet()
+ENet::ENet() :
+    mInitialized(false)
 {
-    if(enet_initialize() != 0)
+    if(int32_t returned = enet_initialize() == 0)
     {
         mInitialized = true;
     }

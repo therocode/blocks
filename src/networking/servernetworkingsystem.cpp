@@ -26,7 +26,7 @@ ServerNetworkingSystem::ServerNetworkingSystem(fea::MessageBus& bus, const Netwo
         if(mENet->isInitialized())
         {
             mBus.send(LogMessage{"Setting up dedicated server networking", netName, LogLevel::INFO});
-            mENetServer = std::unique_ptr<ENetServer>(new ENetServer(*mENet, mBus));
+            mENetServer = std::unique_ptr<ENetServer>(new ENetServer(*mENet, 56556));
         }
         else
         {
@@ -40,7 +40,7 @@ ServerNetworkingSystem::ServerNetworkingSystem(fea::MessageBus& bus, const Netwo
         if(mENet->isInitialized())
         {
             mBus.send(LogMessage{"Setting up networking", netName, LogLevel::INFO});
-            mENetServer = std::unique_ptr<ENetServer>(new ENetServer(*mENet, mBus));
+            mENetServer = std::unique_ptr<ENetServer>(new ENetServer(*mENet, 56556));
         }
         else
         {
@@ -64,7 +64,7 @@ void ServerNetworkingSystem::handleMessage(const LocalConnectionAttemptMessage& 
 
 void ServerNetworkingSystem::handleMessage(const FrameMessage& received)
 {
-    mENetServer->update();
+    mENetServer->update(0);
 }
 
 void ServerNetworkingSystem::handleMessage(const IncomingConnectionMessage& received)

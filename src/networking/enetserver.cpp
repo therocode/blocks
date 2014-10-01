@@ -4,19 +4,17 @@
 #include "networkingmessages.hpp"
 #include "packages.hpp"
 
-ENetServer::ENetServer(const ENet& enet, fea::MessageBus& bus) :
-    mBus(bus),
+ENetServer::ENetServer(const ENet& enet, uint32_t port) :
     mHost(nullptr),
-    mInitialized(false),
-    mNextId(0)
+    mNextId(0),
+    mClientCount(0)
 {
     (void)enet;
 
-    mBus.send(LogMessage{"ENet initialized", netName, LogLevel::INFO});
-    mInitialized = true;
+    //mBus.send(LogMessage{"ENet initialized", netName, LogLevel::INFO});
 
     mAddress.host = ENET_HOST_ANY;
-    mAddress.port = 56556;
+    mAddress.port = port;
 
     mHost = enet_host_create(&mAddress,  //address to bind this server to
             32,                          //allow 32 incoming connections
@@ -24,68 +22,70 @@ ENetServer::ENetServer(const ENet& enet, fea::MessageBus& bus) :
             0,                           //no downstream limit
             0);                          //no upstream limit
 
-    if(mHost == nullptr)
-        mBus.send(LogMessage{"Could not initialize server", netName, LogLevel::ERR});
-    else
-        mBus.send(LogMessage{"Now listening on port " + std::to_string(mAddress.port), netName, LogLevel::INFO});
+    //if(mHost != nullptr)
+        //mBus.send(LogMessage{"Could not initialize server", netName, LogLevel::ERR});
+    //else
+        //mBus.send(LogMessage{"Now listening on port " + std::to_string(mAddress.port), netName, LogLevel::INFO});
 }
 
 ENetServer::~ENetServer()
 {
-    mBus.send(LogMessage{"Shutting down ENet", netName, LogLevel::ERR});
+    //mBus.send(LogMessage{"Shutting down ENet", netName, LogLevel::ERR});
 
     if(mHost)
         enet_host_destroy(mHost);
-
-    if(mInitialized)
-        enet_deinitialize();
 }
 
-void ENetServer::update()
+void ENetServer::update(uint32_t wait)
 {
     if(mHost)
     {
         ENetEvent event;
 
-        while(enet_host_service(mHost, &event, 0) > 0) //0 as third parameter means that we'll not wait for activity. non-blocking
+        while(enet_host_service(mHost, &event, wait) > 0) //0 as third parameter means that we'll not wait for activity. non-blocking
         {
             switch(event.type)
             {   
                 case ENET_EVENT_TYPE_CONNECT:
                     {
-                        mBus.send(LogMessage{"new client connected from " + std::to_string(event.peer->address.host) + ":" + std::to_string(event.peer->address.port), netName, LogLevel::INFO});
+                        //mBus.send(LogMessage{"new client connected from " + std::to_string(event.peer->address.host) + ":" + std::to_string(event.peer->address.port), netName, LogLevel::INFO});
 
                         uint32_t newId = mNextId++;
 
                         event.peer->data = new uint32_t(newId);
                         mConnectedPeers.emplace(newId, event.peer);
 
-                        mBus.send(IncomingConnectionMessage{newId});
+                        mClientCount++;
+
+                        //mBus.send(IncomingConnectionMessage{newId});
 
                         break;
                     }
                 case ENET_EVENT_TYPE_RECEIVE:
                     {
-                        mBus.send(LogMessage{"a packet of length " + std::to_string(event.packet->dataLength) + " was received from " + std::to_string(event.peer->address.host) + " on channel " + std::to_string(event.channelID), netName, LogLevel::VERB});
+                        //mBus.send(LogMessage{"a packet of length " + std::to_string(event.packet->dataLength) + " was received from " + std::to_string(event.peer->address.host) + " on channel " + std::to_string(event.channelID), netName, LogLevel::VERB});
 
                         auto package = deserialize(event.packet);
 
-                        mBus.send(ClientPackageReceived{*((uint32_t*) event.peer->data), package});
+                        //mBus.send(ClientPackageReceived{*((uint32_t*) event.peer->data), package});
 
                         enet_packet_destroy(event.packet);
                         break;
                     }
                 case ENET_EVENT_TYPE_DISCONNECT:
                     {
-                        mBus.send(LogMessage{"client from " + std::to_string(event.peer->address.host) + ":" + std::to_string(event.peer->address.port) + " disconnected", netName, LogLevel::INFO});
+                        //mBus.send(LogMessage{"client from " + std::to_string(event.peer->address.host) + ":" + std::to_string(event.peer->address.port) + " disconnected", netName, LogLevel::INFO});
 
                         uint32_t* idPtr = (uint32_t*)event.peer->data;
 
-                        mBus.send(ClientDisconnectedMessage{*idPtr});
+                        //mBus.send(ClientDisconnectedMessage{*idPtr});
 
                         mConnectedPeers.erase(*idPtr);
                         delete idPtr;
                         event.peer->data = nullptr;
+
+                        mClientCount--;
+
                         break;
                     }
                 case ENET_EVENT_TYPE_NONE:
@@ -115,6 +115,11 @@ void ENetServer::sendToOne(uint32_t id, std::unique_ptr<BasePackage> package)
 
     FEA_ASSERT(mConnectedPeers.count(id) != 0, "Trying to send a package to enet peer ID " + std::to_string(id) + " but that peer doesn't exist!\n");
     enet_peer_send(mConnectedPeers.at(id), package->mChannel, packet);
+}
+
+bool ENetServer::isListening() const
+{
+    return mHost != nullptr;
 }
 
 std::unique_ptr<BasePackage> ENetServer::deserialize(ENetPacket* packet)
@@ -166,9 +171,14 @@ std::unique_ptr<BasePackage> ENetServer::deserialize(ENetPacket* packet)
                 return packagePtr;
             }
         default:
-            mBus.send(LogMessage{"Unknown package received", netName, LogLevel::ERR});
+            //mBus.send(LogMessage{"Unknown package received", netName, LogLevel::ERR});
             return std::unique_ptr<BasePackage>();
             break;
     }
 
+}
+
+uint32_t ENetServer::getClientCount() const
+{
+    return mClientCount;
 }
