@@ -1,8 +1,6 @@
 #include "servernetworkingsystem.hpp"
 #include "../world/chunk.hpp"
 #include "packages.hpp"
-#include "localclientlistener.hpp"
-#include "remoteclientlistener.hpp"
 #include "../lognames.hpp"
 #include "../script/scriptmessages.hpp"
 #include "../input/inputmessages.hpp"
@@ -10,72 +8,73 @@
 ServerNetworkingSystem::ServerNetworkingSystem(fea::MessageBus& bus, const NetworkParameters& parameters) :
     mBus(bus),
     mParameters(parameters),
-    mNextClientId(0)
+    mNextClientId(0),
+    mLocalPlayerId(0),
+    mLocalClientBus(nullptr)
 {
     subscribe(mBus, *this);
 
     if(parameters.mode == NetworkMode::SINGLE_PLAYER)
     {
-        LocalClientListener* listener = new LocalClientListener();
-        mListeners.push_back(std::unique_ptr<LocalClientListener>(listener));
+        mBus.send(LogMessage{"Setting up single player networking", netName, LogLevel::INFO});
     }
     else if(parameters.mode == NetworkMode::DEDICATED)
     {
-        RemoteClientListener* remoteListener = new RemoteClientListener(mBus);
-
-        if(enet_initialize() < 0)
-        {
-            mBus.send(LogMessage{"Couldn't initialise enet", "network", LogLevel::ERR});
-        }
-        else
-        {
-            remoteListener->startListening(parameters.port);
-            mListeners.push_back(std::unique_ptr<RemoteClientListener>(remoteListener));
-        }
+        mBus.send(LogMessage{"Setting up dedicated server networking", netName, LogLevel::INFO});
+        mENetServer = std::unique_ptr<ENetServer>(new ENetServer(mBus));
     }
     else if(parameters.mode == NetworkMode::COMBINED)
     {
-        LocalClientListener* listener = new LocalClientListener();
-        mListeners.push_back(std::unique_ptr<LocalClientListener>(listener));
-
-        RemoteClientListener* remoteListener = new RemoteClientListener(mBus);
-
-        if(enet_initialize() < 0)
-        {
-            mBus.send(LogMessage{"Couldn't initialise enet", "network", LogLevel::ERR});
-        }
-        else
-        {
-            remoteListener->startListening(parameters.port);
-            mListeners.push_back(std::unique_ptr<RemoteClientListener>(remoteListener));
-        }
+        mBus.send(LogMessage{"Setting up networking", netName, LogLevel::INFO});
+        mENetServer = std::unique_ptr<ENetServer>(new ENetServer(mBus));
     }
 }
 
 void ServerNetworkingSystem::handleMessage(const LocalConnectionAttemptMessage& received)
 {
-    if(mListeners.size() > 0)
-    {
-        static_cast<LocalClientListener*>(mListeners[0].get())->createClientConnection(received.clientToServerBridge); //must be first one right now, a hack
-    }
+    uint32_t newId = mNextClientId++;
+
+    mLocalPlayerId = newId;
+    mLocalClientBus = received.clientBus;
+
+    mBus.send(LogMessage{"Client connected locally and given player Id " + std::to_string(newId), netName, LogLevel::INFO});
+    mBus.send(PlayerJoinedMessage{newId, 0, {0.0f, 0.0f, 0.0f}});
 }
 
 void ServerNetworkingSystem::handleMessage(const FrameMessage& received)
 {
-    checkForDisconnectedClients();
+    mENetServer->update();
+}
 
-    for(auto& client : mClients)
-    {
-        fetchClientData(client.second);
-    }
+void ServerNetworkingSystem::handleMessage(const IncomingConnectionMessage& received)
+{
+    uint32_t newId = mNextClientId++;
 
+    mClientToPlayerIds.emplace(received.clientId, newId);
+    mPlayerToClientIds.emplace(newId, received.clientId);
 
-    for(auto& client : mClients)
-    {
-        client.second->flush();
-    }
+    mBus.send(LogMessage{"Client Id " + std::to_string(received.clientId) + " connected and given player Id " + std::to_string(newId), netName, LogLevel::INFO});
+    mBus.send(PlayerJoinedMessage{newId, 0, {0.0f, 0.0f, 0.0f}});
+}
 
-    pollNewClients();
+void ServerNetworkingSystem::handleMessage(const ClientPackageReceived& received)
+{
+    handleClientPackage(received.clientId, received.package);
+}
+
+void ServerNetworkingSystem::handleMessage(const ClientDisconnectedMessage& received)
+{
+    std::cout << "client id " << received.clientId << " disconnected!\n";
+
+    FEA_ASSERT(mClientToPlayerIds.count(received.clientId) != 0, "Client " << received.clientId << " disconnecting, but that client is not marked as connected!");
+
+    uint32_t playerId = mClientToPlayerIds.at(received.clientId);
+
+    mBus.send(LogMessage{"Client Id " + std::to_string(received.clientId) + ", player Id " + std::to_string(playerId) + " disconnected", netName, LogLevel::INFO});
+    mBus.send(PlayerDisconnectedMessage{playerId});
+
+    mClientToPlayerIds.erase(received.clientId);
+    mPlayerToClientIds.erase(playerId);
 }
 
 void ServerNetworkingSystem::handleMessage(const ChunkLoadedMessage& received)
@@ -85,70 +84,76 @@ void ServerNetworkingSystem::handleMessage(const ChunkLoadedMessage& received)
 
     VoxelTypeData typeData = chunk.getVoxelTypeData();
 
-    std::shared_ptr<BasePackage> chunkLoadedPackage(new ChunkLoadedPackage(coordinate, typeData.mRleSegmentIndices, typeData.mRleSegments));
+    std::unique_ptr<BasePackage> chunkLoadedPackage(new ChunkLoadedPackage(coordinate, typeData.mRleSegmentIndices, typeData.mRleSegments));
 
-    for(auto& client : mClients)
-    {
-        client.second->enqueuePackage(chunkLoadedPackage);
-    }
+    if(mLocalClientBus)
+        mLocalClientBus->send(received);
+    if(mENetServer)
+        mENetServer->sendToAll(std::move(chunkLoadedPackage));
 }
 
 void ServerNetworkingSystem::handleMessage(const ChunkDeletedMessage& received)
 {
-    std::shared_ptr<BasePackage> chunkDeletedPackage(new ChunkDeletedPackage{received.coordinate});
-    for(auto& client : mClients)
-    {
-        client.second->enqueuePackage(chunkDeletedPackage);
-    }
+    std::unique_ptr<BasePackage> chunkDeletedPackage(new ChunkDeletedPackage{received.coordinate});
+
+    if(mLocalClientBus)
+        mLocalClientBus->send(received);
+    if(mENetServer)
+        mENetServer->sendToAll(std::move(chunkDeletedPackage));
 }
 
 void ServerNetworkingSystem::handleMessage(const AddGfxEntityMessage& received)
 {
-    std::shared_ptr<BasePackage> gfxEntityAddedPackage(new GfxEntityAddedPackage(received.id, received.position));
-    for(auto& client : mClients)
-    {
-        client.second->enqueuePackage(gfxEntityAddedPackage);
-    }
+    std::unique_ptr<BasePackage> gfxEntityAddedPackage(new GfxEntityAddedPackage(received.id, received.position));
 
     graphicsEntities.insert(received.id); //temphack
+
+    if(mLocalClientBus)
+        mLocalClientBus->send(received);
+    if(mENetServer)
+        mENetServer->sendToAll(std::move(gfxEntityAddedPackage));
 }
 
 void ServerNetworkingSystem::handleMessage(const MoveGfxEntityMessage& received)
 {
-    std::shared_ptr<BasePackage> gfxEntityMovedPackage(new GfxEntityMovedPackage(received.id, received.position));
-    for(auto& client : mClients)
-    {
-        client.second->enqueuePackage(gfxEntityMovedPackage);
-    }
+    std::unique_ptr<BasePackage> gfxEntityMovedPackage(new GfxEntityMovedPackage(received.id, received.position));
+
+    if(mLocalClientBus)
+        mLocalClientBus->send(received);
+    if(mENetServer)
+        mENetServer->sendToAll(std::move(gfxEntityMovedPackage));
 }
 
 void ServerNetworkingSystem::handleMessage(const RotateGfxEntityMessage& received)
 {
-    std::shared_ptr<BasePackage> gfxEntityRotatedPackage(new GfxEntityRotatedPackage(received.id, received.pitch, received.yaw));
-    for(auto& client : mClients)
-    {
-        client.second->enqueuePackage(gfxEntityRotatedPackage);
-    }
+    std::unique_ptr<BasePackage> gfxEntityRotatedPackage(new GfxEntityRotatedPackage(received.id, received.pitch, received.yaw));
+
+    if(mLocalClientBus)
+        mLocalClientBus->send(received);
+    if(mENetServer)
+        mENetServer->sendToAll(std::move(gfxEntityRotatedPackage));
 }
 
 void ServerNetworkingSystem::handleMessage(const RemoveGfxEntityMessage& received)
 {
-    std::shared_ptr<BasePackage> gfxEntityRemovedPackage(new GfxEntityRemovedPackage(received.id));
-    for(auto& client : mClients)
-    {
-        client.second->enqueuePackage(gfxEntityRemovedPackage);
-    }
+    std::unique_ptr<BasePackage> gfxEntityRemovedPackage(new GfxEntityRemovedPackage(received.id));
 
     graphicsEntities.erase(received.id); //temphack
+
+    if(mLocalClientBus)
+        mLocalClientBus->send(received);
+    if(mENetServer)
+        mENetServer->sendToAll(std::move(gfxEntityRemovedPackage));
 }
 
 void ServerNetworkingSystem::handleMessage(const PlayerConnectedToEntityMessage& received)
 {
-    std::shared_ptr<BasePackage> playerConnectedToEntityPackage(new PlayerConnectedToEntityPackage(received.playerId, received.entityId));
-    for(auto& client : mClients)
-    {
-        client.second->enqueuePackage(playerConnectedToEntityPackage);
-    }
+    std::unique_ptr<BasePackage> playerConnectedToEntityPackage(new PlayerConnectedToEntityPackage(received.playerId, received.entityId));
+
+    if(mLocalClientBus)
+        mLocalClientBus->send(received);
+    if(mENetServer)
+        mENetServer->sendToAll(std::move(playerConnectedToEntityPackage));
 }
 
 void ServerNetworkingSystem::handleMessage(const PlayerFacingBlockMessage& received)
@@ -163,122 +168,62 @@ void ServerNetworkingSystem::handleMessage(const PlayerFacingBlockMessage& recei
     y = vector.y;
     z = vector.z;
 
-    std::shared_ptr<BasePackage> playerFacingBlockPackage(new PlayerFacingBlockPackage(id, x, y, z));
-    mClients.at(id)->enqueuePackage(playerFacingBlockPackage);
+    std::unique_ptr<BasePackage> playerFacingBlockPackage(new PlayerFacingBlockPackage(id, x, y, z));
 
+    if(mLocalClientBus)
+    {
+        if(mLocalPlayerId == id)
+            mLocalClientBus->send(received);
+    }
+    if(mENetServer)
+    {
+        FEA_ASSERT(mPlayerToClientIds.count(id) != 0, "Trying to send packet to player Id " + std::to_string(id) + " but that player has no client attached to it");
+        mENetServer->sendToOne(mPlayerToClientIds.count(id), std::move(playerFacingBlockPackage));
+    }
 }
 
 void ServerNetworkingSystem::handleMessage(const VoxelSetMessage& received)
 {
-    std::shared_ptr<BasePackage> voxelSetPackage(new VoxelSetPackage(received.voxel , received.type));
-    for(auto& client : mClients)
-    {
-        client.second->enqueuePackage(voxelSetPackage);
-    }
+    std::unique_ptr<BasePackage> voxelSetPackage(new VoxelSetPackage(received.voxel , received.type));
+
+    if(mLocalClientBus)
+        mLocalClientBus->send(received);
+    if(mENetServer)
+        mENetServer->sendToAll(std::move(voxelSetPackage));
 }
 
-
-
-void ServerNetworkingSystem::acceptClientConnection(std::unique_ptr<ServerClientBridge> client)
+void ServerNetworkingSystem::handleClientPackage(uint32_t clientId, const std::unique_ptr<BasePackage>& package)
 {
-    uint32_t newId = mNextClientId++;
-
-    mBus.send(LogMessage{std::string("Client id ") + std::to_string(newId) + std::string(" connected"), netName, LogLevel::INFO});
-
-    std::shared_ptr<BasePackage> playerIdPackage(new PlayerIdPackage(newId));
-    client->enqueuePackage(playerIdPackage);
-
-    //resend current gfx entities. this is a hack right now. in the futuer it probably has to send the whole game state or something, i dunno
-    for(size_t id : graphicsEntities)
+    if(package->mType == PackageType::REBUILD_SCRIPTS_REQUESTED)
     {
-        std::shared_ptr<BasePackage> gfxEntityAddedPackage(new GfxEntityAddedPackage(id, glm::vec3(0.0f, 0.0f, 0.0f)));
-        client->enqueuePackage(gfxEntityAddedPackage);
+        mBus.send(RebuildScriptsRequestedMessage());
     }
-
-    //resend chunk created messages
-    //for(const auto& chunk : mGameInterface.getWorldSystem().getWorld(0).getChunkMap())  //for world 0, thish shouldn't be hard coded
-    //{
-    //    std::shared_ptr<BasePackage> chunkAddedPackage(new ChunkLoadedPackage(chunk.first, chunk.second.getVoxelTypeData().mRleSegmentIndices, chunk.second.getVoxelTypeData().mRleSegments));
-    //    client->enqueuePackage(chunkAddedPackage);
-    //}
-
-    mBus.send(PlayerJoinedMessage{newId, 0, glm::vec3(0.0f, 45.0f, 0.0f)}); //position and world could be loaded from file or at spawn
-
-    mClients.emplace(newId, std::move(client));
-}
-
-void ServerNetworkingSystem::pollNewClients()
-{
-    std::unique_ptr<ServerClientBridge> client;
-
-    for(auto& listener : mListeners)
+    else if(package->mType == PackageType::PLAYER_ACTION)
     {
-        while((client = listener->fetchIncomingConnection()))
-        {
-            acceptClientConnection(std::move(client));
-        }
+        PlayerActionPackage* playerActionPackage = (PlayerActionPackage*) package.get();
+        mBus.send(PlayerActionMessage{std::get<0>(playerActionPackage->getData()), std::get<1>(playerActionPackage->getData())});
     }
-}
-
-void ServerNetworkingSystem::fetchClientData(std::unique_ptr<ServerClientBridge>& client)
-{
-    std::shared_ptr<BasePackage> package;
-
-    for(auto& client : mClients)
+    else if(package->mType == PackageType::PLAYER_MOVE_DIRECTION)
     {
-        while(client.second->pollPackage(package))
-        {
-            if(package->mType == PackageType::REBUILD_SCRIPTS_REQUESTED)
-            {
-                mBus.send(RebuildScriptsRequestedMessage());
-            }
-            else if(package->mType == PackageType::PLAYER_ACTION)
-            {
-                PlayerActionPackage* playerActionPackage = (PlayerActionPackage*) package.get();
-                mBus.send(PlayerActionMessage{std::get<0>(playerActionPackage->getData()), std::get<1>(playerActionPackage->getData())});
-            }
-            else if(package->mType == PackageType::PLAYER_MOVE_DIRECTION)
-            {
-                PlayerMoveDirectionPackage* playerMoveDirectionPackage = (PlayerMoveDirectionPackage*) package.get();
-                size_t id;
-                int8_t forwardsBack;
-                int8_t leftRight;
-                std::tie(id, forwardsBack, leftRight) = playerMoveDirectionPackage->getData();
+        PlayerMoveDirectionPackage* playerMoveDirectionPackage = (PlayerMoveDirectionPackage*) package.get();
+        size_t id;
+        int8_t forwardsBack;
+        int8_t leftRight;
+        std::tie(id, forwardsBack, leftRight) = playerMoveDirectionPackage->getData();
 
-                MoveDirection dir(forwardsBack, leftRight);
+        MoveDirection dir(forwardsBack, leftRight);
 
-                mBus.send(PlayerMoveDirectionMessage{id, dir});
-            }
-            else if(package->mType == PackageType::PLAYER_MOVE_ACTION)
-            {
-                PlayerMoveActionPackage* playerMoveActionPackage = (PlayerMoveActionPackage*) package.get();
-
-                mBus.send(PlayerMoveActionMessage{std::get<0>(playerMoveActionPackage->getData()), std::get<1>(playerMoveActionPackage->getData())});
-            }
-            else if(package->mType == PackageType::PLAYER_PITCH_YAW)
-            {
-                PlayerPitchYawPackage* playerPitchYawPackage = (PlayerPitchYawPackage*) package.get();
-                mBus.send(PlayerPitchYawMessage{std::get<0>(playerPitchYawPackage->getData()), std::get<1>(playerPitchYawPackage->getData()),std::get<2>( playerPitchYawPackage->getData())});
-            }
-        }
+        mBus.send(PlayerMoveDirectionMessage{id, dir});
     }
-}
-
-void ServerNetworkingSystem::checkForDisconnectedClients()
-{
-    std::vector<size_t> clientsToRemove;
-
-    for(auto& client : mClients)
+    else if(package->mType == PackageType::PLAYER_MOVE_ACTION)
     {
-        if(client.second->isDisconnected())
-        {
-            clientsToRemove.push_back(client.first);
-        }
+        PlayerMoveActionPackage* playerMoveActionPackage = (PlayerMoveActionPackage*) package.get();
+
+        mBus.send(PlayerMoveActionMessage{std::get<0>(playerMoveActionPackage->getData()), std::get<1>(playerMoveActionPackage->getData())});
     }
-
-    for(auto client : clientsToRemove)
+    else if(package->mType == PackageType::PLAYER_PITCH_YAW)
     {
-        mClients.erase(client);
-        mBus.send(PlayerDisconnectedMessage{client});
+        PlayerPitchYawPackage* playerPitchYawPackage = (PlayerPitchYawPackage*) package.get();
+        mBus.send(PlayerPitchYawMessage{std::get<0>(playerPitchYawPackage->getData()), std::get<1>(playerPitchYawPackage->getData()),std::get<2>( playerPitchYawPackage->getData())});
     }
 }

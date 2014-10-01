@@ -236,6 +236,7 @@ void RemoteServerBridge::receivePackage(std::weak_ptr<BasePackage> incoming)
 {
     mIncoming.push_back(incoming.lock());
 }
+
 void RemoteServerBridge::deserialiseAndReceive(const std::vector<uint8_t>& data, BasePackage* package)
 {
     package->setFromBytes(data);

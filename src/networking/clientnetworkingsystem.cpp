@@ -16,7 +16,7 @@ ClientNetworkingSystem::ClientNetworkingSystem(fea::MessageBus& bus, const Netwo
 
     if(parameters.mode == NetworkMode::SINGLE_PLAYER)
     {
-        mBus.send(LocalConnectionAttemptMessage{clientToServer});
+        mBus.send(LocalConnectionAttemptMessage{&bus});
     }
     else if(parameters.mode == NetworkMode::JOIN)
     {
@@ -35,7 +35,7 @@ ClientNetworkingSystem::ClientNetworkingSystem(fea::MessageBus& bus, const Netwo
     }
     else if(parameters.mode == NetworkMode::COMBINED)
     {
-        mBus.send(LocalConnectionAttemptMessage{clientToServer});
+        mBus.send(LocalConnectionAttemptMessage{&bus});
     }
 }
 

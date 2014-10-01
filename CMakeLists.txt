@@ -43,12 +43,10 @@ set(source_files
     src/math/mathutils.cpp
 
     src/networking/clientnetworkingsystem.cpp
-    src/networking/listener.cpp
-    src/networking/localclientlistener.cpp
+    src/networking/enetserver.cpp
     src/networking/localserverclientbridge.cpp
     src/networking/package.cpp
     src/networking/remoteclientbridge.cpp
-    src/networking/remoteclientlistener.cpp
     src/networking/remoteserverbridge.cpp
     src/networking/serverclientbridge.cpp
     src/networking/servernetworkingsystem.cpp
@@ -156,15 +154,13 @@ set(header_files
     src/math/mathutils.hpp
 
     src/networking/clientnetworkingsystem.hpp
-    src/networking/listener.hpp
-    src/networking/localclientlistener.hpp
+    src/networking/enetserver.hpp
     src/networking/localserverclientbridge.hpp
     src/networking/networkingmessages.hpp
     src/networking/package.hpp
     src/networking/packages.hpp
     src/networking/packagetype.hpp
     src/networking/remoteclientbridge.hpp
-    src/networking/remoteclientlistener.hpp
     src/networking/remoteserverbridge.hpp
     src/networking/serverclientbridge.hpp
     src/networking/servernetworkingsystem.cpp
