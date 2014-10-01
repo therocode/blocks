@@ -9,6 +9,7 @@
 #include "../world/worldmessages.hpp"
 #include "../application/applicationmessages.hpp"
 #include "networkingmessages.hpp"
+#include "enet.hpp"
 #include "enetserver.hpp"
 
 using ClientId = size_t;
@@ -59,5 +60,6 @@ class ServerNetworkingSystem : public fea::MessageReceiver<LocalConnectionAttemp
         fea::MessageBus* mLocalClientBus;
         uint32_t mLocalPlayerId;
 
+        std::unique_ptr<ENet> mENet;
         std::unique_ptr<ENetServer> mENetServer;
 };

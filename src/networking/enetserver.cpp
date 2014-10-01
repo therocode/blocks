@@ -4,35 +4,30 @@
 #include "networkingmessages.hpp"
 #include "packages.hpp"
 
-ENetServer::ENetServer(fea::MessageBus& bus) :
+ENetServer::ENetServer(const ENet& enet, fea::MessageBus& bus) :
     mBus(bus),
     mHost(nullptr),
     mInitialized(false),
     mNextId(0)
 {
-    if(enet_initialize() != 0)
-    {
-        mBus.send(LogMessage{"Could not initialize networking", netName, LogLevel::ERR});
-    }
+    (void)enet;
+
+    mBus.send(LogMessage{"ENet initialized", netName, LogLevel::INFO});
+    mInitialized = true;
+
+    mAddress.host = ENET_HOST_ANY;
+    mAddress.port = 56556;
+
+    mHost = enet_host_create(&mAddress,  //address to bind this server to
+            32,                          //allow 32 incoming connections
+            2,                           //allow 2 channels
+            0,                           //no downstream limit
+            0);                          //no upstream limit
+
+    if(mHost == nullptr)
+        mBus.send(LogMessage{"Could not initialize server", netName, LogLevel::ERR});
     else
-    {
-        mBus.send(LogMessage{"ENet initialized", netName, LogLevel::INFO});
-        mInitialized = true;
-
-        mAddress.host = ENET_HOST_ANY;
-        mAddress.port = 56556;
-
-        mHost = enet_host_create(&mAddress,  //address to bind this server to
-                32,                          //allow 32 incoming connections
-                2,                           //allow 2 channels
-                0,                           //no downstream limit
-                0);                          //no upstream limit
-
-        if(mHost == nullptr)
-            mBus.send(LogMessage{"Could not initialize server", netName, LogLevel::ERR});
-        else
-            mBus.send(LogMessage{"Now listening on port " + std::to_string(mAddress.port), netName, LogLevel::INFO});
-    }
+        mBus.send(LogMessage{"Now listening on port " + std::to_string(mAddress.port), netName, LogLevel::INFO});
 }
 
 ENetServer::~ENetServer()

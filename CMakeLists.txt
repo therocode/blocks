@@ -43,6 +43,8 @@ set(source_files
     src/math/mathutils.cpp
 
     src/networking/clientnetworkingsystem.cpp
+    src/networking/enet.cpp
+    src/networking/enetclient.cpp
     src/networking/enetserver.cpp
     src/networking/localserverclientbridge.cpp
     src/networking/package.cpp
@@ -154,6 +156,8 @@ set(header_files
     src/math/mathutils.hpp
 
     src/networking/clientnetworkingsystem.hpp
+    src/networking/enet.hpp
+    src/networking/enetclient.hpp
     src/networking/enetserver.hpp
     src/networking/localserverclientbridge.hpp
     src/networking/networkingmessages.hpp

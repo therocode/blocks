@@ -1,5 +1,6 @@
 #pragma once
 #include <functional>
+#include <memory>
 
 class LocalServerClientBridge;
 class BasePackage;
@@ -7,6 +8,11 @@ class BasePackage;
 struct LocalConnectionAttemptMessage
 {
     fea::MessageBus* clientBus;
+};
+
+struct LocalConnectionEstablishedMessage
+{
+    fea::MessageBus* serverBus;
 };
 
 struct IncomingConnectionMessage

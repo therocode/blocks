@@ -12,6 +12,7 @@ ServerNetworkingSystem::ServerNetworkingSystem(fea::MessageBus& bus, const Netwo
     mLocalPlayerId(0),
     mLocalClientBus(nullptr)
 {
+
     subscribe(mBus, *this);
 
     if(parameters.mode == NetworkMode::SINGLE_PLAYER)
@@ -20,13 +21,31 @@ ServerNetworkingSystem::ServerNetworkingSystem(fea::MessageBus& bus, const Netwo
     }
     else if(parameters.mode == NetworkMode::DEDICATED)
     {
-        mBus.send(LogMessage{"Setting up dedicated server networking", netName, LogLevel::INFO});
-        mENetServer = std::unique_ptr<ENetServer>(new ENetServer(mBus));
+        mENet = std::unique_ptr<ENet>(new ENet());
+
+        if(mENet->isInitialized())
+        {
+            mBus.send(LogMessage{"Setting up dedicated server networking", netName, LogLevel::INFO});
+            mENetServer = std::unique_ptr<ENetServer>(new ENetServer(*mENet, mBus));
+        }
+        else
+        {
+            mBus.send(LogMessage{"Could not initialize networking", netName, LogLevel::ERR});
+        }
     }
     else if(parameters.mode == NetworkMode::COMBINED)
     {
-        mBus.send(LogMessage{"Setting up networking", netName, LogLevel::INFO});
-        mENetServer = std::unique_ptr<ENetServer>(new ENetServer(mBus));
+        mENet = std::unique_ptr<ENet>(new ENet());
+
+        if(mENet->isInitialized())
+        {
+            mBus.send(LogMessage{"Setting up networking", netName, LogLevel::INFO});
+            mENetServer = std::unique_ptr<ENetServer>(new ENetServer(*mENet, mBus));
+        }
+        else
+        {
+            mBus.send(LogMessage{"Could not initialize networking", netName, LogLevel::ERR});
+        }
     }
 }
 
@@ -39,6 +58,8 @@ void ServerNetworkingSystem::handleMessage(const LocalConnectionAttemptMessage& 
 
     mBus.send(LogMessage{"Client connected locally and given player Id " + std::to_string(newId), netName, LogLevel::INFO});
     mBus.send(PlayerJoinedMessage{newId, 0, {0.0f, 0.0f, 0.0f}});
+
+    mBus.send(LocalConnectionEstablishedMessage{&mBus});
 }
 
 void ServerNetworkingSystem::handleMessage(const FrameMessage& received)

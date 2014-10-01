@@ -2,13 +2,14 @@
 #include <memory>
 #include <enet/enet.h>
 #include <fea/util.hpp>
+#include "enet.hpp"
 
 class BasePackage;
 
 class ENetServer
 {
     public:
-        ENetServer(fea::MessageBus& bus);
+        ENetServer(const ENet& enet, fea::MessageBus& bus);
         ~ENetServer();
         void update();
         void sendToAll(std::unique_ptr<BasePackage> package);
