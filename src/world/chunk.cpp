@@ -77,7 +77,24 @@ void Chunk::setVoxelType(const ChunkVoxelCoord& voxel, VoxelType type)
 
     setSegmentTypeFromArray(voxel.y, voxel.z, uncompressed);
 
-	solidityCheck();
+	if(mSolidity != INBETWEEN)
+	{
+		mSolidity = mSolidity ^ (type > 0) ? INBETWEEN : mSolidity;
+	}
+	else
+	{
+		solidityCheck();
+	}
+	
+	if(mSolidity != INBETWEEN)
+	{
+		for(auto &v : mSideSolidities)
+			v = mSolidity;
+	}
+	else
+	{
+		sideSolidityCheck();
+	}
 }
 
 void Chunk::setVoxelData(const VoxelTypeArray& types)
@@ -127,6 +144,15 @@ void Chunk::setVoxelData(const VoxelTypeArray& types)
     }
 
 	solidityCheck();
+	if(mSolidity == INBETWEEN)
+	{
+		sideSolidityCheck();
+	}
+	else
+	{
+		for(auto &v : mSideSolidities)
+			v = mSolidity;
+	}
 }
 
 //these should be optimised in the future using binary trees
@@ -185,10 +211,10 @@ Solidity Chunk::getSolidity()
 	return mSolidity;
 }
 
-// SideSolidity Chunk::getSideSolidity()
-// {
-	// return SOLID;
-// }
+Solidity Chunk::getSideSolidity(ChunkSide side)
+{
+	return mSideSolidities[side];
+}
 
 VoxelSegmentTypeArray Chunk::getUncompressedTypeSegment(uint32_t y, uint32_t z) const
 {
@@ -292,6 +318,89 @@ void Chunk::solidityCheck()
 		{
 			mSolidity = INBETWEEN;
 			break;
+		}
+	}
+}
+
+void Chunk::sideSolidityCheck()
+{
+	VoxelTypeArray types = getFlatVoxelTypeData();
+
+	mSideSolidities[BOTTOM] = types[0] ? SOLID : EMPTY;
+	for(int x=0; x<chunkWidthPow2; ++x)
+	{
+		Solidity s = types[x] ? SOLID : EMPTY;
+		if(mSideSolidities[BOTTOM] != s)
+		{
+			mSideSolidities[BOTTOM] = INBETWEEN;
+			break;
+		}
+	}
+
+	mSideSolidities[TOP] = types[chunkWidthPow3 - chunkWidthPow2] ? SOLID : EMPTY;
+	for(int x=0; x<chunkWidthPow2; ++x)
+	{
+		Solidity s = types[x + (chunkWidthPow3 - chunkWidthPow2)] ? SOLID : EMPTY;
+		if(mSideSolidities[TOP] != s)
+		{
+			mSideSolidities[TOP] = INBETWEEN;
+			break;
+		}
+	}
+	
+	mSideSolidities[FRONT] = types[0] ? SOLID : EMPTY;
+	for(int y=0; y<chunkWidth; ++y)
+	{
+		for(int x=0; x<chunkWidth; ++x)
+		{
+			Solidity s = types[x + y*chunkWidthPow2] ? SOLID : EMPTY;
+			if(mSideSolidities[FRONT] != s)
+			{
+				mSideSolidities[FRONT] = INBETWEEN;
+				break;
+			}
+		}
+	}
+	
+	mSideSolidities[BACK] = types[chunkWidthPow2 - chunkWidth] ? SOLID : EMPTY;
+	for(int y=0; y<chunkWidth; ++y)
+	{
+		for(int x=0; x<chunkWidth; ++x)
+		{
+			Solidity s = types[x + (chunkWidthPow2 - chunkWidth) + y*chunkWidthPow2] ? SOLID : EMPTY;
+			if(mSideSolidities[BACK] != s)
+			{
+				mSideSolidities[BACK] = INBETWEEN;
+				break;
+			}
+		}
+	}
+	
+	mSideSolidities[LEFT] = types[0] ? SOLID : EMPTY;
+	for(int y=0; y<chunkWidth; ++y)
+	{
+		for(int z=0; z<chunkWidth; ++z)
+		{
+			Solidity s = types[z * chunkWidth + y * chunkWidthPow2] ? SOLID : EMPTY;
+			if(mSideSolidities[LEFT] != s)
+			{
+				mSideSolidities[LEFT] = INBETWEEN;
+				break;
+			}
+		}
+	}
+	
+	mSideSolidities[RIGHT] = types[chunkWidth - 1] ? SOLID : EMPTY;
+	for(int y=0; y<chunkWidth; ++y)
+	{
+		for(int z=0; z<chunkWidth; ++z)
+		{
+			Solidity s = types[(chunkWidth - 1) + z * chunkWidth + y * chunkWidthPow2] ? SOLID : EMPTY;
+			if(mSideSolidities[RIGHT] != s)
+			{
+				mSideSolidities[RIGHT] = INBETWEEN;
+				break;
+			}
 		}
 	}
 }
