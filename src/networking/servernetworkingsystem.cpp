@@ -29,9 +29,8 @@ ServerNetworkingSystem::ServerNetworkingSystem(fea::MessageBus& bus, const Netwo
 
             mENetServer = std::unique_ptr<ENetServer>(new ENetServer(*mENet, parameters.port));
             mENetServer->setConnectionCallback(std::bind(&ServerNetworkingSystem::acceptRemoteClient, this, std::placeholders::_1));
-            mENetServer->setPackageReceivedCallback(std::bind(&ServerNetworkingSystem::handleClientPackage, this, std::placeholders::_1, std::placeholders::_2));
+            mENetServer->setDataReceivedCallback(std::bind(&ServerNetworkingSystem::handleClientData, this, std::placeholders::_1, std::placeholders::_2));
             mENetServer->setDisconnectionCallback(std::bind(&ServerNetworkingSystem::disconnectRemoteClient, this, std::placeholders::_1));
-            mENetServer->setUnknownPackageCallback(std::bind(&ServerNetworkingSystem::unknownPackage, this, std::placeholders::_1));
         }
         else
         {
@@ -49,9 +48,8 @@ ServerNetworkingSystem::ServerNetworkingSystem(fea::MessageBus& bus, const Netwo
             mENetServer = std::unique_ptr<ENetServer>(new ENetServer(*mENet, parameters.port));
             mENetServer = std::unique_ptr<ENetServer>(new ENetServer(*mENet, parameters.port));
             mENetServer->setConnectionCallback(std::bind(&ServerNetworkingSystem::acceptRemoteClient, this, std::placeholders::_1));
-            mENetServer->setPackageReceivedCallback(std::bind(&ServerNetworkingSystem::handleClientPackage, this, std::placeholders::_1, std::placeholders::_2));
+            mENetServer->setDataReceivedCallback(std::bind(&ServerNetworkingSystem::handleClientData, this, std::placeholders::_1, std::placeholders::_2));
             mENetServer->setDisconnectionCallback(std::bind(&ServerNetworkingSystem::disconnectRemoteClient, this, std::placeholders::_1));
-            mENetServer->setUnknownPackageCallback(std::bind(&ServerNetworkingSystem::unknownPackage, this, std::placeholders::_1));
         }
         else
         {
@@ -75,7 +73,8 @@ void ServerNetworkingSystem::handleMessage(const LocalConnectionAttemptMessage& 
 
 void ServerNetworkingSystem::handleMessage(const FrameMessage& received)
 {
-    mENetServer->update(0);
+    if(mENetServer)
+        mENetServer->update(0);
 }
 
 void ServerNetworkingSystem::handleMessage(const ChunkLoadedMessage& received)
@@ -90,7 +89,7 @@ void ServerNetworkingSystem::handleMessage(const ChunkLoadedMessage& received)
     if(mLocalClientBus)
         mLocalClientBus->send(received);
     if(mENetServer)
-        mENetServer->sendToAll(std::move(chunkLoadedPackage));
+        mENetServer->sendToAll(std::move(chunkLoadedPackage->getAsBytes()), true, CHANNEL_CHUNKS);
 }
 
 void ServerNetworkingSystem::handleMessage(const ChunkDeletedMessage& received)
@@ -100,7 +99,7 @@ void ServerNetworkingSystem::handleMessage(const ChunkDeletedMessage& received)
     if(mLocalClientBus)
         mLocalClientBus->send(received);
     if(mENetServer)
-        mENetServer->sendToAll(std::move(chunkDeletedPackage));
+        mENetServer->sendToAll(std::move(chunkDeletedPackage->getAsBytes()), true, CHANNEL_CHUNKS);
 }
 
 void ServerNetworkingSystem::handleMessage(const AddGfxEntityMessage& received)
@@ -112,7 +111,7 @@ void ServerNetworkingSystem::handleMessage(const AddGfxEntityMessage& received)
     if(mLocalClientBus)
         mLocalClientBus->send(received);
     if(mENetServer)
-        mENetServer->sendToAll(std::move(gfxEntityAddedPackage));
+        mENetServer->sendToAll(std::move(gfxEntityAddedPackage->getAsBytes()), true, CHANNEL_ENTITY);
 }
 
 void ServerNetworkingSystem::handleMessage(const MoveGfxEntityMessage& received)
@@ -122,7 +121,7 @@ void ServerNetworkingSystem::handleMessage(const MoveGfxEntityMessage& received)
     if(mLocalClientBus)
         mLocalClientBus->send(received);
     if(mENetServer)
-        mENetServer->sendToAll(std::move(gfxEntityMovedPackage));
+        mENetServer->sendToAll(std::move(gfxEntityMovedPackage->getAsBytes()), false, CHANNEL_ENTITY);
 }
 
 void ServerNetworkingSystem::handleMessage(const RotateGfxEntityMessage& received)
@@ -132,7 +131,7 @@ void ServerNetworkingSystem::handleMessage(const RotateGfxEntityMessage& receive
     if(mLocalClientBus)
         mLocalClientBus->send(received);
     if(mENetServer)
-        mENetServer->sendToAll(std::move(gfxEntityRotatedPackage));
+        mENetServer->sendToAll(std::move(gfxEntityRotatedPackage->getAsBytes()), false, CHANNEL_ENTITY);
 }
 
 void ServerNetworkingSystem::handleMessage(const RemoveGfxEntityMessage& received)
@@ -144,7 +143,7 @@ void ServerNetworkingSystem::handleMessage(const RemoveGfxEntityMessage& receive
     if(mLocalClientBus)
         mLocalClientBus->send(received);
     if(mENetServer)
-        mENetServer->sendToAll(std::move(gfxEntityRemovedPackage));
+        mENetServer->sendToAll(std::move(gfxEntityRemovedPackage->getAsBytes()), true, CHANNEL_ENTITY);
 }
 
 void ServerNetworkingSystem::handleMessage(const PlayerConnectedToEntityMessage& received)
@@ -154,7 +153,7 @@ void ServerNetworkingSystem::handleMessage(const PlayerConnectedToEntityMessage&
     if(mLocalClientBus)
         mLocalClientBus->send(received);
     if(mENetServer)
-        mENetServer->sendToAll(std::move(playerConnectedToEntityPackage));
+        mENetServer->sendToAll(std::move(playerConnectedToEntityPackage->getAsBytes()), true, CHANNEL_ENTITY);
 }
 
 void ServerNetworkingSystem::handleMessage(const PlayerFacingBlockMessage& received)
@@ -179,7 +178,7 @@ void ServerNetworkingSystem::handleMessage(const PlayerFacingBlockMessage& recei
     if(mENetServer)
     {
         FEA_ASSERT(mPlayerToClientIds.count(id) != 0, "Trying to send packet to player Id " + std::to_string(id) + " but that player has no client attached to it");
-        mENetServer->sendToOne(mPlayerToClientIds.count(id), std::move(playerFacingBlockPackage));
+        mENetServer->sendToOne(mPlayerToClientIds.count(id), std::move(playerFacingBlockPackage->getAsBytes()), false, CHANNEL_ENTITY);
     }
 }
 
@@ -190,7 +189,7 @@ void ServerNetworkingSystem::handleMessage(const VoxelSetMessage& received)
     if(mLocalClientBus)
         mLocalClientBus->send(received);
     if(mENetServer)
-        mENetServer->sendToAll(std::move(voxelSetPackage));
+        mENetServer->sendToAll(std::move(voxelSetPackage->getAsBytes()), true, CHANNEL_CHUNKS);
 }
 
 void ServerNetworkingSystem::acceptRemoteClient(uint32_t id)
@@ -204,8 +203,58 @@ void ServerNetworkingSystem::acceptRemoteClient(uint32_t id)
     mBus.send(PlayerJoinedMessage{newId, 0, {0.0f, 0.0f, 0.0f}});
 }
 
-void ServerNetworkingSystem::handleClientPackage(uint32_t clientId, const std::unique_ptr<BasePackage>& package)
+void ServerNetworkingSystem::handleClientData(uint32_t clientId, const std::vector<uint8_t>& data)
 {
+    PackageType type;
+
+    uint8_t* typePointer = (uint8_t*)&type;
+    for(uint32_t i = 0; i < sizeof(PackageType); i++)
+    {   
+        *typePointer = data[i];
+        typePointer++;
+    }   
+    
+    std::unique_ptr<BasePackage> package;
+
+    switch(type)
+    {   
+        case PackageType::REBUILD_SCRIPTS_REQUESTED:
+            {   
+                package = std::unique_ptr<RebuildScriptsRequestedPackage>();
+                package->setFromBytes(data);
+                break;
+            }   
+        case PackageType::PLAYER_ACTION:
+            {
+                package = std::unique_ptr<PlayerActionPackage>();
+                package->setFromBytes(data);
+                break;
+            }
+        case PackageType::PLAYER_MOVE_DIRECTION:
+            {
+                package = std::unique_ptr<PlayerMoveDirectionPackage>();
+                package->setFromBytes(data);
+                break;
+            }
+        case PackageType::PLAYER_MOVE_ACTION:
+            {
+                package = std::unique_ptr<PlayerMoveActionPackage>();
+                package->setFromBytes(data);
+                break;
+            }
+        case PackageType::PLAYER_PITCH_YAW:
+            {
+                package = std::unique_ptr<PlayerPitchYawPackage>();
+                package->setFromBytes(data);
+                break;
+            }
+        default:
+            {
+                mBus.send(LogMessage{"Unknown package received of type " + std::to_string((int32_t) type), netName, LogLevel::WARN});
+                return;
+            }
+    }
+
     if(package->mType == PackageType::REBUILD_SCRIPTS_REQUESTED)
     {
         mBus.send(RebuildScriptsRequestedMessage());
@@ -253,9 +302,4 @@ void ServerNetworkingSystem::disconnectRemoteClient(uint32_t id)
 
     mClientToPlayerIds.erase(id);
     mPlayerToClientIds.erase(playerId);
-}
-
-void ServerNetworkingSystem::unknownPackage(PackageType type)
-{
-    mBus.send(LogMessage{"Unknown package type received! Type: " + std::to_string((uint32_t) type), netName, LogLevel::WARN});
 }

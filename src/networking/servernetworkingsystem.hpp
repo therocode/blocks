@@ -41,9 +41,8 @@ class ServerNetworkingSystem : public fea::MessageReceiver<LocalConnectionAttemp
         void handleMessage(const VoxelSetMessage& received);
     private:
         void acceptRemoteClient(uint32_t id);
-        void handleClientPackage(uint32_t clientId, const std::unique_ptr<BasePackage>& package);
+        void handleClientData(uint32_t clientId, const std::vector<uint8_t>& data);
         void disconnectRemoteClient(uint32_t id);
-        void unknownPackage(PackageType type);
 
         fea::MessageBus& mBus;
         NetworkParameters mParameters;

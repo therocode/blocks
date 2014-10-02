@@ -2,84 +2,82 @@
 #include "networkingmessages.hpp"
 #include "packages.hpp"
 #include "../world/worldmessages.hpp"
+#include "../lognames.hpp"
+#include "enetclient.hpp"
 
 ClientNetworkingSystem::ClientNetworkingSystem(fea::MessageBus& bus, const NetworkParameters& parameters) :
     mBus(bus),
-    mParameters(parameters),
-	mBridge(nullptr)
+    mParameters(parameters)
 {
     subscribe(mBus, *this);
-    LocalServerClientBridge* clientToServer = new LocalServerClientBridge();
-    mBridge = std::unique_ptr<LocalServerClientBridge>(clientToServer);
 
     if(parameters.mode == NetworkMode::SINGLE_PLAYER)
     {
+        mBus.send(LogMessage{"Setting up single player client", netName, LogLevel::INFO});
         mBus.send(LocalConnectionAttemptMessage{&bus});
     }
     else if(parameters.mode == NetworkMode::JOIN)
     {
-        RemoteServerBridge* serverBidge = new RemoteServerBridge(mBus);
+        mENet = std::unique_ptr<ENet>(new ENet());
 
-        if(enet_initialize() < 0)
+        if(mENet->isInitialized())
         {
-            mBus.send(LogMessage{"Couldn't initialise enet", "network", LogLevel::ERR});
+            mBus.send(LogMessage{"Setting up client networking", netName, LogLevel::INFO});
+
+            mENetClient = std::unique_ptr<ENetClient>(new ENetClient(*mENet));
+            //mENetClient->setConnectionCallback(std::bind(&ClientNetworkingSystem::acceptRemoteClient, this, std::placeholders::_1));
+            //mENetClient->setPackageReceivedCallback(std::bind(&ClientNetworkingSystem::handleClientPackage, this, std::placeholders::_1, std::placeholders::_2));
+            //mENetClient->setDisconnectionCallback(std::bind(&ClientNetworkingSystem::disconnectRemoteClient, this, std::placeholders::_1));
+            //mENetClient->setUnknownPackageCallback(std::bind(&ClientNetworkingSystem::unknownPackage, this, std::placeholders::_1));
         }
         else
         {
-            mBridge = std::unique_ptr<RemoteServerBridge>(serverBidge);
-            serverBidge->connectToAddress(parameters.serverName, parameters.port);
-            serverBidge->startListening();
+            mBus.send(LogMessage{"Could not initialize networking", netName, LogLevel::ERR});
         }
     }
     else if(parameters.mode == NetworkMode::COMBINED)
     {
+        mBus.send(LogMessage{"Setting up client networking", netName, LogLevel::INFO});
         mBus.send(LocalConnectionAttemptMessage{&bus});
+
+        mENetClient = std::unique_ptr<ENetClient>(new ENetClient(*mENet));
     }
 }
 
 void ClientNetworkingSystem::handleMessage(const FrameMessage& received)
 {
-	if(mBridge)
-	{
-		fetchServerData();
-	}
-
-	if(mBridge)
-	{
-		mBridge->flush();
-	}
+    if(mENetClient)
+        mENetClient->update(0);
 }
 
 void ClientNetworkingSystem::handleMessage(const PlayerActionMessage& received)
 {
-    mBridge->enqueuePackage(std::shared_ptr<BasePackage>(new PlayerActionPackage(received.playerId, received.action)));
+    //mBridge->enqueuePackage(std::shared_ptr<BasePackage>(new PlayerActionPackage(received.playerId, received.action)));
 }
 
 void ClientNetworkingSystem::handleMessage(const PlayerMoveDirectionMessage& received)
 {
-    mBridge->enqueuePackage(std::shared_ptr<BasePackage>(new PlayerMoveDirectionPackage(received.id, received.direction.getForwardBack(), received.direction.getLeftRight())));
+    //mBridge->enqueuePackage(std::shared_ptr<BasePackage>(new PlayerMoveDirectionPackage(received.id, received.direction.getForwardBack(), received.direction.getLeftRight())));
 }
 
 void ClientNetworkingSystem::handleMessage(const PlayerMoveActionMessage& received)
 {
-    mBridge->enqueuePackage(std::shared_ptr<BasePackage>(new PlayerMoveActionPackage(received.id, received.action)));
+    //mBridge->enqueuePackage(std::shared_ptr<BasePackage>(new PlayerMoveActionPackage(received.id, received.action)));
 }
 
 void ClientNetworkingSystem::handleMessage(const PlayerPitchYawMessage& received)
 {
-	mBridge->enqueuePackage(std::shared_ptr<BasePackage>(new PlayerPitchYawPackage(received.playerId, received.pitch, received.yaw)));
+	//mBridge->enqueuePackage(std::shared_ptr<BasePackage>(new PlayerPitchYawPackage(received.playerId, received.pitch, received.yaw)));
 }
 
 void ClientNetworkingSystem::handleMessage(const RebuildScriptsRequestedMessage& received)
 {
-	mBridge->enqueuePackage(std::shared_ptr<BasePackage>(new RebuildScriptsRequestedPackage('0')));
+	//mBridge->enqueuePackage(std::shared_ptr<BasePackage>(new RebuildScriptsRequestedPackage('0')));
 }
 
 void ClientNetworkingSystem::fetchServerData()
 {
 	std::shared_ptr<BasePackage> package;
-	while(mBridge->pollPackage(package))
-	{
 		if(package->mType == PackageType::CHUNK_LOADED)
 		{
 			ChunkLoadedPackage* chunkPackage = (ChunkLoadedPackage*)package.get();
@@ -157,5 +155,4 @@ void ClientNetworkingSystem::fetchServerData()
 
 			mBus.send(PlayerFacingBlockMessage{playerId, VoxelCoord(x, y, z)});
 		}
-	}
 }

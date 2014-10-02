@@ -46,11 +46,7 @@ set(source_files
     src/networking/enet.cpp
     src/networking/enetclient.cpp
     src/networking/enetserver.cpp
-    src/networking/localserverclientbridge.cpp
     src/networking/package.cpp
-    src/networking/remoteclientbridge.cpp
-    src/networking/remoteserverbridge.cpp
-    src/networking/serverclientbridge.cpp
     src/networking/servernetworkingsystem.cpp
     
     src/rendering/chunkgeneratorqueue.cpp
@@ -159,14 +155,10 @@ set(header_files
     src/networking/enet.hpp
     src/networking/enetclient.hpp
     src/networking/enetserver.hpp
-    src/networking/localserverclientbridge.hpp
     src/networking/networkingmessages.hpp
     src/networking/package.hpp
     src/networking/packages.hpp
     src/networking/packagetype.hpp
-    src/networking/remoteclientbridge.hpp
-    src/networking/remoteserverbridge.hpp
-    src/networking/serverclientbridge.hpp
     src/networking/servernetworkingsystem.cpp
 
     src/rendering/chunkgeneratorqueue.hpp

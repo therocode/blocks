@@ -5,6 +5,8 @@
 #include "../rendering/renderingmessages.hpp"
 #include "../script/scriptmessages.hpp"
 #include "../input/inputmessages.hpp"
+#include "enet.hpp"
+#include "enetclient.hpp"
 
 class ENet;
 class ENetClient;
@@ -30,6 +32,6 @@ class ClientNetworkingSystem : public
         fea::MessageBus& mBus;
 
         NetworkParameters mParameters;
-        std::unique_ptr<ENet> mEnet;
-        std::unique_ptr<ENetClient> mEnetClient;
+        std::unique_ptr<ENet> mENet;
+        std::unique_ptr<ENetClient> mENetClient;
 };

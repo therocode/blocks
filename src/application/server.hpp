@@ -1,6 +1,5 @@
 #pragma once
 #include "../world/worldsystem.hpp"
-#include "../networking/serverclientbridge.hpp"
 #include "../world/worldmessages.hpp"
 #include "../script/scriptsystem.hpp"
 #include "../utilities/fpscontroller.hpp"
@@ -9,10 +8,7 @@
 #include "../gameinterface.hpp"
 #include "../networking/servernetworkingsystem.hpp"
 
-class ClientConnection;
-class ClientConnectionListener;
 class NetworkParameters;
-using ClientId = size_t;
 
 class Server
 {

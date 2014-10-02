@@ -32,6 +32,10 @@ ENetClient::~ENetClient()
         enet_host_destroy(mHost);
 }
 
+void ENetClient::update(uint32_t wait)
+{
+}
+
 bool ENetClient::isConnected() const
 {
     return mConnected;

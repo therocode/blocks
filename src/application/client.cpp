@@ -6,7 +6,6 @@
 #include "../application/applicationmessages.hpp"
 #include "../rendering/renderer.hpp"
 #include "../input/inputadaptor.hpp"
-#include "../networking/serverclientbridge.hpp"
 
 
 Client::Client(fea::MessageBus& bus, const NetworkParameters& parameters) :

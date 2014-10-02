@@ -9,29 +9,25 @@ class BasePackage
 {
     public:
         BasePackage();
-        BasePackage(PackageType type, bool unreliable = false, int channel = 0);
+        BasePackage(PackageType type);
         virtual std::vector<uint8_t> getAsBytes() const = 0;
         virtual void setFromBytes(const std::vector<uint8_t>& bytes) = 0;
         PackageType mType;
-        bool mUnreliable;
-        int  mChannel;
 };
 
-template<typename Tag, PackageType TypeId, bool Unreliable, int Channel, typename... Types>
+template<typename Tag, PackageType TypeId, typename... Types>
 class Package : public BasePackage
 {
     public:
         Package()
         {
-            mUnreliable = false;
-            mChannel = 0;
         }
 
-        Package(Types... values) : BasePackage(TypeId, Unreliable, Channel), data(values...)
+        Package(Types... values) : BasePackage(TypeId), data(values...)
         {
         }
 
-        Package(std::tuple<Types...> value) : BasePackage(TypeId, Unreliable, Channel), data(value)
+        Package(std::tuple<Types...> value) : BasePackage(TypeId), data(value)
         {
         }
 
