@@ -20,7 +20,11 @@ ENetClient::ENetClient(const ENet& enet) :
 ENetClient::~ENetClient()
 {
     if(mHost)
+    {
+        if(isConnected())
+            disconnect(1000);
         enet_host_destroy(mHost);
+    }
 }
 
 void ENetClient::update(uint32_t wait)
