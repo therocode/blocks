@@ -107,9 +107,15 @@ SCENARIO("Servers and clients can disconnect", "[networking]")
 
         WHEN("Clients disconnect from a server")
         {
+            bool callBackCalled = false;
+
             client.disconnect();
             server.update(100);
 
+            THEN("Callback has been called")
+            {
+                CHECK(callBackCalled);
+            }
             THEN("Clients are properly disconnected")
             {
                 CHECK(server.getClientCount() == 0);
