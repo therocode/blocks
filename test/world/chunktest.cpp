@@ -129,34 +129,47 @@ TEST_CASE("solidSide", "[solidSide]")
 	VoxelTypeArray voxels;
 	Chunk chunk;
 
-	ChunkVoxelCoord coords(0, 0, 0);
+	REQUIRE(chunk.getSideSolidity(Chunk::LEFT) == EMPTY);
+	REQUIRE(chunk.getSideSolidity(Chunk::RIGHT) == EMPTY);
+	REQUIRE(chunk.getSideSolidity(Chunk::BOTTOM) == EMPTY);
+	REQUIRE(chunk.getSideSolidity(Chunk::TOP) == EMPTY);
+	REQUIRE(chunk.getSideSolidity(Chunk::FRONT) == EMPTY);
+	REQUIRE(chunk.getSideSolidity(Chunk::BACK) == EMPTY);
 
+	
+	ChunkVoxelCoord coords(0, chunkWidth/2, chunkWidth/2);
+	chunk.setVoxelType(coords, 1);
+	REQUIRE(chunk.getSideSolidity(Chunk::LEFT) == INBETWEEN);
+	
+	coords.x = chunkWidth-1;
+	chunk.setVoxelType(coords, 1);
+	REQUIRE(chunk.getSideSolidity(Chunk::RIGHT) == INBETWEEN);
+
+	
+	coords = ChunkVoxelCoord(chunkWidth/2, 0, chunkWidth/2);
 	chunk.setVoxelType(coords, 1);
 	REQUIRE(chunk.getSideSolidity(Chunk::BOTTOM) == INBETWEEN);
-	REQUIRE(chunk.getSideSolidity(Chunk::FRONT) == INBETWEEN);
-	REQUIRE(chunk.getSideSolidity(Chunk::LEFT) == INBETWEEN);
-	chunk.setVoxelType(coords, 0);
-	REQUIRE(chunk.getSideSolidity(Chunk::BOTTOM) == EMPTY);
-	REQUIRE(chunk.getSideSolidity(Chunk::FRONT) == EMPTY);
-	REQUIRE(chunk.getSideSolidity(Chunk::LEFT) == EMPTY);
-
-	coords = ChunkVoxelCoord(chunkWidth-1, chunkWidth-1, chunkWidth-1);
-
+	
+	coords.y = chunkWidth-1;
 	chunk.setVoxelType(coords, 1);
 	REQUIRE(chunk.getSideSolidity(Chunk::TOP) == INBETWEEN);
+
+	
+	coords = ChunkVoxelCoord(chunkWidth/2, chunkWidth/2, 0);
+	chunk.setVoxelType(coords, 1);
+	REQUIRE(chunk.getSideSolidity(Chunk::FRONT) == INBETWEEN);
+	
+	coords.z = chunkWidth-1;
+	chunk.setVoxelType(coords, 1);
 	REQUIRE(chunk.getSideSolidity(Chunk::BACK) == INBETWEEN);
-	REQUIRE(chunk.getSideSolidity(Chunk::RIGHT) == INBETWEEN);
-	chunk.setVoxelType(coords, 0);
-	REQUIRE(chunk.getSideSolidity(Chunk::TOP) == EMPTY);
-	REQUIRE(chunk.getSideSolidity(Chunk::BACK) == EMPTY);
-	REQUIRE(chunk.getSideSolidity(Chunk::RIGHT) == EMPTY);
+	
 
 	voxels.fill(1);
 	chunk.setVoxelData(voxels);
-	REQUIRE(chunk.getSideSolidity(Chunk::BOTTOM) == SOLID);
-	REQUIRE(chunk.getSideSolidity(Chunk::FRONT) == SOLID);
 	REQUIRE(chunk.getSideSolidity(Chunk::LEFT) == SOLID);
-	REQUIRE(chunk.getSideSolidity(Chunk::TOP) == SOLID);
-	REQUIRE(chunk.getSideSolidity(Chunk::BACK) == SOLID);
 	REQUIRE(chunk.getSideSolidity(Chunk::RIGHT) == SOLID);
+	REQUIRE(chunk.getSideSolidity(Chunk::BOTTOM) == SOLID);
+	REQUIRE(chunk.getSideSolidity(Chunk::TOP) == SOLID);
+	REQUIRE(chunk.getSideSolidity(Chunk::FRONT) == SOLID);
+	REQUIRE(chunk.getSideSolidity(Chunk::BACK) == SOLID);
 }
