@@ -23,7 +23,10 @@ ENetServer::ENetServer(const ENet& enet, uint32_t port) :
 ENetServer::~ENetServer()
 {
     if(mHost)
+    {
+        disconnectAll(500);
         enet_host_destroy(mHost);
+    }
 }
 
 void ENetServer::update(uint32_t wait)
@@ -33,54 +36,22 @@ void ENetServer::update(uint32_t wait)
         ENetEvent event;
         while(enet_host_service(mHost, &event, wait) > 0) //0 as third parameter means that we'll not wait for activity. non-blocking
         {
-            std::cout << "got event!\n";
             switch(event.type)
             {   
                 case ENET_EVENT_TYPE_CONNECT:
-                    {
-                        std::cout << "incoming connection\n";
-                        uint32_t newId = mNextId++;
-
-                        event.peer->data = new uint32_t(newId);
-                        mConnectedPeers.emplace(newId, event.peer);
-
-                        mClientCount++;
-
-                        if(mConnectionCallback)
-                            mConnectionCallback(newId);
-
+                        handleConnectionEvent(event);
                         break;
-                    }
+                    
                 case ENET_EVENT_TYPE_RECEIVE:
-                    {
-                        std::cout << "imcoming packeg\n";
-                        auto package = deserialize(event.packet);
-
-                        mDataReceivedCallback(*((uint32_t*) event.peer->data), package);
-
-                        enet_packet_destroy(event.packet);
+                        handleReceiveEvent(event);
                         break;
-                    }
+                    
                 case ENET_EVENT_TYPE_DISCONNECT:
-                    {
-                        std::cout << "incoming disconnection\n";
-                        uint32_t* idPtr = (uint32_t*)event.peer->data;
-
-                        if(mDisconnectionCallback)
-                            mDisconnectionCallback(*idPtr);
-
-                        mConnectedPeers.erase(*idPtr);
-                        delete idPtr;
-                        event.peer->data = nullptr;
-
-                        mClientCount--;
-
+                        handleDisconnectionEvent(event);
                         break;
-                    }
+                    
                 case ENET_EVENT_TYPE_NONE:
-                    {
                         break;
-                    }
             }   
         }
     }
@@ -103,12 +74,81 @@ void ENetServer::sendToOne(uint32_t id, const std::vector<uint8_t>& data, bool r
     enet_peer_send(mConnectedPeers.at(id), channel, packet);
 }
 
+void ENetServer::disconnectOne(uint32_t id, uint32_t wait)
+{
+    ENetEvent event;
+
+    FEA_ASSERT(mConnectedPeers.count(id) != 0, "Trying to disconnect enet peer ID " + std::to_string(id) + " but that peer doesn't exist!\n");
+
+    ENetPeer* client = mConnectedPeers.at(id);
+
+    enet_peer_disconnect(client, 0);
+     
+    while(enet_host_service(mHost, & event, wait) > 0)
+    {
+        switch (event.type)
+        {
+            case ENET_EVENT_TYPE_CONNECT:
+                handleConnectionEvent(event);
+
+            case ENET_EVENT_TYPE_RECEIVE:
+                if(event.peer != client)
+                    handleReceiveEvent(event); //still handle packets from other clients than the one being disconnected
+                else
+                    enet_packet_destroy(event.packet);
+
+                break;
+
+            case ENET_EVENT_TYPE_DISCONNECT:
+                handleDisconnectionEvent(event);
+
+            default:
+                break;
+        }
+    }
+
+    /* We've arrived here, so the disconnect attempt didn't */
+    /* succeed yet.  Force the connection down.             */
+    enet_peer_reset(client);
+}
+
+void ENetServer::disconnectAll(uint32_t wait)
+{
+    std::vector<uint32_t> idsToDisconnect;
+
+    for(const auto& peer : mConnectedPeers)
+        idsToDisconnect.push_back(peer.first);
+
+    for(uint32_t id : idsToDisconnect)
+        disconnectOne(id, wait);
+}
+
 bool ENetServer::isListening() const
 {
     return mHost != nullptr;
 }
 
-std::vector<uint8_t> ENetServer::deserialize(ENetPacket* packet)
+uint32_t ENetServer::getClientCount() const
+{
+    return mClientCount;
+}
+
+void ENetServer::setConnectedCallback(std::function<void(uint32_t)> callback)
+{
+    mConnectedCallback = callback;
+}
+
+void ENetServer::setDataReceivedCallback(std::function<void(uint32_t, const std::vector<uint8_t>&)> callback)
+{
+    mDataReceivedCallback = callback;
+}
+
+void ENetServer::setDisconnectedCallback(std::function<void(uint32_t)> callback)
+{
+    mDisconnectedCallback = callback;
+}
+
+std::vector<uint8_t> ENetServer::unpack(ENetPacket* packet)
 {
     std::vector<uint8_t> dataVector;
     dataVector.resize(packet->dataLength);
@@ -117,22 +157,39 @@ std::vector<uint8_t> ENetServer::deserialize(ENetPacket* packet)
     return dataVector;
 }
 
-uint32_t ENetServer::getClientCount() const
+void ENetServer::handleConnectionEvent(const ENetEvent& event)
 {
-    return mClientCount;
+    uint32_t newId = mNextId++;
+
+    event.peer->data = new uint32_t(newId);
+    mConnectedPeers.emplace(newId, event.peer);
+
+    mClientCount++;
+
+    if(mConnectedCallback)
+        mConnectedCallback(newId);
 }
 
-void ENetServer::setConnectionCallback(std::function<void(uint32_t clientId)> callback)
+void ENetServer::handleReceiveEvent(const ENetEvent& event)
 {
-    mConnectionCallback = callback;
+    auto package = unpack(event.packet);
+
+    if(mDataReceivedCallback)
+        mDataReceivedCallback(*((uint32_t*) event.peer->data), package);
+
+    enet_packet_destroy(event.packet);
 }
 
-void ENetServer::setDataReceivedCallback(std::function<void(uint32_t, const std::vector<uint8_t>&)> callback)
+void ENetServer::handleDisconnectionEvent(const ENetEvent& event)
 {
-    mDataReceivedCallback = callback;
-}
+    uint32_t* idPtr = (uint32_t*)event.peer->data;
 
-void ENetServer::setDisconnectionCallback(std::function<void(uint32_t clientId)> callback)
-{
-    mDisconnectionCallback = callback;
+    if(mDisconnectedCallback)
+        mDisconnectedCallback(*idPtr);
+
+    mConnectedPeers.erase(*idPtr);
+    delete idPtr;
+    event.peer->data = nullptr;
+
+    mClientCount--;
 }

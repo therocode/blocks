@@ -28,7 +28,9 @@ class ClientNetworkingSystem : public
         void handleMessage(const PlayerPitchYawMessage& received) override;
         void handleMessage(const RebuildScriptsRequestedMessage& received) override;
     private:
-        void fetchServerData();
+        void connectedToServer();
+        void handleServerData(const std::vector<uint8_t>& data);
+        void disconnectedFromServer();
         fea::MessageBus& mBus;
 
         NetworkParameters mParameters;

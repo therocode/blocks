@@ -121,7 +121,7 @@ void BlocksApplication::joinServer(const std::string& address, int32_t port)
     NetworkParameters parameters;
 
     parameters.mode = NetworkMode::JOIN;
-    parameters.serverName = address;
+    parameters.address = address;
     parameters.port = port;
 
     client = std::unique_ptr<Client>(new Client(mClientBus, parameters));

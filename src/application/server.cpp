@@ -13,7 +13,8 @@ Server::Server(fea::MessageBus& bus, const NetworkParameters& parameters) :
     mServerNetworkingSystem(mBus, parameters),
     mGameInterface(mWorldSystem, mEntitySystem),
     mLogger(mBus, LogLevel::VERB),
-    mScriptSystem(mBus, mGameInterface)
+    mScriptSystem(mBus, mGameInterface),
+    mFrameNumber(0)
 {
     mTimer.start();
     mBus.send(LogMessage{"Setting up server", serverName, LogLevel::INFO});
@@ -40,4 +41,6 @@ void Server::doLogic()
 	mEntitySystem.update(mTimer.getDeltaTime());
 
     mFPSController.frameEnd();
+
+    mFrameNumber++;
 }

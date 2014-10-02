@@ -26,4 +26,6 @@ class Server
         ServerNetworkingSystem mServerNetworkingSystem;
         GameInterface mGameInterface;
         FPSController mFPSController;
+
+        uint32_t mFrameNumber;
 };

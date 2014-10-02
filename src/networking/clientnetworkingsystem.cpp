@@ -25,10 +25,11 @@ ClientNetworkingSystem::ClientNetworkingSystem(fea::MessageBus& bus, const Netwo
             mBus.send(LogMessage{"Setting up client networking", netName, LogLevel::INFO});
 
             mENetClient = std::unique_ptr<ENetClient>(new ENetClient(*mENet));
-            //mENetClient->setConnectionCallback(std::bind(&ClientNetworkingSystem::acceptRemoteClient, this, std::placeholders::_1));
-            //mENetClient->setPackageReceivedCallback(std::bind(&ClientNetworkingSystem::handleClientPackage, this, std::placeholders::_1, std::placeholders::_2));
-            //mENetClient->setDisconnectionCallback(std::bind(&ClientNetworkingSystem::disconnectRemoteClient, this, std::placeholders::_1));
-            //mENetClient->setUnknownPackageCallback(std::bind(&ClientNetworkingSystem::unknownPackage, this, std::placeholders::_1));
+            mENetClient->setConnectedCallback(std::bind(&ClientNetworkingSystem::connectedToServer, this));
+            mENetClient->setDataReceivedCallback(std::bind(&ClientNetworkingSystem::handleServerData, this, std::placeholders::_1));
+            mENetClient->setDisconnectedCallback(std::bind(&ClientNetworkingSystem::disconnectedFromServer, this));
+
+            mENetClient->connect(parameters.address, parameters.port, 5000);
         }
         else
         {
@@ -75,84 +76,99 @@ void ClientNetworkingSystem::handleMessage(const RebuildScriptsRequestedMessage&
 	//mBridge->enqueuePackage(std::shared_ptr<BasePackage>(new RebuildScriptsRequestedPackage('0')));
 }
 
-void ClientNetworkingSystem::fetchServerData()
+void ClientNetworkingSystem::connectedToServer()
 {
-	std::shared_ptr<BasePackage> package;
-		if(package->mType == PackageType::CHUNK_LOADED)
-		{
-			ChunkLoadedPackage* chunkPackage = (ChunkLoadedPackage*)package.get();
-			ChunkCoord coordinate;
-
-            RleIndexArray rleSegmentIndices;
-            RleSegmentArray rleSegments;
-
-			std::tie(coordinate, rleSegmentIndices, rleSegments) = chunkPackage->getData();
-
-            mBus.send(ChunkLoadedMessage{Chunk(coordinate, rleSegmentIndices, rleSegments), 0}); // the 0 here is timestamp. this shall change
-		}
-		else if(package->mType == PackageType::VOXEL_SET)
-		{
-			VoxelSetPackage* voxelSetPackage = (VoxelSetPackage*)package.get();
-
-            VoxelCoord voxelCoord;
-            VoxelType type;
-
-			std::tie(voxelCoord, type) = voxelSetPackage->getData();
-
-            mBus.send(VoxelSetMessage{voxelCoord, type});
-        }
-		else if(package->mType == PackageType::CHUNK_DELETED)
-		{
-			ChunkDeletedPackage* chunkPackage = (ChunkDeletedPackage*)package.get();
-
-            ChunkCoord coordinate;
-
-            std::tie(coordinate) = chunkPackage->getData();
-
-			mBus.send(ClientChunkDeletedMessage{std::get<0>(chunkPackage->getData())});
-		}
-		else if(package->mType == PackageType::GFX_ENTITY_ADDED)
-		{
-			GfxEntityAddedPackage* gfxAddedPackage = (GfxEntityAddedPackage*)package.get();
-			mBus.send(AddGfxEntityMessage{std::get<0>(gfxAddedPackage->getData()), std::get<1>(gfxAddedPackage->getData())});
-		}
-		else if(package->mType == PackageType::GFX_ENTITY_MOVED)
-		{
-			GfxEntityMovedPackage* gfxMovedPackage = (GfxEntityMovedPackage*)package.get();
-			mBus.send(MoveGfxEntityMessage{std::get<0>(gfxMovedPackage->getData()), std::get<1>(gfxMovedPackage->getData())});
-		}
-		else if(package->mType == PackageType::GFX_ENTITY_ROTATED)
-		{
-			GfxEntityRotatedPackage* gfxEntityRotatedPackage = (GfxEntityRotatedPackage*)package.get();
-			mBus.send(RotateGfxEntityMessage{std::get<0>(gfxEntityRotatedPackage->getData()), std::get<1>(gfxEntityRotatedPackage->getData()), std::get<2>(gfxEntityRotatedPackage->getData())});
-		}
-		else if(package->mType == PackageType::GFX_ENTITY_REMOVED)
-		{
-			GfxEntityRemovedPackage* gfxRemovedPackage = (GfxEntityRemovedPackage*)package.get();
-			mBus.send(RemoveGfxEntityMessage{std::get<0>(gfxRemovedPackage->getData())});
-		}
-		else if(package->mType == PackageType::PLAYER_ID)
-		{
-			PlayerIdPackage* playerIdPackage = (PlayerIdPackage*)package.get();
-			mBus.send(PlayerIdMessage{std::get<0>(playerIdPackage->getData())});
-		}
-		else if(package->mType == PackageType::PLAYER_CONNECTED_TO_ENTITY)
-		{
-			PlayerConnectedToEntityPackage* playerConnectedToEntityPackage = (PlayerConnectedToEntityPackage*)package.get();
-			mBus.send(PlayerConnectedToEntityMessage{std::get<0>(playerConnectedToEntityPackage->getData()), std::get<1>(playerConnectedToEntityPackage->getData())});
-		}
-		else if(package->mType == PackageType::PLAYER_FACING_BLOCK)
-		{
-			PlayerFacingBlockPackage* playerFacingBlockPackage = (PlayerFacingBlockPackage*)package.get();
-
-            size_t playerId;
-
-            int x;
-            int y;
-            int z;
-
-            std::tie(playerId, x, y, z) = playerFacingBlockPackage->getData();
-
-			mBus.send(PlayerFacingBlockMessage{playerId, VoxelCoord(x, y, z)});
-		}
+    std::cout << "client connected to server\n";
 }
+
+void ClientNetworkingSystem::handleServerData(const std::vector<uint8_t>& data)
+{
+    std::cout << "client got data received from server\n";
+}
+
+void ClientNetworkingSystem::disconnectedFromServer()
+{
+    std::cout << "client disconnected from server\n";
+}
+
+//void ClientNetworkingSystem::fetchServerData()
+//{
+//	std::shared_ptr<BasePackage> package;
+//		if(package->mType == PackageType::CHUNK_LOADED)
+//		{
+//			ChunkLoadedPackage* chunkPackage = (ChunkLoadedPackage*)package.get();
+//			ChunkCoord coordinate;
+//
+//            RleIndexArray rleSegmentIndices;
+//            RleSegmentArray rleSegments;
+//
+//			std::tie(coordinate, rleSegmentIndices, rleSegments) = chunkPackage->getData();
+//
+//            mBus.send(ChunkLoadedMessage{Chunk(coordinate, rleSegmentIndices, rleSegments), 0}); // the 0 here is timestamp. this shall change
+//		}
+//		else if(package->mType == PackageType::VOXEL_SET)
+//		{
+//			VoxelSetPackage* voxelSetPackage = (VoxelSetPackage*)package.get();
+//
+//            VoxelCoord voxelCoord;
+//            VoxelType type;
+//
+//			std::tie(voxelCoord, type) = voxelSetPackage->getData();
+//
+//            mBus.send(VoxelSetMessage{voxelCoord, type});
+//        }
+//		else if(package->mType == PackageType::CHUNK_DELETED)
+//		{
+//			ChunkDeletedPackage* chunkPackage = (ChunkDeletedPackage*)package.get();
+//
+//            ChunkCoord coordinate;
+//
+//            std::tie(coordinate) = chunkPackage->getData();
+//
+//			mBus.send(ClientChunkDeletedMessage{std::get<0>(chunkPackage->getData())});
+//		}
+//		else if(package->mType == PackageType::GFX_ENTITY_ADDED)
+//		{
+//			GfxEntityAddedPackage* gfxAddedPackage = (GfxEntityAddedPackage*)package.get();
+//			mBus.send(AddGfxEntityMessage{std::get<0>(gfxAddedPackage->getData()), std::get<1>(gfxAddedPackage->getData())});
+//		}
+//		else if(package->mType == PackageType::GFX_ENTITY_MOVED)
+//		{
+//			GfxEntityMovedPackage* gfxMovedPackage = (GfxEntityMovedPackage*)package.get();
+//			mBus.send(MoveGfxEntityMessage{std::get<0>(gfxMovedPackage->getData()), std::get<1>(gfxMovedPackage->getData())});
+//		}
+//		else if(package->mType == PackageType::GFX_ENTITY_ROTATED)
+//		{
+//			GfxEntityRotatedPackage* gfxEntityRotatedPackage = (GfxEntityRotatedPackage*)package.get();
+//			mBus.send(RotateGfxEntityMessage{std::get<0>(gfxEntityRotatedPackage->getData()), std::get<1>(gfxEntityRotatedPackage->getData()), std::get<2>(gfxEntityRotatedPackage->getData())});
+//		}
+//		else if(package->mType == PackageType::GFX_ENTITY_REMOVED)
+//		{
+//			GfxEntityRemovedPackage* gfxRemovedPackage = (GfxEntityRemovedPackage*)package.get();
+//			mBus.send(RemoveGfxEntityMessage{std::get<0>(gfxRemovedPackage->getData())});
+//		}
+//		else if(package->mType == PackageType::PLAYER_ID)
+//		{
+//			PlayerIdPackage* playerIdPackage = (PlayerIdPackage*)package.get();
+//			mBus.send(PlayerIdMessage{std::get<0>(playerIdPackage->getData())});
+//		}
+//		else if(package->mType == PackageType::PLAYER_CONNECTED_TO_ENTITY)
+//		{
+//			PlayerConnectedToEntityPackage* playerConnectedToEntityPackage = (PlayerConnectedToEntityPackage*)package.get();
+//			mBus.send(PlayerConnectedToEntityMessage{std::get<0>(playerConnectedToEntityPackage->getData()), std::get<1>(playerConnectedToEntityPackage->getData())});
+//		}
+//		else if(package->mType == PackageType::PLAYER_FACING_BLOCK)
+//		{
+//			PlayerFacingBlockPackage* playerFacingBlockPackage = (PlayerFacingBlockPackage*)package.get();
+//
+//            size_t playerId;
+//
+//            int x;
+//            int y;
+//            int z;
+//
+//            std::tie(playerId, x, y, z) = playerFacingBlockPackage->getData();
+//
+//			mBus.send(PlayerFacingBlockMessage{playerId, VoxelCoord(x, y, z)});
+//		}
+//}

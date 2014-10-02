@@ -6,6 +6,6 @@ enum class NetworkMode { SINGLE_PLAYER, DEDICATED, JOIN, COMBINED };
 struct NetworkParameters
 {
     NetworkMode mode;
-    std::string serverName;
+    std::string address;
     int32_t port;
 };

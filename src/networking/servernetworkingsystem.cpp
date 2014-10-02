@@ -28,9 +28,14 @@ ServerNetworkingSystem::ServerNetworkingSystem(fea::MessageBus& bus, const Netwo
             mBus.send(LogMessage{"Setting up dedicated server networking", netName, LogLevel::INFO});
 
             mENetServer = std::unique_ptr<ENetServer>(new ENetServer(*mENet, parameters.port));
-            mENetServer->setConnectionCallback(std::bind(&ServerNetworkingSystem::acceptRemoteClient, this, std::placeholders::_1));
+            mENetServer->setConnectedCallback(std::bind(&ServerNetworkingSystem::acceptRemoteClient, this, std::placeholders::_1));
             mENetServer->setDataReceivedCallback(std::bind(&ServerNetworkingSystem::handleClientData, this, std::placeholders::_1, std::placeholders::_2));
-            mENetServer->setDisconnectionCallback(std::bind(&ServerNetworkingSystem::disconnectRemoteClient, this, std::placeholders::_1));
+            mENetServer->setDisconnectedCallback(std::bind(&ServerNetworkingSystem::disconnectRemoteClient, this, std::placeholders::_1));
+
+            if(mENetServer->isListening())
+                mBus.send(LogMessage{"Now listening on port " + std::to_string(parameters.port), netName, LogLevel::INFO});
+            else
+                mBus.send(LogMessage{"Could not bind to port " + std::to_string(parameters.port), netName, LogLevel::ERR});
         }
         else
         {
@@ -47,9 +52,14 @@ ServerNetworkingSystem::ServerNetworkingSystem(fea::MessageBus& bus, const Netwo
 
             mENetServer = std::unique_ptr<ENetServer>(new ENetServer(*mENet, parameters.port));
             mENetServer = std::unique_ptr<ENetServer>(new ENetServer(*mENet, parameters.port));
-            mENetServer->setConnectionCallback(std::bind(&ServerNetworkingSystem::acceptRemoteClient, this, std::placeholders::_1));
+            mENetServer->setConnectedCallback(std::bind(&ServerNetworkingSystem::acceptRemoteClient, this, std::placeholders::_1));
             mENetServer->setDataReceivedCallback(std::bind(&ServerNetworkingSystem::handleClientData, this, std::placeholders::_1, std::placeholders::_2));
-            mENetServer->setDisconnectionCallback(std::bind(&ServerNetworkingSystem::disconnectRemoteClient, this, std::placeholders::_1));
+            mENetServer->setDisconnectedCallback(std::bind(&ServerNetworkingSystem::disconnectRemoteClient, this, std::placeholders::_1));
+
+            if(mENetServer->isListening())
+                mBus.send(LogMessage{"Now listening on port " + std::to_string(parameters.port), netName, LogLevel::INFO});
+            else
+                mBus.send(LogMessage{"Could not bind to port " + std::to_string(parameters.port), netName, LogLevel::ERR});
         }
         else
         {

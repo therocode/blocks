@@ -14,13 +14,19 @@ class ENetServer
         void update(uint32_t wait);
         void sendToAll(const std::vector<uint8_t>& data, bool reliable, uint8_t channel);
         void sendToOne(uint32_t id, const std::vector<uint8_t>& data, bool reliable, uint8_t channel);
+        void disconnectOne(uint32_t id, uint32_t wait);
+        void disconnectAll(uint32_t wait);
         bool isListening() const;
         uint32_t getClientCount() const;
-        void setConnectionCallback(std::function<void(uint32_t)> callback);
+        void setConnectedCallback(std::function<void(uint32_t)> callback);
         void setDataReceivedCallback(std::function<void(uint32_t, const std::vector<uint8_t>&)> callback);
-        void setDisconnectionCallback(std::function<void(uint32_t)> callback);
+        void setDisconnectedCallback(std::function<void(uint32_t)> callback);
     private:
-        std::vector<uint8_t> deserialize(ENetPacket* packet);
+        void handleConnectionEvent(const ENetEvent& event);
+        void handleReceiveEvent(const ENetEvent& event);
+        void handleDisconnectionEvent(const ENetEvent& event);
+
+        std::vector<uint8_t> unpack(ENetPacket* packet);
         ENetAddress mAddress;
         ENetHost* mHost;
         uint32_t mNextId;
@@ -28,7 +34,7 @@ class ENetServer
 
         std::unordered_map<uint32_t, ENetPeer*> mConnectedPeers;
 
-        std::function<void(uint32_t)> mConnectionCallback;
+        std::function<void(uint32_t)> mConnectedCallback;
         std::function<void(uint32_t, const std::vector<uint8_t>&)> mDataReceivedCallback;
-        std::function<void(uint32_t)> mDisconnectionCallback;
+        std::function<void(uint32_t)> mDisconnectedCallback;
 };
