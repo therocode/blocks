@@ -39,6 +39,7 @@ bool ENetClient::isConnected() const
 
 void ENetClient::connect(const std::string& address, uint32_t port, uint32_t timeout)
 {
+    FEA_ASSERT(!mConnected, "Trying to connect to a server whilst already connected!");
     int result = enet_address_set_host(&mAddress, address.c_str());
     mAddress.port = port;
 
@@ -49,12 +50,41 @@ void ENetClient::connect(const std::string& address, uint32_t port, uint32_t tim
     if(enet_host_service(mHost, &event, timeout) > 0 &&
             event.type == ENET_EVENT_TYPE_CONNECT)
     {
+        std::cout << "client coonnected to " << mServer << "\n";
         mConnected = true;
     }
 }
 
-void ENetClient::disconnect()
+void ENetClient::disconnect(uint32_t timeout)
 {
-    enet_peer_disconnect(mServer, 0);
-    mConnected = false;
+    std::cout << "will maybe disconnect from server " << mServer << "\n";
+    if(mServer)
+    {
+        std::cout << "attempting disconnection\n";
+        enet_peer_disconnect(mServer, 0);
+
+        ENetEvent event;
+
+        while(enet_host_service(mHost, &event, timeout) > 0)
+        {
+            switch(event.type)
+            {
+                case ENET_EVENT_TYPE_RECEIVE:
+                    enet_packet_destroy(event.packet);
+                    break;
+                case ENET_EVENT_TYPE_DISCONNECT:
+                    mConnected = false;
+                    mServer = nullptr;
+                    std::cout << "disconnected gracefully\n";
+                    return;
+                default:
+                    break;
+            }
+        }
+
+        std::cout << "oh no, will have to force it\n";
+        enet_peer_reset(mServer);
+        mConnected = false;
+        mServer = nullptr;
+    }
 }

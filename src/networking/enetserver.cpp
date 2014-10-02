@@ -11,8 +11,6 @@ ENetServer::ENetServer(const ENet& enet, uint32_t port) :
 {
     (void)enet;
 
-    //mBus.send(LogMessage{"ENet initialized", netName, LogLevel::INFO});
-
     mAddress.host = ENET_HOST_ANY;
     mAddress.port = port;
 
@@ -26,12 +24,11 @@ ENetServer::ENetServer(const ENet& enet, uint32_t port) :
         //mBus.send(LogMessage{"Could not initialize server", netName, LogLevel::ERR});
     //else
         //mBus.send(LogMessage{"Now listening on port " + std::to_string(mAddress.port), netName, LogLevel::INFO});
+    update(0);
 }
 
 ENetServer::~ENetServer()
 {
-    //mBus.send(LogMessage{"Shutting down ENet", netName, LogLevel::ERR});
-
     if(mHost)
         enet_host_destroy(mHost);
 }
@@ -41,15 +38,14 @@ void ENetServer::update(uint32_t wait)
     if(mHost)
     {
         ENetEvent event;
-
         while(enet_host_service(mHost, &event, wait) > 0) //0 as third parameter means that we'll not wait for activity. non-blocking
         {
+            std::cout << "got event!\n";
             switch(event.type)
             {   
                 case ENET_EVENT_TYPE_CONNECT:
                     {
-                        //mBus.send(LogMessage{"new client connected from " + std::to_string(event.peer->address.host) + ":" + std::to_string(event.peer->address.port), netName, LogLevel::INFO});
-
+                        std::cout << "incoming connection\n";
                         uint32_t newId = mNextId++;
 
                         event.peer->data = new uint32_t(newId);
@@ -57,28 +53,28 @@ void ENetServer::update(uint32_t wait)
 
                         mClientCount++;
 
-                        //mBus.send(IncomingConnectionMessage{newId});
+                        if(mConnectionCallback)
+                            mConnectionCallback(newId);
 
                         break;
                     }
                 case ENET_EVENT_TYPE_RECEIVE:
                     {
-                        //mBus.send(LogMessage{"a packet of length " + std::to_string(event.packet->dataLength) + " was received from " + std::to_string(event.peer->address.host) + " on channel " + std::to_string(event.channelID), netName, LogLevel::VERB});
-
+                        std::cout << "imcoming packeg\n";
                         auto package = deserialize(event.packet);
 
-                        //mBus.send(ClientPackageReceived{*((uint32_t*) event.peer->data), package});
+                        mPackageReceivedCallback(*((uint32_t*) event.peer->data), package);
 
                         enet_packet_destroy(event.packet);
                         break;
                     }
                 case ENET_EVENT_TYPE_DISCONNECT:
                     {
-                        //mBus.send(LogMessage{"client from " + std::to_string(event.peer->address.host) + ":" + std::to_string(event.peer->address.port) + " disconnected", netName, LogLevel::INFO});
-
+                        std::cout << "incoming disconnection\n";
                         uint32_t* idPtr = (uint32_t*)event.peer->data;
 
-                        //mBus.send(ClientDisconnectedMessage{*idPtr});
+                        if(mDisconnectionCallback)
+                            mDisconnectionCallback(*idPtr);
 
                         mConnectedPeers.erase(*idPtr);
                         delete idPtr;
@@ -171,9 +167,9 @@ std::unique_ptr<BasePackage> ENetServer::deserialize(ENetPacket* packet)
                 return packagePtr;
             }
         default:
-            //mBus.send(LogMessage{"Unknown package received", netName, LogLevel::ERR});
+            if(mUnknownPackageCallback)
+                mUnknownPackageCallback(type);
             return std::unique_ptr<BasePackage>();
-            break;
     }
 
 }
@@ -181,4 +177,24 @@ std::unique_ptr<BasePackage> ENetServer::deserialize(ENetPacket* packet)
 uint32_t ENetServer::getClientCount() const
 {
     return mClientCount;
+}
+
+void ENetServer::setConnectionCallback(std::function<void(uint32_t clientId)> callback)
+{
+    mConnectionCallback = callback;
+}
+
+void ENetServer::setPackageReceivedCallback(std::function<void(uint32_t, const std::unique_ptr<BasePackage>&)> callback)
+{
+    mPackageReceivedCallback = callback;
+}
+
+void ENetServer::setDisconnectionCallback(std::function<void(uint32_t clientId)> callback)
+{
+    mDisconnectionCallback = callback;
+}
+
+void ENetServer::setUnknownPackageCallback(std::function<void(PackageType)> callback)
+{
+    mUnknownPackageCallback = callback;
 }

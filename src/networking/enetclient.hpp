@@ -10,7 +10,7 @@ class ENetClient
         ~ENetClient();
         bool isConnected() const;
         void connect(const std::string& address, uint32_t port, uint32_t timeout);
-        void disconnect();
+        void disconnect(uint32_t timeout);
     private:
         ENetHost* mHost;
         ENetPeer* mServer;

@@ -363,9 +363,6 @@ if(BUILD_TESTS)
     add_executable(test_coordinate "test/world/coordinatetest.cpp" "src/world/worldstd.cpp")
     target_link_libraries(test_coordinate ${FEATHERKIT_LIBRARIES})
     
-    add_executable(test_networking "test/networking/networkingtest.cpp" "src/networking/enetclient.cpp" "src/networking/enetserver.cpp" "src/networking/enet.cpp")
-    target_link_libraries(test_networking ${FEATHERKIT_LIBRARIES} ${ENet_LIBRARIES})
-    
     add_executable(test_world_misc "test/world/misctest.cpp" "src/world/worldstd.cpp" "src/world/region.cpp" "src/world/regiondatafragment.cpp")
     target_link_libraries(test_world_misc ${FEATHERKIT_LIBRARIES})
     

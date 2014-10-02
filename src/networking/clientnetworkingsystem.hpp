@@ -6,7 +6,8 @@
 #include "../script/scriptmessages.hpp"
 #include "../input/inputmessages.hpp"
 
-class ServerClientBridge;
+class ENet;
+class ENetClient;
 
 class ClientNetworkingSystem : public
     fea::MessageReceiver<FrameMessage,
@@ -27,6 +28,8 @@ class ClientNetworkingSystem : public
     private:
         void fetchServerData();
         fea::MessageBus& mBus;
+
         NetworkParameters mParameters;
-        std::unique_ptr<ServerClientBridge> mBridge;
+        std::unique_ptr<ENet> mEnet;
+        std::unique_ptr<ENetClient> mEnetClient;
 };

@@ -1,6 +1,4 @@
 #include "clientnetworkingsystem.hpp"
-#include "localserverclientbridge.hpp"
-#include "remoteserverbridge.hpp"
 #include "networkingmessages.hpp"
 #include "packages.hpp"
 #include "../world/worldmessages.hpp"
@@ -24,13 +22,13 @@ ClientNetworkingSystem::ClientNetworkingSystem(fea::MessageBus& bus, const Netwo
 
         if(enet_initialize() < 0)
         {
-          mBus.send(LogMessage{"Couldn't initialise enet", "network", LogLevel::ERR});
+            mBus.send(LogMessage{"Couldn't initialise enet", "network", LogLevel::ERR});
         }
         else
         {
-          mBridge = std::unique_ptr<RemoteServerBridge>(serverBidge);
-          serverBidge->connectToAddress(parameters.serverName, parameters.port);
-          serverBidge->startListening();
+            mBridge = std::unique_ptr<RemoteServerBridge>(serverBidge);
+            serverBidge->connectToAddress(parameters.serverName, parameters.port);
+            serverBidge->startListening();
         }
     }
     else if(parameters.mode == NetworkMode::COMBINED)

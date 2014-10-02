@@ -16,9 +16,6 @@ using ClientId = size_t;
 
 class ServerNetworkingSystem : public fea::MessageReceiver<LocalConnectionAttemptMessage,
                                            FrameMessage,
-                                           IncomingConnectionMessage,
-                                           ClientPackageReceived,
-                                           ClientDisconnectedMessage,
                                            AddGfxEntityMessage,
                                            MoveGfxEntityMessage,
                                            RotateGfxEntityMessage,
@@ -33,9 +30,6 @@ class ServerNetworkingSystem : public fea::MessageReceiver<LocalConnectionAttemp
         ServerNetworkingSystem(fea::MessageBus& bus, const NetworkParameters& parameters);
         void handleMessage(const LocalConnectionAttemptMessage& received);
         void handleMessage(const FrameMessage& received);
-        void handleMessage(const IncomingConnectionMessage& received);
-        void handleMessage(const ClientPackageReceived& received);
-        void handleMessage(const ClientDisconnectedMessage& received);
         void handleMessage(const AddGfxEntityMessage& received);
         void handleMessage(const MoveGfxEntityMessage& received);
         void handleMessage(const RotateGfxEntityMessage& received);
@@ -46,7 +40,10 @@ class ServerNetworkingSystem : public fea::MessageReceiver<LocalConnectionAttemp
         void handleMessage(const ChunkDeletedMessage& received);
         void handleMessage(const VoxelSetMessage& received);
     private:
+        void acceptRemoteClient(uint32_t id);
         void handleClientPackage(uint32_t clientId, const std::unique_ptr<BasePackage>& package);
+        void disconnectRemoteClient(uint32_t id);
+        void unknownPackage(PackageType type);
 
         fea::MessageBus& mBus;
         NetworkParameters mParameters;

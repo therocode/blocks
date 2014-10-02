@@ -26,7 +26,12 @@ ServerNetworkingSystem::ServerNetworkingSystem(fea::MessageBus& bus, const Netwo
         if(mENet->isInitialized())
         {
             mBus.send(LogMessage{"Setting up dedicated server networking", netName, LogLevel::INFO});
-            mENetServer = std::unique_ptr<ENetServer>(new ENetServer(*mENet, 56556));
+
+            mENetServer = std::unique_ptr<ENetServer>(new ENetServer(*mENet, parameters.port));
+            mENetServer->setConnectionCallback(std::bind(&ServerNetworkingSystem::acceptRemoteClient, this, std::placeholders::_1));
+            mENetServer->setPackageReceivedCallback(std::bind(&ServerNetworkingSystem::handleClientPackage, this, std::placeholders::_1, std::placeholders::_2));
+            mENetServer->setDisconnectionCallback(std::bind(&ServerNetworkingSystem::disconnectRemoteClient, this, std::placeholders::_1));
+            mENetServer->setUnknownPackageCallback(std::bind(&ServerNetworkingSystem::unknownPackage, this, std::placeholders::_1));
         }
         else
         {
@@ -40,7 +45,13 @@ ServerNetworkingSystem::ServerNetworkingSystem(fea::MessageBus& bus, const Netwo
         if(mENet->isInitialized())
         {
             mBus.send(LogMessage{"Setting up networking", netName, LogLevel::INFO});
-            mENetServer = std::unique_ptr<ENetServer>(new ENetServer(*mENet, 56556));
+
+            mENetServer = std::unique_ptr<ENetServer>(new ENetServer(*mENet, parameters.port));
+            mENetServer = std::unique_ptr<ENetServer>(new ENetServer(*mENet, parameters.port));
+            mENetServer->setConnectionCallback(std::bind(&ServerNetworkingSystem::acceptRemoteClient, this, std::placeholders::_1));
+            mENetServer->setPackageReceivedCallback(std::bind(&ServerNetworkingSystem::handleClientPackage, this, std::placeholders::_1, std::placeholders::_2));
+            mENetServer->setDisconnectionCallback(std::bind(&ServerNetworkingSystem::disconnectRemoteClient, this, std::placeholders::_1));
+            mENetServer->setUnknownPackageCallback(std::bind(&ServerNetworkingSystem::unknownPackage, this, std::placeholders::_1));
         }
         else
         {
@@ -65,37 +76,6 @@ void ServerNetworkingSystem::handleMessage(const LocalConnectionAttemptMessage& 
 void ServerNetworkingSystem::handleMessage(const FrameMessage& received)
 {
     mENetServer->update(0);
-}
-
-void ServerNetworkingSystem::handleMessage(const IncomingConnectionMessage& received)
-{
-    uint32_t newId = mNextClientId++;
-
-    mClientToPlayerIds.emplace(received.clientId, newId);
-    mPlayerToClientIds.emplace(newId, received.clientId);
-
-    mBus.send(LogMessage{"Client Id " + std::to_string(received.clientId) + " connected and given player Id " + std::to_string(newId), netName, LogLevel::INFO});
-    mBus.send(PlayerJoinedMessage{newId, 0, {0.0f, 0.0f, 0.0f}});
-}
-
-void ServerNetworkingSystem::handleMessage(const ClientPackageReceived& received)
-{
-    handleClientPackage(received.clientId, received.package);
-}
-
-void ServerNetworkingSystem::handleMessage(const ClientDisconnectedMessage& received)
-{
-    std::cout << "client id " << received.clientId << " disconnected!\n";
-
-    FEA_ASSERT(mClientToPlayerIds.count(received.clientId) != 0, "Client " << received.clientId << " disconnecting, but that client is not marked as connected!");
-
-    uint32_t playerId = mClientToPlayerIds.at(received.clientId);
-
-    mBus.send(LogMessage{"Client Id " + std::to_string(received.clientId) + ", player Id " + std::to_string(playerId) + " disconnected", netName, LogLevel::INFO});
-    mBus.send(PlayerDisconnectedMessage{playerId});
-
-    mClientToPlayerIds.erase(received.clientId);
-    mPlayerToClientIds.erase(playerId);
 }
 
 void ServerNetworkingSystem::handleMessage(const ChunkLoadedMessage& received)
@@ -213,6 +193,17 @@ void ServerNetworkingSystem::handleMessage(const VoxelSetMessage& received)
         mENetServer->sendToAll(std::move(voxelSetPackage));
 }
 
+void ServerNetworkingSystem::acceptRemoteClient(uint32_t id)
+{
+    uint32_t newId = mNextClientId++;
+
+    mClientToPlayerIds.emplace(id, newId);
+    mPlayerToClientIds.emplace(newId, id);
+
+    mBus.send(LogMessage{"Client Id " + std::to_string(id) + " connected and given player Id " + std::to_string(newId), netName, LogLevel::INFO});
+    mBus.send(PlayerJoinedMessage{newId, 0, {0.0f, 0.0f, 0.0f}});
+}
+
 void ServerNetworkingSystem::handleClientPackage(uint32_t clientId, const std::unique_ptr<BasePackage>& package)
 {
     if(package->mType == PackageType::REBUILD_SCRIPTS_REQUESTED)
@@ -247,4 +238,24 @@ void ServerNetworkingSystem::handleClientPackage(uint32_t clientId, const std::u
         PlayerPitchYawPackage* playerPitchYawPackage = (PlayerPitchYawPackage*) package.get();
         mBus.send(PlayerPitchYawMessage{std::get<0>(playerPitchYawPackage->getData()), std::get<1>(playerPitchYawPackage->getData()),std::get<2>( playerPitchYawPackage->getData())});
     }
+}
+
+void ServerNetworkingSystem::disconnectRemoteClient(uint32_t id)
+{
+    std::cout << "client id " << id << " disconnected!\n";
+
+    FEA_ASSERT(mClientToPlayerIds.count(id) != 0, "Client " << id << " disconnecting, but that client is not marked as connected!");
+
+    uint32_t playerId = mClientToPlayerIds.at(id);
+
+    mBus.send(LogMessage{"Client Id " + std::to_string(id) + ", player Id " + std::to_string(playerId) + " disconnected", netName, LogLevel::INFO});
+    mBus.send(PlayerDisconnectedMessage{playerId});
+
+    mClientToPlayerIds.erase(id);
+    mPlayerToClientIds.erase(playerId);
+}
+
+void ServerNetworkingSystem::unknownPackage(PackageType type)
+{
+    mBus.send(LogMessage{"Unknown package type received! Type: " + std::to_string((uint32_t) type), netName, LogLevel::WARN});
 }
