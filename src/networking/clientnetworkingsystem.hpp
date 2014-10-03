@@ -14,21 +14,11 @@ class ENetClient;
 
 class ClientNetworkingSystem : public
     fea::MessageReceiver<FrameMessage,
-                         PlayerActionMessage,
-                         PlayerMoveDirectionMessage,
-                         PlayerMoveActionMessage,
-                         PlayerPitchYawMessage,
-                         RebuildScriptsRequestedMessage,
                          LocalConnectionEstablishedMessage>
 {
     public:
         ClientNetworkingSystem(fea::MessageBus& bus, const NetworkParameters& parameters);
         void handleMessage(const FrameMessage& received) override;
-        void handleMessage(const PlayerActionMessage& received) override;
-        void handleMessage(const PlayerMoveDirectionMessage& received) override;
-        void handleMessage(const PlayerMoveActionMessage& received) override;
-        void handleMessage(const PlayerPitchYawMessage& received) override;
-        void handleMessage(const RebuildScriptsRequestedMessage& received) override;
         void handleMessage(const LocalConnectionEstablishedMessage& received) override;
     private:
         void connectedToServer();

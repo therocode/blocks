@@ -1,6 +1,5 @@
 #include "servernetworkingsystem.hpp"
 #include "../world/chunk.hpp"
-#include "packages.hpp"
 #include "../lognames.hpp"
 #include "../script/scriptmessages.hpp"
 #include "../input/inputmessages.hpp"
@@ -87,121 +86,6 @@ void ServerNetworkingSystem::handleMessage(const FrameMessage& received)
         mENetServer->update(0);
 }
 
-void ServerNetworkingSystem::handleMessage(const ChunkLoadedMessage& received)
-{
-    const ChunkCoord& coordinate = received.chunk.getLocation();
-    const Chunk& chunk = received.chunk;
-
-    VoxelTypeData typeData = chunk.getVoxelTypeData();
-
-    ChunkLoadedPackage chunkLoadedPackage(coordinate, typeData.mRleSegmentIndices, typeData.mRleSegments);
-
-    if(mLocalClientBus)
-        mLocalClientBus->send(received);
-    if(mENetServer)
-        mENetServer->sendToAll(chunkLoadedPackage.getAsBytes(), true, CHANNEL_CHUNKS);
-}
-
-void ServerNetworkingSystem::handleMessage(const ChunkDeletedMessage& received)
-{
-    ChunkDeletedPackage chunkDeletedPackage{received.coordinate};
-
-    if(mLocalClientBus)
-        mLocalClientBus->send(received);
-    if(mENetServer)
-        mENetServer->sendToAll(chunkDeletedPackage.getAsBytes(), true, CHANNEL_CHUNKS);
-}
-
-void ServerNetworkingSystem::handleMessage(const AddGfxEntityMessage& received)
-{
-    GfxEntityAddedPackage gfxEntityAddedPackage(received.id, received.position);
-
-    graphicsEntities.insert(received.id); //temphack
-
-    if(mLocalClientBus)
-        mLocalClientBus->send(received);
-    if(mENetServer)
-        mENetServer->sendToAll(gfxEntityAddedPackage.getAsBytes(), true, CHANNEL_ENTITY);
-}
-
-void ServerNetworkingSystem::handleMessage(const MoveGfxEntityMessage& received)
-{
-    GfxEntityMovedPackage gfxEntityMovedPackage(received.id, received.position);
-
-    if(mLocalClientBus)
-        mLocalClientBus->send(received);
-    if(mENetServer)
-        mENetServer->sendToAll(gfxEntityMovedPackage.getAsBytes(), false, CHANNEL_ENTITY);
-}
-
-void ServerNetworkingSystem::handleMessage(const RotateGfxEntityMessage& received)
-{
-    GfxEntityRotatedPackage gfxEntityRotatedPackage(received.id, received.pitch, received.yaw);
-
-    if(mLocalClientBus)
-        mLocalClientBus->send(received);
-    if(mENetServer)
-        mENetServer->sendToAll(gfxEntityRotatedPackage.getAsBytes(), false, CHANNEL_ENTITY);
-}
-
-void ServerNetworkingSystem::handleMessage(const RemoveGfxEntityMessage& received)
-{
-    GfxEntityRemovedPackage gfxEntityRemovedPackage(received.id);
-
-    graphicsEntities.erase(received.id); //temphack
-
-    if(mLocalClientBus)
-        mLocalClientBus->send(received);
-    if(mENetServer)
-        mENetServer->sendToAll(gfxEntityRemovedPackage.getAsBytes(), true, CHANNEL_ENTITY);
-}
-
-void ServerNetworkingSystem::handleMessage(const PlayerConnectedToEntityMessage& received)
-{
-    PlayerConnectedToEntityPackage playerConnectedToEntityPackage(received.playerId, received.entityId);
-
-    if(mLocalClientBus)
-        mLocalClientBus->send(received);
-    if(mENetServer)
-        mENetServer->sendToAll(playerConnectedToEntityPackage.getAsBytes(), true, CHANNEL_ENTITY);
-}
-
-void ServerNetworkingSystem::handleMessage(const PlayerFacingBlockMessage& received)
-{
-    size_t id = received.playerId;
-    VoxelCoord vector = received.voxelPosition;
-    int x;
-    int y;
-    int z;
-
-    x = vector.x;
-    y = vector.y;
-    z = vector.z;
-
-    PlayerFacingBlockPackage playerFacingBlockPackage(id, x, y, z);
-
-    if(mLocalClientBus)
-    {
-        if(mLocalPlayerId == id)
-            mLocalClientBus->send(received);
-    }
-    if(mENetServer)
-    {
-        FEA_ASSERT(mPlayerToClientIds.count(id) != 0, "Trying to send packet to player Id " + std::to_string(id) + " but that player has no client attached to it");
-        mENetServer->sendToOne(mPlayerToClientIds.count(id), playerFacingBlockPackage.getAsBytes(), false, CHANNEL_ENTITY);
-    }
-}
-
-void ServerNetworkingSystem::handleMessage(const VoxelSetMessage& received)
-{
-    VoxelSetPackage voxelSetPackage(received.voxel , received.type);
-
-    if(mLocalClientBus)
-        mLocalClientBus->send(received);
-    if(mENetServer)
-        mENetServer->sendToAll(voxelSetPackage.getAsBytes(), true, CHANNEL_CHUNKS);
-}
-
 void ServerNetworkingSystem::acceptRemoteClient(uint32_t id)
 {
     uint32_t newId = mNextClientId++;
@@ -215,88 +99,14 @@ void ServerNetworkingSystem::acceptRemoteClient(uint32_t id)
 
 void ServerNetworkingSystem::handleClientData(uint32_t clientId, const std::vector<uint8_t>& data)
 {
-    PackageType type;
+    //PackageType type;
 
-    uint8_t* typePointer = (uint8_t*)&type;
-    for(uint32_t i = 0; i < sizeof(PackageType); i++)
-    {   
-        *typePointer = data[i];
-        typePointer++;
-    }   
-    
-    std::unique_ptr<BasePackage> package;
-
-    switch(type)
-    {   
-        case PackageType::REBUILD_SCRIPTS_REQUESTED:
-            {   
-                package = std::unique_ptr<RebuildScriptsRequestedPackage>();
-                package->setFromBytes(data);
-                break;
-            }   
-        case PackageType::PLAYER_ACTION:
-            {
-                package = std::unique_ptr<PlayerActionPackage>();
-                package->setFromBytes(data);
-                break;
-            }
-        case PackageType::PLAYER_MOVE_DIRECTION:
-            {
-                package = std::unique_ptr<PlayerMoveDirectionPackage>();
-                package->setFromBytes(data);
-                break;
-            }
-        case PackageType::PLAYER_MOVE_ACTION:
-            {
-                package = std::unique_ptr<PlayerMoveActionPackage>();
-                package->setFromBytes(data);
-                break;
-            }
-        case PackageType::PLAYER_PITCH_YAW:
-            {
-                package = std::unique_ptr<PlayerPitchYawPackage>();
-                package->setFromBytes(data);
-                break;
-            }
-        default:
-            {
-                mBus.send(LogMessage{"Unknown package received of type " + std::to_string((int32_t) type), netName, LogLevel::WARN});
-                return;
-            }
-    }
-
-    if(package->mType == PackageType::REBUILD_SCRIPTS_REQUESTED)
-    {
-        mBus.send(RebuildScriptsRequestedMessage());
-    }
-    else if(package->mType == PackageType::PLAYER_ACTION)
-    {
-        PlayerActionPackage* playerActionPackage = (PlayerActionPackage*) package.get();
-        mBus.send(PlayerActionMessage{std::get<0>(playerActionPackage->getData()), std::get<1>(playerActionPackage->getData())});
-    }
-    else if(package->mType == PackageType::PLAYER_MOVE_DIRECTION)
-    {
-        PlayerMoveDirectionPackage* playerMoveDirectionPackage = (PlayerMoveDirectionPackage*) package.get();
-        size_t id;
-        int8_t forwardsBack;
-        int8_t leftRight;
-        std::tie(id, forwardsBack, leftRight) = playerMoveDirectionPackage->getData();
-
-        MoveDirection dir(forwardsBack, leftRight);
-
-        mBus.send(PlayerMoveDirectionMessage{id, dir});
-    }
-    else if(package->mType == PackageType::PLAYER_MOVE_ACTION)
-    {
-        PlayerMoveActionPackage* playerMoveActionPackage = (PlayerMoveActionPackage*) package.get();
-
-        mBus.send(PlayerMoveActionMessage{std::get<0>(playerMoveActionPackage->getData()), std::get<1>(playerMoveActionPackage->getData())});
-    }
-    else if(package->mType == PackageType::PLAYER_PITCH_YAW)
-    {
-        PlayerPitchYawPackage* playerPitchYawPackage = (PlayerPitchYawPackage*) package.get();
-        mBus.send(PlayerPitchYawMessage{std::get<0>(playerPitchYawPackage->getData()), std::get<1>(playerPitchYawPackage->getData()),std::get<2>( playerPitchYawPackage->getData())});
-    }
+    //uint8_t* typePointer = (uint8_t*)&type;
+    //for(uint32_t i = 0; i < sizeof(PackageType); i++)
+    //{   
+    //    *typePointer = data[i];
+    //    typePointer++;
+    //}   
 }
 
 void ServerNetworkingSystem::disconnectRemoteClient(uint32_t id)

@@ -46,7 +46,6 @@ set(source_files
     src/networking/enet.cpp
     src/networking/enetclient.cpp
     src/networking/enetserver.cpp
-    src/networking/package.cpp
     src/networking/servernetworkingsystem.cpp
     
     src/rendering/chunkgeneratorqueue.cpp
@@ -156,9 +155,6 @@ set(header_files
     src/networking/enetclient.hpp
     src/networking/enetserver.hpp
     src/networking/networkingmessages.hpp
-    src/networking/package.hpp
-    src/networking/packages.hpp
-    src/networking/packagetype.hpp
     src/networking/servernetworkingsystem.cpp
 
     src/rendering/chunkgeneratorqueue.hpp
