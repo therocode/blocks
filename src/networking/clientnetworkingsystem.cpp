@@ -7,7 +7,8 @@
 
 ClientNetworkingSystem::ClientNetworkingSystem(fea::MessageBus& bus, const NetworkParameters& parameters) :
     mBus(bus),
-    mParameters(parameters)
+    mParameters(parameters),
+    mServerBus(nullptr)
 {
     subscribe(mBus, *this);
 
@@ -79,6 +80,12 @@ void ClientNetworkingSystem::handleMessage(const RebuildScriptsRequestedMessage&
 {
     RebuildScriptsRequestedPackage package('0');
     mENetClient->send(package.getAsBytes(), true, CHANNEL_ENTITY);
+}
+
+void ClientNetworkingSystem::handleMessage(const LocalConnectionEstablishedMessage& received)
+{
+    mServerBus = received.serverBus;
+    mBus.send(LogMessage{"Connected locally to server", netName, LogLevel::INFO});
 }
 
 void ClientNetworkingSystem::connectedToServer()

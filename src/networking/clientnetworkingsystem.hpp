@@ -1,5 +1,6 @@
 #pragma once
 #include "../networking/networkparameters.hpp"
+#include "../networking/networkingmessages.hpp"
 #include "../application/applicationmessages.hpp"
 #include "../entity/entitymessages.hpp"
 #include "../rendering/renderingmessages.hpp"
@@ -17,7 +18,8 @@ class ClientNetworkingSystem : public
                          PlayerMoveDirectionMessage,
                          PlayerMoveActionMessage,
                          PlayerPitchYawMessage,
-                         RebuildScriptsRequestedMessage>
+                         RebuildScriptsRequestedMessage,
+                         LocalConnectionEstablishedMessage>
 {
     public:
         ClientNetworkingSystem(fea::MessageBus& bus, const NetworkParameters& parameters);
@@ -27,6 +29,7 @@ class ClientNetworkingSystem : public
         void handleMessage(const PlayerMoveActionMessage& received) override;
         void handleMessage(const PlayerPitchYawMessage& received) override;
         void handleMessage(const RebuildScriptsRequestedMessage& received) override;
+        void handleMessage(const LocalConnectionEstablishedMessage& received) override;
     private:
         void connectedToServer();
         void handleServerData(const std::vector<uint8_t>& data);
@@ -34,6 +37,7 @@ class ClientNetworkingSystem : public
         fea::MessageBus& mBus;
 
         NetworkParameters mParameters;
+        fea::MessageBus* mServerBus;
         std::unique_ptr<ENet> mENet;
         std::unique_ptr<ENetClient> mENetClient;
 };
