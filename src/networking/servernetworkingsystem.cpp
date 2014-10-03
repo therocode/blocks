@@ -94,76 +94,76 @@ void ServerNetworkingSystem::handleMessage(const ChunkLoadedMessage& received)
 
     VoxelTypeData typeData = chunk.getVoxelTypeData();
 
-    std::unique_ptr<BasePackage> chunkLoadedPackage(new ChunkLoadedPackage(coordinate, typeData.mRleSegmentIndices, typeData.mRleSegments));
+    ChunkLoadedPackage chunkLoadedPackage(coordinate, typeData.mRleSegmentIndices, typeData.mRleSegments);
 
     if(mLocalClientBus)
         mLocalClientBus->send(received);
     if(mENetServer)
-        mENetServer->sendToAll(std::move(chunkLoadedPackage->getAsBytes()), true, CHANNEL_CHUNKS);
+        mENetServer->sendToAll(chunkLoadedPackage.getAsBytes(), true, CHANNEL_CHUNKS);
 }
 
 void ServerNetworkingSystem::handleMessage(const ChunkDeletedMessage& received)
 {
-    std::unique_ptr<BasePackage> chunkDeletedPackage(new ChunkDeletedPackage{received.coordinate});
+    ChunkDeletedPackage chunkDeletedPackage{received.coordinate};
 
     if(mLocalClientBus)
         mLocalClientBus->send(received);
     if(mENetServer)
-        mENetServer->sendToAll(std::move(chunkDeletedPackage->getAsBytes()), true, CHANNEL_CHUNKS);
+        mENetServer->sendToAll(chunkDeletedPackage.getAsBytes(), true, CHANNEL_CHUNKS);
 }
 
 void ServerNetworkingSystem::handleMessage(const AddGfxEntityMessage& received)
 {
-    std::unique_ptr<BasePackage> gfxEntityAddedPackage(new GfxEntityAddedPackage(received.id, received.position));
+    GfxEntityAddedPackage gfxEntityAddedPackage(received.id, received.position);
 
     graphicsEntities.insert(received.id); //temphack
 
     if(mLocalClientBus)
         mLocalClientBus->send(received);
     if(mENetServer)
-        mENetServer->sendToAll(std::move(gfxEntityAddedPackage->getAsBytes()), true, CHANNEL_ENTITY);
+        mENetServer->sendToAll(gfxEntityAddedPackage.getAsBytes(), true, CHANNEL_ENTITY);
 }
 
 void ServerNetworkingSystem::handleMessage(const MoveGfxEntityMessage& received)
 {
-    std::unique_ptr<BasePackage> gfxEntityMovedPackage(new GfxEntityMovedPackage(received.id, received.position));
+    GfxEntityMovedPackage gfxEntityMovedPackage(received.id, received.position);
 
     if(mLocalClientBus)
         mLocalClientBus->send(received);
     if(mENetServer)
-        mENetServer->sendToAll(std::move(gfxEntityMovedPackage->getAsBytes()), false, CHANNEL_ENTITY);
+        mENetServer->sendToAll(gfxEntityMovedPackage.getAsBytes(), false, CHANNEL_ENTITY);
 }
 
 void ServerNetworkingSystem::handleMessage(const RotateGfxEntityMessage& received)
 {
-    std::unique_ptr<BasePackage> gfxEntityRotatedPackage(new GfxEntityRotatedPackage(received.id, received.pitch, received.yaw));
+    GfxEntityRotatedPackage gfxEntityRotatedPackage(received.id, received.pitch, received.yaw);
 
     if(mLocalClientBus)
         mLocalClientBus->send(received);
     if(mENetServer)
-        mENetServer->sendToAll(std::move(gfxEntityRotatedPackage->getAsBytes()), false, CHANNEL_ENTITY);
+        mENetServer->sendToAll(gfxEntityRotatedPackage.getAsBytes(), false, CHANNEL_ENTITY);
 }
 
 void ServerNetworkingSystem::handleMessage(const RemoveGfxEntityMessage& received)
 {
-    std::unique_ptr<BasePackage> gfxEntityRemovedPackage(new GfxEntityRemovedPackage(received.id));
+    GfxEntityRemovedPackage gfxEntityRemovedPackage(received.id);
 
     graphicsEntities.erase(received.id); //temphack
 
     if(mLocalClientBus)
         mLocalClientBus->send(received);
     if(mENetServer)
-        mENetServer->sendToAll(std::move(gfxEntityRemovedPackage->getAsBytes()), true, CHANNEL_ENTITY);
+        mENetServer->sendToAll(gfxEntityRemovedPackage.getAsBytes(), true, CHANNEL_ENTITY);
 }
 
 void ServerNetworkingSystem::handleMessage(const PlayerConnectedToEntityMessage& received)
 {
-    std::unique_ptr<BasePackage> playerConnectedToEntityPackage(new PlayerConnectedToEntityPackage(received.playerId, received.entityId));
+    PlayerConnectedToEntityPackage playerConnectedToEntityPackage(received.playerId, received.entityId);
 
     if(mLocalClientBus)
         mLocalClientBus->send(received);
     if(mENetServer)
-        mENetServer->sendToAll(std::move(playerConnectedToEntityPackage->getAsBytes()), true, CHANNEL_ENTITY);
+        mENetServer->sendToAll(playerConnectedToEntityPackage.getAsBytes(), true, CHANNEL_ENTITY);
 }
 
 void ServerNetworkingSystem::handleMessage(const PlayerFacingBlockMessage& received)
@@ -178,7 +178,7 @@ void ServerNetworkingSystem::handleMessage(const PlayerFacingBlockMessage& recei
     y = vector.y;
     z = vector.z;
 
-    std::unique_ptr<BasePackage> playerFacingBlockPackage(new PlayerFacingBlockPackage(id, x, y, z));
+    PlayerFacingBlockPackage playerFacingBlockPackage(id, x, y, z);
 
     if(mLocalClientBus)
     {
@@ -188,18 +188,18 @@ void ServerNetworkingSystem::handleMessage(const PlayerFacingBlockMessage& recei
     if(mENetServer)
     {
         FEA_ASSERT(mPlayerToClientIds.count(id) != 0, "Trying to send packet to player Id " + std::to_string(id) + " but that player has no client attached to it");
-        mENetServer->sendToOne(mPlayerToClientIds.count(id), std::move(playerFacingBlockPackage->getAsBytes()), false, CHANNEL_ENTITY);
+        mENetServer->sendToOne(mPlayerToClientIds.count(id), playerFacingBlockPackage.getAsBytes(), false, CHANNEL_ENTITY);
     }
 }
 
 void ServerNetworkingSystem::handleMessage(const VoxelSetMessage& received)
 {
-    std::unique_ptr<BasePackage> voxelSetPackage(new VoxelSetPackage(received.voxel , received.type));
+    VoxelSetPackage voxelSetPackage(received.voxel , received.type);
 
     if(mLocalClientBus)
         mLocalClientBus->send(received);
     if(mENetServer)
-        mENetServer->sendToAll(std::move(voxelSetPackage->getAsBytes()), true, CHANNEL_CHUNKS);
+        mENetServer->sendToAll(voxelSetPackage.getAsBytes(), true, CHANNEL_CHUNKS);
 }
 
 void ServerNetworkingSystem::acceptRemoteClient(uint32_t id)
@@ -301,8 +301,6 @@ void ServerNetworkingSystem::handleClientData(uint32_t clientId, const std::vect
 
 void ServerNetworkingSystem::disconnectRemoteClient(uint32_t id)
 {
-    std::cout << "client id " << id << " disconnected!\n";
-
     FEA_ASSERT(mClientToPlayerIds.count(id) != 0, "Client " << id << " disconnecting, but that client is not marked as connected!");
 
     uint32_t playerId = mClientToPlayerIds.at(id);

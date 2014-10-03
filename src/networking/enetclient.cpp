@@ -86,19 +86,14 @@ void ENetClient::connect(const std::string& address, uint32_t port, uint32_t tim
 
     ENetEvent event;
 
-        std::cout << "connecting to " << address << ":" << port << "\n";
-        
     if(enet_host_service(mHost, &event, timeout) > 0 &&
             event.type == ENET_EVENT_TYPE_CONNECT)
     {
         if(mConnectedCallback)
             mConnectedCallback();
 
-        std::cout << "connected!\n";
         mConnected = true;
     }
-
-    std::cout << "step over\n";
 }
 
 void ENetClient::disconnect(uint32_t timeout)
