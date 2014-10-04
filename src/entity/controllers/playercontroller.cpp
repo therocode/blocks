@@ -23,7 +23,7 @@ void PlayerController::onFrame(int dt)
 {
 }
 
-void PlayerController::handleMessage(const PlayerJoinedMessage& received)
+void PlayerController::handleMessage(const PlayerJoinedGameMessage& received)
 {
     size_t playerId = received.playerId;
     glm::vec3 position = received.position;
@@ -47,7 +47,7 @@ void PlayerController::handleMessage(const PlayerJoinedMessage& received)
     mBus.send(PlayerConnectedToEntityMessage{(fea::EntityId)playerId, playerEntity->getId()});
 }
 
-void PlayerController::handleMessage(const PlayerDisconnectedMessage& received)
+void PlayerController::handleMessage(const PlayerLeftGameMessage& received)
 {
     size_t playerId = received.playerId;
 

@@ -19,12 +19,12 @@ struct LogLevelMessage
     uint32_t level;
 };
 
-struct PlayerJoinedMessage
+struct PlayerJoinedGameMessage
 {
     size_t playerId; WorldId worldId; const::glm::vec3& position;
 };
 
-struct PlayerDisconnectedMessage
+struct PlayerLeftGameMessage
 {
     size_t playerId;
 };

@@ -75,8 +75,8 @@ void ServerNetworkingSystem::handleMessage(const LocalConnectionAttemptMessage& 
     mLocalPlayerId = newId;
     mLocalClientBus = received.clientBus;
 
-    mBus.send(LogMessage{"Client connected locally and given player Id " + std::to_string(newId), netName, LogLevel::INFO});
-    mBus.send(PlayerJoinedMessage{newId, 0, {0.0f, 0.0f, 0.0f}});
+    //mBus.send(LogMessage{"Client connected locally and given player Id " + std::to_string(newId), netName, LogLevel::INFO});
+    //mBus.send(PlayerJoinedMessage{newId, 0, {0.0f, 0.0f, 0.0f}});
 
     mBus.send(LocalConnectionEstablishedMessage{&mBus});
 }
@@ -85,6 +85,11 @@ void ServerNetworkingSystem::handleMessage(const FrameMessage& received)
 {
     if(mENetServer)
         mENetServer->update(0);
+}
+
+void ServerNetworkingSystem::handleMessage(const GameStartMessage& received)
+{
+    mAcceptingClients = true;
 }
 
 void ServerNetworkingSystem::acceptRemoteClient(uint32_t id)
@@ -96,8 +101,8 @@ void ServerNetworkingSystem::acceptRemoteClient(uint32_t id)
         mClientToPlayerIds.emplace(id, newId);
         mPlayerToClientIds.emplace(newId, id);
 
-        mBus.send(LogMessage{"Client Id " + std::to_string(id) + " connected and given player Id " + std::to_string(newId), netName, LogLevel::INFO});
-        mBus.send(PlayerJoinedMessage{newId, 0, {0.0f, 0.0f, 0.0f}});
+        //mBus.send(LogMessage{"Client Id " + std::to_string(id) + " connected and given player Id " + std::to_string(newId), netName, LogLevel::INFO});
+        //mBus.send(PlayerJoinedMessage{newId, 0, {0.0f, 0.0f, 0.0f}});
     }
     else
     {
@@ -126,7 +131,7 @@ void ServerNetworkingSystem::disconnectRemoteClient(uint32_t id)
         uint32_t playerId = mClientToPlayerIds.at(id);
 
         mBus.send(LogMessage{"Client Id " + std::to_string(id) + ", player Id " + std::to_string(playerId) + " disconnected", netName, LogLevel::INFO});
-        mBus.send(PlayerDisconnectedMessage{playerId});
+        //mBus.send(PlayerDisconnectedMessage{playerId});
 
         mClientToPlayerIds.erase(id);
         mPlayerToClientIds.erase(playerId);

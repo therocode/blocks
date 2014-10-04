@@ -16,12 +16,14 @@ using ClientId = size_t;
 
 class ServerNetworkingSystem : public fea::MessageReceiver<
                                            LocalConnectionAttemptMessage,
-                                           FrameMessage>
+                                           FrameMessage,
+                                           GameStartMessage>
 {
     public:
         ServerNetworkingSystem(fea::MessageBus& bus, const NetworkParameters& parameters);
         void handleMessage(const LocalConnectionAttemptMessage& received);
         void handleMessage(const FrameMessage& received);
+        void handleMessage(const GameStartMessage& received);
     private:
         void acceptRemoteClient(uint32_t id);
         void handleClientData(uint32_t clientId, const std::vector<uint8_t>& data);
