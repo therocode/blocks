@@ -29,6 +29,7 @@ class ServerNetworkingSystem : public fea::MessageReceiver<
 
         fea::MessageBus& mBus;
         NetworkParameters mParameters;
+        bool mAcceptingClients;
 
         std::unordered_set<size_t> graphicsEntities; //temporary solution on how to resend things
 

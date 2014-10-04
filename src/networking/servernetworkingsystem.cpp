@@ -7,6 +7,7 @@
 ServerNetworkingSystem::ServerNetworkingSystem(fea::MessageBus& bus, const NetworkParameters& parameters) :
     mBus(bus),
     mParameters(parameters),
+    mAcceptingClients(false),
     mNextClientId(0),
     mLocalPlayerId(0),
     mLocalClientBus(nullptr)
@@ -90,11 +91,19 @@ void ServerNetworkingSystem::acceptRemoteClient(uint32_t id)
 {
     uint32_t newId = mNextClientId++;
 
-    mClientToPlayerIds.emplace(id, newId);
-    mPlayerToClientIds.emplace(newId, id);
+    if(mAcceptingClients)
+    {
+        mClientToPlayerIds.emplace(id, newId);
+        mPlayerToClientIds.emplace(newId, id);
 
-    mBus.send(LogMessage{"Client Id " + std::to_string(id) + " connected and given player Id " + std::to_string(newId), netName, LogLevel::INFO});
-    mBus.send(PlayerJoinedMessage{newId, 0, {0.0f, 0.0f, 0.0f}});
+        mBus.send(LogMessage{"Client Id " + std::to_string(id) + " connected and given player Id " + std::to_string(newId), netName, LogLevel::INFO});
+        mBus.send(PlayerJoinedMessage{newId, 0, {0.0f, 0.0f, 0.0f}});
+    }
+    else
+    {
+        mBus.send(LogMessage{"Player connected prematurely, disconnecting player", netName, LogLevel::WARN});
+        mENetServer->disconnectOne(id, 500);
+    }
 }
 
 void ServerNetworkingSystem::handleClientData(uint32_t clientId, const std::vector<uint8_t>& data)
@@ -111,13 +120,19 @@ void ServerNetworkingSystem::handleClientData(uint32_t clientId, const std::vect
 
 void ServerNetworkingSystem::disconnectRemoteClient(uint32_t id)
 {
-    FEA_ASSERT(mClientToPlayerIds.count(id) != 0, "Client " << id << " disconnecting, but that client is not marked as connected!");
+    //if the id doesn't exist in the map, this is a client which has not been allowed into the game disconnecting
+    if(mClientToPlayerIds.count(id) != 0)
+    {
+        uint32_t playerId = mClientToPlayerIds.at(id);
 
-    uint32_t playerId = mClientToPlayerIds.at(id);
+        mBus.send(LogMessage{"Client Id " + std::to_string(id) + ", player Id " + std::to_string(playerId) + " disconnected", netName, LogLevel::INFO});
+        mBus.send(PlayerDisconnectedMessage{playerId});
 
-    mBus.send(LogMessage{"Client Id " + std::to_string(id) + ", player Id " + std::to_string(playerId) + " disconnected", netName, LogLevel::INFO});
-    mBus.send(PlayerDisconnectedMessage{playerId});
-
-    mClientToPlayerIds.erase(id);
-    mPlayerToClientIds.erase(playerId);
+        mClientToPlayerIds.erase(id);
+        mPlayerToClientIds.erase(playerId);
+    }
+    else
+    {
+        mBus.send(LogMessage{"Client Id " + std::to_string(id) + " disconnected", netName, LogLevel::INFO});
+    }
 }
