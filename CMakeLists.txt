@@ -46,6 +46,7 @@ set(source_files
     src/networking/enet.cpp
     src/networking/enetclient.cpp
     src/networking/enetserver.cpp
+    src/networking/networkingprotocol.cpp
     src/networking/servernetworkingsystem.cpp
     
     src/rendering/chunkgeneratorqueue.cpp
@@ -120,6 +121,7 @@ set(header_files
     src/blockstd.hpp
     src/gameinterface.hpp
     src/lognames.hpp
+    src/serializable.hpp
     src/application/applicationmessages.hpp
     src/application/blocksapp.hpp
     src/application/client.hpp
@@ -155,7 +157,8 @@ set(header_files
     src/networking/enetclient.hpp
     src/networking/enetserver.hpp
     src/networking/networkingmessages.hpp
-    src/networking/servernetworkingsystem.cpp
+    src/networking/networkingprotocol.hpp
+    src/networking/servernetworkingsystem.hpp
 
     src/rendering/chunkgeneratorqueue.hpp
     src/rendering/debugrenderer.hpp
