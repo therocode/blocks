@@ -116,7 +116,12 @@ void ENetServer::disconnectOne(uint32_t id, uint32_t wait)
 
     /* if disconnection didn't succeed yet, force the connection down.             */
     if(!disconnected)
+    {
+        if(mDisconnectedCallback)
+            mDisconnectedCallback(id);
+
         enet_peer_reset(client);
+    }
 }
 
 void ENetServer::disconnectAll(uint32_t wait)
