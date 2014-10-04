@@ -45,14 +45,24 @@ struct ChunkGeneratedMessage
     WorldId worldId; const ChunkCoord& coordinate; const Chunk& chunk;
 };
 
+struct ChunkInitiallyGeneratedMessage
+{
+    WorldId worldId; const ChunkCoord& coordinate; Chunk& chunk;
+};
+
+struct ChunkCandidateMessage
+{
+    WorldId worldId; const ChunkCoord& coordinate; Chunk& chunk; uint64_t timestamp;
+};
+
+struct ChunkFinishedMessage
+{
+    const ChunkCoord& coordinate; const Chunk& chunk;
+};
+
 struct ChunkDeletedMessage
 {
     const ChunkCoord& coordinate;
-};
-
-struct ChunkLoadedMessage
-{
-    const Chunk& chunk; uint64_t timestamp;
 };
 
 struct ChunkModdedMessage

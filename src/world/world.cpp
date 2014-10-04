@@ -81,8 +81,6 @@ void World::deliverChunk(const ChunkCoord& coordinate, Chunk& chunk)
 {
     RegionCoord regionCoord = chunkToRegion(coordinate);
 
-    mModManager.loadMods(chunk);
-
     if(mHighlightedRegions.count(regionCoord) != 0)
     {
         if(mHighlightedRegions.at(regionCoord).count(coordinate) != 0)
@@ -95,8 +93,19 @@ void World::deliverChunk(const ChunkCoord& coordinate, Chunk& chunk)
                 {
                     region.addChunk(chunkToRegionChunk(coordinate), chunk);
 
-                    uint64_t timestamp = 0; //get proper timestamp later
-                    mBus.send(ChunkLoadedMessage{chunk, timestamp}); //the now fully initialised chunk is announced to the rest of the game. should it be here?
+                    //#C1#if(mModManager.hasMods(chunk))  // implement this check as seen in issue #143
+                        mModManager.loadMods(chunk);
+                    //#C2#else      // implement mExplorationManager as according to issue #144
+                    //#C2#{
+                    //#C2#    if(!mExplorationManager.isExplored(regionCoord))
+                    //#C2#        mBus.send(ChunkInitiallyGeneratedMessage{coordinate, chunk})
+                    //#C2#}
+
+                    uint64_t timestamp = 0; //#C3# get proper timestamp, issue #133
+
+                    mBus.send(ChunkCandidateMessage{mId, coordinate, chunk, timestamp});
+
+                    mBus.send(ChunkFinishedMessage{coordinate, chunk}); //the now fully initialised chunk is announced to the rest of the game.
                 }
             }
         }

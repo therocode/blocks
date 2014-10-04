@@ -80,7 +80,7 @@ void Client::handleMessage(const PlayerActionMessage& received)
 	}
 }
 
-void Client::handleMessage(const ChunkLoadedMessage& received)
+void Client::handleMessage(const ChunkFinishedMessage& received)
 {
     const ChunkCoord& coordinate = received.chunk.getLocation();
 
