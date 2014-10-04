@@ -83,6 +83,8 @@ void ENetServer::disconnectOne(uint32_t id, uint32_t wait)
     ENetPeer* client = mConnectedPeers.at(id);
 
     enet_peer_disconnect(client, 0);
+
+    bool disconnected = false;
      
     while(enet_host_service(mHost, & event, wait) > 0)
     {
@@ -90,6 +92,7 @@ void ENetServer::disconnectOne(uint32_t id, uint32_t wait)
         {
             case ENET_EVENT_TYPE_CONNECT:
                 handleConnectionEvent(event);
+                break;
 
             case ENET_EVENT_TYPE_RECEIVE:
                 if(event.peer != client)
@@ -100,16 +103,20 @@ void ENetServer::disconnectOne(uint32_t id, uint32_t wait)
                 break;
 
             case ENET_EVENT_TYPE_DISCONNECT:
+                if(event.peer == client)
+                    disconnected = true;
+
                 handleDisconnectionEvent(event);
+                break;
 
             default:
                 break;
         }
     }
 
-    /* We've arrived here, so the disconnect attempt didn't */
-    /* succeed yet.  Force the connection down.             */
-    enet_peer_reset(client);
+    /* if disconnection didn't succeed yet, force the connection down.             */
+    if(!disconnected)
+        enet_peer_reset(client);
 }
 
 void ENetServer::disconnectAll(uint32_t wait)
