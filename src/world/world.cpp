@@ -64,32 +64,40 @@ void World::deliverRegion(const RegionCoord& coordinate, const Region& region)
 {
     if(mHighlightedRegions.count(coordinate) != 0)
     {
-        mRegions.emplace(coordinate, std::move(region));
-        mBus.send(LogMessage{"Region " + glm::to_string((glm::ivec2)coordinate) + " loaded", "landscape", LogLevel::VERB});
-
-        for(const auto& chunkToRequest : mHighlightedRegions.at(coordinate))
+        if(mRegions.count(coordinate) == 0)
         {
-            mBus.send(ChunkRequestedMessage{0, mId, chunkToRequest, region.getDataFragment(voxelToRegionVoxel(chunkToVoxel(chunkToRequest)), {chunkWidth, chunkWidth})});
+            mRegions.emplace(coordinate, std::move(region));
+            mBus.send(LogMessage{"Region " + glm::to_string((glm::ivec2)coordinate) + " loaded", "landscape", LogLevel::VERB});
+
+            for(const auto& chunkToRequest : mHighlightedRegions.at(coordinate))
+            {
+                mBus.send(ChunkRequestedMessage{0, mId, chunkToRequest, region.getDataFragment(voxelToRegionVoxel(chunkToVoxel(chunkToRequest)), {chunkWidth, chunkWidth})});
+            }
         }
     }
 }
 
 void World::deliverChunk(const ChunkCoord& coordinate, Chunk& chunk)
 {
-    RegionCoord region = chunkToRegion(coordinate);
+    RegionCoord regionCoord = chunkToRegion(coordinate);
 
     mModManager.loadMods(chunk);
 
-    if(mHighlightedRegions.count(region) != 0)
+    if(mHighlightedRegions.count(regionCoord) != 0)
     {
-        if(mHighlightedRegions.at(region).count(coordinate) != 0)
+        if(mHighlightedRegions.at(regionCoord).count(coordinate) != 0)
         {
-            if(mRegions.count(region) != 0)
+            if(mRegions.count(regionCoord) != 0)
             {
-                mRegions.at(region).addChunk(chunkToRegionChunk(coordinate), chunk);
+                Region& region = mRegions.at(regionCoord);
+                RegionChunkCoord regionChunkCoord = chunkToRegionChunk(coordinate);
+                if(!region.hasChunk(regionChunkCoord))
+                {
+                    region.addChunk(chunkToRegionChunk(coordinate), chunk);
 
-                uint64_t timestamp = 0; //get proper timestamp later
-                mBus.send(ChunkLoadedMessage{chunk, timestamp}); //the now fully initialised chunk is announced to the rest of the game. should it be here?
+                    uint64_t timestamp = 0; //get proper timestamp later
+                    mBus.send(ChunkLoadedMessage{chunk, timestamp}); //the now fully initialised chunk is announced to the rest of the game. should it be here?
+                }
             }
         }
     }
