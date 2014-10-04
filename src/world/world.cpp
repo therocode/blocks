@@ -71,7 +71,7 @@ void World::deliverRegion(const RegionCoord& coordinate, const Region& region)
 
             for(const auto& chunkToRequest : mHighlightedRegions.at(coordinate))
             {
-                mBus.send(ChunkRequestedMessage{0, mId, chunkToRequest, region.getDataFragment(voxelToRegionVoxel(chunkToVoxel(chunkToRequest)), {chunkWidth, chunkWidth})});
+                mBus.send(ChunkGenerationRequestedMessage{0, mId, chunkToRequest, region.getDataFragment(voxelToRegionVoxel(chunkToVoxel(chunkToRequest)), {chunkWidth, chunkWidth})});
             }
         }
     }
@@ -200,14 +200,14 @@ void World::activateChunk(const ChunkCoord& coordinate, int32_t priority)
     if(mHighlightedRegions.count(regionCoord) == 0)
     {
         mHighlightedRegions.emplace(regionCoord, std::unordered_set<ChunkCoord>{coordinate});
-        mBus.send(RegionRequestedMessage{mId, regionCoord});
+        mBus.send(RegionGenerationRequestedMessage{mId, regionCoord});
     }
     else if(mRegions.count(regionCoord) != 0)
     {
         FEA_ASSERT(mHighlightedRegions.at(regionCoord).count(coordinate) == 0, "Trying to activate chunk " + glm::to_string((glm::ivec3)coordinate) + " but it is already activated");
         mHighlightedRegions.at(regionCoord).insert(coordinate);
 
-        mBus.send(ChunkRequestedMessage{priority, mId, coordinate, mRegions.at(regionCoord).getDataFragment(voxelToRegionVoxel(chunkToVoxel(coordinate)), {chunkWidth, chunkWidth})});
+        mBus.send(ChunkGenerationRequestedMessage{priority, mId, coordinate, mRegions.at(regionCoord).getDataFragment(voxelToRegionVoxel(chunkToVoxel(coordinate)), {chunkWidth, chunkWidth})});
     }
     else
     {

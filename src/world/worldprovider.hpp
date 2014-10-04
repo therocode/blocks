@@ -40,15 +40,15 @@ struct ChunkDelivery
 };
 
 class WorldProvider :
-    public fea::MessageReceiver<RegionRequestedMessage,
-                                ChunkRequestedMessage,
+    public fea::MessageReceiver<RegionGenerationRequestedMessage,
+                                ChunkGenerationRequestedMessage,
                                 FrameMessage>
 {
     public:
         WorldProvider(fea::MessageBus& b);
         ~WorldProvider();
-        void handleMessage(const RegionRequestedMessage& received) override;
-        void handleMessage(const ChunkRequestedMessage& received) override;
+        void handleMessage(const RegionGenerationRequestedMessage& received) override;
+        void handleMessage(const ChunkGenerationRequestedMessage& received) override;
         void handleMessage(const FrameMessage& received) override;
     private:
         RegionDelivery generateRegion(WorldId worldId, const RegionCoord& coordinate);

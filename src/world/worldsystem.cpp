@@ -46,7 +46,7 @@ void WorldSystem::handleMessage(const SetVoxelMessage& received)
     }
 }
 
-void WorldSystem::handleMessage(const RegionDeliverMessage& received)
+void WorldSystem::handleMessage(const RegionGeneratedMessage& received)
 {
     RegionCoord coordinate = received.coordinate;
     Region region = received.newRegion;
@@ -54,7 +54,7 @@ void WorldSystem::handleMessage(const RegionDeliverMessage& received)
     mWorlds.at(received.worldId)->deliverRegion(coordinate, region);
 }
 
-void WorldSystem::handleMessage(const ChunkDeliverMessage& received)
+void WorldSystem::handleMessage(const ChunkGeneratedMessage& received)
 {
     ChunkCoord coordinate = received.coordinate;
     Chunk chunk = received.chunk;

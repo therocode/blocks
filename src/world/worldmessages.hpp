@@ -25,22 +25,22 @@ struct VoxelSetMessage
     const VoxelCoord& voxel; VoxelType type;
 };
 
-struct RegionRequestedMessage
+struct RegionGenerationRequestedMessage
 {
     WorldId worldId; const RegionCoord& coordinate;
 };
 
-struct RegionDeliverMessage
+struct RegionGeneratedMessage
 {
     WorldId worldId; const RegionCoord& coordinate; const Region& newRegion;
 };
 
-struct ChunkRequestedMessage
+struct ChunkGenerationRequestedMessage
 {
     int32_t prio; WorldId worldId; const ChunkCoord& coordinate; const RegionDataFragment& regionData;
 };
 
-struct ChunkDeliverMessage
+struct ChunkGeneratedMessage
 {
     WorldId worldId; const ChunkCoord& coordinate; const Chunk& chunk;
 };

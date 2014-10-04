@@ -11,8 +11,8 @@
 
 class WorldSystem : 
         public fea::MessageReceiver<SetVoxelMessage,
-                                    RegionDeliverMessage,
-                                    ChunkDeliverMessage,
+                                    RegionGeneratedMessage,
+                                    ChunkGeneratedMessage,
                                     HighlightEntityAddRequestedMessage,
                                     HighlightEntityMoveRequestedMessage,
                                     HighlightEntityRemoveRequestedMessage>
@@ -21,8 +21,8 @@ class WorldSystem :
         WorldSystem(fea::MessageBus& messageBus);
         ~WorldSystem();
         void handleMessage(const SetVoxelMessage& received) override;
-        void handleMessage(const RegionDeliverMessage& received) override;
-        void handleMessage(const ChunkDeliverMessage& received) override;
+        void handleMessage(const RegionGeneratedMessage& received) override;
+        void handleMessage(const ChunkGeneratedMessage& received) override;
         void handleMessage(const HighlightEntityAddRequestedMessage& received) override;
         void handleMessage(const HighlightEntityMoveRequestedMessage& received) override;
         void handleMessage(const HighlightEntityRemoveRequestedMessage& received) override;
