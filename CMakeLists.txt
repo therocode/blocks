@@ -46,6 +46,7 @@ set(source_files
     src/networking/enet.cpp
     src/networking/enetclient.cpp
     src/networking/enetserver.cpp
+    src/networking/messageserializer.cpp
     src/networking/networkingprotocol.cpp
     src/networking/servernetworkingsystem.cpp
     

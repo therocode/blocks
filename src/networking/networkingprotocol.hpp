@@ -12,6 +12,13 @@ struct ClientJoinRequestedMessage
     {
         return CLIENT_JOIN_REQUESTED;
     }
+
+    template<class Archive>
+    void serialize(Archive& archive)
+    {
+        archive(playerName);
+    }
+
     std::string playerName;
 };
 

@@ -3,6 +3,8 @@
 #include "../lognames.hpp"
 #include "../script/scriptmessages.hpp"
 #include "../input/inputmessages.hpp"
+#include "networkingprotocol.hpp"
+#include "messageserializer.hpp"
 
 ServerNetworkingSystem::ServerNetworkingSystem(fea::MessageBus& bus, const NetworkParameters& parameters) :
     mBus(bus),
@@ -17,7 +19,7 @@ ServerNetworkingSystem::ServerNetworkingSystem(fea::MessageBus& bus, const Netwo
 
     if(parameters.mode == NetworkMode::SINGLE_PLAYER)
     {
-        mBus.send(LogMessage{"Setting up single player networking", netName, LogLevel::INFO});
+        mBus.send(LogMessage{"Setting up single player networking", serverName, LogLevel::INFO});
     }
     else if(parameters.mode == NetworkMode::DEDICATED)
     {
@@ -25,7 +27,7 @@ ServerNetworkingSystem::ServerNetworkingSystem(fea::MessageBus& bus, const Netwo
 
         if(mENet->isInitialized())
         {
-            mBus.send(LogMessage{"Setting up dedicated server networking", netName, LogLevel::INFO});
+            mBus.send(LogMessage{"Setting up dedicated server networking", serverName, LogLevel::INFO});
 
             mENetServer = std::unique_ptr<ENetServer>(new ENetServer(*mENet, parameters.port));
             mENetServer->setConnectedCallback(std::bind(&ServerNetworkingSystem::acceptRemoteClient, this, std::placeholders::_1));
@@ -33,13 +35,13 @@ ServerNetworkingSystem::ServerNetworkingSystem(fea::MessageBus& bus, const Netwo
             mENetServer->setDisconnectedCallback(std::bind(&ServerNetworkingSystem::disconnectRemoteClient, this, std::placeholders::_1));
 
             if(mENetServer->isListening())
-                mBus.send(LogMessage{"Now listening on port " + std::to_string(parameters.port), netName, LogLevel::INFO});
+                mBus.send(LogMessage{"Now listening on port " + std::to_string(parameters.port), serverName, LogLevel::INFO});
             else
-                mBus.send(LogMessage{"Could not bind to port " + std::to_string(parameters.port), netName, LogLevel::ERR});
+                mBus.send(LogMessage{"Could not bind to port " + std::to_string(parameters.port), serverName, LogLevel::ERR});
         }
         else
         {
-            mBus.send(LogMessage{"Could not initialize networking", netName, LogLevel::ERR});
+            mBus.send(LogMessage{"Could not initialize networking", serverName, LogLevel::ERR});
         }
     }
     else if(parameters.mode == NetworkMode::COMBINED)
@@ -48,7 +50,7 @@ ServerNetworkingSystem::ServerNetworkingSystem(fea::MessageBus& bus, const Netwo
 
         if(mENet->isInitialized())
         {
-            mBus.send(LogMessage{"Setting up networking", netName, LogLevel::INFO});
+            mBus.send(LogMessage{"Setting up networking", serverName, LogLevel::INFO});
 
             mENetServer = std::unique_ptr<ENetServer>(new ENetServer(*mENet, parameters.port));
             mENetServer = std::unique_ptr<ENetServer>(new ENetServer(*mENet, parameters.port));
@@ -57,13 +59,13 @@ ServerNetworkingSystem::ServerNetworkingSystem(fea::MessageBus& bus, const Netwo
             mENetServer->setDisconnectedCallback(std::bind(&ServerNetworkingSystem::disconnectRemoteClient, this, std::placeholders::_1));
 
             if(mENetServer->isListening())
-                mBus.send(LogMessage{"Now listening on port " + std::to_string(parameters.port), netName, LogLevel::INFO});
+                mBus.send(LogMessage{"Now listening on port " + std::to_string(parameters.port), serverName, LogLevel::INFO});
             else
-                mBus.send(LogMessage{"Could not bind to port " + std::to_string(parameters.port), netName, LogLevel::ERR});
+                mBus.send(LogMessage{"Could not bind to port " + std::to_string(parameters.port), serverName, LogLevel::ERR});
         }
         else
         {
-            mBus.send(LogMessage{"Could not initialize networking", netName, LogLevel::ERR});
+            mBus.send(LogMessage{"Could not initialize networking", serverName, LogLevel::ERR});
         }
     }
 }
@@ -75,7 +77,7 @@ void ServerNetworkingSystem::handleMessage(const LocalConnectionAttemptMessage& 
     mLocalPlayerId = newId;
     mLocalClientBus = received.clientBus;
 
-    //mBus.send(LogMessage{"Client connected locally and given player Id " + std::to_string(newId), netName, LogLevel::INFO});
+    //mBus.send(LogMessage{"Client connected locally and given player Id " + std::to_string(newId), serverName, LogLevel::INFO});
     //mBus.send(PlayerJoinedMessage{newId, 0, {0.0f, 0.0f, 0.0f}});
 
     mBus.send(LocalConnectionEstablishedMessage{&mBus});
@@ -101,26 +103,31 @@ void ServerNetworkingSystem::acceptRemoteClient(uint32_t id)
         mClientToPlayerIds.emplace(id, newId);
         mPlayerToClientIds.emplace(newId, id);
 
-        //mBus.send(LogMessage{"Client Id " + std::to_string(id) + " connected and given player Id " + std::to_string(newId), netName, LogLevel::INFO});
+        //mBus.send(LogMessage{"Client Id " + std::to_string(id) + " connected and given player Id " + std::to_string(newId), serverName, LogLevel::INFO});
         //mBus.send(PlayerJoinedMessage{newId, 0, {0.0f, 0.0f, 0.0f}});
     }
     else
     {
-        mBus.send(LogMessage{"Player connected prematurely, disconnecting player", netName, LogLevel::WARN});
+        mBus.send(LogMessage{"Player connected prematurely, disconnecting player", serverName, LogLevel::WARN});
         mENetServer->disconnectOne(id, 500);
     }
 }
 
 void ServerNetworkingSystem::handleClientData(uint32_t clientId, const std::vector<uint8_t>& data)
 {
-    //PackageType type;
+    int32_t type = decodeType(data);
 
-    //uint8_t* typePointer = (uint8_t*)&type;
-    //for(uint32_t i = 0; i < sizeof(PackageType); i++)
-    //{   
-    //    *typePointer = data[i];
-    //    typePointer++;
-    //}   
+    if(type == CLIENT_JOIN_REQUESTED)
+    {
+        ClientJoinRequestedMessage message = deserializeMessage<ClientJoinRequestedMessage>(data);
+        mBus.send(LogMessage{"Client id " + std::to_string(clientId) + " requested to join the game with player name " + message.playerName, serverName, LogLevel::INFO});
+    }
+    else if(type == TEST_1)
+        mBus.send(LogMessage{"Received meaningless test message", serverName, LogLevel::WARN});
+    else if(type == TEST_2)
+        mBus.send(LogMessage{"Received meaningless test message", serverName, LogLevel::WARN});
+    else
+        mBus.send(LogMessage{"Received message of unknown type", serverName, LogLevel::WARN});
 }
 
 void ServerNetworkingSystem::disconnectRemoteClient(uint32_t id)
@@ -130,7 +137,7 @@ void ServerNetworkingSystem::disconnectRemoteClient(uint32_t id)
     {
         uint32_t playerId = mClientToPlayerIds.at(id);
 
-        mBus.send(LogMessage{"Client Id " + std::to_string(id) + ", player Id " + std::to_string(playerId) + " disconnected", netName, LogLevel::INFO});
+        mBus.send(LogMessage{"Client Id " + std::to_string(id) + ", player Id " + std::to_string(playerId) + " disconnected", serverName, LogLevel::INFO});
         //mBus.send(PlayerDisconnectedMessage{playerId});
 
         mClientToPlayerIds.erase(id);
@@ -138,6 +145,6 @@ void ServerNetworkingSystem::disconnectRemoteClient(uint32_t id)
     }
     else
     {
-        mBus.send(LogMessage{"Client Id " + std::to_string(id) + " disconnected", netName, LogLevel::INFO});
+        mBus.send(LogMessage{"Client Id " + std::to_string(id) + " disconnected", serverName, LogLevel::INFO});
     }
 }

@@ -1,6 +1,7 @@
 #pragma once
 #include "../networking/networkparameters.hpp"
 #include "../networking/networkingmessages.hpp"
+#include "../networking/messageserializer.hpp"
 #include "../application/applicationmessages.hpp"
 #include "../entity/entitymessages.hpp"
 #include "../rendering/renderingmessages.hpp"
@@ -24,6 +25,8 @@ class ClientNetworkingSystem : public
         void connectedToServer();
         void handleServerData(const std::vector<uint8_t>& data);
         void disconnectedFromServer();
+        template <typename Message>
+        void send(const Message& message, bool reliable, uint8_t channel);
         fea::MessageBus& mBus;
 
         NetworkParameters mParameters;
@@ -31,3 +34,12 @@ class ClientNetworkingSystem : public
         std::unique_ptr<ENet> mENet;
         std::unique_ptr<ENetClient> mENetClient;
 };
+
+template <typename Message>
+void ClientNetworkingSystem::send(const Message& message, bool reliable, uint8_t channel)
+{
+    if(mServerBus)
+        mBus.send(message);
+    else
+        mENetClient->send(serializeMessage(message), reliable, channel);
+}
