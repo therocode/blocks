@@ -3,7 +3,7 @@
 #include <memory>
 #include <fea/assert.hpp>
 #include <cereal/cereal.hpp>
-#include <cereal/archives/binary.hpp>
+#include <cereal/archives/portable_binary.hpp>
 #include <cereal/types/string.hpp>
 #include <cereal/types/map.hpp>
 #include <cereal/types/unordered_map.hpp>
@@ -20,7 +20,7 @@ ByteVector serializeMessage(const Type& message)
 
     std::stringstream stream;
 
-    cereal::BinaryOutputArchive outArchive(stream);
+    cereal::PortableBinaryOutputArchive outArchive(stream);
 
     outArchive(message);
 
@@ -47,7 +47,7 @@ Type deserializeMessage(const ByteVector& data)
 
     std::stringstream stream(std::string(data.begin(), data.end() - sizeof(MessageType)));
 
-    cereal::BinaryInputArchive inArchive(stream);
+    cereal::PortableBinaryInputArchive inArchive(stream);
 
     Type result;
 
