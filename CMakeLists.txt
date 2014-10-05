@@ -121,7 +121,6 @@ set(header_files
     src/blockstd.hpp
     src/gameinterface.hpp
     src/lognames.hpp
-    src/serializable.hpp
     src/application/applicationmessages.hpp
     src/application/blocksapp.hpp
     src/application/client.hpp
@@ -156,6 +155,7 @@ set(header_files
     src/networking/enet.hpp
     src/networking/enetclient.hpp
     src/networking/enetserver.hpp
+    src/networking/messageserializer.hpp
     src/networking/networkingmessages.hpp
     src/networking/networkingprotocol.hpp
     src/networking/servernetworkingsystem.hpp
@@ -244,7 +244,7 @@ find_package(angelscript)
 find_package(JsonCpp REQUIRED)
 
 
-include_directories(src)
+include_directories(include)
 
 #This has to be done before add_executable. I'm adding source files.
 
@@ -359,6 +359,9 @@ if(BUILD_TESTS)
     
     add_executable(test_utilities "test/utilities/utilitiestest.cpp" "src/utilities/directorycreator.cpp")
     target_link_libraries(test_utilities ${FEATHERKIT_LIBRARIES})
+    
+    add_executable(test_net_serializing "test/network/serialize.cpp" "src/networking/networkingprotocol.cpp" "src/networking/messageserializer.cpp")
+    target_link_libraries(test_net_serializing ${FEATHERKIT_LIBRARIES})
     
     #profiling
     add_executable(profile_modmanager "profile/world/modmanagerprofile.cpp" "src/world/modmanager.cpp" "src/world/chunk.cpp" "src/world/worldstd.cpp")
