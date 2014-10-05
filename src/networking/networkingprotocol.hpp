@@ -3,7 +3,7 @@
 #include <string>
 #include <unordered_map>
 
-enum { CLIENT_JOIN_REQUESTED, TEST_1, TEST_2 };
+enum { INVALID = -1, CLIENT_JOIN_REQUESTED, TEST_1, TEST_2 };
 
 //network protocol:
 struct ClientJoinRequestedMessage

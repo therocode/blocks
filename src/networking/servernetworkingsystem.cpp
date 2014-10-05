@@ -126,6 +126,8 @@ void ServerNetworkingSystem::handleClientData(uint32_t clientId, const std::vect
         mBus.send(LogMessage{"Received meaningless test message", serverName, LogLevel::WARN});
     else if(type == TEST_2)
         mBus.send(LogMessage{"Received meaningless test message", serverName, LogLevel::WARN});
+    else if(type == INVALID)
+        mBus.send(LogMessage{"Received invalid message", serverName, LogLevel::WARN});
     else
         mBus.send(LogMessage{"Received message of unknown type", serverName, LogLevel::WARN});
 }

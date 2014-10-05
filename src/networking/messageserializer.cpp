@@ -2,7 +2,12 @@
 
 MessageType decodeType(const ByteVector& data)
 {
-    MessageType* typePointer = (MessageType*)&(*(data.end() - sizeof(MessageType)));
+    if(data.size() >= sizeof(MessageType))
+    {
+        MessageType* typePointer = (MessageType*)&(*(data.end() - sizeof(MessageType)));
 
-    return *typePointer;
+        return *typePointer;
+    }
+    else
+        return -1;
 }
