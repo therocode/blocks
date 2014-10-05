@@ -6,7 +6,7 @@
 
 #include <fea/util.hpp>
 
-#include "world/highlightmanager.hpp"
+#include "../src/world/highlightmanager.hpp"
 
 #define PR(x) std::cerr << #x << " = " << (x) << std::endl;
 

@@ -1,4 +1,4 @@
-#include "blockstd.hpp"
+#include "../blockstd.hpp"
 #include <vector>
 ///A debug renderer that draws stuff in immediate mode.
 class DebugRenderer

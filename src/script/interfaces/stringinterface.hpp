@@ -1,6 +1,6 @@
 #pragma once
 #include "scriptinterface.hpp"
-#include "utilities/random.hpp"
+#include "../../utilities/random.hpp"
 
 class GameInterface;
 

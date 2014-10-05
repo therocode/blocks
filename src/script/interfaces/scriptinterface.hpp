@@ -1,6 +1,6 @@
 #pragma once
 #include <fea/util.hpp>
-#include "utilities/logger.hpp"
+#include "../../utilities/logger.hpp"
 
 class GameInterface;
 class asIScriptEngine;

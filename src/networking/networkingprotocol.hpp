@@ -1,13 +1,52 @@
-#include "../serializable.hpp"
+#include <vector>
+#include <cstdint>
+#include <string>
+#include <unordered_map>
 
-enum MessageType { CLIENT_JOIN_REQUESTED };
+enum { CLIENT_JOIN_REQUESTED, TEST_1, TEST_2 };
 
 //network protocol:
-struct ClientJoinRequestedMessage : public Serializable
+struct ClientJoinRequestedMessage
 {
-    public:
-        std::vector<uint8_t> toBytes() const override;
-        void fromBytes(const std::vector<uint8_t>& bytes) override;
-    private:
-        ClientJoinRequestedMessage 
+    int32_t getType() const
+    {
+        return CLIENT_JOIN_REQUESTED;
+    }
+    std::string playerName;
+};
+
+
+//messages for testing:
+struct TestMessage1
+{
+    int32_t getType() const
+    {
+        return TEST_1;
+    }
+
+    template<class Archive>
+    void serialize(Archive& archive)
+    {
+        archive(text, numerical);
+    }
+
+    std::string text;
+    int32_t numerical;
+};
+
+struct TestMessage2
+{
+    int32_t getType() const
+    {
+        return TEST_2;
+    }
+
+    template<class Archive>
+    void serialize(Archive& archive)
+    {
+        archive(textNumbersMap, floatNumerical);
+    }
+
+    std::unordered_map<std::string, std::vector<int32_t>> textNumbersMap;
+    double floatNumerical;
 };

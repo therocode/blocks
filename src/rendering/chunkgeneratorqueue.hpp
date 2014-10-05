@@ -1,9 +1,9 @@
-#include "blockstd.hpp"
+#include "../blockstd.hpp"
 #include "vbocreator.hpp"
-#include "world/chunk.hpp"
+#include "../world/chunk.hpp"
 #include <vector>
 #include <map>
-#include "utilities/timer.hpp"
+#include "../utilities/timer.hpp"
 
 struct ChunkQueueThing{
     Chunk* mainChunk;

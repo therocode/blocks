@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include "opengl.hpp"
-#include "blockstd.hpp"
+#include "../blockstd.hpp"
 #include "shaderprogram.hpp"
 
 struct VertexElement{

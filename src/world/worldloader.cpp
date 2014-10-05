@@ -1,5 +1,5 @@
 #include "worldloader.hpp"
-#include "../json/json.hpp"
+#include <json/json.hpp>
 #include <fstream>
 #include <limits>
 

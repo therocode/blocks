@@ -1,8 +1,8 @@
 #pragma once
-#include "blockstd.hpp"
+#include "../../blockstd.hpp"
 #include "scriptinterface.hpp"
-#include "utilities/random.hpp"
-#include "world/worldid.hpp"
+#include "../../utilities/random.hpp"
+#include "../../world/worldid.hpp"
 
 class GameInterface;
 using VoxelType = uint16_t;

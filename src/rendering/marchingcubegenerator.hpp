@@ -1,6 +1,6 @@
-#include "blockstd.hpp"
-#include "world/worldstd.hpp"
-#include "world/chunk.hpp"
+#include "../blockstd.hpp"
+#include "../world/worldstd.hpp"
+#include "../world/chunk.hpp"
 #include "vbo.hpp"
 //rmembemr http://http.developer.nvidia.com/GPUGems3/gpugems3_ch01.html
 //http://www.cc.gatech.edu/~bader/COURSES/GATECH/CSE6140-Fall2007/papers/LC87.pdf

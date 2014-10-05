@@ -3,6 +3,7 @@
 #include "../world/worldmessages.hpp"
 #include "../lognames.hpp"
 #include "enetclient.hpp"
+#include "networkingprotocol.hpp"
 
 ClientNetworkingSystem::ClientNetworkingSystem(fea::MessageBus& bus, const NetworkParameters& parameters) :
     mBus(bus),

@@ -1,5 +1,5 @@
 #include "scriptcaller.hpp"
-#include "entity/entitymessages.hpp"
+#include "../../entity/entitymessages.hpp"
 #include "../scriptcallback.hpp"
 
 class OnGroundCaller : 

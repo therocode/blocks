@@ -4,7 +4,7 @@
 #include <fea/entitysystem.hpp>
 #include "entityfactory.hpp"
 #include "entitymessages.hpp"
-#include "utilities/timer.hpp"
+#include "../utilities/timer.hpp"
 
 class EntityController;
 

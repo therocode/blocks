@@ -1,6 +1,6 @@
 #include "entitydefinitionloader.hpp"
 #include "controllers/physicstype.hpp"
-#include "../json/json.hpp"
+#include <json/json.hpp>
 #include <fstream>
 
 EntityDefinition EntityDefinitionLoader::loadFromJSONFile(const std::string& path)

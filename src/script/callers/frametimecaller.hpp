@@ -1,7 +1,7 @@
 #include "scriptcaller.hpp"
-#include "entity/entitymessages.hpp"
+#include "../../entity/entitymessages.hpp"
 #include "../scriptcallback.hpp"
-#include "application/applicationmessages.hpp"
+#include "../../application/applicationmessages.hpp"
 
 class FrameTimeCaller : 
     public ScriptCaller,
