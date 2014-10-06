@@ -10,3 +10,8 @@ struct LocalConnectionEstablishedMessage
 {
     fea::MessageBus* serverBus;
 };
+
+struct LocalDisconnectionMessage
+{
+
+};

@@ -14,7 +14,7 @@ ClientNetworkingSystem::ClientNetworkingSystem(fea::MessageBus& bus, const Netwo
 
     if(parameters.mode == NetworkMode::SINGLE_PLAYER)
     {
-        mBus.send(LogMessage{"Setting up single player client", netName, LogLevel::INFO});
+        mBus.send(LogMessage{"Setting up single player client", clientName, LogLevel::INFO});
         mBus.send(LocalConnectionAttemptMessage{&bus});
     }
     else if(parameters.mode == NetworkMode::JOIN)
@@ -23,7 +23,7 @@ ClientNetworkingSystem::ClientNetworkingSystem(fea::MessageBus& bus, const Netwo
 
         if(mENet->isInitialized())
         {
-            mBus.send(LogMessage{"Setting up client networking", netName, LogLevel::INFO});
+            mBus.send(LogMessage{"Setting up client networking", clientName, LogLevel::INFO});
 
             mENetClient = std::unique_ptr<ENetClient>(new ENetClient(*mENet, CHANNEL_AMOUNT));
             mENetClient->setConnectedCallback(std::bind(&ClientNetworkingSystem::connectedToServer, this));
@@ -34,15 +34,24 @@ ClientNetworkingSystem::ClientNetworkingSystem(fea::MessageBus& bus, const Netwo
         }
         else
         {
-            mBus.send(LogMessage{"Could not initialize networking", netName, LogLevel::ERR});
+            mBus.send(LogMessage{"Could not initialize networking", clientName, LogLevel::ERR});
         }
     }
     else if(parameters.mode == NetworkMode::COMBINED)
     {
-        mBus.send(LogMessage{"Setting up client networking", netName, LogLevel::INFO});
+        mBus.send(LogMessage{"Setting up client networking", clientName, LogLevel::INFO});
         mBus.send(LocalConnectionAttemptMessage{&bus});
 
         mENetClient = std::unique_ptr<ENetClient>(new ENetClient(*mENet, CHANNEL_AMOUNT));
+    }
+}
+
+ClientNetworkingSystem::~ClientNetworkingSystem()
+{
+    if(mServerBus)
+    {
+        mBus.send(LogMessage{"Disconnecting locally from server", clientName, LogLevel::INFO});
+        mServerBus->send(LocalDisconnectionMessage{});
     }
 }
 
@@ -55,9 +64,9 @@ void ClientNetworkingSystem::handleMessage(const FrameMessage& received)
 void ClientNetworkingSystem::handleMessage(const LocalConnectionEstablishedMessage& received)
 {
     mServerBus = received.serverBus;
-    mBus.send(LogMessage{"Connected locally to server", netName, LogLevel::INFO});
+    mBus.send(LogMessage{"Connected locally to server", clientName, LogLevel::INFO});
 
-    mBus.send(LogMessage{"Requesting to join game as '" + std::string("Tobbe") + "'", netName, LogLevel::INFO});
+    mBus.send(LogMessage{"Requesting to join game as '" + std::string("Tobbe") + "'", clientName, LogLevel::INFO});
     ClientJoinRequestedMessage message{"Tobbe"};
     send(message, true, CHANNEL_DEFAULT);
 }
@@ -65,7 +74,7 @@ void ClientNetworkingSystem::handleMessage(const LocalConnectionEstablishedMessa
 void ClientNetworkingSystem::handleMessage(const ClientJoinDeniedMessage& received)
 {
     if(received.reason == JoinDenyReason::FULL)
-        mBus.send(LogMessage{"Could not join game at server. Server is full with " + std::to_string(received.playerAmount) + "/" + std::to_string(received.maximumAllowed) + " players", netName, LogLevel::INFO});
+        mBus.send(LogMessage{"Could not join game at server. Server is full with " + std::to_string(received.playerAmount) + "/" + std::to_string(received.maximumAllowed) + " players", clientName, LogLevel::INFO});
 
     if(mENetClient)
         mENetClient->disconnect(400);
@@ -73,14 +82,14 @@ void ClientNetworkingSystem::handleMessage(const ClientJoinDeniedMessage& receiv
 
 void ClientNetworkingSystem::handleMessage(const ClientJoinAcceptedMessage& received)
 {
-    mBus.send(LogMessage{"Successfully joined the game on server " + received.settings.serverName + "! \nMOTD: " + received.settings.motd, netName, LogLevel::INFO});
+    mBus.send(LogMessage{"Successfully joined the game on server " + received.settings.serverName + "! \nMOTD: " + received.settings.motd, clientName, LogLevel::INFO});
 }
 
 void ClientNetworkingSystem::connectedToServer()
 {
-    mBus.send(LogMessage{"Successfully connected to server", netName, LogLevel::INFO});
+    mBus.send(LogMessage{"Successfully connected to server", clientName, LogLevel::INFO});
 
-    mBus.send(LogMessage{"Requesting to join game as '" + std::string("Tobbe") + "'", netName, LogLevel::INFO});
+    mBus.send(LogMessage{"Requesting to join game as '" + std::string("Tobbe") + "'", clientName, LogLevel::INFO});
     ClientJoinRequestedMessage message{"Tobbe"};
     send(message, true, CHANNEL_DEFAULT);
 }
@@ -111,5 +120,5 @@ void ClientNetworkingSystem::handleServerData(const std::vector<uint8_t>& data)
 
 void ClientNetworkingSystem::disconnectedFromServer()
 {
-    mBus.send(LogMessage{"Disconnected from server", netName, LogLevel::INFO});
+    mBus.send(LogMessage{"Disconnected from server", clientName, LogLevel::INFO});
 }

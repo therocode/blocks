@@ -88,6 +88,13 @@ void ServerNetworkingSystem::handleMessage(const LocalConnectionAttemptMessage& 
     mLocalClientBus->send(LocalConnectionEstablishedMessage{&mBus});
 }
 
+void ServerNetworkingSystem::handleMessage(const LocalDisconnectionMessage& received)
+{
+    FEA_ASSERT(mLocalClientBus != nullptr, "Local client trying to disconnect despite it not being connected");
+    mBus.send(LogMessage{"Local client disconnected", serverName, LogLevel::INFO});
+    mBus.send(PlayerLeftGameMessage{mLocalPlayerId});
+}
+
 void ServerNetworkingSystem::handleMessage(const FrameMessage& received)
 {
     if(mENetServer)
@@ -180,6 +187,8 @@ void ServerNetworkingSystem::disconnectRemoteClient(uint32_t id)
 
         mClientToPlayerIds.erase(id);
         mPlayerToClientIds.erase(playerId);
+
+        mBus.send(PlayerLeftGameMessage{playerId});
     }
     else
     {

@@ -22,6 +22,7 @@ class ClientNetworkingSystem : public
 {
     public:
         ClientNetworkingSystem(fea::MessageBus& bus, const NetworkParameters& parameters);
+        ~ClientNetworkingSystem();
         void handleMessage(const FrameMessage& received) override;
         void handleMessage(const LocalConnectionEstablishedMessage& received) override;
         void handleMessage(const ClientJoinDeniedMessage& received) override;

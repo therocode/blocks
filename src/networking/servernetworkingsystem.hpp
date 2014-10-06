@@ -17,6 +17,7 @@ using ClientId = size_t;
 
 class ServerNetworkingSystem : public fea::MessageReceiver<
                                            LocalConnectionAttemptMessage,
+                                           LocalDisconnectionMessage,
                                            FrameMessage,
                                            GameStartMessage,
                                            ClientJoinRequestedMessage>
@@ -24,6 +25,7 @@ class ServerNetworkingSystem : public fea::MessageReceiver<
     public:
         ServerNetworkingSystem(fea::MessageBus& bus, const NetworkParameters& parameters);
         void handleMessage(const LocalConnectionAttemptMessage& received);
+        void handleMessage(const LocalDisconnectionMessage& received);
         void handleMessage(const FrameMessage& received);
         void handleMessage(const GameStartMessage& received);
         void handleMessage(const ClientJoinRequestedMessage& received);
