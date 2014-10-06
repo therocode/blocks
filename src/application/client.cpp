@@ -9,12 +9,14 @@
 
 
 Client::Client(fea::MessageBus& bus, const NetworkParameters& parameters) :
+    mFrameNumber(0),
     mBus(bus),
     mLogger(mBus, LogLevel::VERB),
 	mWindow(new fea::SDL2WindowBackend()),
 	mRenderer(std::unique_ptr<Renderer>(new Renderer(mBus))),
 	mInputAdaptor(std::unique_ptr<InputAdaptor>(new InputAdaptor(mBus))),
 	mQuit(false),
+    mHighlightedChunks(8),
     mClientNetworkingSystem(bus, parameters)
 {
     subscribe(mBus, *this);
@@ -57,8 +59,9 @@ bool Client::loadTexture(const std::string& path, uint32_t width, uint32_t heigh
 
 void Client::update()
 {
-    mBus.send(FrameMessage{});
+    mBus.send(FrameMessage{mFrameNumber});
 	mInputAdaptor->update();
+    mFrameNumber++;
 }
 
 void Client::render()
@@ -171,6 +174,13 @@ void Client::handleMessage(const ClientChunkDeletedMessage& received)
 void Client::handleMessage(const CursorLockedMessage& received)
 {
     mWindow.lockCursor(received.locked);
+}
+
+void Client::handleMessage(const GameStartMessage& received)
+{
+    auto highlighted = mHighlightedChunks.addHighlightEntity(0, {0.0f, 0.0f, 0.0f});
+
+    mBus.send(ClientRequestedChunksMessage{highlighted});
 }
 
 bool Client::requestedQuit()

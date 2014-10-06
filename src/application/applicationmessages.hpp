@@ -6,7 +6,7 @@
 
 struct FrameMessage
 {
-    bool beginning;
+    uint64_t frameNumber;
 };
 
 struct LogMessage

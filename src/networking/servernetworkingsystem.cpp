@@ -82,6 +82,7 @@ void ServerNetworkingSystem::handleMessage(const LocalConnectionAttemptMessage& 
 
     mLocalPlayerId = newId;
     mLocalClientBus = received.clientBus;
+    mPlayerPositions.emplace(newId, glm::vec3(0.0f, 0.0f, 0.0f));
 
     mBus.send(LogMessage{"Client connected locally and given player Id " + std::to_string(newId), serverName, LogLevel::INFO});
 
@@ -91,8 +92,13 @@ void ServerNetworkingSystem::handleMessage(const LocalConnectionAttemptMessage& 
 void ServerNetworkingSystem::handleMessage(const LocalDisconnectionMessage& received)
 {
     FEA_ASSERT(mLocalClientBus != nullptr, "Local client trying to disconnect despite it not being connected");
+
     mBus.send(LogMessage{"Local client disconnected", serverName, LogLevel::INFO});
     mBus.send(PlayerLeftGameMessage{mLocalPlayerId});
+
+    mPlayerPositions.erase(mLocalPlayerId);
+    mLocalPlayerId = -1;
+    mLocalClientBus = nullptr;
 }
 
 void ServerNetworkingSystem::handleMessage(const FrameMessage& received)
@@ -125,6 +131,14 @@ void ServerNetworkingSystem::handleMessage(const ClientJoinRequestedMessage& rec
     }
 }
 
+void ServerNetworkingSystem::handleMessage(const ClientRequestedChunksMessage& received)
+{
+    if(mLocalClientBus != nullptr)
+    {
+        playerRequestedChunks(mLocalPlayerId, received.coordinates);
+    }
+}
+
 void ServerNetworkingSystem::acceptRemoteClient(uint32_t id)
 {
     uint32_t newId = mNextClientId++;
@@ -133,6 +147,7 @@ void ServerNetworkingSystem::acceptRemoteClient(uint32_t id)
     {
         mClientToPlayerIds.emplace(id, newId);
         mPlayerToClientIds.emplace(newId, id);
+        mPlayerPositions.emplace(newId, glm::vec3(0.0f, 0.0f, 0.0f));
         
         mBus.send(LogMessage{"Client Id " + std::to_string(id) + " connected and given player Id " + std::to_string(newId), serverName, LogLevel::INFO});
     }
@@ -166,6 +181,13 @@ void ServerNetworkingSystem::handleClientData(uint32_t clientId, const std::vect
             mBus.send(PlayerJoinedGameMessage{mClientToPlayerIds.at(clientId)});
         }
     }
+    if(type == CLIENT_REQUESTED_CHUNKS)
+    {
+        ClientRequestedChunksMessage received = deserializeMessage<ClientRequestedChunksMessage>(data);
+        
+        if(mClientToPlayerIds.count(clientId) != 0)
+            playerRequestedChunks(mClientToPlayerIds.at(clientId), received.coordinates);
+    }
     else if(type == TEST_1)
         mBus.send(LogMessage{"Received meaningless test message", serverName, LogLevel::WARN});
     else if(type == TEST_2)
@@ -187,6 +209,7 @@ void ServerNetworkingSystem::disconnectRemoteClient(uint32_t id)
 
         mClientToPlayerIds.erase(id);
         mPlayerToClientIds.erase(playerId);
+        mPlayerPositions.erase(playerId);
 
         mBus.send(PlayerLeftGameMessage{playerId});
     }
@@ -194,4 +217,8 @@ void ServerNetworkingSystem::disconnectRemoteClient(uint32_t id)
     {
         mBus.send(LogMessage{"Client Id " + std::to_string(id) + " disconnected", serverName, LogLevel::INFO});
     }
+}
+
+void ServerNetworkingSystem::playerRequestedChunks(uint32_t id, const std::vector<ChunkCoord>& chunks)
+{
 }

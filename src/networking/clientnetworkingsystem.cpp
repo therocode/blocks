@@ -57,6 +57,11 @@ ClientNetworkingSystem::~ClientNetworkingSystem()
 
 void ClientNetworkingSystem::handleMessage(const FrameMessage& received)
 {
+    if(mServerBus != nullptr && received.frameNumber == 5)
+    {
+        mBus.send(GameStartMessage{});
+    }
+
     if(mENetClient)
         mENetClient->update(0);
 }
@@ -83,6 +88,12 @@ void ClientNetworkingSystem::handleMessage(const ClientJoinDeniedMessage& receiv
 void ClientNetworkingSystem::handleMessage(const ClientJoinAcceptedMessage& received)
 {
     mBus.send(LogMessage{"Successfully joined the game on server " + received.settings.serverName + "! \nMOTD: " + received.settings.motd, clientName, LogLevel::INFO});
+    mBus.send(GameStartMessage{});
+}
+
+void ClientNetworkingSystem::handleMessage(const ClientRequestedChunksMessage& received)
+{
+    send(received, true, CHANNEL_CHUNKS);
 }
 
 void ClientNetworkingSystem::connectedToServer()

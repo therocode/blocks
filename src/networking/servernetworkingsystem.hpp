@@ -20,7 +20,8 @@ class ServerNetworkingSystem : public fea::MessageReceiver<
                                            LocalDisconnectionMessage,
                                            FrameMessage,
                                            GameStartMessage,
-                                           ClientJoinRequestedMessage>
+                                           ClientJoinRequestedMessage,
+                                           ClientRequestedChunksMessage>
 {
     public:
         ServerNetworkingSystem(fea::MessageBus& bus, const NetworkParameters& parameters);
@@ -29,10 +30,12 @@ class ServerNetworkingSystem : public fea::MessageReceiver<
         void handleMessage(const FrameMessage& received);
         void handleMessage(const GameStartMessage& received);
         void handleMessage(const ClientJoinRequestedMessage& received);
+        void handleMessage(const ClientRequestedChunksMessage& received);
     private:
         void acceptRemoteClient(uint32_t id);
         void handleClientData(uint32_t clientId, const std::vector<uint8_t>& data);
         void disconnectRemoteClient(uint32_t id);
+        void playerRequestedChunks(uint32_t id, const std::vector<ChunkCoord>& chunks);
         template <typename Message>
         void sendToOne(uint32_t playerId, const Message& message, bool reliable, uint8_t channel);
         template <typename Message>
@@ -50,6 +53,8 @@ class ServerNetworkingSystem : public fea::MessageReceiver<
         uint32_t mNextClientId;
         std::unordered_map<uint32_t, uint32_t> mClientToPlayerIds;
         std::unordered_map<uint32_t, uint32_t> mPlayerToClientIds;
+
+        std::unordered_map<uint32_t, glm::vec3> mPlayerPositions;
 
         fea::MessageBus* mLocalClientBus;
         uint32_t mLocalPlayerId;

@@ -35,7 +35,7 @@ Server::~Server()
 
 void Server::doLogic()
 {
-    mBus.send(FrameMessage{true});
+    mBus.send(FrameMessage{mFrameNumber});
 
 	mEntitySystem.update(mTimer.getDeltaTime());
 

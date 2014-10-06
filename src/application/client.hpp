@@ -2,13 +2,11 @@
 #include <fea/userinterface.hpp>
 #include "../world/chunk.hpp"
 #include "../networking/clientnetworkingsystem.hpp"
-
 #include "../utilities/lodepng.hpp"
 #include "../utilities/logger.hpp"
-
 #include "../utilities/fpscontroller.hpp"
-
 #include "../world/worldmessages.hpp"
+#include "../world/highlightmanager.hpp"
 
 
 class Renderer;
@@ -20,7 +18,8 @@ class Client :
                                 ChunkFinishedMessage,
                                 VoxelSetMessage,
                                 ClientChunkDeletedMessage,
-                                CursorLockedMessage>
+                                CursorLockedMessage,
+                                GameStartMessage>
 {
     public:
         Client(fea::MessageBus& bus, const NetworkParameters& parameters);
@@ -33,12 +32,13 @@ class Client :
         void handleMessage(const VoxelSetMessage& received) override;
         void handleMessage(const ClientChunkDeletedMessage& received) override;
         void handleMessage(const CursorLockedMessage& received) override;
+        void handleMessage(const GameStartMessage& received) override;
         bool requestedQuit();
         void setServerBridge(std::unique_ptr<ServerClientBridge> bridge);
     private:
-        long mFrame = 0;
+        int64_t mFrame = 0;
+        uint64_t mFrameNumber;
         FPSController mFPSCounter;
-        void fetchServerData();
         void updateChunk(const ChunkCoord& coordinate);
         bool mLockedMouse;
         fea::MessageBus& mBus;
@@ -48,6 +48,7 @@ class Client :
         std::unique_ptr<InputAdaptor> mInputAdaptor;
         bool mQuit;
 
+        HighlightManager mHighlightedChunks;
         ChunkMap mLocalChunks;
 
         ClientNetworkingSystem mClientNetworkingSystem;

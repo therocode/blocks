@@ -1,12 +1,20 @@
 #pragma once
+#include <glm/glm.hpp>
 #include <vector>
 #include <cstdint>
 #include <string>
 #include <unordered_map>
 
-enum { INVALID = -1, CLIENT_JOIN_REQUESTED, CLIENT_JOIN_DENIED, CLIENT_JOIN_ACCEPTED, TEST_1, TEST_2 };
+enum { INVALID = -1, 
+    //joining
+    CLIENT_JOIN_REQUESTED, CLIENT_JOIN_DENIED, CLIENT_JOIN_ACCEPTED,
+    //chunks
+    CLIENT_REQUESTED_CHUNKS,
+    //tests
+    TEST_1, TEST_2 };
 
 //network protocol:
+//joining
 struct ClientJoinRequestedMessage
 {
     int32_t getType() const {return CLIENT_JOIN_REQUESTED;}
@@ -61,6 +69,31 @@ struct ClientJoinAcceptedMessage
     }
 
     ServerNetSettings settings;
+};
+
+//chunks
+using ChunkCoord = glm::i64vec3;
+
+namespace cereal
+{
+    template<class Archive>
+        void serialize(Archive& archive, ChunkCoord& vec)
+        {
+            archive(vec.x, vec.y, vec.z);
+        }
+}
+
+struct ClientRequestedChunksMessage
+{
+    int32_t getType() const {return CLIENT_REQUESTED_CHUNKS;}
+
+    template<class Archive>
+    void serialize(Archive& archive)
+    {
+        archive(coordinates);
+    }
+
+    std::vector<ChunkCoord> coordinates;
 };
 
 //messages for testing:
