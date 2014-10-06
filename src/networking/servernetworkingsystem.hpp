@@ -12,6 +12,7 @@
 #include "networkingprotocol.hpp"
 #include "enet.hpp"
 #include "enetserver.hpp"
+#include "../utilities/glmhash.hpp"
 
 using ClientId = size_t;
 
@@ -21,7 +22,10 @@ class ServerNetworkingSystem : public fea::MessageReceiver<
                                            FrameMessage,
                                            GameStartMessage,
                                            ClientJoinRequestedMessage,
-                                           ClientRequestedChunksMessage>
+                                           ClientRequestedChunksMessage,
+                                           PlayerEntersChunkMessage,
+                                           PlayerEntersWorldMessage,
+                                           ChunksDataMessage>
 {
     public:
         ServerNetworkingSystem(fea::MessageBus& bus, const NetworkParameters& parameters);
@@ -31,6 +35,9 @@ class ServerNetworkingSystem : public fea::MessageReceiver<
         void handleMessage(const GameStartMessage& received);
         void handleMessage(const ClientJoinRequestedMessage& received);
         void handleMessage(const ClientRequestedChunksMessage& received);
+        void handleMessage(const PlayerEntersChunkMessage& received);
+        void handleMessage(const PlayerEntersWorldMessage& received);
+        void handleMessage(const ChunksDataMessage& received);
     private:
         void acceptRemoteClient(uint32_t id);
         void handleClientData(uint32_t clientId, const std::vector<uint8_t>& data);
@@ -54,7 +61,9 @@ class ServerNetworkingSystem : public fea::MessageReceiver<
         std::unordered_map<uint32_t, uint32_t> mClientToPlayerIds;
         std::unordered_map<uint32_t, uint32_t> mPlayerToClientIds;
 
-        std::unordered_map<uint32_t, glm::vec3> mPlayerPositions;
+        std::unordered_map<uint32_t, ChunkCoord> mPlayerPositions;
+        std::unordered_map<uint32_t, WorldId> mPlayerWorlds;
+        std::unordered_map<ChunkCoord, std::vector<uint32_t>> mChunkRequests;
 
         fea::MessageBus* mLocalClientBus;
         uint32_t mLocalPlayerId;

@@ -1,6 +1,7 @@
 #pragma once
 #include <fea/entitysystem.hpp>
 #include <fea/util.hpp>
+#include "../utilities/glmhash.hpp"
 
 class Region;
 class Chunk;
@@ -88,4 +89,16 @@ struct HighlightEntityRemoveRequestedMessage
 {
     WorldId worldId;
     fea::EntityId entityId;
+};
+
+struct ChunksRequestMessage
+{
+    WorldId worldId;
+    const std::vector<ChunkCoord>& coordinates;
+};
+
+struct ChunksDataMessage
+{
+    WorldId worldId;
+    std::unordered_map<ChunkCoord, const Chunk&> chunks;
 };

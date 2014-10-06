@@ -1,5 +1,6 @@
 #pragma once
 #include "../blockstd.hpp"
+#include "../world/worldid.hpp"
 #include "controllers/movedirection.hpp"
 #include "controllers/moveaction.hpp"
 #include <fea/util.hpp>
@@ -70,6 +71,11 @@ struct PlayerConnectedToEntityMessage
 struct PlayerEntersChunkMessage
 {
     size_t playerId; const ChunkCoord& chunkCoord;
+};
+
+struct PlayerEntersWorldMessage
+{
+    size_t playerId; WorldId worldId;
 };
 
 struct PlayerIdMessage

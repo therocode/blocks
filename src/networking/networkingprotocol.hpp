@@ -9,7 +9,7 @@ enum { INVALID = -1,
     //joining
     CLIENT_JOIN_REQUESTED, CLIENT_JOIN_DENIED, CLIENT_JOIN_ACCEPTED,
     //chunks
-    CLIENT_REQUESTED_CHUNKS,
+    CLIENT_REQUESTED_CHUNKS, CLIENT_CHUNKS_DENIED,
     //tests
     TEST_1, TEST_2 };
 
@@ -74,18 +74,34 @@ struct ClientJoinAcceptedMessage
 //chunks
 using ChunkCoord = glm::i64vec3;
 
-namespace cereal
+namespace glm
 {
-    template<class Archive>
-        void serialize(Archive& archive, ChunkCoord& vec)
-        {
-            archive(vec.x, vec.y, vec.z);
-        }
+    namespace detail
+    {
+        template<class Archive>
+            void serialize(Archive& archive, ChunkCoord& vec)
+            {
+                archive(vec.x, vec.y, vec.z);
+            }
+    }
 }
 
 struct ClientRequestedChunksMessage
 {
     int32_t getType() const {return CLIENT_REQUESTED_CHUNKS;}
+
+    template<class Archive>
+    void serialize(Archive& archive)
+    {
+        archive(coordinates);
+    }
+
+    std::vector<ChunkCoord> coordinates;
+};
+
+struct ClientChunksDeniedMessage
+{
+    int32_t getType() const {return CLIENT_CHUNKS_DENIED;}
 
     template<class Archive>
     void serialize(Archive& archive)

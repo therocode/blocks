@@ -135,6 +135,7 @@ void PlayerController::handleMessage(const PlayerActionMessage& received)
         mBus.send(HighlightEntityRemoveRequestedMessage{oldWorld, entityId});
         entity->setAttribute("current_world", nextWorld);
         mBus.send(HighlightEntityAddRequestedMessage{nextWorld, entityId, worldToChunk(entity->getAttribute<glm::vec3>("position"))});
+        mBus.send(PlayerEntersWorldMessage{playerId, nextWorld});
     }
 }
 

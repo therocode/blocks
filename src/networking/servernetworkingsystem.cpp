@@ -73,7 +73,7 @@ ServerNetworkingSystem::ServerNetworkingSystem(fea::MessageBus& bus, const Netwo
     //these should be passed from the outside:
     mSettings.serverName = "Wongaloria";
     mSettings.motd = "Welcome to our glorious server! Please to not grief and take all belonings with you when you leave, thanks.";
-    mSettings.maxChunkViewDistance = 10;
+    mSettings.maxChunkViewDistance = 8;
 }
 
 void ServerNetworkingSystem::handleMessage(const LocalConnectionAttemptMessage& received)
@@ -82,7 +82,8 @@ void ServerNetworkingSystem::handleMessage(const LocalConnectionAttemptMessage& 
 
     mLocalPlayerId = newId;
     mLocalClientBus = received.clientBus;
-    mPlayerPositions.emplace(newId, glm::vec3(0.0f, 0.0f, 0.0f));
+    mPlayerPositions.emplace(newId, ChunkCoord(0, 0, 0));
+    mPlayerWorlds.emplace(newId, 0);
 
     mBus.send(LogMessage{"Client connected locally and given player Id " + std::to_string(newId), serverName, LogLevel::INFO});
 
@@ -139,6 +140,26 @@ void ServerNetworkingSystem::handleMessage(const ClientRequestedChunksMessage& r
     }
 }
 
+void ServerNetworkingSystem::handleMessage(const PlayerEntersChunkMessage& received)
+{
+    std::cout << "player moved to " << received.chunkCoord.x << " " << received.chunkCoord.y << " " << received.chunkCoord.z << "\n";
+    mPlayerPositions.at(received.playerId) = received.chunkCoord;
+}
+
+void ServerNetworkingSystem::handleMessage(const PlayerEntersWorldMessage& received)
+{
+    mPlayerWorlds.at(received.playerId) = received.worldId;
+}
+
+void ServerNetworkingSystem::handleMessage(const ChunksDataMessage& received)
+{
+    std::cout << "got data of " << received.chunks.size() << " chunks\n";
+    
+    if(received.chunks.size() > 0)
+    {
+    }
+}
+
 void ServerNetworkingSystem::acceptRemoteClient(uint32_t id)
 {
     uint32_t newId = mNextClientId++;
@@ -147,7 +168,8 @@ void ServerNetworkingSystem::acceptRemoteClient(uint32_t id)
     {
         mClientToPlayerIds.emplace(id, newId);
         mPlayerToClientIds.emplace(newId, id);
-        mPlayerPositions.emplace(newId, glm::vec3(0.0f, 0.0f, 0.0f));
+        mPlayerPositions.emplace(newId, ChunkCoord(0, 0, 0));
+        mPlayerWorlds.emplace(newId, 0);
         
         mBus.send(LogMessage{"Client Id " + std::to_string(id) + " connected and given player Id " + std::to_string(newId), serverName, LogLevel::INFO});
     }
@@ -181,7 +203,7 @@ void ServerNetworkingSystem::handleClientData(uint32_t clientId, const std::vect
             mBus.send(PlayerJoinedGameMessage{mClientToPlayerIds.at(clientId)});
         }
     }
-    if(type == CLIENT_REQUESTED_CHUNKS)
+    else if(type == CLIENT_REQUESTED_CHUNKS)
     {
         ClientRequestedChunksMessage received = deserializeMessage<ClientRequestedChunksMessage>(data);
         
@@ -195,7 +217,7 @@ void ServerNetworkingSystem::handleClientData(uint32_t clientId, const std::vect
     else if(type == INVALID)
         mBus.send(LogMessage{"Received invalid message", serverName, LogLevel::WARN});
     else
-        mBus.send(LogMessage{"Received message of unknown type", serverName, LogLevel::WARN});
+        mBus.send(LogMessage{"Received message of unknown type: " + std::to_string(type), serverName, LogLevel::WARN});
 }
 
 void ServerNetworkingSystem::disconnectRemoteClient(uint32_t id)
@@ -210,6 +232,7 @@ void ServerNetworkingSystem::disconnectRemoteClient(uint32_t id)
         mClientToPlayerIds.erase(id);
         mPlayerToClientIds.erase(playerId);
         mPlayerPositions.erase(playerId);
+        mPlayerWorlds.erase(playerId);
 
         mBus.send(PlayerLeftGameMessage{playerId});
     }
@@ -221,4 +244,35 @@ void ServerNetworkingSystem::disconnectRemoteClient(uint32_t id)
 
 void ServerNetworkingSystem::playerRequestedChunks(uint32_t id, const std::vector<ChunkCoord>& chunks)
 {
+    std::vector<ChunkCoord> inRange;
+    std::vector<ChunkCoord> notInRange;
+
+    inRange.reserve(chunks.size() / 2);
+    notInRange.reserve(chunks.size() / 2);
+
+    const ChunkCoord& playerChunk = mPlayerPositions.at(id);
+
+    std::cout << "player is in chunk " << playerChunk.x << " " << playerChunk.y << "" << playerChunk.z << "\n";
+
+    for(const auto& chunk : chunks)
+    {
+        if(glm::distance(glm::vec3(chunk), glm::vec3(playerChunk)) <= (float)mSettings.maxChunkViewDistance)
+            inRange.push_back(chunk);
+        else
+            notInRange.push_back(chunk);
+    }
+
+    if(notInRange.size() > 0)
+    {
+        sendToOne(id, ClientChunksDeniedMessage{notInRange}, true, CHANNEL_CHUNKS);
+    }
+    if(inRange.size() > 0)
+    {
+        for(const auto& chunk : inRange)
+        {
+            mChunkRequests[chunk].push_back(id);
+        }
+
+        mBus.send(ChunksRequestMessage{mPlayerWorlds.at(id), inRange});
+    }
 }

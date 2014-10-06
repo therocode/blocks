@@ -197,6 +197,23 @@ void World::moveHighlightEntity(fea::EntityId id, const ChunkCoord& coordinate)
 
 }
 
+const Chunk* World::findChunk(const ChunkCoord& coordinate) const
+{
+    RegionCoord regionCoord = chunkToRegion(coordinate);
+
+    if(hasRegion(regionCoord))
+    {
+        const Region& region = mRegions.at(regionCoord);
+        RegionChunkCoord regionChunk = chunkToRegionChunk(coordinate);
+        if(region.hasChunk(regionChunk))
+            return &region.getChunk(regionChunk);
+        else
+            return nullptr;
+    }
+    else
+        return nullptr;
+}
+
 bool World::hasRegion(const RegionCoord& coordinate) const
 {
     return mRegions.count(coordinate) != 0;

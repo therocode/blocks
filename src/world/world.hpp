@@ -22,6 +22,8 @@ class World
         void addHighlightEntity(fea::EntityId id, const ChunkCoord& coordinate);
         void removeHighlightEntity(fea::EntityId id);
         void moveHighlightEntity(fea::EntityId id, const ChunkCoord& coordinate);
+
+        const Chunk* findChunk(const ChunkCoord& coordinate) const;
     private:
         bool hasRegion(const RegionCoord& coordinate) const;
         void activateChunk(const ChunkCoord& coordinate, int32_t priority);

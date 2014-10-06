@@ -80,6 +80,26 @@ void WorldSystem::handleMessage(const HighlightEntityRemoveRequestedMessage& rec
     mWorlds.at(received.worldId)->removeHighlightEntity(received.entityId); 
 }
 
+void WorldSystem::handleMessage(const ChunksRequestMessage& received)
+{
+    const World& world = *mWorlds.at(received.worldId);
+
+    ChunksDataMessage message;
+    message.worldId = received.worldId;
+
+    for(const auto& requestedChunk : received.coordinates)
+    {
+        const Chunk* chunk = world.findChunk(requestedChunk);
+
+        if(chunk != nullptr)
+        {
+            message.chunks.emplace(requestedChunk, *chunk);
+        }
+    }
+
+    mBus.send(message);
+}
+
 void WorldSystem::addWorld(const WorldParameters& worldParameters)
 {
     mBus.send(LogMessage{"Loading world " + worldParameters.identifier, worldName, LogLevel::INFO});

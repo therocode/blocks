@@ -15,7 +15,8 @@ class WorldSystem :
                                     ChunkGeneratedMessage,
                                     HighlightEntityAddRequestedMessage,
                                     HighlightEntityMoveRequestedMessage,
-                                    HighlightEntityRemoveRequestedMessage>
+                                    HighlightEntityRemoveRequestedMessage,
+                                    ChunksRequestMessage>
 {
     public:
         WorldSystem(fea::MessageBus& messageBus);
@@ -26,6 +27,7 @@ class WorldSystem :
         void handleMessage(const HighlightEntityAddRequestedMessage& received) override;
         void handleMessage(const HighlightEntityMoveRequestedMessage& received) override;
         void handleMessage(const HighlightEntityRemoveRequestedMessage& received) override;
+        void handleMessage(const ChunksRequestMessage& received) override;
         void addWorld(const WorldParameters& worldParameters);
         const World& getWorld(WorldId id) const;
     private:

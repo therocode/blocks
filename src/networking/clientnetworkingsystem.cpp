@@ -96,6 +96,11 @@ void ClientNetworkingSystem::handleMessage(const ClientRequestedChunksMessage& r
     send(received, true, CHANNEL_CHUNKS);
 }
 
+void ClientNetworkingSystem::handleMessage(const ClientChunksDeniedMessage& received)
+{
+    std::cout << "got " << received.coordinates.size() << " chunks denied!\n";
+}
+
 void ClientNetworkingSystem::connectedToServer()
 {
     mBus.send(LogMessage{"Successfully connected to server", clientName, LogLevel::INFO});
@@ -117,6 +122,11 @@ void ClientNetworkingSystem::handleServerData(const std::vector<uint8_t>& data)
     else if(type == CLIENT_JOIN_ACCEPTED)
     {
         ClientJoinAcceptedMessage received = deserializeMessage<ClientJoinAcceptedMessage>(data);
+        mBus.send(received);
+    }
+    else if(type == CLIENT_CHUNKS_DENIED)
+    {
+        ClientChunksDeniedMessage received = deserializeMessage<ClientChunksDeniedMessage>(data);
         mBus.send(received);
     }
     else if(type == TEST_1)
