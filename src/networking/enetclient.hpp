@@ -8,7 +8,7 @@
 class ENetClient
 {
     public:
-        ENetClient(const ENet& enet);
+        ENetClient(const ENet& enet, int32_t channelAmount);
         ~ENetClient();
         void update(uint32_t wait);
         bool isConnected() const;

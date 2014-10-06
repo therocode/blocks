@@ -39,7 +39,7 @@ template <typename Message>
 void ClientNetworkingSystem::send(const Message& message, bool reliable, uint8_t channel)
 {
     if(mServerBus)
-        mBus.send(message);
+        mServerBus->send(message);
     else
         mENetClient->send(serializeMessage(message), reliable, channel);
 }

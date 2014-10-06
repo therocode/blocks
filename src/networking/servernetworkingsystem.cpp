@@ -3,7 +3,7 @@
 #include "../lognames.hpp"
 #include "../script/scriptmessages.hpp"
 #include "../input/inputmessages.hpp"
-#include "networkingprotocol.hpp"
+#include "channels.hpp"
 #include "messageserializer.hpp"
 
 ServerNetworkingSystem::ServerNetworkingSystem(fea::MessageBus& bus, const NetworkParameters& parameters) :
@@ -29,7 +29,7 @@ ServerNetworkingSystem::ServerNetworkingSystem(fea::MessageBus& bus, const Netwo
         {
             mBus.send(LogMessage{"Setting up dedicated server networking", serverName, LogLevel::INFO});
 
-            mENetServer = std::unique_ptr<ENetServer>(new ENetServer(*mENet, parameters.port));
+            mENetServer = std::unique_ptr<ENetServer>(new ENetServer(*mENet, parameters.port, CHANNEL_AMOUNT));
             mENetServer->setConnectedCallback(std::bind(&ServerNetworkingSystem::acceptRemoteClient, this, std::placeholders::_1));
             mENetServer->setDataReceivedCallback(std::bind(&ServerNetworkingSystem::handleClientData, this, std::placeholders::_1, std::placeholders::_2));
             mENetServer->setDisconnectedCallback(std::bind(&ServerNetworkingSystem::disconnectRemoteClient, this, std::placeholders::_1));
@@ -52,8 +52,7 @@ ServerNetworkingSystem::ServerNetworkingSystem(fea::MessageBus& bus, const Netwo
         {
             mBus.send(LogMessage{"Setting up networking", serverName, LogLevel::INFO});
 
-            mENetServer = std::unique_ptr<ENetServer>(new ENetServer(*mENet, parameters.port));
-            mENetServer = std::unique_ptr<ENetServer>(new ENetServer(*mENet, parameters.port));
+            mENetServer = std::unique_ptr<ENetServer>(new ENetServer(*mENet, parameters.port, CHANNEL_AMOUNT));
             mENetServer->setConnectedCallback(std::bind(&ServerNetworkingSystem::acceptRemoteClient, this, std::placeholders::_1));
             mENetServer->setDataReceivedCallback(std::bind(&ServerNetworkingSystem::handleClientData, this, std::placeholders::_1, std::placeholders::_2));
             mENetServer->setDisconnectedCallback(std::bind(&ServerNetworkingSystem::disconnectRemoteClient, this, std::placeholders::_1));
@@ -77,10 +76,9 @@ void ServerNetworkingSystem::handleMessage(const LocalConnectionAttemptMessage& 
     mLocalPlayerId = newId;
     mLocalClientBus = received.clientBus;
 
-    //mBus.send(LogMessage{"Client connected locally and given player Id " + std::to_string(newId), serverName, LogLevel::INFO});
-    //mBus.send(PlayerJoinedMessage{newId, 0, {0.0f, 0.0f, 0.0f}});
+    mBus.send(LogMessage{"Client connected locally and given player Id " + std::to_string(newId), serverName, LogLevel::INFO});
 
-    mBus.send(LocalConnectionEstablishedMessage{&mBus});
+    mLocalClientBus->send(LocalConnectionEstablishedMessage{&mBus});
 }
 
 void ServerNetworkingSystem::handleMessage(const FrameMessage& received)
@@ -92,6 +90,11 @@ void ServerNetworkingSystem::handleMessage(const FrameMessage& received)
 void ServerNetworkingSystem::handleMessage(const GameStartMessage& received)
 {
     mAcceptingClients = true;
+}
+
+void ServerNetworkingSystem::handleMessage(const ClientJoinRequestedMessage& received)
+{
+    mBus.send(LogMessage{"Local client requested to join the game with player name " + received.playerName, serverName, LogLevel::INFO});
 }
 
 void ServerNetworkingSystem::acceptRemoteClient(uint32_t id)

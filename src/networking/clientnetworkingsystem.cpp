@@ -3,6 +3,7 @@
 #include "../world/worldmessages.hpp"
 #include "../lognames.hpp"
 #include "enetclient.hpp"
+#include "channels.hpp"
 #include "networkingprotocol.hpp"
 
 ClientNetworkingSystem::ClientNetworkingSystem(fea::MessageBus& bus, const NetworkParameters& parameters) :
@@ -25,7 +26,7 @@ ClientNetworkingSystem::ClientNetworkingSystem(fea::MessageBus& bus, const Netwo
         {
             mBus.send(LogMessage{"Setting up client networking", netName, LogLevel::INFO});
 
-            mENetClient = std::unique_ptr<ENetClient>(new ENetClient(*mENet));
+            mENetClient = std::unique_ptr<ENetClient>(new ENetClient(*mENet, CHANNEL_AMOUNT));
             mENetClient->setConnectedCallback(std::bind(&ClientNetworkingSystem::connectedToServer, this));
             mENetClient->setDataReceivedCallback(std::bind(&ClientNetworkingSystem::handleServerData, this, std::placeholders::_1));
             mENetClient->setDisconnectedCallback(std::bind(&ClientNetworkingSystem::disconnectedFromServer, this));
@@ -42,7 +43,7 @@ ClientNetworkingSystem::ClientNetworkingSystem(fea::MessageBus& bus, const Netwo
         mBus.send(LogMessage{"Setting up client networking", netName, LogLevel::INFO});
         mBus.send(LocalConnectionAttemptMessage{&bus});
 
-        mENetClient = std::unique_ptr<ENetClient>(new ENetClient(*mENet));
+        mENetClient = std::unique_ptr<ENetClient>(new ENetClient(*mENet, CHANNEL_AMOUNT));
     }
 }
 
@@ -56,11 +57,17 @@ void ClientNetworkingSystem::handleMessage(const LocalConnectionEstablishedMessa
 {
     mServerBus = received.serverBus;
     mBus.send(LogMessage{"Connected locally to server", netName, LogLevel::INFO});
+
+    ClientJoinRequestedMessage message{"Tobbe"};
+    send(message, true, CHANNEL_DEFAULT);
 }
 
 void ClientNetworkingSystem::connectedToServer()
 {
     mBus.send(LogMessage{"Successfully connected to server", netName, LogLevel::INFO});
+
+    ClientJoinRequestedMessage message{"Tobbe"};
+    send(message, true, CHANNEL_DEFAULT);
 }
 
 void ClientNetworkingSystem::handleServerData(const std::vector<uint8_t>& data)

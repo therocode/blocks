@@ -152,6 +152,7 @@ set(header_files
 
     src/math/mathutils.hpp
 
+    src/networking/channels.hpp
     src/networking/clientnetworkingsystem.hpp
     src/networking/enet.hpp
     src/networking/enetclient.hpp

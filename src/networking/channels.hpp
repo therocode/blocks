@@ -1,0 +1,3 @@
+#pragma once
+
+enum { CHANNEL_DEFAULT = 0, CHANNEL_CHUNKS, CHANNEL_AMOUNT };

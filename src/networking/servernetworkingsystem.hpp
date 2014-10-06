@@ -9,6 +9,7 @@
 #include "../world/worldmessages.hpp"
 #include "../application/applicationmessages.hpp"
 #include "networkingmessages.hpp"
+#include "networkingprotocol.hpp"
 #include "enet.hpp"
 #include "enetserver.hpp"
 
@@ -17,13 +18,15 @@ using ClientId = size_t;
 class ServerNetworkingSystem : public fea::MessageReceiver<
                                            LocalConnectionAttemptMessage,
                                            FrameMessage,
-                                           GameStartMessage>
+                                           GameStartMessage,
+                                           ClientJoinRequestedMessage>
 {
     public:
         ServerNetworkingSystem(fea::MessageBus& bus, const NetworkParameters& parameters);
         void handleMessage(const LocalConnectionAttemptMessage& received);
         void handleMessage(const FrameMessage& received);
         void handleMessage(const GameStartMessage& received);
+        void handleMessage(const ClientJoinRequestedMessage& received);
     private:
         void acceptRemoteClient(uint32_t id);
         void handleClientData(uint32_t clientId, const std::vector<uint8_t>& data);

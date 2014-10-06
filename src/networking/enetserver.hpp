@@ -9,7 +9,7 @@
 class ENetServer
 {
     public:
-        ENetServer(const ENet& enet, uint32_t port);
+        ENetServer(const ENet& enet, uint32_t port, int32_t channelAmount);
         ~ENetServer();
         void update(uint32_t wait);
         void sendToAll(const std::vector<uint8_t>& data, bool reliable, uint8_t channel);

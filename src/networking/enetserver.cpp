@@ -3,7 +3,7 @@
 #include "../application/applicationmessages.hpp"
 #include "networkingmessages.hpp"
 
-ENetServer::ENetServer(const ENet& enet, uint32_t port) :
+ENetServer::ENetServer(const ENet& enet, uint32_t port, int32_t channelAmount) :
     mHost(nullptr),
     mNextId(0),
     mClientCount(0)
@@ -15,7 +15,7 @@ ENetServer::ENetServer(const ENet& enet, uint32_t port) :
 
     mHost = enet_host_create(&mAddress,  //address to bind this server to
             32,                          //allow 32 incoming connections
-            2,                           //allow 2 channels
+            channelAmount,               //allow 2 channels
             0,                           //no downstream limit
             0);                          //no upstream limit
 }

@@ -3,7 +3,7 @@
 #include "../application/applicationmessages.hpp"
 #include "../lognames.hpp"
         
-ENetClient::ENetClient(const ENet& enet) :
+ENetClient::ENetClient(const ENet& enet, int32_t channelAmount) :
     mHost(nullptr),
     mServer(nullptr),
     mConnected(false)
@@ -12,7 +12,7 @@ ENetClient::ENetClient(const ENet& enet) :
 
     mHost = enet_host_create(nullptr,    //nullptr since this is a client
             1,                           //allow 1 outgoing connection
-            2,                           //allow 2 channels
+            channelAmount,               //allow 2 channels
             0,                           //no downstream limit
             0);                          //no upstream limit
 }
