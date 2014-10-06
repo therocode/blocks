@@ -21,7 +21,7 @@ struct LogLevelMessage
 
 struct PlayerJoinedGameMessage
 {
-    size_t playerId; WorldId worldId; const::glm::vec3& position;
+    size_t playerId;
 };
 
 struct PlayerLeftGameMessage

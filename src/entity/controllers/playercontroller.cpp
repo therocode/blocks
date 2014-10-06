@@ -26,13 +26,13 @@ void PlayerController::onFrame(int dt)
 void PlayerController::handleMessage(const PlayerJoinedGameMessage& received)
 {
     size_t playerId = received.playerId;
-    glm::vec3 position = received.position;
+    glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);
 
     fea::EntityPtr playerEntity; 
     
     mBus.send(EntityRequestedMessage{"Player", [&] (fea::EntityPtr e) 
             {
-                e->setAttribute("current_world", received.worldId);
+                e->setAttribute("current_world", 0u);
                 e->setAttribute("current_chunk", worldToChunk(position));
                 e->setAttribute("position", position);
                 playerEntity = e;
@@ -40,7 +40,7 @@ void PlayerController::handleMessage(const PlayerJoinedGameMessage& received)
 
     mPlayerEntities.emplace(playerId, playerEntity);
     mBus.send(PlayerEntersChunkMessage{playerId, worldToChunk(position)});
-    mBus.send(HighlightEntityAddRequestedMessage{received.worldId, playerEntity->getId(), worldToChunk(position)});
+    mBus.send(HighlightEntityAddRequestedMessage{0u, playerEntity->getId(), worldToChunk(position)});
 
     ChunkCoord chunkAt = worldToChunk(position);
 
