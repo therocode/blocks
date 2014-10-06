@@ -114,7 +114,7 @@ void ServerNetworkingSystem::handleMessage(const ClientJoinRequestedMessage& rec
         mLocalClientBus->send(message);
 
         mBus.send(LogMessage{"Accepting local client's desire to join the game. Sending server settings", serverName, LogLevel::INFO});
-        //mBus.send(PlayerJoinedMessage{mClientToPlayerIds.at(clientId), 0, {0.0f, 0.0f, 0.0f}});
+        mBus.send(PlayerJoinedMessage{mLocalPlayerId});
     }
 }
 
@@ -156,7 +156,7 @@ void ServerNetworkingSystem::handleClientData(uint32_t clientId, const std::vect
             mENetServer->sendToOne(clientId, serializeMessage(message), true, CHANNEL_DEFAULT);
 
             mBus.send(LogMessage{"Accepting client " + std::to_string(clientId) + "'s desire to join the game. Sending server settings", serverName, LogLevel::INFO});
-            //mBus.send(PlayerJoinedMessage{mClientToPlayerIds.at(clientId), 0, {0.0f, 0.0f, 0.0f}});
+            mBus.send(PlayerJoinedMessage{mClientToPlayerIds.at(clientId)});
         }
     }
     else if(type == TEST_1)
