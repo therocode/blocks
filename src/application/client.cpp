@@ -18,7 +18,6 @@ Client::Client(fea::MessageBus& bus, const NetworkParameters& parameters) :
     mClientNetworkingSystem(bus, parameters)
 {
     subscribe(mBus, *this);
-	mBus.send(LogMessage{"Setting up client", clientName, LogLevel::INFO});
 
 	mWindow.create(fea::VideoMode(800, 600, 32), "Blocky", fea::Style::Default, fea::ContextSettings(32));
     mLockedMouse = true;

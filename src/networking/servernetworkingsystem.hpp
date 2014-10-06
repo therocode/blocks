@@ -31,10 +31,17 @@ class ServerNetworkingSystem : public fea::MessageReceiver<
         void acceptRemoteClient(uint32_t id);
         void handleClientData(uint32_t clientId, const std::vector<uint8_t>& data);
         void disconnectRemoteClient(uint32_t id);
+        template <typename Message>
+        void sendToOne(uint32_t playerId, const Message& message, bool reliable, uint8_t channel);
+        template <typename Message>
+        void sendToAll(const Message& message, bool reliable, uint8_t channel);
 
         fea::MessageBus& mBus;
         NetworkParameters mParameters;
         bool mAcceptingClients;
+        uint32_t mPlayerAmount;
+        uint32_t mMaxPlayerAmount;
+        ServerNetSettings mSettings;
 
         std::unordered_set<size_t> graphicsEntities; //temporary solution on how to resend things
 
@@ -48,3 +55,27 @@ class ServerNetworkingSystem : public fea::MessageReceiver<
         std::unique_ptr<ENet> mENet;
         std::unique_ptr<ENetServer> mENetServer;
 };
+
+template <typename Message>
+void ServerNetworkingSystem::sendToOne(uint32_t playerId, const Message& message, bool reliable, uint8_t channel)
+{
+    if(mLocalPlayerId == playerId)
+    {
+        FEA_ASSERT(mLocalClientBus != nullptr, "local player ID exists, but bus does not. This is bad.");
+        mLocalClientBus->send(message);
+    }
+    else
+    {
+        FEA_ASSERT(mPlayerToClientIds.count(playerId) != 0, "Trying to send message to invalid player ID " + std::to_string(playerId));
+        mENetServer->sendToOne(mPlayerToClientIds.at(playerId), serializeMessage(message), reliable, channel);
+    }
+}
+
+template <typename Message>
+void ServerNetworkingSystem::sendToAll(const Message& message, bool reliable, uint8_t channel)
+{
+    if(mLocalClientBus)
+        mLocalClientBus->send(message);
+    else
+        mENetServer->sendToAll(serializeMessage(message), reliable, channel);
+}

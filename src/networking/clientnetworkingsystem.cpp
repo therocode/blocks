@@ -4,7 +4,6 @@
 #include "../lognames.hpp"
 #include "enetclient.hpp"
 #include "channels.hpp"
-#include "networkingprotocol.hpp"
 
 ClientNetworkingSystem::ClientNetworkingSystem(fea::MessageBus& bus, const NetworkParameters& parameters) :
     mBus(bus),
@@ -58,28 +57,56 @@ void ClientNetworkingSystem::handleMessage(const LocalConnectionEstablishedMessa
     mServerBus = received.serverBus;
     mBus.send(LogMessage{"Connected locally to server", netName, LogLevel::INFO});
 
+    mBus.send(LogMessage{"Requesting to join game as '" + std::string("Tobbe") + "'", netName, LogLevel::INFO});
     ClientJoinRequestedMessage message{"Tobbe"};
     send(message, true, CHANNEL_DEFAULT);
+}
+
+void ClientNetworkingSystem::handleMessage(const ClientJoinDeniedMessage& received)
+{
+    if(received.reason == JoinDenyReason::FULL)
+        mBus.send(LogMessage{"Could not join game at server. Server is full with " + std::to_string(received.playerAmount) + "/" + std::to_string(received.maximumAllowed) + " players", netName, LogLevel::INFO});
+
+    if(mENetClient)
+        mENetClient->disconnect(400);
+}
+
+void ClientNetworkingSystem::handleMessage(const ClientJoinAcceptedMessage& received)
+{
+    mBus.send(LogMessage{"Successfully joined the game on server " + received.settings.serverName + "! \nMOTD: " + received.settings.motd, netName, LogLevel::INFO});
 }
 
 void ClientNetworkingSystem::connectedToServer()
 {
     mBus.send(LogMessage{"Successfully connected to server", netName, LogLevel::INFO});
 
+    mBus.send(LogMessage{"Requesting to join game as '" + std::string("Tobbe") + "'", netName, LogLevel::INFO});
     ClientJoinRequestedMessage message{"Tobbe"};
     send(message, true, CHANNEL_DEFAULT);
 }
 
 void ClientNetworkingSystem::handleServerData(const std::vector<uint8_t>& data)
 {
-    //PackageType type;
+    int32_t type = decodeType(data);
 
-    //uint8_t* typePointer = (uint8_t*)&type;
-    //for(uint32_t i = 0; i < sizeof(PackageType); i++)
-    //{   
-    //    *typePointer = data[i];
-    //    typePointer++;
-    //}   
+    if(type == CLIENT_JOIN_DENIED)
+    {
+        ClientJoinDeniedMessage received = deserializeMessage<ClientJoinDeniedMessage>(data);
+        mBus.send(received);
+    }
+    else if(type == CLIENT_JOIN_ACCEPTED)
+    {
+        ClientJoinAcceptedMessage received = deserializeMessage<ClientJoinAcceptedMessage>(data);
+        mBus.send(received);
+    }
+    else if(type == TEST_1)
+        mBus.send(LogMessage{"Received meaningless test message", serverName, LogLevel::WARN});
+    else if(type == TEST_2)
+        mBus.send(LogMessage{"Received meaningless test message", serverName, LogLevel::WARN});
+    else if(type == INVALID)
+        mBus.send(LogMessage{"Received invalid message", serverName, LogLevel::WARN});
+    else
+        mBus.send(LogMessage{"Received message of unknown type", serverName, LogLevel::WARN});
 }
 
 void ClientNetworkingSystem::disconnectedFromServer()

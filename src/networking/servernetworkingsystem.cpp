@@ -10,8 +10,10 @@ ServerNetworkingSystem::ServerNetworkingSystem(fea::MessageBus& bus, const Netwo
     mBus(bus),
     mParameters(parameters),
     mAcceptingClients(false),
+    mMaxPlayerAmount(20),
+    mPlayerAmount(0),
     mNextClientId(0),
-    mLocalPlayerId(0),
+    mLocalPlayerId(-1),
     mLocalClientBus(nullptr)
 {
 
@@ -67,6 +69,11 @@ ServerNetworkingSystem::ServerNetworkingSystem(fea::MessageBus& bus, const Netwo
             mBus.send(LogMessage{"Could not initialize networking", serverName, LogLevel::ERR});
         }
     }
+
+    //these should be passed from the outside:
+    mSettings.serverName = "Wongaloria";
+    mSettings.motd = "Welcome to our glorious server! Please to not grief and take all belonings with you when you leave, thanks.";
+    mSettings.maxChunkViewDistance = 10;
 }
 
 void ServerNetworkingSystem::handleMessage(const LocalConnectionAttemptMessage& received)
@@ -95,6 +102,20 @@ void ServerNetworkingSystem::handleMessage(const GameStartMessage& received)
 void ServerNetworkingSystem::handleMessage(const ClientJoinRequestedMessage& received)
 {
     mBus.send(LogMessage{"Local client requested to join the game with player name " + received.playerName, serverName, LogLevel::INFO});
+
+    if(mPlayerAmount >= mMaxPlayerAmount)
+    {
+        ClientJoinDeniedMessage message{JoinDenyReason::FULL, 20, 20};
+        mLocalClientBus->send(message);
+    }
+    else
+    {
+        ClientJoinAcceptedMessage message{mSettings};
+        mLocalClientBus->send(message);
+
+        mBus.send(LogMessage{"Accepting local client's desire to join the game. Sending server settings", serverName, LogLevel::INFO});
+        //mBus.send(PlayerJoinedMessage{mClientToPlayerIds.at(clientId), 0, {0.0f, 0.0f, 0.0f}});
+    }
 }
 
 void ServerNetworkingSystem::acceptRemoteClient(uint32_t id)
@@ -105,9 +126,8 @@ void ServerNetworkingSystem::acceptRemoteClient(uint32_t id)
     {
         mClientToPlayerIds.emplace(id, newId);
         mPlayerToClientIds.emplace(newId, id);
-
-        //mBus.send(LogMessage{"Client Id " + std::to_string(id) + " connected and given player Id " + std::to_string(newId), serverName, LogLevel::INFO});
-        //mBus.send(PlayerJoinedMessage{newId, 0, {0.0f, 0.0f, 0.0f}});
+        
+        mBus.send(LogMessage{"Client Id " + std::to_string(id) + " connected and given player Id " + std::to_string(newId), serverName, LogLevel::INFO});
     }
     else
     {
@@ -122,8 +142,22 @@ void ServerNetworkingSystem::handleClientData(uint32_t clientId, const std::vect
 
     if(type == CLIENT_JOIN_REQUESTED)
     {
-        ClientJoinRequestedMessage message = deserializeMessage<ClientJoinRequestedMessage>(data);
-        mBus.send(LogMessage{"Client id " + std::to_string(clientId) + " requested to join the game with player name " + message.playerName, serverName, LogLevel::INFO});
+        ClientJoinRequestedMessage received = deserializeMessage<ClientJoinRequestedMessage>(data);
+        mBus.send(LogMessage{"Client id " + std::to_string(clientId) + " requested to join the game with player name " + received.playerName, serverName, LogLevel::INFO});
+
+        if(mPlayerAmount >= mMaxPlayerAmount)
+        {
+            ClientJoinDeniedMessage message{JoinDenyReason::FULL, mPlayerAmount, mMaxPlayerAmount};
+            mENetServer->sendToOne(clientId, serializeMessage(message), true, CHANNEL_DEFAULT);
+        }
+        else
+        {
+            ClientJoinAcceptedMessage message{mSettings};
+            mENetServer->sendToOne(clientId, serializeMessage(message), true, CHANNEL_DEFAULT);
+
+            mBus.send(LogMessage{"Accepting client " + std::to_string(clientId) + "'s desire to join the game. Sending server settings", serverName, LogLevel::INFO});
+            //mBus.send(PlayerJoinedMessage{mClientToPlayerIds.at(clientId), 0, {0.0f, 0.0f, 0.0f}});
+        }
     }
     else if(type == TEST_1)
         mBus.send(LogMessage{"Received meaningless test message", serverName, LogLevel::WARN});
@@ -143,7 +177,6 @@ void ServerNetworkingSystem::disconnectRemoteClient(uint32_t id)
         uint32_t playerId = mClientToPlayerIds.at(id);
 
         mBus.send(LogMessage{"Client Id " + std::to_string(id) + ", player Id " + std::to_string(playerId) + " disconnected", serverName, LogLevel::INFO});
-        //mBus.send(PlayerDisconnectedMessage{playerId});
 
         mClientToPlayerIds.erase(id);
         mPlayerToClientIds.erase(playerId);

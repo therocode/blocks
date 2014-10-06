@@ -17,7 +17,6 @@ Server::Server(fea::MessageBus& bus, const NetworkParameters& parameters) :
     mFrameNumber(0)
 {
     mTimer.start();
-    mBus.send(LogMessage{"Setting up server", serverName, LogLevel::INFO});
 
 	mEntitySystem.addController(std::unique_ptr<EntityController>(new PlayerController(mBus, mGameInterface)));
 	mEntitySystem.addController(std::unique_ptr<EntityController>(new PhysicsController(mBus, mGameInterface)));

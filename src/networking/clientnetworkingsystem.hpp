@@ -9,18 +9,23 @@
 #include "../input/inputmessages.hpp"
 #include "enet.hpp"
 #include "enetclient.hpp"
+#include "networkingprotocol.hpp"
 
 class ENet;
 class ENetClient;
 
 class ClientNetworkingSystem : public
     fea::MessageReceiver<FrameMessage,
-                         LocalConnectionEstablishedMessage>
+                         LocalConnectionEstablishedMessage,
+                         ClientJoinDeniedMessage,
+                         ClientJoinAcceptedMessage>
 {
     public:
         ClientNetworkingSystem(fea::MessageBus& bus, const NetworkParameters& parameters);
         void handleMessage(const FrameMessage& received) override;
         void handleMessage(const LocalConnectionEstablishedMessage& received) override;
+        void handleMessage(const ClientJoinDeniedMessage& received) override;
+        void handleMessage(const ClientJoinAcceptedMessage& received) override;
     private:
         void connectedToServer();
         void handleServerData(const std::vector<uint8_t>& data);
