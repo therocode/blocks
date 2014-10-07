@@ -10,10 +10,7 @@ using WorldId = uint32_t;
 using VoxelType = uint16_t;
 using VoxelCoord       = glm::i64vec3;
 using ChunkCoord       = glm::i64vec3; 
-using RegionCoord      = glm::i64vec2;
 using ChunkVoxelCoord  = glm::u8vec3;
-using RegionChunkCoord = glm::u8vec3;
-using RegionVoxelCoord = glm::u16vec2;
 
 struct SetVoxelMessage
 {
@@ -51,11 +48,6 @@ struct ChunkDeletedMessage
 };
 
 struct ChunkLoadedMessage
-{
-    const Chunk& chunk; uint64_t timestamp;
-};
-
-struct ChunkModdedMessage
 {
     const Chunk& chunk; uint64_t timestamp;
 };

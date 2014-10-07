@@ -10,10 +10,7 @@
 #include <unordered_map>
 #include <vector>
 
-#include <fea/util.hpp>
-
 #include "chunk.hpp"
-#include "worldmessages.hpp"
 #include "worldconstants.hpp"
 
 #define PR(x) std::cerr << #x << " = " << (x) << std::endl;
@@ -41,6 +38,14 @@ struct Mod
         : coord(coord), type(type) {}
 };
 
+//regions are defined locally to only the modmanager
+using RegionCoord = glm::i64vec3;
+using RegionChunkCoord = glm::u8vec3;
+const uint32_t regionChunkWidth = 32;
+
+using ChunkToRegion = CoordinateCoarseConvert<ChunkCoord, RegionCoord, regionChunkWidth>;
+using ChunkToRegionChunk = CoordinateWrapConvert<ChunkCoord, RegionChunkCoord, 0, regionChunkWidth - 1>;
+
 using ChunkIndex = uint32_t;
 using ChunkModMap = std::unordered_map<ChunkVoxelCoord, VoxelType>;
 using RegionModMap = std::unordered_map<RegionChunkCoord, ChunkModMap>;
@@ -59,7 +64,7 @@ struct ModManagerException : public std::exception
 class ModManager 
 {
     public:
-        ModManager(fea::MessageBus& bus, const std::string& worldName);
+        ModManager(const std::string& worldName);
         void loadMods(Chunk& chunk);
         void saveMods();
         void saveMods(RegionCoord regionLoc);
@@ -75,7 +80,6 @@ class ModManager
         void _setMod(const RegionCoord& regionLoc, const RegionChunkCoord& chunkLoc, const ChunkVoxelCoord& voxLoc, VoxelType type);
         std::string getFilename(RegionCoord regionLoc);
 
-        fea::MessageBus& mBus;
         RegionCoord mRegionLoc;
         std::string mIndexPath;
         std::string mDataPath;

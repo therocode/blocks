@@ -3,16 +3,15 @@
 
 using namespace std;
 
-ModManager::ModManager(fea::MessageBus& bus, const std::string& worldName) :
-    mBus(bus),
+ModManager::ModManager(const std::string& worldName) :
     mWorldName(worldName)
 {
 }
 
 void ModManager::loadMods(Chunk& chunk)
 {
-    RegionCoord regionLoc = chunkToRegion(chunk.getLocation());
-    RegionChunkCoord chunkLoc = chunkToRegionChunk(chunk.getLocation()); 
+    RegionCoord regionLoc = ChunkToRegion::convert(chunk.getLocation());
+    RegionChunkCoord chunkLoc = ChunkToRegionChunk::convert(chunk.getLocation()); 
 
     RegionModMap::const_iterator got = mMods[regionLoc].find(chunkLoc);
     if(got == mMods[regionLoc].end())
@@ -60,12 +59,9 @@ void ModManager::loadMods(Chunk& chunk)
         for(ChunkModMap::iterator it = mods.begin(); it != mods.end(); ++it) 
         {
             vta[it->first.x + it->first.z*chunkWidth + it->first.y*chunkWidthPow2] = it->second;
-            //chunk.setVoxelType(it->first.x, it->first.y, it->first.z, it->second);
         }
         chunk.setVoxelData(vta);
     }
-
-    mBus.send(ChunkModdedMessage{chunk, timestamp});
 }
 
 void ModManager::saveMods()
@@ -188,16 +184,16 @@ void ModManager::saveMods(RegionCoord regionLoc)
 
 void ModManager::setMod(ChunkCoord loc, ChunkVoxelCoord voxLoc, VoxelType type)
 {
-    RegionCoord regionLoc = chunkToRegion(loc);
-    RegionChunkCoord chunkLoc = chunkToRegionChunk(loc);
+    RegionCoord regionLoc = ChunkToRegion::convert(loc);
+    RegionChunkCoord chunkLoc = ChunkToRegionChunk::convert(loc);
 
     _setMod(regionLoc, chunkLoc, voxLoc, type);
 }
 
 VoxelType ModManager::getMod(ChunkCoord loc, ChunkVoxelCoord voxLoc)
 {
-    RegionCoord regionLoc = chunkToRegion(loc);
-    RegionChunkCoord chunkLoc = chunkToRegionChunk(loc);
+    RegionCoord regionLoc = ChunkToRegion::convert(loc);
+    RegionChunkCoord chunkLoc = ChunkToRegionChunk::convert(loc);
 
     return mMods[regionLoc][chunkLoc][voxLoc];
 }
@@ -224,8 +220,8 @@ void ModManager::deleteRegionFile(const RegionCoord& regionLoc)
 
 void ModManager::recordTimestamp(ChunkCoord loc, uint64_t timestamp)
 {
-    RegionCoord regionLoc = chunkToRegion(loc);
-    RegionChunkCoord chunkLoc = chunkToRegionChunk(loc);
+    RegionCoord regionLoc = ChunkToRegion::convert(loc);
+    RegionChunkCoord chunkLoc = ChunkToRegionChunk::convert(loc);
 
     mTimestamps[regionLoc][chunkLoc] = timestamp;
 }

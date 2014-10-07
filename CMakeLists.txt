@@ -83,6 +83,7 @@ set(source_files
     src/script/interfaces/scriptinterface.cpp
     src/script/interfaces/stringinterface.cpp
 
+    src/utilities/coordinateconverter.cpp
     src/utilities/directorycreator.cpp
     src/utilities/folderexploder.cpp
     src/utilities/fpscontroller.cpp
@@ -101,7 +102,6 @@ set(source_files
     src/world/region.cpp
     src/world/regiondatafragment.cpp
     src/world/world.cpp
-    src/world/worldconstants.cpp
     src/world/worldsystem.cpp
     src/world/worldloader.cpp
     src/world/generation/biome.cpp
@@ -201,6 +201,7 @@ set(header_files
     src/script/interfaces/scriptinterface.hpp
     src/script/interfaces/stringinterface.hpp
 
+    src/utilities/coordinateconverters.hpp
     src/utilities/directorycreator.hpp
     src/utilities/folderexploder.hpp
     src/utilities/fpscontroller.hpp
@@ -262,6 +263,12 @@ if(NOT SDL2_FOUND)
 	link_directories(${CMAKE_CURRENT_SOURCE_DIR}/extlibs/SDL-2.0/lib)
 endif(NOT SDL2_FOUND)
 
+if(NOT MSVC)
+    set(CPP_11_FLAG -std=c++11)
+endif()
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CPP_11_FLAG} -pthread")
+
 if(BUILD_GAME)
     add_executable(${project_name} ${header_files} ${source_files})
     
@@ -272,20 +279,6 @@ if(BUILD_GAME)
     	include_directories(${CMAKE_CURRENT_SOURCE_DIR}/extlibs/SDL-2.0/include)
     	target_link_libraries(${project_name} SDL2main SDL2)
     endif()
-    
-    #instead of setting compiler flags globally. SFML doesn't like building with this flag on.
-    #set_target_properties(${project_name} PROPERTIES COMPILE_FLAGS "-std=c++11 -pthread")
-    if(NOT MSVC)
-        set(CPP_11_FLAG -std=c++11)
-    endif()
-
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CPP_11_FLAG} -pthread")
-    
-    #But that doesn't work in windows.
-    #if(WIN32)
-        #    add_definitions(-std=c++11 -pthread)
-        #	add_definitions(-O4)
-        #endif(WIN32)
     
     #if(ENET_FOUND)
     #	include_directories(${ENet_INCLUDE_DIRS})
@@ -355,25 +348,25 @@ endif(BUILD_GAME)
 
 #tests
 if(BUILD_TESTS)
-    add_executable(test_modmanager "test/world/modmanagertest.cpp" "src/world/modmanager.cpp" "src/world/chunk.cpp" "src/world/worldconstants.cpp" "src/utilities/directorycreator.cpp")
+    add_executable(test_modmanager "test/world/modmanagertest.cpp" "src/world/modmanager.cpp" "src/world/chunk.cpp" "src/utilities/directorycreator.cpp" "src/utilities/coordinateconverter.cpp")
     target_link_libraries(test_modmanager ${FEATHERKIT_LIBRARIES})
     
-    add_executable(test_highlightmanager "test/world/highlightmanagertest.cpp" "src/world/highlightmanager.cpp" "src/world/worldconstants.cpp")
+    add_executable(test_highlightmanager "test/world/highlightmanagertest.cpp" "src/world/highlightmanager.cpp")
     target_link_libraries(test_highlightmanager ${FEATHERKIT_LIBRARIES})
     
-    add_executable(test_coordinate "test/world/coordinatetest.cpp" "src/world/worldconstants.cpp")
+    add_executable(test_coordinate "test/world/coordinatetest.cpp" "src/utilities/coordinateconverter.cpp")
     target_link_libraries(test_coordinate ${FEATHERKIT_LIBRARIES})
     
-    add_executable(test_world_misc "test/world/misctest.cpp" "src/world/worldconstants.cpp" "src/world/region.cpp" "src/world/regiondatafragment.cpp")
-    target_link_libraries(test_world_misc ${FEATHERKIT_LIBRARIES})
+    #add_executable(test_world_misc "test/world/misctest.cpp" "src/world/worldconstants.cpp" "src/world/region.cpp" "src/world/regiondatafragment.cpp")
+    #target_link_libraries(test_world_misc ${FEATHERKIT_LIBRARIES})
     
     add_executable(test_utilities "test/utilities/utilitiestest.cpp" "src/utilities/directorycreator.cpp")
     target_link_libraries(test_utilities ${FEATHERKIT_LIBRARIES})
     
-    add_executable(test_chunk "test/world/chunktest.cpp" "src/world/chunk.cpp" "src/world/worldconstants.cpp")
+    add_executable(test_chunk "test/world/chunktest.cpp" "src/world/chunk.cpp")
     target_link_libraries(test_chunk ${FEATHERKIT_LIBRARIES})
 	
     #profiling
-    add_executable(profile_modmanager "profile/world/modmanagerprofile.cpp" "src/world/modmanager.cpp" "src/world/chunk.cpp" "src/world/worldconstants.cpp" "src/utilities/directorycreator.cpp")
+    add_executable(profile_modmanager "profile/world/modmanagerprofile.cpp" "src/world/modmanager.cpp" "src/world/chunk.cpp" "src/utilities/directorycreator.cpp" "src/utilities/coordinateconverter.cpp")
     target_link_libraries(profile_modmanager ${FEATHERKIT_LIBRARIES})
 endif(BUILD_TESTS)
