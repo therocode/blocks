@@ -1,8 +1,8 @@
 #pragma once
-#include "blockstd.hpp"
+#include "utilities/glm.hpp"
 #include "entitycontroller.hpp"
 #include "../entitymessages.hpp"
-#include "math/mathutils.hpp"
+#include "../../utilities/geomath.hpp"
 #include "../../world/worldid.hpp"
 
 class CollisionController : public EntityController,

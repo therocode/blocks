@@ -40,8 +40,6 @@ set(source_files
 
     src/input/inputadaptor.cpp
 
-    src/math/mathutils.cpp
-
     src/networking/serverclientbridge.cpp
     
     src/rendering/chunkgeneratorqueue.cpp
@@ -88,6 +86,7 @@ set(source_files
     src/utilities/directorycreator.cpp
     src/utilities/folderexploder.cpp
     src/utilities/fpscontroller.cpp
+    src/utilities/geomath.cpp
     src/utilities/lodepng.cpp
     src/utilities/logger.cpp
     src/utilities/random.cpp
@@ -113,7 +112,6 @@ set(source_files
     )
 
 set(header_files
-    src/blockstd.hpp
     src/gameinterface.hpp
     src/lognames.hpp
     src/application/applicationmessages.hpp
@@ -143,8 +141,6 @@ set(header_files
     src/input/inputmessages.hpp
     src/input/inputactions.hpp
     src/input/inputadaptor.hpp
-
-    src/math/mathutils.hpp
 
     src/networking/clientconnection.hpp
     src/networking/clientconnectionlistener.hpp
@@ -208,6 +204,8 @@ set(header_files
     src/utilities/directorycreator.hpp
     src/utilities/folderexploder.hpp
     src/utilities/fpscontroller.hpp
+    src/utilities/geomath.hpp
+    src/utilities/glm.hpp
     src/utilities/lodepng.hpp
     src/utilities/logger.hpp
 	src/utilities/random.hpp

@@ -3,7 +3,7 @@
 #include <string>
 #include <fea/util.hpp>
 #include <fea/entitysystem.hpp>
-#include "../blockstd.hpp"
+#include "../utilities/glm.hpp"
 
 class ScriptEntityCore
 {
