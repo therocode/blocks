@@ -157,6 +157,15 @@ void ServerNetworkingSystem::handleMessage(const ChunksDataMessage& received)
     
     if(received.chunks.size() > 0)
     {
+        ClientChunksDeliverMessage message;
+
+        for(const auto& chunkIterator : received.chunks)
+        {
+            message.coordinates.push_back(chunkIterator.first);
+
+            VoxelTypeData voxelData = chunkIterator.second.getVoxelTypeData();
+            message.rleData.push_back({voxelData.mRleSegmentIndices, voxelData.mRleSegments});
+        }
     }
 }
 

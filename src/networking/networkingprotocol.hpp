@@ -4,12 +4,13 @@
 #include <cstdint>
 #include <string>
 #include <unordered_map>
+#include "../world/worldstd.hpp"
 
 enum { INVALID = -1, 
     //joining
     CLIENT_JOIN_REQUESTED, CLIENT_JOIN_DENIED, CLIENT_JOIN_ACCEPTED,
     //chunks
-    CLIENT_REQUESTED_CHUNKS, CLIENT_CHUNKS_DENIED,
+    CLIENT_REQUESTED_CHUNKS, CLIENT_CHUNKS_DENIED, CLIENT_CHUNKS_DELIVERY,
     //tests
     TEST_1, TEST_2 };
 
@@ -109,6 +110,20 @@ struct ClientChunksDeniedMessage
         archive(coordinates);
     }
 
+    std::vector<ChunkCoord> coordinates;
+};
+
+struct ClientChunksDeliverMessage
+{
+    int32_t getType() const {return CLIENT_CHUNKS_DELIVERY;}
+
+    template<class Archive>
+    void serialize(Archive& archive)
+    {
+        archive(coordinates);
+    }
+
+    std::vector<std::pair<RleIndexArray, RleSegmentArray>> rleData;
     std::vector<ChunkCoord> coordinates;
 };
 
