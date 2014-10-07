@@ -16,7 +16,8 @@ const int32_t voxelAmount = chunkWidthPow3;
 //top/bottom: y, -y
 //left/right:-x,  x
 //front/back:-z,  z
-enum CUBE_FACES{
+enum CubeFace
+{
 	CUBE_TOP = 0,
 	CUBE_BOTTOM,
 	CUBE_LEFT,

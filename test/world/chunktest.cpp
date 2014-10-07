@@ -129,47 +129,47 @@ TEST_CASE("solidSide", "[solidSide]")
 	VoxelTypeArray voxels;
 	Chunk chunk;
 
-	REQUIRE(chunk.getSideSolidity(Chunk::LEFT) == EMPTY);
-	REQUIRE(chunk.getSideSolidity(Chunk::RIGHT) == EMPTY);
-	REQUIRE(chunk.getSideSolidity(Chunk::BOTTOM) == EMPTY);
-	REQUIRE(chunk.getSideSolidity(Chunk::TOP) == EMPTY);
-	REQUIRE(chunk.getSideSolidity(Chunk::FRONT) == EMPTY);
-	REQUIRE(chunk.getSideSolidity(Chunk::BACK) == EMPTY);
+	REQUIRE(chunk.getSideSolidity(CUBE_LEFT) == EMPTY);
+	REQUIRE(chunk.getSideSolidity(CUBE_RIGHT) == EMPTY);
+	REQUIRE(chunk.getSideSolidity(CUBE_BOTTOM) == EMPTY);
+	REQUIRE(chunk.getSideSolidity(CUBE_TOP) == EMPTY);
+	REQUIRE(chunk.getSideSolidity(CUBE_FRONT) == EMPTY);
+	REQUIRE(chunk.getSideSolidity(CUBE_BACK) == EMPTY);
 
 	
 	ChunkVoxelCoord coords(0, chunkWidth/2, chunkWidth/2);
 	chunk.setVoxelType(coords, 1);
-	REQUIRE(chunk.getSideSolidity(Chunk::LEFT) == INBETWEEN);
+	REQUIRE(chunk.getSideSolidity(CUBE_LEFT) == INBETWEEN);
 	
 	coords.x = chunkWidth-1;
 	chunk.setVoxelType(coords, 1);
-	REQUIRE(chunk.getSideSolidity(Chunk::RIGHT) == INBETWEEN);
+	REQUIRE(chunk.getSideSolidity(CUBE_RIGHT) == INBETWEEN);
 
 	
 	coords = ChunkVoxelCoord(chunkWidth/2, 0, chunkWidth/2);
 	chunk.setVoxelType(coords, 1);
-	REQUIRE(chunk.getSideSolidity(Chunk::BOTTOM) == INBETWEEN);
+	REQUIRE(chunk.getSideSolidity(CUBE_BOTTOM) == INBETWEEN);
 	
 	coords.y = chunkWidth-1;
 	chunk.setVoxelType(coords, 1);
-	REQUIRE(chunk.getSideSolidity(Chunk::TOP) == INBETWEEN);
+	REQUIRE(chunk.getSideSolidity(CUBE_TOP) == INBETWEEN);
 
 	
 	coords = ChunkVoxelCoord(chunkWidth/2, chunkWidth/2, 0);
 	chunk.setVoxelType(coords, 1);
-	REQUIRE(chunk.getSideSolidity(Chunk::FRONT) == INBETWEEN);
+	REQUIRE(chunk.getSideSolidity(CUBE_FRONT) == INBETWEEN);
 	
 	coords.z = chunkWidth-1;
 	chunk.setVoxelType(coords, 1);
-	REQUIRE(chunk.getSideSolidity(Chunk::BACK) == INBETWEEN);
+	REQUIRE(chunk.getSideSolidity(CUBE_BACK) == INBETWEEN);
 	
 
 	voxels.fill(1);
 	chunk.setVoxelData(voxels);
-	REQUIRE(chunk.getSideSolidity(Chunk::LEFT) == SOLID);
-	REQUIRE(chunk.getSideSolidity(Chunk::RIGHT) == SOLID);
-	REQUIRE(chunk.getSideSolidity(Chunk::BOTTOM) == SOLID);
-	REQUIRE(chunk.getSideSolidity(Chunk::TOP) == SOLID);
-	REQUIRE(chunk.getSideSolidity(Chunk::FRONT) == SOLID);
-	REQUIRE(chunk.getSideSolidity(Chunk::BACK) == SOLID);
+	REQUIRE(chunk.getSideSolidity(CUBE_LEFT) == SOLID);
+	REQUIRE(chunk.getSideSolidity(CUBE_RIGHT) == SOLID);
+	REQUIRE(chunk.getSideSolidity(CUBE_BOTTOM) == SOLID);
+	REQUIRE(chunk.getSideSolidity(CUBE_TOP) == SOLID);
+	REQUIRE(chunk.getSideSolidity(CUBE_FRONT) == SOLID);
+	REQUIRE(chunk.getSideSolidity(CUBE_BACK) == SOLID);
 }
