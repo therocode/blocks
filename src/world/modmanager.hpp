@@ -14,7 +14,7 @@
 
 #include "chunk.hpp"
 #include "worldmessages.hpp"
-#include "worldstd.hpp"
+#include "worldconstants.hpp"
 
 #define PR(x) std::cerr << #x << " = " << (x) << std::endl;
 

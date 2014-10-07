@@ -5,7 +5,7 @@
 #include <fea/entitysystem.hpp>
 
 #include "chunk.hpp"
-#include "worldstd.hpp"
+#include "worldconstants.hpp"
 
 #define PR(x) std::cerr << #x << " = " << (x) << std::endl;
 

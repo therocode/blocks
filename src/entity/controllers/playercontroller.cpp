@@ -97,27 +97,27 @@ void PlayerController::handleMessage(const PlayerActionMessage& received)
 			// printf("ChunkCoord: %i, %i, %i. VoxelCoord: %i, %i, %i. World: %i, %i, %i\n", cc.x, cc.y, cc.z, vc.x, vc.y, vc.z, voxel.x, voxel.y, voxel.z);
 			// printf("Face: %i\n", face);
 			switch(face){
-				case FACE_TOP:
+				case CUBE_TOP:
 					voxel.y++;
 					// printf("Top face\n");
 					break;
-				case FACE_BOTTOM:
+				case CUBE_BOTTOM:
 					voxel.y--;
 					// printf("Bottom face\n");
 					break;
-				case FACE_LEFT:
+				case CUBE_LEFT:
 					voxel.x--;
 					// printf("left face\n");
 					break;
-				case FACE_RIGHT:
+				case CUBE_RIGHT:
 					voxel.x++;
 					// printf("right face\n");
 					break;
-				case FACE_FRONT:
+				case CUBE_FRONT:
 					voxel.z--;
 					// printf("front face\n");
 					break;
-				case FACE_BACK:
+				case CUBE_BACK:
 					voxel.z++;
 					// printf("back face\n");
 					break;

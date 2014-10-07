@@ -1,9 +1,29 @@
 #pragma once
 #include <cstdint>
 #include <functional>
+#include <array>
+#include <vector>
 #include <unordered_map>
-#include "worldstd.hpp"
+#include "worldconstants.hpp"
 #include "../utilities/glmhash.hpp"
+
+struct RleSegmentInfo
+{
+    uint32_t mSegmentStart;
+    uint32_t mSegmentSize;
+};
+
+using VoxelTypeArray = std::array<VoxelType, voxelAmount>;
+using VoxelSegmentTypeArray = std::array<VoxelType, chunkWidth>;
+using RleIndexArray = std::array<RleSegmentInfo, chunkWidthPow2>;
+using RleSegmentArray = std::vector<uint16_t>;
+
+struct VoxelTypeData
+{
+    VoxelTypeData(const RleIndexArray& rleSegmentIndices, const RleSegmentArray& rleSegments);
+    const RleIndexArray& mRleSegmentIndices;
+    const RleSegmentArray& mRleSegments;    
+};
 
 enum Solidity {EMPTY, SOLID, INBETWEEN};
 

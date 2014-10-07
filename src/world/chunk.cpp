@@ -3,6 +3,11 @@
 #include <chrono>
 #include <algorithm>
 
+VoxelTypeData::VoxelTypeData(const RleIndexArray& rleSegmentIndices, const RleSegmentArray& rleSegments) : mRleSegmentIndices(rleSegmentIndices), mRleSegments(rleSegments)
+{
+
+}
+
 Chunk::Chunk()
 {
     VoxelTypeArray types;

@@ -1,7 +1,7 @@
 #pragma once
 #include "surfacemerger.hpp"
 #include <bitset>
-#include "../world/worldstd.hpp"
+#include "../world/worldconstants.hpp"
 
 using RleIterator = const uint16_t*;
 

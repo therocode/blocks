@@ -2,7 +2,7 @@
 #include <fea/util.hpp>
 #include "../utilities/glm.hpp"
 #include "../utilities/loglevel.hpp"
-#include "../world/worldid.hpp"
+#include "../world/worldconstants.hpp"
 
 struct FrameMessage
 {

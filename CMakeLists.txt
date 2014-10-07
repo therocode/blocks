@@ -101,7 +101,7 @@ set(source_files
     src/world/region.cpp
     src/world/regiondatafragment.cpp
     src/world/world.cpp
-    src/world/worldstd.cpp
+    src/world/worldconstants.cpp
     src/world/worldsystem.cpp
     src/world/worldloader.cpp
     src/world/generation/biome.cpp
@@ -220,7 +220,7 @@ set(header_files
     src/world/region.hpp
     src/world/regiondatafragment.hpp
     src/world/world.hpp
-    src/world/worldstd.hpp
+    src/world/worldconstants.hpp
 	src/world/worldsystem.hpp
     src/world/worldloader.hpp
 	src/world/worldmessages.hpp
@@ -355,25 +355,25 @@ endif(BUILD_GAME)
 
 #tests
 if(BUILD_TESTS)
-    add_executable(test_modmanager "test/world/modmanagertest.cpp" "src/world/modmanager.cpp" "src/world/chunk.cpp" "src/world/worldstd.cpp" "src/utilities/directorycreator.cpp")
+    add_executable(test_modmanager "test/world/modmanagertest.cpp" "src/world/modmanager.cpp" "src/world/chunk.cpp" "src/world/worldconstants.cpp" "src/utilities/directorycreator.cpp")
     target_link_libraries(test_modmanager ${FEATHERKIT_LIBRARIES})
     
-    add_executable(test_highlightmanager "test/world/highlightmanagertest.cpp" "src/world/highlightmanager.cpp" "src/world/worldstd.cpp")
+    add_executable(test_highlightmanager "test/world/highlightmanagertest.cpp" "src/world/highlightmanager.cpp" "src/world/worldconstants.cpp")
     target_link_libraries(test_highlightmanager ${FEATHERKIT_LIBRARIES})
     
-    add_executable(test_coordinate "test/world/coordinatetest.cpp" "src/world/worldstd.cpp")
+    add_executable(test_coordinate "test/world/coordinatetest.cpp" "src/world/worldconstants.cpp")
     target_link_libraries(test_coordinate ${FEATHERKIT_LIBRARIES})
     
-    add_executable(test_world_misc "test/world/misctest.cpp" "src/world/worldstd.cpp" "src/world/region.cpp" "src/world/regiondatafragment.cpp")
+    add_executable(test_world_misc "test/world/misctest.cpp" "src/world/worldconstants.cpp" "src/world/region.cpp" "src/world/regiondatafragment.cpp")
     target_link_libraries(test_world_misc ${FEATHERKIT_LIBRARIES})
     
     add_executable(test_utilities "test/utilities/utilitiestest.cpp" "src/utilities/directorycreator.cpp")
     target_link_libraries(test_utilities ${FEATHERKIT_LIBRARIES})
     
-    add_executable(test_chunk "test/world/chunktest.cpp" "src/world/chunk.cpp" "src/world/worldstd.cpp")
+    add_executable(test_chunk "test/world/chunktest.cpp" "src/world/chunk.cpp" "src/world/worldconstants.cpp")
     target_link_libraries(test_chunk ${FEATHERKIT_LIBRARIES})
 	
     #profiling
-    add_executable(profile_modmanager "profile/world/modmanagerprofile.cpp" "src/world/modmanager.cpp" "src/world/chunk.cpp" "src/world/worldstd.cpp" "src/utilities/directorycreator.cpp")
+    add_executable(profile_modmanager "profile/world/modmanagerprofile.cpp" "src/world/modmanager.cpp" "src/world/chunk.cpp" "src/world/worldconstants.cpp" "src/utilities/directorycreator.cpp")
     target_link_libraries(profile_modmanager ${FEATHERKIT_LIBRARIES})
 endif(BUILD_TESTS)

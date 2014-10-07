@@ -1,5 +1,5 @@
 #include "raycaster.hpp"
-#include "worldstd.hpp"
+#include "worldconstants.hpp"
 #include "world.hpp"
 
 bool RayCaster::getVoxelAtRay(const World& world, const glm::vec3& position, const glm::vec3& direction, const float maxDistance, uint32_t& hitFace, VoxelCoord& hitBlock)
@@ -29,29 +29,29 @@ bool RayCaster::getVoxelAtRay(const World& world, const glm::vec3& position, con
     if(d.x > 0)
     {
         bounds.x = 1.0f;
-        enterFaces[0] = FACE_LEFT;
+        enterFaces[0] = CUBE_LEFT;
     }
     else
     {
-        enterFaces[0] = FACE_RIGHT;
+        enterFaces[0] = CUBE_RIGHT;
     }
     if(d.y > 0)
     {
         bounds.y = 1.0f;
-        enterFaces[1] = FACE_BOTTOM;
+        enterFaces[1] = CUBE_BOTTOM;
     }
     else
     {
-        enterFaces[1] = FACE_TOP;
+        enterFaces[1] = CUBE_TOP;
     }
     if(d.z > 0)
     {
         bounds.z = 1.0f;
-        enterFaces[2] = FACE_FRONT;
+        enterFaces[2] = CUBE_FRONT;
     }
     else
     {
-        enterFaces[2] = FACE_BACK;
+        enterFaces[2] = CUBE_BACK;
     }
     float ix, iy, iz;
     while(steps < 256)

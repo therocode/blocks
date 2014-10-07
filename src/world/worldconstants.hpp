@@ -1,8 +1,7 @@
 #pragma once
 #include "utilities/glm.hpp"
-#include <vector>
-#include <array>
-#include "worldid.hpp"
+
+using WorldId = uint32_t;
 
 using VoxelCoord       = glm::i64vec3;
 using ChunkCoord       = glm::i64vec3; 
@@ -25,33 +24,16 @@ const int32_t voxelAmount = chunkWidthPow3;
 //top/bottom: y, -y
 //left/right:-x,  x
 //front/back:-z,  z
-enum BLOCK_FACES{
-	FACE_TOP = 0,
-	FACE_BOTTOM,
-	FACE_LEFT,
-	FACE_RIGHT, 
-	FACE_FRONT,
-	FACE_BACK
-};
-
-struct RleSegmentInfo
-{
-    uint32_t mSegmentStart;
-    uint32_t mSegmentSize;
+enum CUBE_FACES{
+	CUBE_TOP = 0,
+	CUBE_BOTTOM,
+	CUBE_LEFT,
+	CUBE_RIGHT, 
+	CUBE_FRONT,
+	CUBE_BACK
 };
 
 using VoxelType = uint16_t;
-using VoxelTypeArray = std::array<VoxelType, voxelAmount>;
-using VoxelSegmentTypeArray = std::array<VoxelType, chunkWidth>;
-using RleIndexArray = std::array<RleSegmentInfo, chunkWidthPow2>;
-using RleSegmentArray = std::vector<uint16_t>;
-
-struct VoxelTypeData
-{
-    VoxelTypeData(const RleIndexArray& rleSegmentIndices, const RleSegmentArray& rleSegments);
-    const RleIndexArray& mRleSegmentIndices;
-    const RleSegmentArray& mRleSegments;    
-};
 
 VoxelCoord       chunkToVoxel(      const ChunkCoord& chunkCoordinate);
 VoxelCoord       worldToVoxel(      const glm::vec3&   worldCoordinate);

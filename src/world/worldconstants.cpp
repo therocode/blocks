@@ -1,4 +1,4 @@
-#include "worldstd.hpp"
+#include "worldconstants.hpp"
 
 int64_t wrapInt(int64_t kX, int64_t const kLowerBound, int64_t const kUpperBound)
 {
@@ -8,11 +8,6 @@ int64_t wrapInt(int64_t kX, int64_t const kLowerBound, int64_t const kUpperBound
         kX += range_size * ((kLowerBound - kX) / range_size + 1);
 
     return kLowerBound + (kX - kLowerBound) % range_size;
-}
-
-VoxelTypeData::VoxelTypeData(const RleIndexArray& rleSegmentIndices, const RleSegmentArray& rleSegments) : mRleSegmentIndices(rleSegmentIndices), mRleSegments(rleSegments)
-{
-
 }
 
 VoxelCoord chunkToVoxel(const ChunkCoord& chunkCoordinate)
