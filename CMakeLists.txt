@@ -101,7 +101,7 @@ set(source_files
     src/world/raycaster.cpp
     src/world/region.cpp
     src/world/regiondatafragment.cpp
-    src/world/world.cpp
+    src/world/voxelstorage.cpp
     src/world/worldsystem.cpp
     src/world/worldloader.cpp
     src/world/generation/biome.cpp
@@ -220,7 +220,7 @@ set(header_files
     src/world/raycaster.hpp
     src/world/region.hpp
     src/world/regiondatafragment.hpp
-    src/world/world.hpp
+    src/world/voxelstorage.hpp
     src/world/worldconstants.hpp
 	src/world/worldsystem.hpp
     src/world/worldloader.hpp
@@ -366,7 +366,7 @@ if(BUILD_TESTS)
     add_executable(test_chunk "test/world/chunktest.cpp" "src/world/chunk.cpp")
     target_link_libraries(test_chunk ${FEATHERKIT_LIBRARIES})
     
-    add_executable(test_world "test/world/worldtest.cpp" "src/world/chunk.cpp" "src/world/world.cpp" "src/world/ranges.cpp")
+    add_executable(test_world "test/world/worldtest.cpp" "src/world/chunk.cpp" "src/world/voxelstorage.cpp" "src/world/ranges.cpp")
     target_link_libraries(test_world ${FEATHERKIT_LIBRARIES})
 
     add_executable(test_interpolation_grid3d "test/utilities/interpolationgrid3dtest.cpp")
