@@ -2,12 +2,12 @@
 #include "worldconstants.hpp"
 #include "voxelstorage.hpp"
 
-bool RayCaster::getVoxelAtRay(const World& world, const glm::vec3& position, const glm::vec3& direction, const float maxDistance, uint32_t& hitFace, VoxelCoord& hitBlock)
+bool RayCaster::getVoxelAtRay(const VoxelStorage& world, const glm::vec3& position, const glm::vec3& direction, const float maxDistance, uint32_t& hitFace, VoxelCoord& hitBlock)
 {
-    VoxelCoord voxel = worldToVoxel(position);
+    VoxelCoord voxel = WorldToVoxel::convert(position);
 
     glm::vec3 bp = glm::fract(position);
-    ChunkVoxelCoord chunkCoordinate = voxelToChunkVoxel(voxel);
+    ChunkVoxelCoord chunkCoordinate = VoxelToChunkVoxel::convert(voxel);
     //printf("ip:%i, %i, %i\n", ip[0], ip[1], ip[2]);
     //printf("ip:%i, %i, %i\n", chunkCoordinate[0], chunkCoordinate[1], chunkCoordinate[2]);
     //printf("rp:%f, %f, %f\n", ox, oy, oz);
@@ -77,7 +77,11 @@ bool RayCaster::getVoxelAtRay(const World& world, const glm::vec3& position, con
         float lengthToNextBlock = 0.1f;
         lengthToNextBlock = mind + 0.01f;
 
-        vtype = world.getVoxelType(voxel);
+        vtype = 0;
+        
+        const auto chunk = world.find(VoxelToChunk::convert(voxel));
+        if(chunk != world.end())
+            vtype = chunk->second.getVoxelType(VoxelToChunkVoxel::convert(voxel));
 
         if(vtype != (uint16_t)0) 
             break;

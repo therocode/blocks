@@ -203,8 +203,8 @@ void Client::fetchServerData()
 
 			std::tie(voxelCoord, type) = voxelSetPackage->getData();
 
-            ChunkCoord chunkCoord = voxelToChunk(voxelCoord);
-            ChunkVoxelCoord chunkVoxelCoord = voxelToChunkVoxel(voxelCoord);
+            ChunkCoord chunkCoord = VoxelToChunk::convert(voxelCoord);
+            ChunkVoxelCoord chunkVoxelCoord = VoxelToChunkVoxel::convert(voxelCoord);
 
             auto chunk = mLocalChunks.find(chunkCoord);
 

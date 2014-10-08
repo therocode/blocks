@@ -18,10 +18,17 @@ void LandscapeInterface::registerInterface(asIScriptEngine* engine)
 
 void LandscapeInterface::setVoxelType(WorldId worldId, const glm::vec3& coordinate, uint16_t type)
 {
-    mBus.send(SetVoxelMessage{worldId, worldToVoxel(coordinate), type});
+    mBus.send(SetVoxelMessage{worldId, WorldToVoxel::convert(coordinate), type});
 }
 
 VoxelType LandscapeInterface::getVoxelType(WorldId id, const glm::vec3& coordinate)
 {
-    return mGameInterface.getWorldSystem().getWorld(id).getVoxelType(worldToVoxel(coordinate));
+    VoxelType type = 0;
+
+    const auto& chunks = mGameInterface.getWorldSystem().getWorld(id);
+    const auto chunk = chunks.find(WorldToChunk::convert(coordinate));
+
+    if(chunk != chunks.end())
+        type = chunk->second.getVoxelType(WorldToChunkVoxel::convert(coordinate));
+    return type;
 }

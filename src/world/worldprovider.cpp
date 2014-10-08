@@ -1,6 +1,5 @@
 #include "worldprovider.hpp"
-#include "region.hpp"
-#include "../application/applicationmessages.hpp"
+#include "regiondatafragment.hpp"
 
 const std::string logName = "world_gen";
 const int32_t threadAmount = 3;
@@ -47,14 +46,6 @@ WorldProvider::~WorldProvider()
     mBus.send(LogMessage{"Shutting down world generation thread pool", logName, LogLevel::INFO});
 }
 
-void WorldProvider::handleMessage(const RegionRequestedMessage& received)
-{
-    //add region to load to other thread
-
-    auto bound = std::bind(&WorldProvider::generateRegion, this, received.worldId, received.coordinate);
-    mRegionsToDeliver.push_back(mWorkerPool.enqueue(bound, 0));
-}
-
 void WorldProvider::handleMessage(const ChunkRequestedMessage& received)
 {
     //add chunk to load to other thread
@@ -65,20 +56,6 @@ void WorldProvider::handleMessage(const ChunkRequestedMessage& received)
 
 void WorldProvider::handleMessage(const FrameMessage& received)
 {
-    for(auto iter = mRegionsToDeliver.begin(); iter != mRegionsToDeliver.end();)
-    {
-        if(iter->wait_for(std::chrono::seconds(0)) == std::future_status::ready)
-        {
-            RegionDelivery delivery = iter->get();
-            mBus.send(RegionDeliverMessage({delivery.id, delivery.coordinate, std::move(delivery.region)}));
-            iter = mRegionsToDeliver.erase(iter);
-        }
-        else
-        {
-            iter++;
-        }
-    }
-
     for(auto iter = mChunksToDeliver.begin(); iter != mChunksToDeliver.end();)
     {
         if(iter->wait_for(std::chrono::seconds(0)) == std::future_status::ready)
@@ -94,27 +71,11 @@ void WorldProvider::handleMessage(const FrameMessage& received)
     }
 }
 
-RegionDelivery WorldProvider::generateRegion(WorldId worldId, const RegionCoord& coordinate)
-{
-    RegionDelivery delivery;
-    RegionGenerator regionGenerator;
-
-    regionGenerator.setSeed(worldId + 50);
-
-    delivery.id = worldId;
-    delivery.coordinate = coordinate;
-    delivery.region = regionGenerator.generateRegion(coordinate);
-
-    return delivery;
-}
-
 ChunkDelivery WorldProvider::generateChunk(WorldId worldId, const ChunkCoord& coordinate, const RegionDataFragment& regionFragment)
 {
     ChunkDelivery delivery;
     ChunkGenerator generator;
     
-    RegionCoord regionCoordinate = chunkToRegion(coordinate);
-
     delivery.id = worldId;
     delivery.coordinate = coordinate;
 

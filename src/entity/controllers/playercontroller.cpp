@@ -33,16 +33,16 @@ void PlayerController::handleMessage(const PlayerJoinedMessage& received)
     mBus.send(EntityRequestedMessage{"Player", [&] (fea::EntityPtr e) 
             {
                 e->setAttribute("current_world", received.worldId);
-                e->setAttribute("current_chunk", worldToChunk(position));
+                e->setAttribute("current_chunk", WorldToChunk::convert(position));
                 e->setAttribute("position", position);
                 playerEntity = e;
             }});
 
     mPlayerEntities.emplace(playerId, playerEntity);
-    mBus.send(PlayerEntersChunkMessage{playerId, worldToChunk(position)});
-    mBus.send(HighlightEntityAddRequestedMessage{received.worldId, playerEntity->getId(), worldToChunk(position)});
+    mBus.send(PlayerEntersChunkMessage{playerId, WorldToChunk::convert(position)});
+    mBus.send(HighlightEntityAddRequestedMessage{received.worldId, playerEntity->getId(), WorldToChunk::convert(position)});
 
-    ChunkCoord chunkAt = worldToChunk(position);
+    ChunkCoord chunkAt = WorldToChunk::convert(position);
 
     mBus.send(PlayerConnectedToEntityMessage{(fea::EntityId)playerId, playerEntity->getId()});
 }
@@ -92,8 +92,8 @@ void PlayerController::handleMessage(const PlayerActionMessage& received)
         {
 			VoxelCoord voxel = entity->getAttribute<VoxelCoord>("block_facing");
 			uint32_t face = entity->getAttribute<uint32_t>("block_facing_face");
-			ChunkCoord cc = voxelToChunk(voxel);
-			ChunkVoxelCoord vc = voxelToChunkVoxel(voxel);
+			ChunkCoord cc = VoxelToChunk::convert(voxel);
+			ChunkVoxelCoord vc = VoxelToChunkVoxel::convert(voxel);
 			// printf("ChunkCoord: %i, %i, %i. VoxelCoord: %i, %i, %i. World: %i, %i, %i\n", cc.x, cc.y, cc.z, vc.x, vc.y, vc.z, voxel.x, voxel.y, voxel.z);
 			// printf("Face: %i\n", face);
 			switch(face){
@@ -134,7 +134,7 @@ void PlayerController::handleMessage(const PlayerActionMessage& received)
 
         mBus.send(HighlightEntityRemoveRequestedMessage{oldWorld, entityId});
         entity->setAttribute("current_world", nextWorld);
-        mBus.send(HighlightEntityAddRequestedMessage{nextWorld, entityId, worldToChunk(entity->getAttribute<glm::vec3>("position"))});
+        mBus.send(HighlightEntityAddRequestedMessage{nextWorld, entityId, WorldToChunk::convert(entity->getAttribute<glm::vec3>("position"))});
     }
 }
 
@@ -195,9 +195,9 @@ void PlayerController::handleMessage(const EntityMovedMessage& received)
         //updating current chunk
         glm::vec3 position = entity->getAttribute<glm::vec3>("position");
 
-        if(worldToChunk(position) != entity->getAttribute<ChunkCoord>("current_chunk"))
+        if(WorldToChunk::convert(position) != entity->getAttribute<ChunkCoord>("current_chunk"))
         {
-            playerEntersChunk(id, worldToChunk(position));
+            playerEntersChunk(id, WorldToChunk::convert(position));
         }
     }
 

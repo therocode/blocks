@@ -182,12 +182,6 @@ void Server::acceptClientConnection(std::shared_ptr<ClientConnection> client)
         client->enqueuePackage(gfxEntityAddedPackage);
     }
 
-    //resend chunk created messages
-    for(const auto& chunk : mGameInterface.getWorldSystem().getWorld(0).getChunkMap())  //for world 0, thish shouldn't be hard coded
-    {
-        std::shared_ptr<BasePackage> chunkAddedPackage(new ChunkLoadedPackage(chunk.first, chunk.second.getVoxelTypeData().mRleSegmentIndices, chunk.second.getVoxelTypeData().mRleSegments));
-        client->enqueuePackage(chunkAddedPackage);
-    }
 
     mBus.send(PlayerJoinedMessage{newClientId, 0, glm::vec3(0.0f, 45.0f, 0.0f)}); //position and world could be loaded from file or at spawn
 }

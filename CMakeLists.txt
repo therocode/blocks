@@ -99,16 +99,13 @@ set(source_files
     src/world/modmanager.cpp
     src/world/ranges.cpp
     src/world/raycaster.cpp
-    src/world/region.cpp
     src/world/regiondatafragment.cpp
-    src/world/voxelstorage.cpp
     src/world/worldsystem.cpp
     src/world/worldloader.cpp
     src/world/generation/biome.cpp
     src/world/generation/biomestorage.cpp
     src/world/generation/chunkgenerator.cpp
     src/world/generation/regiondatagenerator.cpp
-    src/world/generation/regiongenerator.cpp
     )
 
 set(header_files
@@ -218,9 +215,7 @@ set(header_files
     src/world/highlightmanager.hpp
     src/world/modmanager.hpp
     src/world/raycaster.hpp
-    src/world/region.hpp
     src/world/regiondatafragment.hpp
-    src/world/voxelstorage.hpp
     src/world/worldconstants.hpp
 	src/world/worldsystem.hpp
     src/world/worldloader.hpp
@@ -230,7 +225,6 @@ set(header_files
 	src/world/generation/biomestorage.hpp
     src/world/generation/chunkgenerator.hpp
     src/world/generation/regiondatagenerator.hpp
-    src/world/generation/regiongenerator.hpp
 )
 
 find_package(Featherkit REQUIRED COMPONENTS entity structure ui sdl2 util)
@@ -366,9 +360,6 @@ if(BUILD_TESTS)
     add_executable(test_chunk "test/world/chunktest.cpp" "src/world/chunk.cpp")
     target_link_libraries(test_chunk ${FEATHERKIT_LIBRARIES})
     
-    add_executable(test_world "test/world/worldtest.cpp" "src/world/chunk.cpp" "src/world/voxelstorage.cpp" "src/world/ranges.cpp")
-    target_link_libraries(test_world ${FEATHERKIT_LIBRARIES})
-
     add_executable(test_interpolation_grid3d "test/utilities/interpolationgrid3dtest.cpp")
     target_link_libraries(test_interpolation_grid3d ${FEATHERKIT_LIBRARIES})
 	

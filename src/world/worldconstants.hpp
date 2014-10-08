@@ -36,4 +36,5 @@ using WorldToChunk =      CoordinateCoarseConvert<glm::vec3, ChunkCoord, chunkWi
 using VoxelToWorld =      CoordinateFineConvert<VoxelCoord, glm::vec3, 1>;
 using ChunkToWorld =      CoordinateFineConvert<ChunkCoord, glm::vec3, chunkWidth>;
 using VoxelToChunk =      CoordinateCoarseConvert<VoxelCoord, ChunkCoord, chunkWidth>;
+using WorldToChunkVoxel = CoordinateWrapConvert<glm::vec3, ChunkVoxelCoord, 0, chunkWidth - 1>;
 using VoxelToChunkVoxel = CoordinateWrapConvert<VoxelCoord, ChunkVoxelCoord, 0, chunkWidth - 1>;
