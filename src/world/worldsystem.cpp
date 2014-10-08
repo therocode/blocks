@@ -1,5 +1,5 @@
 #include "worldsystem.hpp"
-#include "world.hpp"
+#include "voxelstorage.hpp"
 #include <fea/util.hpp>
 #include "../application/applicationmessages.hpp"
 #include "../lognames.hpp"

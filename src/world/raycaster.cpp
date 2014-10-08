@@ -1,6 +1,6 @@
 #include "raycaster.hpp"
 #include "worldconstants.hpp"
-#include "world.hpp"
+#include "voxelstorage.hpp"
 
 bool RayCaster::getVoxelAtRay(const World& world, const glm::vec3& position, const glm::vec3& direction, const float maxDistance, uint32_t& hitFace, VoxelCoord& hitBlock)
 {

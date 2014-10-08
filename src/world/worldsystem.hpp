@@ -5,7 +5,7 @@
 #include "../rendering/renderingmessages.hpp"
 #include "worldmessages.hpp"
 #include "worldparameters.hpp"
-#include "world.hpp"
+#include "voxelstorage.hpp"
 #include "worldprovider.hpp"
 #include <memory>
 
