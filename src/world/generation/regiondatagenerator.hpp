@@ -1,16 +1,16 @@
 #pragma once
 #include "../valuemap.hpp"
 
-using RegionCoord = glm::i64vec2;
+using BiomeRegionCoord = glm::i64vec2;
 
 class RegionDataGenerator
 {
     public:
         void setSeed(int32_t seed);
-        FloatMap generateHeightmap(const RegionCoord& regionCoordinate) const;
-        FloatMap generateRainfall(const RegionCoord& regionCoordinate) const;
-        FloatMap generateTemperature(const RegionCoord& regionCoordinate, const FloatMap& height) const;
-        FloatMap generateBiomeSelector(const RegionCoord& regionCoordinate) const;
+        FloatMap generateHeightmap(const BiomeRegionCoord& regionCoordinate) const;
+        FloatMap generateRainfall(const BiomeRegionCoord& regionCoordinate) const;
+        FloatMap generateTemperature(const BiomeRegionCoord& regionCoordinate, const FloatMap& height) const;
+        FloatMap generateBiomeSelector(const BiomeRegionCoord& regionCoordinate) const;
     private:
         int32_t mSeed;
 };

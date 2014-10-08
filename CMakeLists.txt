@@ -201,7 +201,7 @@ set(header_files
     src/script/interfaces/scriptinterface.hpp
     src/script/interfaces/stringinterface.hpp
 
-    src/utilities/coordinateconverters.hpp
+    src/utilities/coordinateconverter.hpp
     src/utilities/directorycreator.hpp
     src/utilities/folderexploder.hpp
     src/utilities/fpscontroller.hpp

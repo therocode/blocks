@@ -1,16 +1,11 @@
 #pragma once
 #include <fea/entitysystem.hpp>
 #include <fea/util.hpp>
+#include "worldconstants.hpp"
 
 class Region;
 class Chunk;
 class RegionDataFragment;
-
-using WorldId = uint32_t;
-using VoxelType = uint16_t;
-using VoxelCoord       = glm::i64vec3;
-using ChunkCoord       = glm::i64vec3; 
-using ChunkVoxelCoord  = glm::u8vec3;
 
 struct SetVoxelMessage
 {
@@ -20,16 +15,6 @@ struct SetVoxelMessage
 struct VoxelSetMessage
 {
     const VoxelCoord& voxel; VoxelType type;
-};
-
-struct RegionRequestedMessage
-{
-    WorldId worldId; const RegionCoord& coordinate;
-};
-
-struct RegionDeliverMessage
-{
-    WorldId worldId; const RegionCoord& coordinate; const Region& newRegion;
 };
 
 struct ChunkRequestedMessage
