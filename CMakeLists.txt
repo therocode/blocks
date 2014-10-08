@@ -211,6 +211,7 @@ set(header_files
 	src/utilities/tinydir.hpp
 
 	src/world/chunk.hpp
+    src/world/worlddata.hpp
     src/world/valuemap.hpp
     src/world/highlightmanager.hpp
     src/world/modmanager.hpp

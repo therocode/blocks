@@ -5,7 +5,7 @@
 #include "../rendering/renderingmessages.hpp"
 #include "worldmessages.hpp"
 #include "worldparameters.hpp"
-#include "voxelstorage.hpp"
+#include "worlddata.hpp"
 #include "worldprovider.hpp"
 #include <memory>
 
@@ -27,8 +27,10 @@ class WorldSystem :
         const VoxelStorage& getWorldVoxels(WorldId id) const;
     private:
         fea::MessageBus& mBus;
-        std::unordered_map<WorldId, VoxelStorage> mWorldVoxels;
-        std::unordered_map<std::string, WorldId> mIdentifierToIdMap;
-        WorldId mNextId;
         WorldProvider mWorldProvider;
+
+        //world data
+        WorldId mNextId;
+        std::unordered_map<std::string, WorldId> mIdentifierToIdMap;
+        std::unordered_map<WorldId, WorldData> mWorldData;
 };

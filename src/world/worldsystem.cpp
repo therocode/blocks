@@ -1,14 +1,15 @@
 #include "worldsystem.hpp"
-#include "voxelstorage.hpp"
 #include <fea/util.hpp>
+#include <fea/assert.hpp>
+#include "voxelstorage.hpp"
 #include "../application/applicationmessages.hpp"
 #include "../lognames.hpp"
 #include "../world/worldloader.hpp"
 
 WorldSystem::WorldSystem(fea::MessageBus& messageBus) 
 :   mBus(messageBus),
-    mNextId(0),
-    mWorldProvider(mBus)
+    mWorldProvider(mBus),
+    mNextId(0)
 {
     mBus.send(LogMessage{"Setting up world system", worldName, LogLevel::INFO});
     subscribe(mBus, *this);
@@ -38,8 +39,8 @@ WorldSystem::~WorldSystem()
 
 void WorldSystem::handleMessage(const SetVoxelMessage& received)
 {
-    FEA_ASSERT(mWorldVoxels.count(received.worldId) != 0, "Trying to get world id " + std::to_string(received.worldId) + " but that world does not exist!");
-    auto& chunks = mWorldVoxels.at(received.worldId);
+    FEA_ASSERT(mWorldData.count(received.worldId) != 0, "Trying to get world id " + std::to_string(received.worldId) + " but that world does not exist!");
+    auto& chunks = mWorldData.at(received.worldId).voxels;
     auto chunk = chunks.find(VoxelToChunk::convert(received.voxel));
 
     if(chunk != chunks.end())
@@ -55,32 +56,32 @@ void WorldSystem::handleMessage(const ChunkDeliverMessage& received)
     Chunk chunk = received.chunk;
 
     //check against ranges and active chunks!!!!!
-    mWorldVoxels.at(received.worldId).emplace(coordinate, chunk);
+    mWorldData.at(received.worldId).voxels.emplace(coordinate, chunk);
 }
 
 void WorldSystem::handleMessage(const HighlightEntityAddRequestedMessage& received)
 {
-    FEA_ASSERT(mWorldVoxels.count(received.worldId) != 0, "Trying to add a highlight entity to world " + std::to_string(received.worldId) + " but that world does not exist");
+    FEA_ASSERT(mWorldData.count(received.worldId) != 0, "Trying to add a highlight entity to world " + std::to_string(received.worldId) + " but that world does not exist");
 
     //hook up to something
 }
 
 void WorldSystem::handleMessage(const HighlightEntityMoveRequestedMessage& received)
 {
-    FEA_ASSERT(mWorldVoxels.count(received.worldId) != 0, "Trying to move a highlight entity in world " + std::to_string(received.worldId) + " but that world does not exist");
+    FEA_ASSERT(mWorldData.count(received.worldId) != 0, "Trying to move a highlight entity in world " + std::to_string(received.worldId) + " but that world does not exist");
 
     //hook up to something
 }
 
 void WorldSystem::handleMessage(const HighlightEntityRemoveRequestedMessage& received)
 {
-    FEA_ASSERT(mWorldVoxels.count(received.worldId) != 0, "Trying to remove a highlight entity from world " + std::to_string(received.worldId) + " but that world does not exist");
+    FEA_ASSERT(mWorldData.count(received.worldId) != 0, "Trying to remove a highlight entity from world " + std::to_string(received.worldId) + " but that world does not exist");
 
     //hook up to something
 }
 
 const VoxelStorage& WorldSystem::getWorldVoxels(WorldId id) const
 {
-    FEA_ASSERT(mWorldVoxels.count(id) != 0, "Trying to get world id " + std::to_string(id) + " but that world does not exist!");
-    return mWorldVoxels.at(id);
+    FEA_ASSERT(mWorldData.count(id) != 0, "Trying to get world id " + std::to_string(id) + " but that world does not exist!");
+    return mWorldData.at(id).voxels;
 }
