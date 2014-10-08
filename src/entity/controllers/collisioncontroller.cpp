@@ -106,7 +106,7 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& receiv
 
         if(n < 1.f )
         {
-            const auto& chunks = mGameInterface.getWorldSystem().getWorld(worldId);
+            const auto& chunks = mGameInterface.getWorldSystem().getWorldVoxels(worldId);
             const auto chunk = chunks.find(VoxelToChunk::convert(currentHitBlock));
 
             int32_t blockType = 0;
@@ -252,7 +252,7 @@ bool CollisionController::testAABBWorld(WorldId worldId, const AABB& a) const{
 
                 int blockType = 0;
                 
-                const auto& chunks = mGameInterface.getWorldSystem().getWorld(worldId);
+                const auto& chunks = mGameInterface.getWorldSystem().getWorldVoxels(worldId);
                 const auto chunk = chunks.find(VoxelToChunk::convert(coord));
                 if(chunk != chunks.end())
                     blockType = chunk->second.getVoxelType(VoxelToChunkVoxel::convert(coord));
@@ -303,7 +303,7 @@ glm::vec3 CollisionController::pushOutFromBlocks(WorldId worldId, const AABB& _a
                 b.y -= _a.y;
                 b.z -= _a.z;
 
-                const auto& chunks = mGameInterface.getWorldSystem().getWorld(worldId);
+                const auto& chunks = mGameInterface.getWorldSystem().getWorldVoxels(worldId);
                 const auto chunk = chunks.find(VoxelToChunk::convert(coord));
                 int blockType = 0;
                 
@@ -364,7 +364,7 @@ float CollisionController::sweepAroundAABB(WorldId worldId, const AABB _a, glm::
                 b.z -= _a.z;
 
                 int blockType = 0;
-                const auto& chunks = mGameInterface.getWorldSystem().getWorld(worldId);
+                const auto& chunks = mGameInterface.getWorldSystem().getWorldVoxels(worldId);
                 const auto chunk = chunks.find(VoxelToChunk::convert(coord));
                 
                 if(chunk != chunks.end())
@@ -402,7 +402,7 @@ float CollisionController::sweepAroundAABB(WorldId worldId, const AABB _a, glm::
                             nc[axis] -= 1;
 
                         int voxelType = 0;
-                        const auto& chunks = mGameInterface.getWorldSystem().getWorld(worldId);
+                        const auto& chunks = mGameInterface.getWorldSystem().getWorldVoxels(worldId);
                         const auto chunk = chunks.find(VoxelToChunk::convert(nc));
                         
                         if(chunk != chunks.end())
@@ -447,7 +447,7 @@ bool CollisionController::AABBOnGround(WorldId worldId, AABB a)
             pos.x = x + a.x;
             pos.z = z + a.z;
             int32_t voxelType = 0;
-            const auto& chunks = mGameInterface.getWorldSystem().getWorld(worldId);
+            const auto& chunks = mGameInterface.getWorldSystem().getWorldVoxels(worldId);
             const auto chunk = chunks.find(WorldToChunk::convert(pos));
 
             if(chunk != chunks.end())

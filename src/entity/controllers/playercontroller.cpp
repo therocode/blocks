@@ -223,7 +223,7 @@ void PlayerController::updateVoxelLookAt(size_t playerId)
 	glm::vec3 direction = glm::vec3(glm::cos(pitch) * glm::sin(yaw), glm::sin(pitch), glm::cos(pitch) * glm::cos(yaw));
 	VoxelCoord block;
 	uint32_t face;
-	bool f = RayCaster::getVoxelAtRay(mGameInterface.getWorldSystem().getWorld(worldId), position + glm::vec3(0, 0.6f, 0), direction, 200.f, face, block);
+	bool f = RayCaster::getVoxelAtRay(mGameInterface.getWorldSystem().getWorldVoxels(worldId), position + glm::vec3(0, 0.6f, 0), direction, 200.f, face, block);
 
     if(entity)
     {

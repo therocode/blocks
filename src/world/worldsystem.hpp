@@ -24,12 +24,11 @@ class WorldSystem :
         void handleMessage(const HighlightEntityAddRequestedMessage& received) override;
         void handleMessage(const HighlightEntityMoveRequestedMessage& received) override;
         void handleMessage(const HighlightEntityRemoveRequestedMessage& received) override;
-        void addWorld(const WorldParameters& worldParameters);
-        const VoxelStorage& getWorld(WorldId id) const;
+        const VoxelStorage& getWorldVoxels(WorldId id) const;
     private:
         fea::MessageBus& mBus;
-        std::unordered_map<WorldId, std::unique_ptr<VoxelStorage>> mWorlds;
-        std::unordered_map<std::string, WorldId> mWorldIds;
+        std::unordered_map<WorldId, VoxelStorage> mWorldVoxels;
+        std::unordered_map<std::string, WorldId> mIdentifierToIdMap;
         WorldId mNextId;
         WorldProvider mWorldProvider;
 };

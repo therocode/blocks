@@ -25,7 +25,7 @@ VoxelType LandscapeInterface::getVoxelType(WorldId id, const glm::vec3& coordina
 {
     VoxelType type = 0;
 
-    const auto& chunks = mGameInterface.getWorldSystem().getWorld(id);
+    const auto& chunks = mGameInterface.getWorldSystem().getWorldVoxels(id);
     const auto chunk = chunks.find(WorldToChunk::convert(coordinate));
 
     if(chunk != chunks.end())
