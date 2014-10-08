@@ -40,8 +40,7 @@ struct ChunkDelivery
 };
 
 class WorldProvider :
-    public fea::MessageReceiver<RegionRequestedMessage,
-                                ChunkRequestedMessage,
+    public fea::MessageReceiver<ChunkRequestedMessage,
                                 FrameMessage>
 {
     public:

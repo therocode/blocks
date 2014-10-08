@@ -154,7 +154,6 @@ set(header_files
     src/networking/localclientconnectionlistener.cpp
     src/networking/localserverclientbridge.cpp
     src/networking/package.cpp
-    src/networking/serverclientbridge.hpp
 
     src/rendering/chunkgeneratorqueue.hpp
     src/rendering/debugrenderer.hpp
@@ -207,6 +206,7 @@ set(header_files
     src/utilities/fpscontroller.hpp
     src/utilities/geomath.hpp
     src/utilities/glm.hpp
+    src/utilities/interpolationgrid3d.hpp
     src/utilities/lodepng.hpp
     src/utilities/logger.hpp
 	src/utilities/random.hpp
@@ -368,6 +368,9 @@ if(BUILD_TESTS)
     
     add_executable(test_world "test/world/worldtest.cpp" "src/world/chunk.cpp" "src/world/world.cpp" "src/world/ranges.cpp")
     target_link_libraries(test_world ${FEATHERKIT_LIBRARIES})
+
+    add_executable(test_interpolation_grid3d "test/utilities/interpolationgrid3dtest.cpp")
+    target_link_libraries(test_interpolation_grid3d ${FEATHERKIT_LIBRARIES})
 	
     #profiling
     add_executable(profile_modmanager "profile/world/modmanagerprofile.cpp" "src/world/modmanager.cpp" "src/world/chunk.cpp" "src/utilities/directorycreator.cpp" "src/utilities/coordinateconverter.cpp")
