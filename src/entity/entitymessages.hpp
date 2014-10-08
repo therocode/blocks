@@ -4,7 +4,7 @@
 #include "controllers/moveaction.hpp"
 #include <fea/util.hpp>
 #include <fea/entitysystem.hpp>
-#include "../world/worldconstants.hpp"
+#include "../world/worlddefines.hpp"
 
 struct EntityMoveRequestedMessage
 {

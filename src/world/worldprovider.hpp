@@ -3,7 +3,6 @@
 #include "modmanager.hpp"
 #include "generation/chunkgenerator.hpp"
 #include "../utilities/threadpool.hpp"
-#include "generation/biomestorage.hpp"
 #include "worldmessages.hpp"
 #include "../application/applicationmessages.hpp"
 
@@ -31,7 +30,7 @@ class WorldProvider :
         ChunkGenerator mChunkGenerator;
 
         ThreadPool mWorkerPool;
-        std::unordered_map<std::thread::id, BiomeStorage> mThreadStorage;
+        //std::unordered_map<std::thread::id, BiomeStorage> mThreadStorage;
 
         std::vector<std::future<ChunkDelivery>> mChunksToDeliver;
 };

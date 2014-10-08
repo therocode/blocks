@@ -1,7 +1,7 @@
 #pragma once
 #include <fea/entitysystem.hpp>
 #include <fea/util.hpp>
-#include "worldconstants.hpp"
+#include "worlddefines.hpp"
 
 class Region;
 class Chunk;

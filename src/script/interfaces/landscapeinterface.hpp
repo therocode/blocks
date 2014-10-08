@@ -2,7 +2,7 @@
 #include "utilities/glm.hpp"
 #include "scriptinterface.hpp"
 #include "utilities/random.hpp"
-#include "world/worldconstants.hpp"
+#include "world/worlddefines.hpp"
 
 class GameInterface;
 using VoxelType = uint16_t;

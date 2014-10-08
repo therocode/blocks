@@ -3,7 +3,7 @@
 #include "entitycontroller.hpp"
 #include "../entitymessages.hpp"
 #include "../../utilities/geomath.hpp"
-#include "../../world/worldconstants.hpp"
+#include "../../world/worlddefines.hpp"
 
 class CollisionController : public EntityController,
                             public fea::MessageReceiver<EntityMoveRequestedMessage>

@@ -4,7 +4,7 @@
 #include <array>
 #include <vector>
 #include <unordered_map>
-#include "worldconstants.hpp"
+#include "worlddefines.hpp"
 #include "../utilities/glmhash.hpp"
 
 struct RleSegmentInfo

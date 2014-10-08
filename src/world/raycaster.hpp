@@ -1,6 +1,6 @@
 #pragma once
 #include "../utilities/glm.hpp"
-#include "worldconstants.hpp"
+#include "worlddefines.hpp"
 #include "voxelstorage.hpp"
 
 class RayCaster

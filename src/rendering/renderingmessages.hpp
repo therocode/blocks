@@ -1,6 +1,6 @@
 #pragma once
 #include <fea/util.hpp>
-#include "../world/worldconstants.hpp"
+#include "../world/worlddefines.hpp"
 
 class Chunk;
 

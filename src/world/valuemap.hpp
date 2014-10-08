@@ -2,7 +2,7 @@
 #include <string>
 #include <memory>
 #include <fea/assert.hpp>
-#include "worldconstants.hpp"
+#include "worlddefines.hpp"
 
 template <class ValueType>
 class ValueMap

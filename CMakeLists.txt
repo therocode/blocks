@@ -93,6 +93,7 @@ set(source_files
     src/utilities/random.cpp
     src/utilities/timer.cpp
 
+    src/world/biome.cpp
     src/world/chunk.cpp
     src/world/worldprovider.cpp
     src/world/highlightmanager.cpp
@@ -102,8 +103,6 @@ set(source_files
     src/world/regiondatafragment.cpp
     src/world/worldsystem.cpp
     src/world/worldloader.cpp
-    src/world/generation/biome.cpp
-    src/world/generation/biomestorage.cpp
     src/world/generation/chunkgenerator.cpp
     src/world/generation/regiondatagenerator.cpp
     )
@@ -210,6 +209,8 @@ set(header_files
 	src/utilities/timer.hpp
 	src/utilities/tinydir.hpp
 
+	src/world/biome.hpp
+	src/world/biomedefines.hpp
 	src/world/chunk.hpp
     src/world/worlddata.hpp
     src/world/valuemap.hpp
@@ -217,13 +218,11 @@ set(header_files
     src/world/modmanager.hpp
     src/world/raycaster.hpp
     src/world/regiondatafragment.hpp
-    src/world/worldconstants.hpp
+    src/world/worlddefines.hpp
 	src/world/worldsystem.hpp
     src/world/worldloader.hpp
 	src/world/worldmessages.hpp
     src/world/worldprovider.hpp
-	src/world/generation/biome.hpp
-	src/world/generation/biomestorage.hpp
     src/world/generation/chunkgenerator.hpp
     src/world/generation/regiondatagenerator.hpp
 )

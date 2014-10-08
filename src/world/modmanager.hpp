@@ -11,7 +11,7 @@
 #include <vector>
 
 #include "chunk.hpp"
-#include "worldconstants.hpp"
+#include "worlddefines.hpp"
 
 #define PR(x) std::cerr << #x << " = " << (x) << std::endl;
 
