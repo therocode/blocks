@@ -28,13 +28,3 @@ void World::removeChunk(const ChunkCoord& coordinate)
 
     mChunks.erase(coordinate);
 }
-
-VoxelType World::getVoxelType(const VoxelCoord& voxelCoordinate) const
-{
-    return -1;
-}
-
-bool World::setVoxelType(const VoxelCoord& voxelCoordinate, VoxelType type)
-{
-    return false;
-}
