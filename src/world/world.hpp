@@ -1,45 +1,22 @@
 #pragma once
 #include "chunk.hpp"
-#include "region.hpp"
-#include "highlightmanager.hpp"
-#include "modmanager.hpp"
 #include <unordered_map>
-#include <unordered_set>
-#include <fea/util.hpp>
 #include "ranges.hpp"
 
 class World
 {
     public:
-        World(fea::MessageBus& b, WorldId id, const std::string& textIdentifier, const std::string& title, const Ranges& ranges);
-        ~World();
-        ChunkReferenceMap getChunkMap() const;
-        void deliverRegion(const RegionCoord& coordinate, const Region& region);
-        void deliverChunk(const ChunkCoord& coordinate, Chunk& chunk);
-        VoxelType getVoxelType(const VoxelCoord& voxelCoordinate) const;
-        bool setVoxelType(const VoxelCoord& voxelCoord, VoxelType type);
-
-        void addHighlightEntity(fea::EntityId id, const ChunkCoord& coordinate);
-        void removeHighlightEntity(fea::EntityId id);
-        void moveHighlightEntity(fea::EntityId id, const ChunkCoord& coordinate);
+        World(const std::string& title, const Ranges& ranges = Ranges());
+        void addChunk(const ChunkCoord& coordinate, const Chunk& chunk);
+        const Chunk* findChunk(const ChunkCoord& coordinate) const;
+        void removeChunk(const ChunkCoord& coordinate);
     private:
-        bool hasRegion(const RegionCoord& coordinate) const;
-        void activateChunk(const ChunkCoord& coordinate, int32_t priority);
-        void deactivateChunk(const ChunkCoord& coordinate);
-
-        fea::MessageBus& mBus;
 
         //world information
-        WorldId     mId;
         std::string mTextIdentifier;
-        std::string mTitle;  //unused right now
+        std::string mTitle;
 
         Ranges mWorldRange;
 
-        std::unordered_map<RegionCoord, Region> mRegions;
-
-        //highlight management
-        HighlightManager mHighlightManager;
-        ModManager mModManager;
-        std::unordered_map<RegionCoord, std::unordered_set<ChunkCoord>> mHighlightedRegions;
+        std::unordered_map<ChunkCoord, Chunk> mChunks;
 };

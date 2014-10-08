@@ -3,6 +3,11 @@
 #include <chrono>
 #include <algorithm>
 
+bool RleSegmentInfo::operator==(const RleSegmentInfo& other) const
+{
+    return mSegmentStart == other.mSegmentStart && mSegmentSize == other.mSegmentSize;
+}
+
 VoxelTypeData::VoxelTypeData(const RleIndexArray& rleSegmentIndices, const RleSegmentArray& rleSegments) : mRleSegmentIndices(rleSegmentIndices), mRleSegments(rleSegments)
 {
 
@@ -29,6 +34,11 @@ Chunk::Chunk(const ChunkCoord& loc, const VoxelTypeArray& types) : mLocation(loc
 
 Chunk::Chunk(const ChunkCoord& loc, const RleIndexArray& indices, const RleSegmentArray& rleData) : mLocation(loc), mRleSegmentIndices(indices), mRleSegments(rleData)
 {
+}
+
+bool Chunk::operator==(const Chunk& other) const
+{
+    return mRleSegmentIndices == other.mRleSegmentIndices && mRleSegments == other.mRleSegments;
 }
 
 //changing the fourth letter to b:

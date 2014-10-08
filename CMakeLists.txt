@@ -365,6 +365,9 @@ if(BUILD_TESTS)
     
     add_executable(test_chunk "test/world/chunktest.cpp" "src/world/chunk.cpp")
     target_link_libraries(test_chunk ${FEATHERKIT_LIBRARIES})
+    
+    add_executable(test_world "test/world/worldtest.cpp" "src/world/chunk.cpp" "src/world/world.cpp" "src/world/ranges.cpp")
+    target_link_libraries(test_world ${FEATHERKIT_LIBRARIES})
 	
     #profiling
     add_executable(profile_modmanager "profile/world/modmanagerprofile.cpp" "src/world/modmanager.cpp" "src/world/chunk.cpp" "src/utilities/directorycreator.cpp" "src/utilities/coordinateconverter.cpp")

@@ -1,6 +1,6 @@
 #pragma once
-#include "utilities/glm.hpp"
-#include "utilities/coordinateconverter.hpp"
+#include "../utilities/glm.hpp"
+#include "../utilities/coordinateconverter.hpp"
 
 using WorldId = uint32_t;
 

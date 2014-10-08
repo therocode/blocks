@@ -9,6 +9,7 @@
 
 struct RleSegmentInfo
 {
+    bool operator==(const RleSegmentInfo& other) const;
     uint32_t mSegmentStart;
     uint32_t mSegmentSize;
 };
@@ -34,6 +35,7 @@ class Chunk
         Chunk(const ChunkCoord& loc);
         Chunk(const ChunkCoord& loc, const VoxelTypeArray& types);
         Chunk(const ChunkCoord& loc, const RleIndexArray& indices, const RleSegmentArray& rleData);
+        bool operator==(const Chunk& other) const;
         void setVoxelType(const ChunkVoxelCoord& voxel, VoxelType type);
         void setVoxelData(const VoxelTypeArray& types);
         VoxelType getVoxelType(const ChunkVoxelCoord& voxel) const;
@@ -54,10 +56,6 @@ class Chunk
 
         RleIndexArray mRleSegmentIndices;
         RleSegmentArray mRleSegments;
-
-        static uint32_t totalTime;
-        static uint32_t totalSize;
-        static uint32_t timesGenerated;
 };
 
 using ChunkMap = std::unordered_map<ChunkCoord, Chunk>;

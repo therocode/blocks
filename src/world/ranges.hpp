@@ -10,7 +10,7 @@ struct Ranges
     static int32_t MAX;
     static int32_t MIN;
     Ranges(const IntRange& x, const IntRange& y, const IntRange& z);
-    bool isWithin(const glm::ivec3& coordinate) const;
+    bool isWithin(const glm::i64vec3& coordinate) const;
     IntRange xRange;
     IntRange yRange;
     IntRange zRange;
