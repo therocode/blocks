@@ -1,4 +1,4 @@
-#include "world.hpp"
+#include "voxelstorage.hpp"
 #include <fea/assert.hpp>
 #include <limits>
 
