@@ -4,20 +4,8 @@
 #include <fea/util.hpp>
 #include "../rendering/renderingmessages.hpp"
 #include "worldmessages.hpp"
-#include "worldparameters.hpp"
-#include "worlddata.hpp"
 #include "worldprovider.hpp"
-#include "highlightmanager.hpp"
-#include <memory>
-
-struct WorldEntry
-{
-    WorldEntry(const std::string& identifier);
-    WorldData worldData;
-
-    HighlightManager highlightManager; //TBI
-    ModManager modManager; //TBI
-};
+#include "worldentry.hpp"
 
 class WorldSystem : 
         public fea::MessageReceiver<SetVoxelMessage,

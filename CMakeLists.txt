@@ -100,6 +100,7 @@ set(source_files
     src/world/ranges.cpp
     src/world/raycaster.cpp
     src/world/regiondatafragment.cpp
+    src/world/worldentry.cpp
     src/world/worldprovider.cpp
     src/world/worldsystem.cpp
     src/world/worldloader.cpp
@@ -222,6 +223,7 @@ set(header_files
     src/world/regiondatafragment.hpp
     src/world/worlddata.hpp
     src/world/worlddefines.hpp
+    src/world/worldentry.hpp
 	src/world/worldsystem.hpp
     src/world/worldloader.hpp
 	src/world/worldmessages.hpp

@@ -3,6 +3,7 @@
 #include "biomedefines.hpp"
 #include "biome.hpp"
 #include "field.hpp"
+#include "ranges.hpp"
 
 struct WorldData
 {
