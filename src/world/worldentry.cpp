@@ -1,7 +1,10 @@
 #include "worldentry.hpp"
+#include "worldmessages.hpp"
 #include <algorithm>
 
-WorldEntry::WorldEntry(const std::string& identifier) :
+WorldEntry::WorldEntry(fea::MessageBus& bus, WorldId id, const std::string& identifier) :
+    mBus(bus),
+    mId(id),
     mHighlightManager(8), //this should be read from somewhere else, probably server settings
     mModManager(identifier)
 {
@@ -35,6 +38,22 @@ void WorldEntry::removeHighlightEntity(uint32_t id)
         deactivateChunk(chunk);
 }
 
+void WorldEntry::deliverBiome(const BiomeRegionCoord& coordinate, const BiomeGrid& biomeData)
+{
+    if(mBiomeGridNotifier.isActive(coordinate))
+    {
+        mWorldData.biomeGrids.emplace(coordinate, biomeData);
+
+        auto iterator = mPendingChunksToRequests.find(coordinate);
+
+        if(iterator != mPendingChunksToRequests.end())
+        {
+            for(const auto& chunk : iterator->second)
+                ;//send chunk request with biome data
+        }
+    }
+}
+
 const ChunkMap& WorldEntry::getChunkMap() const
 {
     return mWorldData.voxels;
@@ -52,7 +71,7 @@ void WorldEntry::activateChunk(const ChunkCoord& chunkCoordinate)
 
     for(const auto& biomeRegionCoord : activatedBiomes)
     {
-        //send biome request asynchronously
+        mBus.send(BiomeRequestedMessage{mId, biomeRegionCoord});
     }
 
     //secondly, the activated chunk will need to be generated as well, but we can't do that if the biome hasn't been delivered since we need data from the biome to pass on to the generator. Hence, if the biome doesn't exist, we store the request

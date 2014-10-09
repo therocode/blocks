@@ -52,7 +52,15 @@ void WorldSystem::handleMessage(const SetVoxelMessage& received)
     }
 }
 
-void WorldSystem::handleMessage(const ChunkDeliverMessage& received)
+void WorldSystem::handleMessage(const BiomeDeliveredMessage& received)
+{
+    auto iterator = mWorlds.find(received.worldId);
+
+    if(iterator != mWorlds.end())
+        iterator->second.deliverBiome(received.coordinate, received.biomeData);
+}
+
+void WorldSystem::handleMessage(const ChunkDeliveredMessage& received)
 {
     ChunkCoord coordinate = received.coordinate;
     Chunk chunk = received.chunk;
@@ -94,5 +102,5 @@ void WorldSystem::createWorld(const WorldParameters& parameters)
 
     mIdentifierToIdMap.emplace(parameters.identifier, newId);   
 
-    mWorlds.emplace(newId, WorldEntry(parameters.identifier));
+    mWorlds.emplace(newId, WorldEntry(mBus, newId, parameters.identifier));
 }

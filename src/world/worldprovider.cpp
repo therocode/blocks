@@ -61,7 +61,7 @@ void WorldProvider::handleMessage(const FrameMessage& received)
         if(iter->wait_for(std::chrono::seconds(0)) == std::future_status::ready)
         {
             ChunkDelivery delivery = iter->get();
-            mBus.send(ChunkDeliverMessage({delivery.id, delivery.coordinate, std::move(delivery.chunk)}));
+            mBus.send(ChunkDeliveredMessage({delivery.id, delivery.coordinate, std::move(delivery.chunk)}));
             iter = mChunksToDeliver.erase(iter);
         }
         else

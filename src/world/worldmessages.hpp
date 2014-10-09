@@ -2,6 +2,7 @@
 #include <fea/entitysystem.hpp>
 #include <fea/util.hpp>
 #include "worlddefines.hpp"
+#include "biomedefines.hpp"
 
 class Region;
 class Chunk;
@@ -17,12 +18,22 @@ struct VoxelSetMessage
     const VoxelCoord& voxel; VoxelType type;
 };
 
+struct BiomeRequestedMessage
+{
+    WorldId worldId; const BiomeRegionCoord& coordinate;
+};
+
+struct BiomeDeliveredMessage
+{
+    WorldId worldId; const BiomeRegionCoord& coordinate; const BiomeGrid& biomeData;
+};
+
 struct ChunkRequestedMessage
 {
     int32_t prio; WorldId worldId; const ChunkCoord& coordinate; const RegionDataFragment& regionData;
 };
 
-struct ChunkDeliverMessage
+struct ChunkDeliveredMessage
 {
     WorldId worldId; const ChunkCoord& coordinate; const Chunk& chunk;
 };
