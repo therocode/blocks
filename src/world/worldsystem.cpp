@@ -6,6 +6,12 @@
 #include "../lognames.hpp"
 #include "../world/worldloader.hpp"
 
+WorldEntry::WorldEntry(const std::string& identifier) :
+    highlightManager(8), //this should be read from somewhere else, probably server settings
+    modManager(identifier)
+{
+}
+
 WorldSystem::WorldSystem(fea::MessageBus& messageBus) 
 :   mBus(messageBus),
     mWorldProvider(mBus),
@@ -22,7 +28,7 @@ WorldSystem::WorldSystem(fea::MessageBus& messageBus)
     {
         for(const auto& worldParameters : mWorldLoader.getLoadedWorlds())
         {
-            //addWorld(worldParameters); //////this must be fixed
+            createWorld(worldParameters);
         }
     }
     else
@@ -84,4 +90,13 @@ const ChunkMap& WorldSystem::getWorldVoxels(WorldId id) const
 {
     FEA_ASSERT(mWorlds.count(id) != 0, "Trying to get world id " + std::to_string(id) + " but that world does not exist!");
     return mWorlds.at(id).worldData.voxels;
+}
+
+void WorldSystem::createWorld(const WorldParameters& parameters)
+{
+    WorldId newId = mNextId++;
+
+    mIdentifierToIdMap.emplace(parameters.identifier, newId);   
+
+    mWorlds.emplace(newId, WorldEntry(parameters.identifier));
 }

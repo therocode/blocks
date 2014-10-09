@@ -12,9 +12,10 @@
 
 struct WorldEntry
 {
+    WorldEntry(const std::string& identifier);
     WorldData worldData;
 
-    HighlightManager highlightManager;
+    HighlightManager highlightManager; //TBI
     ModManager modManager; //TBI
 };
 
@@ -35,6 +36,7 @@ class WorldSystem :
         void handleMessage(const HighlightEntityRemoveRequestedMessage& received) override;
         const ChunkMap& getWorldVoxels(WorldId id) const;
     private:
+        void createWorld(const WorldParameters& parameters);
         fea::MessageBus& mBus;
         WorldProvider mWorldProvider;
 
