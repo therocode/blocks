@@ -1,4 +1,6 @@
 #pragma once
+#include <unordered_map>
+#include <vector>
 #include "worlddata.hpp"
 #include "worldparameters.hpp"
 #include "../utilities/gridnotifier.hpp"
@@ -21,4 +23,6 @@ class WorldEntry
         GridNotifier<biomeRegionWidthInChunks> mBiomeGridNotifier;
         HighlightManager mHighlightManager;
         ModManager mModManager; //TBI
+
+        std::unordered_map<BiomeRegionCoord, std::vector<ChunkCoord>> mPendingChunksToRequests;
 };

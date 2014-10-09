@@ -46,7 +46,25 @@ ChunkMap& WorldEntry::getChunkMap()
 
 void WorldEntry::activateChunk(const ChunkCoord& chunkCoordinate)
 {
-    //send biome requests and chunk requests
+    //firsty handle any newly activated biomes; they need to be requested
+    const auto& activatedBiomes = mBiomeGridNotifier.set(chunkCoordinate, true);
+
+    for(const auto& biomeRegionCoord : activatedBiomes)
+    {
+        //send biome request asynchronously
+    }
+
+    //secondly, the activated chunk will need to be generated as well, but we can't do that if the biome hasn't been delivered since we need data from the biome to pass on to the generator. Hence, if the biome doesn't exist, we store the request
+    const BiomeRegionCoord biomeRegionCoord = ChunkToBiomeRegion::convert(chunkCoordinate);
+    auto iterator = mWorldData.biomeGrids.find(biomeRegionCoord);
+    if(iterator != mWorldData.biomeGrids.end())
+    {
+        //send chunk request with biome data
+    }
+    else
+    {
+        mPendingChunksToRequests[biomeRegionCoord].push_back(chunkCoordinate);
+    }
 }
 
 void WorldEntry::deactivateChunk(const ChunkCoord& chunkCoordinate)
