@@ -95,12 +95,12 @@ set(source_files
 
     src/world/biome.cpp
     src/world/chunk.cpp
-    src/world/worldprovider.cpp
     src/world/highlightmanager.cpp
     src/world/modmanager.cpp
     src/world/ranges.cpp
     src/world/raycaster.cpp
     src/world/regiondatafragment.cpp
+    src/world/worldprovider.cpp
     src/world/worldsystem.cpp
     src/world/worldloader.cpp
     src/world/generation/chunkgenerator.cpp
@@ -201,6 +201,7 @@ set(header_files
     src/utilities/folderexploder.hpp
     src/utilities/fpscontroller.hpp
     src/utilities/geomath.hpp
+    src/utilities/gridnotifier.hpp
     src/utilities/glm.hpp
     src/utilities/interpolationgrid3d.hpp
     src/utilities/lodepng.hpp
@@ -212,12 +213,13 @@ set(header_files
 	src/world/biome.hpp
 	src/world/biomedefines.hpp
 	src/world/chunk.hpp
-    src/world/worlddata.hpp
+    src/world/field.hpp
     src/world/valuemap.hpp
     src/world/highlightmanager.hpp
     src/world/modmanager.hpp
     src/world/raycaster.hpp
     src/world/regiondatafragment.hpp
+    src/world/worlddata.hpp
     src/world/worlddefines.hpp
 	src/world/worldsystem.hpp
     src/world/worldloader.hpp
@@ -362,6 +364,9 @@ if(BUILD_TESTS)
     
     add_executable(test_interpolation_grid3d "test/utilities/interpolationgrid3dtest.cpp")
     target_link_libraries(test_interpolation_grid3d ${FEATHERKIT_LIBRARIES})
+    
+    add_executable(test_grid_notifier "test/utilities/gridnotifiertest.cpp")
+    target_link_libraries(test_grid_notifier ${FEATHERKIT_LIBRARIES})
 	
     #profiling
     add_executable(profile_modmanager "profile/world/modmanagerprofile.cpp" "src/world/modmanager.cpp" "src/world/chunk.cpp" "src/utilities/directorycreator.cpp" "src/utilities/coordinateconverter.cpp")

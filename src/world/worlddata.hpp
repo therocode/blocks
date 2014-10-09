@@ -2,13 +2,14 @@
 #include "voxelstorage.hpp"
 #include "biomedefines.hpp"
 #include "biome.hpp"
+#include "field.hpp"
 
 struct WorldData
 {
     VoxelStorage voxels;
-    //storage of biomes in indexed list
-    std::vector<Biome> biomes;
-    BiomeStorage biomeIndices;
-    //list of field definitions - rules for them
-    //meta with title etc
+    std::vector<BiomeIndex> biomes;
+    BiomeStorage biomeGrids;
+    std::vector<Field> fields;
+
+    std::string title;
 };
