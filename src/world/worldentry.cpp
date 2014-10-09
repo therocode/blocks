@@ -1,4 +1,5 @@
 #include "worldentry.hpp"
+#include <algorithm>
 
 WorldEntry::WorldEntry(const std::string& identifier) :
     mHighlightManager(8), //this should be read from somewhere else, probably server settings
@@ -69,4 +70,21 @@ void WorldEntry::activateChunk(const ChunkCoord& chunkCoordinate)
 
 void WorldEntry::deactivateChunk(const ChunkCoord& chunkCoordinate)
 {
+    //first lets see if this also deactivates a biome. in that case, it must be removed
+    const auto& deactivatedBiomes = mBiomeGridNotifier.set(chunkCoordinate, false);
+
+    for(const auto& biomeRegionCoord : deactivatedBiomes)
+    {
+        mWorldData.biomeGrids.erase(biomeRegionCoord);
+        mPendingChunksToRequests.erase(biomeRegionCoord); //if the biome is deactivated, we don't need to send pending requests either.
+    }
+
+    mWorldData.voxels.erase(chunkCoordinate);
+
+    //we don't need to send pending requests for this chunk
+    const BiomeRegionCoord& biomeRegionCoord = ChunkToBiomeRegion::convert(chunkCoordinate);
+    auto iterator = mPendingChunksToRequests.find(biomeRegionCoord);
+
+    if(iterator != mPendingChunksToRequests.end())
+        std::remove(iterator->second.begin(), iterator->second.end(), chunkCoordinate);
 }
