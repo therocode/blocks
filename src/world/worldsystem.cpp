@@ -69,21 +69,27 @@ void WorldSystem::handleMessage(const HighlightEntityAddRequestedMessage& receiv
 {
     FEA_ASSERT(mWorlds.count(received.worldId) != 0, "Trying to add a highlight entity to world " + std::to_string(received.worldId) + " but that world does not exist");
 
-    //hook up to something
+    const auto& highlighted = mWorlds.at(received.worldId).highlightManager.addHighlightEntity(received.entityId, received.coordinate);
+
+    //send biome requests and chunk requests
 }
 
 void WorldSystem::handleMessage(const HighlightEntityMoveRequestedMessage& received)
 {
     FEA_ASSERT(mWorlds.count(received.worldId) != 0, "Trying to move a highlight entity in world " + std::to_string(received.worldId) + " but that world does not exist");
 
-    //hook up to something
+    const auto& highlightedDehighlighted = mWorlds.at(received.worldId).highlightManager.moveHighlightEntity(received.entityId, received.coordinate);
+
+    //send biome requests and chunk requests
 }
 
 void WorldSystem::handleMessage(const HighlightEntityRemoveRequestedMessage& received)
 {
     FEA_ASSERT(mWorlds.count(received.worldId) != 0, "Trying to remove a highlight entity from world " + std::to_string(received.worldId) + " but that world does not exist");
 
-    //hook up to something
+    const auto& dehighlighted = mWorlds.at(received.worldId).highlightManager.removeHighlightEntity(received.entityId);
+
+    //send biome requests and chunk requests
 }
 
 const ChunkMap& WorldSystem::getWorldVoxels(WorldId id) const
