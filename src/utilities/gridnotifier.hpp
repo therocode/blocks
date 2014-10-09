@@ -1,7 +1,7 @@
 #pragma once
 #include <unordered_map>
 #include <unordered_set>
-#include <memory>
+#include <vector>
 #include <fea/assert.hpp>
 #include "glm.hpp"
 #include "glmhash.hpp"
@@ -13,10 +13,11 @@ class GridNotifier
     using Converter = CoordinateCoarseConvert<glm::i64vec3, glm::i64vec3, factor>;
     public:
         bool isActive(const glm::i64vec3& bigCell) const;
-        std::unique_ptr<glm::i64vec3> set(const glm::i64vec3& cell, bool active);
+        const std::vector<glm::i64vec3>& set(const glm::i64vec3& cell, bool active);
     private:
         std::unordered_map<glm::i64vec3, int32_t> mBigCellRefCounts;
         std::unordered_set<glm::i64vec3> mActivatedCells;
+        std::vector<glm::i64vec3> resultVector;
 };
 
 template<uint32_t factor>
@@ -26,13 +27,12 @@ bool GridNotifier<factor>::isActive(const glm::i64vec3& bigCell) const
 }
 
 template<uint32_t factor>
-std::unique_ptr<glm::i64vec3> GridNotifier<factor>::set(const glm::i64vec3& cell, bool active)
+const std::vector<glm::i64vec3>& GridNotifier<factor>::set(const glm::i64vec3& cell, bool active)
 {
     FEA_ASSERT((mActivatedCells.count(cell) == 0) == active, "Trying to " + (active ? std::string("activate") : std::string("deactivate")) + " cell " + glm::to_string((glm::ivec3)cell) + " which is already in that state");
+    resultVector.clear();
 
     glm::i64vec3 bigCell = Converter::convert(cell);
-
-    std::unique_ptr<glm::i64vec3> result;
 
     if(active)
     {
@@ -43,7 +43,7 @@ std::unique_ptr<glm::i64vec3> GridNotifier<factor>::set(const glm::i64vec3& cell
         else
         {
             mBigCellRefCounts.emplace(bigCell, 1);
-            result = std::unique_ptr<glm::i64vec3>(new glm::i64vec3(bigCell));
+            resultVector.push_back(bigCell);
         }
 
 
@@ -56,11 +56,11 @@ std::unique_ptr<glm::i64vec3> GridNotifier<factor>::set(const glm::i64vec3& cell
         if(--iterator->second == 0)
         {
             mBigCellRefCounts.erase(iterator);
-            result = std::unique_ptr<glm::i64vec3>(new glm::i64vec3(bigCell));
+            resultVector.push_back(bigCell);
         }
 
         mActivatedCells.erase(cell);
     }
 
-    return result;
+    return resultVector;
 }

@@ -62,8 +62,8 @@ SCENARIO("Grid notifiers return notifications of activity in big cells", "[utili
 
         THEN("The correct big cell is notified as active")
         {
-            REQUIRE(activatedCell != nullptr);
-            REQUIRE(*activatedCell == glm::i64vec3(0, 1, 0));
+            REQUIRE(activatedCell.size() > 0);
+            REQUIRE(activatedCell[0] == glm::i64vec3(0, 1, 0));
         }
     }
 
@@ -76,7 +76,7 @@ SCENARIO("Grid notifiers return notifications of activity in big cells", "[utili
 
         THEN("The correct big cell is not notified as active")
         {
-            REQUIRE(activatedCell == nullptr);
+            REQUIRE(activatedCell.size() == 0);
         }
     }
 }
@@ -92,8 +92,8 @@ SCENARIO("Grid notifiers return notifications of inactivity in big cells", "[uti
 
         THEN("The correct big cell is notified as unactive")
         {
-            REQUIRE(deactivatedCell != nullptr);
-            REQUIRE(*deactivatedCell == glm::i64vec3(1, 1, -2));
+            REQUIRE(deactivatedCell.size() > 0);
+            REQUIRE(deactivatedCell[0] == glm::i64vec3(1, 1, -2));
         }
     }
 
@@ -107,7 +107,7 @@ SCENARIO("Grid notifiers return notifications of inactivity in big cells", "[uti
 
         THEN("The correct big cell is not notified as inactive")
         {
-            REQUIRE(deactivatedCell == nullptr);
+            REQUIRE(deactivatedCell.size() == 0);
         }
     }
 
@@ -122,8 +122,8 @@ SCENARIO("Grid notifiers return notifications of inactivity in big cells", "[uti
 
         THEN("The correct big cell is notified as inactive")
         {
-            REQUIRE(deactivatedCell != nullptr);
-            REQUIRE(*deactivatedCell == glm::i64vec3(1, 0, 2));
+            REQUIRE(deactivatedCell.size() > 0);
+            REQUIRE(deactivatedCell[0] == glm::i64vec3(1, 0, 2));
         }
     }
 }
