@@ -7,7 +7,16 @@
 #include "worldparameters.hpp"
 #include "worlddata.hpp"
 #include "worldprovider.hpp"
+#include "highlightmanager.hpp"
 #include <memory>
+
+struct WorldEntry
+{
+    WorldData worldData;
+
+    HighlightManager highlightManager;
+    ModManager modManager; //TBI
+};
 
 class WorldSystem : 
         public fea::MessageReceiver<SetVoxelMessage,
@@ -24,7 +33,7 @@ class WorldSystem :
         void handleMessage(const HighlightEntityAddRequestedMessage& received) override;
         void handleMessage(const HighlightEntityMoveRequestedMessage& received) override;
         void handleMessage(const HighlightEntityRemoveRequestedMessage& received) override;
-        const VoxelStorage& getWorldVoxels(WorldId id) const;
+        const ChunkMap& getWorldVoxels(WorldId id) const;
     private:
         fea::MessageBus& mBus;
         WorldProvider mWorldProvider;
@@ -32,5 +41,5 @@ class WorldSystem :
         //world data
         WorldId mNextId;
         std::unordered_map<std::string, WorldId> mIdentifierToIdMap;
-        std::unordered_map<WorldId, WorldData> mWorldData;
+        std::unordered_map<WorldId, WorldEntry> mWorlds;
 };

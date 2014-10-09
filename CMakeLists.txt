@@ -213,6 +213,7 @@ set(header_files
 	src/world/biome.hpp
 	src/world/biomedefines.hpp
 	src/world/chunk.hpp
+	src/world/chunkmap.hpp
     src/world/field.hpp
     src/world/valuemap.hpp
     src/world/highlightmanager.hpp

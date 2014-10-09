@@ -3,4 +3,4 @@
 #include "worlddefines.hpp"
 #include "chunk.hpp"
 
-using VoxelStorage = std::unordered_map<ChunkCoord, Chunk>;
+using ChunkMap = std::unordered_map<ChunkCoord, Chunk>;

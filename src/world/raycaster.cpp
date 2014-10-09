@@ -1,8 +1,8 @@
 #include "raycaster.hpp"
 #include "worlddefines.hpp"
-#include "voxelstorage.hpp"
+#include "chunkmap.hpp"
 
-bool RayCaster::getVoxelAtRay(const VoxelStorage& world, const glm::vec3& position, const glm::vec3& direction, const float maxDistance, uint32_t& hitFace, VoxelCoord& hitBlock)
+bool RayCaster::getVoxelAtRay(const ChunkMap& world, const glm::vec3& position, const glm::vec3& direction, const float maxDistance, uint32_t& hitFace, VoxelCoord& hitBlock)
 {
     VoxelCoord voxel = WorldToVoxel::convert(position);
 
