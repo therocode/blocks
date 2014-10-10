@@ -205,6 +205,7 @@ set(header_files
     src/utilities/gridnotifier.hpp
     src/utilities/glm.hpp
     src/utilities/interpolationgrid3d.hpp
+    src/utilities/interpolators.hpp
     src/utilities/lodepng.hpp
     src/utilities/logger.hpp
 	src/utilities/random.hpp

@@ -1,6 +1,7 @@
 #define CATCH_CONFIG_MAIN
 #include "../catch.hpp"
 #include "../../src/utilities/interpolationgrid3d.hpp"
+#include "../../src/utilities/interpolators.hpp"
 
 const float accuracy = 0.0005f;
 bool closeEnough(float a, float b)
@@ -85,3 +86,51 @@ SCENARIO("Values are equal to the inner grid","[utilities]")
 }
 
 //interpolating
+
+SCENARIO("Values can be interpolated","[utilities]")
+{
+    WHEN("SMALLEST SIZE: An interpolation grid is created where the inner grid is smaller than the size and given an interpolator")
+    {   
+        InterpolationGrid3D<float> grid(32, 5, 0.0f);
+
+        grid.setInner({0,  0 , 0}, 1.0f);
+        grid.setInner({1,  1 , 1}, 2.0f);
+
+        grid.setInterpolator(Interpolator<float>::nearestNeigbor);
+
+        THEN("The grid returns interpolated values")
+        {
+            REQUIRE(closeEnough(grid.get({0,  0 , 0}),  1.0f));
+            REQUIRE(closeEnough(grid.get({3,  7,  12}), 1.0f));
+            REQUIRE(closeEnough(grid.get({3,  7,  18}), 0.0f));
+            REQUIRE(closeEnough(grid.get({20,  19 , 31}), 2.0f));
+        }   
+    }   
+    
+    WHEN("SMALLEST SIZE: An interpolation grid is created where the inner grid is smaller than the size and given an interpolator")
+    {   
+        InterpolationGrid3D<float> grid(32, 4, 0.0f);
+
+        grid.setInner({0,  0 , 0}, 1.0f);
+        grid.setInner({2,  2 , 2}, 2.0f);
+        grid.setInner({2,  0 , 1}, 4.0f);
+        grid.setInner({1,  1 , 1}, 5.0f);
+
+        grid.setInterpolator(Interpolator<float>::nearestNeigbor);
+
+        THEN("The grid returns interpolated values")
+        {
+            REQUIRE(closeEnough(grid.get({0,  0 , 0}),  1.0f));
+            REQUIRE(closeEnough(grid.get({2,  4 , 7}),  1.0f));
+
+            REQUIRE(closeEnough(grid.get({31,  30,  24}), 2.0f));
+            REQUIRE(closeEnough(grid.get({29,  28,  27}), 2.0f));
+
+            REQUIRE(closeEnough(grid.get({25,  5, 8}), 4.0f));
+            REQUIRE(closeEnough(grid.get({27,  3, 23}), 4.0f));
+
+            REQUIRE(closeEnough(grid.get({9,  13,  18}), 5.0f));
+            REQUIRE(closeEnough(grid.get({16,  20, 21}), 5.0f));
+        }   
+    }   
+}
