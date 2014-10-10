@@ -107,8 +107,20 @@ SCENARIO("Values can be interpolated","[utilities]")
         }   
     }   
     
-    WHEN("SMALLEST SIZE: An interpolation grid is created where the inner grid is smaller than the size and given an interpolator")
+    WHEN("BIGGER SIZE: An interpolation grid is created where the inner grid is smaller than the size and given an interpolator. also created with array data")
     {   
+        std::vector<float> data { 1.0f, 0.0f, 0.0f,
+                                  0.0f, 0.0f, 0.0f,
+                                  0.0f, 0.0f, 0.0f,
+
+                                  0.0f, 5.0f, 4.0f,
+                                  0.0f, 0.0f, 0.0f,
+                                  0.0f, 0.0f, 0.0f,
+
+                                  0.0f, 0.0f, 0.0f,
+                                  0.0f, 0.0f, 0.0f,
+                                  0.0f, 0.0f, 2.0f};
+
         InterpolationGrid3D<float> grid(32, 4, 0.0f);
 
         grid.setInner({0,  0 , 0}, 1.0f);
