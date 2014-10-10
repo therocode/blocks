@@ -23,6 +23,27 @@ SCENARIO("Grid3Ds are fillable on creation","[utilities]")
     }   
 }
 
+SCENARIO("Grids can be filled with values from a vector", "[utilities]")
+{
+    WHEN("A grid is filled with data from a vector")
+    {
+        std::vector<float> data({0.0f, 0.0f, 
+                                 1.0f, 0.0f,
+
+                                 0.0f, 0.0f,
+                                 0.0f, 2.0f});
+
+        InterpolationGrid3D<float> grid(2, 0, data);
+
+        THEN("The grid contains the data given")
+        {
+            REQUIRE(closeEnough(grid.get({0, 0, 0}), 0.0f));
+            REQUIRE(closeEnough(grid.get({0, 1, 0}), 1.0f));
+            REQUIRE(closeEnough(grid.get({1, 1, 1}), 2.0f));
+        }
+    }
+}
+
 SCENARIO("Values are settable and gettable in the inner grid","[utilities]")
 {
     WHEN("An interpolation grid is created and some values are set")

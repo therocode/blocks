@@ -15,10 +15,11 @@ class InterpolationGrid3D
     private:
         inline uint32_t toIndex(const glm::uvec3& coordinates) const
         {
-            return coordinates.x + coordinates.y * mSize + coordinates.z * mSizePow2;
+            return coordinates.x + coordinates.y * mInnerSize + coordinates.z * mInnerSizePow2;
         }
         uint32_t mSize;
-        uint32_t mSizePow2;
+        uint32_t mInnerSize;
+        uint32_t mInnerSizePow2;
         uint32_t mDownSamplingFactor;
         std::vector<Type> mValues;
 };
@@ -26,29 +27,32 @@ class InterpolationGrid3D
 template<typename Type> 
 InterpolationGrid3D<Type>::InterpolationGrid3D(uint32_t size, uint32_t downSamplingFactor) :
     mSize(size),
-    mSizePow2(size * size),
+    mInnerSize(size / (std::pow(2, downSamplingFactor))),
+    mInnerSizePow2(mInnerSize * mInnerSize),
     mDownSamplingFactor(downSamplingFactor)
 {
-    mValues.resize(size * size * size);
+    mValues.resize(mInnerSize * mInnerSize * mInnerSize);
 }
 
 template<typename Type> 
 InterpolationGrid3D<Type>::InterpolationGrid3D(uint32_t size, uint32_t downSamplingFactor, const Type& value) :
     mSize(size),
-    mSizePow2(size * size),
+    mInnerSize(size / (std::pow(2, downSamplingFactor))),
+    mInnerSizePow2(mInnerSize * mInnerSize),
     mDownSamplingFactor(downSamplingFactor)
 {
-    mValues.resize(size * size * size);
+    mValues.resize(mInnerSize * mInnerSize * mInnerSize);
     std::fill(mValues.begin(), mValues.end(), value);
 }
 
 template<typename Type> 
 InterpolationGrid3D<Type>::InterpolationGrid3D(uint32_t size, uint32_t downSamplingFactor, const std::vector<Type>& values) :
     mSize(size),
-    mSizePow2(size * size),
+    mInnerSize(size / (std::pow(2, downSamplingFactor))),
+    mInnerSizePow2(mInnerSize * mInnerSize),
     mDownSamplingFactor(downSamplingFactor)
 {
-    FEA_ASSERT(values.size() == size * size * size, "Value vector contains " + std::to_string(values.size()) + " instead of size * size * size which is " + std::to_string(values.size()));
+    FEA_ASSERT(values.size() == mInnerSize * mInnerSize * mInnerSize, "Value vector contains " + std::to_string(values.size()) + " instead of size * size * size which is " + std::to_string(values.size()));
 
         mValues = values;
 }
