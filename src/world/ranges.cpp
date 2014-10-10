@@ -1,8 +1,8 @@
 #include "ranges.hpp"
 #include <fea/assert.hpp>
 
-int32_t Ranges::MAX = std::numeric_limits<int32_t>::max();
-int32_t Ranges::MIN = std::numeric_limits<int32_t>::min();
+int64_t Ranges::MAX = std::numeric_limits<int64_t>::max();
+int64_t Ranges::MIN = std::numeric_limits<int64_t>::min();
 
 Ranges::Ranges() :
     xRange(MIN, MAX),

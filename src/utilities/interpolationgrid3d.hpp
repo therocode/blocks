@@ -1,48 +1,75 @@
 #pragma once
-#include <type_traits>
-#include "templateutils.hpp"
 #include "glm.hpp"
 #include <fea/assert.hpp>
 
-template<uint32_t size, uint32_t resolution, typename Type> 
+template<typename Type> 
 class InterpolationGrid3D
 {
     public:
-        InterpolationGrid3D();
-        InterpolationGrid3D(const Type& value);
-        Type at(const glm::uvec3& location);
-        void set(const glm::uvec3& location, const Type& value);
+        InterpolationGrid3D(uint32_t size, uint32_t downSamplingFactor);
+        InterpolationGrid3D(uint32_t size, uint32_t downSamplingFactor, const Type& value);
+        InterpolationGrid3D(uint32_t size, uint32_t downSamplingFactor, const std::vector<Type>& values);
+        Type get(const glm::uvec3& location) const;
+        Type getInner(const glm::uvec3& innerLocation) const;
+        void setInner(const glm::uvec3& innerLocation, const Type& value);
     private:
-        std::array<Type, resolution * resolution * resolution> mData;
+        inline uint32_t toIndex(const glm::uvec3& coordinates) const
+        {
+            return coordinates.x + coordinates.y * mSize + coordinates.z * mSizePow2;
+        }
+        uint32_t mSize;
+        uint32_t mSizePow2;
+        uint32_t mDownSamplingFactor;
+        std::vector<Type> mValues;
 };
 
-template<uint32_t size, uint32_t resolution, typename Type> 
-InterpolationGrid3D<size, resolution, Type>::InterpolationGrid3D()
+template<typename Type> 
+InterpolationGrid3D<Type>::InterpolationGrid3D(uint32_t size, uint32_t downSamplingFactor) :
+    mSize(size),
+    mSizePow2(size * size),
+    mDownSamplingFactor(downSamplingFactor)
 {
+    mValues.resize(size * size * size);
 }
 
-template<uint32_t size, uint32_t resolution, typename Type> 
-InterpolationGrid3D<size, resolution, Type>::InterpolationGrid3D(const Type& value)
+template<typename Type> 
+InterpolationGrid3D<Type>::InterpolationGrid3D(uint32_t size, uint32_t downSamplingFactor, const Type& value) :
+    mSize(size),
+    mSizePow2(size * size),
+    mDownSamplingFactor(downSamplingFactor)
 {
-    mData.fill(value);
+    mValues.resize(size * size * size);
+    std::fill(mValues.begin(), mValues.end(), value);
 }
 
-template<uint32_t size, uint32_t resolution, typename Type>
-Type InterpolationGrid3D<size, resolution, Type>::at(const glm::uvec3& location)
+template<typename Type> 
+InterpolationGrid3D<Type>::InterpolationGrid3D(uint32_t size, uint32_t downSamplingFactor, const std::vector<Type>& values) :
+    mSize(size),
+    mSizePow2(size * size),
+    mDownSamplingFactor(downSamplingFactor)
 {
-    uint32_t index = location.x + location.y * resolution + location.z * resolution * resolution;
+    FEA_ASSERT(values.size() == size * size * size, "Value vector contains " + std::to_string(values.size()) + " instead of size * size * size which is " + std::to_string(values.size()));
 
-    FEA_ASSERT(index <= mData.size(), "arguments out of range");
-
-    return mData[index];
+        mValues = values;
 }
 
-template<uint32_t size, uint32_t resolution, typename Type>
-void InterpolationGrid3D<size, resolution, Type>::set(const glm::uvec3& location, const Type& value)
+template<typename Type> 
+Type InterpolationGrid3D<Type>::get(const glm::uvec3& location) const
 {
-    uint32_t index = location.x + location.y * resolution + location.z * resolution * resolution;
+    FEA_ASSERT(toIndex(location) < mValues.size(), "Index out of bounds. None of the given coordinates " + glm::to_string(location) + " should exceed " + std::to_string(mSize));
+    return mValues.at(toIndex(location));
+}
 
-    FEA_ASSERT(index <= mData.size(), "arguments out of range");
+template<typename Type> 
+Type InterpolationGrid3D<Type>::getInner(const glm::uvec3& innerLocation) const
+{
+    FEA_ASSERT(toIndex(innerLocation) < mValues.size(), "Index out of bounds. None of the given coordinates " + glm::to_string(innerLocation) + " should exceed " + std::to_string(mSize));
+    return mValues.at(toIndex(innerLocation));
+}
 
-    mData[index] = value;
+template<typename Type> 
+void InterpolationGrid3D<Type>::setInner(const glm::uvec3& innerLocation, const Type& value)
+{
+    FEA_ASSERT(toIndex(innerLocation) < mValues.size(), "Index out of bounds. None of the given coordinates " + glm::to_string(innerLocation) + " should exceed " + std::to_string(mSize));
+    mValues[toIndex(innerLocation)] = value;
 }
