@@ -29,12 +29,14 @@ class BiomeProvider :
         void handleMessage(const BiomeRequestedMessage& received) override;
         void handleMessage(const FrameMessage& received) override;
     private:
-        BiomeDelivery generateBiome(WorldId worldId, const BiomeRegionCoord& coordinate, const WorldBiomeSettings& settings);
+        BiomeDelivery generateBiome(WorldId worldId, BiomeRegionCoord coordinate);
         fea::MessageBus& mBus;
 
-        ThreadPool mWorkerPool;
         std::unordered_map<BiomeIndex, Biome> mBiomes;
+        std::unordered_map<std::string, BiomeIndex> mBiomeNameToIndex;
         std::unordered_map<WorldId, WorldBiomeSettings> mBiomeSettings;
 
         std::vector<std::future<BiomeDelivery>> mBiomesToDeliver;
+
+        ThreadPool mWorkerPool; //threads last so that their stuff don't get destructed
 };

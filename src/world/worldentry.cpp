@@ -11,10 +11,10 @@ WorldEntry::WorldEntry(fea::MessageBus& bus, WorldId id, const std::string& iden
 {
     mWorldData.biomeSettings.fields =
     {
-        Field{"height", 4},
-        Field{"rainfall", 4},
-        Field{"temperatur", 4},
-        Field{"selector", 4}
+        Field{"height"},
+        Field{"rainfall"},
+        Field{"temperature"},
+        Field{"selector"}
     };
 
     mBus.send(WorldBiomeSettingsMessage{id, mWorldData.biomeSettings});
