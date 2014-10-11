@@ -11,7 +11,7 @@
 class WorldEntry
 {
     public:
-        WorldEntry(fea::MessageBus& bus, WorldId id, const std::string& identifier);
+        WorldEntry(fea::MessageBus& bus, WorldId id, const std::string& identifier, const WorldData& data);
         void addHighlightEntity(uint32_t id, const ChunkCoord& location);
         void moveHighlightEntity(uint32_t id, const ChunkCoord& location);
         void removeHighlightEntity(uint32_t id);

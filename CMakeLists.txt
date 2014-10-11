@@ -94,7 +94,9 @@ set(source_files
     src/utilities/timer.cpp
 
     src/world/biome.cpp
+    src/world/biomeprovider.cpp
     src/world/chunk.cpp
+    src/world/fieldgenerator.cpp
     src/world/highlightmanager.cpp
     src/world/modmanager.cpp
     src/world/ranges.cpp
@@ -214,9 +216,11 @@ set(header_files
 
 	src/world/biome.hpp
 	src/world/biomedefines.hpp
+	src/world/biomeprovider.hpp
 	src/world/chunk.hpp
 	src/world/chunkmap.hpp
     src/world/field.hpp
+    src/world/fieldgenerator.hpp
     src/world/valuemap.hpp
     src/world/highlightmanager.hpp
     src/world/modmanager.hpp

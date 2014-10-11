@@ -18,6 +18,7 @@ class InterpolationGrid3D
         Type getInner(const glm::uvec3& innerLocation) const;
         void setInner(const glm::uvec3& innerLocation, const Type& value);
         void setInterpolator(std::function<Type(const std::array<Type, 8>&, const glm::vec3& point)> interpolator);
+        uint32_t getInnerSize() const;
     private:
         inline uint32_t toIndex(const glm::uvec3& coordinates) const
         {
@@ -129,4 +130,10 @@ template<typename Type>
 void InterpolationGrid3D<Type>::setInterpolator(std::function<Type(const std::array<Type, 8>&, const glm::vec3& point)> interpolator)
 {
     mInterpolator = interpolator;
+}
+
+template<typename Type>
+uint32_t InterpolationGrid3D<Type>::getInnerSize() const
+{
+    return mInnerSize;
 }

@@ -2,7 +2,9 @@
 #include <fea/entitysystem.hpp>
 #include <fea/util.hpp>
 #include "worlddefines.hpp"
+#include "biome.hpp"
 #include "biomedefines.hpp"
+#include "worldbiomesettings.hpp"
 
 class Region;
 class Chunk;
@@ -16,6 +18,16 @@ struct SetVoxelMessage
 struct VoxelSetMessage
 {
     const VoxelCoord& voxel; VoxelType type;
+};
+
+struct WorldBiomeSettingsMessage
+{
+    WorldId worldId; const WorldBiomeSettings& settings;
+};
+
+struct BiomesLoadedMessage
+{
+    const std::unordered_map<BiomeIndex, Biome>& biomes;
 };
 
 struct BiomeRequestedMessage

@@ -5,6 +5,7 @@
 #include "../rendering/renderingmessages.hpp"
 #include "worldmessages.hpp"
 #include "worldprovider.hpp"
+#include "biomeprovider.hpp"
 #include "worldentry.hpp"
 
 class WorldSystem : 
@@ -29,6 +30,12 @@ class WorldSystem :
         void createWorld(const WorldParameters& parameters);
         fea::MessageBus& mBus;
         WorldProvider mWorldProvider;
+        BiomeProvider mBiomeProvider;
+
+        //biome data
+        BiomeIndex mNextBiomeIndex;
+        std::unordered_map<BiomeIndex, Biome> mBiomes;
+        std::unordered_map<std::string, BiomeIndex> mBiomeIdentifierToIdMap;
 
         //world data
         WorldId mNextId;

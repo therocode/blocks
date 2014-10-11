@@ -1,5 +1,6 @@
 #include "worldprovider.hpp"
 #include "regiondatafragment.hpp"
+#include "generation/chunkgenerator.hpp"
 
 const std::string logName = "world_gen";
 const int32_t threadAmount = 3;

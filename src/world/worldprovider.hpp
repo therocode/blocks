@@ -1,10 +1,9 @@
 #pragma once
 #include <fea/util.hpp>
-#include "modmanager.hpp"
-#include "generation/chunkgenerator.hpp"
 #include "../utilities/threadpool.hpp"
 #include "worldmessages.hpp"
 #include "../application/applicationmessages.hpp"
+#include "chunk.hpp"
 
 using ChunkEntry = std::pair<WorldId, std::pair<ChunkCoord, Chunk>>;
 
@@ -27,7 +26,6 @@ class WorldProvider :
     private:
         ChunkDelivery generateChunk(WorldId worldId, const ChunkCoord& coordinate, const RegionDataFragment& regionFragment);
         fea::MessageBus& mBus;
-        ChunkGenerator mChunkGenerator;
 
         ThreadPool mWorkerPool;
         //std::unordered_map<std::thread::id, BiomeStorage> mThreadStorage;

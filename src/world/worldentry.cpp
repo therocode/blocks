@@ -2,12 +2,22 @@
 #include "worldmessages.hpp"
 #include <algorithm>
 
-WorldEntry::WorldEntry(fea::MessageBus& bus, WorldId id, const std::string& identifier) :
+WorldEntry::WorldEntry(fea::MessageBus& bus, WorldId id, const std::string& identifier, const WorldData& data) :
     mBus(bus),
     mId(id),
+    mWorldData(data),
     mHighlightManager(8), //this should be read from somewhere else, probably server settings
     mModManager(identifier)
 {
+    mWorldData.biomeSettings.fields =
+    {
+        Field{"height", 4},
+        Field{"rainfall", 4},
+        Field{"temperatur", 4},
+        Field{"selector", 4}
+    };
+
+    mBus.send(WorldBiomeSettingsMessage{id, mWorldData.biomeSettings});
 }
 
 void WorldEntry::addHighlightEntity(uint32_t id, const ChunkCoord& location)

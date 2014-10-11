@@ -1,15 +1,16 @@
 #include "biome.hpp"
 
-Range::Range(float mi, float ma) : min(mi), max(ma)
+BiomeRequirement::BiomeRequirement(float mi, float ma) : min(mi), max(ma)
 {
 }
 
-bool Range::isWithin(float v) const
+bool BiomeRequirement::isWithin(float v) const
 {
     return v >= min && v <= max;
 }
 
-Biome::Biome(const std::string& name, VoxelType type) : 
-    mName(name)
+Biome::Biome(const std::string& name, VoxelType type, const std::unordered_map<std::string, BiomeRequirement>& requirements) : 
+    mName(name),
+    mRequirements(requirements)
 {
 }

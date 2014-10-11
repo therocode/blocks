@@ -9,11 +9,38 @@
 WorldSystem::WorldSystem(fea::MessageBus& messageBus) 
 :   mBus(messageBus),
     mWorldProvider(mBus),
+    mBiomeProvider(mBus),
+    mNextBiomeIndex(0),
     mNextId(0)
 {
     mBus.send(LogMessage{"Setting up world system", worldName, LogLevel::INFO});
     subscribe(mBus, *this);
 
+    //load biomes
+    mBus.send(LogMessage{"Loading biomes", worldName, LogLevel::INFO});
+    Biome grass("grass", 2,
+        {
+            {"height", BiomeRequirement(0.0f, 1.0f)},
+            {"temperature", BiomeRequirement(0.0f, 1.0f)},
+            {"rainfall", BiomeRequirement(0.5f, 1.0f)}
+        });
+
+    mBiomes.emplace(mNextBiomeIndex++, grass);
+    mBiomeIdentifierToIdMap.emplace(grass.mName, mNextBiomeIndex - 1);
+
+    Biome desert("desert", 3,
+        {
+            {"height", BiomeRequirement(0.0f, 1.0f)},
+            {"temperature", BiomeRequirement(0.0f, 1.0f)},
+            {"rainfall", BiomeRequirement(0.0f, 0.5f)}
+        });
+
+    mBiomes.emplace(mNextBiomeIndex++, desert);
+    mBiomeIdentifierToIdMap.emplace(desert.mName, mNextBiomeIndex - 1);
+
+    mBus.send(BiomesLoadedMessage{mBiomes});
+
+    //load worlds
     WorldLoader mWorldLoader;
 
     mWorldLoader.loadWorldFile("data/worlds/default.json");
@@ -98,9 +125,15 @@ const ChunkMap& WorldSystem::getWorldVoxels(WorldId id) const
 
 void WorldSystem::createWorld(const WorldParameters& parameters)
 {
+    mBus.send(LogMessage{"Loading world " + parameters.identifier, worldName, LogLevel::INFO});
     WorldId newId = mNextId++;
 
     mIdentifierToIdMap.emplace(parameters.identifier, newId);   
 
-    mWorlds.emplace(newId, WorldEntry(mBus, newId, parameters.identifier));
+    WorldData worldData;
+
+    worldData.biomeSettings.biomes.push_back(mBiomeIdentifierToIdMap.at("grass"));
+    worldData.biomeSettings.biomes.push_back(mBiomeIdentifierToIdMap.at("desert"));
+
+    auto createdIterator = mWorlds.emplace(newId, WorldEntry(mBus, newId, parameters.identifier, worldData)).first;
 }
