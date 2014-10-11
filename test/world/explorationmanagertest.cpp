@@ -24,5 +24,5 @@ TEST_CASE("exman", "[exman]")
 	exman.setChunkExplored(coords);
 	REQUIRE(exman.getChunkExplored(coords) == true);
 	
-	exman.saveExploration(coords);
+	exman.saveExploration();
 }
