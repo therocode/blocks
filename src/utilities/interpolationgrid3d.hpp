@@ -93,6 +93,9 @@ Type InterpolationGrid3D<Type>::get(const glm::uvec3& location) const
         glm::uvec3 innerPoint = location / mDownSamplingPow; 
         glm::vec3 point = glm::fract((glm::vec3)location / (float)mDownSamplingPow);
 
+        if(glm::length(point) < 0.000005f)
+            return mValues.at(toInnerIndex(innerPoint));
+
         interpolationPoints[0 + 0 + 0] = mValues.at(toInnerIndex(innerPoint) + 0 + 0          + 0             );
         interpolationPoints[1 + 0 + 0] = mValues.at(toInnerIndex(innerPoint) + 1 + 0          + 0             );
         interpolationPoints[0 + 2 + 0] = mValues.at(toInnerIndex(innerPoint) + 0 + mInnerSize + 0             );
