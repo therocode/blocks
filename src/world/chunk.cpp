@@ -79,7 +79,8 @@ void Chunk::setVoxelType(const ChunkVoxelCoord& voxel, VoxelType type)
 
 	if(mSolidity != INBETWEEN)
 	{
-		mSolidity = mSolidity ^ (type > 0) ? INBETWEEN : mSolidity;
+		Solidity s = type ? SOLID : EMPTY;
+		mSolidity = (mSolidity == s) ? mSolidity : INBETWEEN;
 	}
 	else
 	{

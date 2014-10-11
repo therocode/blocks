@@ -93,6 +93,7 @@ set(source_files
     src/utilities/random.cpp
     src/utilities/timer.cpp
 
+	src/world/explorationmanager.cpp
     src/world/chunk.cpp
     src/world/worldprovider.cpp
     src/world/highlightmanager.cpp
@@ -214,6 +215,7 @@ set(header_files
 	src/utilities/timer.hpp
 	src/utilities/tinydir.hpp
 
+	src/world/explorationmanager.hpp
 	src/world/chunk.hpp
     src/world/valuemap.hpp
     src/world/highlightmanager.hpp
@@ -373,6 +375,9 @@ if(BUILD_TESTS)
     target_link_libraries(test_utilities ${FEATHERKIT_LIBRARIES})
     
     add_executable(test_chunk "test/world/chunktest.cpp" "src/world/chunk.cpp" "src/world/worldstd.cpp")
+    target_link_libraries(test_chunk ${FEATHERKIT_LIBRARIES})
+	
+    add_executable(test_explorationmanager "test/world/explorationmanagertest.cpp" "src/world/explorationmanager.cpp" "src/world/worldstd.cpp")
     target_link_libraries(test_chunk ${FEATHERKIT_LIBRARIES})
 	
     #profiling
