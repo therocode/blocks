@@ -23,11 +23,11 @@ class ExplorationManager
 		bool getChunkExplored(const ChunkCoord& coordinate);
 		void setChunkExplored(const ChunkCoord& coordinate);
 		void saveExploration();
+		void setWorldName(const std::string& name);
 	private:
 		std::unordered_map<RegionCoord, std::vector<bool>> mExploreData;
 		std::unordered_set<RegionCoord> mExploreChange;
 		std::string mWorldName;
 		
 		std::string getFilename(RegionCoord regionLoc);
-		void setWorldName(const std::string& name);
 };

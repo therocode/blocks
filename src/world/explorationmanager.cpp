@@ -1,3 +1,4 @@
+#include <fea/assert.hpp>
 #include "explorationmanager.hpp"
 #include <iostream>
 #include <fstream>
@@ -13,7 +14,32 @@ bool ExplorationManager::getChunkExplored(const ChunkCoord& coordinate)
 
 	if(mExploreData.count(regcoord) == 0)
 	{
-		return false;
+		std::cout << getFilename(regcoord) + dataExt << std::endl;
+		std::ifstream expFile(getFilename(regcoord) + dataExt, std::ios::in | std::ios::binary);
+		if(expFile.is_open())
+		{
+			std::vector<uint8_t> byteHolder(4096);
+			expFile.read((char*)byteHolder.data(), 4096);
+			expFile.close();
+			
+			std::vector<bool> explore(32*32*32);
+			for(int x=0; x<4096; ++x)
+			{
+				explore[x*8  ] = byteHolder[x] >> 7;
+				explore[x*8+1] = byteHolder[x] >> 6 & 1;
+				explore[x*8+2] = byteHolder[x] >> 5 & 1;
+				explore[x*8+3] = byteHolder[x] >> 4 & 1;
+				explore[x*8+4] = byteHolder[x] >> 3 & 1;
+				explore[x*8+5] = byteHolder[x] >> 2 & 1;
+				explore[x*8+6] = byteHolder[x] >> 1 & 1;
+				explore[x*8+7] = byteHolder[x]      & 1;
+			}
+			mExploreData.emplace(regcoord, explore);
+		}
+		else
+		{
+			return false;
+		}
 	}
 
 	uint16_t pos = regchunkcoord.x + regchunkcoord.y * regionChunkWidth * regionChunkWidth + regchunkcoord.z * regionChunkWidth;
@@ -52,9 +78,9 @@ void ExplorationManager::saveExploration()
 								(mExploreData.at(v)[x*8+6] << 1) |  mExploreData.at(v)[x*8+7];
 		}
 		
-		std::ofstream asd(getFilename(v) + dataExt, std::ios::out | std::ios::binary);
-		asd.write((char*)explorePrinter.data(),4096);
-		asd.close();
+		std::ofstream expFile(getFilename(v) + dataExt, std::ios::out | std::ios::binary);
+		expFile.write((char*)explorePrinter.data(), 4096);
+		expFile.close();
 	}
 }
 
@@ -73,5 +99,6 @@ std::string ExplorationManager::getFilename(RegionCoord regionLoc)
 
 void ExplorationManager::setWorldName(const std::string& name)
 {
-    mWorldName = name;
+	FEA_ASSERT(mWorldName != '', "hej");
+    mWorldName = name; //set name
 }
