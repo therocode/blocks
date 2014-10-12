@@ -64,7 +64,7 @@ class CoordinateWrapConvert
 };
 
 template<typename SourceType, typename TargetType, int32_t lower, int32_t upper>
-class CoordinateWrapConvert<SourceType, TargetType, lower, upper, typename std::enable_if<(std::is_integral<decltype(SourceType().x)>::value), void>::type>
+class CoordinateWrapConvert<SourceType, TargetType, lower, upper, typename std::enable_if<(std::is_floating_point<decltype(SourceType().x)>::value), void>::type>
 {
     public:
         static TargetType convert(const SourceType& input)
@@ -79,7 +79,7 @@ class CoordinateWrapConvert<SourceType, TargetType, lower, upper, typename std::
 
 
 template<typename SourceType, typename TargetType, int32_t lower, int32_t upper>
-class CoordinateWrapConvert<SourceType, TargetType, lower, upper, typename std::enable_if<(std::is_floating_point<decltype(SourceType().x)>::value), void>::type>
+class CoordinateWrapConvert<SourceType, TargetType, lower, upper, typename std::enable_if<(std::is_integral<decltype(SourceType().x)>::value), void>::type>
 {
     public:
         static TargetType convert(const SourceType& input)

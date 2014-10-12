@@ -94,3 +94,18 @@ TEST_CASE("VoxelToChunkVoxel", "[coord]")
     REQUIRE(VoxelToChunkVoxel::convert(VoxelCoord(16, 16, 16)) == ChunkVoxelCoord(0, 0, 0));
     REQUIRE(VoxelToChunkVoxel::convert(VoxelCoord(17, 17, 17)) == ChunkVoxelCoord(1, 1, 1));
 }
+
+TEST_CASE("WorldToChunkVoxel", "[coord]")
+{
+    REQUIRE(WorldToChunkVoxel::convert(glm::vec3(0.0f, 0.0f, 0.0f)) == ChunkVoxelCoord(0, 0, 0));
+    REQUIRE(WorldToChunkVoxel::convert(glm::vec3(1.0f, 1.0f, 1.0f)) == ChunkVoxelCoord(1, 1, 1));
+    REQUIRE(WorldToChunkVoxel::convert(glm::vec3(1.9f, 1.9f, 1.9f)) == ChunkVoxelCoord(1, 1, 1));
+    REQUIRE(WorldToChunkVoxel::convert(glm::vec3(-0.5f, -0.5f, -0.5f)) == ChunkVoxelCoord(15, 15, 15));
+    REQUIRE(WorldToChunkVoxel::convert(glm::vec3(-1.5f, -1.5f, -1.5f)) == ChunkVoxelCoord(14, 14, 14));
+    REQUIRE(WorldToChunkVoxel::convert(glm::vec3(2.5f, 2.5f, 2.5f)) == ChunkVoxelCoord(2, 2, 2));
+    REQUIRE(WorldToChunkVoxel::convert(glm::vec3(0.5f, 0.5f, 0.5f)) == ChunkVoxelCoord(0, 0, 0));
+    REQUIRE(WorldToChunkVoxel::convert(glm::vec3(-1.0f, -1.0f, -1.0f)) == ChunkVoxelCoord(15, 15, 15));
+    REQUIRE(WorldToChunkVoxel::convert(glm::vec3(-13.0f, -13.0f, -13.0f)) == ChunkVoxelCoord(3, 3, 3));
+    REQUIRE(WorldToChunkVoxel::convert(glm::vec3(-14.0f, -14.0f, -14.0f)) == ChunkVoxelCoord(2, 2, 2));
+    REQUIRE(WorldToChunkVoxel::convert(glm::vec3(-15.0f, -15.0f, -15.0f)) == ChunkVoxelCoord(1, 1, 1));
+}
