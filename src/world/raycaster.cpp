@@ -1,13 +1,13 @@
 #include "raycaster.hpp"
-#include "worldstd.hpp"
-#include "world.hpp"
+#include "worlddefines.hpp"
+#include "chunkmap.hpp"
 
-bool RayCaster::getVoxelAtRay(const World& world, const glm::vec3& position, const glm::vec3& direction, const float maxDistance, uint32_t& hitFace, VoxelCoord& hitBlock)
+bool RayCaster::getVoxelAtRay(const ChunkMap& world, const glm::vec3& position, const glm::vec3& direction, const float maxDistance, uint32_t& hitFace, VoxelCoord& hitBlock)
 {
-    VoxelCoord voxel = worldToVoxel(position);
+    VoxelCoord voxel = WorldToVoxel::convert(position);
 
     glm::vec3 bp = glm::fract(position);
-    ChunkVoxelCoord chunkCoordinate = voxelToChunkVoxel(voxel);
+    ChunkVoxelCoord chunkCoordinate = VoxelToChunkVoxel::convert(voxel);
     //printf("ip:%i, %i, %i\n", ip[0], ip[1], ip[2]);
     //printf("ip:%i, %i, %i\n", chunkCoordinate[0], chunkCoordinate[1], chunkCoordinate[2]);
     //printf("rp:%f, %f, %f\n", ox, oy, oz);
@@ -29,29 +29,29 @@ bool RayCaster::getVoxelAtRay(const World& world, const glm::vec3& position, con
     if(d.x > 0)
     {
         bounds.x = 1.0f;
-        enterFaces[0] = FACE_LEFT;
+        enterFaces[0] = CUBE_LEFT;
     }
     else
     {
-        enterFaces[0] = FACE_RIGHT;
+        enterFaces[0] = CUBE_RIGHT;
     }
     if(d.y > 0)
     {
         bounds.y = 1.0f;
-        enterFaces[1] = FACE_BOTTOM;
+        enterFaces[1] = CUBE_BOTTOM;
     }
     else
     {
-        enterFaces[1] = FACE_TOP;
+        enterFaces[1] = CUBE_TOP;
     }
     if(d.z > 0)
     {
         bounds.z = 1.0f;
-        enterFaces[2] = FACE_FRONT;
+        enterFaces[2] = CUBE_FRONT;
     }
     else
     {
-        enterFaces[2] = FACE_BACK;
+        enterFaces[2] = CUBE_BACK;
     }
     float ix, iy, iz;
     while(steps < 256)
@@ -77,7 +77,11 @@ bool RayCaster::getVoxelAtRay(const World& world, const glm::vec3& position, con
         float lengthToNextBlock = 0.1f;
         lengthToNextBlock = mind + 0.01f;
 
-        vtype = world.getVoxelType(voxel);
+        vtype = 0;
+        
+        const auto chunk = world.find(VoxelToChunk::convert(voxel));
+        if(chunk != world.end())
+            vtype = chunk->second.getVoxelType(VoxelToChunkVoxel::convert(voxel));
 
         if(vtype != (uint16_t)0) 
             break;

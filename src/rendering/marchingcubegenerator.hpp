@@ -1,5 +1,5 @@
-#include "blockstd.hpp"
-#include "world/worldstd.hpp"
+#include "utilities/glm.hpp"
+#include "world/worlddefines.hpp"
 #include "world/chunk.hpp"
 #include "vbo.hpp"
 //rmembemr http://http.developer.nvidia.com/GPUGems3/gpugems3_ch01.html

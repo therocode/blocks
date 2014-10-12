@@ -1,19 +1,14 @@
 #pragma once
 #include <fea/entitysystem.hpp>
 #include <fea/util.hpp>
+#include "worlddefines.hpp"
+#include "biome.hpp"
+#include "biomedefines.hpp"
+#include "worldbiomesettings.hpp"
 
 class Region;
 class Chunk;
 class RegionDataFragment;
-
-using WorldId = uint32_t;
-using VoxelType = uint16_t;
-using VoxelCoord       = glm::i64vec3;
-using ChunkCoord       = glm::i64vec3; 
-using RegionCoord      = glm::i64vec2;
-using ChunkVoxelCoord  = glm::u8vec3;
-using RegionChunkCoord = glm::u8vec3;
-using RegionVoxelCoord = glm::u16vec2;
 
 struct SetVoxelMessage
 {
@@ -25,22 +20,32 @@ struct VoxelSetMessage
     const VoxelCoord& voxel; VoxelType type;
 };
 
-struct RegionRequestedMessage
+struct WorldBiomeSettingsMessage
 {
-    WorldId worldId; const RegionCoord& coordinate;
+    WorldId worldId; const WorldBiomeSettings& settings;
 };
 
-struct RegionDeliverMessage
+struct BiomesLoadedMessage
 {
-    WorldId worldId; const RegionCoord& coordinate; const Region& newRegion;
+    const std::unordered_map<BiomeIndex, Biome>& biomes;
+};
+
+struct BiomeRequestedMessage
+{
+    WorldId worldId; const BiomeRegionCoord& coordinate;
+};
+
+struct BiomeDeliveredMessage
+{
+    WorldId worldId; const BiomeRegionCoord& coordinate; const BiomeGrid& biomeData;
 };
 
 struct ChunkRequestedMessage
 {
-    int32_t prio; WorldId worldId; const ChunkCoord& coordinate; const RegionDataFragment& regionData;
+    int32_t prio; WorldId worldId; const ChunkCoord& coordinate; const BiomeGrid& biomeData;
 };
 
-struct ChunkDeliverMessage
+struct ChunkDeliveredMessage
 {
     WorldId worldId; const ChunkCoord& coordinate; const Chunk& chunk;
 };
@@ -51,11 +56,6 @@ struct ChunkDeletedMessage
 };
 
 struct ChunkLoadedMessage
-{
-    const Chunk& chunk; uint64_t timestamp;
-};
-
-struct ChunkModdedMessage
 {
     const Chunk& chunk; uint64_t timestamp;
 };

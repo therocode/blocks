@@ -233,7 +233,7 @@ void Renderer::render()
 
 	glBindTexture(GL_TEXTURE_2D, blockTexture);
 
-	ChunkCoord currentChunk = worldToChunk(cam.GetPosition());
+	ChunkCoord currentChunk = WorldToChunk::convert(cam.GetPosition());
 
 	//For looping texture atlas textures, used in chunks.
 	mShaderProgram.setUniform("enableBoundsTexture", 1);
