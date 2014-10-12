@@ -16,7 +16,7 @@ struct ChunkDelivery
 
 class WorldProvider :
     public fea::MessageReceiver<ChunkGenerationRequestedMessage,
-    public fea::MessageReceiver<BiomesLoadedMessage,
+                                BiomesLoadedMessage,
                                 FrameMessage>
 {
     public:

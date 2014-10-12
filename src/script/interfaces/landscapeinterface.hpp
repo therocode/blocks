@@ -1,8 +1,8 @@
 #pragma once
 #include "scriptinterface.hpp"
 #include "../../utilities/random.hpp"
-#include "utilities/glm.hpp"
-#include "world/worlddefines.hpp"
+#include "../../utilities/glm.hpp"
+#include "../../world/worlddefines.hpp"
 
 class GameInterface;
 using VoxelType = uint16_t;

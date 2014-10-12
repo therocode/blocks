@@ -142,5 +142,5 @@ void WorldEntry::requestChunk(const ChunkCoord& chunk)
         }
     }
 
-    mBus.send(ChunkRequestedMessage{0, mId, chunk, grid});
+    mBus.send(ChunkGenerationRequestedMessage{0, mId, chunk, grid});
 }

@@ -4,7 +4,8 @@
 #include <cstdint>
 #include <string>
 #include <unordered_map>
-#include "../world/worldstd.hpp"
+#include "../world/chunk.hpp"
+#include "../world/worlddefines.hpp"
 
 enum { INVALID = -1, 
     //joining

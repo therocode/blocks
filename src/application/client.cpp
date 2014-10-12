@@ -118,8 +118,8 @@ void Client::handleMessage(const ChunkFinishedMessage& received)
 
 void Client::handleMessage(const VoxelSetMessage& received)
 {
-            ChunkCoord chunkCoord = voxelToChunk(received.voxel);
-            ChunkVoxelCoord chunkVoxelCoord = voxelToChunkVoxel(received.voxel);
+            ChunkCoord chunkCoord = VoxelToChunk::convert(received.voxel);
+            ChunkVoxelCoord chunkVoxelCoord = VoxelToChunkVoxel::convert(received.voxel);
 
             auto chunk = mLocalChunks.find(chunkCoord);
 

@@ -1,7 +1,7 @@
 #define CATCH_CONFIG_MAIN
 #include "../catch.hpp"
 
-#include "world/explorationmanager.hpp"
+#include "../src/world/explorationmanager.hpp"
 
 
 

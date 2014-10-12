@@ -40,8 +40,6 @@ set(source_files
 
     src/input/inputadaptor.cpp
 
-    src/math/mathutils.cpp
-
     src/networking/clientnetworkingsystem.cpp
     src/networking/enet.cpp
     src/networking/enetclient.cpp
@@ -146,8 +144,6 @@ set(header_files
     src/input/inputmessages.hpp
     src/input/inputactions.hpp
     src/input/inputadaptor.hpp
-
-    src/math/mathutils.hpp
 
     src/networking/channels.hpp
     src/networking/clientnetworkingsystem.hpp

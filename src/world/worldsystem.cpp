@@ -93,7 +93,7 @@ void WorldSystem::handleMessage(const ChunkGeneratedMessage& received)
     const Chunk& chunk = received.chunk;
 
     //check against ranges and active chunks!!!!!
-    mWorlds.at(received.worldId).getChunkMap().emplace(coordinate, chunk);
+    auto iterator = mWorlds.at(received.worldId).getChunkMap().emplace(coordinate, chunk);
 
 
     //#C1#if(mModManager.hasMods(chunk))  // implement this check as seen in issue #143
@@ -106,11 +106,9 @@ void WorldSystem::handleMessage(const ChunkGeneratedMessage& received)
 
     uint64_t timestamp = 0; //#C3# get proper timestamp, issue #133
 
-    mBus.send(ChunkCandidateMessage{mId, coordinate, chunk, timestamp});
+    mBus.send(ChunkCandidateMessage{received.worldId, coordinate, iterator.first->second, timestamp});
 
-    mBus.send(ChunkFinishedMessage{coordinate, chunk}); //the now fully initialised chunk is announced to the rest of the game.
-
-    mBus.send(ChunkLoadedMessage{chunk, 0});
+    mBus.send(ChunkFinishedMessage{coordinate, iterator.first->second}); //the now fully initialised chunk is announced to the rest of the game.
 }
 
 void WorldSystem::handleMessage(const HighlightEntityAddRequestedMessage& received)
@@ -136,22 +134,22 @@ void WorldSystem::handleMessage(const HighlightEntityRemoveRequestedMessage& rec
 
 void WorldSystem::handleMessage(const ChunksRequestMessage& received)
 {
-    const World& world = *mWorlds.at(received.worldId);
+    //const World& world = *mWorlds.at(received.worldId);
 
-    ChunksDataMessage message;
-    message.worldId = received.worldId;
+    //ChunksDataMessage message;
+    //message.worldId = received.worldId;
 
-    for(const auto& requestedChunk : received.coordinates)
-    {
-        const Chunk* chunk = world.findChunk(requestedChunk);
+    //for(const auto& requestedChunk : received.coordinates)
+    //{
+    //    const Chunk* chunk = world.findChunk(requestedChunk);
 
-        if(chunk != nullptr)
-        {
-            message.chunks.emplace(requestedChunk, *chunk);
-        }
-    }
+    //    if(chunk != nullptr)
+    //    {
+    //        message.chunks.emplace(requestedChunk, *chunk);
+    //    }
+    //}
 
-    mBus.send(message);
+    //mBus.send(message);
 }
 
 const ChunkMap& WorldSystem::getWorldVoxels(WorldId id) const

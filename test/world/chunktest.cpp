@@ -1,7 +1,7 @@
 #define CATCH_CONFIG_MAIN
 #include "../catch.hpp"
 
-#include "world/chunk.hpp"
+#include "../src/world/chunk.hpp"
 
 using ChunkVoxelCoord  = glm::u8vec3;
 

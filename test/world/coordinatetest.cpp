@@ -1,7 +1,7 @@
 #define CATCH_CONFIG_MAIN
 #include "../catch.hpp"
 
-#include "world/worlddefines.hpp"
+#include "../src/world/worlddefines.hpp"
 
 TEST_CASE("wrap", "[wrap]")
 {
