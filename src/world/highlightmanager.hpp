@@ -5,7 +5,7 @@
 #include <fea/entitysystem.hpp>
 
 #include "chunk.hpp"
-#include "worldstd.hpp"
+#include "worlddefines.hpp"
 
 #define PR(x) std::cerr << #x << " = " << (x) << std::endl;
 
@@ -30,7 +30,7 @@ class HighlightManager
         ChunkHighlightList addHighlightEntity(fea::EntityId id, const ChunkCoord& coordinate);
         ChunkDehighlightList removeHighlightEntity(fea::EntityId id);
         std::pair<ChunkHighlightList, ChunkDehighlightList> moveHighlightEntity(fea::EntityId id, const ChunkCoord& coordinate);
-
+        bool chunkIsHighlighted(const ChunkCoord& coordinate);
     private:
         ChunkHighlightList highlightShape(const ChunkCoord& coord);
         ChunkDehighlightList dehighlightShape(const ChunkCoord& coord);

@@ -1,9 +1,9 @@
 #pragma once
-#include "../../blockstd.hpp"
 #include "entitycontroller.hpp"
 #include "../entitymessages.hpp"
-#include "../../math/mathutils.hpp"
-#include "../../world/worldid.hpp"
+#include "utilities/glm.hpp"
+#include "../../utilities/geomath.hpp"
+#include "../../world/worlddefines.hpp"
 
 class CollisionController : public EntityController,
                             public fea::MessageReceiver<EntityMoveRequestedMessage>

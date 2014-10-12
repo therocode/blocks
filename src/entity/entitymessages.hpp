@@ -1,17 +1,10 @@
 #pragma once
-#include "../blockstd.hpp"
-#include "../world/worldid.hpp"
+#include "../utilities/glm.hpp"
 #include "controllers/movedirection.hpp"
 #include "controllers/moveaction.hpp"
 #include <fea/util.hpp>
 #include <fea/entitysystem.hpp>
-
-using VoxelCoord       = glm::i64vec3;
-using ChunkCoord       = glm::i64vec3; 
-using RegionCoord      = glm::i64vec2;
-using ChunkVoxelCoord  = glm::u8vec3;
-using RegionChunkCoord = glm::u8vec3;
-using RegionVoxelCoord = glm::u16vec2;
+#include "../world/worlddefines.hpp"
 
 struct EntityMoveRequestedMessage
 {

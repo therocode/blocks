@@ -63,7 +63,6 @@ set(source_files
     src/rendering/texture.cpp
     src/rendering/vbo.cpp
     src/rendering/vbocreator.cpp
-    src/rendering/marchingcubegenerator.cpp
     src/rendering/gl_core_3_2.c
 
     src/script/scriptcallback.cpp
@@ -91,35 +90,33 @@ set(source_files
     src/script/interfaces/scriptinterface.cpp
     src/script/interfaces/stringinterface.cpp
 
+    src/utilities/coordinateconverter.cpp
     src/utilities/directorycreator.cpp
     src/utilities/folderexploder.cpp
     src/utilities/fpscontroller.cpp
+    src/utilities/geomath.cpp
     src/utilities/lodepng.cpp
     src/utilities/logger.cpp
     src/utilities/random.cpp
     src/utilities/timer.cpp
 
+	src/world/explorationmanager.cpp
+    src/world/biome.cpp
+    src/world/biomeprovider.cpp
     src/world/chunk.cpp
-    src/world/worldprovider.cpp
+    src/world/fieldgenerator.cpp
     src/world/highlightmanager.cpp
     src/world/modmanager.cpp
     src/world/ranges.cpp
     src/world/raycaster.cpp
-    src/world/region.cpp
-    src/world/regiondatafragment.cpp
-    src/world/world.cpp
-    src/world/worldstd.cpp
+    src/world/worldentry.cpp
+    src/world/worldprovider.cpp
     src/world/worldsystem.cpp
     src/world/worldloader.cpp
-    src/world/generation/biome.cpp
-    src/world/generation/biomestorage.cpp
     src/world/generation/chunkgenerator.cpp
-    src/world/generation/regiondatagenerator.cpp
-    src/world/generation/regiongenerator.cpp
     )
 
 set(header_files
-    src/blockstd.hpp
     src/gameinterface.hpp
     src/lognames.hpp
     src/application/applicationmessages.hpp
@@ -177,7 +174,6 @@ set(header_files
     src/rendering/texture.hpp
     src/rendering/vbo.hpp
     src/rendering/vbocreator.hpp
-    src/rendering/marchingcubegenerator.hpp
     src/rendering/gl_core_3_2.h
     src/rendering/opengl.hpp
 
@@ -207,33 +203,41 @@ set(header_files
     src/script/interfaces/scriptinterface.hpp
     src/script/interfaces/stringinterface.hpp
 
+    src/utilities/coordinateconverter.hpp
     src/utilities/directorycreator.hpp
     src/utilities/folderexploder.hpp
     src/utilities/fpscontroller.hpp
+    src/utilities/geomath.hpp
+    src/utilities/gridnotifier.hpp
+    src/utilities/glm.hpp
+    src/utilities/interpolationgrid3d.hpp
+    src/utilities/interpolators.hpp
     src/utilities/lodepng.hpp
     src/utilities/logger.hpp
 	src/utilities/random.hpp
 	src/utilities/timer.hpp
 	src/utilities/tinydir.hpp
 
+	src/world/explorationmanager.hpp
+	src/world/biome.hpp
+	src/world/biomedefines.hpp
+	src/world/biomeprovider.hpp
 	src/world/chunk.hpp
+	src/world/chunkmap.hpp
+    src/world/field.hpp
+    src/world/fieldgenerator.hpp
     src/world/valuemap.hpp
     src/world/highlightmanager.hpp
     src/world/modmanager.hpp
     src/world/raycaster.hpp
-    src/world/region.hpp
-    src/world/regiondatafragment.hpp
-    src/world/world.hpp
-    src/world/worldstd.hpp
+    src/world/worlddata.hpp
+    src/world/worlddefines.hpp
+    src/world/worldentry.hpp
 	src/world/worldsystem.hpp
     src/world/worldloader.hpp
 	src/world/worldmessages.hpp
     src/world/worldprovider.hpp
-	src/world/generation/biome.hpp
-	src/world/generation/biomestorage.hpp
     src/world/generation/chunkgenerator.hpp
-    src/world/generation/regiondatagenerator.hpp
-    src/world/generation/regiongenerator.hpp
 )
 
 find_package(Featherkit REQUIRED COMPONENTS entity structure ui sdl2 util)
@@ -266,6 +270,12 @@ if(NOT SDL2_FOUND)
 	link_directories(${CMAKE_CURRENT_SOURCE_DIR}/extlibs/SDL-2.0/lib)
 endif(NOT SDL2_FOUND)
 
+if(NOT MSVC)
+    set(CPP_11_FLAG -std=c++11)
+endif()
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CPP_11_FLAG} -pthread")
+
 if(BUILD_GAME)
     add_executable(${project_name} ${header_files} ${source_files})
     
@@ -295,6 +305,7 @@ if(BUILD_GAME)
     	include_directories(${ENet_INCLUDE_DIRS})
     	target_link_libraries(${project_name} ${ENet_LIBRARIES})
     endif(ENET_FOUND)
+
     if(ZLIB_FOUND)
         include_directories(${ZLib_INCLUDE_DIRS})
         target_link_libraries(${project_name} ${ZLib_LIBRARIES})
@@ -347,17 +358,17 @@ endif(BUILD_GAME)
 
 #tests
 if(BUILD_TESTS)
-    add_executable(test_modmanager "test/world/modmanagertest.cpp" "src/world/modmanager.cpp" "src/world/chunk.cpp" "src/world/worldstd.cpp")
+    add_executable(test_modmanager "test/world/modmanagertest.cpp" "src/world/modmanager.cpp" "src/world/chunk.cpp" "src/utilities/directorycreator.cpp" "src/utilities/coordinateconverter.cpp")
     target_link_libraries(test_modmanager ${FEATHERKIT_LIBRARIES})
     
-    add_executable(test_highlightmanager "test/world/highlightmanagertest.cpp" "src/world/highlightmanager.cpp" "src/world/worldstd.cpp")
+    add_executable(test_highlightmanager "test/world/highlightmanagertest.cpp" "src/world/highlightmanager.cpp")
     target_link_libraries(test_highlightmanager ${FEATHERKIT_LIBRARIES})
     
-    add_executable(test_coordinate "test/world/coordinatetest.cpp" "src/world/worldstd.cpp")
+    add_executable(test_coordinate "test/world/coordinatetest.cpp" "src/utilities/coordinateconverter.cpp")
     target_link_libraries(test_coordinate ${FEATHERKIT_LIBRARIES})
     
-    add_executable(test_world_misc "test/world/misctest.cpp" "src/world/worldstd.cpp" "src/world/region.cpp" "src/world/regiondatafragment.cpp")
-    target_link_libraries(test_world_misc ${FEATHERKIT_LIBRARIES})
+    #add_executable(test_world_misc "test/world/misctest.cpp" "src/world/worldconstants.cpp" "src/world/region.cpp" "src/world/regiondatafragment.cpp")
+    #target_link_libraries(test_world_misc ${FEATHERKIT_LIBRARIES})
     
     add_executable(test_utilities "test/utilities/utilitiestest.cpp" "src/utilities/directorycreator.cpp")
     target_link_libraries(test_utilities ${FEATHERKIT_LIBRARIES})
@@ -365,7 +376,19 @@ if(BUILD_TESTS)
     add_executable(test_net_serializing "test/network/serialize.cpp" "src/networking/networkingprotocol.cpp" "src/networking/messageserializer.cpp")
     target_link_libraries(test_net_serializing ${FEATHERKIT_LIBRARIES})
     
+    add_executable(test_chunk "test/world/chunktest.cpp" "src/world/chunk.cpp")
+    target_link_libraries(test_chunk ${FEATHERKIT_LIBRARIES})
+    
+    add_executable(test_interpolation_grid3d "test/utilities/interpolationgrid3dtest.cpp")
+    target_link_libraries(test_interpolation_grid3d ${FEATHERKIT_LIBRARIES})
+    
+    add_executable(test_grid_notifier "test/utilities/gridnotifiertest.cpp")
+    target_link_libraries(test_grid_notifier ${FEATHERKIT_LIBRARIES})
+	
+    add_executable(test_explorationmanager "test/world/explorationmanagertest.cpp" "src/world/explorationmanager.cpp" "src/utilities/coordinateconverter.cpp")
+    target_link_libraries(test_chunk ${FEATHERKIT_LIBRARIES})
+	
     #profiling
-    add_executable(profile_modmanager "profile/world/modmanagerprofile.cpp" "src/world/modmanager.cpp" "src/world/chunk.cpp" "src/world/worldstd.cpp")
+    add_executable(profile_modmanager "profile/world/modmanagerprofile.cpp" "src/world/modmanager.cpp" "src/world/chunk.cpp" "src/utilities/directorycreator.cpp" "src/utilities/coordinateconverter.cpp")
     target_link_libraries(profile_modmanager ${FEATHERKIT_LIBRARIES})
 endif(BUILD_TESTS)

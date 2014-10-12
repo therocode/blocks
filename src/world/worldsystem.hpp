@@ -1,17 +1,16 @@
 #pragma once
 #include <unordered_map>
-#include "../blockstd.hpp"
+#include "../utilities/glm.hpp"
 #include <fea/util.hpp>
 #include "../rendering/renderingmessages.hpp"
 #include "worldmessages.hpp"
-#include "worldparameters.hpp"
-#include "world.hpp"
 #include "worldprovider.hpp"
-#include <memory>
+#include "biomeprovider.hpp"
+#include "worldentry.hpp"
 
 class WorldSystem : 
         public fea::MessageReceiver<SetVoxelMessage,
-                                    RegionGeneratedMessage,
+                                    BiomeGeneratedMessage,
                                     ChunkGeneratedMessage,
                                     HighlightEntityAddRequestedMessage,
                                     HighlightEntityMoveRequestedMessage,
@@ -22,18 +21,26 @@ class WorldSystem :
         WorldSystem(fea::MessageBus& messageBus);
         ~WorldSystem();
         void handleMessage(const SetVoxelMessage& received) override;
-        void handleMessage(const RegionGeneratedMessage& received) override;
+        void handleMessage(const BiomeGeneratedMessage& received) override;
         void handleMessage(const ChunkGeneratedMessage& received) override;
         void handleMessage(const HighlightEntityAddRequestedMessage& received) override;
         void handleMessage(const HighlightEntityMoveRequestedMessage& received) override;
         void handleMessage(const HighlightEntityRemoveRequestedMessage& received) override;
         void handleMessage(const ChunksRequestMessage& received) override;
-        void addWorld(const WorldParameters& worldParameters);
-        const World& getWorld(WorldId id) const;
+        const ChunkMap& getWorldVoxels(WorldId id) const;
     private:
+        void createWorld(const WorldParameters& parameters);
         fea::MessageBus& mBus;
-        std::unordered_map<WorldId, std::unique_ptr<World>> mWorlds;
-        std::unordered_map<std::string, WorldId> mWorldIds;
-        WorldId mNextId;
         WorldProvider mWorldProvider;
+        BiomeProvider mBiomeProvider;
+
+        //biome data
+        BiomeIndex mNextBiomeIndex;
+        std::unordered_map<BiomeIndex, Biome> mBiomes;
+        std::unordered_map<std::string, BiomeIndex> mBiomeIdentifierToIdMap;
+
+        //world data
+        WorldId mNextId;
+        std::unordered_map<std::string, WorldId> mIdentifierToIdMap;
+        std::unordered_map<WorldId, WorldEntry> mWorlds;
 };

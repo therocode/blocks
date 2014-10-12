@@ -1,5 +1,4 @@
-#include "mathutils.hpp"
-#include "../rendering/renderer.hpp"
+#include "geomath.hpp"
 
 float AABB::min(const int& axis)const{
     if(axis == 0){
@@ -25,11 +24,6 @@ float AABB::max(const int& axis)const{
         return z + depth;
     }
     return x;
-}
-
-void renderDebugAABB(const AABB a, const int color)
-{
-    Renderer::sDebugRenderer.drawBox(a.x + a.width*0.5f, a.y + a.height*0.5f, a.z + a.depth*0.5f, a.width  + 0.01f, a.height + 0.01f, a.depth + 0.01f, color);
 }
 
 bool testAABBAABB(const AABB& a, const AABB& b) 

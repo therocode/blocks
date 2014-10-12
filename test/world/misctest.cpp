@@ -1,9 +1,9 @@
 #define CATCH_CONFIG_MAIN
 #include "../catch.hpp"
 
-#include "../src/world/worldstd.hpp"
-#include "../src/world/region.hpp"
-#include "../src/world/valuemap.hpp"
+#include "world/worldconstants.hpp"
+#include "world/region.hpp"
+#include "world/valuemap.hpp"
 
 float accuracy = 0.0004f;
 

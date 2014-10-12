@@ -1,6 +1,6 @@
 #pragma once
 #include <climits>
-#include "../blockstd.hpp"
+#include "glm.hpp"
 
 ///This struct contains various geometrical types, like AABB, and AABB. currently only contains AABB.
 struct AABB 
@@ -21,5 +21,3 @@ float sweepAABB(const AABB a, const AABB b, const glm::vec3 va, const glm::vec3 
 bool testAABBAABB(const AABB& a, const AABB& b);
 //returns bool whether or not AABBs overlap, and smallestPenetration, which is a vector of the smallest offset a needs to move out of b
 bool testAABBAABB(const AABB& a, const AABB& b, glm::vec3& smallestPenetration);
-void renderDebugAABB(const AABB a, const int color);
-

@@ -33,16 +33,16 @@ void PlayerController::handleMessage(const PlayerJoinedGameMessage& received)
     mBus.send(EntityRequestedMessage{"Player", [&] (fea::EntityPtr e) 
             {
                 e->setAttribute("current_world", 0u);
-                e->setAttribute("current_chunk", worldToChunk(position));
+                e->setAttribute("current_chunk", WorldToChunk::convert(position));
                 e->setAttribute("position", position);
                 playerEntity = e;
             }});
 
     mPlayerEntities.emplace(playerId, playerEntity);
-    mBus.send(PlayerEntersChunkMessage{playerId, worldToChunk(position)});
-    mBus.send(HighlightEntityAddRequestedMessage{0u, playerEntity->getId(), worldToChunk(position)});
+    mBus.send(PlayerEntersChunkMessage{playerId, WorldToChunk::convert(position)});
+    mBus.send(HighlightEntityAddRequestedMessage{0u, playerEntity->getId(), WorldToChunk::convert(position)});
 
-    ChunkCoord chunkAt = worldToChunk(position);
+    ChunkCoord chunkAt = WorldToChunk::convert(position);
 
     mBus.send(PlayerConnectedToEntityMessage{(fea::EntityId)playerId, playerEntity->getId()});
 }
@@ -92,32 +92,32 @@ void PlayerController::handleMessage(const PlayerActionMessage& received)
         {
 			VoxelCoord voxel = entity->getAttribute<VoxelCoord>("block_facing");
 			uint32_t face = entity->getAttribute<uint32_t>("block_facing_face");
-			ChunkCoord cc = voxelToChunk(voxel);
-			ChunkVoxelCoord vc = voxelToChunkVoxel(voxel);
+			ChunkCoord cc = VoxelToChunk::convert(voxel);
+			ChunkVoxelCoord vc = VoxelToChunkVoxel::convert(voxel);
 			// printf("ChunkCoord: %i, %i, %i. VoxelCoord: %i, %i, %i. World: %i, %i, %i\n", cc.x, cc.y, cc.z, vc.x, vc.y, vc.z, voxel.x, voxel.y, voxel.z);
 			// printf("Face: %i\n", face);
 			switch(face){
-				case FACE_TOP:
+				case CUBE_TOP:
 					voxel.y++;
 					// printf("Top face\n");
 					break;
-				case FACE_BOTTOM:
+				case CUBE_BOTTOM:
 					voxel.y--;
 					// printf("Bottom face\n");
 					break;
-				case FACE_LEFT:
+				case CUBE_LEFT:
 					voxel.x--;
 					// printf("left face\n");
 					break;
-				case FACE_RIGHT:
+				case CUBE_RIGHT:
 					voxel.x++;
 					// printf("right face\n");
 					break;
-				case FACE_FRONT:
+				case CUBE_FRONT:
 					voxel.z--;
 					// printf("front face\n");
 					break;
-				case FACE_BACK:
+				case CUBE_BACK:
 					voxel.z++;
 					// printf("back face\n");
 					break;
@@ -134,7 +134,7 @@ void PlayerController::handleMessage(const PlayerActionMessage& received)
 
         mBus.send(HighlightEntityRemoveRequestedMessage{oldWorld, entityId});
         entity->setAttribute("current_world", nextWorld);
-        mBus.send(HighlightEntityAddRequestedMessage{nextWorld, entityId, worldToChunk(entity->getAttribute<glm::vec3>("position"))});
+        mBus.send(HighlightEntityAddRequestedMessage{nextWorld, entityId, WorldToChunk::convert(entity->getAttribute<glm::vec3>("position"))});
         mBus.send(PlayerEntersWorldMessage{playerId, nextWorld});
     }
 }
@@ -196,9 +196,9 @@ void PlayerController::handleMessage(const EntityMovedMessage& received)
         //updating current chunk
         glm::vec3 position = entity->getAttribute<glm::vec3>("position");
 
-        if(worldToChunk(position) != entity->getAttribute<ChunkCoord>("current_chunk"))
+        if(WorldToChunk::convert(position) != entity->getAttribute<ChunkCoord>("current_chunk"))
         {
-            playerEntersChunk(id, worldToChunk(position));
+            playerEntersChunk(id, WorldToChunk::convert(position));
         }
     }
 
@@ -224,7 +224,7 @@ void PlayerController::updateVoxelLookAt(size_t playerId)
 	glm::vec3 direction = glm::vec3(glm::cos(pitch) * glm::sin(yaw), glm::sin(pitch), glm::cos(pitch) * glm::cos(yaw));
 	VoxelCoord block;
 	uint32_t face;
-	bool f = RayCaster::getVoxelAtRay(mGameInterface.getWorldSystem().getWorld(worldId), position + glm::vec3(0, 0.6f, 0), direction, 200.f, face, block);
+	bool f = RayCaster::getVoxelAtRay(mGameInterface.getWorldSystem().getWorldVoxels(worldId), position + glm::vec3(0, 0.6f, 0), direction, 200.f, face, block);
 
     if(entity)
     {

@@ -106,7 +106,14 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& receiv
 
         if(n < 1.f )
         {
-            int32_t blockType = mGameInterface.getWorldSystem().getWorld(worldId).getVoxelType(currentHitBlock);
+            const auto& chunks = mGameInterface.getWorldSystem().getWorldVoxels(worldId);
+            const auto chunk = chunks.find(VoxelToChunk::convert(currentHitBlock));
+
+            int32_t blockType = 0;
+
+            if(chunk != chunks.end())
+                blockType = chunk->second.getVoxelType(VoxelToChunkVoxel::convert(currentHitBlock));
+
             float moveLen = glm::length(approvedPosition - oldPosition);
 
             b.x = currentHitBlock.x;
@@ -243,7 +250,12 @@ bool CollisionController::testAABBWorld(WorldId worldId, const AABB& a) const{
 
                 VoxelCoord coord(b.x, b.y, b.z);
 
-                int blockType = mGameInterface.getWorldSystem().getWorld(worldId).getVoxelType(coord);
+                int blockType = 0;
+                
+                const auto& chunks = mGameInterface.getWorldSystem().getWorldVoxels(worldId);
+                const auto chunk = chunks.find(VoxelToChunk::convert(coord));
+                if(chunk != chunks.end())
+                    blockType = chunk->second.getVoxelType(VoxelToChunkVoxel::convert(coord));
 
                 if(blockType != 0)
                 {
@@ -291,7 +303,12 @@ glm::vec3 CollisionController::pushOutFromBlocks(WorldId worldId, const AABB& _a
                 b.y -= _a.y;
                 b.z -= _a.z;
 
-                int blockType = mGameInterface.getWorldSystem().getWorld(worldId).getVoxelType(coord);
+                const auto& chunks = mGameInterface.getWorldSystem().getWorldVoxels(worldId);
+                const auto chunk = chunks.find(VoxelToChunk::convert(coord));
+                int blockType = 0;
+                
+                if(chunk != chunks.end())
+                    blockType = chunk->second.getVoxelType(VoxelToChunkVoxel::convert(coord));
 
                 if(blockType != 0)
                 {
@@ -346,7 +363,12 @@ float CollisionController::sweepAroundAABB(WorldId worldId, const AABB _a, glm::
                 b.y -= _a.y;
                 b.z -= _a.z;
 
-                int blockType = mGameInterface.getWorldSystem().getWorld(worldId).getVoxelType(coord);
+                int blockType = 0;
+                const auto& chunks = mGameInterface.getWorldSystem().getWorldVoxels(worldId);
+                const auto chunk = chunks.find(VoxelToChunk::convert(coord));
+                
+                if(chunk != chunks.end())
+                    blockType = chunk->second.getVoxelType(VoxelToChunkVoxel::convert(coord));
 
                 if(blockType != 0)
                 {
@@ -378,7 +400,14 @@ float CollisionController::sweepAroundAABB(WorldId worldId, const AABB _a, glm::
                             nc[axis] += 1;
                         else
                             nc[axis] -= 1;
-                        if(mGameInterface.getWorldSystem().getWorld(worldId).getVoxelType(nc) != 0){
+
+                        int voxelType = 0;
+                        const auto& chunks = mGameInterface.getWorldSystem().getWorldVoxels(worldId);
+                        const auto chunk = chunks.find(VoxelToChunk::convert(nc));
+                        
+                        if(chunk != chunks.end())
+                            voxelType = chunk->second.getVoxelType(VoxelToChunkVoxel::convert(nc));
+                        if(voxelType != 0){
                         }
                         hitBlock = coord;
                         n = nn;
@@ -417,7 +446,12 @@ bool CollisionController::AABBOnGround(WorldId worldId, AABB a)
         {
             pos.x = x + a.x;
             pos.z = z + a.z;
-            int32_t voxelType = mGameInterface.getWorldSystem().getWorld(worldId).getVoxelType(worldToVoxel(pos));
+            int32_t voxelType = 0;
+            const auto& chunks = mGameInterface.getWorldSystem().getWorldVoxels(worldId);
+            const auto chunk = chunks.find(WorldToChunk::convert(pos));
+
+            if(chunk != chunks.end())
+                voxelType = chunk->second.getVoxelType(WorldToChunkVoxel::convert(pos));
             if(voxelType != 0){
                 b.x = glm::floor(pos.x);
                 b.y = glm::floor(pos.y);

@@ -49,6 +49,11 @@ std::pair<ChunkHighlightList, ChunkDehighlightList> HighlightManager::moveHighli
     return {highlightList, dehighlightList};
 }
 
+bool HighlightManager::chunkIsHighlighted(const ChunkCoord& coordinate)
+{
+    return mRefCounts.count(coordinate) != 0;
+}
+
 ChunkHighlightList HighlightManager::highlightShape(const ChunkCoord& loc)
 {
     ChunkHighlightList highlightList;
@@ -140,6 +145,7 @@ bool HighlightManager::dehighlightChunk(const ChunkCoord& coord)
 
     if(mRefCounts[coord] == 0)
     {
+        mRefCounts.erase(coord);
         return true;
     }
     else

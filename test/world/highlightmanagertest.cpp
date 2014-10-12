@@ -47,6 +47,10 @@ TEST_CASE("", "[spawn][despawn][move]")
                 }
             }
         }
+
+        REQUIRE(manager.chunkIsHighlighted(loc1));
+        REQUIRE(manager.chunkIsHighlighted(loc1 + ChunkCoord(1, 1, 1)));
+        REQUIRE(manager.chunkIsHighlighted(loc1 - ChunkCoord(1, 1, 1)));
     }
 
     SECTION("spawn and despawn entity") 
@@ -55,6 +59,10 @@ TEST_CASE("", "[spawn][despawn][move]")
         auto dehighlightedLocs = manager.removeHighlightEntity(eId1);
 
         REQUIRE(highlightedLocs.size() == dehighlightedLocs.size());
+
+        REQUIRE_FALSE(manager.chunkIsHighlighted(loc1));
+        REQUIRE_FALSE(manager.chunkIsHighlighted(loc1 + ChunkCoord(1, 1, 1)));
+        REQUIRE_FALSE(manager.chunkIsHighlighted(loc1 - ChunkCoord(1, 1, 1)));
     }
 
     SECTION("spawn and move entity")

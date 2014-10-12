@@ -22,21 +22,6 @@ bool fexists(string filename)
     return file;
 }
 
-class TestReceiver : 
-    public fea::MessageReceiver<ChunkModdedMessage>
-{
-    public:
-        Chunk chunk;
-        uint64_t timestamp;
-
-    private:
-        virtual void handleMessage(const ChunkModdedMessage& msg)
-        {
-            chunk = msg.chunk;
-            timestamp = msg.timestamp;
-        } 
-};
-
 TEST_CASE("set and get", "[set][get]")
 {
     ChunkCoord loc(12, 356, 9);
@@ -45,8 +30,7 @@ TEST_CASE("set and get", "[set][get]")
     ChunkVoxelCoord voxLocInvalid2(-1, -1, -1);
     VoxelType type = 12;
 
-    fea::MessageBus bus;
-    ModManager manager(bus, "default");
+    ModManager manager("test");
 
     SECTION("set and get one voxel")
     {
@@ -65,8 +49,8 @@ TEST_CASE("save and load", "[save][load]")
 {
     ChunkCoord loc(0, 0, 0);
     ChunkCoord loc2(32, 32, 32);
-    RegionCoord regionLoc = chunkToRegion(loc);
-    RegionCoord regionLoc2 = chunkToRegion(loc2);
+    RegionCoord regionLoc = ChunkToRegion::convert(loc);
+    RegionCoord regionLoc2 = ChunkToRegion::convert(loc2);
     ChunkVoxelCoord voxLoc(2, 2, 2);    
     ChunkVoxelCoord voxLoc2(1, 1, 1);
     VoxelType defaultType = 0;
@@ -79,19 +63,17 @@ TEST_CASE("save and load", "[save][load]")
     Chunk chunk(loc, voxelData);
     Chunk chunk2(loc2, voxelData);
     Chunk chunkClone(loc, voxelData);
-    ModManager manager(bus, "default");
-    ModManager manager2(bus, "default");
+    ModManager manager("test");
+    ModManager manager2("test");
     manager.deleteRegionFile(regionLoc);
     manager.deleteRegionFile(regionLoc2);
-    TestReceiver receiver;
-    bus.addSubscriber<ChunkModdedMessage>(receiver);
 
-    SECTION("load an untimestamped chunk")
-    {
-        manager.loadMods(chunk);
+    //SECTION("load an untimestamped chunk")   //this test might need to me reintroduced, issue #133
+    //{
+    //    manager.loadMods(chunk);
 
-        REQUIRE(0 == receiver.timestamp);
-    }
+    //    REQUIRE(0 == receiver.timestamp);
+    //}
 
     SECTION("save a region containing an untimestamped chunk")
     {
@@ -106,16 +88,16 @@ TEST_CASE("save and load", "[save][load]")
         manager.saveMods(regionLoc);
         manager2.loadMods(chunk);
 
-        REQUIRE(chunk.getLocation() == receiver.chunk.getLocation()); 
+        REQUIRE(chunk.getLocation() == loc); 
     }
 
-    SECTION("chunkmoddedmessage timestamp")
-    {
-        manager.recordTimestamp(loc, timestamp);
-        manager.loadMods(chunk);
+    //SECTION("chunkmoddedmessage timestamp") //this test might need to me reintroduced, issue #133
+    //{
+    //    manager.recordTimestamp(loc, timestamp);
+    //    manager.loadMods(chunk);
 
-        REQUIRE(timestamp == receiver.timestamp); 
-    }
+    //    REQUIRE(timestamp == receiver.timestamp); 
+    //}
 
     SECTION("one voxel")
     {
