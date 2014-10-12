@@ -9,8 +9,8 @@ ExplorationManager::ExplorationManager()
 
 bool ExplorationManager::getChunkExplored(const ChunkCoord& coordinate)
 {
-	RegionCoord regcoord = chunkToRegion(coordinate);
-	RegionChunkCoord regchunkcoord = chunkToRegionChunk(coordinate);
+	ExplorationRegionCoord regcoord = ChunkToExplorationRegion::convert(coordinate);
+	ExplorationRegionChunkCoord regchunkcoord = ChunkToExplorationRegionChunk::convert(coordinate);
 
 	if(mExploreData.count(regcoord) == 0)
 	{
@@ -42,15 +42,15 @@ bool ExplorationManager::getChunkExplored(const ChunkCoord& coordinate)
 		}
 	}
 
-	uint16_t pos = regchunkcoord.x + regchunkcoord.y * regionChunkWidth * regionChunkWidth + regchunkcoord.z * regionChunkWidth;
+	uint16_t pos = regchunkcoord.x + regchunkcoord.y * explorationRegionWidthInChunks * explorationRegionWidthInChunks + regchunkcoord.z * explorationRegionWidthInChunks;
 	
 	return mExploreData.at(regcoord)[pos];
 }
 
 void ExplorationManager::setChunkExplored(const ChunkCoord& coordinate)
 {
-	RegionCoord regcoord = chunkToRegion(coordinate);
-	RegionChunkCoord regchunkcoord = chunkToRegionChunk(coordinate);
+	ExplorationRegionCoord regcoord = ChunkToExplorationRegion::convert(coordinate);
+	ExplorationRegionChunkCoord regchunkcoord = ChunkToExplorationRegionChunk::convert(coordinate);
 
 	if(mExploreData.count(regcoord) == 0)
 	{
@@ -59,7 +59,7 @@ void ExplorationManager::setChunkExplored(const ChunkCoord& coordinate)
 		mExploreData.emplace(regcoord, explore);
 	}
 	
-	uint16_t pos = regchunkcoord.x + regchunkcoord.y * regionChunkWidth * regionChunkWidth + regchunkcoord.z * regionChunkWidth;
+	uint16_t pos = regchunkcoord.x + regchunkcoord.y * explorationRegionWidthInChunks * explorationRegionWidthInChunks + regchunkcoord.z * explorationRegionWidthInChunks;
 	
 	mExploreData.at(regcoord)[pos] = true;
 	mExploreChange.insert(regcoord);
@@ -84,7 +84,7 @@ void ExplorationManager::saveExploration()
 	}
 }
 
-std::string ExplorationManager::getFilename(RegionCoord regionLoc)
+std::string ExplorationManager::getFilename(ExplorationRegionCoord regionLoc)
 {
     std::string xPart = std::to_string(regionLoc.x);
     std::string yPart = std::to_string(regionLoc.y);
@@ -99,6 +99,6 @@ std::string ExplorationManager::getFilename(RegionCoord regionLoc)
 
 void ExplorationManager::setWorldName(const std::string& name)
 {
-	FEA_ASSERT(mWorldName != '', "hej");
+	FEA_ASSERT(name != "", "hej");
     mWorldName = name; //set name
 }

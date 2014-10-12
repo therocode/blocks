@@ -374,7 +374,7 @@ if(BUILD_TESTS)
     add_executable(test_grid_notifier "test/utilities/gridnotifiertest.cpp")
     target_link_libraries(test_grid_notifier ${FEATHERKIT_LIBRARIES})
 	
-    add_executable(test_explorationmanager "test/world/explorationmanagertest.cpp" "src/world/explorationmanager.cpp" "src/world/worldstd.cpp")
+    add_executable(test_explorationmanager "test/world/explorationmanagertest.cpp" "src/world/explorationmanager.cpp" "src/utilities/coordinateconverter.cpp")
     target_link_libraries(test_chunk ${FEATHERKIT_LIBRARIES})
 	
     #profiling
