@@ -101,13 +101,11 @@ set(source_files
     src/world/modmanager.cpp
     src/world/ranges.cpp
     src/world/raycaster.cpp
-    src/world/regiondatafragment.cpp
     src/world/worldentry.cpp
     src/world/worldprovider.cpp
     src/world/worldsystem.cpp
     src/world/worldloader.cpp
     src/world/generation/chunkgenerator.cpp
-    src/world/generation/regiondatagenerator.cpp
     )
 
 set(header_files
@@ -225,7 +223,6 @@ set(header_files
     src/world/highlightmanager.hpp
     src/world/modmanager.hpp
     src/world/raycaster.hpp
-    src/world/regiondatafragment.hpp
     src/world/worlddata.hpp
     src/world/worlddefines.hpp
     src/world/worldentry.hpp
@@ -234,7 +231,6 @@ set(header_files
 	src/world/worldmessages.hpp
     src/world/worldprovider.hpp
     src/world/generation/chunkgenerator.hpp
-    src/world/generation/regiondatagenerator.hpp
 )
 
 find_package(Featherkit REQUIRED COMPONENTS entity structure ui sdl2 util)

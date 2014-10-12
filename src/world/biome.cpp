@@ -11,6 +11,7 @@ bool BiomeRequirement::isWithin(float v) const
 
 Biome::Biome(const std::string& name, VoxelType type, const std::unordered_map<std::string, BiomeRequirement>& requirements) : 
     mName(name),
+    mType(type),
     mRequirements(requirements)
 {
 }

@@ -1,5 +1,6 @@
 #include "worldentry.hpp"
 #include "worldmessages.hpp"
+#include "../utilities/interpolators.hpp"
 #include <algorithm>
 
 WorldEntry::WorldEntry(fea::MessageBus& bus, WorldId id, const std::string& identifier, const WorldData& data) :
@@ -59,8 +60,10 @@ void WorldEntry::deliverBiome(const BiomeRegionCoord& coordinate, const BiomeGri
         if(iterator != mPendingChunksToRequests.end())
         {
             for(const auto& chunk : iterator->second)
-                ;//send chunk request with biome data
+                requestChunk(chunk);
         }
+
+        mPendingChunksToRequests.erase(coordinate);
     }
 }
 
@@ -89,7 +92,7 @@ void WorldEntry::activateChunk(const ChunkCoord& chunkCoordinate)
     auto iterator = mWorldData.biomeGrids.find(biomeRegionCoord);
     if(iterator != mWorldData.biomeGrids.end())
     {
-        //send chunk request with biome data
+        requestChunk(chunkCoordinate);
     }
     else
     {
@@ -116,4 +119,28 @@ void WorldEntry::deactivateChunk(const ChunkCoord& chunkCoordinate)
 
     if(iterator != mPendingChunksToRequests.end())
         std::remove(iterator->second.begin(), iterator->second.end(), chunkCoordinate);
+}
+
+void WorldEntry::requestChunk(const ChunkCoord& chunk)
+{
+    BiomeGrid grid(16, 4);
+    grid.setInterpolator(Interpolator<BiomeIndex>::nearestNeigbor);
+    BiomeRegionChunkCoord biomeRegionChunk = ChunkToBiomeRegionChunk::convert(chunk);
+    BiomeGrid& bigGrid = mWorldData.biomeGrids.at(ChunkToBiomeRegion::convert(chunk));
+
+    uint32_t size = grid.getInnerSize();
+    glm::uvec3 start = (glm::uvec3)biomeRegionChunk / biomeRegionWidthInChunks;
+
+    for(uint32_t z = 0; z < size; z++)
+    {
+        for(uint32_t y = 0; y < size; y++)
+        {
+            for(uint32_t x = 0; x < size; x++)
+            {
+                grid.setInner({x, y, z}, bigGrid.get(start + glm::uvec3(x, y, z)));
+            }
+        }
+    }
+
+    mBus.send(ChunkRequestedMessage{0, mId, chunk, grid});
 }

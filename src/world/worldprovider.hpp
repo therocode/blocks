@@ -15,20 +15,24 @@ struct ChunkDelivery
 };
 
 class WorldProvider :
-    public fea::MessageReceiver<ChunkRequestedMessage,
+    public fea::MessageReceiver<BiomesLoadedMessage,
+                                ChunkRequestedMessage,
                                 FrameMessage>
 {
     public:
         WorldProvider(fea::MessageBus& b);
         ~WorldProvider();
+        void handleMessage(const BiomesLoadedMessage& received) override;
         void handleMessage(const ChunkRequestedMessage& received) override;
         void handleMessage(const FrameMessage& received) override;
     private:
-        ChunkDelivery generateChunk(WorldId worldId, const ChunkCoord& coordinate, const RegionDataFragment& regionFragment);
+        ChunkDelivery generateChunk(WorldId worldId, const ChunkCoord& coordinate, const BiomeGrid& biomeData);
         fea::MessageBus& mBus;
 
-        ThreadPool mWorkerPool;
-        //std::unordered_map<std::thread::id, BiomeStorage> mThreadStorage;
 
         std::vector<std::future<ChunkDelivery>> mChunksToDeliver;
+        
+        std::unordered_map<BiomeIndex, Biome> mBiomes;
+
+        ThreadPool mWorkerPool;
 };

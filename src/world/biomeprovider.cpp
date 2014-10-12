@@ -1,8 +1,8 @@
 #include <algorithm>
 #include "biomeprovider.hpp"
-#include "regiondatafragment.hpp"
 #include "generation/biomegenerator.hpp"
 #include "fieldgenerator.hpp"
+#include "../utilities/interpolators.hpp"
 
 const std::string logName = "world_gen";
 const int32_t threadAmount = 3;
@@ -172,14 +172,8 @@ BiomeDelivery BiomeProvider::generateBiome(WorldId worldId, BiomeRegionCoord coo
             }
         }
     }
-    ////filter out biomes that match 
-    //std::remove_if(worldBiomes.begin(), worldBiomes.end(), [] (const Biome* biome) 
-    //        {
-    //            for(const auto& requirement : biome->mRequirements)
 
-    //            return false;
-    //        });
-
+    biomeData.setInterpolator(Interpolator<BiomeIndex>::nearestNeigbor);
     BiomeDelivery delivery{worldId, coordinate, std::move(biomeData)};
     return delivery;
 }

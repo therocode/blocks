@@ -90,10 +90,12 @@ void WorldSystem::handleMessage(const BiomeDeliveredMessage& received)
 void WorldSystem::handleMessage(const ChunkDeliveredMessage& received)
 {
     ChunkCoord coordinate = received.coordinate;
-    Chunk chunk = received.chunk;
+    const Chunk& chunk = received.chunk;
 
     //check against ranges and active chunks!!!!!
     mWorlds.at(received.worldId).getChunkMap().emplace(coordinate, chunk);
+
+    mBus.send(ChunkLoadedMessage{chunk, 0});
 }
 
 void WorldSystem::handleMessage(const HighlightEntityAddRequestedMessage& received)

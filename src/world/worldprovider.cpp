@@ -1,5 +1,4 @@
 #include "worldprovider.hpp"
-#include "regiondatafragment.hpp"
 #include "generation/chunkgenerator.hpp"
 
 const std::string logName = "world_gen";
@@ -47,11 +46,16 @@ WorldProvider::~WorldProvider()
     mBus.send(LogMessage{"Shutting down world generation thread pool", logName, LogLevel::INFO});
 }
 
+void WorldProvider::handleMessage(const BiomesLoadedMessage& received)
+{
+    mBiomes = received.biomes;
+}
+
 void WorldProvider::handleMessage(const ChunkRequestedMessage& received)
 {
     //add chunk to load to other thread
     //std::cout << "requesting chunk " << glm::to_string((glm::ivec3)received.coordinate) << " to world " << received.worldId << "\n";
-    auto bound = std::bind(&WorldProvider::generateChunk, this, received.worldId, received.coordinate, received.regionData);
+    auto bound = std::bind(&WorldProvider::generateChunk, this, received.worldId, received.coordinate, received.biomeData);
     mChunksToDeliver.push_back(mWorkerPool.enqueue(bound, received.prio));
 }
 
@@ -72,7 +76,7 @@ void WorldProvider::handleMessage(const FrameMessage& received)
     }
 }
 
-ChunkDelivery WorldProvider::generateChunk(WorldId worldId, const ChunkCoord& coordinate, const RegionDataFragment& regionFragment)
+ChunkDelivery WorldProvider::generateChunk(WorldId worldId, const ChunkCoord& coordinate, const BiomeGrid& biomeData)
 {
     ChunkDelivery delivery;
     ChunkGenerator generator;
@@ -80,7 +84,7 @@ ChunkDelivery WorldProvider::generateChunk(WorldId worldId, const ChunkCoord& co
     delivery.id = worldId;
     delivery.coordinate = coordinate;
 
-    //delivery.chunk = generator.generateChunk(coordinate, regionFragment, mThreadStorage.at(std::this_thread::get_id()));
+    delivery.chunk = generator.generateChunk(coordinate, biomeData, mBiomes);
 
     return delivery;
 }

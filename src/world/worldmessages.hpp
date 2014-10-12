@@ -42,7 +42,7 @@ struct BiomeDeliveredMessage
 
 struct ChunkRequestedMessage
 {
-    int32_t prio; WorldId worldId; const ChunkCoord& coordinate; const RegionDataFragment& regionData;
+    int32_t prio; WorldId worldId; const ChunkCoord& coordinate; const BiomeGrid& biomeData;
 };
 
 struct ChunkDeliveredMessage

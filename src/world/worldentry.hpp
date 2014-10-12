@@ -21,6 +21,7 @@ class WorldEntry
     private:
         void activateChunk(const ChunkCoord& chunk);
         void deactivateChunk(const ChunkCoord& chunk);
+        void requestChunk(const ChunkCoord& chunk);
         fea::MessageBus& mBus;
         WorldId mId;
         WorldData mWorldData;

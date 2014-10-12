@@ -221,12 +221,12 @@ const ChunkCoord& Chunk::getLocation() const
     return mLocation;
 }
 
-Solidity Chunk::getSolidity()
+Solidity Chunk::getSolidity() const
 {
 	return mSolidity;
 }
 
-Solidity Chunk::getSideSolidity(CubeFace side)
+Solidity Chunk::getSideSolidity(CubeFace side) const
 {
 	return mSideSolidities[side];
 }
