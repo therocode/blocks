@@ -51,19 +51,26 @@ void WorldEntry::removeHighlightEntity(uint32_t id)
 
 void WorldEntry::deliverBiome(const BiomeRegionCoord& coordinate, const BiomeGrid& biomeData)
 {
+    std::cout << "biome delivered " << glm::to_string((glm::ivec3)coordinate) << "\n";
     if(mBiomeGridNotifier.isActive(coordinate))
     {
+        std::cout << "biome is active\n";
         mWorldData.biomeGrids.emplace(coordinate, biomeData);
 
         auto iterator = mPendingChunksToRequests.find(coordinate);
 
         if(iterator != mPendingChunksToRequests.end())
         {
+            std::cout << "there are chunks to deliver for this biome\n";
             for(const auto& chunk : iterator->second)
+            {
+                std::cout << "requesting chunk since biome data has been delivered " << glm::to_string((glm::ivec3)chunk) << "\n";
                 requestChunk(chunk);
-        }
+            }
 
-        mPendingChunksToRequests.erase(coordinate);
+            std::cout << "removing pending chunk list for biome " << glm::to_string((glm::ivec3)coordinate) << "\n";
+            mPendingChunksToRequests.erase(coordinate);
+        }
     }
 }
 
@@ -80,15 +87,18 @@ ChunkMap& WorldEntry::getChunkMap()
 void WorldEntry::activateChunk(const ChunkCoord& chunkCoordinate)
 {
     //firsty handle any newly activated biomes; they need to be requested
+    //std::cout << "activating chunk " << glm::to_string((glm::ivec3)chunkCoordinate) << "\n";
     const auto& activatedBiomes = mBiomeGridNotifier.set(chunkCoordinate, true);
 
     for(const auto& biomeRegionCoord : activatedBiomes)
     {
+        std::cout << "requesting biome " << glm::to_string((glm::ivec3)biomeRegionCoord) <<"\n";
         mBus.send(BiomeRequestedMessage{mId, biomeRegionCoord});
     }
 
     //secondly, the activated chunk will need to be generated as well, but we can't do that if the biome hasn't been delivered since we need data from the biome to pass on to the generator. Hence, if the biome doesn't exist, we store the request
     const BiomeRegionCoord biomeRegionCoord = ChunkToBiomeRegion::convert(chunkCoordinate);
+    std::cout << "converted " << glm::to_string(glm::ivec3(chunkCoordinate)) << " into biome " << glm::to_string((glm::ivec3)biomeRegionCoord) << "\n";
     auto iterator = mWorldData.biomeGrids.find(biomeRegionCoord);
     if(iterator != mWorldData.biomeGrids.end())
     {
@@ -97,6 +107,7 @@ void WorldEntry::activateChunk(const ChunkCoord& chunkCoordinate)
     else
     {
         mPendingChunksToRequests[biomeRegionCoord].push_back(chunkCoordinate);
+        std::cout << "adding chunk to pending chunks which is now of size " << mPendingChunksToRequests[biomeRegionCoord].size() <<  "with biome coord " << glm::to_string((glm::ivec3)biomeRegionCoord) << "\n";
     }
 }
 
@@ -107,11 +118,15 @@ void WorldEntry::deactivateChunk(const ChunkCoord& chunkCoordinate)
 
     for(const auto& biomeRegionCoord : deactivatedBiomes)
     {
+        std::cout << "removing biome " << glm::to_string((glm::ivec3)chunkCoordinate) << "\n";
         mWorldData.biomeGrids.erase(biomeRegionCoord);
         mPendingChunksToRequests.erase(biomeRegionCoord); //if the biome is deactivated, we don't need to send pending requests either.
     }
 
-    mWorldData.voxels.erase(chunkCoordinate);
+    if(mWorldData.voxels.erase(chunkCoordinate) != 0)
+    {
+        mBus.send(ChunkDeletedMessage{chunkCoordinate});
+    }
 
     //we don't need to send pending requests for this chunk
     const BiomeRegionCoord& biomeRegionCoord = ChunkToBiomeRegion::convert(chunkCoordinate);
@@ -119,8 +134,6 @@ void WorldEntry::deactivateChunk(const ChunkCoord& chunkCoordinate)
 
     if(iterator != mPendingChunksToRequests.end())
         std::remove(iterator->second.begin(), iterator->second.end(), chunkCoordinate);
-
-    mBus.send(ChunkDeletedMessage{chunkCoordinate});
 }
 
 void WorldEntry::requestChunk(const ChunkCoord& chunk)
