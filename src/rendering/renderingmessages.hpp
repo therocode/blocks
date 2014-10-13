@@ -41,5 +41,6 @@ struct PlayerFacingBlockMessage
 
 struct UpdateChunkVboMessage
 {
+    const ChunkCoord& mainChunkCoord;
     Chunk* main; Chunk* top; Chunk* bottom; Chunk* front; Chunk* back; Chunk* left; Chunk* right;
 };

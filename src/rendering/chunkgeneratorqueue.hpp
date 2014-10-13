@@ -6,6 +6,7 @@
 #include "utilities/timer.hpp"
 
 struct ChunkQueueThing{
+    ChunkCoord mainChunkCoord;
     Chunk* mainChunk;
     Chunk* topChunk;
     Chunk* bottomChunk;
@@ -16,7 +17,7 @@ struct ChunkQueueThing{
 };
 class ChunkGeneratorQueue{
     public:
-        void addToQueue(Chunk* mainChunk, Chunk* topChunk, Chunk* bottomChunk, Chunk* frontChunk, Chunk* backChunk, Chunk* leftChunk, Chunk* rightChunk);
+        void addToQueue(const ChunkCoord& mainChunkCoord, Chunk* mainChunk, Chunk* topChunk, Chunk* bottomChunk, Chunk* frontChunk, Chunk* backChunk, Chunk* leftChunk, Chunk* rightChunk);
         void generateSomeChunks(std::unordered_map<ChunkCoord, VBO>& chunkMap, const VoxelCoord focusPoint);
         void setMaxGenTime(int milliseconds);
     private:

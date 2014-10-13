@@ -65,7 +65,7 @@ class ModManager
 {
     public:
         ModManager(const std::string& worldName);
-        void loadMods(Chunk& chunk);
+        void loadMods(const ChunkCoord& location, Chunk& chunk);
         void saveMods();
         void saveMods(RegionCoord regionLoc);
         void setMod(ChunkCoord loc, ChunkVoxelCoord voxLoc, VoxelType type);

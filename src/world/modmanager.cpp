@@ -8,10 +8,10 @@ ModManager::ModManager(const std::string& worldName) :
 {
 }
 
-void ModManager::loadMods(Chunk& chunk)
+void ModManager::loadMods(const ChunkCoord& location, Chunk& chunk)
 {
-    RegionCoord regionLoc = ChunkToRegion::convert(chunk.getLocation());
-    RegionChunkCoord chunkLoc = ChunkToRegionChunk::convert(chunk.getLocation()); 
+    RegionCoord regionLoc = ChunkToRegion::convert(location);
+    RegionChunkCoord chunkLoc = ChunkToRegionChunk::convert(location); 
 
     RegionModMap::const_iterator got = mMods[regionLoc].find(chunkLoc);
     if(got == mMods[regionLoc].end())

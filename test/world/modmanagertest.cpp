@@ -47,9 +47,9 @@ TEST_CASE("save and load", "[save][load]")
     fea::MessageBus bus;
     VoxelTypeArray voxelData;
     voxelData.fill(defaultType);
-    Chunk chunk(loc, voxelData);
-    Chunk chunk2(loc2, voxelData);
-    Chunk chunkClone(loc, voxelData);
+    Chunk chunk(voxelData);
+    Chunk chunk2(voxelData);
+    Chunk chunkClone(voxelData);
     ModManager manager("test");
     ModManager manager2("test");
     manager.deleteRegionFile(regionLoc);
@@ -68,16 +68,6 @@ TEST_CASE("save and load", "[save][load]")
     //    CHECK_THROWS_AS(manager.saveMods(regionLoc), ModManagerException);
     //}
 
-    SECTION("chunkmoddedmessage chunk")
-    {
-        manager.setMod(loc, voxLoc, type);
-        manager.recordTimestamp(loc, timestamp);
-        manager.saveMods(regionLoc);
-        manager2.loadMods(chunk);
-
-        REQUIRE(chunk.getLocation() == loc); 
-    }
-
     //SECTION("chunkmoddedmessage timestamp") //this test might need to me reintroduced, issue #133
     //{
     //    manager.recordTimestamp(loc, timestamp);
@@ -91,7 +81,7 @@ TEST_CASE("save and load", "[save][load]")
         manager.setMod(loc, voxLoc, type);
         manager.recordTimestamp(loc, timestamp);
         manager.saveMods(regionLoc);
-        manager2.loadMods(chunk);
+        manager2.loadMods(loc, chunk);
 
         REQUIRE(type == chunk.getVoxelType(voxLoc));
         REQUIRE(defaultType == chunk.getVoxelType(voxLoc2));
@@ -102,11 +92,11 @@ TEST_CASE("save and load", "[save][load]")
         manager.setMod(loc, voxLoc, type);
         manager.recordTimestamp(loc, timestamp);
         manager.saveMods(regionLoc);
-        manager.loadMods(chunk);
+        manager.loadMods(loc, chunk);
         manager.setMod(loc, voxLoc2, type);
         manager.recordTimestamp(loc, timestamp);
         manager.saveMods(regionLoc);
-        manager.loadMods(chunkClone);
+        manager.loadMods(loc, chunkClone);
 
         REQUIRE(type == chunkClone.getVoxelType(voxLoc));
         REQUIRE(type == chunkClone.getVoxelType(voxLoc2));
@@ -115,7 +105,7 @@ TEST_CASE("save and load", "[save][load]")
     SECTION("set and then load with same manager instance")
     {
         manager.setMod(loc, voxLoc, type);
-        manager.loadMods(chunk);
+        manager.loadMods(loc, chunk);
 
         REQUIRE(type == chunk.getVoxelType(voxLoc));
         REQUIRE(defaultType == chunk.getVoxelType(voxLoc2));
@@ -124,7 +114,7 @@ TEST_CASE("save and load", "[save][load]")
     SECTION("set and then load with different manager instance")
     {
         manager.setMod(loc, voxLoc, type);
-        manager2.loadMods(chunk);
+        manager2.loadMods(loc, chunk);
 
         REQUIRE(defaultType == chunk.getVoxelType(voxLoc));
         REQUIRE(defaultType == chunk.getVoxelType(voxLoc2)); 
@@ -133,7 +123,7 @@ TEST_CASE("save and load", "[save][load]")
     SECTION("set and then load on a different manager")
     {
         manager.setMod(loc, voxLoc, type);
-        manager2.loadMods(chunk);
+        manager2.loadMods(loc, chunk);
 
         REQUIRE(defaultType == chunk.getVoxelType(voxLoc));
         REQUIRE(defaultType == chunk.getVoxelType(voxLoc2));
@@ -146,8 +136,8 @@ TEST_CASE("save and load", "[save][load]")
         manager.recordTimestamp(loc, timestamp);
         manager.recordTimestamp(loc2, timestamp);
         manager.saveMods();
-        manager2.loadMods(chunk);
-        manager2.loadMods(chunk2);
+        manager2.loadMods(loc, chunk);
+        manager2.loadMods(loc2, chunk2);
 
         REQUIRE(type == chunk.getVoxelType(voxLoc));
         REQUIRE(defaultType == chunk.getVoxelType(voxLoc2));

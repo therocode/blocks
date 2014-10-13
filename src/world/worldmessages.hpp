@@ -57,7 +57,7 @@ struct ChunkDeletedMessage
 
 struct ChunkLoadedMessage
 {
-    const Chunk& chunk; uint64_t timestamp;
+    const ChunkCoord& coordinate; const Chunk& chunk; uint64_t timestamp;
 };
 
 struct HighlightEntityAddRequestedMessage

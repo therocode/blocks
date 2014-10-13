@@ -165,7 +165,7 @@ void Client::fetchServerData()
 
 			std::tie(coordinate, rleSegmentIndices, rleSegments) = chunkPackage->getData();
 
-            mLocalChunks[coordinate] = Chunk(coordinate, rleSegmentIndices, rleSegments);
+            mLocalChunks[coordinate] = Chunk(rleSegmentIndices, rleSegments);
 
             updateChunk(coordinate);
 
@@ -339,5 +339,5 @@ void Client::updateChunk(const ChunkCoord& coordinate)
     if(right != mLocalChunks.end())
         rightChunk = &right->second;
 
-    mBus.send(UpdateChunkVboMessage{mainChunk, topChunk, bottomChunk, frontChunk, backChunk, leftChunk, rightChunk});
+    mBus.send(UpdateChunkVboMessage{coordinate, mainChunk, topChunk, bottomChunk, frontChunk, backChunk, leftChunk, rightChunk});
 }

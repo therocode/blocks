@@ -3,7 +3,7 @@
 
 Chunk ChunkGenerator::generateChunk(const ChunkCoord& chunkCoordinate, const BiomeGrid& biomeData, const std::unordered_map<BiomeIndex, Biome>& biomes) const
 {
-    Chunk newChunk(chunkCoordinate);
+    Chunk newChunk;
 
     VoxelCoord chunkVoxelCoord = WorldToVoxel::convert(ChunkToWorld::convert(chunkCoordinate));
 

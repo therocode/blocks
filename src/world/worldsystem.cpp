@@ -95,7 +95,7 @@ void WorldSystem::handleMessage(const ChunkDeliveredMessage& received)
     //check against ranges and active chunks!!!!!
     mWorlds.at(received.worldId).getChunkMap().emplace(coordinate, chunk);
 
-    mBus.send(ChunkLoadedMessage{chunk, 0});
+    mBus.send(ChunkLoadedMessage{coordinate, chunk, 0});
 }
 
 void WorldSystem::handleMessage(const HighlightEntityAddRequestedMessage& received)

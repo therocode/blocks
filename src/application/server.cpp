@@ -62,7 +62,7 @@ void Server::doLogic()
 
 void Server::handleMessage(const ChunkLoadedMessage& received)
 {
-    const ChunkCoord& coordinate = received.chunk.getLocation();
+    const ChunkCoord& coordinate = received.coordinate;
     const Chunk& chunk = received.chunk;
 
     VoxelTypeData typeData = chunk.getVoxelTypeData();
