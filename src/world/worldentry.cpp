@@ -119,6 +119,8 @@ void WorldEntry::deactivateChunk(const ChunkCoord& chunkCoordinate)
 
     if(iterator != mPendingChunksToRequests.end())
         std::remove(iterator->second.begin(), iterator->second.end(), chunkCoordinate);
+
+    mBus.send(ChunkDeletedMessage{chunkCoordinate});
 }
 
 void WorldEntry::requestChunk(const ChunkCoord& chunk)
