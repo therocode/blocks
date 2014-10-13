@@ -5,6 +5,7 @@
 #include "../rendering/renderingmessages.hpp"
 #include "../script/scriptmessages.hpp"
 #include "../world/chunk.hpp"
+#include "../world/chunkmap.hpp"
 
 #include "../utilities/lodepng.hpp"
 #include "../utilities/logger.hpp"

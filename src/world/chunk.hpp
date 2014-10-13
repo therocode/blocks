@@ -53,6 +53,3 @@ class Chunk
         RleIndexArray mRleSegmentIndices;
         RleSegmentArray mRleSegments;
 };
-
-using ChunkMap = std::unordered_map<ChunkCoord, Chunk>;
-using ChunkReferenceMap = std::unordered_map<ChunkCoord, const Chunk&>;
