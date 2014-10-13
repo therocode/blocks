@@ -21,6 +21,11 @@ WorldEntry::WorldEntry(fea::MessageBus& bus, WorldId id, const std::string& iden
     mBus.send(WorldBiomeSettingsMessage{id, mWorldData.biomeSettings});
 }
 
+WorldEntry::~WorldEntry()
+{
+    mModManager.saveMods();
+}
+
 void WorldEntry::addHighlightEntity(uint32_t id, const ChunkCoord& location)
 {
     const auto& highlighted = mHighlightManager.addHighlightEntity(id, location);
@@ -74,6 +79,16 @@ void WorldEntry::deliverBiome(const BiomeRegionCoord& coordinate, const BiomeGri
     }
 }
 
+void WorldEntry::deliverChunk(const ChunkCoord& coordinate, const Chunk& chunk)
+{
+    //check against ranges and active chunks!!!!!
+    auto iterator = mWorldData.voxels.emplace(coordinate, chunk);
+
+    mModManager.loadMods(coordinate, iterator.first->second);
+
+    mBus.send(ChunkLoadedMessage{coordinate, iterator.first->second, 0});
+}
+
 const ChunkMap& WorldEntry::getChunkMap() const
 {
     return mWorldData.voxels;
@@ -82,6 +97,22 @@ const ChunkMap& WorldEntry::getChunkMap() const
 ChunkMap& WorldEntry::getChunkMap()
 {
     return mWorldData.voxels;
+}
+
+void WorldEntry::setVoxelType(const VoxelCoord& voxelCoordinate, VoxelType type)
+{
+    const ChunkCoord& chunkCoord = VoxelToChunk::convert(voxelCoordinate);
+    const ChunkVoxelCoord& chunkVoxelCoord = VoxelToChunkVoxel::convert(voxelCoordinate);
+
+    auto chunk = mWorldData.voxels.find(chunkCoord);
+
+    if(chunk != mWorldData.voxels.end())
+    {
+        chunk->second.setVoxelType(chunkVoxelCoord, type);
+        mBus.send(VoxelSetMessage{voxelCoordinate, type});
+
+        mModManager.setMod(chunkCoord, chunkVoxelCoord, type);
+    }
 }
 
 void WorldEntry::activateChunk(const ChunkCoord& chunkCoordinate)
