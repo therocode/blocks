@@ -1,13 +1,7 @@
-#define CATCH_CONFIG_MAIN
 #include "../catch.hpp"
+#include "../testhelpers.hpp"
 #include "../../src/utilities/interpolationgrid3d.hpp"
 #include "../../src/utilities/interpolators.hpp"
-
-const float accuracy = 0.0005f;
-bool closeEnough(float a, float b)
-{
-    return fabs(a - b) < accuracy;
-}
 
 //non-interpolating - i.e. downsampling = 0
 

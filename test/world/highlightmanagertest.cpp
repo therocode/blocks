@@ -1,16 +1,7 @@
-#define CATCH_CONFIG_MAIN
 #include "../catch.hpp"
-
-#include <iostream>
-#include <tuple>
-
-#include <fea/util.hpp>
-
 #include "world/highlightmanager.hpp"
-
-#define PR(x) std::cerr << #x << " = " << (x) << std::endl;
-
-using namespace std;
+#include <vector>
+#include <fea/util.hpp>
 
 TEST_CASE("", "[spawn][despawn][move]")
 {
@@ -26,7 +17,7 @@ TEST_CASE("", "[spawn][despawn][move]")
 
     SECTION("spawn entity") 
     {
-        vector<ChunkCoord> highlightedLocs = manager.addHighlightEntity(eId1, loc1);
+        std::vector<ChunkCoord> highlightedLocs = manager.addHighlightEntity(eId1, loc1);
 
         for(int64_t x = loc1.x - highlightRadius; x < loc1.x + highlightRadius + 1; ++x)
         {
@@ -35,7 +26,7 @@ TEST_CASE("", "[spawn][despawn][move]")
                 for(int64_t z = loc1.z - highlightRadius; z < loc1.z + highlightRadius + 1; ++z)
                 {
                     ChunkCoord loc(x, y, z); 
-                    vector<ChunkCoord>::const_iterator got = find(highlightedLocs.begin(), highlightedLocs.end(), loc);
+                    std::vector<ChunkCoord>::const_iterator got = find(highlightedLocs.begin(), highlightedLocs.end(), loc);
                     if(got == highlightedLocs.end())
                     {
                         REQUIRE(glm::distance(glm::dvec3(loc), glm::dvec3(loc1)) > highlightRadius);

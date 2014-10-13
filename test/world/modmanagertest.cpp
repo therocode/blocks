@@ -1,24 +1,11 @@
-#define CATCH_CONFIG_MAIN
 #include "../catch.hpp"
-
-#include <cstdio>
-#include <fstream>
-#include <string>
-#include <tuple>
-
-#include <fea/util.hpp>
-
 #include "world/chunk.hpp"
 #include "world/modmanager.hpp"
 #include "world/worldmessages.hpp"
 
-#define PR(x) std::cerr << #x << " = " << (x) << std::endl;
-
-using namespace std;
-
-bool fexists(string filename)
+bool fexists(std::string filename)
 {
-    ifstream file(filename);
+    std::ifstream file(filename);
     return file;
 }
 
@@ -75,11 +62,11 @@ TEST_CASE("save and load", "[save][load]")
     //    REQUIRE(0 == receiver.timestamp);
     //}
 
-    SECTION("save a region containing an untimestamped chunk")
-    {
-        manager.setMod(loc, voxLoc, type);
-        CHECK_THROWS_AS(manager.saveMods(regionLoc), ModManagerException);
-    }
+    //SECTION("save a region containing an untimestamped chunk") //this test might need to me reintroduced, issue #133
+    //{
+    //    manager.setMod(loc, voxLoc, type);
+    //    CHECK_THROWS_AS(manager.saveMods(regionLoc), ModManagerException);
+    //}
 
     SECTION("chunkmoddedmessage chunk")
     {

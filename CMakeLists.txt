@@ -350,32 +350,25 @@ endif(BUILD_GAME)
 
 #tests
 if(BUILD_TESTS)
-    add_executable(test_modmanager "test/world/modmanagertest.cpp" "src/world/modmanager.cpp" "src/world/chunk.cpp" "src/utilities/directorycreator.cpp" "src/utilities/coordinateconverter.cpp")
-    target_link_libraries(test_modmanager ${FEATHERKIT_LIBRARIES})
-    
-    add_executable(test_highlightmanager "test/world/highlightmanagertest.cpp" "src/world/highlightmanager.cpp")
-    target_link_libraries(test_highlightmanager ${FEATHERKIT_LIBRARIES})
-    
-    add_executable(test_coordinate "test/world/coordinatetest.cpp" "src/utilities/coordinateconverter.cpp")
-    target_link_libraries(test_coordinate ${FEATHERKIT_LIBRARIES})
-    
-    #add_executable(test_world_misc "test/world/misctest.cpp" "src/world/worldconstants.cpp" "src/world/region.cpp" "src/world/regiondatafragment.cpp")
-    #target_link_libraries(test_world_misc ${FEATHERKIT_LIBRARIES})
-    
-    add_executable(test_utilities "test/utilities/utilitiestest.cpp" "src/utilities/directorycreator.cpp")
-    target_link_libraries(test_utilities ${FEATHERKIT_LIBRARIES})
-    
-    add_executable(test_chunk "test/world/chunktest.cpp" "src/world/chunk.cpp")
-    target_link_libraries(test_chunk ${FEATHERKIT_LIBRARIES})
-    
-    add_executable(test_interpolation_grid3d "test/utilities/interpolationgrid3dtest.cpp")
-    target_link_libraries(test_interpolation_grid3d ${FEATHERKIT_LIBRARIES})
-    
-    add_executable(test_grid_notifier "test/utilities/gridnotifiertest.cpp")
-    target_link_libraries(test_grid_notifier ${FEATHERKIT_LIBRARIES})
-	
-    add_executable(test_explorationmanager "test/world/explorationmanagertest.cpp" "src/world/explorationmanager.cpp" "src/utilities/coordinateconverter.cpp")
-    target_link_libraries(test_chunk ${FEATHERKIT_LIBRARIES})
+    add_executable(tests "test/main.cpp"
+        "test/utilities/gridnotifiertest.cpp"
+        "test/utilities/interpolationgrid3dtest.cpp"
+        "test/utilities/utilitiestest.cpp"
+        "test/world/chunktest.cpp"
+        "test/world/coordinatetest.cpp"
+        "test/world/explorationmanagertest.cpp"
+        "test/world/highlightmanagertest.cpp"
+        "test/world/modmanagertest.cpp"
+
+        "src/world/highlightmanager.cpp"
+        "src/world/modmanager.cpp"
+        "src/utilities/coordinateconverter.cpp"
+        "src/utilities/directorycreator.cpp"
+        "src/world/chunk.cpp"
+        "src/world/explorationmanager.cpp" "src/utilities/coordinateconverter.cpp"
+        )
+
+    target_link_libraries(tests ${FEATHERKIT_LIBRARIES})
 	
     #profiling
     add_executable(profile_modmanager "profile/world/modmanagerprofile.cpp" "src/world/modmanager.cpp" "src/world/chunk.cpp" "src/utilities/directorycreator.cpp" "src/utilities/coordinateconverter.cpp")

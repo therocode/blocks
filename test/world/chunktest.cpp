@@ -1,9 +1,5 @@
-#define CATCH_CONFIG_MAIN
 #include "../catch.hpp"
-
 #include "world/chunk.hpp"
-
-using ChunkVoxelCoord  = glm::u8vec3;
 
 SCENARIO("Voxels can be set and gotten","[world]")
 {
