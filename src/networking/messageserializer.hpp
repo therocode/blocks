@@ -9,6 +9,16 @@
 #include <cereal/types/unordered_map.hpp>
 #include <cereal/types/vector.hpp>
 #include <cereal/types/complex.hpp>
+#include <stdexcept>
+
+class DeserializeException : public std::runtime_error
+{
+    public:
+        DeserializeException() :
+            std::runtime_error("Error deserializing bytes")
+    {
+    }
+};
 
 using MessageType = int32_t;
 using ByteVector = std::vector<uint8_t>;
@@ -43,17 +53,24 @@ MessageType decodeType(const ByteVector& data);
 template <typename Type>
 Type deserializeMessage(const ByteVector& data)
 {
-    MessageType type = decodeType(data);
+    try
+    {
+        MessageType type = decodeType(data);
 
-    std::stringstream stream(std::string(data.begin(), data.end() - sizeof(MessageType)));
+        std::stringstream stream(std::string(data.begin(), data.end() - sizeof(MessageType)));
 
-    cereal::PortableBinaryInputArchive inArchive(stream);
+        cereal::PortableBinaryInputArchive inArchive(stream);
 
-    Type result;
+        Type result;
 
-    inArchive(result);
+        inArchive(result);
 
-    FEA_ASSERT(type == result.getType(), "Deserializing something where the type is not correct!");
+        FEA_ASSERT(type == result.getType(), "Deserializing something where the type is not correct!");
 
-    return result;
+        return result;
+    }
+    catch (...)
+    {
+        throw DeserializeException();
+    }
 }

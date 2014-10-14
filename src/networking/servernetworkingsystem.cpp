@@ -171,16 +171,9 @@ void ServerNetworkingSystem::handleMessage(const ChunksDataMessage& received)
 
 void ServerNetworkingSystem::acceptRemoteClient(uint32_t id)
 {
-    uint32_t newId = mNextClientId++;
-
     if(mAcceptingClients)
     {
-        mClientToPlayerIds.emplace(id, newId);
-        mPlayerToClientIds.emplace(newId, id);
-        mPlayerPositions.emplace(newId, ChunkCoord(0, 0, 0));
-        mPlayerWorlds.emplace(newId, 0);
-        
-        mBus.send(LogMessage{"Client Id " + std::to_string(id) + " connected and given player Id " + std::to_string(newId), serverName, LogLevel::INFO});
+        mBus.send(LogMessage{"Client Id " + std::to_string(id) + " connected", serverName, LogLevel::INFO});
     }
     else
     {
@@ -191,42 +184,63 @@ void ServerNetworkingSystem::acceptRemoteClient(uint32_t id)
 
 void ServerNetworkingSystem::handleClientData(uint32_t clientId, const std::vector<uint8_t>& data)
 {
-    int32_t type = decodeType(data);
-
-    if(type == CLIENT_JOIN_REQUESTED)
+    try
     {
-        ClientJoinRequestedMessage received = deserializeMessage<ClientJoinRequestedMessage>(data);
-        mBus.send(LogMessage{"Client id " + std::to_string(clientId) + " requested to join the game with player name " + received.playerName, serverName, LogLevel::INFO});
+        int32_t type = decodeType(data);
 
-        if(mPlayerAmount >= mMaxPlayerAmount)
+        if(type == CLIENT_JOIN_REQUESTED)
         {
-            ClientJoinDeniedMessage message{JoinDenyReason::FULL, mPlayerAmount, mMaxPlayerAmount};
-            mENetServer->sendToOne(clientId, serializeMessage(message), true, CHANNEL_DEFAULT);
+            ClientJoinRequestedMessage received = deserializeMessage<ClientJoinRequestedMessage>(data);
+            mBus.send(LogMessage{"Client id " + std::to_string(clientId) + " requested to join the game with player name " + received.playerName, serverName, LogLevel::INFO});
+
+            if(mPlayerAmount >= mMaxPlayerAmount)
+            {
+                ClientJoinDeniedMessage message{JoinDenyReason::FULL, mPlayerAmount, mMaxPlayerAmount};
+                mENetServer->sendToOne(clientId, serializeMessage(message), true, CHANNEL_DEFAULT);
+            }
+            else
+            {
+                ClientJoinAcceptedMessage message{mSettings};
+                mENetServer->sendToOne(clientId, serializeMessage(message), true, CHANNEL_DEFAULT);
+
+                uint32_t newId = mNextClientId++;
+                mClientToPlayerIds.emplace(clientId, newId);
+                mPlayerToClientIds.emplace(newId, clientId);
+                mPlayerPositions.emplace(newId, ChunkCoord(0, 0, 0));
+                mPlayerWorlds.emplace(newId, 0);
+
+                mBus.send(LogMessage{"Accepting client " + std::to_string(clientId) + "'s desire to join the game and assigning player Id " + std::to_string(newId) + ". Sending server settings", serverName, LogLevel::INFO});
+
+                mBus.send(PlayerJoinedGameMessage{mClientToPlayerIds.at(clientId)});
+            }
         }
+        else if(type == CLIENT_REQUESTED_CHUNKS)
+        {
+            if(mClientToPlayerIds.count(clientId) != 0)
+            {
+            ClientRequestedChunksMessage received = deserializeMessage<ClientRequestedChunksMessage>(data);
+
+            if(mClientToPlayerIds.count(clientId) != 0)
+                playerRequestedChunks(mClientToPlayerIds.at(clientId), received.coordinates);
+            }
+            else
+            { //client violated protocol by requesting chunks without being part of the game
+                mENetServer->disconnectOne(clientId, 200);
+            }
+        }
+        else if(type == TEST_1)
+            mBus.send(LogMessage{"Received meaningless test message", serverName, LogLevel::WARN});
+        else if(type == TEST_2)
+            mBus.send(LogMessage{"Received meaningless test message", serverName, LogLevel::WARN});
+        else if(type == INVALID)
+            mBus.send(LogMessage{"Received invalid message", serverName, LogLevel::WARN});
         else
-        {
-            ClientJoinAcceptedMessage message{mSettings};
-            mENetServer->sendToOne(clientId, serializeMessage(message), true, CHANNEL_DEFAULT);
-
-            mBus.send(LogMessage{"Accepting client " + std::to_string(clientId) + "'s desire to join the game. Sending server settings", serverName, LogLevel::INFO});
-            mBus.send(PlayerJoinedGameMessage{mClientToPlayerIds.at(clientId)});
-        }
-    }
-    else if(type == CLIENT_REQUESTED_CHUNKS)
+            mBus.send(LogMessage{"Received message of unknown type: " + std::to_string(type), serverName, LogLevel::WARN});
+    } 
+    catch (const DeserializeException& e)
     {
-        ClientRequestedChunksMessage received = deserializeMessage<ClientRequestedChunksMessage>(data);
-        
-        if(mClientToPlayerIds.count(clientId) != 0)
-            playerRequestedChunks(mClientToPlayerIds.at(clientId), received.coordinates);
+        mBus.send(LogMessage{"Received corrupt/unserializable message", serverName, LogLevel::WARN});
     }
-    else if(type == TEST_1)
-        mBus.send(LogMessage{"Received meaningless test message", serverName, LogLevel::WARN});
-    else if(type == TEST_2)
-        mBus.send(LogMessage{"Received meaningless test message", serverName, LogLevel::WARN});
-    else if(type == INVALID)
-        mBus.send(LogMessage{"Received invalid message", serverName, LogLevel::WARN});
-    else
-        mBus.send(LogMessage{"Received message of unknown type: " + std::to_string(type), serverName, LogLevel::WARN});
 }
 
 void ServerNetworkingSystem::disconnectRemoteClient(uint32_t id)

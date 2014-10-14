@@ -114,6 +114,8 @@ void ClientNetworkingSystem::handleServerData(const std::vector<uint8_t>& data)
 {
     int32_t type = decodeType(data);
 
+    try
+    {
     if(type == CLIENT_JOIN_DENIED)
     {
         ClientJoinDeniedMessage received = deserializeMessage<ClientJoinDeniedMessage>(data);
@@ -130,13 +132,18 @@ void ClientNetworkingSystem::handleServerData(const std::vector<uint8_t>& data)
         mBus.send(received);
     }
     else if(type == TEST_1)
-        mBus.send(LogMessage{"Received meaningless test message", serverName, LogLevel::WARN});
+        mBus.send(LogMessage{"Received meaningless test message", clientName, LogLevel::WARN});
     else if(type == TEST_2)
-        mBus.send(LogMessage{"Received meaningless test message", serverName, LogLevel::WARN});
+        mBus.send(LogMessage{"Received meaningless test message", clientName, LogLevel::WARN});
     else if(type == INVALID)
-        mBus.send(LogMessage{"Received invalid message", serverName, LogLevel::WARN});
+        mBus.send(LogMessage{"Received invalid message", clientName, LogLevel::WARN});
     else
-        mBus.send(LogMessage{"Received message of unknown type", serverName, LogLevel::WARN});
+        mBus.send(LogMessage{"Received message of unknown type", clientName, LogLevel::WARN});
+    } 
+    catch(const DeserializeException& e)
+    {
+        mBus.send(LogMessage{"Received corrupt/unserializable message", clientName, LogLevel::WARN});
+    }
 }
 
 void ClientNetworkingSystem::disconnectedFromServer()
