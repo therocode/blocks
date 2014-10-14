@@ -1,72 +1,52 @@
-#define CATCH_CONFIG_MAIN
 #include "../catch.hpp"
 
-#include <cstdio>
 #include <fstream>
-#include <string>
-#include <tuple>
-
-#include <fea/util.hpp>
 
 #include "../src/world/chunk.hpp"
 #include "../src/world/modmanager.hpp"
 #include "../src/world/worldmessages.hpp"
 
-#define PR(x) std::cerr << #x << " = " << (x) << std::endl;
-
-using namespace std;
-
-bool fexists(string filename)
+bool fexists(std::string filename)
 {
-    ifstream file(filename);
+    std::ifstream file(filename);
     return file;
 }
 
 TEST_CASE("set and get", "[set][get]")
 {
-    ChunkCoord loc(12, 356, 9);
-    ChunkVoxelCoord voxLoc(9, 8, 7);
-    ChunkVoxelCoord voxLocInvalid(16, 16, 16);
-    ChunkVoxelCoord voxLocInvalid2(-1, -1, -1);
+    VoxelCoord voxLoc(9, 8, 7);
     VoxelType type = 12;
 
     ModManager manager("test");
 
     SECTION("set and get one voxel")
     {
-        manager.setMod(loc, voxLoc, type);
-        REQUIRE(type == manager.getMod(loc, voxLoc)); 
-    }
-
-    SECTION("set invalid voxel location")
-    {
-        CHECK_THROWS_AS(manager.setMod(loc, voxLocInvalid, type), ModManagerException);
-        CHECK_THROWS_AS(manager.setMod(loc, voxLocInvalid2, type), ModManagerException);
+        manager.setMod(voxLoc, type);
+        REQUIRE(type == manager.getMod(voxLoc)); 
     }
 }
 
 TEST_CASE("save and load", "[save][load]")
 {
-    ChunkCoord loc(0, 0, 0);
-    ChunkCoord loc2(32, 32, 32);
-    RegionCoord regionLoc = ChunkToRegion::convert(loc);
-    RegionCoord regionLoc2 = ChunkToRegion::convert(loc2);
-    ChunkVoxelCoord voxLoc(2, 2, 2);    
-    ChunkVoxelCoord voxLoc2(1, 1, 1);
+    VoxelCoord voxLoc(2, 2, 2);    
+    VoxelCoord voxLoc2(580, 580, 580);
+    ChunkCoord loc = VoxelToChunk::convert(voxLoc);
+    ChunkCoord loc2 = VoxelToChunk::convert(voxLoc2);
+    ModRegionCoord regionLoc = ChunkToModRegion::convert(loc);
+    ModRegionCoord regionLoc2 = ChunkToModRegion::convert(loc2);
     VoxelType defaultType = 0;
     VoxelType type = 1;
     uint64_t timestamp = 123;
 
-    fea::MessageBus bus;
     VoxelTypeArray voxelData;
     voxelData.fill(defaultType);
-    Chunk chunk(loc, voxelData);
-    Chunk chunk2(loc2, voxelData);
-    Chunk chunkClone(loc, voxelData);
+    Chunk chunk(voxelData);
+    Chunk chunk2(voxelData);
+    Chunk chunkClone(voxelData);
     ModManager manager("test");
     ModManager manager2("test");
-    manager.deleteRegionFile(regionLoc);
-    manager.deleteRegionFile(regionLoc2);
+    manager.deleteModRegionFile(regionLoc);
+    manager.deleteModRegionFile(regionLoc2);
 
     //SECTION("load an untimestamped chunk")   //this test might need to me reintroduced, issue #133
     //{
@@ -75,21 +55,11 @@ TEST_CASE("save and load", "[save][load]")
     //    REQUIRE(0 == receiver.timestamp);
     //}
 
-    SECTION("save a region containing an untimestamped chunk")
-    {
-        manager.setMod(loc, voxLoc, type);
-        CHECK_THROWS_AS(manager.saveMods(regionLoc), ModManagerException);
-    }
-
-    SECTION("chunkmoddedmessage chunk")
-    {
-        manager.setMod(loc, voxLoc, type);
-        manager.recordTimestamp(loc, timestamp);
-        manager.saveMods(regionLoc);
-        manager2.loadMods(chunk);
-
-        REQUIRE(chunk.getLocation() == loc); 
-    }
+    //SECTION("save a region containing an untimestamped chunk") //this test might need to me reintroduced, issue #133
+    //{
+    //    manager.setMod(loc, voxLoc, type);
+    //    CHECK_THROWS_AS(manager.saveMods(regionLoc), ModManagerException);
+    //}
 
     //SECTION("chunkmoddedmessage timestamp") //this test might need to me reintroduced, issue #133
     //{
@@ -101,70 +71,70 @@ TEST_CASE("save and load", "[save][load]")
 
     SECTION("one voxel")
     {
-        manager.setMod(loc, voxLoc, type);
+        manager.setMod(voxLoc, type);
         manager.recordTimestamp(loc, timestamp);
         manager.saveMods(regionLoc);
-        manager2.loadMods(chunk);
+        manager2.loadMods(loc, chunk);
 
-        REQUIRE(type == chunk.getVoxelType(voxLoc));
-        REQUIRE(defaultType == chunk.getVoxelType(voxLoc2));
+        REQUIRE(type == chunk.getVoxelType(VoxelToChunkVoxel::convert(voxLoc)));
+        REQUIRE(defaultType == chunk.getVoxelType(VoxelToChunkVoxel::convert(voxLoc2)));
     }
 
     SECTION("save and load twice")
     {
-        manager.setMod(loc, voxLoc, type);
+        manager.setMod(voxLoc, type);
         manager.recordTimestamp(loc, timestamp);
         manager.saveMods(regionLoc);
-        manager.loadMods(chunk);
-        manager.setMod(loc, voxLoc2, type);
+        manager.loadMods(loc, chunk);
+        manager.setMod(voxLoc + VoxelCoord(1, 1, 1), type);
         manager.recordTimestamp(loc, timestamp);
         manager.saveMods(regionLoc);
-        manager.loadMods(chunkClone);
+        manager.loadMods(loc, chunkClone);
 
-        REQUIRE(type == chunkClone.getVoxelType(voxLoc));
-        REQUIRE(type == chunkClone.getVoxelType(voxLoc2));
+        REQUIRE(type == chunkClone.getVoxelType(VoxelToChunkVoxel::convert(voxLoc)));
+        REQUIRE(type == chunkClone.getVoxelType(VoxelToChunkVoxel::convert(voxLoc + VoxelCoord(1, 1, 1))));
     }
 
     SECTION("set and then load with same manager instance")
     {
-        manager.setMod(loc, voxLoc, type);
-        manager.loadMods(chunk);
+        manager.setMod(voxLoc, type);
+        manager.loadMods(loc, chunk);
 
-        REQUIRE(type == chunk.getVoxelType(voxLoc));
-        REQUIRE(defaultType == chunk.getVoxelType(voxLoc2));
+        REQUIRE(type == chunk.getVoxelType(VoxelToChunkVoxel::convert(voxLoc)));
+        REQUIRE(defaultType == chunk.getVoxelType(VoxelToChunkVoxel::convert(voxLoc2)));
     }
 
     SECTION("set and then load with different manager instance")
     {
-        manager.setMod(loc, voxLoc, type);
-        manager2.loadMods(chunk);
+        manager.setMod(voxLoc, type);
+        manager2.loadMods(loc, chunk);
 
-        REQUIRE(defaultType == chunk.getVoxelType(voxLoc));
-        REQUIRE(defaultType == chunk.getVoxelType(voxLoc2)); 
+        REQUIRE(defaultType == chunk.getVoxelType(VoxelToChunkVoxel::convert(voxLoc)));
+        REQUIRE(defaultType == chunk.getVoxelType(VoxelToChunkVoxel::convert(voxLoc2))); 
     }
 
     SECTION("set and then load on a different manager")
     {
-        manager.setMod(loc, voxLoc, type);
-        manager2.loadMods(chunk);
+        manager.setMod(voxLoc, type);
+        manager2.loadMods(loc, chunk);
 
-        REQUIRE(defaultType == chunk.getVoxelType(voxLoc));
-        REQUIRE(defaultType == chunk.getVoxelType(voxLoc2));
+        REQUIRE(defaultType == chunk.getVoxelType(VoxelToChunkVoxel::convert(voxLoc)));
+        REQUIRE(defaultType == chunk.getVoxelType(VoxelToChunkVoxel::convert(voxLoc2)));
     }
 
     SECTION("all regions")
     {
-        manager.setMod(loc, voxLoc, type);
-        manager.setMod(loc2, voxLoc, type);
+        manager.setMod(voxLoc, type);
+        manager.setMod(voxLoc2, type);
         manager.recordTimestamp(loc, timestamp);
         manager.recordTimestamp(loc2, timestamp);
         manager.saveMods();
-        manager2.loadMods(chunk);
-        manager2.loadMods(chunk2);
+        manager2.loadMods(loc, chunk);
+        manager2.loadMods(loc2, chunk2);
 
-        REQUIRE(type == chunk.getVoxelType(voxLoc));
-        REQUIRE(defaultType == chunk.getVoxelType(voxLoc2));
-        REQUIRE(type == chunk2.getVoxelType(voxLoc));
-        REQUIRE(defaultType == chunk.getVoxelType(voxLoc2));
+        REQUIRE(type == chunk.getVoxelType(VoxelToChunkVoxel::convert(voxLoc)));
+        REQUIRE(defaultType == chunk.getVoxelType({15, 14, 13}));
+        REQUIRE(type == chunk2.getVoxelType(VoxelToChunkVoxel::convert(voxLoc2)));
+        REQUIRE(defaultType == chunk.getVoxelType({15, 14, 13}));
     }
 }

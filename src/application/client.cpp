@@ -84,7 +84,7 @@ void Client::handleMessage(const PlayerActionMessage& received)
 
 void Client::handleMessage(const ChunkFinishedMessage& received)
 {
-    const ChunkCoord& coordinate = received.chunk.getLocation();
+    const ChunkCoord& coordinate = received.coordinate;
 
     mLocalChunks[coordinate] = received.chunk;
 
@@ -118,52 +118,52 @@ void Client::handleMessage(const ChunkFinishedMessage& received)
 
 void Client::handleMessage(const VoxelSetMessage& received)
 {
-            ChunkCoord chunkCoord = VoxelToChunk::convert(received.voxel);
-            ChunkVoxelCoord chunkVoxelCoord = VoxelToChunkVoxel::convert(received.voxel);
+    ChunkCoord chunkCoord = VoxelToChunk::convert(received.voxel);
+    ChunkVoxelCoord chunkVoxelCoord = VoxelToChunkVoxel::convert(received.voxel);
 
-            auto chunk = mLocalChunks.find(chunkCoord);
+    auto chunk = mLocalChunks.find(chunkCoord);
 
-            if(chunk != mLocalChunks.end())
-            {
-                chunk->second.setVoxelType(chunkVoxelCoord, received.type);
-                updateChunk(chunkCoord);
-            }
+    if(chunk != mLocalChunks.end())
+    {
+        chunk->second.setVoxelType(chunkVoxelCoord, received.type);
+        updateChunk(chunkCoord);
+    }
 
-            ChunkCoord leftNeighbour = ChunkCoord(chunkCoord.x - 1, chunkCoord.y, chunkCoord.z);
-            if(chunkVoxelCoord.x == 0 && mLocalChunks.find(leftNeighbour) != mLocalChunks.end())
-            {
-                updateChunk(leftNeighbour);
-            }
+    ChunkCoord leftNeighbour = ChunkCoord(chunkCoord.x - 1, chunkCoord.y, chunkCoord.z);
+    if(chunkVoxelCoord.x == 0 && mLocalChunks.find(leftNeighbour) != mLocalChunks.end())
+    {
+        updateChunk(leftNeighbour);
+    }
 
-            ChunkCoord rightNeighbour = ChunkCoord(chunkCoord.x + 1, chunkCoord.y, chunkCoord.z);
-            if(chunkVoxelCoord.x == chunkWidth - 1 && mLocalChunks.find(rightNeighbour) != mLocalChunks.end())
-            {
-                updateChunk(rightNeighbour);
-            }
+    ChunkCoord rightNeighbour = ChunkCoord(chunkCoord.x + 1, chunkCoord.y, chunkCoord.z);
+    if(chunkVoxelCoord.x == chunkWidth - 1 && mLocalChunks.find(rightNeighbour) != mLocalChunks.end())
+    {
+        updateChunk(rightNeighbour);
+    }
 
-            ChunkCoord topNeighbour = ChunkCoord(chunkCoord.x, chunkCoord.y + 1, chunkCoord.z);
-            if(chunkVoxelCoord.y == chunkWidth - 1 && mLocalChunks.find(topNeighbour) != mLocalChunks.end())
-            {
-                updateChunk(topNeighbour);
-            }
+    ChunkCoord topNeighbour = ChunkCoord(chunkCoord.x, chunkCoord.y + 1, chunkCoord.z);
+    if(chunkVoxelCoord.y == chunkWidth - 1 && mLocalChunks.find(topNeighbour) != mLocalChunks.end())
+    {
+        updateChunk(topNeighbour);
+    }
 
-            ChunkCoord bottomNeighbour = ChunkCoord(chunkCoord.x, chunkCoord.y - 1, chunkCoord.z);
-            if(chunkVoxelCoord.y == 0 && mLocalChunks.find(bottomNeighbour) != mLocalChunks.end())
-            {
-                updateChunk(bottomNeighbour);
-            }
+    ChunkCoord bottomNeighbour = ChunkCoord(chunkCoord.x, chunkCoord.y - 1, chunkCoord.z);
+    if(chunkVoxelCoord.y == 0 && mLocalChunks.find(bottomNeighbour) != mLocalChunks.end())
+    {
+        updateChunk(bottomNeighbour);
+    }
 
-            ChunkCoord frontNeighbour = ChunkCoord(chunkCoord.x, chunkCoord.y, chunkCoord.z + 1);
-            if(chunkVoxelCoord.z == chunkWidth - 1 && mLocalChunks.find(frontNeighbour) != mLocalChunks.end())
-            {
-                updateChunk(frontNeighbour);
-            }
+    ChunkCoord frontNeighbour = ChunkCoord(chunkCoord.x, chunkCoord.y, chunkCoord.z + 1);
+    if(chunkVoxelCoord.z == chunkWidth - 1 && mLocalChunks.find(frontNeighbour) != mLocalChunks.end())
+    {
+        updateChunk(frontNeighbour);
+    }
 
-            ChunkCoord backNeighbour = ChunkCoord(chunkCoord.x, chunkCoord.y, chunkCoord.z - 1);
-            if(chunkVoxelCoord.z == 0 && mLocalChunks.find(backNeighbour) != mLocalChunks.end())
-            {
-                updateChunk(backNeighbour);
-            }
+    ChunkCoord backNeighbour = ChunkCoord(chunkCoord.x, chunkCoord.y, chunkCoord.z - 1);
+    if(chunkVoxelCoord.z == 0 && mLocalChunks.find(backNeighbour) != mLocalChunks.end())
+    {
+        updateChunk(backNeighbour);
+    }
 }
 
 void Client::handleMessage(const ClientChunkDeletedMessage& received)
@@ -218,5 +218,5 @@ void Client::updateChunk(const ChunkCoord& coordinate)
     if(right != mLocalChunks.end())
         rightChunk = &right->second;
 
-    mBus.send(UpdateChunkVboMessage{mainChunk, topChunk, bottomChunk, frontChunk, backChunk, leftChunk, rightChunk});
+    mBus.send(UpdateChunkVboMessage{coordinate, mainChunk, topChunk, bottomChunk, frontChunk, backChunk, leftChunk, rightChunk});
 }

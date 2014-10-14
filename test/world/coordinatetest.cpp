@@ -1,7 +1,7 @@
-#define CATCH_CONFIG_MAIN
 #include "../catch.hpp"
 
 #include "../src/world/worlddefines.hpp"
+#include "../src/world/biomedefines.hpp"
 
 TEST_CASE("wrap", "[wrap]")
 {
@@ -93,4 +93,34 @@ TEST_CASE("VoxelToChunkVoxel", "[coord]")
     REQUIRE(VoxelToChunkVoxel::convert(VoxelCoord(15, 15, 15)) == ChunkVoxelCoord(15, 15, 15));
     REQUIRE(VoxelToChunkVoxel::convert(VoxelCoord(16, 16, 16)) == ChunkVoxelCoord(0, 0, 0));
     REQUIRE(VoxelToChunkVoxel::convert(VoxelCoord(17, 17, 17)) == ChunkVoxelCoord(1, 1, 1));
+}
+
+TEST_CASE("WorldToChunkVoxel", "[coord]")
+{
+    REQUIRE(WorldToChunkVoxel::convert(glm::vec3(0.0f, 0.0f, 0.0f)) == ChunkVoxelCoord(0, 0, 0));
+    REQUIRE(WorldToChunkVoxel::convert(glm::vec3(1.0f, 1.0f, 1.0f)) == ChunkVoxelCoord(1, 1, 1));
+    REQUIRE(WorldToChunkVoxel::convert(glm::vec3(1.9f, 1.9f, 1.9f)) == ChunkVoxelCoord(1, 1, 1));
+    REQUIRE(WorldToChunkVoxel::convert(glm::vec3(-0.5f, -0.5f, -0.5f)) == ChunkVoxelCoord(15, 15, 15));
+    REQUIRE(WorldToChunkVoxel::convert(glm::vec3(-1.5f, -1.5f, -1.5f)) == ChunkVoxelCoord(14, 14, 14));
+    REQUIRE(WorldToChunkVoxel::convert(glm::vec3(2.5f, 2.5f, 2.5f)) == ChunkVoxelCoord(2, 2, 2));
+    REQUIRE(WorldToChunkVoxel::convert(glm::vec3(0.5f, 0.5f, 0.5f)) == ChunkVoxelCoord(0, 0, 0));
+    REQUIRE(WorldToChunkVoxel::convert(glm::vec3(-1.0f, -1.0f, -1.0f)) == ChunkVoxelCoord(15, 15, 15));
+    REQUIRE(WorldToChunkVoxel::convert(glm::vec3(-13.0f, -13.0f, -13.0f)) == ChunkVoxelCoord(3, 3, 3));
+    REQUIRE(WorldToChunkVoxel::convert(glm::vec3(-14.0f, -14.0f, -14.0f)) == ChunkVoxelCoord(2, 2, 2));
+    REQUIRE(WorldToChunkVoxel::convert(glm::vec3(-15.0f, -15.0f, -15.0f)) == ChunkVoxelCoord(1, 1, 1));
+}
+
+TEST_CASE("ChunkToBiomeRegion", "[coord]")
+{
+    REQUIRE(ChunkToBiomeRegion::convert(ChunkCoord(0, 0, 0)) == BiomeRegionCoord(0, 0, 0));
+    REQUIRE(ChunkToBiomeRegion::convert(ChunkCoord(1, 1, 1)) == BiomeRegionCoord(0, 0, 0));
+    REQUIRE(ChunkToBiomeRegion::convert(ChunkCoord(-1, -1, -1)) == BiomeRegionCoord(-1, -1, -1));
+    REQUIRE(ChunkToBiomeRegion::convert(ChunkCoord(14, 14, 14)) == BiomeRegionCoord(0, 0, 0));
+    REQUIRE(ChunkToBiomeRegion::convert(ChunkCoord(15, 15, 15)) == BiomeRegionCoord(0, 0, 0));
+    REQUIRE(ChunkToBiomeRegion::convert(ChunkCoord(16, 16, 16)) == BiomeRegionCoord(1, 1, 1));
+    REQUIRE(ChunkToBiomeRegion::convert(ChunkCoord(17, 17, 17)) == BiomeRegionCoord(1, 1, 1));
+    REQUIRE(ChunkToBiomeRegion::convert(ChunkCoord(-14, -14, -14)) == BiomeRegionCoord(-1, -1, -1));
+    REQUIRE(ChunkToBiomeRegion::convert(ChunkCoord(-15, -15, -15)) == BiomeRegionCoord(-1, -1, -1));
+    REQUIRE(ChunkToBiomeRegion::convert(ChunkCoord(-16, -16, -16)) == BiomeRegionCoord(-1, -1, -1));
+    REQUIRE(ChunkToBiomeRegion::convert(ChunkCoord(-17, -17, -17)) == BiomeRegionCoord(-2, -2, -2));
 }

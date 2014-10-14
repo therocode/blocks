@@ -1,15 +1,8 @@
-#define CATCH_CONFIG_MAIN
 #include "../catch.hpp"
+#include "../testhelpers.hpp"
 
 #include "../src/networking/networkingprotocol.hpp"
 #include "../src/networking/messageserializer.hpp"
-
-const double accuracy = 0.0002;
-
-bool closeEnough(double a, double b)
-{
-    return fabs(a - b) < accuracy; 
-}
 
 SCENARIO("Networking messages can be serialized and deserialized","[networking]")
 {

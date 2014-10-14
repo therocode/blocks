@@ -2,6 +2,7 @@
 #include <fea/userinterface.hpp>
 #include "../world/chunk.hpp"
 #include "../networking/clientnetworkingsystem.hpp"
+#include "../world/chunkmap.hpp"
 #include "../utilities/lodepng.hpp"
 #include "../utilities/logger.hpp"
 #include "../utilities/fpscontroller.hpp"

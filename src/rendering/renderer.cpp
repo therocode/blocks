@@ -81,6 +81,7 @@ void Renderer::setCameraMatrix(const glm::mat4& m){
 
 void Renderer::handleMessage(const UpdateChunkVboMessage& received)
 {
+    const ChunkCoord& mainChunkCoord = received.mainChunkCoord;
     Chunk* mainChunk = received.main;
     Chunk* topChunk = received.top;
     Chunk* bottomChunk = received.bottom;
@@ -91,19 +92,19 @@ void Renderer::handleMessage(const UpdateChunkVboMessage& received)
 
     //mGeneratorQueue.addToQueue(mainChunk, topChunk, bottomChunk, frontChunk, backChunk, leftChunk, rightChunk); 
 
-    auto vboEntry = vbos.find(mainChunk->getLocation());
+    auto vboEntry = vbos.find(mainChunkCoord);
 
     //std::cout << "adding client chunk " << glm::to_string((glm::ivec3)mainChunk->getLocation()) << "\n";
 
     if(vboEntry == vbos.end())
     {
-        vbos.emplace(mainChunk->getLocation(), vboCreator.generateChunkVBO(mainChunk, topChunk, bottomChunk, frontChunk, backChunk, leftChunk, rightChunk));
+        vbos.emplace(mainChunkCoord, vboCreator.generateChunkVBO(mainChunkCoord, mainChunk, topChunk, bottomChunk, frontChunk, backChunk, leftChunk, rightChunk));
     }
     else
     {
-        vbos.at(mainChunk->getLocation()).destroyBuffers();
-        vbos.erase(mainChunk->getLocation());
-        vbos.emplace(mainChunk->getLocation(), vboCreator.generateChunkVBO(mainChunk, topChunk, bottomChunk, frontChunk, backChunk, leftChunk, rightChunk));
+        vbos.at(mainChunkCoord).destroyBuffers();
+        vbos.erase(mainChunkCoord);
+        vbos.emplace(mainChunkCoord, vboCreator.generateChunkVBO(mainChunkCoord, mainChunk, topChunk, bottomChunk, frontChunk, backChunk, leftChunk, rightChunk));
     }
 }
 

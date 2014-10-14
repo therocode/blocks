@@ -32,17 +32,14 @@ class Chunk
 {
     public:
         Chunk();
-        Chunk(const ChunkCoord& loc);
-        Chunk(const ChunkCoord& loc, const VoxelTypeArray& types);
-        Chunk(const ChunkCoord& loc, const RleIndexArray& indices, const RleSegmentArray& rleData);
+        Chunk(const VoxelTypeArray& types);
+        Chunk(const RleIndexArray& indices, const RleSegmentArray& rleData);
         bool operator==(const Chunk& other) const;
         void setVoxelType(const ChunkVoxelCoord& voxel, VoxelType type);
         void setVoxelData(const VoxelTypeArray& types);
         VoxelType getVoxelType(const ChunkVoxelCoord& voxel) const;
         VoxelTypeData getVoxelTypeData() const;
         VoxelTypeArray getFlatVoxelTypeData() const;
-        uint32_t getWidth() const;
-        const ChunkCoord& getLocation() const; //should probably be gone
 		Solidity getSolidity() const;
 		Solidity getSideSolidity(CubeFace side) const;
     private:
@@ -50,13 +47,9 @@ class Chunk
         void setSegmentTypeFromArray(uint16_t y, uint16_t z, const VoxelSegmentTypeArray& typeArray);
 		void solidityCheck();
 		void sideSolidityCheck();
-        ChunkCoord mLocation;
 		Solidity mSolidity;
 		Solidity mSideSolidities[6];
 
         RleIndexArray mRleSegmentIndices;
         RleSegmentArray mRleSegments;
 };
-
-using ChunkMap = std::unordered_map<ChunkCoord, Chunk>;
-using ChunkReferenceMap = std::unordered_map<ChunkCoord, const Chunk&>;

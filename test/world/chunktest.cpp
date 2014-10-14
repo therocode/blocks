@@ -1,9 +1,6 @@
-#define CATCH_CONFIG_MAIN
 #include "../catch.hpp"
 
 #include "../src/world/chunk.hpp"
-
-using ChunkVoxelCoord  = glm::u8vec3;
 
 SCENARIO("Voxels can be set and gotten","[world]")
 {
@@ -44,7 +41,7 @@ SCENARIO("Voxels can be set from data arrays","[world]")
 
         WHEN("A new chunk is created from the data of the original one")
         {
-            Chunk newChunk(originalChunk.getLocation(), originalChunk.getFlatVoxelTypeData());
+            Chunk newChunk(originalChunk.getFlatVoxelTypeData());
 
             THEN("The new chunk holds the same voxel data")
             {

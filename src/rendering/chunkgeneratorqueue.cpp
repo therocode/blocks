@@ -1,8 +1,9 @@
 #include "chunkgeneratorqueue.hpp"
 
-void ChunkGeneratorQueue::addToQueue(Chunk* mainChunk, Chunk* topChunk, Chunk* bottomChunk, Chunk* frontChunk, Chunk* backChunk, Chunk* leftChunk, Chunk* rightChunk){
-    auto main = mQueue.find(mainChunk->getLocation());
+void ChunkGeneratorQueue::addToQueue(const ChunkCoord& mainChunkCoord, Chunk* mainChunk, Chunk* topChunk, Chunk* bottomChunk, Chunk* frontChunk, Chunk* backChunk, Chunk* leftChunk, Chunk* rightChunk){
+    auto main = mQueue.find(mainChunkCoord);
     ChunkQueueThing t;
+    t.mainChunkCoord = mainChunkCoord;
     t.mainChunk = mainChunk;
     t.topChunk  = topChunk;
     t.bottomChunk = bottomChunk;
@@ -11,10 +12,10 @@ void ChunkGeneratorQueue::addToQueue(Chunk* mainChunk, Chunk* topChunk, Chunk* b
     t.leftChunk = leftChunk;
     t.rightChunk = rightChunk;
     if(main == mQueue.end()){
-        mQueue.emplace(mainChunk->getLocation(), t);
+        mQueue.emplace(mainChunkCoord, t);
     }else{
         mQueue.erase(main);
-        mQueue.emplace(mainChunk->getLocation(), t);
+        mQueue.emplace(mainChunkCoord, t);
     }
 }
 void ChunkGeneratorQueue::generateSomeChunks(std::unordered_map<ChunkCoord, VBO>& chunkMap, const VoxelCoord focusPoint){
@@ -41,13 +42,13 @@ void ChunkGeneratorQueue::generateSomeChunks(std::unordered_map<ChunkCoord, VBO>
 
             if(vboEntry == chunkMap.end())
             {
-                chunkMap.emplace(m.mainChunk->getLocation(), mCreator.generateChunkVBO(m.mainChunk, m.topChunk, m.bottomChunk, m.frontChunk, m.backChunk, m.leftChunk, m.rightChunk));
+                chunkMap.emplace(m.mainChunkCoord, mCreator.generateChunkVBO(m.mainChunkCoord, m.mainChunk, m.topChunk, m.bottomChunk, m.frontChunk, m.backChunk, m.leftChunk, m.rightChunk));
             }
             else
             {
                 chunkMap.at(closestChunk->first).destroyBuffers();
                 chunkMap.erase(closestChunk->first);
-                chunkMap.emplace(m.mainChunk->getLocation(), mCreator.generateChunkVBO(m.mainChunk, m.topChunk, m.bottomChunk, m.frontChunk, m.backChunk, m.leftChunk, m.rightChunk));
+                chunkMap.emplace(m.mainChunkCoord, mCreator.generateChunkVBO(m.mainChunkCoord, m.mainChunk, m.topChunk, m.bottomChunk, m.frontChunk, m.backChunk, m.leftChunk, m.rightChunk));
             }
             mQueue.erase(closestChunk->first);
         }

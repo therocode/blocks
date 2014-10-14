@@ -67,16 +67,7 @@ WorldSystem::~WorldSystem()
 void WorldSystem::handleMessage(const SetVoxelMessage& received)
 {
     FEA_ASSERT(mWorlds.count(received.worldId) != 0, "Trying to get world id " + std::to_string(received.worldId) + " but that world does not exist!");
-    auto& chunks = mWorlds.at(received.worldId).getChunkMap();
-    auto chunk = chunks.find(VoxelToChunk::convert(received.voxel));
-
-    if(chunk != chunks.end())
-    {
-        chunk->second.setVoxelType(VoxelToChunkVoxel::convert(received.voxel), received.type);
-        mBus.send(VoxelSetMessage{received.voxel, received.type});
-
-        //also modmanager here
-    }
+    mWorlds.at(received.worldId).setVoxelType(received.voxel, received.type);
 }
 
 void WorldSystem::handleMessage(const BiomeGeneratedMessage& received)
@@ -89,26 +80,10 @@ void WorldSystem::handleMessage(const BiomeGeneratedMessage& received)
 
 void WorldSystem::handleMessage(const ChunkGeneratedMessage& received)
 {
-    ChunkCoord coordinate = received.coordinate;
-    const Chunk& chunk = received.chunk;
+    auto iterator = mWorlds.find(received.worldId);
 
-    //check against ranges and active chunks!!!!!
-    auto iterator = mWorlds.at(received.worldId).getChunkMap().emplace(coordinate, chunk);
-
-
-    //#C1#if(mModManager.hasMods(chunk))  // implement this check as seen in issue #143
-    //mModManager.loadMods(chunk);
-    //#C2#else      // implement mExplorationManager as according to issue #144
-    //#C2#{
-    //#C2#    if(!mExplorationManager.isExplored(regionCoord))
-    //#C2#        mBus.send(ChunkInitiallyGeneratedMessage{coordinate, chunk})
-    //#C2#}
-
-    uint64_t timestamp = 0; //#C3# get proper timestamp, issue #133
-
-    mBus.send(ChunkCandidateMessage{received.worldId, coordinate, iterator.first->second, timestamp});
-
-    mBus.send(ChunkFinishedMessage{coordinate, iterator.first->second}); //the now fully initialised chunk is announced to the rest of the game.
+    if(iterator != mWorlds.end())
+        iterator->second.deliverChunk(received.coordinate, received.chunk);
 }
 
 void WorldSystem::handleMessage(const HighlightEntityAddRequestedMessage& received)
@@ -166,6 +141,9 @@ void WorldSystem::createWorld(const WorldParameters& parameters)
     mIdentifierToIdMap.emplace(parameters.identifier, newId);   
 
     WorldData worldData;
+
+    worldData.range = parameters.ranges;
+    worldData.title = parameters.title;
 
     worldData.biomeSettings.biomes.push_back(mBiomeIdentifierToIdMap.at("grass"));
     worldData.biomeSettings.biomes.push_back(mBiomeIdentifierToIdMap.at("desert"));

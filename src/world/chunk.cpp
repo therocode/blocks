@@ -20,19 +20,12 @@ Chunk::Chunk()
     setVoxelData(types);
 }
 
-Chunk::Chunk(const ChunkCoord& loc) : mLocation(loc)
-{
-    VoxelTypeArray types;
-    types.fill(0);
-    setVoxelData(types);
-}
-
-Chunk::Chunk(const ChunkCoord& loc, const VoxelTypeArray& types) : mLocation(loc)
+Chunk::Chunk(const VoxelTypeArray& types)
 {
     setVoxelData(types);
 }
 
-Chunk::Chunk(const ChunkCoord& loc, const RleIndexArray& indices, const RleSegmentArray& rleData) : mLocation(loc), mRleSegmentIndices(indices), mRleSegments(rleData)
+Chunk::Chunk(const RleIndexArray& indices, const RleSegmentArray& rleData) : mRleSegmentIndices(indices), mRleSegments(rleData)
 {
 }
 
@@ -210,16 +203,6 @@ VoxelTypeArray Chunk::getFlatVoxelTypeData() const
         }
     }
     return typeData;
-}
-
-uint32_t Chunk::getWidth() const
-{
-    return chunkWidth;
-}
-
-const ChunkCoord& Chunk::getLocation() const
-{
-    return mLocation;
 }
 
 Solidity Chunk::getSolidity() const

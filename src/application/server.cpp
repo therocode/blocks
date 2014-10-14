@@ -40,6 +40,5 @@ void Server::doLogic()
 	mEntitySystem.update(mTimer.getDeltaTime());
 
     mFPSController.frameEnd();
-
     mFrameNumber++;
 }

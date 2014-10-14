@@ -16,7 +16,7 @@ VBOCreator::VBOCreator()
 {
 }
 
-VBO VBOCreator::generateChunkVBO(Chunk* mainChunk, Chunk* topChunk, Chunk* bottomChunk, Chunk* frontChunk, Chunk* backChunk, Chunk* leftChunk, Chunk* rightChunk)
+VBO VBOCreator::generateChunkVBO(const ChunkCoord& mainChunkCoord, Chunk* mainChunk, Chunk* topChunk, Chunk* bottomChunk, Chunk* frontChunk, Chunk* backChunk, Chunk* leftChunk, Chunk* rightChunk)
 {
     high_resolution_clock::time_point start = high_resolution_clock::now();
 
@@ -29,9 +29,7 @@ VBO VBOCreator::generateChunkVBO(Chunk* mainChunk, Chunk* topChunk, Chunk* botto
     nvbo.getVertexDeclaration().addElement(VertexElement::ELEMENT_FLOAT2, 3, "uv");
     nvbo.getVertexDeclaration().addElement(VertexElement::ELEMENT_FLOAT4, 4, "bounds");
 
-    const ChunkCoord location = mainChunk->getLocation();
-
-    glm::vec3 chunkOffset(location.x * (float)chunkWidth, location.y * (float)chunkWidth, location.z * (float)chunkWidth);
+    glm::vec3 chunkOffset(mainChunkCoord.x * (float)chunkWidth, mainChunkCoord.y * (float)chunkWidth, mainChunkCoord.z * (float)chunkWidth);
 
     const VoxelTypeData& voxelTypeData = mainChunk->getVoxelTypeData();
 #if 1

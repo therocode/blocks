@@ -1,4 +1,5 @@
 #pragma once
+#include <unordered_map>
 #include "worlddefines.hpp"
 #include "../utilities/interpolationgrid3d.hpp"
 
@@ -12,5 +13,5 @@ using BiomeRegionChunkCoord = glm::u8vec3;
 using BiomeGrid = InterpolationGrid3D<BiomeIndex>; //right now this uses no interpolation, should change when interpolation grid is capable of it
 using BiomeStorage = std::unordered_map<BiomeRegionCoord, BiomeGrid>;
 
-using ChunkToBiomeRegion = CoordinateCoarseConvert<ChunkCoord, BiomeRegionCoord, biomeRegionWidth>;
-using ChunkToBiomeRegionChunk = CoordinateWrapConvert<ChunkCoord, BiomeRegionChunkCoord, 0, biomeRegionWidth - 1>;
+using ChunkToBiomeRegion = CoordinateCoarseConvert<ChunkCoord, BiomeRegionCoord, biomeRegionWidthInChunks>;
+using ChunkToBiomeRegionChunk = CoordinateWrapConvert<ChunkCoord, BiomeRegionChunkCoord, 0, biomeRegionWidthInChunks - 1>;

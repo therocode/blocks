@@ -39,7 +39,7 @@ class WorldSystem :
         std::unordered_map<BiomeIndex, Biome> mBiomes;
         std::unordered_map<std::string, BiomeIndex> mBiomeIdentifierToIdMap;
 
-        //world data
+        //worlds
         WorldId mNextId;
         std::unordered_map<std::string, WorldId> mIdentifierToIdMap;
         std::unordered_map<WorldId, WorldEntry> mWorlds;

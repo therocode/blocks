@@ -1,9 +1,6 @@
-#define CATCH_CONFIG_MAIN
 #include "../catch.hpp"
 
 #include "../src/world/explorationmanager.hpp"
-
-
 
 TEST_CASE("exman", "[exman]")
 {
