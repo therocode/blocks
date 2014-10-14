@@ -76,12 +76,14 @@ void WorldEntry::deliverBiome(const BiomeRegionCoord& coordinate, const BiomeGri
 
 void WorldEntry::deliverChunk(const ChunkCoord& coordinate, const Chunk& chunk)
 {
-    //check against ranges and active chunks!!!!!
-    auto iterator = mWorldData.voxels.emplace(coordinate, chunk);
+    if(mHighlightManager.chunkIsHighlighted(coordinate))
+    {
+        auto iterator = mWorldData.voxels.emplace(coordinate, chunk);
 
-    mModManager.loadMods(coordinate, iterator.first->second);
+        mModManager.loadMods(coordinate, iterator.first->second);
 
-    mBus.send(ChunkLoadedMessage{coordinate, iterator.first->second, 0});
+        mBus.send(ChunkLoadedMessage{coordinate, iterator.first->second, 0});
+    }
 }
 
 const ChunkMap& WorldEntry::getChunkMap() const
@@ -112,49 +114,55 @@ void WorldEntry::setVoxelType(const VoxelCoord& voxelCoordinate, VoxelType type)
 
 void WorldEntry::activateChunk(const ChunkCoord& chunkCoordinate)
 {
-    //firsty handle any newly activated biomes; they need to be requested
-    const auto& activatedBiomes = mBiomeGridNotifier.set(chunkCoordinate, true);
+    if(mWorldData.range.isWithin(chunkCoordinate))
+    {
+        //firsty handle any newly activated biomes; they need to be requested
+        const auto& activatedBiomes = mBiomeGridNotifier.set(chunkCoordinate, true);
 
-    for(const auto& biomeRegionCoord : activatedBiomes)
-    {
-        mBus.send(BiomeRequestedMessage{mId, biomeRegionCoord});
-    }
+        for(const auto& biomeRegionCoord : activatedBiomes)
+        {
+            mBus.send(BiomeRequestedMessage{mId, biomeRegionCoord});
+        }
 
-    //secondly, the activated chunk will need to be generated as well, but we can't do that if the biome hasn't been delivered since we need data from the biome to pass on to the generator. Hence, if the biome doesn't exist, we store the request
-    const BiomeRegionCoord biomeRegionCoord = ChunkToBiomeRegion::convert(chunkCoordinate);
-    auto iterator = mWorldData.biomeGrids.find(biomeRegionCoord);
-    if(iterator != mWorldData.biomeGrids.end())
-    {
-        requestChunk(chunkCoordinate);
-    }
-    else
-    {
-        mPendingChunksToRequests[biomeRegionCoord].push_back(chunkCoordinate);
+        //secondly, the activated chunk will need to be generated as well, but we can't do that if the biome hasn't been delivered since we need data from the biome to pass on to the generator. Hence, if the biome doesn't exist, we store the request
+        const BiomeRegionCoord biomeRegionCoord = ChunkToBiomeRegion::convert(chunkCoordinate);
+        auto iterator = mWorldData.biomeGrids.find(biomeRegionCoord);
+        if(iterator != mWorldData.biomeGrids.end())
+        {
+            requestChunk(chunkCoordinate);
+        }
+        else
+        {
+            mPendingChunksToRequests[biomeRegionCoord].push_back(chunkCoordinate);
+        }
     }
 }
 
 void WorldEntry::deactivateChunk(const ChunkCoord& chunkCoordinate)
 {
-    //first lets see if this also deactivates a biome. in that case, it must be removed
-    const auto& deactivatedBiomes = mBiomeGridNotifier.set(chunkCoordinate, false);
-
-    for(const auto& biomeRegionCoord : deactivatedBiomes)
+    if(mWorldData.range.isWithin(chunkCoordinate))
     {
-        mWorldData.biomeGrids.erase(biomeRegionCoord);
-        mPendingChunksToRequests.erase(biomeRegionCoord); //if the biome is deactivated, we don't need to send pending requests either.
+        //first lets see if this also deactivates a biome. in that case, it must be removed
+        const auto& deactivatedBiomes = mBiomeGridNotifier.set(chunkCoordinate, false);
+
+        for(const auto& biomeRegionCoord : deactivatedBiomes)
+        {
+            mWorldData.biomeGrids.erase(biomeRegionCoord);
+            mPendingChunksToRequests.erase(biomeRegionCoord); //if the biome is deactivated, we don't need to send pending requests either.
+        }
+
+        if(mWorldData.voxels.erase(chunkCoordinate) != 0)
+        {
+            mBus.send(ChunkDeletedMessage{chunkCoordinate});
+        }
+
+        //we don't need to send pending requests for this chunk
+        const BiomeRegionCoord& biomeRegionCoord = ChunkToBiomeRegion::convert(chunkCoordinate);
+        auto iterator = mPendingChunksToRequests.find(biomeRegionCoord);
+
+        if(iterator != mPendingChunksToRequests.end())
+            std::remove(iterator->second.begin(), iterator->second.end(), chunkCoordinate);
     }
-
-    if(mWorldData.voxels.erase(chunkCoordinate) != 0)
-    {
-        mBus.send(ChunkDeletedMessage{chunkCoordinate});
-    }
-
-    //we don't need to send pending requests for this chunk
-    const BiomeRegionCoord& biomeRegionCoord = ChunkToBiomeRegion::convert(chunkCoordinate);
-    auto iterator = mPendingChunksToRequests.find(biomeRegionCoord);
-
-    if(iterator != mPendingChunksToRequests.end())
-        std::remove(iterator->second.begin(), iterator->second.end(), chunkCoordinate);
 }
 
 void WorldEntry::requestChunk(const ChunkCoord& chunk)

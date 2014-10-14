@@ -122,6 +122,9 @@ void WorldSystem::createWorld(const WorldParameters& parameters)
 
     WorldData worldData;
 
+    worldData.range = parameters.ranges;
+    worldData.title = parameters.title;
+
     worldData.biomeSettings.biomes.push_back(mBiomeIdentifierToIdMap.at("grass"));
     worldData.biomeSettings.biomes.push_back(mBiomeIdentifierToIdMap.at("desert"));
 
