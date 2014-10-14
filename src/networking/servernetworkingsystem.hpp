@@ -25,7 +25,8 @@ class ServerNetworkingSystem : public fea::MessageReceiver<
                                            ClientRequestedChunksMessage,
                                            PlayerEntersChunkMessage,
                                            PlayerEntersWorldMessage,
-                                           ChunksDataMessage>
+                                           ChunksDataDeniedMessage,
+                                           ChunksDataDeliveredMessage>
 {
     public:
         ServerNetworkingSystem(fea::MessageBus& bus, const NetworkParameters& parameters);
@@ -37,7 +38,8 @@ class ServerNetworkingSystem : public fea::MessageReceiver<
         void handleMessage(const ClientRequestedChunksMessage& received);
         void handleMessage(const PlayerEntersChunkMessage& received);
         void handleMessage(const PlayerEntersWorldMessage& received);
-        void handleMessage(const ChunksDataMessage& received);
+        void handleMessage(const ChunksDataDeniedMessage& received);
+        void handleMessage(const ChunksDataDeliveredMessage& received);
     private:
         void acceptRemoteClient(uint32_t id);
         void handleClientData(uint32_t clientId, const std::vector<uint8_t>& data);

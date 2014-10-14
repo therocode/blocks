@@ -91,13 +91,19 @@ struct HighlightEntityRemoveRequestedMessage
     fea::EntityId entityId;
 };
 
-struct ChunksRequestMessage
+struct ChunksRequestedMessage
 {
     WorldId worldId;
     const std::vector<ChunkCoord>& coordinates;
 };
 
-struct ChunksDataMessage
+struct ChunksDataDeniedMessage
+{
+    WorldId worldId;
+    const std::vector<ChunkCoord>& coordinates;
+};
+
+struct ChunksDataDeliveredMessage
 {
     WorldId worldId;
     std::unordered_map<ChunkCoord, const Chunk&> chunks;

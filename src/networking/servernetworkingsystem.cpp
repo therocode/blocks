@@ -151,22 +151,28 @@ void ServerNetworkingSystem::handleMessage(const PlayerEntersWorldMessage& recei
     mPlayerWorlds.at(received.playerId) = received.worldId;
 }
 
-void ServerNetworkingSystem::handleMessage(const ChunksDataMessage& received)
+void ServerNetworkingSystem::handleMessage(const ChunksDataDeniedMessage& received)
 {
-    std::cout << "got data of " << received.chunks.size() << " chunks\n";
-    
-    if(received.chunks.size() > 0)
+    if(received.coordinates.size() > 0)
     {
-        ClientChunksDeliverMessage message;
-
-        for(const auto& chunkIterator : received.chunks)
-        {
-            message.coordinates.push_back(chunkIterator.first);
-
-            VoxelTypeData voxelData = chunkIterator.second.getVoxelTypeData();
-            message.rleData.push_back({voxelData.mRleSegmentIndices, voxelData.mRleSegments});
-        }
+        //denied these chunks, send to client
     }
+}
+
+void ServerNetworkingSystem::handleMessage(const ChunksDataDeliveredMessage& received)
+{
+    //if(received.chunks.size() > 0)
+    //{
+    //    ClientChunksDeliverMessage message;
+
+    //    for(const auto& chunkIterator : received.chunks)
+    //    {
+    //        message.coordinates.push_back(chunkIterator.first);
+
+    //        VoxelTypeData voxelData = chunkIterator.second.getVoxelTypeData();
+    //        message.rleData.push_back({voxelData.mRleSegmentIndices, voxelData.mRleSegments});
+    //    }
+    //}
 }
 
 void ServerNetworkingSystem::acceptRemoteClient(uint32_t id)
@@ -296,6 +302,6 @@ void ServerNetworkingSystem::playerRequestedChunks(uint32_t id, const std::vecto
             mChunkRequests[chunk].push_back(id);
         }
 
-        mBus.send(ChunksRequestMessage{mPlayerWorlds.at(id), inRange});
+        mBus.send(ChunksRequestedMessage{mPlayerWorlds.at(id), inRange});
     }
 }

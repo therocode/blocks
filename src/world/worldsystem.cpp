@@ -107,24 +107,20 @@ void WorldSystem::handleMessage(const HighlightEntityRemoveRequestedMessage& rec
     mWorlds.at(received.worldId).removeHighlightEntity(received.entityId);
 }
 
-void WorldSystem::handleMessage(const ChunksRequestMessage& received)
+void WorldSystem::handleMessage(const ChunksRequestedMessage& received)
 {
-    //const World& world = *mWorlds.at(received.worldId);
+    const auto& iterator = mWorlds.find(received.worldId);
+    
+    if(iterator != mWorlds.end())
+    {
+        iterator->second.chunksRequested(received.coordinates);
+    }
+    else
+    {
+        ChunksDataDeniedMessage message{received.worldId, received.coordinates};
 
-    //ChunksDataMessage message;
-    //message.worldId = received.worldId;
-
-    //for(const auto& requestedChunk : received.coordinates)
-    //{
-    //    const Chunk* chunk = world.findChunk(requestedChunk);
-
-    //    if(chunk != nullptr)
-    //    {
-    //        message.chunks.emplace(requestedChunk, *chunk);
-    //    }
-    //}
-
-    //mBus.send(message);
+        mBus.send(message);
+    }
 }
 
 const ChunkMap& WorldSystem::getWorldVoxels(WorldId id) const

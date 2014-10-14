@@ -124,6 +124,29 @@ void WorldEntry::setVoxelType(const VoxelCoord& voxelCoordinate, VoxelType type)
     }
 }
 
+void WorldEntry::chunksRequested(const std::vector<ChunkCoord>& coordinates)
+{
+    std::unordered_map<ChunkCoord, const Chunk&> grantedChunks;
+    std::vector<ChunkCoord> deniedChunks;
+
+    for(const auto& requestedChunk : coordinates)
+    {
+        if(mHighlightManager.chunkIsHighlighted(requestedChunk))
+        {
+            const auto& iterator = mWorldData.voxels.find(requestedChunk);
+
+            if(iterator != mWorldData.voxels.end())
+            {
+                grantedChunks.emplace(requestedChunk, iterator->second);
+            }
+        }
+        else
+        {
+            deniedChunks.push_back(requestedChunk);
+        }
+    }
+}
+
 void WorldEntry::activateChunk(const ChunkCoord& chunkCoordinate)
 {
     if(mWorldData.range.isWithin(chunkCoordinate))

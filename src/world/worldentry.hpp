@@ -21,6 +21,7 @@ class WorldEntry
         const ChunkMap& getChunkMap() const;
         ChunkMap& getChunkMap();
         void setVoxelType(const VoxelCoord& voxelCoordinate, VoxelType type);
+        void chunksRequested(const std::vector<ChunkCoord>& coordinates);
     private:
         void activateChunk(const ChunkCoord& chunk);
         void deactivateChunk(const ChunkCoord& chunk);
