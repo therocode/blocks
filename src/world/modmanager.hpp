@@ -17,7 +17,7 @@
 
 #define NO_CHUNK -1
 
-const std::string regionDir = "worlddata";
+const std::string modRegionDir = "worlddata";
 const std::string dataExt = ".dat";
 const std::string indexExt = ".idx";
 
@@ -39,19 +39,21 @@ struct Mod
 };
 
 //regions are defined locally to only the modmanager
-using RegionCoord = glm::i64vec3;
-using RegionChunkCoord = glm::u8vec3;
-const uint32_t regionChunkWidth = 32;
+using ModRegionCoord = glm::i64vec3;
+using ModRegionChunkCoord = glm::u8vec3;
+const uint32_t modRegionWidthInChunks = 32;
+const uint32_t modRegionWidth = modRegionWidthInChunks * chunkWidth;
 
-using ChunkToRegion = CoordinateCoarseConvert<ChunkCoord, RegionCoord, regionChunkWidth>;
-using ChunkToRegionChunk = CoordinateWrapConvert<ChunkCoord, RegionChunkCoord, 0, regionChunkWidth - 1>;
+using VoxelToModRegion = CoordinateCoarseConvert<ChunkCoord, ModRegionCoord, modRegionWidth>;
+using ChunkToModRegion = CoordinateCoarseConvert<ChunkCoord, ModRegionCoord, modRegionWidthInChunks>;
+using ChunkToModRegionChunk = CoordinateWrapConvert<ChunkCoord, ModRegionChunkCoord, 0, modRegionWidthInChunks - 1>;
 
 using ChunkIndex = uint32_t;
 using ChunkModMap = std::unordered_map<ChunkVoxelCoord, VoxelType>;
-using RegionModMap = std::unordered_map<RegionChunkCoord, ChunkModMap>;
-using WorldModMap = std::unordered_map<RegionCoord, RegionModMap>;
-using RegionTimestampMap = std::unordered_map<RegionChunkCoord, uint64_t>;
-using WorldTimestampMap = std::unordered_map<RegionCoord, RegionTimestampMap>;
+using ModRegionModMap = std::unordered_map<ModRegionChunkCoord, ChunkModMap>;
+using WorldModMap = std::unordered_map<ModRegionCoord, ModRegionModMap>;
+using ModRegionTimestampMap = std::unordered_map<ModRegionChunkCoord, uint64_t>;
+using WorldTimestampMap = std::unordered_map<ModRegionCoord, ModRegionTimestampMap>;
 
 struct ModManagerException : public std::exception
 {
@@ -67,20 +69,20 @@ class ModManager
         ModManager(const std::string& worldName);
         void loadMods(const ChunkCoord& location, Chunk& chunk);
         void saveMods();
-        void saveMods(RegionCoord regionLoc);
-        void setMod(ChunkCoord loc, ChunkVoxelCoord voxLoc, VoxelType type);
-        VoxelType getMod(ChunkCoord loc, ChunkVoxelCoord voxLoc);
-        void deleteRegionFile(const RegionCoord& regionLoc);
+        void saveMods(ModRegionCoord regionLoc);
+        void setMod(const VoxelCoord& voxLoc, VoxelType type);
+        VoxelType getMod(const VoxelCoord& voxLoc);
+        void deleteModRegionFile(const ModRegionCoord& regionLoc);
         void recordTimestamp(ChunkCoord loc, uint64_t timestamp);
         void setWorldName(const std::string& worldName);
 
     private:
-        ChunkIndex getChunkIndex(RegionCoord regionLoc, RegionChunkCoord chunkLoc);
-        void initIndexFile(RegionCoord regionLoc);
-        void _setMod(const RegionCoord& regionLoc, const RegionChunkCoord& chunkLoc, const ChunkVoxelCoord& voxLoc, VoxelType type);
-        std::string getFilename(RegionCoord regionLoc);
+        ChunkIndex getChunkIndex(ModRegionCoord regionLoc, ModRegionChunkCoord chunkLoc);
+        void initIndexFile(ModRegionCoord regionLoc);
+        void _setMod(const ModRegionCoord& regionLoc, const ModRegionChunkCoord& chunkLoc, const ChunkVoxelCoord& voxLoc, VoxelType type);
+        std::string getFilename(ModRegionCoord regionLoc);
 
-        RegionCoord mRegionLoc;
+        ModRegionCoord mModRegionLoc;
         std::string mIndexPath;
         std::string mDataPath;
         WorldModMap mMods;

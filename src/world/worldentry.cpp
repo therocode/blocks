@@ -108,7 +108,7 @@ void WorldEntry::setVoxelType(const VoxelCoord& voxelCoordinate, VoxelType type)
         chunk->second.setVoxelType(chunkVoxelCoord, type);
         mBus.send(VoxelSetMessage{voxelCoordinate, type});
 
-        mModManager.setMod(chunkCoord, chunkVoxelCoord, type);
+        mModManager.setMod(voxelCoordinate, type);
     }
 }
 
