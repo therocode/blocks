@@ -363,7 +363,8 @@ if(BUILD_TESTS)
         "test/world/explorationmanagertest.cpp"
         "test/world/highlightmanagertest.cpp"
         "test/world/modmanagertest.cpp"
-        "test/network/serialize.cpp"
+        "test/network/serializetest.cpp"
+        "test/network/chunkrequesthandlertest.cpp"
 
         "test/testhelpers.cpp"
         "src/world/highlightmanager.cpp"
@@ -372,7 +373,8 @@ if(BUILD_TESTS)
         "src/utilities/directorycreator.cpp"
         "src/world/chunk.cpp"
         "src/world/explorationmanager.cpp" "src/utilities/coordinateconverter.cpp"
-         "src/networking/networkingprotocol.cpp" "src/networking/messageserializer.cpp"
+        "src/networking/networkingprotocol.cpp" "src/networking/messageserializer.cpp"
+        "src/networking/chunkrequesthandler.cpp" 
         )
 
     target_link_libraries(tests ${FEATHERKIT_LIBRARIES})
