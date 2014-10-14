@@ -145,6 +145,19 @@ void WorldEntry::chunksRequested(const std::vector<ChunkCoord>& coordinates)
             deniedChunks.push_back(requestedChunk);
         }
     }
+
+    if(grantedChunks.size() > 0)
+    {
+        ChunksDataDeliveredMessage message{mId, grantedChunks};
+
+        mBus.send(message);
+    }
+    if(deniedChunks.size() > 0)
+    {
+        ChunksDataDeniedMessage message{mId, deniedChunks};
+
+        mBus.send(message);
+    }
 }
 
 void WorldEntry::activateChunk(const ChunkCoord& chunkCoordinate)
