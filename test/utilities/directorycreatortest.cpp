@@ -82,6 +82,7 @@ SCENARIO("Directories with things in them can not be removed unless the force fl
             THEN("the removal fails")
             {
                 CHECK_FALSE(succeeded);
+                CHECK(DirectoryCreator::directoryExists("non_empty_directory"));
             }
         }
 
@@ -92,10 +93,6 @@ SCENARIO("Directories with things in them can not be removed unless the force fl
             THEN("the removal succeeds")
             {
                 CHECK(succeeded);
-            }
-
-            THEN("the directory is actually gone")
-            {
                 CHECK_FALSE(DirectoryCreator::directoryExists("non_empty_directory"));
             }
         }
@@ -107,6 +104,7 @@ SCENARIO("Directories with things in them can not be removed unless the force fl
             THEN("the removal fails")
             {
                 CHECK_FALSE(succeeded);
+                CHECK(DirectoryCreator::directoryExists("non_empty_directory"));
             }
         }
 
