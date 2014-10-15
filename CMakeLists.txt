@@ -354,11 +354,14 @@ if(BUILD_TESTS)
         "test/utilities/gridnotifiertest.cpp"
         "test/utilities/interpolationgrid3dtest.cpp"
         "test/utilities/directorycreatortest.cpp"
+        "test/utilities/scopeddirectorytest.cpp"
         "test/world/chunktest.cpp"
         "test/world/coordinatetest.cpp"
         "test/world/explorationmanagertest.cpp"
         "test/world/highlightmanagertest.cpp"
         "test/world/modmanagertest.cpp"
+        
+        "test/scopeddirectory.cpp"
 
         "src/world/highlightmanager.cpp"
         "src/world/modmanager.cpp"
