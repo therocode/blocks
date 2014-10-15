@@ -109,5 +109,8 @@ SCENARIO("Directories with things in them can not be removed unless the force fl
                 CHECK_FALSE(succeeded);
             }
         }
+
+        //cleanup
+        DirectoryCreator::removeDirectory("non_empty_directory", true);
     }
 }
