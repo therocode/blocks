@@ -41,6 +41,7 @@ set(source_files
     src/input/inputadaptor.cpp
 
     src/networking/clientnetworkingsystem.cpp
+    src/networking/chunkrequesthandler.cpp
     src/networking/enet.cpp
     src/networking/enetclient.cpp
     src/networking/enetserver.cpp
@@ -146,6 +147,7 @@ set(header_files
     src/input/inputadaptor.hpp
 
     src/networking/channels.hpp
+    src/networking/chunkrequesthandler.hpp
     src/networking/clientnetworkingsystem.hpp
     src/networking/enet.hpp
     src/networking/enetclient.hpp

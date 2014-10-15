@@ -177,10 +177,10 @@ void Client::handleMessage(const CursorLockedMessage& received)
 }
 
 void Client::handleMessage(const GameStartMessage& received)
-{
+{ //hard coded world values :<
     auto highlighted = mHighlightedChunks.addHighlightEntity(0, {0.0f, 0.0f, 0.0f});
 
-    mBus.send(ClientRequestedChunksMessage{highlighted});
+    mBus.send(ClientRequestedChunksMessage{"default", highlighted});
 }
 
 bool Client::requestedQuit()

@@ -95,9 +95,10 @@ struct ClientRequestedChunksMessage
     template<class Archive>
     void serialize(Archive& archive)
     {
-        archive(coordinates);
+        archive(worldIdentifier, coordinates);
     }
 
+    std::string worldIdentifier;
     std::vector<ChunkCoord> coordinates;
 };
 
@@ -108,9 +109,10 @@ struct ClientChunksDeniedMessage
     template<class Archive>
     void serialize(Archive& archive)
     {
-        archive(coordinates);
+        archive(worldIdentifier, coordinates);
     }
 
+    std::string worldIdentifier;
     std::vector<ChunkCoord> coordinates;
 };
 
@@ -121,9 +123,10 @@ struct ClientChunksDeliverMessage
     template<class Archive>
     void serialize(Archive& archive)
     {
-        archive(coordinates);
+        archive(worldIdentifier, rleData, coordinates);
     }
 
+    std::string worldIdentifier;
     std::vector<std::pair<RleIndexArray, RleSegmentArray>> rleData;
     std::vector<ChunkCoord> coordinates;
 };

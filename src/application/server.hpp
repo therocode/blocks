@@ -23,8 +23,8 @@ class Server
         WorldSystem mWorldSystem;
         ScriptSystem mScriptSystem;
         EntitySystem mEntitySystem;
-        ServerNetworkingSystem mServerNetworkingSystem;
         GameInterface mGameInterface;
+        ServerNetworkingSystem mServerNetworkingSystem;
         FPSController mFPSController;
 
         uint32_t mFrameNumber;

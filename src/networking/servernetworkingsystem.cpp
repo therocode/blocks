@@ -5,9 +5,12 @@
 #include "../input/inputmessages.hpp"
 #include "channels.hpp"
 #include "messageserializer.hpp"
+#include "../gameinterface.hpp"
+#include "../world/worldsystem.hpp"
 
-ServerNetworkingSystem::ServerNetworkingSystem(fea::MessageBus& bus, const NetworkParameters& parameters) :
+ServerNetworkingSystem::ServerNetworkingSystem(fea::MessageBus& bus, const GameInterface& gameInterface, const NetworkParameters& parameters) :
     mBus(bus),
+    mGameInterface(gameInterface),
     mParameters(parameters),
     mAcceptingClients(false),
     mMaxPlayerAmount(20),
@@ -136,7 +139,7 @@ void ServerNetworkingSystem::handleMessage(const ClientRequestedChunksMessage& r
 {
     if(mLocalClientBus != nullptr)
     {
-        playerRequestedChunks(mLocalPlayerId, received.coordinates);
+        playerRequestedChunks(mLocalPlayerId, received.worldIdentifier, received.coordinates);
     }
 }
 
@@ -155,7 +158,10 @@ void ServerNetworkingSystem::handleMessage(const ChunksDataDeniedMessage& receiv
 {
     if(received.coordinates.size() > 0)
     {
-        //denied these chunks, send to client
+       for(const auto& chunk : received.coordinates)
+       {
+           //get 
+       }
     }
 }
 
@@ -173,6 +179,10 @@ void ServerNetworkingSystem::handleMessage(const ChunksDataDeliveredMessage& rec
     //        message.rleData.push_back({voxelData.mRleSegmentIndices, voxelData.mRleSegments});
     //    }
     //}
+}
+
+void ServerNetworkingSystem::handleMessage(const ChunkFinishedMessage& received)
+{
 }
 
 void ServerNetworkingSystem::acceptRemoteClient(uint32_t id)
@@ -227,7 +237,7 @@ void ServerNetworkingSystem::handleClientData(uint32_t clientId, const std::vect
             ClientRequestedChunksMessage received = deserializeMessage<ClientRequestedChunksMessage>(data);
 
             if(mClientToPlayerIds.count(clientId) != 0)
-                playerRequestedChunks(mClientToPlayerIds.at(clientId), received.coordinates);
+                playerRequestedChunks(mClientToPlayerIds.at(clientId), received.worldIdentifier, received.coordinates);
             }
             else
             { //client violated protocol by requesting chunks without being part of the game
@@ -271,7 +281,7 @@ void ServerNetworkingSystem::disconnectRemoteClient(uint32_t id)
     }
 }
 
-void ServerNetworkingSystem::playerRequestedChunks(uint32_t id, const std::vector<ChunkCoord>& chunks)
+void ServerNetworkingSystem::playerRequestedChunks(uint32_t id, const std::string& worldIdentifier, const std::vector<ChunkCoord>& chunks)
 {
     std::vector<ChunkCoord> inRange;
     std::vector<ChunkCoord> notInRange;
@@ -293,13 +303,14 @@ void ServerNetworkingSystem::playerRequestedChunks(uint32_t id, const std::vecto
 
     if(notInRange.size() > 0)
     {
-        sendToOne(id, ClientChunksDeniedMessage{notInRange}, true, CHANNEL_CHUNKS);
+        sendToOne(id, ClientChunksDeniedMessage{worldIdentifier, notInRange}, true, CHANNEL_CHUNKS);
     }
     if(inRange.size() > 0)
     {
+        auto& chunkRequestHandler = mChunkRequestHandlers[mGameInterface.getWorldSystem().worldIdentifierToId(worldIdentifier)];
         for(const auto& chunk : inRange)
         {
-            mChunkRequests[chunk].push_back(id);
+            chunkRequestHandler.addRequest(id, chunk);
         }
 
         mBus.send(ChunksRequestedMessage{mPlayerWorlds.at(id), inRange});

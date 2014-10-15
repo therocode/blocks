@@ -28,6 +28,7 @@ class WorldSystem :
         void handleMessage(const HighlightEntityRemoveRequestedMessage& received) override;
         void handleMessage(const ChunksRequestedMessage& received) override;
         const ChunkMap& getWorldVoxels(WorldId id) const;
+        WorldId worldIdentifierToId(const std::string& identifier) const;
     private:
         void createWorld(const WorldParameters& parameters);
         fea::MessageBus& mBus;

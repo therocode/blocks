@@ -10,8 +10,8 @@ Server::Server(fea::MessageBus& bus, const NetworkParameters& parameters) :
     mBus(bus),
     mWorldSystem(mBus),
 	mEntitySystem(mBus),
-    mServerNetworkingSystem(mBus, parameters),
     mGameInterface(mWorldSystem, mEntitySystem),
+    mServerNetworkingSystem(mBus, mGameInterface, parameters),
     mLogger(mBus, LogLevel::VERB),
     mScriptSystem(mBus, mGameInterface),
     mFrameNumber(0)

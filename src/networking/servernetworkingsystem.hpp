@@ -13,8 +13,10 @@
 #include "enet.hpp"
 #include "enetserver.hpp"
 #include "../utilities/glmhash.hpp"
+#include "chunkrequesthandler.hpp"
 
 using ClientId = size_t;
+class GameInterface;
 
 class ServerNetworkingSystem : public fea::MessageReceiver<
                                            LocalConnectionAttemptMessage,
@@ -26,10 +28,11 @@ class ServerNetworkingSystem : public fea::MessageReceiver<
                                            PlayerEntersChunkMessage,
                                            PlayerEntersWorldMessage,
                                            ChunksDataDeniedMessage,
-                                           ChunksDataDeliveredMessage>
+                                           ChunksDataDeliveredMessage,
+                                           ChunkFinishedMessage>
 {
     public:
-        ServerNetworkingSystem(fea::MessageBus& bus, const NetworkParameters& parameters);
+        ServerNetworkingSystem(fea::MessageBus& bus, const GameInterface& gameInterface, const NetworkParameters& parameters);
         void handleMessage(const LocalConnectionAttemptMessage& received);
         void handleMessage(const LocalDisconnectionMessage& received);
         void handleMessage(const FrameMessage& received);
@@ -40,24 +43,24 @@ class ServerNetworkingSystem : public fea::MessageReceiver<
         void handleMessage(const PlayerEntersWorldMessage& received);
         void handleMessage(const ChunksDataDeniedMessage& received);
         void handleMessage(const ChunksDataDeliveredMessage& received);
+        void handleMessage(const ChunkFinishedMessage& received);
     private:
         void acceptRemoteClient(uint32_t id);
         void handleClientData(uint32_t clientId, const std::vector<uint8_t>& data);
         void disconnectRemoteClient(uint32_t id);
-        void playerRequestedChunks(uint32_t id, const std::vector<ChunkCoord>& chunks);
+        void playerRequestedChunks(uint32_t id, const std::string& worldIdentifier, const std::vector<ChunkCoord>& chunks);
         template <typename Message>
         void sendToOne(uint32_t playerId, const Message& message, bool reliable, uint8_t channel);
         template <typename Message>
         void sendToAll(const Message& message, bool reliable, uint8_t channel);
 
         fea::MessageBus& mBus;
+        const GameInterface& mGameInterface;
         NetworkParameters mParameters;
         bool mAcceptingClients;
         uint32_t mPlayerAmount;
         uint32_t mMaxPlayerAmount;
         ServerNetSettings mSettings;
-
-        std::unordered_set<size_t> graphicsEntities; //temporary solution on how to resend things
 
         uint32_t mNextClientId;
         std::unordered_map<uint32_t, uint32_t> mClientToPlayerIds;
@@ -65,7 +68,8 @@ class ServerNetworkingSystem : public fea::MessageReceiver<
 
         std::unordered_map<uint32_t, ChunkCoord> mPlayerPositions;
         std::unordered_map<uint32_t, WorldId> mPlayerWorlds;
-        std::unordered_map<ChunkCoord, std::vector<uint32_t>> mChunkRequests;
+
+        std::unordered_map<WorldId, ChunkRequestHandler> mChunkRequestHandlers;
 
         fea::MessageBus* mLocalClientBus;
         uint32_t mLocalPlayerId;

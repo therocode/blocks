@@ -6,6 +6,7 @@
 WorldEntry::WorldEntry(fea::MessageBus& bus, WorldId id, const std::string& identifier, const WorldData& data) :
     mBus(bus),
     mId(id),
+    mIdentifier(identifier),
     mWorldData(data),
     mHighlightManager(8), //this should be read from somewhere else, probably server settings
     mModManager(identifier)
@@ -158,6 +159,11 @@ void WorldEntry::chunksRequested(const std::vector<ChunkCoord>& coordinates)
 
         mBus.send(message);
     }
+}
+
+const std::string& WorldEntry::getIdentifier() const
+{
+    return mIdentifier;
 }
 
 void WorldEntry::activateChunk(const ChunkCoord& chunkCoordinate)
