@@ -353,7 +353,7 @@ if(BUILD_TESTS)
     add_executable(tests "test/main.cpp"
         "test/utilities/gridnotifiertest.cpp"
         "test/utilities/interpolationgrid3dtest.cpp"
-        "test/utilities/utilitiestest.cpp"
+        "test/utilities/directorycreatortest.cpp"
         "test/world/chunktest.cpp"
         "test/world/coordinatetest.cpp"
         "test/world/explorationmanagertest.cpp"
