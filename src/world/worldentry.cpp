@@ -95,7 +95,7 @@ void WorldEntry::deliverChunk(const ChunkCoord& coordinate, const Chunk& chunk)
 
         mBus.send(ChunkCandidateMessage{mId, coordinate, iterator.first->second, timestamp});
 
-        mBus.send(ChunkFinishedMessage{coordinate, iterator.first->second}); //the now fully initialised chunk is announced to the rest of the game.
+        mBus.send(ChunkFinishedMessage{mId, coordinate, iterator.first->second}); //the now fully initialised chunk is announced to the rest of the game.
     }
 }
 
@@ -207,7 +207,7 @@ void WorldEntry::deactivateChunk(const ChunkCoord& chunkCoordinate)
 
         if(mWorldData.voxels.erase(chunkCoordinate) != 0)
         {
-            mBus.send(ChunkDeletedMessage{chunkCoordinate});
+            //mBus.send(ChunkDeletedMessage{chunkCoordinate}); there is no such message atm
         }
 
         //we don't need to send pending requests for this chunk

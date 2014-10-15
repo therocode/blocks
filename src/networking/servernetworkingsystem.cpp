@@ -210,7 +210,7 @@ void ServerNetworkingSystem::handleMessage(const ChunksDataDeliveredMessage& rec
                 ClientChunksDeliverMessage message{mGameInterface.getWorldSystem().worldIdToIdentifier(received.worldId), std::get<0>(tuple), std::get<1>(tuple), std::get<2>(tuple)};
                 sendToOne(iterator.first, message, true, CHANNEL_CHUNKS);
                 
-                std::cout << "sent " << message.coordinates.size() << " chunks to " << iterator.first << "\n";
+                //std::cout << "sent " << message.coordinates.size() << " chunks to " << iterator.first << "\n";
             }
         }
     }
@@ -218,6 +218,22 @@ void ServerNetworkingSystem::handleMessage(const ChunksDataDeliveredMessage& rec
 
 void ServerNetworkingSystem::handleMessage(const ChunkFinishedMessage& received)
 {
+    if(mChunkRequestHandlers.count(received.worldId) != 0)
+    {
+        ChunkRequestHandler& chunkRequestHandler = mChunkRequestHandlers.at(received.worldId);
+
+        auto acceptedRequests = chunkRequestHandler.getAndRemove(received.coordinate);
+
+        const auto& voxelRleData = received.chunk.getVoxelTypeData();
+        ClientChunksDeliverMessage message{mGameInterface.getWorldSystem().worldIdToIdentifier(received.worldId), {received.coordinate}, {voxelRleData.mRleSegmentIndices}, {voxelRleData.mRleSegments}};
+
+        for(const auto& client : acceptedRequests)
+        {
+            sendToOne(client, message, true, CHANNEL_CHUNKS);
+
+            //std::cout << "sent one chunks to " << client << "\n";
+        }
+    }
 }
 
 void ServerNetworkingSystem::acceptRemoteClient(uint32_t id)
@@ -336,7 +352,7 @@ void ServerNetworkingSystem::playerRequestedChunks(uint32_t id, const std::strin
 
     if(notInRange.size() > 0)
     {
-        std::cout << notInRange.size() << " chunks not in range! will deny\n";
+        //std::cout << notInRange.size() << " chunks not in range! will deny\n";
         sendToOne(id, ClientChunksDeniedMessage{worldIdentifier, notInRange}, true, CHANNEL_CHUNKS);
     }
     if(inRange.size() > 0)

@@ -63,12 +63,7 @@ struct ChunkCandidateMessage
 
 struct ChunkFinishedMessage
 {
-    const ChunkCoord& coordinate; const Chunk& chunk;
-};
-
-struct ChunkDeletedMessage
-{
-    const ChunkCoord& coordinate;
+    WorldId worldId; const ChunkCoord& coordinate; const Chunk& chunk;
 };
 
 struct HighlightEntityAddRequestedMessage
