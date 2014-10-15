@@ -1,13 +1,8 @@
 #include "../catch.hpp"
+#include "../scopeddirectory.hpp"
 #include "world/chunk.hpp"
 #include "world/modmanager.hpp"
 #include "world/worldmessages.hpp"
-
-bool fexists(std::string filename)
-{
-    std::ifstream file(filename);
-    return file;
-}
 
 TEST_CASE("set and get", "[set][get]")
 {
@@ -25,6 +20,7 @@ TEST_CASE("set and get", "[set][get]")
 
 TEST_CASE("save and load", "[save][load]")
 {
+    ScopedDirectory testDir("test_directory");
     VoxelCoord voxLoc(2, 2, 2);    
     VoxelCoord voxLoc2(580, 580, 580);
     ChunkCoord loc = VoxelToChunk::convert(voxLoc);
@@ -41,8 +37,8 @@ TEST_CASE("save and load", "[save][load]")
     Chunk chunk(voxelData);
     Chunk chunk2(voxelData);
     Chunk chunkClone(voxelData);
-    ModManager manager("test");
-    ModManager manager2("test");
+    ModManager manager("test_directory");
+    ModManager manager2("test_directory");
     manager.deleteModRegionFile(regionLoc);
     manager.deleteModRegionFile(regionLoc2);
 

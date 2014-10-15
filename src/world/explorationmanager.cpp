@@ -1,6 +1,5 @@
 #include <fea/assert.hpp>
 #include "explorationmanager.hpp"
-#include <iostream>
 #include <fstream>
 
 ExplorationManager::ExplorationManager()
