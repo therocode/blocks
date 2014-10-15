@@ -12,9 +12,9 @@ SCENARIO("Chunk request handler can accept requests","[networking]")
 
         WHEN("Requests are added to the handler")
         {   
-            handler.addRequester(ChunkCoord(1, 2, 3), 0);
-            handler.addRequester(ChunkCoord(1, 2, 3), 1);
-            handler.addRequester(ChunkCoord(1, 3, 4), 2);
+            handler.addRequest(0, ChunkCoord(1, 2, 3));
+            handler.addRequest(1, ChunkCoord(1, 2, 3));
+            handler.addRequest(2, ChunkCoord(1, 3, 4));
             
             THEN("The requests are added")
             {
@@ -35,15 +35,15 @@ SCENARIO("Chunk request that are equal to previous requests are not accounted fo
 
         WHEN("Requests are added to the handler that are the same as other requests")
         {   
-            handler.addRequester(ChunkCoord(1, 2, 3), 1);
-            handler.addRequester(ChunkCoord(1, 2, 3), 1);
-            handler.addRequester(ChunkCoord(1, 2, 3), 2);
-            handler.addRequester(ChunkCoord(1, 2, 3), 2);
-            handler.addRequester(ChunkCoord(2, 1, 3), 1);
-            handler.addRequester(ChunkCoord(2, 1, 3), 1);
-            handler.addRequester(ChunkCoord(2, 1, 3), 1);
-            handler.addRequester(ChunkCoord(2, 1, 3), 1);
-            handler.addRequester(ChunkCoord(2, 1, 3), 1);
+            handler.addRequest(1, ChunkCoord(1, 2, 3));
+            handler.addRequest(1, ChunkCoord(1, 2, 3));
+            handler.addRequest(2, ChunkCoord(1, 2, 3));
+            handler.addRequest(2, ChunkCoord(1, 2, 3));
+            handler.addRequest(1, ChunkCoord(2, 1, 3));
+            handler.addRequest(1, ChunkCoord(2, 1, 3));
+            handler.addRequest(1, ChunkCoord(2, 1, 3));
+            handler.addRequest(1, ChunkCoord(2, 1, 3));
+            handler.addRequest(1, ChunkCoord(2, 1, 3));
             
             THEN("The equal requests are not accounted for")
             {

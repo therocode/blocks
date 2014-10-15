@@ -1,6 +1,6 @@
 #include "chunkrequesthandler.hpp"
 
-void ChunkRequestHandler::addRequester(const ChunkCoord& coordinate, uint32_t id)
+void ChunkRequestHandler::addRequest(uint32_t id, const ChunkCoord& coordinate)
 {
     mRequests[coordinate].insert(id);   
 }

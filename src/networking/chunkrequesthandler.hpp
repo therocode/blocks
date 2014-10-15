@@ -7,7 +7,7 @@
 class ChunkRequestHandler
 {
     public:
-        void addRequester(const ChunkCoord& coordinate, uint32_t id);
+        void addRequest(uint32_t id, const ChunkCoord& coordinate);
         uint32_t getRequesterAmount(const ChunkCoord& coordinate) const;
         uint32_t getTotalRequesterAmount() const;
     private:
