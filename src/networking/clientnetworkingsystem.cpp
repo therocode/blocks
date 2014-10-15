@@ -131,6 +131,11 @@ void ClientNetworkingSystem::handleServerData(const std::vector<uint8_t>& data)
         ClientChunksDeniedMessage received = deserializeMessage<ClientChunksDeniedMessage>(data);
         mBus.send(received);
     }
+    else if(type == CLIENT_CHUNKS_DELIVERY)
+    {
+        ClientChunksDeliveredMessage received = deserializeMessage<ClientChunksDeliveredMessage>(data);
+        mBus.send(received);
+    }
     else if(type == TEST_1)
         mBus.send(LogMessage{"Received meaningless test message", clientName, LogLevel::WARN});
     else if(type == TEST_2)

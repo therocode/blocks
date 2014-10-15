@@ -207,7 +207,7 @@ void ServerNetworkingSystem::handleMessage(const ChunksDataDeliveredMessage& rec
             for(const auto iterator : chunksToDeliver)
             {
                 const auto& tuple = chunksToDeliver[iterator.first];
-                ClientChunksDeliverMessage message{mGameInterface.getWorldSystem().worldIdToIdentifier(received.worldId), std::get<0>(tuple), std::get<1>(tuple), std::get<2>(tuple)};
+                ClientChunksDeliveredMessage message{mGameInterface.getWorldSystem().worldIdToIdentifier(received.worldId), std::get<0>(tuple), std::get<1>(tuple), std::get<2>(tuple)};
                 sendToOne(iterator.first, message, true, CHANNEL_CHUNKS);
                 
                 //std::cout << "sent " << message.coordinates.size() << " chunks to " << iterator.first << "\n";
@@ -225,7 +225,7 @@ void ServerNetworkingSystem::handleMessage(const ChunkFinishedMessage& received)
         auto acceptedRequests = chunkRequestHandler.getAndRemove(received.coordinate);
 
         const auto& voxelRleData = received.chunk.getVoxelTypeData();
-        ClientChunksDeliverMessage message{mGameInterface.getWorldSystem().worldIdToIdentifier(received.worldId), {received.coordinate}, {voxelRleData.mRleSegmentIndices}, {voxelRleData.mRleSegments}};
+        ClientChunksDeliveredMessage message{mGameInterface.getWorldSystem().worldIdToIdentifier(received.worldId), {received.coordinate}, {voxelRleData.mRleSegmentIndices}, {voxelRleData.mRleSegments}};
 
         for(const auto& client : acceptedRequests)
         {

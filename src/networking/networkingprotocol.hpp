@@ -118,7 +118,7 @@ struct ClientChunksDeniedMessage
     std::vector<ChunkCoord> coordinates;
 };
 
-struct ClientChunksDeliverMessage
+struct ClientChunksDeliveredMessage
 {
     int32_t getType() const {return CLIENT_CHUNKS_DELIVERY;}
 

@@ -82,37 +82,41 @@ void Client::handleMessage(const PlayerActionMessage& received)
 	}
 }
 
-void Client::handleMessage(const ChunkFinishedMessage& received)
+void Client::handleMessage(const ClientChunksDeliveredMessage& received)
 {
-    const ChunkCoord& coordinate = received.coordinate;
+    for(uint32_t i = 0; i < received.coordinates.size(); i++)
+    {
+        const ChunkCoord& coordinate = received.coordinates[i];
+        Chunk chunk(received.rleIndices[i], received.rleSegments[i]);
 
-    mLocalChunks[coordinate] = received.chunk;
+        mLocalChunks[coordinate] = chunk;
 
-    updateChunk(coordinate);
+        updateChunk(coordinate);
 
-    if(mLocalChunks.find(ChunkCoord(coordinate.x + 1, coordinate.y, coordinate.z)) != mLocalChunks.end())
-    {
-        updateChunk(ChunkCoord(coordinate.x + 1, coordinate.y, coordinate.z));
-    }
-    if(mLocalChunks.find(ChunkCoord(coordinate.x - 1, coordinate.y, coordinate.z)) != mLocalChunks.end())
-    {
-        updateChunk(ChunkCoord(coordinate.x - 1, coordinate.y, coordinate.z));
-    }
-    if(mLocalChunks.find(ChunkCoord(coordinate.x, coordinate.y + 1, coordinate.z)) != mLocalChunks.end())
-    {
-        updateChunk(ChunkCoord(coordinate.x, coordinate.y + 1, coordinate.z));
-    }
-    if(mLocalChunks.find(ChunkCoord(coordinate.x, coordinate.y - 1, coordinate.z)) != mLocalChunks.end())
-    {
-        updateChunk(ChunkCoord(coordinate.x, coordinate.y - 1, coordinate.z));
-    }
-    if(mLocalChunks.find(ChunkCoord(coordinate.x, coordinate.y, coordinate.z + 1)) != mLocalChunks.end())
-    {
-        updateChunk(ChunkCoord(coordinate.x, coordinate.y, coordinate.z + 1));
-    }
-    if(mLocalChunks.find(ChunkCoord(coordinate.x, coordinate.y, coordinate.z - 1)) != mLocalChunks.end())
-    {
-        updateChunk(ChunkCoord(coordinate.x, coordinate.y, coordinate.z - 1));
+        if(mLocalChunks.find(ChunkCoord(coordinate.x + 1, coordinate.y, coordinate.z)) != mLocalChunks.end())
+        {
+            updateChunk(ChunkCoord(coordinate.x + 1, coordinate.y, coordinate.z));
+        }
+        if(mLocalChunks.find(ChunkCoord(coordinate.x - 1, coordinate.y, coordinate.z)) != mLocalChunks.end())
+        {
+            updateChunk(ChunkCoord(coordinate.x - 1, coordinate.y, coordinate.z));
+        }
+        if(mLocalChunks.find(ChunkCoord(coordinate.x, coordinate.y + 1, coordinate.z)) != mLocalChunks.end())
+        {
+            updateChunk(ChunkCoord(coordinate.x, coordinate.y + 1, coordinate.z));
+        }
+        if(mLocalChunks.find(ChunkCoord(coordinate.x, coordinate.y - 1, coordinate.z)) != mLocalChunks.end())
+        {
+            updateChunk(ChunkCoord(coordinate.x, coordinate.y - 1, coordinate.z));
+        }
+        if(mLocalChunks.find(ChunkCoord(coordinate.x, coordinate.y, coordinate.z + 1)) != mLocalChunks.end())
+        {
+            updateChunk(ChunkCoord(coordinate.x, coordinate.y, coordinate.z + 1));
+        }
+        if(mLocalChunks.find(ChunkCoord(coordinate.x, coordinate.y, coordinate.z - 1)) != mLocalChunks.end())
+        {
+            updateChunk(ChunkCoord(coordinate.x, coordinate.y, coordinate.z - 1));
+        }
     }
 }
 

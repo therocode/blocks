@@ -16,7 +16,7 @@ class ServerClientBridge;
 
 class Client :
     public fea::MessageReceiver<PlayerActionMessage,
-                                ChunkFinishedMessage,
+                                ClientChunksDeliveredMessage,
                                 VoxelSetMessage,
                                 ClientChunkDeletedMessage,
                                 CursorLockedMessage,
@@ -29,7 +29,7 @@ class Client :
         void update();
         void render();
         void handleMessage(const PlayerActionMessage& received) override;
-        void handleMessage(const ChunkFinishedMessage& received) override;
+        void handleMessage(const ClientChunksDeliveredMessage& received) override;
         void handleMessage(const VoxelSetMessage& received) override;
         void handleMessage(const ClientChunkDeletedMessage& received) override;
         void handleMessage(const CursorLockedMessage& received) override;
