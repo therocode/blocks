@@ -21,13 +21,6 @@ const std::string modRegionDir = "worlddata";
 const std::string dataExt = ".dat";
 const std::string indexExt = ".idx";
 
-const std::string pathSep =
-#ifdef _WIN32
-    "\\";
-#else
-    "/";
-#endif
-
 struct Mod
 {
     ChunkVoxelCoord coord;

@@ -93,7 +93,7 @@ std::string ExplorationManager::getFilename(ExplorationRegionCoord regionLoc)
     if(yPart[0] == '-')
         yPart[0] = '_';
 
-    return regionDir + pathSep + mWorldName + pathSep + xPart + "_" + yPart;
+    return regionDir + "/" + mWorldName + "/" + xPart + "_" + yPart;
 }
 
 void ExplorationManager::setWorldName(const std::string& name)

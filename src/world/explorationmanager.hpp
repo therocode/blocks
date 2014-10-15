@@ -18,13 +18,6 @@ using ChunkToExplorationRegionChunk = CoordinateWrapConvert<ChunkCoord, Explorat
 const std::string regionDir = "worlddata";
 const std::string dataExt = ".exp";
 
-const std::string pathSep =
-#ifdef _WIN32
-    "\\";
-#else
-    "/";
-#endif
-
 class ExplorationManager
 {
 	public:

@@ -82,11 +82,11 @@ void ModManager::saveMods(ModRegionCoord modRegionLoc)
 			std::cout << modRegionDir << "didn't exist and failed to create it" << std::endl;
 		}
 	}
-	if(!DirectoryCreator::directoryExists(modRegionDir + pathSep + mWorldName))
+	if(!DirectoryCreator::directoryExists(modRegionDir + "/" + mWorldName))
 	{
-		if(!DirectoryCreator::createDirectory(modRegionDir + pathSep + mWorldName))
+		if(!DirectoryCreator::createDirectory(modRegionDir + "/" + mWorldName))
 		{
-			std::cout << modRegionDir + pathSep + mWorldName << "didn't exist and failed to create it" << std::endl;
+			std::cout << modRegionDir + "/" + mWorldName << "didn't exist and failed to create it" << std::endl;
 		}
 	}
 
@@ -284,5 +284,5 @@ std::string ModManager::getFilename(ModRegionCoord modRegionLoc)
     if(yPart[0] == '-')
         yPart[0] = '_';
 
-    return modRegionDir + pathSep + mWorldName + pathSep + xPart + "_" + yPart;  //NOTE: not sure why this needs to be casted... not good.
+    return modRegionDir + "/" + mWorldName + "/" + xPart + "_" + yPart;  //NOTE: not sure why this needs to be casted... not good.
 }
