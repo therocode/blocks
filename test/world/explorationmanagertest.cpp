@@ -2,11 +2,10 @@
 #include "world/explorationmanager.hpp"
 
 
-
 TEST_CASE("exman", "[exman]")
 {
 	ExplorationManager exman;
-	exman.setWorldName("default");
+	exman.setWorldName("test");
 
 	ChunkCoord coords(0,0,0);
 	REQUIRE(exman.getChunkExplored(coords) == false);
@@ -27,7 +26,7 @@ TEST_CASE("exman", "[exman]")
 	
 	
 	ExplorationManager exman2;
-	exman2.setWorldName("default");
+	exman2.setWorldName("test");
 	
 	coords = ChunkCoord(0,0,0);
 	REQUIRE(exman2.getChunkExplored(coords) == true);
@@ -37,4 +36,7 @@ TEST_CASE("exman", "[exman]")
 	
 	coords = ChunkCoord(32,0,0);
 	REQUIRE(exman2.getChunkExplored(coords) == true);
+	
+	std::string expfile = "worlddata/test/0_0.exp";
+	std::remove(expfile.c_str());
 }

@@ -14,7 +14,6 @@ bool ExplorationManager::getChunkExplored(const ChunkCoord& coordinate)
 
 	if(mExploreData.count(regcoord) == 0)
 	{
-		std::cout << getFilename(regcoord) + dataExt << std::endl;
 		std::ifstream expFile(getFilename(regcoord) + dataExt, std::ios::in | std::ios::binary);
 		if(expFile.is_open())
 		{
