@@ -21,3 +21,18 @@ uint32_t ChunkRequestHandler::getTotalRequesterAmount() const
 
     return total;
 }
+
+std::unordered_set<uint32_t> ChunkRequestHandler::getAndRemove(const ChunkCoord& coordinate)
+{
+    std::unordered_set<uint32_t> result;
+    const auto& iterator = mRequests.find(coordinate);
+
+    if(iterator != mRequests.end())
+    {
+        result = std::move(iterator->second);
+
+        mRequests.erase(iterator);
+    }
+
+    return result;
+}
