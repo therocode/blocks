@@ -7,9 +7,9 @@
 class ChunkRequestHandler
 {
     public:
-        void addRequest(uint32_t id, const ChunkCoord& coordinate);
-        uint32_t getRequestAmount(uint32_t id) const;
-        uint32_t getTotalRequestAmount() const;
+        void addRequester(const ChunkCoord& coordinate, uint32_t id);
+        uint32_t getRequesterAmount(const ChunkCoord& coordinate) const;
+        uint32_t getTotalRequesterAmount() const;
     private:
-        std::unordered_map<uint32_t, std::unordered_set<ChunkCoord>> mRequests;
+        std::unordered_map<ChunkCoord, std::unordered_set<uint32_t>> mRequests;
 };
