@@ -7,6 +7,7 @@
 #include "messageserializer.hpp"
 #include "../gameinterface.hpp"
 #include "../world/worldsystem.hpp"
+#include <tuple>
 
 ServerNetworkingSystem::ServerNetworkingSystem(fea::MessageBus& bus, const GameInterface& gameInterface, const NetworkParameters& parameters) :
     mBus(bus),
@@ -145,7 +146,6 @@ void ServerNetworkingSystem::handleMessage(const ClientRequestedChunksMessage& r
 
 void ServerNetworkingSystem::handleMessage(const PlayerEntersChunkMessage& received)
 {
-    std::cout << "player moved to " << received.chunkCoord.x << " " << received.chunkCoord.y << " " << received.chunkCoord.z << "\n";
     mPlayerPositions.at(received.playerId) = received.chunkCoord;
 }
 
@@ -158,27 +158,62 @@ void ServerNetworkingSystem::handleMessage(const ChunksDataDeniedMessage& receiv
 {
     if(received.coordinates.size() > 0)
     {
-       for(const auto& chunk : received.coordinates)
-       {
-           //get 
-       }
+        if(mChunkRequestHandlers.count(received.worldId) != 0)
+        {
+            ChunkRequestHandler& chunkRequestHandler = mChunkRequestHandlers.at(received.worldId);
+            std::unordered_map<uint32_t, std::vector<ChunkCoord>> chunksToDeny;
+
+            for(const auto& chunk : received.coordinates)
+            {
+                auto deniedRequests = chunkRequestHandler.getAndRemove(chunk);
+
+                for(const auto& client : deniedRequests)
+                {
+                    chunksToDeny[client].push_back(chunk);
+                }
+            }
+
+            for(const auto iterator : chunksToDeny)
+            {
+                ClientChunksDeniedMessage message{mGameInterface.getWorldSystem().worldIdToIdentifier(received.worldId), iterator.second};
+                sendToOne(iterator.first, message, true, CHANNEL_CHUNKS);
+            }
+        }
     }
 }
 
 void ServerNetworkingSystem::handleMessage(const ChunksDataDeliveredMessage& received)
 {
-    //if(received.chunks.size() > 0)
-    //{
-    //    ClientChunksDeliverMessage message;
+    if(received.chunks.size() > 0)
+    {
+        if(mChunkRequestHandlers.count(received.worldId) != 0)
+        {
+            ChunkRequestHandler& chunkRequestHandler = mChunkRequestHandlers.at(received.worldId);
+            std::unordered_map<uint32_t, std::tuple<std::vector<ChunkCoord>, std::vector<RleIndexArray>, std::vector<RleSegmentArray>>> chunksToDeliver;
 
-    //    for(const auto& chunkIterator : received.chunks)
-    //    {
-    //        message.coordinates.push_back(chunkIterator.first);
+            for(const auto& chunk : received.chunks)
+            {
+                auto acceptedRequests = chunkRequestHandler.getAndRemove(chunk.first);
 
-    //        VoxelTypeData voxelData = chunkIterator.second.getVoxelTypeData();
-    //        message.rleData.push_back({voxelData.mRleSegmentIndices, voxelData.mRleSegments});
-    //    }
-    //}
+                for(const auto& client : acceptedRequests)
+                {
+                    const auto& voxelRleData = chunk.second.getVoxelTypeData();
+                    std::get<0>(chunksToDeliver[client]).push_back(chunk.first);
+                    std::get<1>(chunksToDeliver[client]).push_back(voxelRleData.mRleSegmentIndices);
+                    std::get<2>(chunksToDeliver[client]).push_back(voxelRleData.mRleSegments);
+                }
+            }
+
+            for(const auto iterator : chunksToDeliver)
+            {
+                const auto& tuple = chunksToDeliver[iterator.first];
+                ClientChunksDeliverMessage message{mGameInterface.getWorldSystem().worldIdToIdentifier(received.worldId), std::get<0>(tuple), std::get<1>(tuple), std::get<2>(tuple)};
+                sendToOne(iterator.first, message, true, CHANNEL_CHUNKS);
+                
+                std::cout << "sent " << message.coordinates.size() << " chunks to " << iterator.first << "\n";
+            }
+        }
+    }
 }
 
 void ServerNetworkingSystem::handleMessage(const ChunkFinishedMessage& received)
@@ -291,8 +326,6 @@ void ServerNetworkingSystem::playerRequestedChunks(uint32_t id, const std::strin
 
     const ChunkCoord& playerChunk = mPlayerPositions.at(id);
 
-    std::cout << "player is in chunk " << playerChunk.x << " " << playerChunk.y << "" << playerChunk.z << "\n";
-
     for(const auto& chunk : chunks)
     {
         if(glm::distance(glm::vec3(chunk), glm::vec3(playerChunk)) <= (float)mSettings.maxChunkViewDistance)
@@ -303,11 +336,13 @@ void ServerNetworkingSystem::playerRequestedChunks(uint32_t id, const std::strin
 
     if(notInRange.size() > 0)
     {
+        std::cout << notInRange.size() << " chunks not in range! will deny\n";
         sendToOne(id, ClientChunksDeniedMessage{worldIdentifier, notInRange}, true, CHANNEL_CHUNKS);
     }
     if(inRange.size() > 0)
     {
         auto& chunkRequestHandler = mChunkRequestHandlers[mGameInterface.getWorldSystem().worldIdentifierToId(worldIdentifier)];
+
         for(const auto& chunk : inRange)
         {
             chunkRequestHandler.addRequest(id, chunk);

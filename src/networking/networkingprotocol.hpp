@@ -6,6 +6,8 @@
 #include <unordered_map>
 #include "../world/chunk.hpp"
 #include "../world/worlddefines.hpp"
+#include <cereal/types/vector.hpp>
+#include <cereal/types/array.hpp>
 
 enum { INVALID = -1, 
     //joining
@@ -123,12 +125,13 @@ struct ClientChunksDeliverMessage
     template<class Archive>
     void serialize(Archive& archive)
     {
-        archive(worldIdentifier, rleData, coordinates);
+        archive(worldIdentifier, coordinates, rleIndices, rleSegments);
     }
 
     std::string worldIdentifier;
-    std::vector<std::pair<RleIndexArray, RleSegmentArray>> rleData;
     std::vector<ChunkCoord> coordinates;
+    std::vector<RleIndexArray> rleIndices;
+    std::vector<RleSegmentArray> rleSegments;
 };
 
 //messages for testing:

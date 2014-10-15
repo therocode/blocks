@@ -135,6 +135,12 @@ WorldId WorldSystem::worldIdentifierToId(const std::string& identifier) const
     return mIdentifierToIdMap.at(identifier);
 }
 
+const std::string& WorldSystem::worldIdToIdentifier(WorldId id) const
+{
+    FEA_ASSERT(mWorlds.count(id) != 0, "Trying to get the identifier of a world id " + std::to_string(id) + " but that world doesn't exist!");
+    return mWorlds.at(id).getIdentifier();
+}
+
 void WorldSystem::createWorld(const WorldParameters& parameters)
 {
     mBus.send(LogMessage{"Loading world " + parameters.identifier, worldName, LogLevel::INFO});
