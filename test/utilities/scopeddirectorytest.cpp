@@ -53,3 +53,18 @@ SCENARIO("Scoped directory creates and removes directories properly", "[utilitie
         }
     }
 }
+
+SCENARIO("A scoped directory is created on an already existing directory or directory creation fails otherwise", "[utilities]")
+{
+    GIVEN("A scoped directory and a file")
+    {
+        ScopedDirectory scoped("scoped");
+        std::ofstream dummyFile("scoped/dummy");
+
+        WHEN("scoped directories are created on the other items, they throw exceptions")
+        {
+            CHECK_THROWS_AS(ScopedDirectory scoped2("scoped"), DirectoryCreationException);
+            CHECK_THROWS_AS(ScopedDirectory scoped3("scoped/dummy"), DirectoryCreationException);
+        }
+    }
+}

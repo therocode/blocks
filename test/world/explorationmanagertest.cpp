@@ -1,9 +1,12 @@
 #include "../catch.hpp"
 #include "world/explorationmanager.hpp"
+#include "../scopeddirectory.hpp"
 
 
 TEST_CASE("exman", "[exman]")
 {
+    //ScopedDirectory("test");
+
 	ExplorationManager exman;
 	exman.setWorldName("test");
 

@@ -4,13 +4,16 @@
 ScopedDirectory::ScopedDirectory(const std::string& path) :
     mPath(path)
 {
-    bool succeeded = DirectoryCreator::createDirectory(mPath);
+    mCreated = DirectoryCreator::createDirectory(mPath);
 
-    if(!succeeded)
+    if(!mCreated)
         throw DirectoryCreationException(mPath);
 }
 
 ScopedDirectory::~ScopedDirectory()
 {
-    DirectoryCreator::removeDirectory(mPath, true);
+    if(mCreated)
+    {
+        DirectoryCreator::removeDirectory(mPath, true);
+    }
 }
