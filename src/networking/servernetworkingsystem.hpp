@@ -86,6 +86,7 @@ class ServerNetworkingSystem : public fea::MessageReceiver<
         //entity subscriptions
         std::unordered_map<uint32_t, float> mEntitySubscriptions;  //playerId, range
         std::unordered_map<fea::EntityId, uint32_t> mEntityIdToPlayerId;
+        std::unordered_map<uint32_t, std::unordered_set<fea::EntityId>> mEntityTracking;
 
         std::unordered_map<WorldId, ChunkRequestHandler> mChunkRequestHandlers;
 

@@ -126,7 +126,6 @@ void ServerNetworkingSystem::handleMessage(const ClientJoinRequestedMessage& rec
     {
         uint32_t newId = mNextClientId++;
         mLocalPlayerId = newId;
-        std::cout << "made id " << mLocalPlayerId << "\n";
         mPlayerWorlds.emplace(newId, 0);
 
         mBus.send(LogMessage{"Accepting local client's desire to join the game. Giving player Id " + std::to_string(newId) + ". Sending server settings", serverName, LogLevel::INFO});
@@ -182,7 +181,6 @@ void ServerNetworkingSystem::handleMessage(const ClientEntitySubscriptionRequest
     if(mLocalClientBus != nullptr)
     {
         FEA_ASSERT(mLocalPlayerId != -1, "Trying to subscribe before joining!\n");
-        std::cout << "id " << mLocalPlayerId <<"\n";
         mEntitySubscriptions.emplace(mLocalPlayerId, received.distance);
     }
 }
@@ -216,9 +214,28 @@ void ServerNetworkingSystem::handleMessage(const EntityMovedMessage& received)
             const glm::vec3& playerPosition = positionIterator->second;
             float range = subscription.second;
 
-            std::cout << "entity position: " << glm::to_string(entityPosition) << " player pos: " << glm::to_string(playerPosition) << "\n";
             if(glm::distance(entityPosition, playerPosition) < range)
-                std::cout << "this entity is within range\n";
+            {
+                auto result = mEntityTracking[subscription.first].emplace(received.id);
+
+                if(result.second)
+                {
+                    //send entity-now-in-range
+                }
+                else
+                {
+                    //send entity-update
+                }
+            }
+            else
+            {
+                auto result = mEntityTracking[subscription.first].erase(received.id);
+
+                if(result > 0)
+                {
+                    //send entity-not-in-range
+                }
+            }
         }
     }
 }
@@ -278,8 +295,6 @@ void ServerNetworkingSystem::handleMessage(const ChunksDataDeliveredMessage& rec
                 const auto& tuple = chunksToDeliver[iterator.first];
                 ClientChunksDeliveredMessage message{mGameInterface.getWorldSystem().worldIdToIdentifier(received.worldId), std::get<0>(tuple), std::get<1>(tuple), std::get<2>(tuple)};
                 sendToOne(iterator.first, message, true, CHANNEL_CHUNKS);
-                
-                //std::cout << "sent " << message.coordinates.size() << " chunks to " << iterator.first << "\n";
             }
         }
     }
@@ -299,8 +314,6 @@ void ServerNetworkingSystem::handleMessage(const ChunkFinishedMessage& received)
         for(const auto& client : acceptedRequests)
         {
             sendToOne(client, message, true, CHANNEL_CHUNKS);
-
-            //std::cout << "sent one chunks to " << client << "\n";
         }
     }
 }
