@@ -124,9 +124,6 @@ void ServerNetworkingSystem::handleMessage(const ClientJoinRequestedMessage& rec
     }
     else
     {
-        ClientJoinAcceptedMessage message{mSettings};
-        mLocalClientBus->send(message);
-
         uint32_t newId = mNextClientId++;
         mLocalPlayerId = newId;
         std::cout << "made id " << mLocalPlayerId << "\n";
@@ -134,6 +131,9 @@ void ServerNetworkingSystem::handleMessage(const ClientJoinRequestedMessage& rec
 
         mBus.send(LogMessage{"Accepting local client's desire to join the game. Giving player Id " + std::to_string(newId) + ". Sending server settings", serverName, LogLevel::INFO});
         mBus.send(PlayerJoinedGameMessage{mLocalPlayerId});
+
+        ClientJoinAcceptedMessage message{mSettings};
+        mLocalClientBus->send(message);
     }
 }
 
