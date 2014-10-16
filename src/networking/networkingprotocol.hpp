@@ -18,7 +18,7 @@ enum { INVALID = -1,
     //chunks
     CLIENT_REQUESTED_CHUNKS, CLIENT_CHUNKS_DENIED, CLIENT_CHUNKS_DELIVERY,
     //controls
-    CLIENT_ACTION, CLIENT_MOVE_ACTION, CLIENT_MOVE_DIRECTION,
+    CLIENT_ACTION, CLIENT_MOVE_ACTION, CLIENT_MOVE_DIRECTION, CLIENT_PITCH_YAW,
     //tests
     TEST_1, TEST_2 };
 
@@ -176,6 +176,19 @@ struct ClientMoveActionMessage
     }
 
     MoveAction action;
+};
+
+struct ClientPitchYawMessage
+{
+    int32_t getType() const {return CLIENT_PITCH_YAW;}
+
+    template<class Archive>
+    void serialize(Archive& archive)
+    {
+        archive(pitch, yaw);
+    }
+
+    float pitch, yaw;
 };
 
 //messages for testing:

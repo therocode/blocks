@@ -23,7 +23,8 @@ class ClientNetworkingSystem : public
                          ClientChunksDeniedMessage,
                          ClientActionMessage,
                          ClientMoveActionMessage,
-                         ClientMoveDirectionMessage>
+                         ClientMoveDirectionMessage,
+                         ClientPitchYawMessage>
 {
     public:
         ClientNetworkingSystem(fea::MessageBus& bus, const NetworkParameters& parameters);
@@ -37,6 +38,7 @@ class ClientNetworkingSystem : public
         void handleMessage(const ClientActionMessage& received) override;
         void handleMessage(const ClientMoveActionMessage& received) override;
         void handleMessage(const ClientMoveDirectionMessage& received) override;
+        void handleMessage(const ClientPitchYawMessage& received) override;
     private:
         void connectedToServer();
         void handleServerData(const std::vector<uint8_t>& data);

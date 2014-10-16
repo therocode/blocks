@@ -168,6 +168,14 @@ void ServerNetworkingSystem::handleMessage(const ClientMoveDirectionMessage& rec
     }
 }
 
+void ServerNetworkingSystem::handleMessage(const ClientPitchYawMessage& received)
+{
+    if(mLocalClientBus != nullptr)
+    {
+        mBus.send(PlayerPitchYawMessage{mLocalPlayerId, received.pitch, received.yaw});
+    }
+}
+
 void ServerNetworkingSystem::handleMessage(const PlayerEntersChunkMessage& received)
 {
     mPlayerPositions.at(received.playerId) = received.chunkCoord;
@@ -341,6 +349,15 @@ void ServerNetworkingSystem::handleClientData(uint32_t clientId, const std::vect
             {
                 ClientMoveDirectionMessage received = deserializeMessage<ClientMoveDirectionMessage>(data);
                 PlayerMoveDirectionMessage message{mClientToPlayerIds.at(clientId), received.direction};
+                mBus.send(message);
+            }
+        }
+        else if(type == CLIENT_PITCH_YAW)
+        {
+            if(mClientToPlayerIds.count(clientId) != 0)
+            {
+                ClientPitchYawMessage received = deserializeMessage<ClientPitchYawMessage>(data);
+                PlayerPitchYawMessage message{mClientToPlayerIds.at(clientId), received.pitch, received.yaw};
                 mBus.send(message);
             }
         }

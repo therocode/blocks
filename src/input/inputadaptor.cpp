@@ -10,7 +10,6 @@ const std::string logName = "input";
 
 InputAdaptor::InputAdaptor(fea::MessageBus& b):
     inputHandler(new fea::SDL2InputBackend),
-    mPlayerId(-1),
     mBus(b),
     mHoldingForwards(false),
     mHoldingBackwards(false),
@@ -30,7 +29,6 @@ InputAdaptor::InputAdaptor(fea::MessageBus& b):
     first = true;
     mouseDown = false;
     mNewPitch = mNewYaw = 0;
-    subscribe(mBus, *this);
 }
 
 //void Client::handleMessage(const WindowFocusLostMessage& received){
@@ -81,7 +79,7 @@ void InputAdaptor::update()
                     float sensitivity = 0.2f;
                     pitch *= sensitivity;
                     yaw   *= sensitivity;
-                    PlayerPitchYawMessage msg{mPlayerId, pitch, yaw};
+                    ClientPitchYawMessage msg{pitch, yaw};
                    // msg.onlyLocal = true;
                     mBus.send(msg);
                    /* if(glm::abs(mNewYaw) > 10.f || glm::abs(mNewPitch) > 10.f)
@@ -136,10 +134,10 @@ void InputAdaptor::update()
             }
             if(event.mouseWheel.x > 0)
             {
-                mBus.send(PlayerPitchYawMessage{mPlayerId, 0, -1.0f});
+                mBus.send(ClientPitchYawMessage{0, -1.0f});
             }else if(event.mouseWheel.x < 0)
             {
-                mBus.send(PlayerPitchYawMessage{mPlayerId, 0, 1.0f});
+                mBus.send(ClientPitchYawMessage{0, 1.0f});
             }
         }
         else if(event.type == fea::Event::MOUSEBUTTONRELEASED)
@@ -217,11 +215,6 @@ void InputAdaptor::update()
         else if(action == "warp")
             mBus.send(ClientActionMessage{InputAction::WARP});
     }
-}
-
-void InputAdaptor::handleMessage(const PlayerIdMessage& received)
-{
-    mPlayerId = received.id;
 }
 
 void InputAdaptor::sendMovementData()
