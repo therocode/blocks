@@ -228,10 +228,10 @@ void InputAdaptor::sendMovementData()
 {
     direction.setDirection(mHoldingForwards, mHoldingBackwards, mHoldingLeft, mHoldingRight);
 
-    mBus.send(PlayerMoveDirectionMessage{mPlayerId, direction});
+    mBus.send(ClientMoveDirectionMessage{direction});
 
     if(direction.isStill())
-        mBus.send(PlayerMoveActionMessage{mPlayerId, MoveAction::STANDING});
+        mBus.send(ClientMoveActionMessage{MoveAction::STANDING});
     else
-        mBus.send(PlayerMoveActionMessage{mPlayerId, MoveAction::WALKING});
+        mBus.send(ClientMoveActionMessage{MoveAction::WALKING});
 }

@@ -109,6 +109,16 @@ void ClientNetworkingSystem::handleMessage(const ClientActionMessage& received)
     }
 }
 
+void ClientNetworkingSystem::handleMessage(const ClientMoveActionMessage& received)
+{
+    send(received, true, CHANNEL_DEFAULT);
+}
+
+void ClientNetworkingSystem::handleMessage(const ClientMoveDirectionMessage& received)
+{
+    send(received, true, CHANNEL_DEFAULT);
+}
+
 void ClientNetworkingSystem::connectedToServer()
 {
     mBus.send(LogMessage{"Successfully connected to server", clientName, LogLevel::INFO});

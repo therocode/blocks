@@ -7,6 +7,8 @@
 #include "../world/chunk.hpp"
 #include "../world/worlddefines.hpp"
 #include "../input/inputactions.hpp"
+#include "../entity/controllers/movedirection.hpp"
+#include "../entity/controllers/moveaction.hpp"
 #include <cereal/types/vector.hpp>
 #include <cereal/types/array.hpp>
 
@@ -16,7 +18,7 @@ enum { INVALID = -1,
     //chunks
     CLIENT_REQUESTED_CHUNKS, CLIENT_CHUNKS_DENIED, CLIENT_CHUNKS_DELIVERY,
     //controls
-    CLIENT_ACTION,
+    CLIENT_ACTION, CLIENT_MOVE_ACTION, CLIENT_MOVE_DIRECTION,
     //tests
     TEST_1, TEST_2 };
 
@@ -148,6 +150,32 @@ struct ClientActionMessage
     }
 
     InputAction action;
+};
+
+struct ClientMoveDirectionMessage
+{
+    int32_t getType() const {return CLIENT_MOVE_DIRECTION;}
+
+    template<class Archive>
+    void serialize(Archive& archive)
+    {
+        archive(direction);
+    }
+
+    MoveDirection direction;
+};
+
+struct ClientMoveActionMessage
+{
+    int32_t getType() const {return CLIENT_MOVE_ACTION;}
+
+    template<class Archive>
+    void serialize(Archive& archive)
+    {
+        archive(action);
+    }
+
+    MoveAction action;
 };
 
 //messages for testing:

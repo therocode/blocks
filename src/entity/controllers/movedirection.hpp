@@ -19,6 +19,13 @@ class MoveDirection
         bool isStill() const;
         int8_t getForwardBack() const;
         int8_t getLeftRight() const;
+
+        template<class Archive>
+        void serialize(Archive& archive)
+        {
+            archive(forwardBack, leftRight);
+        }
+
     private:
         int8_t forwardBack;
         int8_t leftRight;

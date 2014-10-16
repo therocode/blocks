@@ -151,6 +151,22 @@ void ServerNetworkingSystem::handleMessage(const ClientActionMessage& received)
         mBus.send(PlayerActionMessage{mLocalPlayerId, received.action});
     }
 }
+        
+void ServerNetworkingSystem::handleMessage(const ClientMoveActionMessage& received)
+{
+    if(mLocalClientBus != nullptr)
+    {
+        mBus.send(PlayerMoveActionMessage{mLocalPlayerId, received.action});
+    }
+}
+
+void ServerNetworkingSystem::handleMessage(const ClientMoveDirectionMessage& received)
+{
+    if(mLocalClientBus != nullptr)
+    {
+        mBus.send(PlayerMoveDirectionMessage{mLocalPlayerId, received.direction});
+    }
+}
 
 void ServerNetworkingSystem::handleMessage(const PlayerEntersChunkMessage& received)
 {
@@ -307,6 +323,24 @@ void ServerNetworkingSystem::handleClientData(uint32_t clientId, const std::vect
             {
                 ClientActionMessage received = deserializeMessage<ClientActionMessage>(data);
                 PlayerActionMessage message{mClientToPlayerIds.at(clientId), received.action};
+                mBus.send(message);
+            }
+        }
+        else if(type == CLIENT_MOVE_ACTION)
+        {
+            if(mClientToPlayerIds.count(clientId) != 0)
+            {
+                ClientMoveActionMessage received = deserializeMessage<ClientMoveActionMessage>(data);
+                PlayerMoveActionMessage message{mClientToPlayerIds.at(clientId), received.action};
+                mBus.send(message);
+            }
+        }
+        else if(type == CLIENT_MOVE_DIRECTION)
+        {
+            if(mClientToPlayerIds.count(clientId) != 0)
+            {
+                ClientMoveDirectionMessage received = deserializeMessage<ClientMoveDirectionMessage>(data);
+                PlayerMoveDirectionMessage message{mClientToPlayerIds.at(clientId), received.direction};
                 mBus.send(message);
             }
         }

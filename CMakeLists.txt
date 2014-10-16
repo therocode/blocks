@@ -46,7 +46,6 @@ set(source_files
     src/networking/enetclient.cpp
     src/networking/enetserver.cpp
     src/networking/messageserializer.cpp
-    src/networking/networkingprotocol.cpp
     src/networking/servernetworkingsystem.cpp
     
     src/rendering/chunkgeneratorqueue.cpp
@@ -375,7 +374,7 @@ if(BUILD_TESTS)
         "src/utilities/directorycreator.cpp"
         "src/world/chunk.cpp"
         "src/world/explorationmanager.cpp" "src/utilities/coordinateconverter.cpp"
-        "src/networking/networkingprotocol.cpp" "src/networking/messageserializer.cpp"
+        "src/networking/messageserializer.cpp"
         "src/networking/chunkrequesthandler.cpp" 
         )
 

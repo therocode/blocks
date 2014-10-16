@@ -26,6 +26,8 @@ class ServerNetworkingSystem : public fea::MessageReceiver<
                                            ClientJoinRequestedMessage,
                                            ClientRequestedChunksMessage,
                                            ClientActionMessage,
+                                           ClientMoveActionMessage,
+                                           ClientMoveDirectionMessage,
                                            PlayerEntersChunkMessage,
                                            PlayerEntersWorldMessage,
                                            ChunksDataDeniedMessage,
@@ -41,6 +43,8 @@ class ServerNetworkingSystem : public fea::MessageReceiver<
         void handleMessage(const ClientJoinRequestedMessage& received);
         void handleMessage(const ClientRequestedChunksMessage& received);
         void handleMessage(const ClientActionMessage& received);
+        void handleMessage(const ClientMoveActionMessage& received);
+        void handleMessage(const ClientMoveDirectionMessage& received);
         void handleMessage(const PlayerEntersChunkMessage& received);
         void handleMessage(const PlayerEntersWorldMessage& received);
         void handleMessage(const ChunksDataDeniedMessage& received);
