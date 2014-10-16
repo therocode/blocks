@@ -57,9 +57,9 @@ struct PlayerEntityMessage
     size_t playerId; fea::WeakEntityPtr playerEntity;
 };
 
-struct PlayerConnectedToEntityMessage
+struct PlayerEntityMovedMessage
 {
-    size_t playerId; fea::EntityId entityId;
+    size_t playerId; const glm::vec3& position;
 };
 
 struct PlayerEntersChunkMessage
@@ -72,9 +72,11 @@ struct PlayerEntersWorldMessage
     size_t playerId; WorldId worldId;
 };
 
-struct PlayerIdMessage
+struct PlayerAttachedToEntityMessage
 {
-    size_t id;
+    size_t playerId;
+    fea::EntityId entityId;
+    fea::WeakEntityPtr entity;
 };
 
 struct PlayerActionMessage

@@ -39,12 +39,13 @@ void PlayerController::handleMessage(const PlayerJoinedGameMessage& received)
             }});
 
     mPlayerEntities.emplace(playerId, playerEntity);
+    mEntityIdToPlayerId.emplace(playerEntity->getId(), playerId);
     mBus.send(PlayerEntersChunkMessage{playerId, WorldToChunk::convert(position)});
     mBus.send(HighlightEntityAddRequestedMessage{0u, playerEntity->getId(), WorldToChunk::convert(position)});
 
     ChunkCoord chunkAt = WorldToChunk::convert(position);
 
-    mBus.send(PlayerConnectedToEntityMessage{(fea::EntityId)playerId, playerEntity->getId()});
+    mBus.send(PlayerAttachedToEntityMessage{(fea::EntityId)playerId, playerEntity->getId(), playerEntity});
 }
 
 void PlayerController::handleMessage(const PlayerLeftGameMessage& received)
@@ -52,6 +53,7 @@ void PlayerController::handleMessage(const PlayerLeftGameMessage& received)
     size_t playerId = received.playerId;
 
     fea::EntityPtr entity = mPlayerEntities.at(playerId).lock();
+    mEntityIdToPlayerId.erase(entity->getId());
     mBus.send(HighlightEntityRemoveRequestedMessage{entity->getAttribute<WorldId>("current_world"), entity->getId()});
     mBus.send(RemoveEntityRequestedMessage{entity->getId()});
     mPlayerEntities.erase(playerId);
@@ -188,18 +190,21 @@ void PlayerController::handleMessage(const EntityMovedMessage& received)
 {
     size_t id = received.id;
 
-    if(mPlayerEntities.find(id) != mPlayerEntities.end())
+    if(mEntityIdToPlayerId.find(id) != mEntityIdToPlayerId.end())
     {
-        updateVoxelLookAt(id);
+        size_t playerId = mEntityIdToPlayerId.at(id);
+        updateVoxelLookAt(playerId);
 
-        fea::EntityPtr entity = mPlayerEntities.at(id).lock();
+        fea::EntityPtr entity = mPlayerEntities.at(playerId).lock();
         //updating current chunk
-        glm::vec3 position = entity->getAttribute<glm::vec3>("position");
+        glm::vec3 position = received.newPosition;
 
         if(WorldToChunk::convert(position) != entity->getAttribute<ChunkCoord>("current_chunk"))
         {
-            playerEntersChunk(id, WorldToChunk::convert(position));
+            playerEntersChunk(playerId, WorldToChunk::convert(position));
         }
+
+        mBus.send(PlayerEntityMovedMessage{playerId, position});
     }
 
 }

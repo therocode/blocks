@@ -82,14 +82,9 @@ ServerNetworkingSystem::ServerNetworkingSystem(fea::MessageBus& bus, const GameI
 
 void ServerNetworkingSystem::handleMessage(const LocalConnectionAttemptMessage& received)
 {
-    uint32_t newId = mNextClientId++;
-
-    mLocalPlayerId = newId;
     mLocalClientBus = received.clientBus;
-    mPlayerPositions.emplace(newId, ChunkCoord(0, 0, 0));
-    mPlayerWorlds.emplace(newId, 0);
 
-    mBus.send(LogMessage{"Client connected locally and given player Id " + std::to_string(newId), serverName, LogLevel::INFO});
+    mBus.send(LogMessage{"Client connected locally", serverName, LogLevel::INFO});
 
     mLocalClientBus->send(LocalConnectionEstablishedMessage{&mBus});
 }
@@ -132,7 +127,12 @@ void ServerNetworkingSystem::handleMessage(const ClientJoinRequestedMessage& rec
         ClientJoinAcceptedMessage message{mSettings};
         mLocalClientBus->send(message);
 
-        mBus.send(LogMessage{"Accepting local client's desire to join the game. Sending server settings", serverName, LogLevel::INFO});
+        uint32_t newId = mNextClientId++;
+        mLocalPlayerId = newId;
+        std::cout << "made id " << mLocalPlayerId << "\n";
+        mPlayerWorlds.emplace(newId, 0);
+
+        mBus.send(LogMessage{"Accepting local client's desire to join the game. Giving player Id " + std::to_string(newId) + ". Sending server settings", serverName, LogLevel::INFO});
         mBus.send(PlayerJoinedGameMessage{mLocalPlayerId});
     }
 }
@@ -181,18 +181,46 @@ void ServerNetworkingSystem::handleMessage(const ClientEntitySubscriptionRequest
 {
     if(mLocalClientBus != nullptr)
     {
+        FEA_ASSERT(mLocalPlayerId != -1, "Trying to subscribe before joining!\n");
+        std::cout << "id " << mLocalPlayerId <<"\n";
         mEntitySubscriptions.emplace(mLocalPlayerId, received.distance);
     }
 }
 
-void ServerNetworkingSystem::handleMessage(const PlayerEntersChunkMessage& received)
+void ServerNetworkingSystem::handleMessage(const PlayerAttachedToEntityMessage& received)
 {
-    mPlayerPositions.at(received.playerId) = received.chunkCoord;
+    mEntityIdToPlayerId.emplace(received.entityId, received.playerId);
+    mPlayerPositions[received.playerId] = received.entity.lock()->getAttribute<glm::vec3>("position");
+}
+
+void ServerNetworkingSystem::handleMessage(const PlayerEntityMovedMessage& received)
+{
+    mPlayerPositions.at(received.playerId) = received.position;
 }
 
 void ServerNetworkingSystem::handleMessage(const PlayerEntersWorldMessage& received)
 {
     mPlayerWorlds.at(received.playerId) = received.worldId;
+}
+
+void ServerNetworkingSystem::handleMessage(const EntityMovedMessage& received)
+{
+    const glm::vec3& entityPosition = received.newPosition;
+
+    for(const auto& subscription : mEntitySubscriptions)
+    {
+        const auto& positionIterator = mPlayerPositions.find(subscription.first);
+
+        if(positionIterator != mPlayerPositions.end())
+        {
+            const glm::vec3& playerPosition = positionIterator->second;
+            float range = subscription.second;
+
+            std::cout << "entity position: " << glm::to_string(entityPosition) << " player pos: " << glm::to_string(playerPosition) << "\n";
+            if(glm::distance(entityPosition, playerPosition) < range)
+                std::cout << "this entity is within range\n";
+        }
+    }
 }
 
 void ServerNetworkingSystem::handleMessage(const ChunksDataDeniedMessage& received)
@@ -314,7 +342,6 @@ void ServerNetworkingSystem::handleClientData(uint32_t clientId, const std::vect
                 uint32_t newId = mNextClientId++;
                 mClientToPlayerIds.emplace(clientId, newId);
                 mPlayerToClientIds.emplace(newId, clientId);
-                mPlayerPositions.emplace(newId, ChunkCoord(0, 0, 0));
                 mPlayerWorlds.emplace(newId, 0);
 
                 mBus.send(LogMessage{"Accepting client " + std::to_string(clientId) + "'s desire to join the game and assigning player Id " + std::to_string(newId) + ". Sending server settings", serverName, LogLevel::INFO});
@@ -424,7 +451,7 @@ void ServerNetworkingSystem::playerRequestedChunks(uint32_t id, const std::strin
     inRange.reserve(chunks.size() / 2);
     notInRange.reserve(chunks.size() / 2);
 
-    const ChunkCoord& playerChunk = mPlayerPositions.at(id);
+    const ChunkCoord& playerChunk = WorldToChunk::convert(mPlayerPositions.at(id));
 
     for(const auto& chunk : chunks)
     {

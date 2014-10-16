@@ -30,30 +30,34 @@ class ServerNetworkingSystem : public fea::MessageReceiver<
                                            ClientMoveDirectionMessage,
                                            ClientPitchYawMessage,
                                            ClientEntitySubscriptionRequestedMessage,
-                                           PlayerEntersChunkMessage,
+                                           PlayerAttachedToEntityMessage,
+                                           PlayerEntityMovedMessage,
                                            PlayerEntersWorldMessage,
+                                           EntityMovedMessage,
                                            ChunksDataDeniedMessage,
                                            ChunksDataDeliveredMessage,
                                            ChunkFinishedMessage>
 {
     public:
         ServerNetworkingSystem(fea::MessageBus& bus, const GameInterface& gameInterface, const NetworkParameters& parameters);
-        void handleMessage(const LocalConnectionAttemptMessage& received);
-        void handleMessage(const LocalDisconnectionMessage& received);
-        void handleMessage(const FrameMessage& received);
-        void handleMessage(const GameStartMessage& received);
-        void handleMessage(const ClientJoinRequestedMessage& received);
-        void handleMessage(const ClientRequestedChunksMessage& received);
-        void handleMessage(const ClientActionMessage& received);
-        void handleMessage(const ClientMoveActionMessage& received);
-        void handleMessage(const ClientMoveDirectionMessage& received);
-        void handleMessage(const ClientPitchYawMessage& received);
-        void handleMessage(const ClientEntitySubscriptionRequestedMessage& received);
-        void handleMessage(const PlayerEntersChunkMessage& received);
-        void handleMessage(const PlayerEntersWorldMessage& received);
-        void handleMessage(const ChunksDataDeniedMessage& received);
-        void handleMessage(const ChunksDataDeliveredMessage& received);
-        void handleMessage(const ChunkFinishedMessage& received);
+        void handleMessage(const LocalConnectionAttemptMessage& received) override;
+        void handleMessage(const LocalDisconnectionMessage& received) override;
+        void handleMessage(const FrameMessage& received) override;
+        void handleMessage(const GameStartMessage& received) override;
+        void handleMessage(const ClientJoinRequestedMessage& received) override;
+        void handleMessage(const ClientRequestedChunksMessage& received) override;
+        void handleMessage(const ClientActionMessage& received) override;
+        void handleMessage(const ClientMoveActionMessage& received) override;
+        void handleMessage(const ClientMoveDirectionMessage& received) override;
+        void handleMessage(const ClientPitchYawMessage& received) override;
+        void handleMessage(const ClientEntitySubscriptionRequestedMessage& received) override;
+        void handleMessage(const PlayerAttachedToEntityMessage& received) override;
+        void handleMessage(const PlayerEntityMovedMessage& received) override;
+        void handleMessage(const PlayerEntersWorldMessage& received) override;
+        void handleMessage(const EntityMovedMessage& received) override;
+        void handleMessage(const ChunksDataDeniedMessage& received) override;
+        void handleMessage(const ChunksDataDeliveredMessage& received) override;
+        void handleMessage(const ChunkFinishedMessage& received) override;
     private:
         void acceptRemoteClient(uint32_t id);
         void handleClientData(uint32_t clientId, const std::vector<uint8_t>& data);
@@ -76,11 +80,12 @@ class ServerNetworkingSystem : public fea::MessageReceiver<
         std::unordered_map<uint32_t, uint32_t> mClientToPlayerIds;
         std::unordered_map<uint32_t, uint32_t> mPlayerToClientIds;
 
-        std::unordered_map<uint32_t, ChunkCoord> mPlayerPositions;
+        std::unordered_map<uint32_t, glm::vec3> mPlayerPositions;
         std::unordered_map<uint32_t, WorldId> mPlayerWorlds;
 
         //entity subscriptions
         std::unordered_map<uint32_t, float> mEntitySubscriptions;  //playerId, range
+        std::unordered_map<fea::EntityId, uint32_t> mEntityIdToPlayerId;
 
         std::unordered_map<WorldId, ChunkRequestHandler> mChunkRequestHandlers;
 

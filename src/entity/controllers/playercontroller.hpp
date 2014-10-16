@@ -32,4 +32,5 @@ class PlayerController :
         void playerEntersChunk(size_t playerId, const ChunkCoord& chunk);
         void updateVoxelLookAt(size_t playerId);
         std::unordered_map<size_t, fea::WeakEntityPtr> mPlayerEntities;
+        std::unordered_map<fea::EntityId, size_t> mEntityIdToPlayerId;
 };

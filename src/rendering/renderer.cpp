@@ -147,12 +147,7 @@ void Renderer::handleMessage(const WindowResizeMessage& received)
 	glViewport(0, 0, width, height);
 }
 
-void Renderer::handleMessage(const PlayerIdMessage& received)
-{
-    mPlayerId = received.id;
-}
-
-void Renderer::handleMessage(const PlayerConnectedToEntityMessage& received)
+void Renderer::handleMessage(const PlayerAttachedToEntityMessage& received)
 {
     size_t playerId = received.playerId;
     size_t entityId = received.entityId;
