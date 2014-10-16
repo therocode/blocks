@@ -256,7 +256,17 @@ void ServerNetworkingSystem::handleMessage(const EntityMovedMessage& received)
 
                 if(result > 0)
                 {
-                    //send entity-not-in-range
+                    EntityLeftRangeMessage message{received.id};
+
+                    if(mLocalClientBus != nullptr)
+                    {
+                        if(mLocalPlayerId == subscription.first)
+                        mLocalClientBus->send(message);
+                    }
+                    else
+                    {
+                        sendToOne(mPlayerToClientIds.at(subscription.first), message, true, CHANNEL_DEFAULT);
+                    }
                 }
             }
         }

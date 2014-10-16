@@ -27,7 +27,8 @@ class ClientNetworkingSystem : public
                          ClientMoveDirectionMessage,
                          ClientPitchYawMessage,
                          EntityEnteredRangeMessage,
-                         EntityPositionUpdatedMessage>
+                         EntityPositionUpdatedMessage,
+                         EntityLeftRangeMessage>
 {
     public:
         ClientNetworkingSystem(fea::MessageBus& bus, const NetworkParameters& parameters);
@@ -45,6 +46,7 @@ class ClientNetworkingSystem : public
         void handleMessage(const ClientPitchYawMessage& received) override;
         void handleMessage(const EntityEnteredRangeMessage& received) override;
         void handleMessage(const EntityPositionUpdatedMessage& received) override;
+        void handleMessage(const EntityLeftRangeMessage& received) override;
     private:
         void connectedToServer();
         void handleServerData(const std::vector<uint8_t>& data);

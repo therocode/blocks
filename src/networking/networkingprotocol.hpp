@@ -21,7 +21,7 @@ enum { INVALID = -1,
     //controls
     CLIENT_ACTION, CLIENT_MOVE_ACTION, CLIENT_MOVE_DIRECTION, CLIENT_PITCH_YAW,
     //entities
-    ENTITY_SUBSCRIPTION_REQUESTED, ENTITY_SUBSCRIPTION_REPLY, ENTITY_ENTERED_RANGE, ENTITY_POSITION_UPDATED,
+    ENTITY_SUBSCRIPTION_REQUESTED, ENTITY_SUBSCRIPTION_REPLY, ENTITY_ENTERED_RANGE, ENTITY_POSITION_UPDATED, ENTITY_LEFT_RANGE,
     //tests
     TEST_1, TEST_2 };
 
@@ -252,6 +252,19 @@ struct EntityPositionUpdatedMessage
     glm::vec3 position;
     //float pitch;
     //float yaw; add these later
+};
+
+struct EntityLeftRangeMessage
+{
+    int32_t getType() const {return ENTITY_LEFT_RANGE;}
+
+    template<class Archive>
+    void serialize(Archive& archive)
+    {
+        archive(id);
+    }
+
+    fea::EntityId id;
 };
 
 //messages for testing:

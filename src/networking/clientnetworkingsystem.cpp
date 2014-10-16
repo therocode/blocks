@@ -141,6 +141,11 @@ void ClientNetworkingSystem::handleMessage(const EntityPositionUpdatedMessage& r
     mBus.send(MoveGfxEntityMessage{received.id, received.position});
 }
 
+void ClientNetworkingSystem::handleMessage(const EntityLeftRangeMessage& received)
+{
+    mBus.send(RemoveGfxEntityMessage{received.id});
+}
+
 void ClientNetworkingSystem::connectedToServer()
 {
     mBus.send(LogMessage{"Successfully connected to server", clientName, LogLevel::INFO});
@@ -189,6 +194,11 @@ void ClientNetworkingSystem::handleServerData(const std::vector<uint8_t>& data)
     else if(type == ENTITY_POSITION_UPDATED)
     {
         EntityPositionUpdatedMessage received = deserializeMessage<EntityPositionUpdatedMessage>(data);
+        mBus.send(received);
+    }
+    else if(type == ENTITY_LEFT_RANGE)
+    {
+        EntityLeftRangeMessage received = deserializeMessage<EntityLeftRangeMessage>(data);
         mBus.send(received);
     }
     else if(type == TEST_1)
