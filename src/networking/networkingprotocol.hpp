@@ -19,6 +19,8 @@ enum { INVALID = -1,
     CLIENT_REQUESTED_CHUNKS, CLIENT_CHUNKS_DENIED, CLIENT_CHUNKS_DELIVERY,
     //controls
     CLIENT_ACTION, CLIENT_MOVE_ACTION, CLIENT_MOVE_DIRECTION, CLIENT_PITCH_YAW,
+    //entities
+    CLIENT_ENTITY_SUBSCRIPTION_REQUESTED,
     //tests
     TEST_1, TEST_2 };
 
@@ -189,6 +191,19 @@ struct ClientPitchYawMessage
     }
 
     float pitch, yaw;
+};
+
+struct ClientEntitySubscriptionRequestedMessage
+{
+    int32_t getType() const {return CLIENT_ENTITY_SUBSCRIPTION_REQUESTED;}
+
+    template<class Archive>
+    void serialize(Archive& archive)
+    {
+        archive(distance);
+    }
+
+    float distance;
 };
 
 //messages for testing:

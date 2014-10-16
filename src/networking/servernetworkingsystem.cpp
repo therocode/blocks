@@ -102,6 +102,7 @@ void ServerNetworkingSystem::handleMessage(const LocalDisconnectionMessage& rece
     mBus.send(PlayerLeftGameMessage{mLocalPlayerId});
 
     mPlayerPositions.erase(mLocalPlayerId);
+    mEntitySubscriptions.erase(mLocalPlayerId);
     mLocalPlayerId = -1;
     mLocalClientBus = nullptr;
 }
@@ -173,6 +174,14 @@ void ServerNetworkingSystem::handleMessage(const ClientPitchYawMessage& received
     if(mLocalClientBus != nullptr)
     {
         mBus.send(PlayerPitchYawMessage{mLocalPlayerId, received.pitch, received.yaw});
+    }
+}
+
+void ServerNetworkingSystem::handleMessage(const ClientEntitySubscriptionRequestedMessage& received)
+{
+    if(mLocalClientBus != nullptr)
+    {
+        mEntitySubscriptions.emplace(mLocalPlayerId, received.distance);
     }
 }
 
@@ -361,6 +370,14 @@ void ServerNetworkingSystem::handleClientData(uint32_t clientId, const std::vect
                 mBus.send(message);
             }
         }
+        else if(type == CLIENT_ENTITY_SUBSCRIPTION_REQUESTED)
+        {
+            if(mClientToPlayerIds.count(clientId) != 0)
+            {
+                ClientEntitySubscriptionRequestedMessage received = deserializeMessage<ClientEntitySubscriptionRequestedMessage>(data);
+                mEntitySubscriptions.emplace(mClientToPlayerIds.at(clientId), received.distance);
+            }
+        }
         else if(type == TEST_1)
             mBus.send(LogMessage{"Received meaningless test message", serverName, LogLevel::WARN});
         else if(type == TEST_2)
@@ -388,6 +405,7 @@ void ServerNetworkingSystem::disconnectRemoteClient(uint32_t id)
         mClientToPlayerIds.erase(id);
         mPlayerToClientIds.erase(playerId);
         mPlayerPositions.erase(playerId);
+        mEntitySubscriptions.erase(playerId);
         mPlayerWorlds.erase(playerId);
 
         mBus.send(PlayerLeftGameMessage{playerId});
@@ -418,7 +436,6 @@ void ServerNetworkingSystem::playerRequestedChunks(uint32_t id, const std::strin
 
     if(notInRange.size() > 0)
     {
-        //std::cout << notInRange.size() << " chunks not in range! will deny\n";
         sendToOne(id, ClientChunksDeniedMessage{worldIdentifier, notInRange}, true, CHANNEL_CHUNKS);
     }
     if(inRange.size() > 0)

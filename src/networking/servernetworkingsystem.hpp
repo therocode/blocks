@@ -29,6 +29,7 @@ class ServerNetworkingSystem : public fea::MessageReceiver<
                                            ClientMoveActionMessage,
                                            ClientMoveDirectionMessage,
                                            ClientPitchYawMessage,
+                                           ClientEntitySubscriptionRequestedMessage,
                                            PlayerEntersChunkMessage,
                                            PlayerEntersWorldMessage,
                                            ChunksDataDeniedMessage,
@@ -47,6 +48,7 @@ class ServerNetworkingSystem : public fea::MessageReceiver<
         void handleMessage(const ClientMoveActionMessage& received);
         void handleMessage(const ClientMoveDirectionMessage& received);
         void handleMessage(const ClientPitchYawMessage& received);
+        void handleMessage(const ClientEntitySubscriptionRequestedMessage& received);
         void handleMessage(const PlayerEntersChunkMessage& received);
         void handleMessage(const PlayerEntersWorldMessage& received);
         void handleMessage(const ChunksDataDeniedMessage& received);
@@ -76,6 +78,9 @@ class ServerNetworkingSystem : public fea::MessageReceiver<
 
         std::unordered_map<uint32_t, ChunkCoord> mPlayerPositions;
         std::unordered_map<uint32_t, WorldId> mPlayerWorlds;
+
+        //entity subscriptions
+        std::unordered_map<uint32_t, float> mEntitySubscriptions;  //playerId, range
 
         std::unordered_map<WorldId, ChunkRequestHandler> mChunkRequestHandlers;
 

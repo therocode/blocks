@@ -89,6 +89,8 @@ void ClientNetworkingSystem::handleMessage(const ClientJoinAcceptedMessage& rece
 {
     mBus.send(LogMessage{"Successfully joined the game on server " + received.settings.serverName + "! \nMOTD: " + received.settings.motd, clientName, LogLevel::INFO});
     mBus.send(GameStartMessage{});
+
+    send(ClientEntitySubscriptionRequestedMessage{(float)chunkWidth * 8.0f}, true, CHANNEL_DEFAULT);
 }
 
 void ClientNetworkingSystem::handleMessage(const ClientRequestedChunksMessage& received)
