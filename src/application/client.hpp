@@ -12,10 +12,9 @@
 
 class Renderer;
 class InputAdaptor;
-class ServerClientBridge;
 
 class Client :
-    public fea::MessageReceiver<PlayerActionMessage,
+    public fea::MessageReceiver<ClientActionMessage,
                                 ClientChunksDeliveredMessage,
                                 VoxelSetMessage,
                                 ClientChunkDeletedMessage,
@@ -28,14 +27,13 @@ class Client :
         bool loadTexture(const std::string& path, uint32_t width, uint32_t height, std::vector<unsigned char>& result);
         void update();
         void render();
-        void handleMessage(const PlayerActionMessage& received) override;
+        void handleMessage(const ClientActionMessage& received) override;
         void handleMessage(const ClientChunksDeliveredMessage& received) override;
         void handleMessage(const VoxelSetMessage& received) override;
         void handleMessage(const ClientChunkDeletedMessage& received) override;
         void handleMessage(const CursorLockedMessage& received) override;
         void handleMessage(const GameStartMessage& received) override;
         bool requestedQuit();
-        void setServerBridge(std::unique_ptr<ServerClientBridge> bridge);
     private:
         int64_t mFrame = 0;
         uint64_t mFrameNumber;

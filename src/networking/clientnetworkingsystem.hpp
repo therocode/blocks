@@ -20,7 +20,8 @@ class ClientNetworkingSystem : public
                          ClientJoinDeniedMessage,
                          ClientJoinAcceptedMessage,
                          ClientRequestedChunksMessage,
-                         ClientChunksDeniedMessage>
+                         ClientChunksDeniedMessage,
+                         ClientActionMessage>
 {
     public:
         ClientNetworkingSystem(fea::MessageBus& bus, const NetworkParameters& parameters);
@@ -31,6 +32,7 @@ class ClientNetworkingSystem : public
         void handleMessage(const ClientJoinAcceptedMessage& received) override;
         void handleMessage(const ClientRequestedChunksMessage& received) override;
         void handleMessage(const ClientChunksDeniedMessage& received) override;
+        void handleMessage(const ClientActionMessage& received) override;
     private:
         void connectedToServer();
         void handleServerData(const std::vector<uint8_t>& data);

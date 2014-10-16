@@ -4,6 +4,7 @@
 #include "controllers/moveaction.hpp"
 #include <fea/util.hpp>
 #include <fea/entitysystem.hpp>
+#include "../input/inputactions.hpp"
 #include "../world/worlddefines.hpp"
 
 struct EntityMoveRequestedMessage
@@ -74,6 +75,12 @@ struct PlayerEntersWorldMessage
 struct PlayerIdMessage
 {
     size_t id;
+};
+
+struct PlayerActionMessage
+{
+    size_t playerId;
+    InputAction action;
 };
 
 struct PlayerMoveDirectionMessage

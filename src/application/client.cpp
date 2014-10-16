@@ -74,7 +74,7 @@ void Client::render()
     mWindow.setTitle("Blocks | FPS:" + std::to_string((int)mFPSCounter.getAverageFPS()));
 }
 
-void Client::handleMessage(const PlayerActionMessage& received)
+void Client::handleMessage(const ClientActionMessage& received)
 {
 	if(received.action == InputAction::QUIT)
 	{

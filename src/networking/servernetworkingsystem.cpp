@@ -144,6 +144,14 @@ void ServerNetworkingSystem::handleMessage(const ClientRequestedChunksMessage& r
     }
 }
 
+void ServerNetworkingSystem::handleMessage(const ClientActionMessage& received)
+{
+    if(mLocalClientBus != nullptr)
+    {
+        mBus.send(PlayerActionMessage{mLocalPlayerId, received.action});
+    }
+}
+
 void ServerNetworkingSystem::handleMessage(const PlayerEntersChunkMessage& received)
 {
     mPlayerPositions.at(received.playerId) = received.chunkCoord;
@@ -285,14 +293,21 @@ void ServerNetworkingSystem::handleClientData(uint32_t clientId, const std::vect
         {
             if(mClientToPlayerIds.count(clientId) != 0)
             {
-            ClientRequestedChunksMessage received = deserializeMessage<ClientRequestedChunksMessage>(data);
-
-            if(mClientToPlayerIds.count(clientId) != 0)
+                ClientRequestedChunksMessage received = deserializeMessage<ClientRequestedChunksMessage>(data);
                 playerRequestedChunks(mClientToPlayerIds.at(clientId), received.worldIdentifier, received.coordinates);
             }
             else
             { //client violated protocol by requesting chunks without being part of the game
                 mENetServer->disconnectOne(clientId, 200);
+            }
+        }
+        else if(type == CLIENT_ACTION)
+        {
+            if(mClientToPlayerIds.count(clientId) != 0)
+            {
+                ClientActionMessage received = deserializeMessage<ClientActionMessage>(data);
+                PlayerActionMessage message{mClientToPlayerIds.at(clientId), received.action};
+                mBus.send(message);
             }
         }
         else if(type == TEST_1)

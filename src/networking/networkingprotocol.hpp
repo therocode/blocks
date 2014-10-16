@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include "../world/chunk.hpp"
 #include "../world/worlddefines.hpp"
+#include "../input/inputactions.hpp"
 #include <cereal/types/vector.hpp>
 #include <cereal/types/array.hpp>
 
@@ -14,6 +15,8 @@ enum { INVALID = -1,
     CLIENT_JOIN_REQUESTED, CLIENT_JOIN_DENIED, CLIENT_JOIN_ACCEPTED,
     //chunks
     CLIENT_REQUESTED_CHUNKS, CLIENT_CHUNKS_DENIED, CLIENT_CHUNKS_DELIVERY,
+    //controls
+    CLIENT_ACTION,
     //tests
     TEST_1, TEST_2 };
 
@@ -132,6 +135,19 @@ struct ClientChunksDeliveredMessage
     std::vector<ChunkCoord> coordinates;
     std::vector<RleIndexArray> rleIndices;
     std::vector<RleSegmentArray> rleSegments;
+};
+
+struct ClientActionMessage
+{
+    int32_t getType() const {return CLIENT_ACTION;}
+
+    template<class Archive>
+    void serialize(Archive& archive)
+    {
+        archive(action);
+    }
+
+    InputAction action;
 };
 
 //messages for testing:

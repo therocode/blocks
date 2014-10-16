@@ -98,7 +98,15 @@ void ClientNetworkingSystem::handleMessage(const ClientRequestedChunksMessage& r
 
 void ClientNetworkingSystem::handleMessage(const ClientChunksDeniedMessage& received)
 {
-    std::cout << "got " << received.coordinates.size() << " chunks denied!\n";
+    //std::cout << "got " << received.coordinates.size() << " chunks denied!\n";
+}
+
+void ClientNetworkingSystem::handleMessage(const ClientActionMessage& received)
+{
+    if(received.action != QUIT)
+    {
+        send(received, true, CHANNEL_DEFAULT);
+    }
 }
 
 void ClientNetworkingSystem::connectedToServer()
