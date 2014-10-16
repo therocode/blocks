@@ -201,6 +201,11 @@ void ClientNetworkingSystem::handleServerData(const std::vector<uint8_t>& data)
         EntityLeftRangeMessage received = deserializeMessage<EntityLeftRangeMessage>(data);
         mBus.send(received);
     }
+    else if(type == CLIENT_ATTACHED_TO_ENTITY)
+    {
+        ClientAttachedToEntityMessage received = deserializeMessage<ClientAttachedToEntityMessage>(data);
+        mBus.send(received);
+    }
     else if(type == TEST_1)
         mBus.send(LogMessage{"Received meaningless test message", clientName, LogLevel::WARN});
     else if(type == TEST_2)

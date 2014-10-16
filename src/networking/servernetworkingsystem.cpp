@@ -192,6 +192,8 @@ void ServerNetworkingSystem::handleMessage(const PlayerAttachedToEntityMessage& 
 {
     mEntityIdToPlayerId.emplace(received.entityId, received.playerId);
     mPlayerPositions[received.playerId] = received.entity.lock()->getAttribute<glm::vec3>("position");
+
+    sendToOne(received.playerId, ClientAttachedToEntityMessage{received.entityId}, true, CHANNEL_DEFAULT);
 }
 
 void ServerNetworkingSystem::handleMessage(const PlayerEntityMovedMessage& received)
@@ -224,30 +226,12 @@ void ServerNetworkingSystem::handleMessage(const EntityMovedMessage& received)
                 if(result.second)
                 {
                     EntityEnteredRangeMessage message{received.id, entityPosition};
-
-                    if(mLocalClientBus != nullptr)
-                    {
-                        if(mLocalPlayerId == subscription.first)
-                        mLocalClientBus->send(message);
-                    }
-                    else
-                    {
-                        sendToOne(mPlayerToClientIds.at(subscription.first), message, true, CHANNEL_DEFAULT);
-                    }
+                    sendToOne(subscription.first, message, true, CHANNEL_DEFAULT);
                 }
                 else
                 {
                     EntityPositionUpdatedMessage message{received.id, entityPosition};
-
-                    if(mLocalClientBus != nullptr)
-                    {
-                        if(mLocalPlayerId == subscription.first)
-                        mLocalClientBus->send(message);
-                    }
-                    else
-                    {
-                        sendToOne(mPlayerToClientIds.at(subscription.first), message, false, CHANNEL_DEFAULT);
-                    }
+                    sendToOne(subscription.first, message, false, CHANNEL_DEFAULT);
                 }
             }
             else
@@ -257,16 +241,7 @@ void ServerNetworkingSystem::handleMessage(const EntityMovedMessage& received)
                 if(result > 0)
                 {
                     EntityLeftRangeMessage message{received.id};
-
-                    if(mLocalClientBus != nullptr)
-                    {
-                        if(mLocalPlayerId == subscription.first)
-                        mLocalClientBus->send(message);
-                    }
-                    else
-                    {
-                        sendToOne(mPlayerToClientIds.at(subscription.first), message, true, CHANNEL_DEFAULT);
-                    }
+                    sendToOne(subscription.first, message, true, CHANNEL_DEFAULT);
                 }
             }
         }

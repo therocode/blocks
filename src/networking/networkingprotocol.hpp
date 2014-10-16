@@ -21,7 +21,7 @@ enum { INVALID = -1,
     //controls
     CLIENT_ACTION, CLIENT_MOVE_ACTION, CLIENT_MOVE_DIRECTION, CLIENT_PITCH_YAW,
     //entities
-    ENTITY_SUBSCRIPTION_REQUESTED, ENTITY_SUBSCRIPTION_REPLY, ENTITY_ENTERED_RANGE, ENTITY_POSITION_UPDATED, ENTITY_LEFT_RANGE,
+    CLIENT_ATTACHED_TO_ENTITY, ENTITY_SUBSCRIPTION_REQUESTED, ENTITY_SUBSCRIPTION_REPLY, ENTITY_ENTERED_RANGE, ENTITY_POSITION_UPDATED, ENTITY_LEFT_RANGE,
     //tests
     TEST_1, TEST_2 };
 
@@ -192,6 +192,19 @@ struct ClientPitchYawMessage
     }
 
     float pitch, yaw;
+};
+
+struct ClientAttachedToEntityMessage
+{
+    int32_t getType() const {return CLIENT_ATTACHED_TO_ENTITY;}
+
+    template<class Archive>
+    void serialize(Archive& archive)
+    {
+        archive(id);
+    }
+
+    fea::EntityId id;
 };
 
 struct EntitySubscriptionRequestedMessage
