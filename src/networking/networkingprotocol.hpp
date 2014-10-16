@@ -20,7 +20,7 @@ enum { INVALID = -1,
     //controls
     CLIENT_ACTION, CLIENT_MOVE_ACTION, CLIENT_MOVE_DIRECTION, CLIENT_PITCH_YAW,
     //entities
-    CLIENT_ENTITY_SUBSCRIPTION_REQUESTED,
+    CLIENT_ENTITY_SUBSCRIPTION_REQUESTED, CLIENT_ENTITY_SUBSCRIPTION_REPLY,
     //tests
     TEST_1, TEST_2 };
 
@@ -204,6 +204,19 @@ struct ClientEntitySubscriptionRequestedMessage
     }
 
     float distance;
+};
+
+struct ClientEntitySubscriptionReplyMessage
+{
+    int32_t getType() const {return CLIENT_ENTITY_SUBSCRIPTION_REPLY;}
+
+    template<class Archive>
+    void serialize(Archive& archive)
+    {
+        archive(granted);
+    }
+
+    bool granted;
 };
 
 //messages for testing:

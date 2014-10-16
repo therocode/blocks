@@ -103,6 +103,11 @@ void ClientNetworkingSystem::handleMessage(const ClientChunksDeniedMessage& rece
     //std::cout << "got " << received.coordinates.size() << " chunks denied!\n";
 }
 
+void ClientNetworkingSystem::handleMessage(const ClientEntitySubscriptionReplyMessage& received)
+{
+    mBus.send(LogMessage{received.granted ? "Server granted entity subscription" : "Server did not grant entity update subscription request", clientName, LogLevel::INFO});
+}
+
 void ClientNetworkingSystem::handleMessage(const ClientActionMessage& received)
 {
     if(received.action != QUIT)
@@ -154,6 +159,11 @@ void ClientNetworkingSystem::handleServerData(const std::vector<uint8_t>& data)
     else if(type == CLIENT_CHUNKS_DENIED)
     {
         ClientChunksDeniedMessage received = deserializeMessage<ClientChunksDeniedMessage>(data);
+        mBus.send(received);
+    }
+    else if(type == CLIENT_ENTITY_SUBSCRIPTION_REPLY)
+    {
+        ClientEntitySubscriptionReplyMessage received = deserializeMessage<ClientEntitySubscriptionReplyMessage>(data);
         mBus.send(received);
     }
     else if(type == CLIENT_CHUNKS_DELIVERY)

@@ -98,6 +98,7 @@ void ServerNetworkingSystem::handleMessage(const LocalDisconnectionMessage& rece
 
     mPlayerPositions.erase(mLocalPlayerId);
     mEntitySubscriptions.erase(mLocalPlayerId);
+    mEntityTracking.erase(mLocalPlayerId);
     mLocalPlayerId = -1;
     mLocalClientBus = nullptr;
 }
@@ -182,6 +183,8 @@ void ServerNetworkingSystem::handleMessage(const ClientEntitySubscriptionRequest
     {
         FEA_ASSERT(mLocalPlayerId != -1, "Trying to subscribe before joining!\n");
         mEntitySubscriptions.emplace(mLocalPlayerId, received.distance);
+
+        mLocalClientBus->send(ClientEntitySubscriptionReplyMessage{true});
     }
 }
 
@@ -416,6 +419,8 @@ void ServerNetworkingSystem::handleClientData(uint32_t clientId, const std::vect
             {
                 ClientEntitySubscriptionRequestedMessage received = deserializeMessage<ClientEntitySubscriptionRequestedMessage>(data);
                 mEntitySubscriptions.emplace(mClientToPlayerIds.at(clientId), received.distance);
+
+                mENetServer->sendToOne(clientId, serializeMessage(ClientEntitySubscriptionReplyMessage{true}), true, CHANNEL_DEFAULT);
             }
         }
         else if(type == TEST_1)
@@ -446,6 +451,7 @@ void ServerNetworkingSystem::disconnectRemoteClient(uint32_t id)
         mPlayerToClientIds.erase(playerId);
         mPlayerPositions.erase(playerId);
         mEntitySubscriptions.erase(playerId);
+        mEntityTracking.erase(playerId);
         mPlayerWorlds.erase(playerId);
 
         mBus.send(PlayerLeftGameMessage{playerId});
