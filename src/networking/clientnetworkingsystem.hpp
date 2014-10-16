@@ -21,11 +21,13 @@ class ClientNetworkingSystem : public
                          ClientJoinAcceptedMessage,
                          ClientRequestedChunksMessage,
                          ClientChunksDeniedMessage,
-                         ClientEntitySubscriptionReplyMessage,
+                         EntitySubscriptionReplyMessage,
                          ClientActionMessage,
                          ClientMoveActionMessage,
                          ClientMoveDirectionMessage,
-                         ClientPitchYawMessage>
+                         ClientPitchYawMessage,
+                         EntityEnteredRangeMessage,
+                         EntityPositionUpdatedMessage>
 {
     public:
         ClientNetworkingSystem(fea::MessageBus& bus, const NetworkParameters& parameters);
@@ -36,11 +38,13 @@ class ClientNetworkingSystem : public
         void handleMessage(const ClientJoinAcceptedMessage& received) override;
         void handleMessage(const ClientRequestedChunksMessage& received) override;
         void handleMessage(const ClientChunksDeniedMessage& received) override;
-        void handleMessage(const ClientEntitySubscriptionReplyMessage& received) override;
+        void handleMessage(const EntitySubscriptionReplyMessage& received) override;
         void handleMessage(const ClientActionMessage& received) override;
         void handleMessage(const ClientMoveActionMessage& received) override;
         void handleMessage(const ClientMoveDirectionMessage& received) override;
         void handleMessage(const ClientPitchYawMessage& received) override;
+        void handleMessage(const EntityEnteredRangeMessage& received) override;
+        void handleMessage(const EntityPositionUpdatedMessage& received) override;
     private:
         void connectedToServer();
         void handleServerData(const std::vector<uint8_t>& data);

@@ -90,7 +90,7 @@ void ClientNetworkingSystem::handleMessage(const ClientJoinAcceptedMessage& rece
     mBus.send(LogMessage{"Successfully joined the game on server " + received.settings.serverName + "! \nMOTD: " + received.settings.motd, clientName, LogLevel::INFO});
     mBus.send(GameStartMessage{});
 
-    send(ClientEntitySubscriptionRequestedMessage{(float)chunkWidth * 8.0f}, true, CHANNEL_DEFAULT);
+    send(EntitySubscriptionRequestedMessage{(float)chunkWidth * 8.0f}, true, CHANNEL_DEFAULT);
 }
 
 void ClientNetworkingSystem::handleMessage(const ClientRequestedChunksMessage& received)
@@ -103,7 +103,7 @@ void ClientNetworkingSystem::handleMessage(const ClientChunksDeniedMessage& rece
     //std::cout << "got " << received.coordinates.size() << " chunks denied!\n";
 }
 
-void ClientNetworkingSystem::handleMessage(const ClientEntitySubscriptionReplyMessage& received)
+void ClientNetworkingSystem::handleMessage(const EntitySubscriptionReplyMessage& received)
 {
     mBus.send(LogMessage{received.granted ? "Server granted entity subscription" : "Server did not grant entity update subscription request", clientName, LogLevel::INFO});
 }
@@ -129,6 +129,16 @@ void ClientNetworkingSystem::handleMessage(const ClientMoveDirectionMessage& rec
 void ClientNetworkingSystem::handleMessage(const ClientPitchYawMessage& received)
 {
     send(received, true, CHANNEL_DEFAULT);
+}
+
+void ClientNetworkingSystem::handleMessage(const EntityEnteredRangeMessage& received)
+{
+    mBus.send(AddGfxEntityMessage{received.id, received.position});
+}
+
+void ClientNetworkingSystem::handleMessage(const EntityPositionUpdatedMessage& received)
+{
+    mBus.send(MoveGfxEntityMessage{received.id, received.position});
 }
 
 void ClientNetworkingSystem::connectedToServer()
@@ -161,14 +171,24 @@ void ClientNetworkingSystem::handleServerData(const std::vector<uint8_t>& data)
         ClientChunksDeniedMessage received = deserializeMessage<ClientChunksDeniedMessage>(data);
         mBus.send(received);
     }
-    else if(type == CLIENT_ENTITY_SUBSCRIPTION_REPLY)
+    else if(type == ENTITY_SUBSCRIPTION_REPLY)
     {
-        ClientEntitySubscriptionReplyMessage received = deserializeMessage<ClientEntitySubscriptionReplyMessage>(data);
+        EntitySubscriptionReplyMessage received = deserializeMessage<EntitySubscriptionReplyMessage>(data);
         mBus.send(received);
     }
     else if(type == CLIENT_CHUNKS_DELIVERY)
     {
         ClientChunksDeliveredMessage received = deserializeMessage<ClientChunksDeliveredMessage>(data);
+        mBus.send(received);
+    }
+    else if(type == ENTITY_ENTERED_RANGE)
+    {
+        EntityEnteredRangeMessage received = deserializeMessage<EntityEnteredRangeMessage>(data);
+        mBus.send(received);
+    }
+    else if(type == ENTITY_POSITION_UPDATED)
+    {
+        EntityPositionUpdatedMessage received = deserializeMessage<EntityPositionUpdatedMessage>(data);
         mBus.send(received);
     }
     else if(type == TEST_1)

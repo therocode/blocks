@@ -29,7 +29,7 @@ class ServerNetworkingSystem : public fea::MessageReceiver<
                                            ClientMoveActionMessage,
                                            ClientMoveDirectionMessage,
                                            ClientPitchYawMessage,
-                                           ClientEntitySubscriptionRequestedMessage,
+                                           EntitySubscriptionRequestedMessage,
                                            PlayerAttachedToEntityMessage,
                                            PlayerEntityMovedMessage,
                                            PlayerEntersWorldMessage,
@@ -50,7 +50,7 @@ class ServerNetworkingSystem : public fea::MessageReceiver<
         void handleMessage(const ClientMoveActionMessage& received) override;
         void handleMessage(const ClientMoveDirectionMessage& received) override;
         void handleMessage(const ClientPitchYawMessage& received) override;
-        void handleMessage(const ClientEntitySubscriptionRequestedMessage& received) override;
+        void handleMessage(const EntitySubscriptionRequestedMessage& received) override;
         void handleMessage(const PlayerAttachedToEntityMessage& received) override;
         void handleMessage(const PlayerEntityMovedMessage& received) override;
         void handleMessage(const PlayerEntersWorldMessage& received) override;

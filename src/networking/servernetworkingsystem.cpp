@@ -177,14 +177,14 @@ void ServerNetworkingSystem::handleMessage(const ClientPitchYawMessage& received
     }
 }
 
-void ServerNetworkingSystem::handleMessage(const ClientEntitySubscriptionRequestedMessage& received)
+void ServerNetworkingSystem::handleMessage(const EntitySubscriptionRequestedMessage& received)
 {
     if(mLocalClientBus != nullptr)
     {
         FEA_ASSERT(mLocalPlayerId != -1, "Trying to subscribe before joining!\n");
         mEntitySubscriptions.emplace(mLocalPlayerId, received.distance);
 
-        mLocalClientBus->send(ClientEntitySubscriptionReplyMessage{true});
+        mLocalClientBus->send(EntitySubscriptionReplyMessage{true});
     }
 }
 
@@ -223,11 +223,31 @@ void ServerNetworkingSystem::handleMessage(const EntityMovedMessage& received)
 
                 if(result.second)
                 {
-                    //send entity-now-in-range
+                    EntityEnteredRangeMessage message{received.id, entityPosition};
+
+                    if(mLocalClientBus != nullptr)
+                    {
+                        if(mLocalPlayerId == subscription.first)
+                        mLocalClientBus->send(message);
+                    }
+                    else
+                    {
+                        sendToOne(mPlayerToClientIds.at(subscription.first), message, true, CHANNEL_DEFAULT);
+                    }
                 }
                 else
                 {
-                    //send entity-update
+                    EntityPositionUpdatedMessage message{received.id, entityPosition};
+
+                    if(mLocalClientBus != nullptr)
+                    {
+                        if(mLocalPlayerId == subscription.first)
+                        mLocalClientBus->send(message);
+                    }
+                    else
+                    {
+                        sendToOne(mPlayerToClientIds.at(subscription.first), message, false, CHANNEL_DEFAULT);
+                    }
                 }
             }
             else
@@ -413,14 +433,14 @@ void ServerNetworkingSystem::handleClientData(uint32_t clientId, const std::vect
                 mBus.send(message);
             }
         }
-        else if(type == CLIENT_ENTITY_SUBSCRIPTION_REQUESTED)
+        else if(type == ENTITY_SUBSCRIPTION_REQUESTED)
         {
             if(mClientToPlayerIds.count(clientId) != 0)
             {
-                ClientEntitySubscriptionRequestedMessage received = deserializeMessage<ClientEntitySubscriptionRequestedMessage>(data);
+                EntitySubscriptionRequestedMessage received = deserializeMessage<EntitySubscriptionRequestedMessage>(data);
                 mEntitySubscriptions.emplace(mClientToPlayerIds.at(clientId), received.distance);
 
-                mENetServer->sendToOne(clientId, serializeMessage(ClientEntitySubscriptionReplyMessage{true}), true, CHANNEL_DEFAULT);
+                mENetServer->sendToOne(clientId, serializeMessage(EntitySubscriptionReplyMessage{true}), true, CHANNEL_DEFAULT);
             }
         }
         else if(type == TEST_1)

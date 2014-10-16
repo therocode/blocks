@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <string>
 #include <unordered_map>
+#include <fea/entitysystem.hpp>
 #include "../world/chunk.hpp"
 #include "../world/worlddefines.hpp"
 #include "../input/inputactions.hpp"
@@ -20,7 +21,7 @@ enum { INVALID = -1,
     //controls
     CLIENT_ACTION, CLIENT_MOVE_ACTION, CLIENT_MOVE_DIRECTION, CLIENT_PITCH_YAW,
     //entities
-    CLIENT_ENTITY_SUBSCRIPTION_REQUESTED, CLIENT_ENTITY_SUBSCRIPTION_REPLY,
+    ENTITY_SUBSCRIPTION_REQUESTED, ENTITY_SUBSCRIPTION_REPLY, ENTITY_ENTERED_RANGE, ENTITY_POSITION_UPDATED,
     //tests
     TEST_1, TEST_2 };
 
@@ -193,9 +194,9 @@ struct ClientPitchYawMessage
     float pitch, yaw;
 };
 
-struct ClientEntitySubscriptionRequestedMessage
+struct EntitySubscriptionRequestedMessage
 {
-    int32_t getType() const {return CLIENT_ENTITY_SUBSCRIPTION_REQUESTED;}
+    int32_t getType() const {return ENTITY_SUBSCRIPTION_REQUESTED;}
 
     template<class Archive>
     void serialize(Archive& archive)
@@ -206,9 +207,9 @@ struct ClientEntitySubscriptionRequestedMessage
     float distance;
 };
 
-struct ClientEntitySubscriptionReplyMessage
+struct EntitySubscriptionReplyMessage
 {
-    int32_t getType() const {return CLIENT_ENTITY_SUBSCRIPTION_REPLY;}
+    int32_t getType() const {return ENTITY_SUBSCRIPTION_REPLY;}
 
     template<class Archive>
     void serialize(Archive& archive)
@@ -217,6 +218,40 @@ struct ClientEntitySubscriptionReplyMessage
     }
 
     bool granted;
+};
+
+struct EntityEnteredRangeMessage
+{
+    int32_t getType() const {return ENTITY_ENTERED_RANGE;}
+
+    template<class Archive>
+    void serialize(Archive& archive)
+    {
+        archive(id, position.x, position.y, position.z);
+    }
+
+    fea::EntityId id;
+    //type
+    glm::vec3 position;
+    //float pitch;
+    //float yaw; add these later
+};
+
+struct EntityPositionUpdatedMessage
+{
+    int32_t getType() const {return ENTITY_POSITION_UPDATED;}
+
+    template<class Archive>
+    void serialize(Archive& archive)
+    {
+        archive(id, position.x, position.y, position.z);
+    }
+
+    fea::EntityId id;
+    //type
+    glm::vec3 position;
+    //float pitch;
+    //float yaw; add these later
 };
 
 //messages for testing:
