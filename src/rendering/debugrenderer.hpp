@@ -1,4 +1,4 @@
-#include "utilities/glm.hpp"
+#include "../utilities/glm.hpp"
 #include <vector>
 ///A debug renderer that draws stuff in immediate mode.
 class DebugRenderer

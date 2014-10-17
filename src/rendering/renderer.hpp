@@ -8,6 +8,7 @@
 #include "camera.hpp"
 #include "../utilities/timer.hpp"
 #include "vbocreator.hpp"
+#include "../networking/networkingprotocol.hpp"
 
 #include "shaderprogram.hpp"
 
@@ -23,10 +24,9 @@ class Renderer
                                     AddGfxEntityMessage,
                                     MoveGfxEntityMessage,
                                     RotateGfxEntityMessage,
-                                    PlayerFacingBlockMessage,
+                                    //PlayerFacingBlockMessage,
                                     RemoveGfxEntityMessage,
-                                    PlayerIdMessage,
-                                    PlayerConnectedToEntityMessage>
+                                    ClientAttachedToEntityMessage>
                 
 {
     public:
@@ -44,9 +44,8 @@ class Renderer
         virtual void handleMessage(const MoveGfxEntityMessage& received);
         virtual void handleMessage(const RotateGfxEntityMessage& received);
         virtual void handleMessage(const RemoveGfxEntityMessage& received);
-        virtual void handleMessage(const PlayerFacingBlockMessage& received);
-        virtual void handleMessage(const PlayerIdMessage& received);
-        virtual void handleMessage(const PlayerConnectedToEntityMessage& received);
+        //virtual void handleMessage(const PlayerFacingBlockMessage& received);
+        virtual void handleMessage(const ClientAttachedToEntityMessage& received);
         void render();
 		void setCameraMatrix(const glm::mat4& m);
     private:
@@ -75,8 +74,6 @@ class Renderer
         glm::vec2 mScreenSize;
         // camera stuff
         glm::vec3 mCameraPosition;
-
-        size_t mPlayerId;
 
         size_t mCameraEntity;
         float mCameraPitch;

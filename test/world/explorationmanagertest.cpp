@@ -2,7 +2,6 @@
 #include "../../src/world/explorationmanager.hpp"
 #include "../scopeddirectory.hpp"
 
-
 TEST_CASE("exman", "[exman]")
 {
     ScopedDirectory testDir("worlddata/test_exploration");

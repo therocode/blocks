@@ -51,7 +51,7 @@ void WorldProvider::handleMessage(const BiomesLoadedMessage& received)
     mBiomes = received.biomes;
 }
 
-void WorldProvider::handleMessage(const ChunkRequestedMessage& received)
+void WorldProvider::handleMessage(const ChunkGenerationRequestedMessage& received)
 {
     //add chunk to load to other thread
     //std::cout << "requesting chunk " << glm::to_string((glm::ivec3)received.coordinate) << " to world " << received.worldId << "\n";
@@ -66,7 +66,7 @@ void WorldProvider::handleMessage(const FrameMessage& received)
         if(iter->wait_for(std::chrono::seconds(0)) == std::future_status::ready)
         {
             ChunkDelivery delivery = iter->get();
-            mBus.send(ChunkDeliveredMessage({delivery.id, delivery.coordinate, std::move(delivery.chunk)}));
+            mBus.send(ChunkGeneratedMessage({delivery.id, delivery.coordinate, std::move(delivery.chunk)}));
             iter = mChunksToDeliver.erase(iter);
         }
         else

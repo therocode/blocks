@@ -21,12 +21,15 @@ class WorldEntry
         const ChunkMap& getChunkMap() const;
         ChunkMap& getChunkMap();
         void setVoxelType(const VoxelCoord& voxelCoordinate, VoxelType type);
+        void chunksRequested(const std::vector<ChunkCoord>& coordinates);
+        const std::string& getIdentifier() const;
     private:
         void activateChunk(const ChunkCoord& chunk);
         void deactivateChunk(const ChunkCoord& chunk);
         void requestChunk(const ChunkCoord& chunk);
         fea::MessageBus& mBus;
         WorldId mId;
+        std::string mIdentifier;
         WorldData mWorldData;
         GridNotifier<biomeRegionWidthInChunks> mBiomeGridNotifier;
         HighlightManager mHighlightManager;

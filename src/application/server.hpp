@@ -1,56 +1,31 @@
 #pragma once
 #include "../world/worldsystem.hpp"
-#include "../networking/serverclientbridge.hpp"
 #include "../world/worldmessages.hpp"
-#include "../rendering/renderingmessages.hpp"
 #include "../script/scriptsystem.hpp"
 #include "../utilities/fpscontroller.hpp"
 #include "../utilities/logger.hpp"
 #include "../entity/entitysystem.hpp"
 #include "../gameinterface.hpp"
+#include "../networking/servernetworkingsystem.hpp"
 
-class ClientConnection;
-class ClientConnectionListener;
-using ClientId = size_t;
+class NetworkParameters;
 
-class Server : public fea::MessageReceiver<AddGfxEntityMessage,
-                                           MoveGfxEntityMessage,
-                                           RotateGfxEntityMessage,
-                                           RemoveGfxEntityMessage,
-                                           PlayerConnectedToEntityMessage,
-                                           PlayerFacingBlockMessage,
-                                           ChunkLoadedMessage,
-                                           ChunkDeletedMessage,
-                                           VoxelSetMessage>
+class Server
 {
     public:
-        Server(fea::MessageBus& bus);
+        Server(fea::MessageBus& bus, const NetworkParameters& parameters);
         ~Server();
         void doLogic();
-        void handleMessage(const AddGfxEntityMessage& received);
-        void handleMessage(const MoveGfxEntityMessage& received);
-        void handleMessage(const RotateGfxEntityMessage& received);
-        void handleMessage(const RemoveGfxEntityMessage& received);
-        void handleMessage(const PlayerConnectedToEntityMessage& received);
-        void handleMessage(const PlayerFacingBlockMessage& received);
-        void handleMessage(const ChunkLoadedMessage& received);
-        void handleMessage(const ChunkDeletedMessage& received);
-        void handleMessage(const VoxelSetMessage& received);
-        void setClientListener(std::unique_ptr<ClientConnectionListener> clientListener);
     private:
-        void acceptClientConnection(const std::shared_ptr<ClientConnection> client);
-        void pollNewClients();
-        void fetchClientData(std::weak_ptr<ClientConnection> client);
-        void checkForDisconnectedClients();
         fea::MessageBus& mBus;
         Logger mLogger;
         Timer mTimer;
-        std::unordered_map<ClientId, std::shared_ptr<ClientConnection> > mClients;
-        std::unique_ptr<ClientConnectionListener> mListener;
-        std::unordered_set<size_t> graphicsEntities; //temporary solution on how to resend things
         WorldSystem mWorldSystem;
         ScriptSystem mScriptSystem;
         EntitySystem mEntitySystem;
         GameInterface mGameInterface;
+        ServerNetworkingSystem mServerNetworkingSystem;
         FPSController mFPSController;
+
+        uint32_t mFrameNumber;
 };

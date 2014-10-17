@@ -6,6 +6,7 @@
 WorldEntry::WorldEntry(fea::MessageBus& bus, WorldId id, const std::string& identifier, const WorldData& data) :
     mBus(bus),
     mId(id),
+    mIdentifier(identifier),
     mWorldData(data),
     mHighlightManager(8), //this should be read from somewhere else, probably server settings
     mModManager(identifier)
@@ -80,9 +81,21 @@ void WorldEntry::deliverChunk(const ChunkCoord& coordinate, const Chunk& chunk)
     {
         auto iterator = mWorldData.voxels.emplace(coordinate, chunk);
 
-        mModManager.loadMods(coordinate, iterator.first->second);
+        //#C1#if(mModManager.hasMods(chunk))  // implement this check as seen in issue #143
+        //mModManager.loadMods(chunk);
+        //#C2#else      // implement mExplorationManager as according to issue #144
+        //#C2#{
+        //#C2#    if(!mExplorationManager.isExplored(regionCoord))
+        //#C2#        mBus.send(ChunkInitiallyGeneratedMessage{coordinate, chunk})
+        //#C2#}
 
-        mBus.send(ChunkLoadedMessage{coordinate, iterator.first->second, 0});
+        uint64_t timestamp = 0; //#C3# get proper timestamp, issue #133
+
+        mModManager.loadMods(coordinate, iterator.first->second);//temporary
+
+        mBus.send(ChunkCandidateMessage{mId, coordinate, iterator.first->second, timestamp});
+
+        mBus.send(ChunkFinishedMessage{mId, coordinate, iterator.first->second}); //the now fully initialised chunk is announced to the rest of the game.
     }
 }
 
@@ -110,6 +123,47 @@ void WorldEntry::setVoxelType(const VoxelCoord& voxelCoordinate, VoxelType type)
 
         mModManager.setMod(voxelCoordinate, type);
     }
+}
+
+void WorldEntry::chunksRequested(const std::vector<ChunkCoord>& coordinates)
+{
+    std::unordered_map<ChunkCoord, const Chunk&> grantedChunks;
+    std::vector<ChunkCoord> deniedChunks;
+
+    for(const auto& requestedChunk : coordinates)
+    {
+        if(mHighlightManager.chunkIsHighlighted(requestedChunk))
+        {
+            const auto& iterator = mWorldData.voxels.find(requestedChunk);
+
+            if(iterator != mWorldData.voxels.end())
+            {
+                grantedChunks.emplace(requestedChunk, iterator->second);
+            }
+        }
+        else
+        {
+            deniedChunks.push_back(requestedChunk);
+        }
+    }
+
+    if(grantedChunks.size() > 0)
+    {
+        ChunksDataDeliveredMessage message{mId, grantedChunks};
+
+        mBus.send(message);
+    }
+    if(deniedChunks.size() > 0)
+    {
+        ChunksDataDeniedMessage message{mId, deniedChunks};
+
+        mBus.send(message);
+    }
+}
+
+const std::string& WorldEntry::getIdentifier() const
+{
+    return mIdentifier;
 }
 
 void WorldEntry::activateChunk(const ChunkCoord& chunkCoordinate)
@@ -153,7 +207,7 @@ void WorldEntry::deactivateChunk(const ChunkCoord& chunkCoordinate)
 
         if(mWorldData.voxels.erase(chunkCoordinate) != 0)
         {
-            mBus.send(ChunkDeletedMessage{chunkCoordinate});
+            //mBus.send(ChunkDeletedMessage{chunkCoordinate}); there is no such message atm
         }
 
         //we don't need to send pending requests for this chunk
@@ -186,5 +240,5 @@ void WorldEntry::requestChunk(const ChunkCoord& chunk)
         }
     }
 
-    mBus.send(ChunkRequestedMessage{0, mId, chunk, grid});
+    mBus.send(ChunkGenerationRequestedMessage{0, mId, chunk, grid});
 }

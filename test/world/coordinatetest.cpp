@@ -1,6 +1,7 @@
 #include "../catch.hpp"
-#include "world/worlddefines.hpp"
-#include "world/biomedefines.hpp"
+
+#include "../src/world/worlddefines.hpp"
+#include "../src/world/biomedefines.hpp"
 
 TEST_CASE("wrap", "[wrap]")
 {

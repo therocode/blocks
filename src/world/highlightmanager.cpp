@@ -66,7 +66,7 @@ ChunkHighlightList HighlightManager::highlightShape(const ChunkCoord& loc)
             {
                 ChunkCoord subLoc(x, y, z);
 
-                if(glm::distance(glm::dvec3(loc), glm::dvec3(subLoc)) <= (double)mHighlightRadius)
+                if(glm::distance(glm::vec3(loc), glm::vec3(subLoc)) <= (float)mHighlightRadius)
                 {
                     if(highlightChunk(subLoc))
                     {

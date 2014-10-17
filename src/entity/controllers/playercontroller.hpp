@@ -8,8 +8,8 @@ using ChunkCoord = glm::i64vec3;
 
 class PlayerController : 
     public EntityController,
-    public fea::MessageReceiver<PlayerJoinedMessage,
-                                PlayerDisconnectedMessage,
+    public fea::MessageReceiver<PlayerJoinedGameMessage,
+                                PlayerLeftGameMessage,
                                 PlayerActionMessage,
                                 PlayerMoveDirectionMessage,
                                 PlayerMoveActionMessage,
@@ -21,8 +21,8 @@ class PlayerController :
         virtual void inspectEntity(fea::WeakEntityPtr entity);
         virtual void removeEntity(fea::EntityId id);
         virtual void onFrame(int dt) override;
-        void handleMessage(const PlayerJoinedMessage& received);
-        void handleMessage(const PlayerDisconnectedMessage& received);
+        void handleMessage(const PlayerJoinedGameMessage& received);
+        void handleMessage(const PlayerLeftGameMessage& received);
         void handleMessage(const PlayerActionMessage& received);
         void handleMessage(const PlayerMoveDirectionMessage& received);
         void handleMessage(const PlayerMoveActionMessage& received);
@@ -32,4 +32,5 @@ class PlayerController :
         void playerEntersChunk(size_t playerId, const ChunkCoord& chunk);
         void updateVoxelLookAt(size_t playerId);
         std::unordered_map<size_t, fea::WeakEntityPtr> mPlayerEntities;
+        std::unordered_map<fea::EntityId, size_t> mEntityIdToPlayerId;
 };

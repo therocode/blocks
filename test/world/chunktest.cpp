@@ -1,5 +1,6 @@
 #include "../catch.hpp"
-#include "world/chunk.hpp"
+
+#include "../src/world/chunk.hpp"
 
 SCENARIO("Voxels can be set and gotten","[world]")
 {

@@ -40,7 +40,13 @@ set(source_files
 
     src/input/inputadaptor.cpp
 
-    src/networking/serverclientbridge.cpp
+    src/networking/clientnetworkingsystem.cpp
+    src/networking/chunkrequesthandler.cpp
+    src/networking/enet.cpp
+    src/networking/enetclient.cpp
+    src/networking/enetserver.cpp
+    src/networking/messageserializer.cpp
+    src/networking/servernetworkingsystem.cpp
     
     src/rendering/chunkgeneratorqueue.cpp
     src/rendering/debugrenderer.cpp
@@ -55,7 +61,6 @@ set(source_files
     src/rendering/texture.cpp
     src/rendering/vbo.cpp
     src/rendering/vbocreator.cpp
-    src/rendering/marchingcubegenerator.cpp
     src/rendering/gl_core_3_2.c
 
     src/script/scriptcallback.cpp
@@ -140,18 +145,16 @@ set(header_files
     src/input/inputactions.hpp
     src/input/inputadaptor.hpp
 
-    src/networking/clientconnection.hpp
-    src/networking/clientconnectionlistener.hpp
-    src/networking/localclientconnectionlistener.hpp
-    src/networking/localserverclientbridge.hpp
-    src/networking/package.hpp
-    src/networking/packagetype.hpp
-
-    src/networking/clientconnection.cpp
-    src/networking/clientconnectionlistener.cpp
-    src/networking/localclientconnectionlistener.cpp
-    src/networking/localserverclientbridge.cpp
-    src/networking/package.cpp
+    src/networking/channels.hpp
+    src/networking/chunkrequesthandler.hpp
+    src/networking/clientnetworkingsystem.hpp
+    src/networking/enet.hpp
+    src/networking/enetclient.hpp
+    src/networking/enetserver.hpp
+    src/networking/messageserializer.hpp
+    src/networking/networkingmessages.hpp
+    src/networking/networkingprotocol.hpp
+    src/networking/servernetworkingsystem.hpp
 
     src/rendering/chunkgeneratorqueue.hpp
     src/rendering/debugrenderer.hpp
@@ -168,7 +171,6 @@ set(header_files
     src/rendering/texture.hpp
     src/rendering/vbo.hpp
     src/rendering/vbocreator.hpp
-    src/rendering/marchingcubegenerator.hpp
     src/rendering/gl_core_3_2.h
     src/rendering/opengl.hpp
 
@@ -239,13 +241,13 @@ find_package(Featherkit REQUIRED COMPONENTS entity structure ui sdl2 util)
 find_package(GLM)
 find_package(SDL2)
 find_package(OpenGL REQUIRED)
-#find_package(ENet)
+find_package(ENet)
 find_package(angelscript)
 
 find_package(JsonCpp REQUIRED)
 
 
-include_directories(src)
+include_directories(include)
 
 #This has to be done before add_executable. I'm adding source files.
 
@@ -282,22 +284,25 @@ if(BUILD_GAME)
     	target_link_libraries(${project_name} SDL2main SDL2)
     endif()
     
-    #if(ENET_FOUND)
-    #	include_directories(${ENet_INCLUDE_DIRS})
-    #	target_link_libraries(${project_name} ${ENet_LIBRARIES})
-    #else(ENET_FOUND)
-    #	subdirs(extlibs/enet)
-    #	include_directories(${CMAKE_CURRENT_SOURCE_DIR}/extlibs/enet/include)
-    #	link_directories(${CMAKE_CURRENT_SOURCE_DIR}/extlibs/enet)
-    #	SET(ELIBS enet)
-    #	IF(WIN32)
-    #        SET(WINDOWS_ENET_DEPENDENCIES "ws2_32;winmm")
-    #        SET(ELIBS ${ELIBS} ${WINDOWS_ENET_DEPENDENCIES})
-    #    ELSE(WIN32)
-    #        SET(ELIBS ${ELIBS})
-    #    ENDIF(WIN32)
-    #	target_link_libraries(${project_name} ${ELIBS})
-    #endif(ENET_FOUND)
+    #instead of setting compiler flags globally. SFML doesn't like building with this flag on.
+    #set_target_properties(${project_name} PROPERTIES COMPILE_FLAGS "-std=c++11 -pthread")
+    if(NOT MSVC)
+        set(CPP_11_FLAG -std=c++11)
+    endif()
+
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CPP_11_FLAG} -pthread")
+    
+    #But that doesn't work in windows.
+    #if(WIN32)
+        #    add_definitions(-std=c++11 -pthread)
+        #	add_definitions(-O4)
+        #endif(WIN32)
+    
+    if(ENET_FOUND)
+    	include_directories(${ENet_INCLUDE_DIRS})
+    	target_link_libraries(${project_name} ${ENet_LIBRARIES})
+    endif(ENET_FOUND)
+
     if(ZLIB_FOUND)
         include_directories(${ZLib_INCLUDE_DIRS})
         target_link_libraries(${project_name} ${ZLib_LIBRARIES})
@@ -362,13 +367,18 @@ if(BUILD_TESTS)
         "test/world/modmanagertest.cpp"
         
         "test/scopeddirectory.cpp"
+        "test/network/serializetest.cpp"
+        "test/network/chunkrequesthandlertest.cpp"
 
+        "test/testhelpers.cpp"
         "src/world/highlightmanager.cpp"
         "src/world/modmanager.cpp"
         "src/utilities/coordinateconverter.cpp"
         "src/utilities/directorycreator.cpp"
         "src/world/chunk.cpp"
         "src/world/explorationmanager.cpp" "src/utilities/coordinateconverter.cpp"
+        "src/networking/messageserializer.cpp"
+        "src/networking/chunkrequesthandler.cpp" 
         )
 
     target_link_libraries(tests ${FEATHERKIT_LIBRARIES})

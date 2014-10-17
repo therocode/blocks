@@ -4,6 +4,7 @@
 #include "controllers/moveaction.hpp"
 #include <fea/util.hpp>
 #include <fea/entitysystem.hpp>
+#include "../input/inputactions.hpp"
 #include "../world/worlddefines.hpp"
 
 struct EntityMoveRequestedMessage
@@ -14,6 +15,11 @@ struct EntityMoveRequestedMessage
 struct EntityMovedMessage
 {
     fea::EntityId id; const glm::vec3& oldPosition; const glm::vec3& newPosition;
+};
+
+struct EntityRotatedMessage
+{
+    fea::EntityId id; float pitch; float yaw;
 };
 
 struct GravityRequestedMessage
@@ -56,9 +62,9 @@ struct PlayerEntityMessage
     size_t playerId; fea::WeakEntityPtr playerEntity;
 };
 
-struct PlayerConnectedToEntityMessage
+struct PlayerEntityMovedMessage
 {
-    size_t playerId; fea::EntityId entityId;
+    size_t playerId; const glm::vec3& position;
 };
 
 struct PlayerEntersChunkMessage
@@ -66,9 +72,22 @@ struct PlayerEntersChunkMessage
     size_t playerId; const ChunkCoord& chunkCoord;
 };
 
-struct PlayerIdMessage
+struct PlayerEntersWorldMessage
 {
-    size_t id;
+    size_t playerId; WorldId worldId;
+};
+
+struct PlayerAttachedToEntityMessage
+{
+    size_t playerId;
+    fea::EntityId entityId;
+    fea::WeakEntityPtr entity;
+};
+
+struct PlayerActionMessage
+{
+    size_t playerId;
+    InputAction action;
 };
 
 struct PlayerMoveDirectionMessage

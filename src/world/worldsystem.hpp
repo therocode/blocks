@@ -10,22 +10,26 @@
 
 class WorldSystem : 
         public fea::MessageReceiver<SetVoxelMessage,
-                                    BiomeDeliveredMessage,
-                                    ChunkDeliveredMessage,
+                                    BiomeGeneratedMessage,
+                                    ChunkGeneratedMessage,
                                     HighlightEntityAddRequestedMessage,
                                     HighlightEntityMoveRequestedMessage,
-                                    HighlightEntityRemoveRequestedMessage>
+                                    HighlightEntityRemoveRequestedMessage,
+                                    ChunksRequestedMessage>
 {
     public:
         WorldSystem(fea::MessageBus& messageBus);
         ~WorldSystem();
         void handleMessage(const SetVoxelMessage& received) override;
-        void handleMessage(const BiomeDeliveredMessage& received) override;
-        void handleMessage(const ChunkDeliveredMessage& received) override;
+        void handleMessage(const BiomeGeneratedMessage& received) override;
+        void handleMessage(const ChunkGeneratedMessage& received) override;
         void handleMessage(const HighlightEntityAddRequestedMessage& received) override;
         void handleMessage(const HighlightEntityMoveRequestedMessage& received) override;
         void handleMessage(const HighlightEntityRemoveRequestedMessage& received) override;
+        void handleMessage(const ChunksRequestedMessage& received) override;
         const ChunkMap& getWorldVoxels(WorldId id) const;
+        WorldId worldIdentifierToId(const std::string& identifier) const;
+        const std::string& worldIdToIdentifier(WorldId id) const;
     private:
         void createWorld(const WorldParameters& parameters);
         fea::MessageBus& mBus;

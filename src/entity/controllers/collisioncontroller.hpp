@@ -1,7 +1,7 @@
 #pragma once
-#include "utilities/glm.hpp"
 #include "entitycontroller.hpp"
 #include "../entitymessages.hpp"
+#include "../../utilities/glm.hpp"
 #include "../../utilities/geomath.hpp"
 #include "../../world/worlddefines.hpp"
 

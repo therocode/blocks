@@ -1,6 +1,7 @@
 #pragma once
 #include <fea/entitysystem.hpp>
 #include <fea/util.hpp>
+#include "../utilities/glmhash.hpp"
 #include "worlddefines.hpp"
 #include "biome.hpp"
 #include "biomedefines.hpp"
@@ -35,29 +36,34 @@ struct BiomeRequestedMessage
     WorldId worldId; const BiomeRegionCoord& coordinate;
 };
 
-struct BiomeDeliveredMessage
+struct BiomeGeneratedMessage
 {
     WorldId worldId; const BiomeRegionCoord& coordinate; const BiomeGrid& biomeData;
 };
 
-struct ChunkRequestedMessage
+struct ChunkGenerationRequestedMessage
 {
     int32_t prio; WorldId worldId; const ChunkCoord& coordinate; const BiomeGrid& biomeData;
 };
 
-struct ChunkDeliveredMessage
+struct ChunkGeneratedMessage
 {
     WorldId worldId; const ChunkCoord& coordinate; const Chunk& chunk;
 };
 
-struct ChunkDeletedMessage
+struct ChunkInitiallyGeneratedMessage
 {
-    const ChunkCoord& coordinate;
+    WorldId worldId; const ChunkCoord& coordinate; Chunk& chunk;
 };
 
-struct ChunkLoadedMessage
+struct ChunkCandidateMessage
 {
-    const ChunkCoord& coordinate; const Chunk& chunk; uint64_t timestamp;
+    WorldId worldId; const ChunkCoord& coordinate; Chunk& chunk; uint64_t timestamp;
+};
+
+struct ChunkFinishedMessage
+{
+    WorldId worldId; const ChunkCoord& coordinate; const Chunk& chunk;
 };
 
 struct HighlightEntityAddRequestedMessage
@@ -78,4 +84,22 @@ struct HighlightEntityRemoveRequestedMessage
 {
     WorldId worldId;
     fea::EntityId entityId;
+};
+
+struct ChunksRequestedMessage
+{
+    WorldId worldId;
+    const std::vector<ChunkCoord>& coordinates;
+};
+
+struct ChunksDataDeniedMessage
+{
+    WorldId worldId;
+    const std::vector<ChunkCoord>& coordinates;
+};
+
+struct ChunksDataDeliveredMessage
+{
+    WorldId worldId;
+    std::unordered_map<ChunkCoord, const Chunk&> chunks;
 };

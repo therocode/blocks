@@ -1,8 +1,8 @@
 #include "../catch.hpp"
 #include "../scopeddirectory.hpp"
-#include "world/chunk.hpp"
-#include "world/modmanager.hpp"
-#include "world/worldmessages.hpp"
+#include "../src/world/chunk.hpp"
+#include "../src/world/modmanager.hpp"
+#include "../src/world/worldmessages.hpp"
 
 TEST_CASE("set and get", "[set][get]")
 {
@@ -31,7 +31,6 @@ TEST_CASE("save and load", "[save][load]")
     VoxelType type = 1;
     uint64_t timestamp = 123;
 
-    fea::MessageBus bus;
     VoxelTypeArray voxelData;
     voxelData.fill(defaultType);
     Chunk chunk(voxelData);

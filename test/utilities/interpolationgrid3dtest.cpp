@@ -1,5 +1,6 @@
 #include "../catch.hpp"
 #include "../testhelpers.hpp"
+
 #include "../../src/utilities/interpolationgrid3d.hpp"
 #include "../../src/utilities/interpolators.hpp"
 

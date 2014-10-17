@@ -1,9 +1,9 @@
-#include "utilities/glm.hpp"
+#include "../utilities/glm.hpp"
 #include "vbocreator.hpp"
-#include "world/chunk.hpp"
+#include "../world/chunk.hpp"
 #include <vector>
 #include <map>
-#include "utilities/timer.hpp"
+#include "../utilities/timer.hpp"
 
 struct ChunkQueueThing{
     ChunkCoord mainChunkCoord;

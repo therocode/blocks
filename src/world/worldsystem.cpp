@@ -70,7 +70,7 @@ void WorldSystem::handleMessage(const SetVoxelMessage& received)
     mWorlds.at(received.worldId).setVoxelType(received.voxel, received.type);
 }
 
-void WorldSystem::handleMessage(const BiomeDeliveredMessage& received)
+void WorldSystem::handleMessage(const BiomeGeneratedMessage& received)
 {
     auto iterator = mWorlds.find(received.worldId);
 
@@ -78,7 +78,7 @@ void WorldSystem::handleMessage(const BiomeDeliveredMessage& received)
         iterator->second.deliverBiome(received.coordinate, received.biomeData);
 }
 
-void WorldSystem::handleMessage(const ChunkDeliveredMessage& received)
+void WorldSystem::handleMessage(const ChunkGeneratedMessage& received)
 {
     auto iterator = mWorlds.find(received.worldId);
 
@@ -107,10 +107,38 @@ void WorldSystem::handleMessage(const HighlightEntityRemoveRequestedMessage& rec
     mWorlds.at(received.worldId).removeHighlightEntity(received.entityId);
 }
 
+void WorldSystem::handleMessage(const ChunksRequestedMessage& received)
+{
+    const auto& iterator = mWorlds.find(received.worldId);
+    
+    if(iterator != mWorlds.end())
+    {
+        iterator->second.chunksRequested(received.coordinates);
+    }
+    else
+    {
+        ChunksDataDeniedMessage message{received.worldId, received.coordinates};
+
+        mBus.send(message);
+    }
+}
+
 const ChunkMap& WorldSystem::getWorldVoxels(WorldId id) const
 {
     FEA_ASSERT(mWorlds.count(id) != 0, "Trying to get world id " + std::to_string(id) + " but that world does not exist!");
     return mWorlds.at(id).getChunkMap();
+}
+
+WorldId WorldSystem::worldIdentifierToId(const std::string& identifier) const
+{
+    FEA_ASSERT(mIdentifierToIdMap.count(identifier) != 0, "Trying to get the ID of a world called " + identifier + " but that world doesn't exist!");
+    return mIdentifierToIdMap.at(identifier);
+}
+
+const std::string& WorldSystem::worldIdToIdentifier(WorldId id) const
+{
+    FEA_ASSERT(mWorlds.count(id) != 0, "Trying to get the identifier of a world id " + std::to_string(id) + " but that world doesn't exist!");
+    return mWorlds.at(id).getIdentifier();
 }
 
 void WorldSystem::createWorld(const WorldParameters& parameters)

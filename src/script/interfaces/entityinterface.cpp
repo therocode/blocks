@@ -32,7 +32,7 @@ asIScriptObject* EntityInterface::createEntity(const std::string& type, WorldId 
     mBus.send(EntityRequestedMessage{type, [&] (fea::EntityPtr e)
             {
                 e->setAttribute("position", position);
-                e->setAttribute("current_world", worldId); //default world!?
+                e->setAttribute("current_world", worldId);
             }});
 
     fea::WeakEntityPtr createdEntity;

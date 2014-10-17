@@ -1,5 +1,5 @@
 #pragma once
-#include "utilities/glm.hpp"
+#include "../utilities/glm.hpp"
 
 class AABox
 {

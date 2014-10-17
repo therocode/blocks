@@ -7,7 +7,7 @@
 
 
 DebugRenderer Renderer::sDebugRenderer;
-Renderer::Renderer(fea::MessageBus& messageBus) : bus(messageBus), mPlayerId(-1)
+Renderer::Renderer(fea::MessageBus& messageBus) : bus(messageBus)
 {
 	mTimer.start();
     subscribe(messageBus, *this);
@@ -120,14 +120,14 @@ void Renderer::handleMessage(const ClientChunkDeletedMessage& received)
     vbos.erase(coordinate);
 }
 
-void Renderer::handleMessage(const PlayerFacingBlockMessage& received)
-{
-	glm::vec3 v = (glm::vec3)received.voxelPosition;
-    size_t playerId = received.playerId;
+//void Renderer::handleMessage(const PlayerFacingBlockMessage& received)
+//{
+//	glm::vec3 v = (glm::vec3)received.voxelPosition;
+//    size_t playerId = received.playerId;
+//
+//    mCurrentlyFacingBlock = v;
+//}
 
-    if(playerId == mPlayerId)
-	    mCurrentlyFacingBlock = v;
-}
 void Renderer::handleMessage(const WindowResizeMessage& received)
 {
 	uint32_t width = received.width;
@@ -147,20 +147,9 @@ void Renderer::handleMessage(const WindowResizeMessage& received)
 	glViewport(0, 0, width, height);
 }
 
-void Renderer::handleMessage(const PlayerIdMessage& received)
+void Renderer::handleMessage(const ClientAttachedToEntityMessage& received)
 {
-    mPlayerId = received.id;
-}
-
-void Renderer::handleMessage(const PlayerConnectedToEntityMessage& received)
-{
-    size_t playerId = received.playerId;
-    size_t entityId = received.entityId;
-
-    if(playerId == mPlayerId)
-    {
-        mCameraEntity = entityId;
-    }
+    mCameraEntity = received.id;
 }
 
 void Renderer::render()
@@ -447,18 +436,23 @@ void Renderer::handleMessage(const MoveGfxEntityMessage& received)
 	size_t id = received.id;
 	glm::vec3 position = received.position;
 
-	billboards.at(id).mPosition = position;
+    auto billboard = billboards.find(id);
 
-    if(id == mCameraEntity)
+    if(billboard != billboards.end())
     {
-		glm::vec3 newVel = position - mCameraPosition;
-		if(lastVel.y < -0.0f && newVel.y >= 0.f){
-			duck = glm::min(-lastVel.y * 400.f, 1.0f);
-		}
-		speedVec = glm::vec2(newVel.x, newVel.z);
-		speed = glm::length(speedVec);
-		lastVel = newVel;
-        mCameraPosition = position;
+        billboard->second.mPosition = position;
+
+        if(id == mCameraEntity)
+        {
+            glm::vec3 newVel = position - mCameraPosition;
+            if(lastVel.y < -0.0f && newVel.y >= 0.f){
+                duck = glm::min(-lastVel.y * 400.f, 1.0f);
+            }
+            speedVec = glm::vec2(newVel.x, newVel.z);
+            speed = glm::length(speedVec);
+            lastVel = newVel;
+            mCameraPosition = position;
+        }
     }
 }
 

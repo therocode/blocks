@@ -4,7 +4,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include "worlddefines.hpp"
-#include "utilities/glmhash.hpp"
+#include "../utilities/glmhash.hpp"
 
 const uint32_t explorationRegionWidthInChunks = 16;
 const uint32_t explorationRegionWidth = explorationRegionWidthInChunks * chunkWidth;

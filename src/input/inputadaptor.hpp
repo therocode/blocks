@@ -5,20 +5,17 @@
 #include "../entity/controllers/movedirection.hpp"
 #include "../application/applicationmessages.hpp"
 
-class InputAdaptor : public fea::MessageReceiver<PlayerIdMessage>
+class InputAdaptor
 {
     public:
         InputAdaptor(fea::MessageBus& b);
         void update();
-        void handleMessage(const PlayerIdMessage& received) override;
 
     private:
         void sendMovementData();
         fea::MessageBus& mBus;
         fea::InputHandler inputHandler;
         fea::ActionHandler<std::string> actionHandler;
-
-        size_t mPlayerId;
 
 		bool windowFocus;
         int32_t lastMouseX;
@@ -31,6 +28,8 @@ class InputAdaptor : public fea::MessageReceiver<PlayerIdMessage>
         bool mHoldingBackwards;
         bool mHoldingLeft;
         bool mHoldingRight;
+
+        bool mMouseLocked;
 
         float mNewPitch;
         float mNewYaw;

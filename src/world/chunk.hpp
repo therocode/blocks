@@ -10,6 +10,13 @@
 struct RleSegmentInfo
 {
     bool operator==(const RleSegmentInfo& other) const;
+
+    template<class Archive> //this might not be needed if RLE is rewritten cleaner
+    void serialize(Archive& archive)
+    {
+        archive(mSegmentStart, mSegmentSize);
+    }
+
     uint32_t mSegmentStart;
     uint32_t mSegmentSize;
 };

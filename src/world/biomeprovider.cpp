@@ -81,7 +81,7 @@ void BiomeProvider::handleMessage(const FrameMessage& received)
         if(iter->wait_for(std::chrono::seconds(0)) == std::future_status::ready)
         {
             BiomeDelivery delivery = iter->get();
-            mBus.send(BiomeDeliveredMessage({delivery.id, delivery.coordinate, std::move(delivery.biomeData)}));
+            mBus.send(BiomeGeneratedMessage({delivery.id, delivery.coordinate, std::move(delivery.biomeData)}));
             iter = mBiomesToDeliver.erase(iter);
         }
         else

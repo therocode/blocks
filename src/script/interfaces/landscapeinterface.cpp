@@ -1,7 +1,7 @@
 #include "landscapeinterface.hpp"
 #include "../../gameinterface.hpp"
-#include "world/worldmessages.hpp"
-#include "world/worldsystem.hpp"
+#include "../../world/worldmessages.hpp"
+#include "../../world/worldsystem.hpp"
 #include <angelscript.h>
 #include <assert.h>
 

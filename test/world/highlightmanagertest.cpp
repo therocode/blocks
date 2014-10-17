@@ -1,7 +1,8 @@
 #include "../catch.hpp"
-#include "world/highlightmanager.hpp"
+
+#include "../src/world/highlightmanager.hpp"
+
 #include <vector>
-#include <fea/util.hpp>
 
 TEST_CASE("", "[spawn][despawn][move]")
 {
@@ -12,7 +13,6 @@ TEST_CASE("", "[spawn][despawn][move]")
     ChunkCoord loc3(5,0,0);
     int highlightRadius = 3;
 
-    fea::MessageBus bus;
     HighlightManager manager(highlightRadius);
 
     SECTION("spawn entity") 
