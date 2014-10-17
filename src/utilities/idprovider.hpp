@@ -8,7 +8,7 @@ class IdProvider
     public:
         IdProvider();
         IdType getId(const Type& value);
-        void free(IdType id);
+        void free(const Type& value);
     private:
         IdType getNext();
         IdType mNext;
@@ -38,10 +38,15 @@ IdType IdProvider<Type, IdType>::getId(const Type& value)
 }
 
 template<typename Type, typename IdType>
-void IdProvider<Type, IdType>::free(IdType id)
+void IdProvider<Type, IdType>::free(const Type& value)
 {
-    if(mIds.erase(id) > 0)
-        mReturned.push(id);
+    const auto& iterator = mIds.find(value);
+
+    if(iterator != mIds.end())
+    {
+        mReturned.push(iterator->second);
+        mIds.erase(iterator);
+    }
 }
 
 template<typename Type, typename IdType>

@@ -30,3 +30,37 @@ SCENARIO("IdProviders give unique IDs for unique entries, but the same IDs for t
         }   
     }
 }
+
+SCENARIO("IdProviders reuse freed IDs","[utilities]")
+{
+    GIVEN("An IdProvider with some values added")
+    {
+        IdProvider<std::string> provider;
+
+        uint32_t id1 = provider.getId("hej");
+        uint32_t id2 = provider.getId("dej");
+        uint32_t id3 = provider.getId("sej");
+
+        WHEN("Ids are freed and more values assigned")
+        {   
+            provider.free("hej");
+            provider.free("sej");
+
+            uint32_t id4 = provider.getId("lax");
+            uint32_t id5 = provider.getId("kex");
+            uint32_t id6 = provider.getId("boll");
+
+            THEN("Those IDs are reused, but only reused once")
+            {
+
+                CHECK(id5 == id1);
+                CHECK(id4 == id3);
+                CHECK_FALSE(id6 == id1);
+                CHECK_FALSE(id6 == id2);
+                CHECK_FALSE(id6 == id3);
+                CHECK_FALSE(id6 == id4);
+                CHECK_FALSE(id6 == id5);
+            }   
+        }   
+    }
+}
