@@ -181,7 +181,7 @@ void PlayerController::handleMessage(const PlayerPitchYawMessage& received) //mo
 
         float newYaw = entity->getAttribute<float>("yaw");
 		//printf("Pitch: %f, and yaw: %f\n", newPitch, newYaw);
-        mBus.send(RotateGfxEntityMessage{playerEntry->second.lock()->getId(), newPitch, newYaw});
+        mBus.send(EntityRotatedMessage{playerEntry->second.lock()->getId(), newPitch, newYaw});
         updateVoxelLookAt(playerId);
     }
 }

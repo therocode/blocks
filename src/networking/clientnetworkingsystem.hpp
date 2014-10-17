@@ -28,6 +28,7 @@ class ClientNetworkingSystem : public
                          ClientPitchYawMessage,
                          EntityEnteredRangeMessage,
                          EntityPositionUpdatedMessage,
+                         EntityRotationUpdatedMessage,
                          EntityLeftRangeMessage>
 {
     public:
@@ -46,6 +47,7 @@ class ClientNetworkingSystem : public
         void handleMessage(const ClientPitchYawMessage& received) override;
         void handleMessage(const EntityEnteredRangeMessage& received) override;
         void handleMessage(const EntityPositionUpdatedMessage& received) override;
+        void handleMessage(const EntityRotationUpdatedMessage& received) override;
         void handleMessage(const EntityLeftRangeMessage& received) override;
     private:
         void connectedToServer();

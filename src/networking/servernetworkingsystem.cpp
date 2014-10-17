@@ -212,7 +212,8 @@ void ServerNetworkingSystem::handleMessage(const EntityMovedMessage& received)
 
     for(const auto& subscription : mEntitySubscriptions)
     {
-        const auto& positionIterator = mPlayerPositions.find(subscription.first);
+        uint32_t playerId = subscription.first;
+        const auto& positionIterator = mPlayerPositions.find(playerId);
 
         if(positionIterator != mPlayerPositions.end())
         {
@@ -221,29 +222,43 @@ void ServerNetworkingSystem::handleMessage(const EntityMovedMessage& received)
 
             if(glm::distance(entityPosition, playerPosition) < range)
             {
-                auto result = mEntityTracking[subscription.first].emplace(received.id);
+                auto result = mEntityTracking[playerId].emplace(received.id);
 
                 if(result.second)
                 {
                     EntityEnteredRangeMessage message{received.id, entityPosition};
-                    sendToOne(subscription.first, message, true, CHANNEL_DEFAULT);
+                    sendToOne(playerId, message, true, CHANNEL_DEFAULT);
                 }
                 else
                 {
                     EntityPositionUpdatedMessage message{received.id, entityPosition};
-                    sendToOne(subscription.first, message, false, CHANNEL_DEFAULT);
+                    sendToOne(playerId, message, false, CHANNEL_DEFAULT);
                 }
             }
             else
             {
-                auto result = mEntityTracking[subscription.first].erase(received.id);
+                auto result = mEntityTracking[playerId].erase(received.id);
 
                 if(result > 0)
                 {
                     EntityLeftRangeMessage message{received.id};
-                    sendToOne(subscription.first, message, true, CHANNEL_DEFAULT);
+                    sendToOne(playerId, message, true, CHANNEL_DEFAULT);
                 }
             }
+        }
+    }
+}
+
+void ServerNetworkingSystem::handleMessage(const EntityRotatedMessage& received)
+{
+    for(const auto& subscription : mEntitySubscriptions)
+    {
+        uint32_t playerId = subscription.first;
+
+        if(mEntityTracking[playerId].count(received.id) != 0)
+        {
+            EntityRotationUpdatedMessage message{received.id, received.pitch, received.yaw};
+            sendToOne(playerId, message, true, CHANNEL_DEFAULT);
         }
     }
 }
