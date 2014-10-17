@@ -1,5 +1,6 @@
 #include "enet.hpp"
 #include <enet/enet.h>
+#include <cstdint>
 
 ENet::ENet() :
     mInitialized(false)
