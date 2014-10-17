@@ -19,7 +19,7 @@ void GfxController::inspectEntity(fea::WeakEntityPtr entity)
 
 void GfxController::handleMessage(const EntityMovedMessage& message)
 {
-   mBus.send(MoveGfxEntityMessage{message.id, message.newPosition});
+   mBus.send(MoveGfxEntityMessage{message.entityId, message.newPosition});
 }
 
 void GfxController::removeEntity(fea::EntityId id)

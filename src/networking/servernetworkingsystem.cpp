@@ -220,28 +220,28 @@ void ServerNetworkingSystem::handleMessage(const EntityMovedMessage& received)
             const glm::vec3& playerPosition = positionIterator->second;
             float range = subscription.second;
 
-            if(glm::distance(entityPosition, playerPosition) < range)
+            if(glm::distance(entityPosition, playerPosition) < range && received.worldId == mPlayerWorlds.at(playerId))
             {
-                auto result = mEntityTracking[playerId].emplace(received.id);
+                auto result = mEntityTracking[playerId].emplace(received.entityId);
 
                 if(result.second)
                 {
-                    EntityEnteredRangeMessage message{received.id, entityPosition};
+                    EntityEnteredRangeMessage message{received.entityId, entityPosition};
                     sendToOne(playerId, message, true, CHANNEL_DEFAULT);
                 }
                 else
                 {
-                    EntityPositionUpdatedMessage message{received.id, entityPosition};
+                    EntityPositionUpdatedMessage message{received.entityId, entityPosition};
                     sendToOne(playerId, message, false, CHANNEL_DEFAULT);
                 }
             }
             else
             {
-                auto result = mEntityTracking[playerId].erase(received.id);
+                auto result = mEntityTracking[playerId].erase(received.entityId);
 
                 if(result > 0)
                 {
-                    EntityLeftRangeMessage message{received.id};
+                    EntityLeftRangeMessage message{received.entityId};
                     sendToOne(playerId, message, true, CHANNEL_DEFAULT);
                 }
             }

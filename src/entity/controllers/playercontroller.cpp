@@ -188,7 +188,7 @@ void PlayerController::handleMessage(const PlayerPitchYawMessage& received) //mo
 
 void PlayerController::handleMessage(const EntityMovedMessage& received)
 {
-    size_t id = received.id;
+    size_t id = received.entityId;
 
     if(mEntityIdToPlayerId.find(id) != mEntityIdToPlayerId.end())
     {
