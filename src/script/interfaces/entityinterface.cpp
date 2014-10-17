@@ -1,11 +1,12 @@
 #include "entityinterface.hpp"
+#include "../scriptstd.hpp"
 #include <angelscript.h>
 #include <assert.h>
 #include "../../lognames.hpp"
 #include "../scriptentitycore.hpp"
 #include "../../gameinterface.hpp"
 
-EntityInterface::EntityInterface(fea::MessageBus& bus, GameInterface& worldInterface, std::unordered_map<size_t, ScriptEntity>& scriptEntities) : 
+EntityInterface::EntityInterface(fea::MessageBus& bus, GameInterface& worldInterface, ScriptEntityMap& scriptEntities) : 
     ScriptInterface(bus, worldInterface),
     mBus(bus),
     mScriptEntities(scriptEntities)
@@ -58,7 +59,7 @@ asIScriptObject* EntityInterface::createEntity(const std::string& type, WorldId 
     }
 }
 
-void EntityInterface::removeEntityFromId(size_t id)
+void EntityInterface::removeEntityFromId(fea::EntityId id)
 {
     mBus.send(RemoveEntityRequestedMessage{id});   
 }

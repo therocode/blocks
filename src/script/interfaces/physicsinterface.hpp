@@ -1,4 +1,5 @@
 #pragma once
+#include <fea/entitysystem.hpp>
 #include "scriptinterface.hpp"
 #include "../../utilities/random.hpp"
 
@@ -9,6 +10,6 @@ class PhysicsInterface : public ScriptInterface
         void registerInterface(asIScriptEngine* engine) override;
     private:
         void setGravity(float constant);
-        void applyImpulse(size_t id, const glm::vec3& force);
+        void applyImpulse(fea::EntityId id, const glm::vec3& force);
         Random random;
 };

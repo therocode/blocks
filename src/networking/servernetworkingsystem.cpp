@@ -206,6 +206,33 @@ void ServerNetworkingSystem::handleMessage(const PlayerEntersWorldMessage& recei
     mPlayerWorlds.at(received.playerId) = received.worldId;
 }
 
+void ServerNetworkingSystem::handleMessage(const EntityCreatedMessage& received)
+{
+    fea::EntityPtr entity = received.entity.lock();
+    WorldId entityWorld = entity->getAttribute<WorldId>("current_world");
+    const glm::vec3& entityPosition = entity->getAttribute<glm::vec3>("position");
+
+    for(const auto& subscription : mEntitySubscriptions)
+    {
+        uint32_t playerId = subscription.first;
+        const auto& positionIterator = mPlayerPositions.find(playerId);
+
+        if(positionIterator != mPlayerPositions.end())
+        {
+            const glm::vec3& playerPosition = positionIterator->second;
+            float range = subscription.second;
+
+            if(glm::distance(entityPosition, playerPosition) < range && entityWorld == mPlayerWorlds.at(playerId))
+            {
+                mEntityTracking[playerId].emplace(entity->getId());
+
+                EntityEnteredRangeMessage message{entity->getId(), entityPosition};
+                sendToOne(playerId, message, true, CHANNEL_DEFAULT);
+            }
+        }
+    }
+}
+
 void ServerNetworkingSystem::handleMessage(const EntityMovedMessage& received)
 {
     const glm::vec3& entityPosition = received.newPosition;
@@ -258,6 +285,22 @@ void ServerNetworkingSystem::handleMessage(const EntityRotatedMessage& received)
         if(mEntityTracking[playerId].count(received.id) != 0)
         {
             EntityRotationUpdatedMessage message{received.id, received.pitch, received.yaw};
+            sendToOne(playerId, message, true, CHANNEL_DEFAULT);
+        }
+    }
+}
+
+void ServerNetworkingSystem::handleMessage(const EntityRemovedMessage& received)
+{
+    for(const auto& subscription : mEntitySubscriptions)
+    {
+        uint32_t playerId = subscription.first;
+
+        auto result = mEntityTracking[playerId].erase(received.id);
+
+        if(result > 0)
+        {
+            EntityLeftRangeMessage message{received.id};
             sendToOne(playerId, message, true, CHANNEL_DEFAULT);
         }
     }

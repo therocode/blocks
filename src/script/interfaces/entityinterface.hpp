@@ -10,13 +10,13 @@ class EntityInterface :
     public fea::MessageReceiver<EntityCreatedMessage>
 {
     public:
-        EntityInterface(fea::MessageBus& bus, GameInterface& worldInterface, std::unordered_map<size_t, ScriptEntity>& scriptEntities);
+        EntityInterface(fea::MessageBus& bus, GameInterface& worldInterface, std::unordered_map<fea::EntityId, ScriptEntity>& scriptEntities);
         void registerInterface(asIScriptEngine* engine) override;
         asIScriptObject* createEntity(const std::string& type, WorldId worldId, const  glm::vec3 position);
-        void removeEntityFromId(size_t id);
+        void removeEntityFromId(fea::EntityId id);
         void handleMessage(const EntityCreatedMessage& message);
     private:
         fea::MessageBus& mBus;
-        std::unordered_map<size_t, ScriptEntity>& mScriptEntities;
+        std::unordered_map<fea::EntityId, ScriptEntity>& mScriptEntities;
         fea::WeakEntityPtr mNewlyCreated;
 };

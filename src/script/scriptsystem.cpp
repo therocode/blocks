@@ -111,7 +111,7 @@ void ScriptSystem::handleMessage(const EntityCreatedMessage& received)
 
 void ScriptSystem::handleMessage(const EntityRemovedMessage& received)
 {
-    size_t id = received.id;
+    fea::EntityId id = received.id;
 
     auto entity = mScriptEntities.find(id);
 

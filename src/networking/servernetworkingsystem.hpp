@@ -33,8 +33,10 @@ class ServerNetworkingSystem : public fea::MessageReceiver<
                                            PlayerAttachedToEntityMessage,
                                            PlayerEntityMovedMessage,
                                            PlayerEntersWorldMessage,
+                                           EntityCreatedMessage,
                                            EntityMovedMessage,
                                            EntityRotatedMessage,
+                                           EntityRemovedMessage,
                                            ChunksDataDeniedMessage,
                                            ChunksDataDeliveredMessage,
                                            ChunkFinishedMessage>
@@ -55,8 +57,10 @@ class ServerNetworkingSystem : public fea::MessageReceiver<
         void handleMessage(const PlayerAttachedToEntityMessage& received) override;
         void handleMessage(const PlayerEntityMovedMessage& received) override;
         void handleMessage(const PlayerEntersWorldMessage& received) override;
+        void handleMessage(const EntityCreatedMessage& received) override;
         void handleMessage(const EntityMovedMessage& received) override;
         void handleMessage(const EntityRotatedMessage& received) override;
+        void handleMessage(const EntityRemovedMessage& received) override;
         void handleMessage(const ChunksDataDeniedMessage& received) override;
         void handleMessage(const ChunksDataDeliveredMessage& received) override;
         void handleMessage(const ChunkFinishedMessage& received) override;

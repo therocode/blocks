@@ -39,7 +39,7 @@ struct EntityCreatedMessage
 
 struct EntityJumpMessage
 {
-    size_t id; const bool jumping;
+    fea::EntityId id; const bool jumping;
 };
 
 struct EntityOnGroundMessage
@@ -49,12 +49,12 @@ struct EntityOnGroundMessage
 
 struct RemoveEntityRequestedMessage
 {
-    size_t id;
+    fea::EntityId id;
 };
 
 struct EntityRemovedMessage
 {
-    size_t id;
+    fea::EntityId id;
 };
 
 struct PlayerEntityMessage
@@ -102,5 +102,5 @@ struct PlayerMoveActionMessage
 
 struct PhysicsImpulseMessage
 {
-    size_t id; const glm::vec3& force;
+    fea::EntityId id; const glm::vec3& force;
 };

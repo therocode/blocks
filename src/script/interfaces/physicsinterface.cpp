@@ -18,7 +18,7 @@ void PhysicsInterface::setGravity(float constant)
     mBus.send(GravityRequestedMessage{constant});
 }
 
-void PhysicsInterface::applyImpulse(size_t id, const glm::vec3& force)
+void PhysicsInterface::applyImpulse(fea::EntityId id, const glm::vec3& force)
 {
     mBus.send(PhysicsImpulseMessage{id, force});
 }
