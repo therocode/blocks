@@ -53,6 +53,8 @@ void WorldEntry::removeHighlightEntity(uint32_t id)
 
     for(const auto& chunk : dehighlighted)
         deactivateChunk(chunk);
+
+    mModManager.saveMods();  //this is a hack due to issue http://dev.pallkars.net/issues/21
 }
 
 void WorldEntry::deliverBiome(const BiomeRegionCoord& coordinate, const BiomeGrid& biomeData)

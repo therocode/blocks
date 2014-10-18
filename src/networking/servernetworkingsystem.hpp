@@ -115,7 +115,7 @@ void ServerNetworkingSystem::sendToOne(uint32_t playerId, const Message& message
     }
     else
     {
-        FEA_ASSERT(mPlayerToClientIds.count(playerId) != 0, "Trying to send message to invalid player ID " + std::to_string(playerId));
+        FEA_ASSERT(mPlayerToClientIds.count(playerId) != 0, "Trying to send message type " + std::to_string(message.getType()) + " to invalid player ID " + std::to_string(playerId));
         mENetServer->sendToOne(mPlayerToClientIds.at(playerId), serializeMessage(message), reliable, channel);
     }
 }
