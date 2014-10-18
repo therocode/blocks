@@ -8,10 +8,15 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_LIST_DIR}/cmake/modu
 set(BUILD_EXPBIOMES FALSE CACHE BOOL "build the biome experiment application")
 set(BUILD_TESTS TRUE CACHE BOOL "build the tests")
 set(BUILD_GAME TRUE CACHE BOOL "build the actual game")
+set(CLIENT_ONLY FALSE CACHE BOOL "only build client functionality")
 
 #project name
 set(project_name blocks)
 project(${project_name})
+
+if(CLIENT_ONLY)
+    add_definitions(-DCLIENT_ONLY=1)
+endif(CLIENT_ONLY)
 
 if(BUILD_EXPBIOMES)
     add_subdirectory(expbiomes)
