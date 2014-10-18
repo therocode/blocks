@@ -22,6 +22,9 @@ enum { INVALID = -1,
     CLIENT_ACTION, CLIENT_MOVE_ACTION, CLIENT_MOVE_DIRECTION, CLIENT_PITCH_YAW,
     //entities
     CLIENT_ATTACHED_TO_ENTITY, ENTITY_SUBSCRIPTION_REQUESTED, ENTITY_SUBSCRIPTION_REPLY, ENTITY_ENTERED_RANGE, ENTITY_POSITION_UPDATED, ENTITY_ROTATION_UPDATED, ENTITY_LEFT_RANGE,
+    //client
+    CLIENT_ENTERED_WORLD,
+    CLIENT_POSITION,
     //tests
     TEST_1, TEST_2 };
 
@@ -201,10 +204,12 @@ struct ClientAttachedToEntityMessage
     template<class Archive>
     void serialize(Archive& archive)
     {
-        archive(id);
+        archive(entityId, world, position.x, position.y, position.z);
     }
 
-    fea::EntityId id;
+    fea::EntityId entityId;
+    std::string world;
+    glm::vec3 position;
 };
 
 struct EntitySubscriptionRequestedMessage
@@ -294,6 +299,32 @@ struct EntityLeftRangeMessage
     }
 
     fea::EntityId id;
+};
+
+struct ClientEnteredWorldMessage
+{
+    int32_t getType() const {return CLIENT_ENTERED_WORLD;}
+
+    template<class Archive>
+    void serialize(Archive& archive)
+    {
+        archive(world);
+    }
+
+    std::string world;
+};
+
+struct ClientPositionMessage
+{
+    int32_t getType() const {return CLIENT_POSITION;}
+
+    template<class Archive>
+    void serialize(Archive& archive)
+    {
+        archive(position.x, position.y, position.z);
+    }
+
+    glm::vec3 position;
 };
 
 //messages for testing:

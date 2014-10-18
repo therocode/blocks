@@ -6,6 +6,7 @@
 #include "../utilities/lodepng.hpp"
 #include "../utilities/logger.hpp"
 #include "../utilities/fpscontroller.hpp"
+#include "../utilities/idprovider.hpp"
 #include "../world/worldmessages.hpp"
 #include "../world/highlightmanager.hpp"
 
@@ -19,7 +20,10 @@ class Client :
                                 VoxelSetMessage,
                                 ClientChunkDeletedMessage,
                                 CursorLockedMessage,
-                                GameStartMessage>
+                                GameStartMessage,
+                                ClientAttachedToEntityMessage,
+                                ClientEnteredWorldMessage,
+                                ClientPositionMessage>
 {
     public:
         Client(fea::MessageBus& bus, const NetworkParameters& parameters);
@@ -33,6 +37,9 @@ class Client :
         void handleMessage(const ClientChunkDeletedMessage& received) override;
         void handleMessage(const CursorLockedMessage& received) override;
         void handleMessage(const GameStartMessage& received) override;
+        void handleMessage(const ClientAttachedToEntityMessage& received) override;
+        void handleMessage(const ClientEnteredWorldMessage& received) override;
+        void handleMessage(const ClientPositionMessage& received) override;
         bool requestedQuit();
     private:
         int64_t mFrame = 0;
@@ -47,8 +54,11 @@ class Client :
         std::unique_ptr<InputAdaptor> mInputAdaptor;
         bool mQuit;
 
+        std::string mCurrentWorld;
+        IdProvider<std::string> mWorldIds;
         HighlightManager mHighlightedChunks;
+        ChunkCoord mLastChunk;
         ChunkMap mLocalChunks;
 
-        ClientNetworkingSystem mClientNetworkingSystem;
+        std::unique_ptr<ClientNetworkingSystem> mClientNetworkingSystem;
 };

@@ -16,8 +16,7 @@ Client::Client(fea::MessageBus& bus, const NetworkParameters& parameters) :
 	mRenderer(std::unique_ptr<Renderer>(new Renderer(mBus))),
 	mInputAdaptor(std::unique_ptr<InputAdaptor>(new InputAdaptor(mBus))),
 	mQuit(false),
-    mHighlightedChunks(8),
-    mClientNetworkingSystem(bus, parameters)
+    mHighlightedChunks(8)
 {
     subscribe(mBus, *this);
 
@@ -36,6 +35,8 @@ Client::Client(fea::MessageBus& bus, const NetworkParameters& parameters) :
     mFPSCounter.setMaxFPS(0);
     mFPSCounter.setSampleTime(0.5f);
 	//if there's an error, display it
+
+    mClientNetworkingSystem = std::unique_ptr<ClientNetworkingSystem>(new ClientNetworkingSystem(bus, parameters));
 }
 
 Client::~Client()
@@ -87,35 +88,38 @@ void Client::handleMessage(const ClientChunksDeliveredMessage& received)
     for(uint32_t i = 0; i < received.coordinates.size(); i++)
     {
         const ChunkCoord& coordinate = received.coordinates[i];
-        Chunk chunk(received.rleIndices[i], received.rleSegments[i]);
+        if(mHighlightedChunks.chunkIsHighlighted(coordinate))
+        {
+            Chunk chunk(received.rleIndices[i], received.rleSegments[i]);
 
-        mLocalChunks[coordinate] = chunk;
+            mLocalChunks[coordinate] = chunk;
 
-        updateChunk(coordinate);
+            updateChunk(coordinate);
 
-        if(mLocalChunks.find(ChunkCoord(coordinate.x + 1, coordinate.y, coordinate.z)) != mLocalChunks.end())
-        {
-            updateChunk(ChunkCoord(coordinate.x + 1, coordinate.y, coordinate.z));
-        }
-        if(mLocalChunks.find(ChunkCoord(coordinate.x - 1, coordinate.y, coordinate.z)) != mLocalChunks.end())
-        {
-            updateChunk(ChunkCoord(coordinate.x - 1, coordinate.y, coordinate.z));
-        }
-        if(mLocalChunks.find(ChunkCoord(coordinate.x, coordinate.y + 1, coordinate.z)) != mLocalChunks.end())
-        {
-            updateChunk(ChunkCoord(coordinate.x, coordinate.y + 1, coordinate.z));
-        }
-        if(mLocalChunks.find(ChunkCoord(coordinate.x, coordinate.y - 1, coordinate.z)) != mLocalChunks.end())
-        {
-            updateChunk(ChunkCoord(coordinate.x, coordinate.y - 1, coordinate.z));
-        }
-        if(mLocalChunks.find(ChunkCoord(coordinate.x, coordinate.y, coordinate.z + 1)) != mLocalChunks.end())
-        {
-            updateChunk(ChunkCoord(coordinate.x, coordinate.y, coordinate.z + 1));
-        }
-        if(mLocalChunks.find(ChunkCoord(coordinate.x, coordinate.y, coordinate.z - 1)) != mLocalChunks.end())
-        {
-            updateChunk(ChunkCoord(coordinate.x, coordinate.y, coordinate.z - 1));
+            if(mLocalChunks.find(ChunkCoord(coordinate.x + 1, coordinate.y, coordinate.z)) != mLocalChunks.end())
+            {
+                updateChunk(ChunkCoord(coordinate.x + 1, coordinate.y, coordinate.z));
+            }
+            if(mLocalChunks.find(ChunkCoord(coordinate.x - 1, coordinate.y, coordinate.z)) != mLocalChunks.end())
+            {
+                updateChunk(ChunkCoord(coordinate.x - 1, coordinate.y, coordinate.z));
+            }
+            if(mLocalChunks.find(ChunkCoord(coordinate.x, coordinate.y + 1, coordinate.z)) != mLocalChunks.end())
+            {
+                updateChunk(ChunkCoord(coordinate.x, coordinate.y + 1, coordinate.z));
+            }
+            if(mLocalChunks.find(ChunkCoord(coordinate.x, coordinate.y - 1, coordinate.z)) != mLocalChunks.end())
+            {
+                updateChunk(ChunkCoord(coordinate.x, coordinate.y - 1, coordinate.z));
+            }
+            if(mLocalChunks.find(ChunkCoord(coordinate.x, coordinate.y, coordinate.z + 1)) != mLocalChunks.end())
+            {
+                updateChunk(ChunkCoord(coordinate.x, coordinate.y, coordinate.z + 1));
+            }
+            if(mLocalChunks.find(ChunkCoord(coordinate.x, coordinate.y, coordinate.z - 1)) != mLocalChunks.end())
+            {
+                updateChunk(ChunkCoord(coordinate.x, coordinate.y, coordinate.z - 1));
+            }
         }
     }
 }
@@ -172,7 +176,10 @@ void Client::handleMessage(const VoxelSetMessage& received)
 
 void Client::handleMessage(const ClientChunkDeletedMessage& received)
 {
-    mLocalChunks.erase(received.coordinate);
+    if(mLocalChunks.erase(received.coordinate) > 0)
+    {
+        mBus.send(ChunkVBODeletedMessage{received.coordinate});
+    }
 }
 
 void Client::handleMessage(const CursorLockedMessage& received)
@@ -181,10 +188,41 @@ void Client::handleMessage(const CursorLockedMessage& received)
 }
 
 void Client::handleMessage(const GameStartMessage& received)
-{ //hard coded world values :<
-    auto highlighted = mHighlightedChunks.addHighlightEntity(0, {0.0f, 0.0f, 0.0f});
+{
+}
 
-    mBus.send(ClientRequestedChunksMessage{"default", highlighted});
+void Client::handleMessage(const ClientAttachedToEntityMessage& received)
+{
+    mCurrentWorld = received.world;
+    auto highlighted = mHighlightedChunks.addHighlightEntity(0, WorldToChunk::convert(received.position));
+    mLastChunk = WorldToChunk::convert(received.position);
+
+    mBus.send(ClientRequestedChunksMessage{mCurrentWorld, highlighted});
+}
+
+void Client::handleMessage(const ClientEnteredWorldMessage& received)
+{
+    mCurrentWorld = received.world;
+
+    auto dehighlighted = mHighlightedChunks.removeHighlightEntity(0);
+
+    auto highlighted = mHighlightedChunks.addHighlightEntity(0, mLastChunk);
+
+    mBus.send(ClientRequestedChunksMessage{mCurrentWorld, highlighted});
+
+    for(const auto& chunk : dehighlighted)
+        mBus.send(ClientChunkDeletedMessage{chunk});
+}
+
+void Client::handleMessage(const ClientPositionMessage& received)
+{
+    const auto& highlighted = mHighlightedChunks.moveHighlightEntity(0, WorldToChunk::convert(received.position));
+    mLastChunk = WorldToChunk::convert(received.position);
+
+    mBus.send(ClientRequestedChunksMessage{mCurrentWorld, highlighted.first});
+
+    for(const auto& chunk : highlighted.second)
+        mBus.send(ClientChunkDeletedMessage{chunk});
 }
 
 bool Client::requestedQuit()

@@ -19,7 +19,7 @@
 
 class Renderer
     :   public fea::MessageReceiver<UpdateChunkVboMessage,
-                                    ClientChunkDeletedMessage,
+                                    ChunkVBODeletedMessage,
                                     WindowResizeMessage,
                                     AddGfxEntityMessage,
                                     MoveGfxEntityMessage,
@@ -38,7 +38,7 @@ class Renderer
         void makeTexture(const std::string& path, uint32_t width, uint32_t height, GLuint& textureId);
         void setup();
         virtual void handleMessage(const UpdateChunkVboMessage& received);
-        virtual void handleMessage(const ClientChunkDeletedMessage& received);
+        virtual void handleMessage(const ChunkVBODeletedMessage& received);
         virtual void handleMessage(const WindowResizeMessage& received);
         virtual void handleMessage(const AddGfxEntityMessage& received);
         virtual void handleMessage(const MoveGfxEntityMessage& received);

@@ -9,6 +9,11 @@ struct ClientChunkDeletedMessage
     const ChunkCoord& coordinate;
 };
 
+struct ChunkVBODeletedMessage
+{
+    const ChunkCoord& coordinate;
+};
+
 struct AddGfxEntityMessage
 {
     size_t id; const glm::vec3& position;

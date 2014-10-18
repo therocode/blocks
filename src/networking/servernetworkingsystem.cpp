@@ -192,18 +192,25 @@ void ServerNetworkingSystem::handleMessage(const PlayerAttachedToEntityMessage& 
 {
     mEntityIdToPlayerId.emplace(received.entityId, received.playerId);
     mPlayerPositions[received.playerId] = received.entity.lock()->getAttribute<glm::vec3>("position");
+    mPlayerWorlds[received.playerId] = received.entity.lock()->getAttribute<WorldId>("current_world");
 
-    sendToOne(received.playerId, ClientAttachedToEntityMessage{received.entityId}, true, CHANNEL_DEFAULT);
+    const std::string worldIdentifier = mGameInterface.getWorldSystem().worldIdToIdentifier(mPlayerWorlds.at(received.playerId));
+
+    sendToOne(received.playerId, ClientAttachedToEntityMessage{received.entityId, worldIdentifier, mPlayerPositions.at(received.playerId)}, true, CHANNEL_DEFAULT);
 }
 
 void ServerNetworkingSystem::handleMessage(const PlayerEntityMovedMessage& received)
 {
     mPlayerPositions.at(received.playerId) = received.position;
+
+    sendToOne(received.playerId, ClientPositionMessage{received.position}, false, CHANNEL_DEFAULT);
 }
 
 void ServerNetworkingSystem::handleMessage(const PlayerEntersWorldMessage& received)
 {
     mPlayerWorlds.at(received.playerId) = received.worldId;
+
+    sendToOne(received.playerId, ClientEnteredWorldMessage{mGameInterface.getWorldSystem().worldIdToIdentifier(mPlayerWorlds.at(received.playerId))}, true, CHANNEL_DEFAULT);
 }
 
 void ServerNetworkingSystem::handleMessage(const EntityCreatedMessage& received)

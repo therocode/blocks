@@ -108,7 +108,7 @@ void Renderer::handleMessage(const UpdateChunkVboMessage& received)
     }
 }
 
-void Renderer::handleMessage(const ClientChunkDeletedMessage& received)
+void Renderer::handleMessage(const ChunkVBODeletedMessage& received)
 {
     ChunkCoord coordinate = received.coordinate;
 
@@ -149,7 +149,7 @@ void Renderer::handleMessage(const WindowResizeMessage& received)
 
 void Renderer::handleMessage(const ClientAttachedToEntityMessage& received)
 {
-    mCameraEntity = received.id;
+    mCameraEntity = received.entityId;
 }
 
 void Renderer::render()
