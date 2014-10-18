@@ -191,6 +191,11 @@ void ClientNetworkingSystem::handleServerData(const std::vector<uint8_t>& data)
         ClientChunksDeliveredMessage received = deserializeMessage<ClientChunksDeliveredMessage>(data);
         mBus.send(received);
     }
+    else if(type == VOXEL_UPDATED)
+    {
+        VoxelUpdatedMessage received = deserializeMessage<VoxelUpdatedMessage>(data);
+        mBus.send(received);
+    }
     else if(type == ENTITY_ENTERED_RANGE)
     {
         EntityEnteredRangeMessage received = deserializeMessage<EntityEnteredRangeMessage>(data);

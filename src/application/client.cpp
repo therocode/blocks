@@ -124,7 +124,7 @@ void Client::handleMessage(const ClientChunksDeliveredMessage& received)
     }
 }
 
-void Client::handleMessage(const VoxelSetMessage& received)
+void Client::handleMessage(const VoxelUpdatedMessage& received)
 {
     ChunkCoord chunkCoord = VoxelToChunk::convert(received.voxel);
     ChunkVoxelCoord chunkVoxelCoord = VoxelToChunkVoxel::convert(received.voxel);

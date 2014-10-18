@@ -17,7 +17,7 @@ enum { INVALID = -1,
     //joining
     CLIENT_JOIN_REQUESTED, CLIENT_JOIN_DENIED, CLIENT_JOIN_ACCEPTED, SUBSCRIPTION_REQUESTED, SUBSCRIPTION_REPLY,
     //chunks
-    CLIENT_REQUESTED_CHUNKS, CLIENT_CHUNKS_DENIED, CLIENT_CHUNKS_DELIVERY,
+    CLIENT_REQUESTED_CHUNKS, CLIENT_CHUNKS_DENIED, CLIENT_CHUNKS_DELIVERY, VOXEL_UPDATED,
     //controls
     CLIENT_ACTION, CLIENT_MOVE_ACTION, CLIENT_MOVE_DIRECTION, CLIENT_PITCH_YAW,
     //entities
@@ -143,6 +143,20 @@ struct ClientChunksDeliveredMessage
     std::vector<ChunkCoord> coordinates;
     std::vector<RleIndexArray> rleIndices;
     std::vector<RleSegmentArray> rleSegments;
+};
+
+struct VoxelUpdatedMessage
+{
+    int32_t getType() const {return VOXEL_UPDATED;}
+
+    template<class Archive>
+    void serialize(Archive& archive)
+    {
+        archive(voxel.x, voxel.y, voxel.z, type);
+    }
+
+    VoxelCoord voxel;
+    VoxelType type;
 };
 
 struct ClientActionMessage

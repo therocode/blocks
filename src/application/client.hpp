@@ -17,7 +17,7 @@ class InputAdaptor;
 class Client :
     public fea::MessageReceiver<ClientActionMessage,
                                 ClientChunksDeliveredMessage,
-                                VoxelSetMessage,
+                                VoxelUpdatedMessage,
                                 ClientChunkDeletedMessage,
                                 CursorLockedMessage,
                                 GameStartMessage,
@@ -33,7 +33,7 @@ class Client :
         void render();
         void handleMessage(const ClientActionMessage& received) override;
         void handleMessage(const ClientChunksDeliveredMessage& received) override;
-        void handleMessage(const VoxelSetMessage& received) override;
+        void handleMessage(const VoxelUpdatedMessage& received) override;
         void handleMessage(const ClientChunkDeletedMessage& received) override;
         void handleMessage(const CursorLockedMessage& received) override;
         void handleMessage(const GameStartMessage& received) override;

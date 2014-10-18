@@ -39,7 +39,8 @@ class ServerNetworkingSystem : public fea::MessageReceiver<
                                            EntityRemovedMessage,
                                            ChunksDataDeniedMessage,
                                            ChunksDataDeliveredMessage,
-                                           ChunkFinishedMessage>
+                                           ChunkFinishedMessage,
+                                           VoxelSetMessage>
 {
     public:
         ServerNetworkingSystem(fea::MessageBus& bus, const GameInterface& gameInterface, const NetworkParameters& parameters);
@@ -64,6 +65,7 @@ class ServerNetworkingSystem : public fea::MessageReceiver<
         void handleMessage(const ChunksDataDeniedMessage& received) override;
         void handleMessage(const ChunksDataDeliveredMessage& received) override;
         void handleMessage(const ChunkFinishedMessage& received) override;
+        void handleMessage(const VoxelSetMessage& received) override;
     private:
         void acceptRemoteClient(uint32_t id);
         void handleClientData(uint32_t clientId, const std::vector<uint8_t>& data);

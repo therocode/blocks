@@ -391,6 +391,28 @@ void ServerNetworkingSystem::handleMessage(const ChunkFinishedMessage& received)
     }
 }
 
+void ServerNetworkingSystem::handleMessage(const VoxelSetMessage& received)
+{
+    ChunkCoord chunk = VoxelToChunk::convert(received.voxel);
+
+    for(const auto& subscription : mSubscriptions)
+    {
+        uint32_t playerId = subscription.first;
+        const auto& positionIterator = mPlayerPositions.find(playerId);
+
+        if(positionIterator != mPlayerPositions.end())
+        {
+            ChunkCoord playerChunk = WorldToChunk::convert(positionIterator->second);
+
+            if(glm::distance(glm::vec3(chunk), glm::vec3(playerChunk)) <= (float)mSettings.maxChunkViewDistance)
+            {
+                VoxelUpdatedMessage message{received.voxel, received.type};
+                sendToOne(playerId, message, true, CHANNEL_DEFAULT);
+            }
+        }
+    }
+}
+
 void ServerNetworkingSystem::acceptRemoteClient(uint32_t id)
 {
     if(mAcceptingClients)
