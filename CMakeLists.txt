@@ -258,9 +258,11 @@ find_package(GLM)
 find_package(SDL2)
 find_package(OpenGL REQUIRED)
 find_package(ENet)
+if(CLIENT_ONLY)
 find_package(angelscript)
 
 find_package(JsonCpp REQUIRED)
+endif()
 
 
 include_directories(include)
