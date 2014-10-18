@@ -91,20 +91,23 @@ Type InterpolationGrid3D<Type>::get(const glm::uvec3& location) const
 
         std::array<Type, 8> interpolationPoints;
 
-        glm::uvec3 innerPoint = location / mDownSamplingPow; 
-        glm::vec3 point = glm::fract((glm::vec3)location / (float)mDownSamplingPow);
+
+        glm::vec3 divided = (glm::vec3)location / (float)mDownSamplingPow;
+        glm::vec3 point = glm::fract(divided);
+        glm::uvec3 innerPoint = (glm::uvec3)divided;
+        uint32_t innerIndex = toInnerIndex(innerPoint);
 
         if(glm::length(point) < 0.000005f)
-            return mValues.at(toInnerIndex(innerPoint));
+            return mValues.at(innerIndex);
 
-        interpolationPoints[0 + 0 + 0] = mValues.at(toInnerIndex(innerPoint) + 0 + 0          + 0             );
-        interpolationPoints[1 + 0 + 0] = mValues.at(toInnerIndex(innerPoint) + 1 + 0          + 0             );
-        interpolationPoints[0 + 2 + 0] = mValues.at(toInnerIndex(innerPoint) + 0 + mInnerSize + 0             );
-        interpolationPoints[1 + 2 + 0] = mValues.at(toInnerIndex(innerPoint) + 1 + mInnerSize + 0             );
-        interpolationPoints[0 + 0 + 4] = mValues.at(toInnerIndex(innerPoint) + 0 + 0          + mInnerSizePow2);
-        interpolationPoints[1 + 0 + 4] = mValues.at(toInnerIndex(innerPoint) + 1 + 0          + mInnerSizePow2);
-        interpolationPoints[0 + 2 + 4] = mValues.at(toInnerIndex(innerPoint) + 0 + mInnerSize + mInnerSizePow2);
-        interpolationPoints[1 + 2 + 4] = mValues.at(toInnerIndex(innerPoint) + 1 + mInnerSize + mInnerSizePow2);
+        interpolationPoints[0 + 0 + 0] = mValues.at(innerIndex + 0 + 0          + 0             );
+        interpolationPoints[1 + 0 + 0] = mValues.at(innerIndex + 1 + 0          + 0             );
+        interpolationPoints[0 + 2 + 0] = mValues.at(innerIndex + 0 + mInnerSize + 0             );
+        interpolationPoints[1 + 2 + 0] = mValues.at(innerIndex + 1 + mInnerSize + 0             );
+        interpolationPoints[0 + 0 + 4] = mValues.at(innerIndex + 0 + 0          + mInnerSizePow2);
+        interpolationPoints[1 + 0 + 4] = mValues.at(innerIndex + 1 + 0          + mInnerSizePow2);
+        interpolationPoints[0 + 2 + 4] = mValues.at(innerIndex + 0 + mInnerSize + mInnerSizePow2);
+        interpolationPoints[1 + 2 + 4] = mValues.at(innerIndex + 1 + mInnerSize + mInnerSizePow2);
 
         FEA_ASSERT(mInterpolator, "No interpolator given!");
 
