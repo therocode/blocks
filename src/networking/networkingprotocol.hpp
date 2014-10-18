@@ -15,13 +15,13 @@
 
 enum { INVALID = -1, 
     //joining
-    CLIENT_JOIN_REQUESTED, CLIENT_JOIN_DENIED, CLIENT_JOIN_ACCEPTED,
+    CLIENT_JOIN_REQUESTED, CLIENT_JOIN_DENIED, CLIENT_JOIN_ACCEPTED, SUBSCRIPTION_REQUESTED, SUBSCRIPTION_REPLY,
     //chunks
     CLIENT_REQUESTED_CHUNKS, CLIENT_CHUNKS_DENIED, CLIENT_CHUNKS_DELIVERY,
     //controls
     CLIENT_ACTION, CLIENT_MOVE_ACTION, CLIENT_MOVE_DIRECTION, CLIENT_PITCH_YAW,
     //entities
-    CLIENT_ATTACHED_TO_ENTITY, ENTITY_SUBSCRIPTION_REQUESTED, ENTITY_SUBSCRIPTION_REPLY, ENTITY_ENTERED_RANGE, ENTITY_POSITION_UPDATED, ENTITY_ROTATION_UPDATED, ENTITY_LEFT_RANGE,
+    CLIENT_ATTACHED_TO_ENTITY, ENTITY_ENTERED_RANGE, ENTITY_POSITION_UPDATED, ENTITY_ROTATION_UPDATED, ENTITY_LEFT_RANGE,
     //client
     CLIENT_ENTERED_WORLD,
     CLIENT_POSITION,
@@ -212,22 +212,22 @@ struct ClientAttachedToEntityMessage
     glm::vec3 position;
 };
 
-struct EntitySubscriptionRequestedMessage
+struct SubscriptionRequestedMessage
 {
-    int32_t getType() const {return ENTITY_SUBSCRIPTION_REQUESTED;}
+    int32_t getType() const {return SUBSCRIPTION_REQUESTED;}
 
     template<class Archive>
     void serialize(Archive& archive)
     {
-        archive(distance);
+        archive(chunkDistance);
     }
 
-    float distance;
+    uint32_t chunkDistance;
 };
 
-struct EntitySubscriptionReplyMessage
+struct SubscriptionReplyMessage
 {
-    int32_t getType() const {return ENTITY_SUBSCRIPTION_REPLY;}
+    int32_t getType() const {return SUBSCRIPTION_REPLY;}
 
     template<class Archive>
     void serialize(Archive& archive)

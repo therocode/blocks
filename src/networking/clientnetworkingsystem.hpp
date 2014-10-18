@@ -21,7 +21,7 @@ class ClientNetworkingSystem : public
                          ClientJoinAcceptedMessage,
                          ClientRequestedChunksMessage,
                          ClientChunksDeniedMessage,
-                         EntitySubscriptionReplyMessage,
+                         SubscriptionReplyMessage,
                          ClientActionMessage,
                          ClientMoveActionMessage,
                          ClientMoveDirectionMessage,
@@ -40,7 +40,7 @@ class ClientNetworkingSystem : public
         void handleMessage(const ClientJoinAcceptedMessage& received) override;
         void handleMessage(const ClientRequestedChunksMessage& received) override;
         void handleMessage(const ClientChunksDeniedMessage& received) override;
-        void handleMessage(const EntitySubscriptionReplyMessage& received) override;
+        void handleMessage(const SubscriptionReplyMessage& received) override;
         void handleMessage(const ClientActionMessage& received) override;
         void handleMessage(const ClientMoveActionMessage& received) override;
         void handleMessage(const ClientMoveDirectionMessage& received) override;

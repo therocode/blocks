@@ -97,7 +97,7 @@ void ServerNetworkingSystem::handleMessage(const LocalDisconnectionMessage& rece
     mBus.send(PlayerLeftGameMessage{mLocalPlayerId});
 
     mPlayerPositions.erase(mLocalPlayerId);
-    mEntitySubscriptions.erase(mLocalPlayerId);
+    mSubscriptions.erase(mLocalPlayerId);
     mEntityTracking.erase(mLocalPlayerId);
     mLocalPlayerId = -1;
     mLocalClientBus = nullptr;
@@ -134,6 +134,17 @@ void ServerNetworkingSystem::handleMessage(const ClientJoinRequestedMessage& rec
 
         ClientJoinAcceptedMessage message{mSettings};
         mLocalClientBus->send(message);
+    }
+}
+
+void ServerNetworkingSystem::handleMessage(const SubscriptionRequestedMessage& received)
+{
+    if(mLocalClientBus != nullptr)
+    {
+        FEA_ASSERT(mLocalPlayerId != -1, "Trying to subscribe before joining!\n");
+        mSubscriptions.emplace(mLocalPlayerId, received.chunkDistance);
+
+        mLocalClientBus->send(SubscriptionReplyMessage{true});
     }
 }
 
@@ -177,17 +188,6 @@ void ServerNetworkingSystem::handleMessage(const ClientPitchYawMessage& received
     }
 }
 
-void ServerNetworkingSystem::handleMessage(const EntitySubscriptionRequestedMessage& received)
-{
-    if(mLocalClientBus != nullptr)
-    {
-        FEA_ASSERT(mLocalPlayerId != -1, "Trying to subscribe before joining!\n");
-        mEntitySubscriptions.emplace(mLocalPlayerId, received.distance);
-
-        mLocalClientBus->send(EntitySubscriptionReplyMessage{true});
-    }
-}
-
 void ServerNetworkingSystem::handleMessage(const PlayerAttachedToEntityMessage& received)
 {
     mEntityIdToPlayerId.emplace(received.entityId, received.playerId);
@@ -219,7 +219,7 @@ void ServerNetworkingSystem::handleMessage(const EntityCreatedMessage& received)
     WorldId entityWorld = entity->getAttribute<WorldId>("current_world");
     const glm::vec3& entityPosition = entity->getAttribute<glm::vec3>("position");
 
-    for(const auto& subscription : mEntitySubscriptions)
+    for(const auto& subscription : mSubscriptions)
     {
         uint32_t playerId = subscription.first;
         const auto& positionIterator = mPlayerPositions.find(playerId);
@@ -227,7 +227,7 @@ void ServerNetworkingSystem::handleMessage(const EntityCreatedMessage& received)
         if(positionIterator != mPlayerPositions.end())
         {
             const glm::vec3& playerPosition = positionIterator->second;
-            float range = subscription.second;
+            float range = subscription.second * chunkWidth;
 
             if(glm::distance(entityPosition, playerPosition) < range && entityWorld == mPlayerWorlds.at(playerId))
             {
@@ -244,7 +244,7 @@ void ServerNetworkingSystem::handleMessage(const EntityMovedMessage& received)
 {
     const glm::vec3& entityPosition = received.newPosition;
 
-    for(const auto& subscription : mEntitySubscriptions)
+    for(const auto& subscription : mSubscriptions)
     {
         uint32_t playerId = subscription.first;
         const auto& positionIterator = mPlayerPositions.find(playerId);
@@ -252,7 +252,7 @@ void ServerNetworkingSystem::handleMessage(const EntityMovedMessage& received)
         if(positionIterator != mPlayerPositions.end())
         {
             const glm::vec3& playerPosition = positionIterator->second;
-            float range = subscription.second;
+            float range = subscription.second * chunkWidth;
 
             if(glm::distance(entityPosition, playerPosition) < range && received.worldId == mPlayerWorlds.at(playerId))
             {
@@ -285,7 +285,7 @@ void ServerNetworkingSystem::handleMessage(const EntityMovedMessage& received)
 
 void ServerNetworkingSystem::handleMessage(const EntityRotatedMessage& received)
 {
-    for(const auto& subscription : mEntitySubscriptions)
+    for(const auto& subscription : mSubscriptions)
     {
         uint32_t playerId = subscription.first;
 
@@ -299,7 +299,7 @@ void ServerNetworkingSystem::handleMessage(const EntityRotatedMessage& received)
 
 void ServerNetworkingSystem::handleMessage(const EntityRemovedMessage& received)
 {
-    for(const auto& subscription : mEntitySubscriptions)
+    for(const auto& subscription : mSubscriptions)
     {
         uint32_t playerId = subscription.first;
 
@@ -483,14 +483,14 @@ void ServerNetworkingSystem::handleClientData(uint32_t clientId, const std::vect
                 mBus.send(message);
             }
         }
-        else if(type == ENTITY_SUBSCRIPTION_REQUESTED)
+        else if(type == SUBSCRIPTION_REQUESTED)
         {
             if(mClientToPlayerIds.count(clientId) != 0)
             {
-                EntitySubscriptionRequestedMessage received = deserializeMessage<EntitySubscriptionRequestedMessage>(data);
-                mEntitySubscriptions.emplace(mClientToPlayerIds.at(clientId), received.distance);
+                SubscriptionRequestedMessage received = deserializeMessage<SubscriptionRequestedMessage>(data);
+                mSubscriptions.emplace(mClientToPlayerIds.at(clientId), received.chunkDistance);
 
-                mENetServer->sendToOne(clientId, serializeMessage(EntitySubscriptionReplyMessage{true}), true, CHANNEL_DEFAULT);
+                mENetServer->sendToOne(clientId, serializeMessage(SubscriptionReplyMessage{true}), true, CHANNEL_DEFAULT);
             }
         }
         else if(type == TEST_1)
@@ -520,7 +520,7 @@ void ServerNetworkingSystem::disconnectRemoteClient(uint32_t id)
         mClientToPlayerIds.erase(id);
         mPlayerToClientIds.erase(playerId);
         mPlayerPositions.erase(playerId);
-        mEntitySubscriptions.erase(playerId);
+        mSubscriptions.erase(playerId);
         mEntityTracking.erase(playerId);
         mPlayerWorlds.erase(playerId);
 

@@ -90,7 +90,7 @@ void ClientNetworkingSystem::handleMessage(const ClientJoinAcceptedMessage& rece
     mBus.send(LogMessage{"Successfully joined the game on server " + received.settings.serverName + "! \nMOTD: " + received.settings.motd, clientName, LogLevel::INFO});
     mBus.send(GameStartMessage{});
 
-    send(EntitySubscriptionRequestedMessage{(float)chunkWidth * 8.0f}, true, CHANNEL_DEFAULT);
+    send(SubscriptionRequestedMessage{chunkWidth}, true, CHANNEL_DEFAULT);
 }
 
 void ClientNetworkingSystem::handleMessage(const ClientRequestedChunksMessage& received)
@@ -103,9 +103,9 @@ void ClientNetworkingSystem::handleMessage(const ClientChunksDeniedMessage& rece
     //std::cout << "got " << received.coordinates.size() << " chunks denied!\n";
 }
 
-void ClientNetworkingSystem::handleMessage(const EntitySubscriptionReplyMessage& received)
+void ClientNetworkingSystem::handleMessage(const SubscriptionReplyMessage& received)
 {
-    mBus.send(LogMessage{received.granted ? "Server granted entity subscription" : "Server did not grant entity update subscription request", clientName, LogLevel::INFO});
+    mBus.send(LogMessage{received.granted ? "Server granted subscription" : "Server did not grant subscription request", clientName, LogLevel::INFO});
 }
 
 void ClientNetworkingSystem::handleMessage(const ClientActionMessage& received)
@@ -181,9 +181,9 @@ void ClientNetworkingSystem::handleServerData(const std::vector<uint8_t>& data)
         ClientChunksDeniedMessage received = deserializeMessage<ClientChunksDeniedMessage>(data);
         mBus.send(received);
     }
-    else if(type == ENTITY_SUBSCRIPTION_REPLY)
+    else if(type == SUBSCRIPTION_REPLY)
     {
-        EntitySubscriptionReplyMessage received = deserializeMessage<EntitySubscriptionReplyMessage>(data);
+        SubscriptionReplyMessage received = deserializeMessage<SubscriptionReplyMessage>(data);
         mBus.send(received);
     }
     else if(type == CLIENT_CHUNKS_DELIVERY)

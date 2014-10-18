@@ -25,11 +25,11 @@ class ServerNetworkingSystem : public fea::MessageReceiver<
                                            GameStartMessage,
                                            ClientJoinRequestedMessage,
                                            ClientRequestedChunksMessage,
+                                           SubscriptionRequestedMessage,
                                            ClientActionMessage,
                                            ClientMoveActionMessage,
                                            ClientMoveDirectionMessage,
                                            ClientPitchYawMessage,
-                                           EntitySubscriptionRequestedMessage,
                                            PlayerAttachedToEntityMessage,
                                            PlayerEntityMovedMessage,
                                            PlayerEntersWorldMessage,
@@ -49,11 +49,11 @@ class ServerNetworkingSystem : public fea::MessageReceiver<
         void handleMessage(const GameStartMessage& received) override;
         void handleMessage(const ClientJoinRequestedMessage& received) override;
         void handleMessage(const ClientRequestedChunksMessage& received) override;
+        void handleMessage(const SubscriptionRequestedMessage& received) override;
         void handleMessage(const ClientActionMessage& received) override;
         void handleMessage(const ClientMoveActionMessage& received) override;
         void handleMessage(const ClientMoveDirectionMessage& received) override;
         void handleMessage(const ClientPitchYawMessage& received) override;
-        void handleMessage(const EntitySubscriptionRequestedMessage& received) override;
         void handleMessage(const PlayerAttachedToEntityMessage& received) override;
         void handleMessage(const PlayerEntityMovedMessage& received) override;
         void handleMessage(const PlayerEntersWorldMessage& received) override;
@@ -90,7 +90,7 @@ class ServerNetworkingSystem : public fea::MessageReceiver<
         std::unordered_map<uint32_t, WorldId> mPlayerWorlds;
 
         //entity subscriptions
-        std::unordered_map<uint32_t, float> mEntitySubscriptions;  //playerId, range
+        std::unordered_map<uint32_t, uint32_t> mSubscriptions;  //playerId, range
         std::unordered_map<fea::EntityId, uint32_t> mEntityIdToPlayerId;
         std::unordered_map<uint32_t, std::unordered_set<fea::EntityId>> mEntityTracking;
 
