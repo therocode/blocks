@@ -22,15 +22,13 @@ if(BUILD_EXPBIOMES)
     add_subdirectory(expbiomes)
 endif()
 
-#Set source files.
-set(source_files
-    src/gameinterface.cpp
-	src/application/blocksapp.cpp
-    src/application/client.cpp
-	src/application/main.cpp
+if(NOT CLIENT_ONLY)
+set(server_source
     src/application/server.cpp
 
-    src/console/console.cpp
+    src/networking/chunkrequesthandler.cpp
+    src/networking/enetserver.cpp
+    src/networking/servernetworkingsystem.cpp
 
     src/entity/entityfactory.cpp
     src/entity/entitydefinitionloader.cpp
@@ -39,34 +37,8 @@ set(source_files
     src/entity/controllers/entitycontroller.cpp
     src/entity/controllers/gfxcontroller.cpp
     src/entity/controllers/movementcontroller.cpp
-    src/entity/controllers/movedirection.cpp
     src/entity/controllers/physicscontroller.cpp
     src/entity/controllers/playercontroller.cpp
-
-    src/input/inputadaptor.cpp
-
-    src/networking/clientnetworkingsystem.cpp
-    src/networking/chunkrequesthandler.cpp
-    src/networking/enet.cpp
-    src/networking/enetclient.cpp
-    src/networking/enetserver.cpp
-    src/networking/messageserializer.cpp
-    src/networking/servernetworkingsystem.cpp
-    
-    src/rendering/chunkgeneratorqueue.cpp
-    src/rendering/debugrenderer.cpp
-    src/rendering/billboard.cpp
-    src/rendering/camera.cpp
-    src/rendering/frustum.cpp
-    src/rendering/meshwalker.cpp
-    src/rendering/renderer.cpp
-    src/rendering/shader.cpp
-    src/rendering/shaderprogram.cpp
-    src/rendering/surfacemerger.cpp
-    src/rendering/texture.cpp
-    src/rendering/vbo.cpp
-    src/rendering/vbocreator.cpp
-    src/rendering/gl_core_3_2.c
 
     src/script/scriptcallback.cpp
     src/script/scriptengine.cpp
@@ -93,6 +65,40 @@ set(source_files
     src/script/interfaces/scriptinterface.cpp
     src/script/interfaces/stringinterface.cpp
 
+	src/world/explorationmanager.cpp
+    src/world/biome.cpp
+    src/world/biomeprovider.cpp
+    src/world/fieldgenerator.cpp
+    src/world/modmanager.cpp
+    src/world/ranges.cpp
+    src/world/raycaster.cpp
+    src/world/worldentry.cpp
+    src/world/worldprovider.cpp
+    src/world/worldsystem.cpp
+    src/world/worldloader.cpp
+    src/world/generation/chunkgenerator.cpp
+    )
+
+endif()
+
+#Set source files.
+set(source_files
+    src/gameinterface.cpp
+	src/application/blocksapp.cpp
+    src/application/client.cpp
+	src/application/main.cpp
+
+    src/console/console.cpp
+
+    src/entity/controllers/movedirection.cpp
+
+    src/input/inputadaptor.cpp
+
+    src/networking/clientnetworkingsystem.cpp
+    src/networking/enet.cpp
+    src/networking/enetclient.cpp
+    src/networking/messageserializer.cpp
+
     src/utilities/coordinateconverter.cpp
     src/utilities/directorycreator.cpp
     src/utilities/folderexploder.cpp
@@ -103,20 +109,25 @@ set(source_files
     src/utilities/random.cpp
     src/utilities/timer.cpp
 
-	src/world/explorationmanager.cpp
-    src/world/biome.cpp
-    src/world/biomeprovider.cpp
-    src/world/chunk.cpp
-    src/world/fieldgenerator.cpp
+    src/rendering/chunkgeneratorqueue.cpp
+    src/rendering/debugrenderer.cpp
+    src/rendering/billboard.cpp
+    src/rendering/camera.cpp
+    src/rendering/frustum.cpp
+    src/rendering/meshwalker.cpp
+    src/rendering/renderer.cpp
+    src/rendering/shader.cpp
+    src/rendering/shaderprogram.cpp
+    src/rendering/surfacemerger.cpp
+    src/rendering/texture.cpp
+    src/rendering/vbo.cpp
+    src/rendering/vbocreator.cpp
+    src/rendering/gl_core_3_2.c
+
     src/world/highlightmanager.cpp
-    src/world/modmanager.cpp
-    src/world/ranges.cpp
-    src/world/raycaster.cpp
-    src/world/worldentry.cpp
-    src/world/worldprovider.cpp
-    src/world/worldsystem.cpp
-    src/world/worldloader.cpp
-    src/world/generation/chunkgenerator.cpp
+    src/world/chunk.cpp
+
+    ${server_source}
     )
 
 set(header_files
@@ -178,6 +189,21 @@ set(header_files
     src/rendering/vbocreator.hpp
     src/rendering/gl_core_3_2.h
     src/rendering/opengl.hpp
+    
+    src/utilities/coordinateconverter.hpp
+    src/utilities/directorycreator.hpp
+    src/utilities/folderexploder.hpp
+    src/utilities/fpscontroller.hpp
+    src/utilities/geomath.hpp
+    src/utilities/gridnotifier.hpp
+    src/utilities/glm.hpp
+    src/utilities/interpolationgrid3d.hpp
+    src/utilities/interpolators.hpp
+    src/utilities/lodepng.hpp
+    src/utilities/logger.hpp
+	src/utilities/random.hpp
+	src/utilities/timer.hpp
+	src/utilities/tinydir.hpp
 
     src/script/scriptmessages.hpp
     src/script/scriptcallback.hpp
@@ -204,21 +230,6 @@ set(header_files
     src/script/interfaces/randominterface.hpp
     src/script/interfaces/scriptinterface.hpp
     src/script/interfaces/stringinterface.hpp
-
-    src/utilities/coordinateconverter.hpp
-    src/utilities/directorycreator.hpp
-    src/utilities/folderexploder.hpp
-    src/utilities/fpscontroller.hpp
-    src/utilities/geomath.hpp
-    src/utilities/gridnotifier.hpp
-    src/utilities/glm.hpp
-    src/utilities/interpolationgrid3d.hpp
-    src/utilities/interpolators.hpp
-    src/utilities/lodepng.hpp
-    src/utilities/logger.hpp
-	src/utilities/random.hpp
-	src/utilities/timer.hpp
-	src/utilities/tinydir.hpp
 
 	src/world/explorationmanager.hpp
 	src/world/biome.hpp

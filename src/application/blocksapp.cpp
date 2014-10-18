@@ -53,10 +53,12 @@ void BlocksApplication::loop()
         client->update();
     }
 
+#if !defined(CLIENT_ONLY)
     if(server)
     {
         server->doLogic();
     }
+#endif
 
     if(client)
     {
@@ -76,15 +78,19 @@ void BlocksApplication::destroy()
     {
         client = std::unique_ptr<Client>();
     }
+#if !defined(CLIENT_ONLY)
     if(server)
     {
         server = std::unique_ptr<Server>();
     }
+#endif
 }
 
 void BlocksApplication::handleMessage(const LocalConnectionAttemptMessage& received)
 {
+#if !defined(CLIENT_ONLY)
     mServerBus.send(received);
+#endif
 }
 
 void BlocksApplication::setupSinglePlayer()
@@ -92,7 +98,9 @@ void BlocksApplication::setupSinglePlayer()
     NetworkParameters parameters;
 
     parameters.mode = NetworkMode::SINGLE_PLAYER;
+#if !defined(CLIENT_ONLY)
     server = std::unique_ptr<Server>(new Server(mServerBus, parameters));
+#endif
     client = std::unique_ptr<Client>(new Client(mClientBus, parameters));
 }
 
@@ -103,7 +111,9 @@ void BlocksApplication::setupMultiPlayer(int32_t port)
     parameters.mode = NetworkMode::COMBINED;
     parameters.port = port;
 
+#if !defined(CLIENT_ONLY)
     server = std::unique_ptr<Server>(new Server(mServerBus, parameters));
+#endif
 	client = std::unique_ptr<Client>(new Client(mClientBus, parameters));
 }
 
@@ -113,7 +123,9 @@ void BlocksApplication::setupDedicatedServer(int32_t port)
 
     parameters.mode = NetworkMode::DEDICATED;
     parameters.port = port;
+#if !defined(CLIENT_ONLY)
     server = std::unique_ptr<Server>(new Server(mServerBus, parameters));
+#endif
 }
 
 void BlocksApplication::joinServer(const std::string& address, int32_t port)
