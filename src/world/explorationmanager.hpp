@@ -15,21 +15,19 @@ using ExplorationRegionChunkCoord = glm::u8vec3;
 using ChunkToExplorationRegion = CoordinateCoarseConvert<ChunkCoord, ExplorationRegionCoord, explorationRegionWidth>;
 using ChunkToExplorationRegionChunk = CoordinateWrapConvert<ChunkCoord, ExplorationRegionChunkCoord, 0, explorationRegionWidth - 1>;
 
-const std::string regionDir = "worlddata";
 const std::string dataExt = ".exp";
 
 class ExplorationManager
 {
 	public:
-		ExplorationManager();
+        ExplorationManager(const std::string& worldPath);
 		bool getChunkExplored(const ChunkCoord& coordinate);
 		void setChunkExplored(const ChunkCoord& coordinate);
 		void saveExploration();
-		void setWorldName(const std::string& name);
 	private:
 		std::unordered_map<ExplorationRegionCoord, std::vector<bool>> mExploreData;
 		std::unordered_set<ExplorationRegionCoord> mExploreChange;
-		std::string mWorldName;
+		std::string mWorldPath;
 		
 		std::string getFilename(ExplorationRegionCoord regionLoc);
 };

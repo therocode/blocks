@@ -3,14 +3,15 @@
 #include "../utilities/interpolators.hpp"
 #include <algorithm>
 
-WorldEntry::WorldEntry(fea::MessageBus& bus, WorldId id, const std::string& identifier, const WorldData& data) :
+WorldEntry::WorldEntry(fea::MessageBus& bus, WorldId id, const std::string& identifier, const WorldData& data, const std::string& path) :
     mBus(bus),
     mId(id),
     mIdentifier(identifier),
     mWorldData(data),
     mHighlightManager(8), //this should be read from somewhere else, probably server settings
-    mModManager(identifier)
+    mModManager(path)
 {
+
     mWorldData.biomeSettings.fields =
     {
         Field{"height"},

@@ -2,7 +2,8 @@
 #include "explorationmanager.hpp"
 #include <fstream>
 
-ExplorationManager::ExplorationManager()
+ExplorationManager::ExplorationManager(const std::string& worldPath) :
+    mWorldPath(worldPath)
 {
 }
 
@@ -92,11 +93,5 @@ std::string ExplorationManager::getFilename(ExplorationRegionCoord regionLoc)
     if(yPart[0] == '-')
         yPart[0] = '_';
 
-    return regionDir + "/" + mWorldName + "/" + xPart + "_" + yPart;
-}
-
-void ExplorationManager::setWorldName(const std::string& name)
-{
-	FEA_ASSERT(name != "", "hej");
-    mWorldName = name; //set name
+    return mWorldPath + "/" + xPart + "_" + yPart;
 }

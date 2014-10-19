@@ -6,8 +6,7 @@ TEST_CASE("exman", "[exman]")
 {
     ScopedDirectory testDir("worlddata/test_exploration");
 
-	ExplorationManager exman;
-	exman.setWorldName("test_exploration");
+	ExplorationManager exman(testDir.getPath());
 
 	ChunkCoord coords(0,0,0);
 	REQUIRE(exman.getChunkExplored(coords) == false);
@@ -26,9 +25,7 @@ TEST_CASE("exman", "[exman]")
 
 	exman.saveExploration();
 	
-	
-	ExplorationManager exman2;
-	exman2.setWorldName("test_exploration");
+	ExplorationManager exman2(testDir.getPath());
 	
 	coords = ChunkCoord(0,0,0);
 	REQUIRE(exman2.getChunkExplored(coords) == true);

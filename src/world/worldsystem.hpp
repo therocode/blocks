@@ -31,7 +31,7 @@ class WorldSystem :
         WorldId worldIdentifierToId(const std::string& identifier) const;
         const std::string& worldIdToIdentifier(WorldId id) const;
     private:
-        void createWorld(const WorldParameters& parameters);
+        void createWorld(const WorldParameters& parameters, const std::string& worldPath);
         fea::MessageBus& mBus;
         WorldProvider mWorldProvider;
         BiomeProvider mBiomeProvider;

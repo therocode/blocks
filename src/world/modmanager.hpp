@@ -17,7 +17,6 @@
 
 #define NO_CHUNK -1
 
-const std::string modRegionDir = "worlddata";
 const std::string dataExt = ".dat";
 const std::string indexExt = ".idx";
 
@@ -59,7 +58,7 @@ struct ModManagerException : public std::exception
 class ModManager 
 {
     public:
-        ModManager(const std::string& worldName);
+        ModManager(const std::string& worldPath);
         void loadMods(const ChunkCoord& location, Chunk& chunk);
         void saveMods();
         void saveMods(ModRegionCoord regionLoc);
@@ -80,5 +79,5 @@ class ModManager
         std::string mDataPath;
         WorldModMap mMods;
         WorldTimestampMap mTimestamps;
-        std::string mWorldName;
+        std::string mWorldPath;
 };

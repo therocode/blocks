@@ -4,8 +4,8 @@
 
 using namespace std;
 
-ModManager::ModManager(const std::string& worldName) :
-    mWorldName(worldName)
+ModManager::ModManager(const std::string& worldPath) :
+    mWorldPath(worldPath)
 {
 }
 
@@ -75,21 +75,6 @@ void ModManager::saveMods()
 
 void ModManager::saveMods(ModRegionCoord modRegionLoc) 
 {
-	if(!DirectoryCreator::directoryExists(modRegionDir))
-	{
-		if(!DirectoryCreator::createDirectory(modRegionDir))
-		{
-			std::cout << modRegionDir << "didn't exist and failed to create it" << std::endl;
-		}
-	}
-	if(!DirectoryCreator::directoryExists(modRegionDir + "/" + mWorldName))
-	{
-		if(!DirectoryCreator::createDirectory(modRegionDir + "/" + mWorldName))
-		{
-			std::cout << modRegionDir + "/" + mWorldName << "didn't exist and failed to create it" << std::endl;
-		}
-	}
-
     string dataFilename = getFilename(modRegionLoc) + dataExt;
     string indexFilename = getFilename(modRegionLoc) + indexExt;
 
@@ -227,11 +212,6 @@ void ModManager::recordTimestamp(ChunkCoord loc, uint64_t timestamp)
     mTimestamps[modRegionLoc][chunkLoc] = timestamp;
 }
 
-void ModManager::setWorldName(const std::string& name)
-{
-    mWorldName = name;
-}
-
 ChunkIndex ModManager::getChunkIndex(ModRegionCoord modRegionLoc, ModRegionChunkCoord chunkLoc)
 {
     hash<ModRegionChunkCoord> crcHash;
@@ -284,5 +264,5 @@ std::string ModManager::getFilename(ModRegionCoord modRegionLoc)
     if(yPart[0] == '-')
         yPart[0] = '_';
 
-    return modRegionDir + "/" + mWorldName + "/" + xPart + "_" + yPart;  //NOTE: not sure why this needs to be casted... not good.
+    return mWorldPath + "/" + xPart + "_" + yPart; 
 }
