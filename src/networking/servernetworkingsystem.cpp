@@ -581,13 +581,20 @@ void ServerNetworkingSystem::playerRequestedChunks(uint32_t id, const std::strin
     }
     if(inRange.size() > 0)
     {
-        auto& chunkRequestHandler = mChunkRequestHandlers[mGameInterface.getWorldSystem().worldIdentifierToId(worldIdentifier)];
-
-        for(const auto& chunk : inRange)
+        if(mGameInterface.getWorldSystem().hasWorld(worldIdentifier))
         {
-            chunkRequestHandler.addRequest(id, chunk);
-        }
+            auto& chunkRequestHandler = mChunkRequestHandlers[mGameInterface.getWorldSystem().worldIdentifierToId(worldIdentifier)];
 
-        mBus.send(ChunksRequestedMessage{mPlayerWorlds.at(id), inRange});
+            for(const auto& chunk : inRange)
+            {
+                chunkRequestHandler.addRequest(id, chunk);
+            }
+
+            mBus.send(ChunksRequestedMessage{mPlayerWorlds.at(id), inRange});
+        }
+        else
+        {
+            mBus.send(LogMessage{"Client Id " + std::to_string(id) + " requested chunks of nonexisting world " + worldIdentifier, serverName, LogLevel::WARN});
+        }
     }
 }

@@ -28,6 +28,7 @@ class WorldSystem :
         void handleMessage(const HighlightEntityRemoveRequestedMessage& received) override;
         void handleMessage(const ChunksRequestedMessage& received) override;
         const ChunkMap& getWorldVoxels(WorldId id) const;
+        bool hasWorld(const std::string& identifier) const;
         WorldId worldIdentifierToId(const std::string& identifier) const;
         const std::string& worldIdToIdentifier(WorldId id) const;
     private:

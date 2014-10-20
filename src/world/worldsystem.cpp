@@ -141,6 +141,11 @@ const ChunkMap& WorldSystem::getWorldVoxels(WorldId id) const
     return mWorlds.at(id).getChunkMap();
 }
 
+bool WorldSystem::hasWorld(const std::string& identifier) const
+{
+    return mIdentifierToIdMap.count(identifier) != 0;
+}
+
 WorldId WorldSystem::worldIdentifierToId(const std::string& identifier) const
 {
     FEA_ASSERT(mIdentifierToIdMap.count(identifier) != 0, "Trying to get the ID of a world called " + identifier + " but that world doesn't exist!");
