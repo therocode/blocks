@@ -31,6 +31,10 @@ inline std::string removeBeforeComma(const std::string& line, int32_t commaIndex
         std::string withoutSpace = Type##String;\
         withoutSpace.erase(std::remove_if(withoutSpace.begin(), withoutSpace.end(), ::isspace), withoutSpace.end());\
         int32_t enumAmount = std::count(withoutSpace.begin(), withoutSpace.end(), ',') + 1;\
+\
+        if(enumAmount == 1) \
+            return withoutSpace; \
+\
         if(value == 0)\
             return removeAfterComma(withoutSpace, 0);\
         else if(value == enumAmount -1) \

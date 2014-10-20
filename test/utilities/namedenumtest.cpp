@@ -1,7 +1,9 @@
 #include "../catch.hpp"
 #include "../../src/utilities/namedenum.hpp"
 
-named_enum(TestEnum, CREAM, NOODLES, SALAD, BREAD, CURRY);
+named_enum(TestEnum, CREAM, 
+        //interrupting comment
+        NOODLES, SALAD, BREAD, CURRY);
 
 SCENARIO("named enums can be created and their values and texts are correct","[utilities]")
 {
@@ -37,5 +39,26 @@ SCENARIO("named enums can be created and their values and texts are correct","[u
                 REQUIRE(curryString == "CURRY");
             }   
         }   
+    }
+}
+
+named_enum(SingleEnum, KALLE);
+
+SCENARIO("named enums can have only one element","[utilities]")
+{
+    GIVEN("a named enum with one entry")
+    {
+        //declared at top
+        WHEN("Value and string is stored")
+        {
+            int32_t kalle = KALLE;
+            std::string kalleString = SingleEnumToString(kalle);
+
+            THEN("The value and string is correct")
+            {
+                REQUIRE(kalle == 0);
+                REQUIRE(kalleString == "KALLE");
+            }
+        }
     }
 }
