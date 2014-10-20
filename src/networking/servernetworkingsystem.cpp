@@ -428,10 +428,10 @@ void ServerNetworkingSystem::acceptRemoteClient(uint32_t id)
 
 void ServerNetworkingSystem::handleClientData(uint32_t clientId, const std::vector<uint8_t>& data)
 {
+    int32_t type = decodeType(data);
+
     try
     {
-        int32_t type = decodeType(data);
-
         if(type == CLIENT_JOIN_REQUESTED)
         {
             ClientJoinRequestedMessage received = deserializeMessage<ClientJoinRequestedMessage>(data);
@@ -526,7 +526,7 @@ void ServerNetworkingSystem::handleClientData(uint32_t clientId, const std::vect
     } 
     catch (const DeserializeException& e)
     {
-        mBus.send(LogMessage{"Received corrupt/unserializable message", serverName, LogLevel::WARN});
+        mBus.send(LogMessage{"Received corrupt/unserializable message of type " + std::to_string(type) + "(" + PacketTypeToString(type) + ")", serverName, LogLevel::WARN});
     }
 }
 
@@ -545,6 +545,9 @@ void ServerNetworkingSystem::disconnectRemoteClient(uint32_t id)
         mSubscriptions.erase(playerId);
         mEntityTracking.erase(playerId);
         mPlayerWorlds.erase(playerId);
+        
+        for(auto& requestHandler : mChunkRequestHandlers)
+            requestHandler.second.clearRequestsFor(playerId);
 
         mBus.send(PlayerLeftGameMessage{playerId});
     }

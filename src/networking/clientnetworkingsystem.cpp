@@ -8,7 +8,8 @@
 ClientNetworkingSystem::ClientNetworkingSystem(fea::MessageBus& bus, const NetworkParameters& parameters) :
     mBus(bus),
     mParameters(parameters),
-    mServerBus(nullptr)
+    mServerBus(nullptr),
+    mIsConnected(false)
 {
     subscribe(mBus, *this);
 
@@ -74,6 +75,7 @@ void ClientNetworkingSystem::handleMessage(const LocalConnectionEstablishedMessa
     mBus.send(LogMessage{"Requesting to join game as '" + std::string("Tobbe") + "'", clientName, LogLevel::INFO});
     ClientJoinRequestedMessage message{"Tobbe"};
     send(message, true, CHANNEL_DEFAULT);
+    mIsConnected = true;
 }
 
 void ClientNetworkingSystem::handleMessage(const ClientJoinDeniedMessage& received)
@@ -90,12 +92,14 @@ void ClientNetworkingSystem::handleMessage(const ClientJoinAcceptedMessage& rece
     mBus.send(LogMessage{"Successfully joined the game on server " + received.settings.serverName + "! \nMOTD: " + received.settings.motd, clientName, LogLevel::INFO});
     mBus.send(GameStartMessage{});
 
-    send(SubscriptionRequestedMessage{chunkWidth}, true, CHANNEL_DEFAULT);
+    if(mIsConnected)
+        send(SubscriptionRequestedMessage{chunkWidth}, true, CHANNEL_DEFAULT);
 }
 
 void ClientNetworkingSystem::handleMessage(const ClientRequestedChunksMessage& received)
 {
-    send(received, true, CHANNEL_CHUNKS);
+    if(mIsConnected)
+        send(received, true, CHANNEL_CHUNKS);
 }
 
 void ClientNetworkingSystem::handleMessage(const ClientChunksDeniedMessage& received)
@@ -112,23 +116,27 @@ void ClientNetworkingSystem::handleMessage(const ClientActionMessage& received)
 {
     if(received.action != QUIT)
     {
-        send(received, true, CHANNEL_DEFAULT);
+        if(mIsConnected)
+            send(received, true, CHANNEL_DEFAULT);
     }
 }
 
 void ClientNetworkingSystem::handleMessage(const ClientMoveActionMessage& received)
 {
-    send(received, true, CHANNEL_DEFAULT);
+    if(mIsConnected)
+        send(received, true, CHANNEL_DEFAULT);
 }
 
 void ClientNetworkingSystem::handleMessage(const ClientMoveDirectionMessage& received)
 {
-    send(received, true, CHANNEL_DEFAULT);
+    if(mIsConnected)
+        send(received, true, CHANNEL_DEFAULT);
 }
 
 void ClientNetworkingSystem::handleMessage(const ClientPitchYawMessage& received)
 {
-    send(received, true, CHANNEL_DEFAULT);
+    if(mIsConnected)
+        send(received, true, CHANNEL_DEFAULT);
 }
 
 void ClientNetworkingSystem::handleMessage(const EntityEnteredRangeMessage& received)
@@ -158,6 +166,7 @@ void ClientNetworkingSystem::connectedToServer()
     mBus.send(LogMessage{"Requesting to join game as '" + std::string("Tobbe") + "'", clientName, LogLevel::INFO});
     ClientJoinRequestedMessage message{"Tobbe"};
     send(message, true, CHANNEL_DEFAULT);
+    mIsConnected = true;
 }
 
 void ClientNetworkingSystem::handleServerData(const std::vector<uint8_t>& data)
@@ -242,11 +251,12 @@ void ClientNetworkingSystem::handleServerData(const std::vector<uint8_t>& data)
     } 
     catch(const DeserializeException& e)
     {
-        mBus.send(LogMessage{"Received corrupt/unserializable message", clientName, LogLevel::WARN});
+        mBus.send(LogMessage{"Received corrupt/unserializable message of type " + std::to_string(type) + "(" + PacketTypeToString(type) + ")", clientName, LogLevel::WARN});
     }
 }
 
 void ClientNetworkingSystem::disconnectedFromServer()
 {
     mBus.send(LogMessage{"Disconnected from server", clientName, LogLevel::INFO});
+    mIsConnected = false;
 }

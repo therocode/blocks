@@ -61,6 +61,7 @@ class ClientNetworkingSystem : public
         fea::MessageBus* mServerBus;
         std::unique_ptr<ENet> mENet;
         std::unique_ptr<ENetClient> mENetClient;
+        bool mIsConnected;
 };
 
 template <typename Message>
