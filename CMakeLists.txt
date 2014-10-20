@@ -201,6 +201,7 @@ set(header_files
     src/utilities/interpolators.hpp
     src/utilities/lodepng.hpp
     src/utilities/logger.hpp
+    src/utilities/namedenum.hpp
 	src/utilities/random.hpp
 	src/utilities/timer.hpp
 	src/utilities/tinydir.hpp
@@ -379,6 +380,7 @@ if(BUILD_TESTS)
         "test/utilities/directorycreatortest.cpp"
         "test/utilities/scopeddirectorytest.cpp"
         "test/utilities/idprovidertest.cpp"
+        "test/utilities/namedenumtest.cpp"
         "test/world/chunktest.cpp"
         "test/world/coordinatetest.cpp"
         "test/world/explorationmanagertest.cpp"
