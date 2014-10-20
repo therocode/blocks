@@ -53,7 +53,6 @@
 
         "attributes":
         {
-            "current_chunk":"",
             "block_facing":"0,0,0",
             "block_facing_face":"0",
             "is_facing_block":"false"

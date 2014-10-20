@@ -33,7 +33,6 @@ void PlayerController::handleMessage(const PlayerJoinedGameMessage& received)
     mBus.send(EntityRequestedMessage{"Player", [&] (fea::EntityPtr e) 
             {
                 e->setAttribute("current_world", 0u);
-                e->setAttribute("current_chunk", WorldToChunk::convert(position));
                 e->setAttribute("position", position);
                 playerEntity = e;
             }});
@@ -197,14 +196,14 @@ void PlayerController::handleMessage(const EntityMovedMessage& received)
 
         fea::EntityPtr entity = mPlayerEntities.at(playerId).lock();
         //updating current chunk
-        const glm::vec3& position = received.newPosition;
+        ChunkCoord newChunk = WorldToChunk::convert(received.newPosition);
 
-        if(WorldToChunk::convert(position) != entity->getAttribute<ChunkCoord>("current_chunk"))
+        if(WorldToChunk::convert(received.oldPosition) != newChunk)
         {
-            playerEntersChunk(playerId, WorldToChunk::convert(position));
+            playerEntersChunk(playerId, newChunk);
         }
 
-        mBus.send(PlayerEntityMovedMessage{playerId, position});
+        mBus.send(PlayerEntityMovedMessage{playerId, received.newPosition});
     }
 
 }
@@ -214,7 +213,6 @@ void PlayerController::playerEntersChunk(size_t playerId, const ChunkCoord& chun
     fea::EntityPtr entity = mPlayerEntities.at(playerId).lock();
     mBus.send(PlayerEntersChunkMessage{(fea::EntityId)playerId, chunk});
     mBus.send(HighlightEntityMoveRequestedMessage{entity->getAttribute<WorldId>("current_world"), entity->getId(), chunk});
-    entity->setAttribute("current_chunk", chunk);
 }
 
 void PlayerController::updateVoxelLookAt(size_t playerId)

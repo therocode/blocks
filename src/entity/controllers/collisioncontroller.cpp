@@ -72,6 +72,7 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& receiv
     fea::EntityPtr entity =  mEntities.at(id).lock();
     WorldId worldId = entity->getAttribute<WorldId>("current_world");
     glm::vec3 oldPosition = entity->getAttribute<glm::vec3>("position");
+    const glm::vec3 oldPositionRetained = oldPosition;
     glm::vec3 size = entity->getAttribute<glm::vec3>("hitbox");
     AABB a;
 
@@ -228,7 +229,7 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& receiv
         }
     }
     entity->setAttribute<glm::vec3>("position", approvedPosition);
-    mBus.send(EntityMovedMessage{id, worldId, requestedPosition, approvedPosition});
+    mBus.send(EntityMovedMessage{id, worldId, oldPositionRetained, approvedPosition});
 }
 
 bool CollisionController::testAABBWorld(WorldId worldId, const AABB& a) const{
