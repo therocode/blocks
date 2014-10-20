@@ -62,3 +62,22 @@ SCENARIO("named enums can have only one element","[utilities]")
         }
     }
 }
+
+SCENARIO("accessing names of enum values out of range gives empty strings","[utilities]")
+{
+    GIVEN("a named enum")
+    {
+        //declared at top
+        WHEN("strings are gotten out of range")
+        {
+            std::string failString1 = TestEnumToString(-3);
+            std::string failString2 = TestEnumToString(30);
+
+            THEN("the strings are empty")
+            {
+                REQUIRE(failString1 == "");
+                REQUIRE(failString2 == "");
+            }
+        }
+    }
+}
