@@ -197,7 +197,7 @@ void PlayerController::handleMessage(const EntityMovedMessage& received)
 
         fea::EntityPtr entity = mPlayerEntities.at(playerId).lock();
         //updating current chunk
-        glm::vec3 position = received.newPosition;
+        const glm::vec3& position = received.newPosition;
 
         if(WorldToChunk::convert(position) != entity->getAttribute<ChunkCoord>("current_chunk"))
         {

@@ -36,6 +36,7 @@ set(server_source
     src/entity/controllers/collisioncontroller.cpp
     src/entity/controllers/entitycontroller.cpp
     src/entity/controllers/gfxcontroller.cpp
+    src/entity/controllers/highlightcontroller.cpp
     src/entity/controllers/movementcontroller.cpp
     src/entity/controllers/physicscontroller.cpp
     src/entity/controllers/playercontroller.cpp
@@ -150,6 +151,7 @@ set(header_files
     src/entity/controllers/collisioncontroller.hpp
     src/entity/controllers/entitycontroller.hpp
     src/entity/controllers/gfxcontroller.hpp
+    src/entity/controllers/highlightcontroller.hpp
     src/entity/controllers/moveaction.hpp
     src/entity/controllers/movedirection.hpp
     src/entity/controllers/movementcontroller.hpp

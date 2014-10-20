@@ -4,8 +4,6 @@
 #include "../../input/inputmessages.hpp"
 #include "../entitymessages.hpp"
 
-using ChunkCoord = glm::i64vec3;
-
 class PlayerController : 
     public EntityController,
     public fea::MessageReceiver<PlayerJoinedGameMessage,
