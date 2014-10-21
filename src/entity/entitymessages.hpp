@@ -17,6 +17,11 @@ struct EntityMovedMessage
     fea::EntityId entityId; WorldId worldId; const glm::vec3& oldPosition; const glm::vec3& newPosition;
 };
 
+struct EntityEnteredWorldMessage
+{
+    fea::EntityId entityId; WorldId oldWorld; WorldId newWorld;
+};
+
 struct EntityRotatedMessage
 {
     fea::EntityId id; float pitch; float yaw;

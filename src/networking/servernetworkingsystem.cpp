@@ -363,6 +363,7 @@ void ServerNetworkingSystem::handleMessage(const ChunksDataDeliveredMessage& rec
                 }
             }
 
+
             for(const auto iterator : chunksToDeliver)
             {
                 const auto& tuple = chunksToDeliver[iterator.first];

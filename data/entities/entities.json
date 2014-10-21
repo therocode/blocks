@@ -45,11 +45,18 @@
             "acceleration":"0.0f,0.0f,0.0f"
         }
     },
+    {"name":"highlight_entity",
+        "attributes":
+        {
+            "highlight_radius":"0",
+            "is_highlighting":"true"
+        }
+    },
     {"name":"living",
         "inherits": ["physics_entity",
                      "collision_entity",
-                     "gfx_entity",
-                     "movement_entity"],
+                     "movement_entity",
+                     "highlight_entity"],
 
         "attributes":
         {

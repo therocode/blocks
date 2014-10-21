@@ -24,6 +24,7 @@ void GfxController::handleMessage(const EntityMovedMessage& message)
 
 void GfxController::removeEntity(fea::EntityId id)
 {
+    //ouch
     mBus.send(RemoveGfxEntityMessage{id});
 }
 

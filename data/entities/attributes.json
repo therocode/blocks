@@ -16,6 +16,9 @@
 	"is_facing_block":"bool",
 	"block_facing_face":"uint32",
 
+    "highlight_radius":"uint32",
+    "is_highlighting":"bool",
+
     "walk_speed":"float",
     "run_speed":"float",
     "jump_strength":"float",
