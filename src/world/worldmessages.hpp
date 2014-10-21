@@ -18,7 +18,7 @@ struct SetVoxelMessage
 
 struct VoxelSetMessage
 {
-    const VoxelCoord& voxel; VoxelType type;
+    WorldId worldId; const VoxelCoord& voxel; VoxelType type;
 };
 
 struct WorldBiomeSettingsMessage

@@ -1,7 +1,6 @@
 #include "chunk.hpp"
-#include <iostream>
-#include <chrono>
 #include <algorithm>
+#include <fea/assert.hpp>
 
 bool RleSegmentInfo::operator==(const RleSegmentInfo& other) const
 {
@@ -76,8 +75,7 @@ bool Chunk::operator==(const Chunk& other) const
 
 void Chunk::setVoxelType(const ChunkVoxelCoord& voxel, VoxelType type)
 {
-    if(voxel.x >= chunkWidth || voxel.y >= chunkWidth || voxel.z >= chunkWidth)
-        return;
+	FEA_ASSERT(voxel.x < chunkWidth && voxel.y < chunkWidth && voxel.z < chunkWidth, "Setting voxel " + glm::to_string((glm::ivec3) voxel) + " which is out of bounds of the chunk");
 
     VoxelSegmentTypeArray uncompressed = getUncompressedTypeSegment(voxel.y, voxel.z);
 
@@ -167,7 +165,7 @@ void Chunk::setVoxelData(const VoxelTypeArray& types)
 //these should be optimised in the future using binary trees
 VoxelType Chunk::getVoxelType(const ChunkVoxelCoord& voxel) const
 {
-	if(voxel.x >= chunkWidth || voxel.y >= chunkWidth || voxel.z >= chunkWidth)return 0;
+	FEA_ASSERT(voxel.x < chunkWidth && voxel.y < chunkWidth && voxel.z < chunkWidth, "Accessing voxel " + glm::to_string((glm::ivec3)voxel) + " which is out of bounds of the chunk");
     size_t segmentIterator = mRleSegmentIndices[voxel.z + voxel.y * chunkWidth].mSegmentStart;
     size_t walked = 0;
 

@@ -403,12 +403,15 @@ void ServerNetworkingSystem::handleMessage(const VoxelSetMessage& received)
 
         if(positionIterator != mPlayerPositions.end())
         {
-            ChunkCoord playerChunk = WorldToChunk::convert(positionIterator->second);
-
-            if(glm::distance(glm::vec3(chunk), glm::vec3(playerChunk)) <= (float)mSettings.maxChunkViewDistance)
+            if(received.worldId == mPlayerWorlds.at(playerId))
             {
-                VoxelUpdatedMessage message{received.voxel, received.type};
-                sendToOne(playerId, message, true, CHANNEL_DEFAULT);
+                ChunkCoord playerChunk = WorldToChunk::convert(positionIterator->second);
+
+                if(glm::distance(glm::vec3(chunk), glm::vec3(playerChunk)) <= (float)mSettings.maxChunkViewDistance)
+                {
+                    VoxelUpdatedMessage message{received.voxel, received.type};
+                    sendToOne(playerId, message, true, CHANNEL_DEFAULT);
+                }
             }
         }
     }

@@ -122,7 +122,7 @@ void WorldEntry::setVoxelType(const VoxelCoord& voxelCoordinate, VoxelType type)
     if(chunk != mWorldData.voxels.end())
     {
         chunk->second.setVoxelType(chunkVoxelCoord, type);
-        mBus.send(VoxelSetMessage{voxelCoordinate, type});
+        mBus.send(VoxelSetMessage{mId, voxelCoordinate, type});
 
         mModManager.setMod(voxelCoordinate, type);
     }
