@@ -34,6 +34,7 @@ void PlayerController::handleMessage(const PlayerJoinedGameMessage& received)
             {
                 e->setAttribute("current_world", 0u);
                 e->setAttribute("position", position);
+                e->setAttribute("is_highlighting", true);
                 playerEntity = e;
             }});
 
