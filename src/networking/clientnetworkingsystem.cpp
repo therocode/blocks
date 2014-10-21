@@ -74,8 +74,8 @@ void ClientNetworkingSystem::handleMessage(const LocalConnectionEstablishedMessa
 
     mBus.send(LogMessage{"Requesting to join game as '" + std::string("Tobbe") + "'", clientName, LogLevel::INFO});
     ClientJoinRequestedMessage message{"Tobbe"};
-    send(message, true, CHANNEL_DEFAULT);
     mIsConnected = true;
+    send(message, true, CHANNEL_DEFAULT);
 }
 
 void ClientNetworkingSystem::handleMessage(const ClientJoinDeniedMessage& received)
