@@ -1,19 +1,20 @@
 #pragma once
 #include "entitycontroller.hpp"
+#include "../../application/applicationmessages.hpp"
 #include "../entitymessages.hpp"
 #include "../../utilities/glm.hpp"
 #include "../../utilities/geomath.hpp"
 #include "../../world/worlddefines.hpp"
 
 class CollisionController : public EntityController,
-                            public fea::MessageReceiver<EntityMoveRequestedMessage>
+                            public fea::MessageReceiver<FrameMessage,
+                                                        EntityMoveRequestedMessage>
 {
 	public:
-        CollisionController(fea::MessageBus& bus, GameInterface& worldInterface);
-        virtual void inspectEntity(fea::WeakEntityPtr entity) override;
-        void onFrame(int dt) override;
+        CollisionController(fea::MessageBus& bus, GameInterface& gameInterface);
+        bool keepEntity(fea::WeakEntityPtr entity) const override;
+        void handleMessage(const FrameMessage& message) override;
         void handleMessage(const EntityMoveRequestedMessage& message) override;
-        virtual void removeEntity(fea::EntityId id);
 		bool AABBOnGround(WorldId worldId, AABB a);
     private:
         ///Returns true if aabb hits any block in world. Should be moved to worldInterface in the future.
@@ -25,4 +26,5 @@ class CollisionController : public EntityController,
 		float sweepAroundAABB(WorldId worldId, const AABB _a, glm::vec3 velocity, glm::ivec3& outnormal, VoxelCoord& hitBlock, const glm::vec3 ignoreAxis = glm::vec3(0));
         bool checkIfOnGround(fea::EntityPtr entity);
         fea::MessageBus& mBus;
+        GameInterface& mGameInterface;
 };

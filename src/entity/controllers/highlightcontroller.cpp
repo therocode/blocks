@@ -1,36 +1,36 @@
 #include "highlightcontroller.hpp"
 #include "../../world/worldmessages.hpp"
 
-HighlightController::HighlightController(fea::MessageBus& bus, GameInterface& gameInterface) :
-    EntityController(bus, gameInterface)
+HighlightController::HighlightController(fea::MessageBus& bus) :
+    EntityController(bus)
 {
     subscribe(mBus, *this);
 }
 
-void HighlightController::inspectEntity(fea::WeakEntityPtr entity)
+bool HighlightController::keepEntity(fea::WeakEntityPtr entity) const
 {
     fea::EntityPtr locked = entity.lock();
 
-    if(locked->hasAttribute("highlight_radius") &&
-            locked->hasAttribute("is_highlighting"))
+    return locked->hasAttribute("highlight_radius") &&
+        locked->hasAttribute("is_highlighting");
+}
+
+void HighlightController::entityKept(fea::WeakEntityPtr entity)
+{
+    fea::EntityPtr locked = entity.lock();
+
+    if(locked->getAttribute<bool>("is_highlighting"))
     {
-        if(locked->getAttribute<bool>("is_highlighting"))
-        {
-            mEntities.emplace(locked->getId(), entity);
-            mBus.send(HighlightEntityAddRequestedMessage{locked->getAttribute<WorldId>("current_world"), locked->getId(), WorldToChunk::convert(locked->getAttribute<glm::vec3>("position"))});
-        }
+        mBus.send(HighlightEntityAddRequestedMessage{locked->getAttribute<WorldId>("current_world"), locked->getId(), WorldToChunk::convert(locked->getAttribute<glm::vec3>("position"))});
     }
 }
 
-void HighlightController::removeEntity(fea::EntityId id)
+void HighlightController::entityDropped(fea::WeakEntityPtr entity)
 {
-    if(mEntities.count(id))
+    fea::EntityPtr locked = entity.lock();
+    if(locked->getAttribute<bool>("is_highlighting"))
     {
-        fea::EntityPtr entity = mEntities.at(id).lock();
-        if(entity->getAttribute<bool>("is_highlighting"))
-        {
-            mBus.send(HighlightEntityRemoveRequestedMessage{entity->getAttribute<WorldId>("current_world"), entity->getId()});
-        }
+        mBus.send(HighlightEntityRemoveRequestedMessage{locked->getAttribute<WorldId>("current_world"), locked->getId()});
     }
 }
 

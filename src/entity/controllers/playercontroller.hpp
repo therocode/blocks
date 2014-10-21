@@ -15,10 +15,7 @@ class PlayerController :
                                 EntityMovedMessage>
 {
     public:
-        PlayerController(fea::MessageBus& bus, GameInterface& worldInterface);
-        virtual void inspectEntity(fea::WeakEntityPtr entity);
-        virtual void removeEntity(fea::EntityId id);
-        virtual void onFrame(int dt) override;
+        PlayerController(fea::MessageBus& bus, GameInterface& gameInterface);
         void handleMessage(const PlayerJoinedGameMessage& received);
         void handleMessage(const PlayerLeftGameMessage& received);
         void handleMessage(const PlayerActionMessage& received);
@@ -31,4 +28,5 @@ class PlayerController :
         void updateVoxelLookAt(size_t playerId);
         std::unordered_map<size_t, fea::WeakEntityPtr> mPlayerEntities;
         std::unordered_map<fea::EntityId, size_t> mEntityIdToPlayerId;
+        GameInterface& mGameInterface;
 };

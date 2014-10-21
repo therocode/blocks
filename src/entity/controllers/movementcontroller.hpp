@@ -2,16 +2,17 @@
 #include <fea/util.hpp>
 #include "../../gameinterface.hpp"
 #include "entitycontroller.hpp"
+#include "../../application/applicationmessages.hpp"
 #include "../entitymessages.hpp"
 
 class MovementController : 
     public EntityController,
-    public fea::MessageReceiver<EntityJumpMessage>
+    public fea::MessageReceiver<FrameMessage, 
+                                EntityJumpMessage>
 {
     public:
-        MovementController(fea::MessageBus& bus, GameInterface& worldInterface);
-        virtual void inspectEntity(fea::WeakEntityPtr entity) override;
-        virtual void removeEntity(fea::EntityId id) override;
-        virtual void onFrame(int dt) override;
-        void handleMessage(const EntityJumpMessage& received);
+        MovementController(fea::MessageBus& bus);
+        bool keepEntity(fea::WeakEntityPtr entity) const override;
+        void handleMessage(const FrameMessage& received) override;
+        void handleMessage(const EntityJumpMessage& received) override;
 };

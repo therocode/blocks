@@ -2,39 +2,33 @@
 #include "moveaction.hpp"
 #include "physicstype.hpp"
 
-MovementController::MovementController(fea::MessageBus& bus, GameInterface& worldInterface) : EntityController(bus, worldInterface)
+MovementController::MovementController(fea::MessageBus& bus) :
+    EntityController(bus)
 {
     subscribe(mBus, *this);
 }
 
-void MovementController::inspectEntity(fea::WeakEntityPtr entity)
+bool MovementController::keepEntity(fea::WeakEntityPtr entity) const
 {
     fea::EntityPtr locked = entity.lock();
 
-    if(locked->hasAttribute("walk_speed") &&
-       locked->hasAttribute("run_speed") &&
-       locked->hasAttribute("move_action") &&
-       locked->hasAttribute("move_direction") &&
-       locked->hasAttribute("pitch") &&
-       locked->hasAttribute("yaw") &&
-       locked->hasAttribute("jumping") &&
-       locked->hasAttribute("jump_strength") &&
-       locked->hasAttribute("physics_type") &&
-       locked->hasAttribute("on_ground") &&
-       locked->hasAttribute("velocity") &&
-       locked->hasAttribute("acceleration"))
-    {
-        mEntities.emplace(locked->getId(), entity);
-    }
+    return locked->hasAttribute("walk_speed") &&
+           locked->hasAttribute("run_speed") &&
+           locked->hasAttribute("move_action") &&
+           locked->hasAttribute("move_direction") &&
+           locked->hasAttribute("pitch") &&
+           locked->hasAttribute("yaw") &&
+           locked->hasAttribute("jumping") &&
+           locked->hasAttribute("jump_strength") &&
+           locked->hasAttribute("physics_type") &&
+           locked->hasAttribute("on_ground") &&
+           locked->hasAttribute("velocity") &&
+           locked->hasAttribute("acceleration");
 }
 
-void MovementController::removeEntity(fea::EntityId id)
+void MovementController::handleMessage(const FrameMessage& received)
 {
-    mEntities.erase(id);
-}
-
-void MovementController::onFrame(int dt)
-{
+    int32_t dt = received.deltaTime;
 
     for(auto wEntity : mEntities)
     {

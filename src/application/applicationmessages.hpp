@@ -7,6 +7,7 @@
 struct FrameMessage
 {
     uint64_t frameNumber;
+    int32_t deltaTime;
 };
 
 struct LogMessage

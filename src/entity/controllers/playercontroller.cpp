@@ -6,21 +6,11 @@
 #include "../../world/raycaster.hpp"
 #include "moveaction.hpp"
 
-PlayerController::PlayerController(fea::MessageBus& bus, GameInterface& worldInterface) : EntityController(bus, worldInterface)
+PlayerController::PlayerController(fea::MessageBus& bus, GameInterface& gameInterface) :
+    EntityController(bus),
+    mGameInterface(gameInterface)
 {
     subscribe(mBus, *this);
-}
-
-void PlayerController::inspectEntity(fea::WeakEntityPtr entity)
-{
-}
-
-void PlayerController::removeEntity(fea::EntityId id)
-{
-}
-
-void PlayerController::onFrame(int dt)
-{
 }
 
 void PlayerController::handleMessage(const PlayerJoinedGameMessage& received)

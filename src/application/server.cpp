@@ -19,11 +19,11 @@ Server::Server(fea::MessageBus& bus, const NetworkParameters& parameters) :
 {
     mTimer.start();
 
-	mEntitySystem.addController(std::unique_ptr<EntityController>(new PhysicsController(mBus, mGameInterface)));
+	mEntitySystem.addController(std::unique_ptr<EntityController>(new PhysicsController(mBus)));
 	mEntitySystem.addController(std::unique_ptr<EntityController>(new CollisionController(mBus, mGameInterface)));
-	mEntitySystem.addController(std::unique_ptr<EntityController>(new MovementController(mBus, mGameInterface)));
-	mEntitySystem.addController(std::unique_ptr<EntityController>(new GfxController(mBus, mGameInterface)));
-	mEntitySystem.addController(std::unique_ptr<EntityController>(new HighlightController(mBus, mGameInterface)));
+	mEntitySystem.addController(std::unique_ptr<EntityController>(new MovementController(mBus)));
+	mEntitySystem.addController(std::unique_ptr<EntityController>(new GfxController(mBus)));
+	mEntitySystem.addController(std::unique_ptr<EntityController>(new HighlightController(mBus)));
 	mEntitySystem.addController(std::unique_ptr<EntityController>(new PlayerController(mBus, mGameInterface)));
 
     mFPSController.setMaxFPS(60);
@@ -37,9 +37,7 @@ Server::~Server()
 
 void Server::doLogic()
 {
-    mBus.send(FrameMessage{mFrameNumber});
-
-	mEntitySystem.update(mTimer.getDeltaTime());
+    mBus.send(FrameMessage{mFrameNumber, (int32_t) mTimer.getDeltaTime()});
 
     mFPSController.frameEnd();
     mFrameNumber++;

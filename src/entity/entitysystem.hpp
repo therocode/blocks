@@ -14,8 +14,7 @@ class EntitySystem :
     public:
         EntitySystem(fea::MessageBus& bus);
         ~EntitySystem();
-        void addController(std::unique_ptr<EntityController> controller);
-        void update(int32_t deltaTime);
+        void addController(std::unique_ptr<fea::EntityComponent> controller);
         void handleMessage(const EntityRequestedMessage& received);
         void handleMessage(const RemoveEntityRequestedMessage& received);
         const fea::EntityManager& getEntityManager() const;
@@ -26,5 +25,5 @@ class EntitySystem :
         fea::MessageBus& mBus;
         fea::EntityManager mManager;
         EntityFactory mFactory;
-        std::vector<std::unique_ptr<EntityController>> mControllers;
+        std::vector<std::unique_ptr<fea::EntityComponent>> mControllers;
 };

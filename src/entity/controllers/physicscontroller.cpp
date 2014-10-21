@@ -2,31 +2,30 @@
 #include "../../utilities/glm.hpp"
 #include "physicstype.hpp"
 
-PhysicsController::PhysicsController(fea::MessageBus& bus, GameInterface& worldInterface) : EntityController(bus, worldInterface), gravityConstant(-0.003f)
+PhysicsController::PhysicsController(fea::MessageBus& bus) :
+    EntityController(bus),
+    gravityConstant(-0.003f)
 {
     mTimer.start();
     accumulator = 0;
     subscribe(mBus, *this);
 }
 
-void PhysicsController::inspectEntity(fea::WeakEntityPtr entity)
+bool PhysicsController::keepEntity(fea::WeakEntityPtr entity) const
 {
     fea::EntityPtr locked = entity.lock();
 
-    if(locked->hasAttribute("position") &&
+    return locked->hasAttribute("position") &&
             locked->hasAttribute("velocity") &&
             locked->hasAttribute("acceleration") &&
             locked->hasAttribute("drag") && 
             locked->hasAttribute("on_ground") && 
-            locked->hasAttribute("physics_type"))
-    {
-        mEntities.emplace(locked->getId(), entity);
-    }
+            locked->hasAttribute("physics_type");
 }
 
-void PhysicsController::onFrame(int dt)
+void PhysicsController::handleMessage(const FrameMessage& received)
 {
-    //int dt = mTimer.getDeltaTime();
+    int dt = received.deltaTime;
     if(dt > 500) return;
     dt += accumulator;
     int millisecondsPerStep = 1000/60;
@@ -84,9 +83,4 @@ void PhysicsController::handleMessage(const PhysicsImpulseMessage& received)
     {
         entity->second.lock()->addToAttribute<glm::vec3>("velocity", received.force / 10.0f);
     }
-}
-
-void PhysicsController::removeEntity(fea::EntityId id)
-{
-    mEntities.erase(id);
 }

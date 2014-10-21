@@ -8,9 +8,10 @@ class HighlightController :
                                 EntityEnteredWorldMessage>
 {
     public:
-        HighlightController(fea::MessageBus& bus, GameInterface& gameInterface);
-        virtual void inspectEntity(fea::WeakEntityPtr entity) override;
-        virtual void removeEntity(fea::EntityId id) override;
+        HighlightController(fea::MessageBus& bus);
+        bool keepEntity(fea::WeakEntityPtr entity) const override;
+        void entityKept(fea::WeakEntityPtr entity) override;
+        void entityDropped(fea::WeakEntityPtr entity) override;
         void handleMessage(const EntityMovedMessage& received);
         void handleMessage(const EntityEnteredWorldMessage& received);
     private:
