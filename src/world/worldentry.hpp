@@ -7,6 +7,7 @@
 #include "../utilities/gridnotifier.hpp"
 #include "highlightmanager.hpp"
 #include "modmanager.hpp"
+#include "explorationmanager.hpp"
 
 class WorldEntry
 {
@@ -34,6 +35,7 @@ class WorldEntry
         GridNotifier<biomeRegionWidthInChunks> mBiomeGridNotifier;
         HighlightManager mHighlightManager;
         ModManager mModManager;
-
+		ExplorationManager mExplorationManager;
+		
         std::unordered_map<BiomeRegionCoord, std::vector<ChunkCoord>> mPendingChunksToRequests;
 };

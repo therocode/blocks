@@ -8,7 +8,8 @@ WorldEntry::WorldEntry(fea::MessageBus& bus, WorldId id, const std::string& iden
     mId(id),
     mIdentifier(identifier),
     mWorldData(data),
-    mModManager(path)
+    mModManager(path),
+	mExplorationManager(path)
 {
 
     mWorldData.biomeSettings.fields =
@@ -25,6 +26,7 @@ WorldEntry::WorldEntry(fea::MessageBus& bus, WorldId id, const std::string& iden
 WorldEntry::~WorldEntry()
 {
     mModManager.saveMods();
+    mExplorationManager.saveExploration();
 }
 
 void WorldEntry::addHighlightEntity(uint32_t id, const ChunkCoord& location, uint32_t radius)
@@ -87,8 +89,11 @@ void WorldEntry::deliverChunk(const ChunkCoord& coordinate, const Chunk& chunk)
         //mModManager.loadMods(chunk);
         //#C2#else      // implement mExplorationManager as according to issue #144
         //#C2#{
-        //#C2#    if(!mExplorationManager.isExplored(regionCoord))
-        //#C2#        mBus.send(ChunkInitiallyGeneratedMessage{coordinate, chunk})
+		if(!mExplorationManager.getChunkExplored(coordinate))
+		{
+			mBus.send(ChunkInitiallyGeneratedMessage{mId, coordinate, iterator.first->second});
+			mExplorationManager.setChunkExplored(coordinate);
+		}
         //#C2#}
 
         uint64_t timestamp = 0; //#C3# get proper timestamp, issue #133
