@@ -83,26 +83,23 @@ void WorldEntry::deliverChunk(const ChunkCoord& coordinate, const Chunk& chunk)
 {
     if(mHighlightManager.chunkIsHighlighted(coordinate))
     {
-        auto iterator = mWorldData.voxels.emplace(coordinate, chunk);
+        Chunk& createdChunk = mWorldData.voxels.emplace(coordinate, chunk).first->second;
 
-        //#C1#if(mModManager.hasMods(chunk))  // implement this check as seen in issue #143
-        //mModManager.loadMods(chunk);
-        //#C2#else      // implement mExplorationManager as according to issue #144
-        //#C2#{
-		if(!mExplorationManager.getChunkExplored(coordinate))
+		if(!mExplorationManager.getChunkExplored(coordinate)) //explore the chunk and perform initial generation if not already explored
 		{
-			mBus.send(ChunkInitiallyGeneratedMessage{mId, coordinate, iterator.first->second});
+			mBus.send(ChunkInitiallyGeneratedMessage{mId, coordinate, createdChunk});
 			mExplorationManager.setChunkExplored(coordinate);
 		}
-        //#C2#}
+        else       //apply possible modifications on chunks that are already explored
+        {
+            mModManager.loadMods(coordinate, createdChunk);
+        }
 
         uint64_t timestamp = 0; //#C3# get proper timestamp, issue #133
 
-        mModManager.loadMods(coordinate, iterator.first->second);//temporary
+        mBus.send(ChunkCandidateMessage{mId, coordinate, createdChunk, timestamp}); //let others have a chance of modifying this chunk
 
-        mBus.send(ChunkCandidateMessage{mId, coordinate, iterator.first->second, timestamp});
-
-        mBus.send(ChunkFinishedMessage{mId, coordinate, iterator.first->second}); //the now fully initialised chunk is announced to the rest of the game.
+        mBus.send(ChunkFinishedMessage{mId, coordinate, createdChunk}); //the now fully initialised chunk is announced to the rest of the game.
     }
 }
 
