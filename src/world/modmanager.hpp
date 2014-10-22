@@ -17,8 +17,8 @@
 
 #define NO_CHUNK -1
 
-const std::string dataExt = ".dat";
-const std::string indexExt = ".idx";
+const std::string modManagerExt = ".dat";
+const std::string modManagerIndexExt = ".idx";
 
 struct Mod
 {

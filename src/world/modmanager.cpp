@@ -22,7 +22,7 @@ void ModManager::loadMods(const ChunkCoord& location, Chunk& chunk)
         mMods[modRegionLoc][chunkLoc] = ChunkModMap();
 
         if(chunkIndex != NO_CHUNK) { 
-            ifstream dataFile(getFilename(modRegionLoc) + dataExt, ios::in | ios::binary);
+            ifstream dataFile(getFilename(modRegionLoc) + modManagerExt, ios::in | ios::binary);
             dataFile.seekg(chunkIndex);
 
             uint16_t modCount;
@@ -75,8 +75,8 @@ void ModManager::saveMods()
 
 void ModManager::saveMods(ModRegionCoord modRegionLoc) 
 {
-    string dataFilename = getFilename(modRegionLoc) + dataExt;
-    string indexFilename = getFilename(modRegionLoc) + indexExt;
+    string dataFilename = getFilename(modRegionLoc) + modManagerExt;
+    string indexFilename = getFilename(modRegionLoc) + modManagerIndexExt;
 
     hash<ModRegionChunkCoord> crcHash;
     ifstream iIndexFile(indexFilename, ios::in | ios::binary);
@@ -186,8 +186,8 @@ VoxelType ModManager::getMod(const VoxelCoord& voxLoc)
 
 void ModManager::deleteModRegionFile(const ModRegionCoord& modRegionLoc)
 {
-    string indexFilename = getFilename(modRegionLoc) + indexExt;
-    string dataFilename = getFilename(modRegionLoc) + dataExt;
+    string indexFilename = getFilename(modRegionLoc) + modManagerIndexExt;
+    string dataFilename = getFilename(modRegionLoc) + modManagerExt;
     
     ifstream indexFile(indexFilename);
     if(indexFile)
@@ -215,7 +215,7 @@ void ModManager::recordTimestamp(ChunkCoord loc, uint64_t timestamp)
 ChunkIndex ModManager::getChunkIndex(ModRegionCoord modRegionLoc, ModRegionChunkCoord chunkLoc)
 {
     hash<ModRegionChunkCoord> crcHash;
-    ifstream indexFile(getFilename(modRegionLoc) + indexExt, ios::in | ios::binary);
+    ifstream indexFile(getFilename(modRegionLoc) + modManagerIndexExt, ios::in | ios::binary);
 
     if(indexFile)
     {
@@ -236,7 +236,7 @@ ChunkIndex ModManager::getChunkIndex(ModRegionCoord modRegionLoc, ModRegionChunk
 
 void ModManager::initIndexFile(ModRegionCoord modRegionLoc)
 {
-    ofstream indexFile(getFilename(modRegionLoc) + indexExt, ios::out | ios::binary);
+    ofstream indexFile(getFilename(modRegionLoc) + modManagerIndexExt, ios::out | ios::binary);
 
     ChunkIndex index = NO_CHUNK;
     for(int i = 0; i < modRegionWidthInChunks*modRegionWidthInChunks*modRegionWidthInChunks; ++i)
