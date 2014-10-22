@@ -64,7 +64,7 @@ class ModManager
         void saveMods(ModRegionCoord regionLoc);
         void setMod(const VoxelCoord& voxLoc, VoxelType type);
         VoxelType getMod(const VoxelCoord& voxLoc);
-        void deleteModRegionFile(const ModRegionCoord& regionLoc);
+        bool hasMods(const ChunkCoord& location);
         void recordTimestamp(ChunkCoord loc, uint64_t timestamp);
         void setWorldName(const std::string& worldName);
 

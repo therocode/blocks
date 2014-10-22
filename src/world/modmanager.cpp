@@ -184,24 +184,42 @@ VoxelType ModManager::getMod(const VoxelCoord& voxLoc)
     return mMods[modRegionLoc][chunkLoc][VoxelToChunkVoxel::convert(voxLoc)];
 }
 
-void ModManager::deleteModRegionFile(const ModRegionCoord& modRegionLoc)
+bool ModManager::hasMods(const ChunkCoord& location)
 {
-    string indexFilename = getFilename(modRegionLoc) + modManagerIndexExt;
-    string dataFilename = getFilename(modRegionLoc) + modManagerExt;
+    bool result = false;
+
+    ModRegionCoord modRegionLoc = ChunkToModRegion::convert(location);
+
+    auto regionIterator = mMods.find(modRegionLoc);
     
-    ifstream indexFile(indexFilename);
-    if(indexFile)
+    //first check if it is modified in memory
+    if(regionIterator != mMods.end())
     {
-        indexFile.close();
-        remove(indexFilename.c_str());
+        auto chunkIterator = regionIterator->second.find(ChunkToModRegionChunk::convert(location));
+
+        if(chunkIterator != regionIterator->second.end())
+        {
+            result = chunkIterator->second.size() > 0;
+        }
     }
 
-    ifstream dataFile(dataFilename);
-    if(dataFile)
+    //if not modified in memory, check if it is modified in file
+    if(!result)
     {
-        dataFile.close();
-        remove(dataFilename.c_str());
+        string indexFilename = getFilename(modRegionLoc) + modManagerIndexExt;
+        hash<ModRegionChunkCoord> crcHash;
+        ifstream iIndexFile(indexFilename, ios::in | ios::binary);
+
+        if(iIndexFile)
+        {
+            iIndexFile.seekg(crcHash(ChunkToModRegionChunk::convert(location))*sizeof(ChunkIndex));
+            ChunkIndex chunkIndex;
+            iIndexFile.read((char*)&chunkIndex, sizeof(ChunkIndex));
+            result = chunkIndex != NO_CHUNK;
+        }
     }
+
+    return result;
 }
 
 void ModManager::recordTimestamp(ChunkCoord loc, uint64_t timestamp)
@@ -258,11 +276,14 @@ std::string ModManager::getFilename(ModRegionCoord modRegionLoc)
 {
     std::string xPart = std::to_string(modRegionLoc.x);
     std::string yPart = std::to_string(modRegionLoc.y);
+    std::string zPart = std::to_string(modRegionLoc.z);
 
     if(xPart[0] == '-')
         xPart[0] = '_';
     if(yPart[0] == '-')
         yPart[0] = '_';
+    if(zPart[0] == '-')
+        zPart[0] = '_';
 
-    return mWorldPath + "/" + xPart + "_" + yPart; 
+    return mWorldPath + "/" + xPart + "_" + yPart + "_" + zPart; 
 }

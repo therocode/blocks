@@ -38,8 +38,6 @@ TEST_CASE("save and load", "[save][load]")
     Chunk chunkClone(voxelData);
     ModManager manager("test_directory");
     ModManager manager2("test_directory");
-    manager.deleteModRegionFile(regionLoc);
-    manager.deleteModRegionFile(regionLoc2);
 
     //SECTION("load an untimestamped chunk")   //this test might need to me reintroduced, issue #133
     //{
@@ -66,11 +64,21 @@ TEST_CASE("save and load", "[save][load]")
     {
         manager.setMod(voxLoc, type);
         manager.recordTimestamp(loc, timestamp);
+
+        REQUIRE_FALSE(manager2.hasMods(loc));
+
         manager.saveMods(regionLoc);
+
+        REQUIRE(manager2.hasMods(loc));
+
         manager2.loadMods(loc, chunk);
 
         REQUIRE(type == chunk.getVoxelType(VoxelToChunkVoxel::convert(voxLoc)));
         REQUIRE(defaultType == chunk.getVoxelType(VoxelToChunkVoxel::convert(voxLoc2)));
+        REQUIRE(manager.hasMods(loc));
+        REQUIRE(manager2.hasMods(loc));
+        REQUIRE_FALSE(manager.hasMods(loc + ChunkCoord(2, 5, 4)));
+        REQUIRE_FALSE(manager2.hasMods(loc + ChunkCoord(1, 7, 4)));
     }
 
     SECTION("save and load twice")
