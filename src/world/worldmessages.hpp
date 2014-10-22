@@ -71,6 +71,7 @@ struct HighlightEntityAddRequestedMessage
     WorldId worldId;
     fea::EntityId entityId;
     const ChunkCoord& coordinate;
+    uint32_t radius;
 };
 
 struct HighlightEntityMoveRequestedMessage

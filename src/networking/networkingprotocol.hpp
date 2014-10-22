@@ -219,12 +219,13 @@ struct ClientAttachedToEntityMessage
     template<class Archive>
     void serialize(Archive& archive)
     {
-        archive(entityId, world, position.x, position.y, position.z);
+        archive(entityId, world, position.x, position.y, position.z, highlightRange);
     }
 
     fea::EntityId entityId;
     std::string world;
     glm::vec3 position;
+    uint32_t highlightRange;
 };
 
 struct SubscriptionRequestedMessage

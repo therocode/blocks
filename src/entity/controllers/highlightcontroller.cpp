@@ -21,7 +21,7 @@ void HighlightController::entityKept(fea::WeakEntityPtr entity)
 
     if(locked->getAttribute<bool>("is_highlighting"))
     {
-        mBus.send(HighlightEntityAddRequestedMessage{locked->getAttribute<WorldId>("current_world"), locked->getId(), WorldToChunk::convert(locked->getAttribute<glm::vec3>("position"))});
+        mBus.send(HighlightEntityAddRequestedMessage{locked->getAttribute<WorldId>("current_world"), locked->getId(), WorldToChunk::convert(locked->getAttribute<glm::vec3>("position")), locked->getAttribute<uint32_t>("highlight_radius")});
     }
 }
 

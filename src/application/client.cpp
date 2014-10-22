@@ -15,8 +15,7 @@ Client::Client(fea::MessageBus& bus, const NetworkParameters& parameters) :
 	mWindow(new fea::SDL2WindowBackend()),
 	mRenderer(std::unique_ptr<Renderer>(new Renderer(mBus))),
 	mInputAdaptor(std::unique_ptr<InputAdaptor>(new InputAdaptor(mBus))),
-	mQuit(false),
-    mHighlightedChunks(8)
+	mQuit(false)
 {
     subscribe(mBus, *this);
 
@@ -194,7 +193,8 @@ void Client::handleMessage(const GameStartMessage& received)
 void Client::handleMessage(const ClientAttachedToEntityMessage& received)
 {
     mCurrentWorld = received.world;
-    auto highlighted = mHighlightedChunks.addHighlightEntity(0, WorldToChunk::convert(received.position));
+    mHighlightRadius = received.highlightRange;
+    auto highlighted = mHighlightedChunks.addHighlightEntity(0, WorldToChunk::convert(received.position), mHighlightRadius);
     mLastChunk = WorldToChunk::convert(received.position);
 
     mBus.send(ClientRequestedChunksMessage{mCurrentWorld, highlighted});
@@ -206,7 +206,7 @@ void Client::handleMessage(const ClientEnteredWorldMessage& received)
 
     auto dehighlighted = mHighlightedChunks.removeHighlightEntity(0);
 
-    auto highlighted = mHighlightedChunks.addHighlightEntity(0, mLastChunk);
+    auto highlighted = mHighlightedChunks.addHighlightEntity(0, mLastChunk, mHighlightRadius);
 
     mBus.send(ClientRequestedChunksMessage{mCurrentWorld, highlighted});
 

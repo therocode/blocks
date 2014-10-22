@@ -104,7 +104,7 @@ void ClientNetworkingSystem::handleMessage(const ClientRequestedChunksMessage& r
 
 void ClientNetworkingSystem::handleMessage(const ClientChunksDeniedMessage& received)
 {
-    //std::cout << "got " << received.coordinates.size() << " chunks denied!\n";
+    std::cout << "got " << received.coordinates.size() << " chunks denied!\n";
 }
 
 void ClientNetworkingSystem::handleMessage(const SubscriptionReplyMessage& received)

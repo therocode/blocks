@@ -102,7 +102,7 @@ void WorldSystem::handleMessage(const HighlightEntityAddRequestedMessage& receiv
 {
     FEA_ASSERT(mWorlds.count(received.worldId) != 0, "Trying to add a highlight entity to world " + std::to_string(received.worldId) + " but that world does not exist");
 
-    mWorlds.at(received.worldId).addHighlightEntity(received.entityId, received.coordinate);
+    mWorlds.at(received.worldId).addHighlightEntity(received.entityId, received.coordinate, received.radius);
 }
 
 void WorldSystem::handleMessage(const HighlightEntityMoveRequestedMessage& received)

@@ -8,7 +8,6 @@ WorldEntry::WorldEntry(fea::MessageBus& bus, WorldId id, const std::string& iden
     mId(id),
     mIdentifier(identifier),
     mWorldData(data),
-    mHighlightManager(8), //this should be read from somewhere else, probably server settings
     mModManager(path)
 {
 
@@ -28,9 +27,9 @@ WorldEntry::~WorldEntry()
     mModManager.saveMods();
 }
 
-void WorldEntry::addHighlightEntity(uint32_t id, const ChunkCoord& location)
+void WorldEntry::addHighlightEntity(uint32_t id, const ChunkCoord& location, uint32_t radius)
 {
-    const auto& highlighted = mHighlightManager.addHighlightEntity(id, location);
+    const auto& highlighted = mHighlightManager.addHighlightEntity(id, location, radius);
 
     for(const auto& chunk : highlighted)
         activateChunk(chunk);

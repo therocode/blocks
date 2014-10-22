@@ -193,10 +193,11 @@ void ServerNetworkingSystem::handleMessage(const PlayerAttachedToEntityMessage& 
     mEntityIdToPlayerId.emplace(received.entityId, received.playerId);
     mPlayerPositions[received.playerId] = received.entity.lock()->getAttribute<glm::vec3>("position");
     mPlayerWorlds[received.playerId] = received.entity.lock()->getAttribute<WorldId>("current_world");
+    uint32_t highlightRadius = received.entity.lock()->getAttribute<uint32_t>("highlight_radius");
 
     const std::string worldIdentifier = mGameInterface.getWorldSystem().worldIdToIdentifier(mPlayerWorlds.at(received.playerId));
 
-    sendToOne(received.playerId, ClientAttachedToEntityMessage{received.entityId, worldIdentifier, mPlayerPositions.at(received.playerId)}, true, CHANNEL_DEFAULT);
+    sendToOne(received.playerId, ClientAttachedToEntityMessage{received.entityId, worldIdentifier, mPlayerPositions.at(received.playerId), highlightRadius}, true, CHANNEL_DEFAULT);
 }
 
 void ServerNetworkingSystem::handleMessage(const PlayerEntityMovedMessage& received)
