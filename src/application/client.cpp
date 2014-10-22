@@ -197,7 +197,8 @@ void Client::handleMessage(const ClientAttachedToEntityMessage& received)
     auto highlighted = mHighlightedChunks.addHighlightEntity(0, WorldToChunk::convert(received.position), mHighlightRadius);
     mLastChunk = WorldToChunk::convert(received.position);
 
-    mBus.send(ClientRequestedChunksMessage{mCurrentWorld, highlighted});
+    if(highlighted.size() > 0)
+        mBus.send(ClientRequestedChunksMessage{mCurrentWorld, highlighted});
 }
 
 void Client::handleMessage(const ClientEnteredWorldMessage& received)
@@ -208,7 +209,8 @@ void Client::handleMessage(const ClientEnteredWorldMessage& received)
 
     auto highlighted = mHighlightedChunks.addHighlightEntity(0, mLastChunk, mHighlightRadius);
 
-    mBus.send(ClientRequestedChunksMessage{mCurrentWorld, highlighted});
+    if(highlighted.size() > 0)
+        mBus.send(ClientRequestedChunksMessage{mCurrentWorld, highlighted});
 
     for(const auto& chunk : dehighlighted)
         mBus.send(ClientChunkDeletedMessage{chunk});
@@ -219,7 +221,8 @@ void Client::handleMessage(const ClientPositionMessage& received)
     const auto& highlighted = mHighlightedChunks.moveHighlightEntity(0, WorldToChunk::convert(received.position));
     mLastChunk = WorldToChunk::convert(received.position);
 
-    mBus.send(ClientRequestedChunksMessage{mCurrentWorld, highlighted.first});
+    if(highlighted.first.size() > 0)
+        mBus.send(ClientRequestedChunksMessage{mCurrentWorld, highlighted.first});
 
     for(const auto& chunk : highlighted.second)
         mBus.send(ClientChunkDeletedMessage{chunk});
