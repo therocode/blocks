@@ -6,14 +6,13 @@
 #include "worlddefines.hpp"
 #include "../utilities/glmhash.hpp"
 
-const uint32_t explorationRegionWidthInChunks = 16;
-const uint32_t explorationRegionWidth = explorationRegionWidthInChunks * chunkWidth;
+const uint32_t explorationRegionWidthInChunks = 32;
 
 using ExplorationRegionCoord = glm::i64vec3;
 using ExplorationRegionChunkCoord = glm::u8vec3;
 
-using ChunkToExplorationRegion = CoordinateCoarseConvert<ChunkCoord, ExplorationRegionCoord, explorationRegionWidth>;
-using ChunkToExplorationRegionChunk = CoordinateWrapConvert<ChunkCoord, ExplorationRegionChunkCoord, 0, explorationRegionWidth - 1>;
+using ChunkToExplorationRegion = CoordinateCoarseConvert<ChunkCoord, ExplorationRegionCoord, explorationRegionWidthInChunks>;
+using ChunkToExplorationRegionChunk = CoordinateWrapConvert<ChunkCoord, ExplorationRegionChunkCoord, 0, explorationRegionWidthInChunks - 1>;
 
 const std::string dataExt = ".exp";
 
