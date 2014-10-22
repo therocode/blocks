@@ -14,10 +14,12 @@ using ExplorationRegionChunkCoord = glm::u8vec3;
 using ChunkToExplorationRegion = CoordinateCoarseConvert<ChunkCoord, ExplorationRegionCoord, explorationRegionWidthInChunks>;
 using ChunkToExplorationRegionChunk = CoordinateWrapConvert<ChunkCoord, ExplorationRegionChunkCoord, 0, explorationRegionWidthInChunks - 1>;
 
-const std::string dataExt = ".exp";
+const std::string explorationExt = ".exp";
 
 class ExplorationManager
 {
+	//todo: GridNotifier setchunkactivated / deactivated
+
 	public:
         ExplorationManager(const std::string& worldPath);
 		bool getChunkExplored(const ChunkCoord& coordinate);

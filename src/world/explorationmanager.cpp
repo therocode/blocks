@@ -14,7 +14,7 @@ bool ExplorationManager::getChunkExplored(const ChunkCoord& coordinate)
 
 	if(mExploreData.count(regcoord) == 0)
 	{
-		std::ifstream expFile(getFilename(regcoord) + dataExt, std::ios::in | std::ios::binary);
+		std::ifstream expFile(getFilename(regcoord) + explorationExt, std::ios::in | std::ios::binary);
 		if(expFile.is_open())
 		{
 			std::vector<uint8_t> byteHolder(4096);
@@ -77,7 +77,7 @@ void ExplorationManager::saveExploration()
 								(mExploreData.at(v)[x*8+6] << 1) |  mExploreData.at(v)[x*8+7];
 		}
 		
-		std::ofstream expFile(getFilename(v) + dataExt, std::ios::out | std::ios::binary);
+		std::ofstream expFile(getFilename(v) + explorationExt, std::ios::out | std::ios::binary);
 		expFile.write((char*)explorePrinter.data(), 4096);
 		expFile.close();
 	}
@@ -87,11 +87,14 @@ std::string ExplorationManager::getFilename(ExplorationRegionCoord regionLoc)
 {
     std::string xPart = std::to_string(regionLoc.x);
     std::string yPart = std::to_string(regionLoc.y);
+    std::string zPart = std::to_string(regionLoc.z);
 
     if(xPart[0] == '-')
         xPart[0] = '_';
     if(yPart[0] == '-')
         yPart[0] = '_';
+	if(zPart[0] == '-')
+        zPart[0] = '_';
 
-    return mWorldPath + "/" + xPart + "_" + yPart;
+    return mWorldPath + "/" + xPart + "_" + yPart + "_" + zPart;
 }
