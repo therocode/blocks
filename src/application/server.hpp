@@ -4,6 +4,7 @@
 #include "../script/scriptsystem.hpp"
 #include "../utilities/fpscontroller.hpp"
 #include "../utilities/logger.hpp"
+#include "../utilities/signalcatcher.hpp"
 #include "../entity/entitysystem.hpp"
 #include "../gameinterface.hpp"
 #include "../networking/servernetworkingsystem.hpp"
@@ -16,6 +17,7 @@ class Server
         Server(fea::MessageBus& bus, const NetworkParameters& parameters);
         ~Server();
         void doLogic();
+        bool requestedQuit() const;
     private:
         fea::MessageBus& mBus;
         Logger mLogger;
@@ -26,6 +28,8 @@ class Server
         GameInterface mGameInterface;
         ServerNetworkingSystem mServerNetworkingSystem;
         FPSController mFPSController;
+        SignalCatcher mSignalCatcher;
 
         uint32_t mFrameNumber;
+        bool mQuit;
 };

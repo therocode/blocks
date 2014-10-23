@@ -66,6 +66,8 @@ set(server_source
     src/script/interfaces/scriptinterface.cpp
     src/script/interfaces/stringinterface.cpp
 
+    src/utilities/signalcatcher.cpp
+
 	src/world/explorationmanager.cpp
     src/world/biome.cpp
     src/world/biomeprovider.cpp
@@ -205,6 +207,7 @@ set(header_files
     src/utilities/logger.hpp
     src/utilities/namedenum.hpp
 	src/utilities/random.hpp
+    src/utilities/signalcatcher.hpp
 	src/utilities/timer.hpp
 	src/utilities/tinydir.hpp
 

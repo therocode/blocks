@@ -15,7 +15,8 @@ Server::Server(fea::MessageBus& bus, const NetworkParameters& parameters) :
     mServerNetworkingSystem(mBus, mGameInterface, parameters),
     mLogger(mBus, LogLevel::VERB),
     mScriptSystem(mBus, mGameInterface),
-    mFrameNumber(0)
+    mFrameNumber(0),
+    mQuit(false)
 {
     mTimer.start();
 
@@ -41,4 +42,15 @@ void Server::doLogic()
 
     mFPSController.frameEnd();
     mFrameNumber++;
+
+    if(mSignalCatcher.getSignal() == QUIT_SIGNAL)
+    {
+        mBus.send(LogMessage{"Received quit signal. Requesting to quit!", serverName, LogLevel::INFO});
+        mQuit = true;
+    }
+}
+
+bool Server::requestedQuit() const
+{
+    return mQuit;
 }

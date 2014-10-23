@@ -57,6 +57,8 @@ void BlocksApplication::loop()
     if(server)
     {
         server->doLogic();
+        if(server->requestedQuit())
+            quit();
     }
 #endif
 
