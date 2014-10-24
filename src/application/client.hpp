@@ -6,7 +6,6 @@
 #include "../utilities/lodepng.hpp"
 #include "../utilities/logger.hpp"
 #include "../utilities/fpscontroller.hpp"
-#include "../utilities/idprovider.hpp"
 #include "../world/worldmessages.hpp"
 #include "../world/highlightmanager.hpp"
 
