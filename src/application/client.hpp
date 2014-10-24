@@ -56,7 +56,6 @@ class Client :
 
         std::string mCurrentWorld;
         uint32_t mHighlightRadius;
-        IdProvider<std::string> mWorldIds;
         HighlightManager mHighlightedChunks;
         ChunkCoord mLastChunk;
         ChunkMap mLocalChunks;
