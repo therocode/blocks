@@ -13,6 +13,7 @@ SCENARIO("Grid notifiers has all deactivated cells on start","[utilities]")
             REQUIRE_FALSE(gridNotifier.isActive({100, 0, 0}));
             REQUIRE_FALSE(gridNotifier.isActive({0, 30, 0}));
             REQUIRE_FALSE(gridNotifier.isActive({0, 20, 19}));
+            REQUIRE(gridNotifier.getAllActive().size() == 0);
         }   
     }   
 }
@@ -35,6 +36,8 @@ SCENARIO("Grid notifiers show correct status of big cells","[utilities]")
             REQUIRE_FALSE(gridNotifier.isActive({1, 10, -6}));
             REQUIRE_FALSE(gridNotifier.isActive({2, 11, -4}));
             REQUIRE_FALSE(gridNotifier.isActive({0, 9, -6}));
+            REQUIRE(gridNotifier.getAllActive().size() == 1);
+            REQUIRE(gridNotifier.getAllActive()[0] == glm::i64vec3(1, 10, -5));
         }   
     }   
 
