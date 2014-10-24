@@ -5,6 +5,7 @@
 #include <unordered_set>
 #include "worlddefines.hpp"
 #include "../utilities/glmhash.hpp"
+#include "../../src/utilities/gridnotifier.hpp"
 
 const uint32_t explorationRegionWidthInChunks = 32;
 
@@ -18,17 +19,18 @@ const std::string explorationExt = ".exp";
 
 class ExplorationManager
 {
-	//todo: GridNotifier setchunkactivated / deactivated
-
 	public:
         ExplorationManager(const std::string& worldPath);
 		bool getChunkExplored(const ChunkCoord& coordinate);
 		void setChunkExplored(const ChunkCoord& coordinate);
 		void saveExploration();
+		void saveRegionExploration(const ChunkCoord& coordinate);
+		void activateChunk(const ChunkCoord& coordinate);
+		void deactivateChunk(const ChunkCoord& coordinate);
 	private:
 		std::unordered_map<ExplorationRegionCoord, std::vector<bool>> mExploreData;
 		std::unordered_set<ExplorationRegionCoord> mExploreChange;
-		std::string mWorldPath;
-		
 		std::string getFilename(ExplorationRegionCoord regionLoc);
+		GridNotifier<explorationRegionWidthInChunks> explorationGrid;
+		std::string mWorldPath;
 };

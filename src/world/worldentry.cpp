@@ -26,7 +26,6 @@ WorldEntry::WorldEntry(fea::MessageBus& bus, WorldId id, const std::string& iden
 WorldEntry::~WorldEntry()
 {
     mModManager.saveMods();
-    mExplorationManager.saveExploration();
 }
 
 void WorldEntry::addHighlightEntity(uint32_t id, const ChunkCoord& location, uint32_t radius)
@@ -95,6 +94,8 @@ void WorldEntry::deliverChunk(const ChunkCoord& coordinate, const Chunk& chunk)
             mModManager.loadMods(coordinate, createdChunk);
         }
 
+		mExplorationManager.activateChunk(coordinate);
+		
         uint64_t timestamp = 0; //#C3# get proper timestamp, issue #133
 
         mBus.send(ChunkCandidateMessage{mId, coordinate, createdChunk, timestamp}); //let others have a chance of modifying this chunk
@@ -174,7 +175,7 @@ void WorldEntry::activateChunk(const ChunkCoord& chunkCoordinate)
 {
     if(mWorldData.range.isWithin(chunkCoordinate))
     {
-        //firsty handle any newly activated biomes; they need to be requested
+        //firstly handle any newly activated biomes; they need to be requested
         const auto& activatedBiomes = mBiomeGridNotifier.set(chunkCoordinate, true);
 
         for(const auto& biomeRegionCoord : activatedBiomes)
@@ -211,6 +212,7 @@ void WorldEntry::deactivateChunk(const ChunkCoord& chunkCoordinate)
 
         if(mWorldData.voxels.erase(chunkCoordinate) != 0)
         {
+			mExplorationManager.deactivateChunk(chunkCoordinate);
             //mBus.send(ChunkDeletedMessage{chunkCoordinate}); there is no such message atm
         }
 
