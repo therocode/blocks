@@ -66,21 +66,22 @@ void ExplorationManager::setChunkExplored(const ChunkCoord& coordinate)
 
 void ExplorationManager::saveExploration()
 {
-	for(const auto &v : mExploreChange)
+	for(const auto &regionCoord : mExploreChange)
 	{
-		std::vector<uint8_t> explorePrinter(4096);
+		std::vector<uint8_t> exploreWriter(4096);
 		for(int x=0; x<4096; ++x)
 		{
-			FEA_ASSERT(mExploreData.count(v) > 0, std::to_string(v.x) + " " + std::to_string(v.y) + " " + std::to_string(v.z) + "doesn't exist");
-		
-			explorePrinter[x] = (mExploreData.at(v)[x*8  ] << 7) | (mExploreData.at(v)[x*8+1] << 6) |
-								(mExploreData.at(v)[x*8+2] << 5) | (mExploreData.at(v)[x*8+3] << 4) |
-								(mExploreData.at(v)[x*8+4] << 3) | (mExploreData.at(v)[x*8+5] << 2) |
-								(mExploreData.at(v)[x*8+6] << 1) |  mExploreData.at(v)[x*8+7];
+			FEA_ASSERT(mExploreData.count(regionCoord) > 0, std::to_string(regionCoord.x) + " " + std::to_string(regionCoord.y) + " " + std::to_string(regionCoord.z) + "doesn't exist");
+			
+			std::vector<bool> &changedRegion = mExploreData.at(regionCoord);
+			exploreWriter[x] = (changedRegion[x*8  ] << 7) | (changedRegion[x*8+1] << 6) |
+							   (changedRegion[x*8+2] << 5) | (changedRegion[x*8+3] << 4) |
+							   (changedRegion[x*8+4] << 3) | (changedRegion[x*8+5] << 2) |
+							   (changedRegion[x*8+6] << 1) |  changedRegion[x*8+7];
 		}
 		
-		std::ofstream expFile(getFilename(v) + explorationExt, std::ios::out | std::ios::binary);
-		expFile.write((char*)explorePrinter.data(), 4096);
+		std::ofstream expFile(getFilename(regionCoord) + explorationExt, std::ios::out | std::ios::binary);
+		expFile.write((char*)exploreWriter.data(), 4096);
 		expFile.close();
 	}
 	
@@ -93,31 +94,32 @@ void ExplorationManager::saveRegionExploration(const ChunkCoord& coordinate)
 	
 	if(mExploreChange.count(regionCoord))
 	{
-		std::vector<uint8_t> explorePrinter(4096);
+		std::vector<uint8_t> exploreWriter(4096);
 		for(int x=0; x<4096; ++x)
 		{
 			FEA_ASSERT(mExploreData.count(regionCoord) > 0, std::to_string(regionCoord.x) + " " + std::to_string(regionCoord.y) + " " + std::to_string(regionCoord.z) + "doesn't exist");
-		
-			explorePrinter[x] = (mExploreData.at(regionCoord)[x*8  ] << 7) | (mExploreData.at(regionCoord)[x*8+1] << 6) |
-								(mExploreData.at(regionCoord)[x*8+2] << 5) | (mExploreData.at(regionCoord)[x*8+3] << 4) |
-								(mExploreData.at(regionCoord)[x*8+4] << 3) | (mExploreData.at(regionCoord)[x*8+5] << 2) |
-								(mExploreData.at(regionCoord)[x*8+6] << 1) |  mExploreData.at(regionCoord)[x*8+7];
+			
+			std::vector<bool> &changedRegion = mExploreData.at(regionCoord);
+			exploreWriter[x] = (changedRegion[x*8  ] << 7) | (changedRegion[x*8+1] << 6) |
+							   (changedRegion[x*8+2] << 5) | (changedRegion[x*8+3] << 4) |
+							   (changedRegion[x*8+4] << 3) | (changedRegion[x*8+5] << 2) |
+							   (changedRegion[x*8+6] << 1) |  changedRegion[x*8+7];
 		}
 		
 		std::ofstream expFile(getFilename(regionCoord) + explorationExt, std::ios::out | std::ios::binary);
-		expFile.write((char*)explorePrinter.data(), 4096);
+		expFile.write((char*)exploreWriter.data(), 4096);
 		expFile.close();
 	}
 }
 
 void ExplorationManager::activateChunk(const ChunkCoord& coordinate)
 {
-	explorationGrid.set(coordinate, true);
+	mExplorationGrid.set(coordinate, true);
 }
 
 void ExplorationManager::deactivateChunk(const ChunkCoord& coordinate)
 {
-	auto activatedCell = explorationGrid.set(coordinate, false);
+	auto activatedCell = mExplorationGrid.set(coordinate, false);
 	if(!activatedCell.empty())
 	{
 		saveRegionExploration(coordinate);

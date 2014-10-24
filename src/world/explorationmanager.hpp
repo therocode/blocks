@@ -30,7 +30,8 @@ class ExplorationManager
 	private:
 		std::unordered_map<ExplorationRegionCoord, std::vector<bool>> mExploreData;
 		std::unordered_set<ExplorationRegionCoord> mExploreChange;
-		std::string getFilename(ExplorationRegionCoord regionLoc);
-		GridNotifier<explorationRegionWidthInChunks> explorationGrid;
+		GridNotifier<explorationRegionWidthInChunks> mExplorationGrid;
 		std::string mWorldPath;
+		
+		std::string getFilename(ExplorationRegionCoord regionLoc);
 };
