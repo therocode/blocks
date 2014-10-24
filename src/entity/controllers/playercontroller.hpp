@@ -3,6 +3,7 @@
 #include "../../application/applicationmessages.hpp"
 #include "../../input/inputmessages.hpp"
 #include "../entitymessages.hpp"
+#include "../playermessages.hpp"
 
 class PlayerController : 
     public EntityController,

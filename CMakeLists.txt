@@ -150,6 +150,7 @@ set(header_files
     src/entity/entitydefinition.hpp
     src/entity/entitydefinitionloader.hpp
     src/entity/entitysystem.hpp
+    src/entity/playermessages.hpp
     src/entity/controllers/collisioncontroller.hpp
     src/entity/controllers/entitycontroller.hpp
     src/entity/controllers/gfxcontroller.hpp

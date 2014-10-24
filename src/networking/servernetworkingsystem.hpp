@@ -6,6 +6,7 @@
 #include "networkparameters.hpp"
 #include "../rendering/renderingmessages.hpp"
 #include "../entity/entitymessages.hpp"
+#include "../entity/playermessages.hpp"
 #include "../world/worldmessages.hpp"
 #include "../application/applicationmessages.hpp"
 #include "networkingmessages.hpp"
