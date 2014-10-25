@@ -64,6 +64,7 @@ set(source_files
     src/rendering/gl_core_3_2.c
 
     src/script/scriptcallback.cpp
+    src/script/scriptchunk.cpp
     src/script/scriptengine.cpp
     src/script/scriptentity.cpp
     src/script/scriptentitycore.cpp
@@ -72,13 +73,19 @@ set(source_files
     src/script/asaddons/scriptarray.cpp
     src/script/asaddons/scriptmath.cpp
     src/script/asaddons/scriptvectors.cpp
+    src/script/asaddons/scriptvec3.cpp
+    src/script/asaddons/scriptu8vec3.cpp
+    src/script/asaddons/scripti64vec3.cpp
     src/script/asaddons/scriptbuilder.cpp
     src/script/asaddons/scriptstdstring.cpp
+    src/script/asaddons/scriptprimitivealiases.cpp
     src/script/asaddons/scriptstdstring_utils.cpp
     src/script/callers/scriptcaller.cpp
     src/script/callers/frametimecaller.cpp
     src/script/callers/gameeventcaller.cpp
+    src/script/callers/chunkeventcaller.cpp
     src/script/callers/ongroundcaller.cpp
+    src/script/interfaces/chunkinterface.cpp
     src/script/interfaces/entityinterface.cpp
     src/script/interfaces/landscapeinterface.cpp
     src/script/interfaces/mathsinterface.cpp
@@ -175,6 +182,7 @@ set(header_files
     src/rendering/opengl.hpp
 
     src/script/scriptmessages.hpp
+    src/script/scriptchunk.hpp
     src/script/scriptcallback.hpp
     src/script/scriptengine.hpp
     src/script/scriptentity.hpp
@@ -185,12 +193,18 @@ set(header_files
     src/script/asaddons/scriptarray.hpp
     src/script/asaddons/scriptmath.hpp
     src/script/asaddons/scriptvectors.hpp
+    src/script/asaddons/scriptvec3.hpp
+    src/script/asaddons/scriptu8vec3.hpp
+    src/script/asaddons/scripti64vec3.hpp
     src/script/asaddons/scriptbuilder.hpp
     src/script/asaddons/scriptstdstring.hpp
+    src/script/asaddons/scriptprimitivealiases.hpp
     src/script/callers/scriptcaller.hpp
     src/script/callers/frametimecaller.hpp
     src/script/callers/gameeventcaller.hpp
     src/script/callers/ongroundcaller.hpp
+    src/script/callers/chunkeventcaller.hpp
+    src/script/interfaces/chunkinterface.hpp
     src/script/interfaces/entityinterface.hpp
     src/script/interfaces/landscapeinterface.hpp
     src/script/interfaces/mathsinterface.hpp

@@ -5,6 +5,7 @@
 #include "scriptentitycore.hpp"
 #include "scriptmessages.hpp"
 
+#include "interfaces/chunkinterface.hpp"
 #include "interfaces/entityinterface.hpp"
 #include "interfaces/landscapeinterface.hpp"
 #include "interfaces/mathsinterface.hpp"
@@ -16,6 +17,7 @@
 #include "callers/ongroundcaller.hpp"
 #include "callers/gameeventcaller.hpp"
 #include "callers/frametimecaller.hpp"
+#include "callers/chunkeventcaller.hpp"
 
 ScriptSystem::ScriptSystem(fea::MessageBus& bus, GameInterface& worldInterface) : 
     mBus(bus),
@@ -130,6 +132,7 @@ void ScriptSystem::setupInterfaces()
     mInterfaces.push_back(std::unique_ptr<ScriptInterface>(new PhysicsInterface(mBus, mGameInterface)));
     mInterfaces.push_back(std::unique_ptr<ScriptInterface>(new PrintInterface(mBus, mGameInterface)));
     mInterfaces.push_back(std::unique_ptr<ScriptInterface>(new RandomInterface(mBus, mGameInterface)));
+	mInterfaces.push_back(std::unique_ptr<ScriptInterface>(new ChunkInterface(mBus, mGameInterface)));
 
     registerInterfaces();
 }
@@ -147,6 +150,7 @@ void ScriptSystem::setupCallbacks()
     mCallers.push_back(std::unique_ptr<ScriptCaller>(new FrameTimeCaller(mBus, mEngine, mScriptEntities)));
     mCallers.push_back(std::unique_ptr<ScriptCaller>(new GameEventCaller(mBus, mEngine, mScriptEntities)));
     mCallers.push_back(std::unique_ptr<ScriptCaller>(new OnGroundCaller(mBus, mEngine, mScriptEntities)));
+	mCallers.push_back(std::unique_ptr<ScriptCaller>(new ChunkEventCaller(mBus, mEngine, mScriptEntities)));
 }
 
 void ScriptSystem::loadSources()
@@ -155,7 +159,7 @@ void ScriptSystem::loadSources()
 
     mSourceFiles.clear();
 
-    exploder.explodeFolder("data", ".*\\.as", mSourceFiles);
+    exploder.explodeFolder("data/scripts", ".*\\.as", mSourceFiles);
     for(auto& string : mSourceFiles)
     {
         mBus.send(LogMessage{"Adding " + string + " for compilation.", scriptName, LogLevel::VERB});

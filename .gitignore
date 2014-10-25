@@ -30,3 +30,4 @@ zlib-1.2.8/*
 *.vim
 *.exp
 docs/gen/*
+*.kdev4

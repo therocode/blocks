@@ -3,12 +3,20 @@
 #include <cstdio>
 #include "scriptengine.hpp"
 #include <assert.h>
+#include "../utilities/glm.hpp"
+#include "scriptchunk.hpp"
 
 void parameterFunction(asIScriptContext* context, std::size_t index, int value);
  
 void parameterFunction(asIScriptContext* context, std::size_t index, float value);
 
 void parameterFunction(asIScriptContext* context, std::size_t index, bool value);
+
+void parameterFunction(asIScriptContext* context, std::size_t index, uint32_t value);
+
+void parameterFunction(asIScriptContext* context, std::size_t index, glm::i64vec3& value);
+
+void parameterFunction(asIScriptContext* context, std::size_t index, ScriptChunk& value);
 
 template <std::size_t I, typename... Types>
 struct ParameterHelper;

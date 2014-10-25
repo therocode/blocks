@@ -1,4 +1,5 @@
 #pragma once
+#include "scriptchunk.hpp"
 #include "scriptengine.hpp"
 #include "scriptmessages.hpp"
 #include "scriptstd.hpp"
