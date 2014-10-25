@@ -6,6 +6,7 @@
 #include "../entity/controllers/gfxcontroller.hpp"
 #include "../entity/controllers/movementcontroller.hpp"
 #include "../entity/controllers/highlightcontroller.hpp"
+#include "../entity/controllers/worldcontroller.hpp"
 
 Server::Server(fea::MessageBus& bus, const NetworkParameters& parameters) : 
     mBus(bus),
@@ -25,6 +26,7 @@ Server::Server(fea::MessageBus& bus, const NetworkParameters& parameters) :
 	mEntitySystem.addController(std::unique_ptr<EntityController>(new MovementController(mBus)));
 	mEntitySystem.addController(std::unique_ptr<EntityController>(new GfxController(mBus)));
 	mEntitySystem.addController(std::unique_ptr<EntityController>(new HighlightController(mBus)));
+	mEntitySystem.addController(std::unique_ptr<EntityController>(new WorldController(mBus)));
 	mEntitySystem.addController(std::unique_ptr<EntityController>(new PlayerController(mBus, mGameInterface)));
 
     mFPSController.setMaxFPS(60);

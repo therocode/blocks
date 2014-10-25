@@ -25,7 +25,7 @@ void PlayerController::handleMessage(const PlayerJoinedGameMessage& received)
                 e->setAttribute("current_world", 0u);
                 e->setAttribute("position", position);
                 e->setAttribute("is_highlighting", true);
-                e->setAttribute("highlight_radius", 8u);
+                e->setAttribute("highlight_radius", 4u);
                 playerEntity = e;
             }});
 
@@ -119,13 +119,14 @@ void PlayerController::handleMessage(const PlayerActionMessage& received)
     }
     else if(action == WARP)
     {
-        //WorldId oldWorld = entity->getAttribute<WorldId>("current_world");
-        //WorldId nextWorld = oldWorld == 0 ? 1 : 0;
+        WorldId oldWorld = entity->getAttribute<WorldId>("current_world");
+        WorldId nextWorld = oldWorld == 0 ? 1 : 0;
         //fea::EntityId entityId = entity->getId();
 
         //entity->setAttribute("current_world", nextWorld);
         //mBus.send(PlayerEntersWorldMessage{playerId, nextWorld});
         //mBus.send(EntityEnteredWorldMessage{entityId, oldWorld, nextWorld});
+        mBus.send(EntityWorldTransferRequestedMessage{entity, nextWorld});
     }
 }
 
@@ -195,6 +196,19 @@ void PlayerController::handleMessage(const EntityMovedMessage& received)
         mBus.send(PlayerEntityMovedMessage{playerId, received.newPosition});
     }
 
+}
+
+void PlayerController::handleMessage(const EntityTransferredWorldMessage& received)
+{
+    size_t id = received.entityId;
+
+    std::cout << "sent it?\n";
+    if(mEntityIdToPlayerId.find(id) != mEntityIdToPlayerId.end())
+    {
+        size_t playerId = mEntityIdToPlayerId.at(id);
+        mBus.send(PlayerEntersWorldMessage{playerId, received.newWorld});
+        std::cout << "sent it\n";
+    }
 }
 
 void PlayerController::playerEntersChunk(size_t playerId, const ChunkCoord& chunk)

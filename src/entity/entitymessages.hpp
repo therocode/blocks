@@ -17,7 +17,12 @@ struct EntityMovedMessage
     fea::EntityId entityId; WorldId worldId; const glm::vec3& oldPosition; const glm::vec3& newPosition;
 };
 
-struct EntityEnteredWorldMessage
+struct EntityWorldTransferRequestedMessage
+{
+    fea::EntityPtr entity; WorldId worldId;
+};
+
+struct EntityTransferredWorldMessage
 {
     fea::EntityId entityId; WorldId oldWorld; WorldId newWorld;
 };

@@ -40,6 +40,7 @@ set(server_source
     src/entity/controllers/movementcontroller.cpp
     src/entity/controllers/physicscontroller.cpp
     src/entity/controllers/playercontroller.cpp
+    src/entity/controllers/worldcontroller.cpp
 
     src/script/scriptcallback.cpp
     src/script/scriptchunk.cpp
@@ -168,6 +169,7 @@ set(header_files
     src/entity/controllers/physicscontroller.hpp
     src/entity/controllers/physicstype.hpp
     src/entity/controllers/playercontroller.hpp
+    src/entity/controllers/worldcontroller.hpp
 
     src/input/inputmessages.hpp
     src/input/inputactions.hpp

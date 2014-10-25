@@ -13,7 +13,8 @@ class PlayerController :
                                 PlayerMoveDirectionMessage,
                                 PlayerMoveActionMessage,
                                 PlayerPitchYawMessage,
-                                EntityMovedMessage>
+                                EntityMovedMessage,
+                                EntityTransferredWorldMessage>
 {
     public:
         PlayerController(fea::MessageBus& bus, GameInterface& gameInterface);
@@ -24,6 +25,7 @@ class PlayerController :
         void handleMessage(const PlayerMoveActionMessage& received);
         void handleMessage(const PlayerPitchYawMessage& received);
         void handleMessage(const EntityMovedMessage& received);
+        void handleMessage(const EntityTransferredWorldMessage& received);
     private:
         void playerEntersChunk(size_t playerId, const ChunkCoord& chunk);
         void updateVoxelLookAt(size_t playerId);

@@ -98,7 +98,7 @@ void ScriptSystem::handleMessage(const EntityCreatedMessage& received)
         // otherwise it will be destroyed when the context is reused or destroyed.
         obj->AddRef();
 
-        mBus.send(LogMessage{"Created entity id " + std::to_string(id) + " of type '" + type + "'", scriptName, LogLevel::VERB});
+        //mBus.send(LogMessage{"Created entity id " + std::to_string(id) + " of type '" + type + "'", scriptName, LogLevel::VERB});
 
         mEngine.freeContext(ctx);
 

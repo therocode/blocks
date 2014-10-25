@@ -59,11 +59,17 @@ void HighlightController::handleMessage(const EntityMovedMessage& received)
     }
 }
 
-void HighlightController::handleMessage(const EntityEnteredWorldMessage& received)
+void HighlightController::handleMessage(const EntityTransferredWorldMessage& received)
 {
-    //if(mEntities.count(received.entityId))
-    //{
-    //    mBus.send(HighlightEntityRemoveRequestedMessage{received.oldWorld, received.entityId});
-    //    mBus.send(HighlightEntityAddRequestedMessage{received.newWorld, received.entityId, WorldToChunk::convert(mEntities.at(received.entityId).lock()->getAttribute<glm::vec3>("position"))});
-    //}
+    auto entityIterator = mEntities.find(received.entityId);
+    if(entityIterator != mEntities.end())
+    {
+        fea::EntityPtr entity = entityIterator->second.lock();
+        if(entity->getAttribute<bool>("is_highlighting"))
+        {
+            uint32_t radius = entity->getAttribute<uint32_t>("highlight_radius");
+            mBus.send(HighlightEntityRemoveRequestedMessage{received.oldWorld, received.entityId});
+            mBus.send(HighlightEntityAddRequestedMessage{received.newWorld, received.entityId, WorldToChunk::convert(mEntities.at(received.entityId).lock()->getAttribute<glm::vec3>("position")), radius});
+        }
+    }
 }

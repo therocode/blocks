@@ -34,9 +34,66 @@ void hills(const ChunkCoord &in coord, Chunk &chunk) {
 	chunk.setVoxelData(voxelData);
 }
 
+void spikes(const ChunkCoord &in coord, Chunk &chunk) {
+
+	int typeBlock = 36;
+	int typeEmpty = 0;
+	
+	if(coord.y != -1) 
+		return;
+	
+	bool xFlipped = coord.x % 2 == 0;
+	bool zFlipped = coord.z % 2 == 0;
+
+	array<uint16> voxelData;
+	voxelData.resize(16*16*16);
+
+	int x = 0, y = 0, z = 0;
+	for(int x = 0; x < 16; x++) 
+    {
+        bool spikex = randomChance(0.4f);
+        for(int z = 0;z < 16; z++) 
+        {
+            bool spike = spikex && randomChance(0.4f);
+            int height = randomIntRange(1, 15);
+            for(int y = 0; y < 16; y++)
+            {
+                bool empty = true;
+
+                if(spike)
+                {
+                    if(y < height)
+                        empty = false;
+                }
+                else
+                {
+                    if(y <3)
+                        empty = false;
+                }
+
+                if(empty)
+                    if(randomChance(0.0005))
+                        createEntity("Elephant", 1, Vec3(x, y, z) + Vec3(coord.x, coord.y, coord.z) * 16);
+                    else if(randomChance(0.001))
+                    {
+                        typeEmpty = 12;
+                    }
+                setVoxelDataArray(voxelData, x, y, z, empty ? typeEmpty : typeBlock);
+
+                typeEmpty = 0;
+            }
+        }
+    }
+			
+	chunk.setVoxelData(voxelData);
+}
+
 void chunkInitiallyGenerated(const uint32 worldId, const ChunkCoord &in coord, Chunk &in chunk)
 {
-	hills(coord, chunk);
+    if(worldId == 0)
+        hills(coord, chunk);
+    else
+        spikes(coord, chunk);
 }
 
 void chunkCandidate(const uint32 worldId, const ChunkCoord &in coord, Chunk &in chunk)

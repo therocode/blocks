@@ -88,12 +88,9 @@ void WorldEntry::deliverChunk(const ChunkCoord& coordinate, const Chunk& chunk)
 		{
             VoxelTypeArray before = createdChunk.getFlatVoxelTypeData();
 
-            std::cout << before[0] << "\n";;
-
 			mBus.send(ChunkInitiallyGeneratedMessage{mId, coordinate, createdChunk});
 			mExplorationManager.setChunkExplored(coordinate);
             
-            std::cout <<  createdChunk.getFlatVoxelTypeData()[0] << "\n";
             applyDifferenceAsMods(coordinate, before, createdChunk.getFlatVoxelTypeData());
 		}
         else       //apply possible modifications on chunks that are already explored
