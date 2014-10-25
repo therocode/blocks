@@ -34,7 +34,11 @@ void hills(const ChunkCoord &in coord, Chunk &chunk) {
 	chunk.setVoxelData(voxelData);
 }
 
-void chunkCandidate(const uint32 worldId, const ChunkCoord &in coord, Chunk &in chunk)
+void chunkInitiallyGenerated(const uint32 worldId, const ChunkCoord &in coord, Chunk &in chunk)
 {
 	hills(coord, chunk);
+}
+
+void chunkCandidate(const uint32 worldId, const ChunkCoord &in coord, Chunk &in chunk)
+{
 }
