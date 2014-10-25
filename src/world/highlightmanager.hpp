@@ -9,7 +9,7 @@
 
 #define PR(x) std::cerr << #x << " = " << (x) << std::endl;
 
-using RefMap = std::unordered_map<ChunkCoord, uint16_t>;
+using RefMap = std::unordered_map<ChunkCoord, uint32_t>;
 using EntityMap = std::unordered_map<fea::EntityId, ChunkCoord>;
 
 struct HighlightManagerException : public std::exception
@@ -26,18 +26,17 @@ using ChunkDehighlightList = std::vector<ChunkCoord>;
 class HighlightManager
 {
     public:
-        HighlightManager(int highlightRadius);
-        ChunkHighlightList addHighlightEntity(fea::EntityId id, const ChunkCoord& coordinate);
+        ChunkHighlightList addHighlightEntity(fea::EntityId id, const ChunkCoord& coordinate, uint32_t radius);
         ChunkDehighlightList removeHighlightEntity(fea::EntityId id);
         std::pair<ChunkHighlightList, ChunkDehighlightList> moveHighlightEntity(fea::EntityId id, const ChunkCoord& coordinate);
         bool chunkIsHighlighted(const ChunkCoord& coordinate);
     private:
-        ChunkHighlightList highlightShape(const ChunkCoord& coord);
-        ChunkDehighlightList dehighlightShape(const ChunkCoord& coord);
+        ChunkHighlightList highlightShape(const ChunkCoord& coord, uint32_t radius);
+        ChunkDehighlightList dehighlightShape(const ChunkCoord& coord, uint32_t radius);
         bool highlightChunk(const ChunkCoord& coord);
         bool dehighlightChunk(const ChunkCoord& coord);
 
         RefMap mRefCounts;
         EntityMap mEntityMap;
-        int mHighlightRadius;
+        std::unordered_map<fea::EntityId, uint32_t> mRadii;
 };

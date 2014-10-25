@@ -2,28 +2,29 @@
 #include "../../gameinterface.hpp"
 #include "../../world/worldsystem.hpp"
 
-CollisionController::CollisionController(fea::MessageBus& bus, GameInterface& worldInterface) : EntityController(bus, worldInterface), mBus(bus)
+CollisionController::CollisionController(fea::MessageBus& bus, GameInterface& gameInterface) :
+    EntityController(bus), mBus(bus),
+    mGameInterface(gameInterface)
 {
     subscribe(mBus, *this);
 }
 
-void CollisionController::inspectEntity(fea::WeakEntityPtr entity)
+bool CollisionController::keepEntity(fea::WeakEntityPtr entity) const
 {
     fea::EntityPtr locked = entity.lock();
 
-    if(locked->hasAttribute("position") &&
+    return locked->hasAttribute("position") &&
             locked->hasAttribute("velocity") &&
             locked->hasAttribute("acceleration") &&
             locked->hasAttribute("on_ground") &&
             locked->hasAttribute("current_world") &&
-            locked->hasAttribute("hitbox"))
-    {
-        mEntities.emplace(locked->getId(), entity);
-    }
+            locked->hasAttribute("hitbox");
 }
 
-void CollisionController::onFrame(int dt)
+void CollisionController::handleMessage(const FrameMessage& message)
 {
+    int32_t dt = message.deltaTime;
+
     for(auto wEntity : mEntities)
     {
         fea::EntityPtr entity = wEntity.second.lock();
@@ -72,6 +73,7 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& receiv
     fea::EntityPtr entity =  mEntities.at(id).lock();
     WorldId worldId = entity->getAttribute<WorldId>("current_world");
     glm::vec3 oldPosition = entity->getAttribute<glm::vec3>("position");
+    const glm::vec3 oldPositionRetained = oldPosition;
     glm::vec3 size = entity->getAttribute<glm::vec3>("hitbox");
     AABB a;
 
@@ -228,7 +230,7 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& receiv
         }
     }
     entity->setAttribute<glm::vec3>("position", approvedPosition);
-    mBus.send(EntityMovedMessage{id, worldId, requestedPosition, approvedPosition});
+    mBus.send(EntityMovedMessage{id, worldId, oldPositionRetained, approvedPosition});
 }
 
 bool CollisionController::testAABBWorld(WorldId worldId, const AABB& a) const{
@@ -467,11 +469,6 @@ bool CollisionController::AABBOnGround(WorldId worldId, AABB a)
         }
     return false;
 
-}
-
-void CollisionController::removeEntity(fea::EntityId id)
-{
-    mEntities.erase(id);
 }
 
 bool CollisionController::checkIfOnGround(fea::EntityPtr entity)

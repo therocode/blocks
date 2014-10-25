@@ -18,7 +18,7 @@ struct SetVoxelMessage
 
 struct VoxelSetMessage
 {
-    const VoxelCoord& voxel; VoxelType type;
+    WorldId worldId; const VoxelCoord& voxel; VoxelType type;
 };
 
 struct WorldBiomeSettingsMessage
@@ -71,6 +71,7 @@ struct HighlightEntityAddRequestedMessage
     WorldId worldId;
     fea::EntityId entityId;
     const ChunkCoord& coordinate;
+    uint32_t radius;
 };
 
 struct HighlightEntityMoveRequestedMessage

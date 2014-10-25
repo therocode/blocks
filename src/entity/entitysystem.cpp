@@ -52,17 +52,9 @@ EntitySystem::~EntitySystem()
     mBus.send(LogMessage{"Shutting down entity system", entityName, LogLevel::INFO});
 }
 
-void EntitySystem::addController(std::unique_ptr<EntityController> controller)
+void EntitySystem::addController(std::unique_ptr<fea::EntityComponent> controller)
 {
     mControllers.push_back(std::move(controller));
-}
-
-void EntitySystem::update(int32_t deltaTime)
-{
-    for(auto& controller : mControllers)
-    {
-        controller->onFrame(deltaTime);
-    }
 }
 
 void EntitySystem::handleMessage(const EntityRequestedMessage& received) 
@@ -104,7 +96,7 @@ void EntitySystem::attachEntity(fea::WeakEntityPtr entity)
 {
     for(auto& controller : mControllers)
     {
-        controller->inspectEntity(entity);
+        controller->entityCreated(entity);
     }
 }
 
@@ -112,7 +104,7 @@ void EntitySystem::removeEntity(fea::EntityId id)
 {
     for(auto& controller : mControllers)
     {
-        controller->removeEntity(id);
+        controller->entityRemoved(id);
     }
 
     mManager.removeEntity(id);

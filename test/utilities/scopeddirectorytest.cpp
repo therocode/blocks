@@ -12,9 +12,10 @@ SCENARIO("Scoped directory creates and removes directories properly", "[utilitie
 
             WHEN("it is within the scope")
             {
-                THEN("A directory for it exists")
+                THEN("A directory for it exists and it has the correct path set")
                 {
                     CHECK(DirectoryCreator::directoryExists("scoped_directory"));
+                    CHECK(scoped.getPath() == "scoped_directory");
                 }
             }
         }

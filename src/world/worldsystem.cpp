@@ -5,6 +5,7 @@
 #include "../application/applicationmessages.hpp"
 #include "../lognames.hpp"
 #include "../world/worldloader.hpp"
+#include "../utilities/directorycreator.hpp"
 
 WorldSystem::WorldSystem(fea::MessageBus& messageBus) 
 :   mBus(messageBus),
@@ -40,6 +41,17 @@ WorldSystem::WorldSystem(fea::MessageBus& messageBus)
 
     mBus.send(BiomesLoadedMessage{mBiomes});
 
+    //make sure world data directory exists. In the future, the name of it should be a setting
+    std::string worldPath = "worlds";
+    if(!DirectoryCreator::directoryExists(worldPath))
+    {
+        mBus.send(LogMessage{"Creating directory '" + worldPath + "' to store worlds in", worldName, LogLevel::INFO});
+        bool success = DirectoryCreator::createDirectory(worldPath);
+
+        if(!success)
+            mBus.send(LogMessage{"Failed creating world data directory '" + worldPath + "'!", worldName, LogLevel::ERR});
+    }
+
     //load worlds
     WorldLoader mWorldLoader;
 
@@ -49,7 +61,7 @@ WorldSystem::WorldSystem(fea::MessageBus& messageBus)
     {
         for(const auto& worldParameters : mWorldLoader.getLoadedWorlds())
         {
-            createWorld(worldParameters);
+            createWorld(worldParameters, worldPath);
         }
     }
     else
@@ -90,7 +102,7 @@ void WorldSystem::handleMessage(const HighlightEntityAddRequestedMessage& receiv
 {
     FEA_ASSERT(mWorlds.count(received.worldId) != 0, "Trying to add a highlight entity to world " + std::to_string(received.worldId) + " but that world does not exist");
 
-    mWorlds.at(received.worldId).addHighlightEntity(received.entityId, received.coordinate);
+    mWorlds.at(received.worldId).addHighlightEntity(received.entityId, received.coordinate, received.radius);
 }
 
 void WorldSystem::handleMessage(const HighlightEntityMoveRequestedMessage& received)
@@ -129,6 +141,11 @@ const ChunkMap& WorldSystem::getWorldVoxels(WorldId id) const
     return mWorlds.at(id).getChunkMap();
 }
 
+bool WorldSystem::hasWorld(const std::string& identifier) const
+{
+    return mIdentifierToIdMap.count(identifier) != 0;
+}
+
 WorldId WorldSystem::worldIdentifierToId(const std::string& identifier) const
 {
     FEA_ASSERT(mIdentifierToIdMap.count(identifier) != 0, "Trying to get the ID of a world called " + identifier + " but that world doesn't exist!");
@@ -141,7 +158,7 @@ const std::string& WorldSystem::worldIdToIdentifier(WorldId id) const
     return mWorlds.at(id).getIdentifier();
 }
 
-void WorldSystem::createWorld(const WorldParameters& parameters)
+void WorldSystem::createWorld(const WorldParameters& parameters, const std::string& worldPath)
 {
     mBus.send(LogMessage{"Loading world " + parameters.identifier, worldName, LogLevel::INFO});
     WorldId newId = mNextId++;
@@ -156,5 +173,16 @@ void WorldSystem::createWorld(const WorldParameters& parameters)
     worldData.biomeSettings.biomes.push_back(mBiomeIdentifierToIdMap.at("grass"));
     worldData.biomeSettings.biomes.push_back(mBiomeIdentifierToIdMap.at("desert"));
 
-    auto createdIterator = mWorlds.emplace(newId, WorldEntry(mBus, newId, parameters.identifier, worldData)).first;
+    //make sure world directory exists.
+    std::string path = worldPath + "/" + parameters.identifier;
+    if(!DirectoryCreator::directoryExists(path))
+    {
+        mBus.send(LogMessage{"Creating directory '" + path + "' for world " + parameters.identifier, worldName, LogLevel::INFO});
+        bool success = DirectoryCreator::createDirectory(path);
+
+        if(!success)
+            mBus.send(LogMessage{"Failed creating world directory '" + path + "'!", worldName, LogLevel::ERR});
+    }
+
+    auto createdIterator = mWorlds.emplace(newId, WorldEntry(mBus, newId, parameters.identifier, worldData, path)).first;
 }

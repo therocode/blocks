@@ -1,14 +1,6 @@
 #include "highlightmanager.hpp"
 
-using namespace std;
-
-HighlightManager::HighlightManager(int highlightRadius)
-    : mHighlightRadius(highlightRadius) 
-{
-}
-
-
-ChunkHighlightList HighlightManager::addHighlightEntity(fea::EntityId id, const ChunkCoord& coordinate)
+ChunkHighlightList HighlightManager::addHighlightEntity(fea::EntityId id, const ChunkCoord& coordinate, uint32_t radius)
 {
     EntityMap::const_iterator got = mEntityMap.find(id);
     if(got != mEntityMap.end())
@@ -17,8 +9,9 @@ ChunkHighlightList HighlightManager::addHighlightEntity(fea::EntityId id, const 
     }
 
     mEntityMap[id] = coordinate;
+    mRadii[id] = radius;
     
-    return highlightShape(coordinate); 
+    return highlightShape(coordinate, radius); 
 }
 
 ChunkDehighlightList HighlightManager::removeHighlightEntity(fea::EntityId id)
@@ -29,8 +22,9 @@ ChunkDehighlightList HighlightManager::removeHighlightEntity(fea::EntityId id)
         throw HighlightManagerException("Entity hasn't spawned.");
     }
 
-    ChunkDehighlightList dehighlightList = dehighlightShape(mEntityMap[id]);
+    ChunkDehighlightList dehighlightList = dehighlightShape(mEntityMap[id], mRadii[id]);
     mEntityMap.erase(got);
+    mRadii.erase(id);
 
     return dehighlightList;
 }
@@ -43,8 +37,10 @@ std::pair<ChunkHighlightList, ChunkDehighlightList> HighlightManager::moveHighli
         throw HighlightManagerException("Entity hasn't spawned.");
     }
 
-    ChunkHighlightList highlightList = highlightShape(coordinate);
-    ChunkDehighlightList dehighlightList = dehighlightShape(mEntityMap[id]);
+    uint32_t radius = mRadii[id];
+
+    ChunkHighlightList highlightList = highlightShape(coordinate, radius);
+    ChunkDehighlightList dehighlightList = dehighlightShape(mEntityMap[id], radius);
     mEntityMap[id] = coordinate;
     return {highlightList, dehighlightList};
 }
@@ -54,19 +50,19 @@ bool HighlightManager::chunkIsHighlighted(const ChunkCoord& coordinate)
     return mRefCounts.count(coordinate) != 0;
 }
 
-ChunkHighlightList HighlightManager::highlightShape(const ChunkCoord& loc)
+ChunkHighlightList HighlightManager::highlightShape(const ChunkCoord& loc, uint32_t radius)
 {
     ChunkHighlightList highlightList;
 
-    for(int64_t x = loc.x - mHighlightRadius; x < loc.x + mHighlightRadius + 1; ++x)
+    for(int64_t x = loc.x - radius; x < loc.x + radius + 1; ++x)
     {
-        for(int64_t y = loc.y - mHighlightRadius; y < loc.y + mHighlightRadius + 1; ++y)
+        for(int64_t y = loc.y - radius; y < loc.y + radius + 1; ++y)
         {
-            for(int64_t z = loc.z - mHighlightRadius; z < loc.z + mHighlightRadius + 1; ++z)
+            for(int64_t z = loc.z - radius; z < loc.z + radius + 1; ++z)
             {
                 ChunkCoord subLoc(x, y, z);
 
-                if(glm::distance(glm::vec3(loc), glm::vec3(subLoc)) <= (float)mHighlightRadius)
+                if(glm::distance(glm::vec3(loc), glm::vec3(subLoc)) <= (float)radius)
                 {
                     if(highlightChunk(subLoc))
                     {
@@ -80,19 +76,19 @@ ChunkHighlightList HighlightManager::highlightShape(const ChunkCoord& loc)
     return highlightList;
 }
 
-ChunkDehighlightList HighlightManager::dehighlightShape(const ChunkCoord& loc)
+ChunkDehighlightList HighlightManager::dehighlightShape(const ChunkCoord& loc, uint32_t radius)
 {
     ChunkDehighlightList dehighlightList;
 
-    for(int64_t x = loc.x - mHighlightRadius; x < loc.x + mHighlightRadius + 1; ++x)
+    for(int64_t x = loc.x - radius; x < loc.x + radius + 1; ++x)
     {
-        for(int64_t y = loc.y - mHighlightRadius; y < loc.y + mHighlightRadius + 1; ++y)
+        for(int64_t y = loc.y - radius; y < loc.y + radius + 1; ++y)
         {
-            for(int64_t z = loc.z - mHighlightRadius; z < loc.z + mHighlightRadius + 1; ++z)
+            for(int64_t z = loc.z - radius; z < loc.z + radius + 1; ++z)
             {
                 ChunkCoord subLoc(x, y, z);
 
-                if(glm::distance(glm::dvec3(loc), glm::dvec3(subLoc)) <= (double)mHighlightRadius)
+                if(glm::distance(glm::dvec3(loc), glm::dvec3(subLoc)) <= (double)radius)
                 {
                     if(dehighlightChunk(subLoc))
                     {

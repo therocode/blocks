@@ -32,29 +32,29 @@ SCENARIO("Networking messages can be serialized and deserialized","[networking]"
 
             THEN("The deserialized types are correct and the deserialized messages matches the original ones")
             {
-                CHECK(deserialized1Type == TEST_1);
-                CHECK(deserialized2Type == TEST_2);
+                REQUIRE(deserialized1Type == TEST_1);
+                REQUIRE(deserialized2Type == TEST_2);
 
-                CHECK(deserialized1.text == "This is a cool message!");
-                CHECK(deserialized1.numerical == 54);
+                REQUIRE(deserialized1.text == "This is a cool message!");
+                REQUIRE(deserialized1.numerical == 54);
 
-                CHECK(deserialized2.textNumbersMap.count("kalle") == 1);
-                CHECK(deserialized2.textNumbersMap.count("ralle") == 1);
+                REQUIRE(deserialized2.textNumbersMap.count("kalle") == 1);
+                REQUIRE(deserialized2.textNumbersMap.count("ralle") == 1);
 
                 if(deserialized2.textNumbersMap.count("kalle") == 1)
                 {
-                    CHECK(deserialized2.textNumbersMap.at("kalle")[0] == 1);
-                    CHECK(deserialized2.textNumbersMap.at("kalle")[1] == 2);
+                    REQUIRE(deserialized2.textNumbersMap.at("kalle")[0] == 1);
+                    REQUIRE(deserialized2.textNumbersMap.at("kalle")[1] == 2);
                 }
 
                 if(deserialized2.textNumbersMap.count("ralle") == 1)
                 {
-                    CHECK(deserialized2.textNumbersMap.at("ralle")[0] == 5);
-                    CHECK(deserialized2.textNumbersMap.at("ralle")[1] == 0);
-                    CHECK(deserialized2.textNumbersMap.at("ralle")[2] == -3);
+                    REQUIRE(deserialized2.textNumbersMap.at("ralle")[0] == 5);
+                    REQUIRE(deserialized2.textNumbersMap.at("ralle")[1] == 0);
+                    REQUIRE(deserialized2.textNumbersMap.at("ralle")[2] == -3);
                 }
 
-                CHECK(closeEnough(deserialized2.floatNumerical, 0.00003));
+                REQUIRE(closeEnough(deserialized2.floatNumerical, 0.00003));
             }   
         }   
     }   

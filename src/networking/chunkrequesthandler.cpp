@@ -5,6 +5,12 @@ void ChunkRequestHandler::addRequest(uint32_t id, const ChunkCoord& coordinate)
     mRequests[coordinate].insert(id);   
 }
 
+void ChunkRequestHandler::clearRequestsFor(uint32_t id)
+{
+    for(auto& requestList : mRequests)
+        requestList.second.erase(id);
+}
+
 uint32_t ChunkRequestHandler::getRequesterAmount(const ChunkCoord& coordinate) const
 {
     const auto& iterator = mRequests.find(coordinate);

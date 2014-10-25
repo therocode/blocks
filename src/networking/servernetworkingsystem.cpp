@@ -193,10 +193,11 @@ void ServerNetworkingSystem::handleMessage(const PlayerAttachedToEntityMessage& 
     mEntityIdToPlayerId.emplace(received.entityId, received.playerId);
     mPlayerPositions[received.playerId] = received.entity.lock()->getAttribute<glm::vec3>("position");
     mPlayerWorlds[received.playerId] = received.entity.lock()->getAttribute<WorldId>("current_world");
+    uint32_t highlightRadius = received.entity.lock()->getAttribute<uint32_t>("highlight_radius");
 
     const std::string worldIdentifier = mGameInterface.getWorldSystem().worldIdToIdentifier(mPlayerWorlds.at(received.playerId));
 
-    sendToOne(received.playerId, ClientAttachedToEntityMessage{received.entityId, worldIdentifier, mPlayerPositions.at(received.playerId)}, true, CHANNEL_DEFAULT);
+    sendToOne(received.playerId, ClientAttachedToEntityMessage{received.entityId, worldIdentifier, mPlayerPositions.at(received.playerId), highlightRadius}, true, CHANNEL_DEFAULT);
 }
 
 void ServerNetworkingSystem::handleMessage(const PlayerEntityMovedMessage& received)
@@ -363,6 +364,7 @@ void ServerNetworkingSystem::handleMessage(const ChunksDataDeliveredMessage& rec
                 }
             }
 
+
             for(const auto iterator : chunksToDeliver)
             {
                 const auto& tuple = chunksToDeliver[iterator.first];
@@ -402,12 +404,15 @@ void ServerNetworkingSystem::handleMessage(const VoxelSetMessage& received)
 
         if(positionIterator != mPlayerPositions.end())
         {
-            ChunkCoord playerChunk = WorldToChunk::convert(positionIterator->second);
-
-            if(glm::distance(glm::vec3(chunk), glm::vec3(playerChunk)) <= (float)mSettings.maxChunkViewDistance)
+            if(received.worldId == mPlayerWorlds.at(playerId))
             {
-                VoxelUpdatedMessage message{received.voxel, received.type};
-                sendToOne(playerId, message, true, CHANNEL_DEFAULT);
+                ChunkCoord playerChunk = WorldToChunk::convert(positionIterator->second);
+
+                if(glm::distance(glm::vec3(chunk), glm::vec3(playerChunk)) <= (float)mSettings.maxChunkViewDistance)
+                {
+                    VoxelUpdatedMessage message{received.voxel, received.type};
+                    sendToOne(playerId, message, true, CHANNEL_DEFAULT);
+                }
             }
         }
     }
@@ -428,10 +433,10 @@ void ServerNetworkingSystem::acceptRemoteClient(uint32_t id)
 
 void ServerNetworkingSystem::handleClientData(uint32_t clientId, const std::vector<uint8_t>& data)
 {
+    int32_t type = decodeType(data);
+
     try
     {
-        int32_t type = decodeType(data);
-
         if(type == CLIENT_JOIN_REQUESTED)
         {
             ClientJoinRequestedMessage received = deserializeMessage<ClientJoinRequestedMessage>(data);
@@ -526,7 +531,7 @@ void ServerNetworkingSystem::handleClientData(uint32_t clientId, const std::vect
     } 
     catch (const DeserializeException& e)
     {
-        mBus.send(LogMessage{"Received corrupt/unserializable message", serverName, LogLevel::WARN});
+        mBus.send(LogMessage{"Received corrupt/unserializable message of type " + std::to_string(type) + "(" + PacketTypeToString(type) + ")", serverName, LogLevel::WARN});
     }
 }
 
@@ -545,6 +550,9 @@ void ServerNetworkingSystem::disconnectRemoteClient(uint32_t id)
         mSubscriptions.erase(playerId);
         mEntityTracking.erase(playerId);
         mPlayerWorlds.erase(playerId);
+        
+        for(auto& requestHandler : mChunkRequestHandlers)
+            requestHandler.second.clearRequestsFor(playerId);
 
         mBus.send(PlayerLeftGameMessage{playerId});
     }
@@ -578,13 +586,20 @@ void ServerNetworkingSystem::playerRequestedChunks(uint32_t id, const std::strin
     }
     if(inRange.size() > 0)
     {
-        auto& chunkRequestHandler = mChunkRequestHandlers[mGameInterface.getWorldSystem().worldIdentifierToId(worldIdentifier)];
-
-        for(const auto& chunk : inRange)
+        if(mGameInterface.getWorldSystem().hasWorld(worldIdentifier))
         {
-            chunkRequestHandler.addRequest(id, chunk);
-        }
+            auto& chunkRequestHandler = mChunkRequestHandlers[mGameInterface.getWorldSystem().worldIdentifierToId(worldIdentifier)];
 
-        mBus.send(ChunksRequestedMessage{mPlayerWorlds.at(id), inRange});
+            for(const auto& chunk : inRange)
+            {
+                chunkRequestHandler.addRequest(id, chunk);
+            }
+
+            mBus.send(ChunksRequestedMessage{mPlayerWorlds.at(id), inRange});
+        }
+        else
+        {
+            mBus.send(LogMessage{"Client Id " + std::to_string(id) + " requested chunks of nonexisting world " + worldIdentifier, serverName, LogLevel::WARN});
+        }
     }
 }

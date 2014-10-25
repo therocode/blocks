@@ -12,8 +12,9 @@
 #include "../entity/controllers/moveaction.hpp"
 #include <cereal/types/vector.hpp>
 #include <cereal/types/array.hpp>
+#include "../utilities/namedenum.hpp"
 
-enum { INVALID = -1, 
+named_enum(PacketType, INVALID, 
     //joining
     CLIENT_JOIN_REQUESTED, CLIENT_JOIN_DENIED, CLIENT_JOIN_ACCEPTED, SUBSCRIPTION_REQUESTED, SUBSCRIPTION_REPLY,
     //chunks
@@ -26,13 +27,13 @@ enum { INVALID = -1,
     CLIENT_ENTERED_WORLD,
     CLIENT_POSITION,
     //tests
-    TEST_1, TEST_2 };
+    TEST_1, TEST_2);
 
 //network protocol:
 //joining
 struct ClientJoinRequestedMessage
 {
-    int32_t getType() const {return CLIENT_JOIN_REQUESTED;}
+    PacketType getType() const {return CLIENT_JOIN_REQUESTED;}
 
     template<class Archive>
     void serialize(Archive& archive)
@@ -47,7 +48,7 @@ enum JoinDenyReason { FULL };
 
 struct ClientJoinDeniedMessage
 {
-    int32_t getType() const {return CLIENT_JOIN_DENIED;}
+    PacketType getType() const {return CLIENT_JOIN_DENIED;}
 
     template<class Archive>
     void serialize(Archive& archive)
@@ -75,7 +76,7 @@ struct ServerNetSettings
 
 struct ClientJoinAcceptedMessage
 {
-    int32_t getType() const {return CLIENT_JOIN_ACCEPTED;}
+    PacketType getType() const {return CLIENT_JOIN_ACCEPTED;}
 
     template<class Archive>
     void serialize(Archive& archive)
@@ -103,7 +104,7 @@ namespace glm
 
 struct ClientRequestedChunksMessage
 {
-    int32_t getType() const {return CLIENT_REQUESTED_CHUNKS;}
+    PacketType getType() const {return CLIENT_REQUESTED_CHUNKS;}
 
     template<class Archive>
     void serialize(Archive& archive)
@@ -117,7 +118,7 @@ struct ClientRequestedChunksMessage
 
 struct ClientChunksDeniedMessage
 {
-    int32_t getType() const {return CLIENT_CHUNKS_DENIED;}
+    PacketType getType() const {return CLIENT_CHUNKS_DENIED;}
 
     template<class Archive>
     void serialize(Archive& archive)
@@ -131,7 +132,7 @@ struct ClientChunksDeniedMessage
 
 struct ClientChunksDeliveredMessage
 {
-    int32_t getType() const {return CLIENT_CHUNKS_DELIVERY;}
+    PacketType getType() const {return CLIENT_CHUNKS_DELIVERY;}
 
     template<class Archive>
     void serialize(Archive& archive)
@@ -147,7 +148,7 @@ struct ClientChunksDeliveredMessage
 
 struct VoxelUpdatedMessage
 {
-    int32_t getType() const {return VOXEL_UPDATED;}
+    PacketType getType() const {return VOXEL_UPDATED;}
 
     template<class Archive>
     void serialize(Archive& archive)
@@ -161,7 +162,7 @@ struct VoxelUpdatedMessage
 
 struct ClientActionMessage
 {
-    int32_t getType() const {return CLIENT_ACTION;}
+    PacketType getType() const {return CLIENT_ACTION;}
 
     template<class Archive>
     void serialize(Archive& archive)
@@ -174,7 +175,7 @@ struct ClientActionMessage
 
 struct ClientMoveDirectionMessage
 {
-    int32_t getType() const {return CLIENT_MOVE_DIRECTION;}
+    PacketType getType() const {return CLIENT_MOVE_DIRECTION;}
 
     template<class Archive>
     void serialize(Archive& archive)
@@ -187,7 +188,7 @@ struct ClientMoveDirectionMessage
 
 struct ClientMoveActionMessage
 {
-    int32_t getType() const {return CLIENT_MOVE_ACTION;}
+    PacketType getType() const {return CLIENT_MOVE_ACTION;}
 
     template<class Archive>
     void serialize(Archive& archive)
@@ -200,7 +201,7 @@ struct ClientMoveActionMessage
 
 struct ClientPitchYawMessage
 {
-    int32_t getType() const {return CLIENT_PITCH_YAW;}
+    PacketType getType() const {return CLIENT_PITCH_YAW;}
 
     template<class Archive>
     void serialize(Archive& archive)
@@ -213,22 +214,23 @@ struct ClientPitchYawMessage
 
 struct ClientAttachedToEntityMessage
 {
-    int32_t getType() const {return CLIENT_ATTACHED_TO_ENTITY;}
+    PacketType getType() const {return CLIENT_ATTACHED_TO_ENTITY;}
 
     template<class Archive>
     void serialize(Archive& archive)
     {
-        archive(entityId, world, position.x, position.y, position.z);
+        archive(entityId, world, position.x, position.y, position.z, highlightRange);
     }
 
     fea::EntityId entityId;
     std::string world;
     glm::vec3 position;
+    uint32_t highlightRange;
 };
 
 struct SubscriptionRequestedMessage
 {
-    int32_t getType() const {return SUBSCRIPTION_REQUESTED;}
+    PacketType getType() const {return SUBSCRIPTION_REQUESTED;}
 
     template<class Archive>
     void serialize(Archive& archive)
@@ -241,7 +243,7 @@ struct SubscriptionRequestedMessage
 
 struct SubscriptionReplyMessage
 {
-    int32_t getType() const {return SUBSCRIPTION_REPLY;}
+    PacketType getType() const {return SUBSCRIPTION_REPLY;}
 
     template<class Archive>
     void serialize(Archive& archive)
@@ -254,7 +256,7 @@ struct SubscriptionReplyMessage
 
 struct EntityEnteredRangeMessage
 {
-    int32_t getType() const {return ENTITY_ENTERED_RANGE;}
+    PacketType getType() const {return ENTITY_ENTERED_RANGE;}
 
     template<class Archive>
     void serialize(Archive& archive)
@@ -271,7 +273,7 @@ struct EntityEnteredRangeMessage
 
 struct EntityPositionUpdatedMessage
 {
-    int32_t getType() const {return ENTITY_POSITION_UPDATED;}
+    PacketType getType() const {return ENTITY_POSITION_UPDATED;}
 
     template<class Archive>
     void serialize(Archive& archive)
@@ -288,7 +290,7 @@ struct EntityPositionUpdatedMessage
 
 struct EntityRotationUpdatedMessage
 {
-    int32_t getType() const {return ENTITY_ROTATION_UPDATED;}
+    PacketType getType() const {return ENTITY_ROTATION_UPDATED;}
 
     template<class Archive>
     void serialize(Archive& archive)
@@ -304,7 +306,7 @@ struct EntityRotationUpdatedMessage
 
 struct EntityLeftRangeMessage
 {
-    int32_t getType() const {return ENTITY_LEFT_RANGE;}
+    PacketType getType() const {return ENTITY_LEFT_RANGE;}
 
     template<class Archive>
     void serialize(Archive& archive)
@@ -317,7 +319,7 @@ struct EntityLeftRangeMessage
 
 struct ClientEnteredWorldMessage
 {
-    int32_t getType() const {return CLIENT_ENTERED_WORLD;}
+    PacketType getType() const {return CLIENT_ENTERED_WORLD;}
 
     template<class Archive>
     void serialize(Archive& archive)
@@ -330,7 +332,7 @@ struct ClientEnteredWorldMessage
 
 struct ClientPositionMessage
 {
-    int32_t getType() const {return CLIENT_POSITION;}
+    PacketType getType() const {return CLIENT_POSITION;}
 
     template<class Archive>
     void serialize(Archive& archive)
@@ -344,7 +346,7 @@ struct ClientPositionMessage
 //messages for testing:
 struct TestMessage1
 {
-    int32_t getType() const
+    PacketType getType() const
     {
         return TEST_1;
     }
@@ -361,7 +363,7 @@ struct TestMessage1
 
 struct TestMessage2
 {
-    int32_t getType() const
+    PacketType getType() const
     {
         return TEST_2;
     }

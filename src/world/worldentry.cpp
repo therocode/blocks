@@ -3,14 +3,15 @@
 #include "../utilities/interpolators.hpp"
 #include <algorithm>
 
-WorldEntry::WorldEntry(fea::MessageBus& bus, WorldId id, const std::string& identifier, const WorldData& data) :
+WorldEntry::WorldEntry(fea::MessageBus& bus, WorldId id, const std::string& identifier, const WorldData& data, const std::string& path) :
     mBus(bus),
     mId(id),
     mIdentifier(identifier),
     mWorldData(data),
-    mHighlightManager(8), //this should be read from somewhere else, probably server settings
-    mModManager(identifier)
+    mModManager(path),
+	mExplorationManager(path)
 {
+
     mWorldData.biomeSettings.fields =
     {
         Field{"height"},
@@ -27,9 +28,9 @@ WorldEntry::~WorldEntry()
     mModManager.saveMods();
 }
 
-void WorldEntry::addHighlightEntity(uint32_t id, const ChunkCoord& location)
+void WorldEntry::addHighlightEntity(uint32_t id, const ChunkCoord& location, uint32_t radius)
 {
-    const auto& highlighted = mHighlightManager.addHighlightEntity(id, location);
+    const auto& highlighted = mHighlightManager.addHighlightEntity(id, location, radius);
 
     for(const auto& chunk : highlighted)
         activateChunk(chunk);
@@ -53,6 +54,8 @@ void WorldEntry::removeHighlightEntity(uint32_t id)
 
     for(const auto& chunk : dehighlighted)
         deactivateChunk(chunk);
+
+    mModManager.saveMods();  //this is a hack due to issue http://dev.pallkars.net/issues/21
 }
 
 void WorldEntry::deliverBiome(const BiomeRegionCoord& coordinate, const BiomeGrid& biomeData)
@@ -79,23 +82,25 @@ void WorldEntry::deliverChunk(const ChunkCoord& coordinate, const Chunk& chunk)
 {
     if(mHighlightManager.chunkIsHighlighted(coordinate))
     {
-        auto iterator = mWorldData.voxels.emplace(coordinate, chunk);
+        Chunk& createdChunk = mWorldData.voxels.emplace(coordinate, chunk).first->second;
 
-        //#C1#if(mModManager.hasMods(chunk))  // implement this check as seen in issue #143
-        //mModManager.loadMods(chunk);
-        //#C2#else      // implement mExplorationManager as according to issue #144
-        //#C2#{
-        //#C2#    if(!mExplorationManager.isExplored(regionCoord))
-        //#C2#        mBus.send(ChunkInitiallyGeneratedMessage{coordinate, chunk})
-        //#C2#}
+		if(!mExplorationManager.getChunkExplored(coordinate)) //explore the chunk and perform initial generation if not already explored
+		{
+			mBus.send(ChunkInitiallyGeneratedMessage{mId, coordinate, createdChunk});
+			mExplorationManager.setChunkExplored(coordinate);
+		}
+        else       //apply possible modifications on chunks that are already explored
+        {
+            mModManager.loadMods(coordinate, createdChunk);
+        }
 
+		mExplorationManager.activateChunk(coordinate);
+		
         uint64_t timestamp = 0; //#C3# get proper timestamp, issue #133
 
-        mModManager.loadMods(coordinate, iterator.first->second);//temporary
+        mBus.send(ChunkCandidateMessage{mId, coordinate, createdChunk, timestamp}); //let others have a chance of modifying this chunk
 
-        mBus.send(ChunkCandidateMessage{mId, coordinate, iterator.first->second, timestamp});
-
-        mBus.send(ChunkFinishedMessage{mId, coordinate, iterator.first->second}); //the now fully initialised chunk is announced to the rest of the game.
+        mBus.send(ChunkFinishedMessage{mId, coordinate, createdChunk}); //the now fully initialised chunk is announced to the rest of the game.
     }
 }
 
@@ -119,7 +124,7 @@ void WorldEntry::setVoxelType(const VoxelCoord& voxelCoordinate, VoxelType type)
     if(chunk != mWorldData.voxels.end())
     {
         chunk->second.setVoxelType(chunkVoxelCoord, type);
-        mBus.send(VoxelSetMessage{voxelCoordinate, type});
+        mBus.send(VoxelSetMessage{mId, voxelCoordinate, type});
 
         mModManager.setMod(voxelCoordinate, type);
     }
@@ -170,7 +175,7 @@ void WorldEntry::activateChunk(const ChunkCoord& chunkCoordinate)
 {
     if(mWorldData.range.isWithin(chunkCoordinate))
     {
-        //firsty handle any newly activated biomes; they need to be requested
+        //firstly handle any newly activated biomes; they need to be requested
         const auto& activatedBiomes = mBiomeGridNotifier.set(chunkCoordinate, true);
 
         for(const auto& biomeRegionCoord : activatedBiomes)
@@ -207,6 +212,7 @@ void WorldEntry::deactivateChunk(const ChunkCoord& chunkCoordinate)
 
         if(mWorldData.voxels.erase(chunkCoordinate) != 0)
         {
+			mExplorationManager.deactivateChunk(chunkCoordinate);
             //mBus.send(ChunkDeletedMessage{chunkCoordinate}); there is no such message atm
         }
 

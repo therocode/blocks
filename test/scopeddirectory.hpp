@@ -18,6 +18,7 @@ class ScopedDirectory
         ~ScopedDirectory();
         ScopedDirectory(const ScopedDirectory&) = delete;
         ScopedDirectory& operator=(const ScopedDirectory&) = delete;
+        const std::string& getPath() const;
     private:
         bool mCreated;
         const std::string mPath;

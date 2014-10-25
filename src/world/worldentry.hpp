@@ -7,13 +7,14 @@
 #include "../utilities/gridnotifier.hpp"
 #include "highlightmanager.hpp"
 #include "modmanager.hpp"
+#include "explorationmanager.hpp"
 
 class WorldEntry
 {
     public:
-        WorldEntry(fea::MessageBus& bus, WorldId id, const std::string& identifier, const WorldData& data);
+        WorldEntry(fea::MessageBus& bus, WorldId id, const std::string& identifier, const WorldData& data, const std::string& path);
         ~WorldEntry();
-        void addHighlightEntity(uint32_t id, const ChunkCoord& location);
+        void addHighlightEntity(uint32_t id, const ChunkCoord& location, uint32_t radius);
         void moveHighlightEntity(uint32_t id, const ChunkCoord& location);
         void removeHighlightEntity(uint32_t id);
         void deliverBiome(const BiomeRegionCoord& coordinate, const BiomeGrid& biomeData);
@@ -34,6 +35,7 @@ class WorldEntry
         GridNotifier<biomeRegionWidthInChunks> mBiomeGridNotifier;
         HighlightManager mHighlightManager;
         ModManager mModManager;
-
+		ExplorationManager mExplorationManager;
+		
         std::unordered_map<BiomeRegionCoord, std::vector<ChunkCoord>> mPendingChunksToRequests;
 };

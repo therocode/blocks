@@ -5,6 +5,7 @@
 #include "../entity/controllers/collisioncontroller.hpp"
 #include "../entity/controllers/gfxcontroller.hpp"
 #include "../entity/controllers/movementcontroller.hpp"
+#include "../entity/controllers/highlightcontroller.hpp"
 
 Server::Server(fea::MessageBus& bus, const NetworkParameters& parameters) : 
     mBus(bus),
@@ -14,15 +15,17 @@ Server::Server(fea::MessageBus& bus, const NetworkParameters& parameters) :
     mServerNetworkingSystem(mBus, mGameInterface, parameters),
     mLogger(mBus, LogLevel::VERB),
     mScriptSystem(mBus, mGameInterface),
-    mFrameNumber(0)
+    mFrameNumber(0),
+    mQuit(false)
 {
     mTimer.start();
 
-	mEntitySystem.addController(std::unique_ptr<EntityController>(new PlayerController(mBus, mGameInterface)));
-	mEntitySystem.addController(std::unique_ptr<EntityController>(new PhysicsController(mBus, mGameInterface)));
+	mEntitySystem.addController(std::unique_ptr<EntityController>(new PhysicsController(mBus)));
 	mEntitySystem.addController(std::unique_ptr<EntityController>(new CollisionController(mBus, mGameInterface)));
-	mEntitySystem.addController(std::unique_ptr<EntityController>(new MovementController(mBus, mGameInterface)));
-	mEntitySystem.addController(std::unique_ptr<EntityController>(new GfxController(mBus, mGameInterface)));
+	mEntitySystem.addController(std::unique_ptr<EntityController>(new MovementController(mBus)));
+	mEntitySystem.addController(std::unique_ptr<EntityController>(new GfxController(mBus)));
+	mEntitySystem.addController(std::unique_ptr<EntityController>(new HighlightController(mBus)));
+	mEntitySystem.addController(std::unique_ptr<EntityController>(new PlayerController(mBus, mGameInterface)));
 
     mFPSController.setMaxFPS(60);
     mBus.send(GameStartMessage{});
@@ -35,10 +38,19 @@ Server::~Server()
 
 void Server::doLogic()
 {
-    mBus.send(FrameMessage{mFrameNumber});
-
-	mEntitySystem.update(mTimer.getDeltaTime());
+    mBus.send(FrameMessage{mFrameNumber, (int32_t) mTimer.getDeltaTime()});
 
     mFPSController.frameEnd();
     mFrameNumber++;
+
+    if(mSignalCatcher.getSignal() == QUIT_SIGNAL)
+    {
+        mBus.send(LogMessage{"Received quit signal. Requesting to quit!", serverName, LogLevel::INFO});
+        mQuit = true;
+    }
+}
+
+bool Server::requestedQuit() const
+{
+    return mQuit;
 }

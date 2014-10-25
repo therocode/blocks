@@ -14,6 +14,7 @@ class GridNotifier
     public:
         bool isActive(const glm::i64vec3& bigCell) const;
         const std::vector<glm::i64vec3>& set(const glm::i64vec3& cell, bool active);
+        std::vector<glm::i64vec3> getAllActive() const;
     private:
         std::unordered_map<glm::i64vec3, int32_t> mBigCellRefCounts;
         std::unordered_set<glm::i64vec3> mActivatedCells;
@@ -63,4 +64,17 @@ const std::vector<glm::i64vec3>& GridNotifier<factor>::set(const glm::i64vec3& c
     }
 
     return resultVector;
+}
+
+template<uint32_t factor>
+std::vector<glm::i64vec3> GridNotifier<factor>::getAllActive() const
+{
+    std::vector<glm::i64vec3> result;
+
+    for(auto iterator : mBigCellRefCounts)
+    {
+        result.push_back(iterator.first);
+    }
+
+    return result;
 }

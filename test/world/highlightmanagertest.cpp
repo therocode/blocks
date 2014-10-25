@@ -13,11 +13,11 @@ TEST_CASE("", "[spawn][despawn][move]")
     ChunkCoord loc3(5,0,0);
     int highlightRadius = 3;
 
-    HighlightManager manager(highlightRadius);
+    HighlightManager manager;
 
     SECTION("spawn entity") 
     {
-        std::vector<ChunkCoord> highlightedLocs = manager.addHighlightEntity(eId1, loc1);
+        std::vector<ChunkCoord> highlightedLocs = manager.addHighlightEntity(eId1, loc1, highlightRadius);
 
         for(int64_t x = loc1.x - highlightRadius; x < loc1.x + highlightRadius + 1; ++x)
         {
@@ -46,7 +46,7 @@ TEST_CASE("", "[spawn][despawn][move]")
 
     SECTION("spawn and despawn entity") 
     {
-        auto highlightedLocs = manager.addHighlightEntity(eId1, loc1);
+        auto highlightedLocs = manager.addHighlightEntity(eId1, loc1, highlightRadius);
         auto dehighlightedLocs = manager.removeHighlightEntity(eId1);
 
         REQUIRE(highlightedLocs.size() == dehighlightedLocs.size());
@@ -58,7 +58,7 @@ TEST_CASE("", "[spawn][despawn][move]")
 
     SECTION("spawn and move entity")
     {
-        auto highlightedLocs = manager.addHighlightEntity(eId1, loc1);
+        auto highlightedLocs = manager.addHighlightEntity(eId1, loc1, highlightRadius);
         auto highlighted_dehighlightedLocs = manager.moveHighlightEntity(eId1, loc2);
 
         REQUIRE(29 == highlighted_dehighlightedLocs.second.size());
@@ -66,16 +66,16 @@ TEST_CASE("", "[spawn][despawn][move]")
 
     SECTION("intersect two highlight entities")
     {
-        auto highlightedLocs1 = manager.addHighlightEntity(eId1, loc1);
-        auto highlightedLocs2 = manager.addHighlightEntity(eId2, loc3);
+        auto highlightedLocs1 = manager.addHighlightEntity(eId1, loc1, highlightRadius);
+        auto highlightedLocs2 = manager.addHighlightEntity(eId2, loc3, highlightRadius);
 
         REQUIRE(244 == highlightedLocs1.size() + highlightedLocs2.size());
     }
 
     SECTION("intersect two highlight entities and despawn one")
     {
-        manager.addHighlightEntity(eId1, loc1);
-        manager.addHighlightEntity(eId2, loc3);
+        manager.addHighlightEntity(eId1, loc1, highlightRadius);
+        manager.addHighlightEntity(eId2, loc3, highlightRadius);
         auto dehighlightedList = manager.removeHighlightEntity(eId1);
         
         REQUIRE(121 == dehighlightedList.size());        

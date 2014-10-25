@@ -45,15 +45,21 @@
             "acceleration":"0.0f,0.0f,0.0f"
         }
     },
+    {"name":"highlight_entity",
+        "attributes":
+        {
+            "highlight_radius":"0",
+            "is_highlighting":"false"
+        }
+    },
     {"name":"living",
         "inherits": ["physics_entity",
                      "collision_entity",
-                     "gfx_entity",
-                     "movement_entity"],
+                     "movement_entity",
+                     "highlight_entity"],
 
         "attributes":
         {
-            "current_chunk":"",
             "block_facing":"0,0,0",
             "block_facing_face":"0",
             "is_facing_block":"false"

@@ -17,3 +17,8 @@ ScopedDirectory::~ScopedDirectory()
         DirectoryCreator::removeDirectory(mPath, true);
     }
 }
+
+const std::string& ScopedDirectory::getPath() const
+{
+    return mPath;
+}

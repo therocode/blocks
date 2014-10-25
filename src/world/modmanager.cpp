@@ -4,8 +4,8 @@
 
 using namespace std;
 
-ModManager::ModManager(const std::string& worldName) :
-    mWorldName(worldName)
+ModManager::ModManager(const std::string& worldPath) :
+    mWorldPath(worldPath)
 {
 }
 
@@ -22,7 +22,7 @@ void ModManager::loadMods(const ChunkCoord& location, Chunk& chunk)
         mMods[modRegionLoc][chunkLoc] = ChunkModMap();
 
         if(chunkIndex != NO_CHUNK) { 
-            ifstream dataFile(getFilename(modRegionLoc) + dataExt, ios::in | ios::binary);
+            ifstream dataFile(getFilename(modRegionLoc) + modManagerExt, ios::in | ios::binary);
             dataFile.seekg(chunkIndex);
 
             uint16_t modCount;
@@ -75,23 +75,8 @@ void ModManager::saveMods()
 
 void ModManager::saveMods(ModRegionCoord modRegionLoc) 
 {
-	if(!DirectoryCreator::directoryExists(modRegionDir))
-	{
-		if(!DirectoryCreator::createDirectory(modRegionDir))
-		{
-			std::cout << modRegionDir << "didn't exist and failed to create it" << std::endl;
-		}
-	}
-	if(!DirectoryCreator::directoryExists(modRegionDir + "/" + mWorldName))
-	{
-		if(!DirectoryCreator::createDirectory(modRegionDir + "/" + mWorldName))
-		{
-			std::cout << modRegionDir + "/" + mWorldName << "didn't exist and failed to create it" << std::endl;
-		}
-	}
-
-    string dataFilename = getFilename(modRegionLoc) + dataExt;
-    string indexFilename = getFilename(modRegionLoc) + indexExt;
+    string dataFilename = getFilename(modRegionLoc) + modManagerExt;
+    string indexFilename = getFilename(modRegionLoc) + modManagerIndexExt;
 
     hash<ModRegionChunkCoord> crcHash;
     ifstream iIndexFile(indexFilename, ios::in | ios::binary);
@@ -199,24 +184,42 @@ VoxelType ModManager::getMod(const VoxelCoord& voxLoc)
     return mMods[modRegionLoc][chunkLoc][VoxelToChunkVoxel::convert(voxLoc)];
 }
 
-void ModManager::deleteModRegionFile(const ModRegionCoord& modRegionLoc)
+bool ModManager::hasMods(const ChunkCoord& location)
 {
-    string indexFilename = getFilename(modRegionLoc) + indexExt;
-    string dataFilename = getFilename(modRegionLoc) + dataExt;
+    bool result = false;
+
+    ModRegionCoord modRegionLoc = ChunkToModRegion::convert(location);
+
+    auto regionIterator = mMods.find(modRegionLoc);
     
-    ifstream indexFile(indexFilename);
-    if(indexFile)
+    //first check if it is modified in memory
+    if(regionIterator != mMods.end())
     {
-        indexFile.close();
-        remove(indexFilename.c_str());
+        auto chunkIterator = regionIterator->second.find(ChunkToModRegionChunk::convert(location));
+
+        if(chunkIterator != regionIterator->second.end())
+        {
+            result = chunkIterator->second.size() > 0;
+        }
     }
 
-    ifstream dataFile(dataFilename);
-    if(dataFile)
+    //if not modified in memory, check if it is modified in file
+    if(!result)
     {
-        dataFile.close();
-        remove(dataFilename.c_str());
+        string indexFilename = getFilename(modRegionLoc) + modManagerIndexExt;
+        hash<ModRegionChunkCoord> crcHash;
+        ifstream iIndexFile(indexFilename, ios::in | ios::binary);
+
+        if(iIndexFile)
+        {
+            iIndexFile.seekg(crcHash(ChunkToModRegionChunk::convert(location))*sizeof(ChunkIndex));
+            ChunkIndex chunkIndex;
+            iIndexFile.read((char*)&chunkIndex, sizeof(ChunkIndex));
+            result = chunkIndex != NO_CHUNK;
+        }
     }
+
+    return result;
 }
 
 void ModManager::recordTimestamp(ChunkCoord loc, uint64_t timestamp)
@@ -227,15 +230,10 @@ void ModManager::recordTimestamp(ChunkCoord loc, uint64_t timestamp)
     mTimestamps[modRegionLoc][chunkLoc] = timestamp;
 }
 
-void ModManager::setWorldName(const std::string& name)
-{
-    mWorldName = name;
-}
-
 ChunkIndex ModManager::getChunkIndex(ModRegionCoord modRegionLoc, ModRegionChunkCoord chunkLoc)
 {
     hash<ModRegionChunkCoord> crcHash;
-    ifstream indexFile(getFilename(modRegionLoc) + indexExt, ios::in | ios::binary);
+    ifstream indexFile(getFilename(modRegionLoc) + modManagerIndexExt, ios::in | ios::binary);
 
     if(indexFile)
     {
@@ -256,7 +254,7 @@ ChunkIndex ModManager::getChunkIndex(ModRegionCoord modRegionLoc, ModRegionChunk
 
 void ModManager::initIndexFile(ModRegionCoord modRegionLoc)
 {
-    ofstream indexFile(getFilename(modRegionLoc) + indexExt, ios::out | ios::binary);
+    ofstream indexFile(getFilename(modRegionLoc) + modManagerIndexExt, ios::out | ios::binary);
 
     ChunkIndex index = NO_CHUNK;
     for(int i = 0; i < modRegionWidthInChunks*modRegionWidthInChunks*modRegionWidthInChunks; ++i)
@@ -278,11 +276,14 @@ std::string ModManager::getFilename(ModRegionCoord modRegionLoc)
 {
     std::string xPart = std::to_string(modRegionLoc.x);
     std::string yPart = std::to_string(modRegionLoc.y);
+    std::string zPart = std::to_string(modRegionLoc.z);
 
     if(xPart[0] == '-')
         xPart[0] = '_';
     if(yPart[0] == '-')
         yPart[0] = '_';
+    if(zPart[0] == '-')
+        zPart[0] = '_';
 
-    return modRegionDir + "/" + mWorldName + "/" + xPart + "_" + yPart;  //NOTE: not sure why this needs to be casted... not good.
+    return mWorldPath + "/" + xPart + "_" + yPart + "_" + zPart; 
 }

@@ -2,7 +2,8 @@
 #include "explorationmanager.hpp"
 #include <fstream>
 
-ExplorationManager::ExplorationManager()
+ExplorationManager::ExplorationManager(const std::string& worldPath) :
+    mWorldPath(worldPath)
 {
 }
 
@@ -13,7 +14,7 @@ bool ExplorationManager::getChunkExplored(const ChunkCoord& coordinate)
 
 	if(mExploreData.count(regcoord) == 0)
 	{
-		std::ifstream expFile(getFilename(regcoord) + dataExt, std::ios::in | std::ios::binary);
+		std::ifstream expFile(getFilename(regcoord) + explorationExt, std::ios::in | std::ios::binary);
 		if(expFile.is_open())
 		{
 			std::vector<uint8_t> byteHolder(4096);
@@ -65,20 +66,65 @@ void ExplorationManager::setChunkExplored(const ChunkCoord& coordinate)
 
 void ExplorationManager::saveExploration()
 {
-	for(const auto &v : mExploreChange)
+	for(const auto &regionCoord : mExploreChange)
 	{
-		std::vector<uint8_t> explorePrinter(4096);
+		std::vector<uint8_t> exploreWriter(4096);
 		for(int x=0; x<4096; ++x)
 		{
-			explorePrinter[x] = (mExploreData.at(v)[x*8  ] << 7) | (mExploreData.at(v)[x*8+1] << 6) |
-								(mExploreData.at(v)[x*8+2] << 5) | (mExploreData.at(v)[x*8+3] << 4) |
-								(mExploreData.at(v)[x*8+4] << 3) | (mExploreData.at(v)[x*8+5] << 2) |
-								(mExploreData.at(v)[x*8+6] << 1) |  mExploreData.at(v)[x*8+7];
+			FEA_ASSERT(mExploreData.count(regionCoord) > 0, std::to_string(regionCoord.x) + " " + std::to_string(regionCoord.y) + " " + std::to_string(regionCoord.z) + "doesn't exist");
+			
+			std::vector<bool> &changedRegion = mExploreData.at(regionCoord);
+			exploreWriter[x] = (changedRegion[x*8  ] << 7) | (changedRegion[x*8+1] << 6) |
+							   (changedRegion[x*8+2] << 5) | (changedRegion[x*8+3] << 4) |
+							   (changedRegion[x*8+4] << 3) | (changedRegion[x*8+5] << 2) |
+							   (changedRegion[x*8+6] << 1) |  changedRegion[x*8+7];
 		}
 		
-		std::ofstream expFile(getFilename(v) + dataExt, std::ios::out | std::ios::binary);
-		expFile.write((char*)explorePrinter.data(), 4096);
+		std::ofstream expFile(getFilename(regionCoord) + explorationExt, std::ios::out | std::ios::binary);
+		expFile.write((char*)exploreWriter.data(), 4096);
 		expFile.close();
+	}
+	
+	mExploreChange.clear();
+}
+
+void ExplorationManager::saveRegionExploration(const ChunkCoord& coordinate)
+{
+	ExplorationRegionCoord regionCoord = ChunkToExplorationRegion::convert(coordinate);
+	
+	if(mExploreChange.count(regionCoord))
+	{
+		std::vector<uint8_t> exploreWriter(4096);
+		for(int x=0; x<4096; ++x)
+		{
+			FEA_ASSERT(mExploreData.count(regionCoord) > 0, std::to_string(regionCoord.x) + " " + std::to_string(regionCoord.y) + " " + std::to_string(regionCoord.z) + "doesn't exist");
+			
+			std::vector<bool> &changedRegion = mExploreData.at(regionCoord);
+			exploreWriter[x] = (changedRegion[x*8  ] << 7) | (changedRegion[x*8+1] << 6) |
+							   (changedRegion[x*8+2] << 5) | (changedRegion[x*8+3] << 4) |
+							   (changedRegion[x*8+4] << 3) | (changedRegion[x*8+5] << 2) |
+							   (changedRegion[x*8+6] << 1) |  changedRegion[x*8+7];
+		}
+		
+		std::ofstream expFile(getFilename(regionCoord) + explorationExt, std::ios::out | std::ios::binary);
+		expFile.write((char*)exploreWriter.data(), 4096);
+		expFile.close();
+	}
+}
+
+void ExplorationManager::activateChunk(const ChunkCoord& coordinate)
+{
+	mExplorationGrid.set(coordinate, true);
+}
+
+void ExplorationManager::deactivateChunk(const ChunkCoord& coordinate)
+{
+	auto activatedCell = mExplorationGrid.set(coordinate, false);
+	if(!activatedCell.empty())
+	{
+		saveRegionExploration(coordinate);
+		mExploreData.erase(coordinate);
+		mExploreChange.erase(ChunkToExplorationRegion::convert(coordinate));
 	}
 }
 
@@ -86,17 +132,14 @@ std::string ExplorationManager::getFilename(ExplorationRegionCoord regionLoc)
 {
     std::string xPart = std::to_string(regionLoc.x);
     std::string yPart = std::to_string(regionLoc.y);
+    std::string zPart = std::to_string(regionLoc.z);
 
     if(xPart[0] == '-')
         xPart[0] = '_';
     if(yPart[0] == '-')
         yPart[0] = '_';
+	if(zPart[0] == '-')
+        zPart[0] = '_';
 
-    return regionDir + "/" + mWorldName + "/" + xPart + "_" + yPart;
-}
-
-void ExplorationManager::setWorldName(const std::string& name)
-{
-	FEA_ASSERT(name != "", "hej");
-    mWorldName = name; //set name
+    return mWorldPath + "/" + xPart + "_" + yPart + "_" + zPart;
 }

@@ -37,49 +37,60 @@ CMAKE_MINIMUM_REQUIRED( VERSION 2.6 )
 
 # Look for the header file.
 
-    FIND_PATH( ANGELSCRIPT_ROOT_DIRECTORY
-            angelscript/include/angelscript.h
-            ${ANGELSCRIPT_SEARCH_SDK_DIRECTORY}/${ANGELSCRIPT_DIRECTORY_NAME}
-            DOC "angelscript sdk is best above the trunk directory in ${ANGELSCRIPT_SEARCH_SDK_DIRECTORY}/${ANGELSCRIPT_DIRECTORY_NAME}."
-            )
-
     FIND_PATH( ANGELSCRIPT_INCLUDE_DIRECTORY
             angelscript.h
             ${ANGELSCRIPT_ROOT_DIRECTORY}/angelscript/include
+            ${ANGELSCRIPT_ROOT_DIRECTORY}/include
+            ${ANGELSCRIPT_ROOT_DIRECTORY}/sdk/angelscript/include
             DOC "Should be in ${ANGELSCRIPT_ROOT_DIRECTORY}/angelscript/include."
             )
 
     FIND_LIBRARY( ANGELSCRIPT_LIBRARY
-            angelscript
+            Angelscript
             ${ANGELSCRIPT_SEARCH_LIB_DIRECTORY}
+            ${ANGELSCRIPT_ROOT_DIRECTORY}/angelscript/lib
+            ${ANGELSCRIPT_ROOT_DIRECTORY}/lib
+            ${ANGELSCRIPT_ROOT_DIRECTORY}/sdk/angelscript/lib
             DOC "Should be in ${ANGELSCRIPT_SEARCH_LIB_DIRECTORY}."
             )
 
 IF( NOT ANGELSCRIPT_LIBRARY )
 
     FIND_LIBRARY( ANGELSCRIPT_DEBUG_LIBRARY
-            angelscript
+            Angelscript
             ${ANGELSCRIPT_SEARCH_LIB_DIRECTORY}/debug
+            ${ANGELSCRIPT_ROOT_DIRECTORY}/angelscript/lib
+            ${ANGELSCRIPT_ROOT_DIRECTORY}/lib
+            ${ANGELSCRIPT_ROOT_DIRECTORY}/sdk/angelscript/lib
             DOC "Should be in ${ANGELSCRIPT_SEARCH_LIB_DIRECTORY}/debug."
             )
 
     FIND_LIBRARY( ANGELSCRIPT_RELEASE_LIBRARY
-            angelscript
+            Angelscript
             ${ANGELSCRIPT_SEARCH_LIB_DIRECTORY}/release
+            ${ANGELSCRIPT_ROOT_DIRECTORY}/angelscript/lib
+            ${ANGELSCRIPT_ROOT_DIRECTORY}/lib
+            ${ANGELSCRIPT_ROOT_DIRECTORY}/sdk/angelscript/lib
             DOC "${ANGELSCRIPT_SEARCH_LIB_DIRECTORY}/release."
             )
 
 ELSE( NOT ANGELSCRIPT_LIBRARY )
 
     FIND_LIBRARY( ANGELSCRIPT_DEBUG_LIBRARY
-            angelscript
+            Angelscript
             ${ANGELSCRIPT_SEARCH_LIB_DIRECTORY}
+            ${ANGELSCRIPT_ROOT_DIRECTORY}/angelscript/lib
+            ${ANGELSCRIPT_ROOT_DIRECTORY}/lib
+            ${ANGELSCRIPT_ROOT_DIRECTORY}/sdk/angelscript/lib
             DOC "Should be in ${ANGELSCRIPT_SEARCH_LIB_DIRECTORY}/debug."
             )
 
     FIND_LIBRARY( ANGELSCRIPT_RELEASE_LIBRARY
-            angelscript
+            Angelscript
             ${ANGELSCRIPT_SEARCH_LIB_DIRECTORY}
+            ${ANGELSCRIPT_ROOT_DIRECTORY}/angelscript/lib
+            ${ANGELSCRIPT_ROOT_DIRECTORY}/lib
+            ${ANGELSCRIPT_ROOT_DIRECTORY}/sdk/angelscript/lib
             DOC "${ANGELSCRIPT_SEARCH_LIB_DIRECTORY}/release."
             )
 
