@@ -28,6 +28,7 @@ class WorldEntry
         void activateChunk(const ChunkCoord& chunk);
         void deactivateChunk(const ChunkCoord& chunk);
         void requestChunk(const ChunkCoord& chunk);
+        void applyDifferenceAsMods(const ChunkCoord& coordinate, const VoxelTypeArray& before, const VoxelTypeArray& after);
         fea::MessageBus& mBus;
         WorldId mId;
         std::string mIdentifier;

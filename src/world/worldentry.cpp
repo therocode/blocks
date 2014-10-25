@@ -86,8 +86,15 @@ void WorldEntry::deliverChunk(const ChunkCoord& coordinate, const Chunk& chunk)
 
 		if(!mExplorationManager.getChunkExplored(coordinate)) //explore the chunk and perform initial generation if not already explored
 		{
+            VoxelTypeArray before = createdChunk.getFlatVoxelTypeData();
+
+            std::cout << before[0] << "\n";;
+
 			mBus.send(ChunkInitiallyGeneratedMessage{mId, coordinate, createdChunk});
 			mExplorationManager.setChunkExplored(coordinate);
+            
+            std::cout <<  createdChunk.getFlatVoxelTypeData()[0] << "\n";
+            applyDifferenceAsMods(coordinate, before, createdChunk.getFlatVoxelTypeData());
 		}
         else       //apply possible modifications on chunks that are already explored
         {
@@ -98,7 +105,11 @@ void WorldEntry::deliverChunk(const ChunkCoord& coordinate, const Chunk& chunk)
 		
         uint64_t timestamp = 0; //#C3# get proper timestamp, issue #133
 
+        VoxelTypeArray before = createdChunk.getFlatVoxelTypeData();
+
         mBus.send(ChunkCandidateMessage{mId, coordinate, createdChunk, timestamp}); //let others have a chance of modifying this chunk
+
+        applyDifferenceAsMods(coordinate, before, createdChunk.getFlatVoxelTypeData());
 
         mBus.send(ChunkFinishedMessage{mId, coordinate, createdChunk}); //the now fully initialised chunk is announced to the rest of the game.
     }
@@ -247,4 +258,24 @@ void WorldEntry::requestChunk(const ChunkCoord& chunk)
     }
 
     mBus.send(ChunkGenerationRequestedMessage{0, mId, chunk, grid});
+}
+
+void WorldEntry::applyDifferenceAsMods(const ChunkCoord& coordinate, const VoxelTypeArray& before, const VoxelTypeArray& after)
+{
+    uint32_t index = 0;
+
+    for(uint32_t y = 0; y < chunkWidth; y++)
+    {
+        for(uint32_t z = 0; z < chunkWidth; z++)
+        {
+            for(uint32_t x = 0; x < chunkWidth; x++)
+            {
+                if(before[index] != after[index])
+                {
+                    mModManager.setMod(ChunkToVoxel::convert(coordinate) + VoxelCoord(x, y, z), after[index]);
+                }
+                index++;
+            }
+        }
+    }
 }
