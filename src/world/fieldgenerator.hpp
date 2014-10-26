@@ -3,8 +3,6 @@
 #include "biomedefines.hpp"
 #include "field.hpp"
 
-enum NoiseType { SIMPLEX, VORONOI };
-
 class FieldGenerator
 {
     public:

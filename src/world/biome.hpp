@@ -1,7 +1,7 @@
 #pragma once
-#include <string>
 #include <unordered_map>
-#include "worlddefines.hpp"
+#include "biomedefines.hpp"
+//#include "worlddefines.hpp"
 
 struct BiomeRequirement
 {
@@ -13,8 +13,8 @@ struct BiomeRequirement
 
 struct Biome
 {
-    Biome(const std::string& name, VoxelType type, const std::unordered_map<std::string, BiomeRequirement>& requirements);
-    std::string mName;
+    Biome(BiomeId id, VoxelType type, const std::unordered_map<uint32_t, BiomeRequirement>& requirements);
+    BiomeId mId;
     VoxelType mType;
-    std::unordered_map<std::string, BiomeRequirement> mRequirements;
+    std::unordered_map<uint32_t, BiomeRequirement> mRequirements;
 };

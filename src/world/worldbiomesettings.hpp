@@ -6,5 +6,5 @@
 struct WorldBiomeSettings
 {
     std::vector<Field> fields;
-    std::vector<BiomeIndex> biomes;
+    std::vector<BiomeId> biomes;
 };

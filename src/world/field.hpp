@@ -1,9 +1,11 @@
 #pragma once
-#include <string>
+
+enum NoiseType { SIMPLEX, VORONOI };
 
 using FieldGrid = InterpolationGrid3D<float>;
 
 struct Field
 {
-    std::string name;
+    uint32_t id;
+    NoiseType noiseType;
 };

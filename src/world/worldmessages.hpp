@@ -28,7 +28,7 @@ struct WorldBiomeSettingsMessage
 
 struct BiomesLoadedMessage
 {
-    const std::unordered_map<BiomeIndex, Biome>& biomes;
+    const std::unordered_map<BiomeId, Biome>& biomes;
 };
 
 struct BiomeRequestedMessage
@@ -38,7 +38,7 @@ struct BiomeRequestedMessage
 
 struct BiomeGeneratedMessage
 {
-    WorldId worldId; const BiomeRegionCoord& coordinate; const BiomeGrid& biomeData;
+    WorldId worldId; const BiomeRegionCoord& coordinate; const FieldMap& fields;
 };
 
 struct ChunkGenerationRequestedMessage

@@ -32,7 +32,7 @@ class ChunkProvider :
 
         std::vector<std::future<ChunkDelivery>> mChunksToDeliver;
         
-        std::unordered_map<BiomeIndex, Biome> mBiomes;
+        std::unordered_map<BiomeId, Biome> mBiomes;
 
         ThreadPool mWorkerPool;
 };

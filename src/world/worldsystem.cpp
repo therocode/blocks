@@ -18,23 +18,23 @@ WorldSystem::WorldSystem(fea::MessageBus& messageBus)
 
     //load biomes
     mBus.send(LogMessage{"Loading biomes", worldName, LogLevel::INFO});
-    Biome grass("grass", 2,
+    Biome grass(mBiomeIds.getId("grass"), 2,
         {
-            {"height", BiomeRequirement(0.0f, 1.0f)},
-            {"temperature", BiomeRequirement(0.0f, 1.0f)},
-            {"rainfall", BiomeRequirement(0.5f, 1.0f)}
+            {mFieldIds.getId("height"), BiomeRequirement(0.0f, 1.0f)},
+            {mFieldIds.getId("temperature"), BiomeRequirement(0.0f, 1.0f)},
+            {mFieldIds.getId("rainfall"), BiomeRequirement(0.5f, 1.0f)}
         });
 
-    mBiomes.emplace(mBiomeIds.getId(grass.mName), grass);
+    mBiomes.emplace(grass.mId, grass);
 
-    Biome desert("desert", 3,
+    Biome desert(mBiomeIds.getId("desert"), 3,
         {
-            {"height", BiomeRequirement(0.0f, 1.0f)},
-            {"temperature", BiomeRequirement(0.0f, 1.0f)},
-            {"rainfall", BiomeRequirement(0.0f, 0.5f)}
+            {mFieldIds.getId("height"), BiomeRequirement(0.0f, 1.0f)},
+            {mFieldIds.getId("temperature"), BiomeRequirement(0.0f, 1.0f)},
+            {mFieldIds.getId("rainfall"), BiomeRequirement(0.0f, 0.5f)}
         });
 
-    mBiomes.emplace(mBiomeIds.getId(desert.mName), desert);
+    mBiomes.emplace(desert.mId, desert);
 
     mBus.send(BiomesLoadedMessage{mBiomes});
 
@@ -84,7 +84,7 @@ void WorldSystem::handleMessage(const BiomeGeneratedMessage& received)
     auto iterator = mWorlds.find(received.worldId);
 
     if(iterator != mWorlds.end())
-        iterator->second.deliverBiome(received.coordinate, received.biomeData);
+        iterator->second.deliverBiome(received.coordinate, received.fields);
 }
 
 void WorldSystem::handleMessage(const ChunkGeneratedMessage& received)
@@ -180,6 +180,15 @@ void WorldSystem::createWorld(const WorldParameters& parameters, const std::stri
         if(!success)
             mBus.send(LogMessage{"Failed creating world directory '" + path + "'!", worldName, LogLevel::ERR});
     }
+
+    worldData.biomeSettings.fields =
+    {
+        Field{mFieldIds.getId("height")},
+        Field{mFieldIds.getId("rainfall")},
+        Field{mFieldIds.getId("temperature")},
+        Field{mFieldIds.getId("selector")}
+    };
+
 
     auto createdIterator = mWorlds.emplace(newId, WorldEntry(mBus, newId, parameters.identifier, worldData, path)).first;
 }

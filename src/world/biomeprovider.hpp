@@ -12,7 +12,7 @@ struct BiomeDelivery
 {
     WorldId id;
     BiomeRegionCoord coordinate;
-    BiomeGrid biomeData;
+    FieldMap fields;
 };
 
 class BiomeProvider :
@@ -29,11 +29,10 @@ class BiomeProvider :
         void handleMessage(const BiomeRequestedMessage& received) override;
         void handleMessage(const FrameMessage& received) override;
     private:
-        BiomeDelivery generateBiome(WorldId worldId, BiomeRegionCoord coordinate);
+        BiomeDelivery generateBiomeData(WorldId worldId, BiomeRegionCoord coordinate);
         fea::MessageBus& mBus;
 
-        std::unordered_map<BiomeIndex, Biome> mBiomes;
-        std::unordered_map<std::string, BiomeIndex> mBiomeNameToIndex;
+        std::unordered_map<BiomeId, Biome> mBiomes;
         std::unordered_map<WorldId, WorldBiomeSettings> mBiomeSettings;
 
         std::vector<std::future<BiomeDelivery>> mBiomesToDeliver;

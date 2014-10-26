@@ -11,15 +11,6 @@ WorldEntry::WorldEntry(fea::MessageBus& bus, WorldId id, const std::string& iden
     mModManager(path),
 	mExplorationManager(path)
 {
-
-    mWorldData.biomeSettings.fields =
-    {
-        Field{"height"},
-        Field{"rainfall"},
-        Field{"temperature"},
-        Field{"selector"}
-    };
-
     mBus.send(WorldBiomeSettingsMessage{id, mWorldData.biomeSettings});
 }
 
@@ -58,11 +49,12 @@ void WorldEntry::removeHighlightEntity(uint32_t id)
     mModManager.saveMods();  //this is a hack due to issue http://dev.pallkars.net/issues/21
 }
 
-void WorldEntry::deliverBiome(const BiomeRegionCoord& coordinate, const BiomeGrid& biomeData)
+void WorldEntry::deliverBiome(const BiomeRegionCoord& coordinate, const FieldMap& fields)
 {
     if(mBiomeGridNotifier.isActive(coordinate))
     {
-        mWorldData.biomeGrids.emplace(coordinate, biomeData);
+        //mWorldData.biomeGrids.emplace(coordinate, fields); MISSING, FIX TOBBE
+        mWorldData.fields = std::move(fields);
 
         auto iterator = mPendingChunksToRequests.find(coordinate);
 
@@ -236,7 +228,7 @@ void WorldEntry::deactivateChunk(const ChunkCoord& chunkCoordinate)
 void WorldEntry::requestChunk(const ChunkCoord& chunk)
 {
     BiomeGrid grid(16, 4);
-    grid.setInterpolator(Interpolator<BiomeIndex>::nearestNeigbor);
+    grid.setInterpolator(Interpolator<BiomeId>::nearestNeigbor);
     BiomeRegionChunkCoord biomeRegionChunk = ChunkToBiomeRegionChunk::convert(chunk);
     BiomeGrid& bigGrid = mWorldData.biomeGrids.at(ChunkToBiomeRegion::convert(chunk));
 

@@ -9,8 +9,8 @@ bool BiomeRequirement::isWithin(float v) const
     return v >= min && v <= max;
 }
 
-Biome::Biome(const std::string& name, VoxelType type, const std::unordered_map<std::string, BiomeRequirement>& requirements) : 
-    mName(name),
+Biome::Biome(BiomeId id, VoxelType type, const std::unordered_map<uint32_t, BiomeRequirement>& requirements) : 
+    mId(id),
     mType(type),
     mRequirements(requirements)
 {

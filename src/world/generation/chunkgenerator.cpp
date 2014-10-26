@@ -1,7 +1,7 @@
 #include "chunkgenerator.hpp"
 #include "../biome.hpp"
 
-Chunk ChunkGenerator::generateChunk(const ChunkCoord& chunkCoordinate, const BiomeGrid& biomeData, const std::unordered_map<BiomeIndex, Biome>& biomes) const
+Chunk ChunkGenerator::generateChunk(const ChunkCoord& chunkCoordinate, const BiomeGrid& biomeData, const std::unordered_map<BiomeId, Biome>& biomes) const
 {
     Chunk newChunk;
 

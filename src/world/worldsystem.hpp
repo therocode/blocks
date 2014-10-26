@@ -39,8 +39,9 @@ class WorldSystem :
         BiomeProvider mBiomeProvider;
 
         //biome data
+        IdProvider<std::string> mFieldIds;
         IdProvider<std::string> mBiomeIds;
-        std::unordered_map<BiomeIndex, Biome> mBiomes;
+        std::unordered_map<BiomeId, Biome> mBiomes;
 
         //worlds
         WorldId mNextId;

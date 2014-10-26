@@ -9,6 +9,6 @@
 class ChunkGenerator
 {
     public:
-        Chunk generateChunk(const ChunkCoord& chunkCoordinate, const BiomeGrid& biomeData, const std::unordered_map<BiomeIndex, Biome>& biomes) const;
+        Chunk generateChunk(const ChunkCoord& chunkCoordinate, const BiomeGrid& biomeData, const std::unordered_map<BiomeId, Biome>& biomes) const;
     private:
 };

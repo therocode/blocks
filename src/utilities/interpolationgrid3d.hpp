@@ -3,6 +3,7 @@
 #include <fea/assert.hpp>
 #include <functional>
 #include <array>
+#include <vector>
 
 //interpolator arguments follows the standard: x + y * width + z * width*width 
 //where width = 2. 

@@ -17,7 +17,7 @@ class WorldEntry
         void addHighlightEntity(uint32_t id, const ChunkCoord& location, uint32_t radius);
         void moveHighlightEntity(uint32_t id, const ChunkCoord& location);
         void removeHighlightEntity(uint32_t id);
-        void deliverBiome(const BiomeRegionCoord& coordinate, const BiomeGrid& biomeData);
+        void deliverBiome(const BiomeRegionCoord& coordinate, const FieldMap& biomeData);
         void deliverChunk(const ChunkCoord& coordinate, const Chunk& chunk);
         const ChunkMap& getChunkMap() const;
         ChunkMap& getChunkMap();
