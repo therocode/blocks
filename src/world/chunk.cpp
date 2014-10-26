@@ -17,15 +17,23 @@ Chunk::Chunk()
     VoxelTypeArray types;
     types.fill(0);
     setVoxelData(types);
+
+    solidityCheck();
+    sideSolidityCheck();
 }
 
 Chunk::Chunk(const VoxelTypeArray& types)
 {
     setVoxelData(types);
+
+    solidityCheck();
+    sideSolidityCheck();
 }
 
 Chunk::Chunk(const RleIndexArray& indices, const RleSegmentArray& rleData) : mRleSegmentIndices(indices), mRleSegments(rleData)
 {
+    solidityCheck();
+    sideSolidityCheck();
 }
 
 bool Chunk::operator==(const Chunk& other) const
