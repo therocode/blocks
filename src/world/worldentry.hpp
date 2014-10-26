@@ -29,6 +29,7 @@ class WorldEntry
         void deactivateChunk(const ChunkCoord& chunk);
         void requestChunk(const ChunkCoord& chunk);
         void applyDifferenceAsMods(const ChunkCoord& coordinate, const VoxelTypeArray& before, const VoxelTypeArray& after);
+        BiomeGrid generateBiomes(const FieldMap& fields) const;
         fea::MessageBus& mBus;
         WorldId mId;
         std::string mIdentifier;

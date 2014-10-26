@@ -9,7 +9,7 @@ struct WorldData
 {
     ChunkMap voxels;
     BiomeStorage biomeGrids;
-    FieldMap fields;
+    FieldStorage fieldGrids;
     WorldBiomeSettings biomeSettings;
     Ranges range;
 
