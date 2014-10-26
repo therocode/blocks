@@ -64,9 +64,10 @@ set(server_source
     src/script/callers/gameeventcaller.cpp
     src/script/callers/chunkeventcaller.cpp
     src/script/callers/ongroundcaller.cpp
+    src/script/callers/worldcaller.cpp
     src/script/interfaces/chunkinterface.cpp
     src/script/interfaces/entityinterface.cpp
-    src/script/interfaces/landscapeinterface.cpp
+    src/script/interfaces/worldinterface.cpp
     src/script/interfaces/mathsinterface.cpp
     src/script/interfaces/physicsinterface.cpp
     src/script/interfaces/printinterface.cpp
@@ -244,9 +245,10 @@ set(header_files
     src/script/callers/gameeventcaller.hpp
     src/script/callers/ongroundcaller.hpp
     src/script/callers/chunkeventcaller.hpp
+    src/script/callers/worldcaller.hpp
     src/script/interfaces/chunkinterface.hpp
     src/script/interfaces/entityinterface.hpp
-    src/script/interfaces/landscapeinterface.hpp
+    src/script/interfaces/worldinterface.hpp
     src/script/interfaces/mathsinterface.hpp
     src/script/interfaces/physicsinterface.hpp
     src/script/interfaces/printinterface.hpp

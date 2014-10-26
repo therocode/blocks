@@ -22,6 +22,11 @@ struct EntityWorldTransferRequestedMessage
     fea::EntityPtr entity; WorldId worldId;
 };
 
+struct EntityTransferringWorldMessage
+{
+    fea::EntityId entityId; WorldId oldWorldId; WorldId newWorldId;
+};
+
 struct EntityTransferredWorldMessage
 {
     fea::EntityId entityId; WorldId oldWorld; WorldId newWorld;

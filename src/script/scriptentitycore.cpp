@@ -24,14 +24,9 @@ void ScriptEntityCore::release()
     }
 }
 
-void ScriptEntityCore::setPosition(float x, float y, float z)
-{
-    mBus.send<EntityMoveRequestedMessage>(EntityMoveRequestedMessage{mEntity->getId(), glm::vec3(x, y, z)});
-}
-
 void ScriptEntityCore::setPosition(const glm::vec3& vec)
 {
-    mBus.send<EntityMoveRequestedMessage>(EntityMoveRequestedMessage{mEntity->getId(), vec});
+    mBus.send(EntityMoveRequestedMessage{mEntity->getId(), vec});
 }
 
 glm::vec3 ScriptEntityCore::getPosition()

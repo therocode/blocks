@@ -5,6 +5,7 @@
 #include <assert.h>
 #include "../utilities/glm.hpp"
 #include "scriptchunk.hpp"
+#include "scriptentity.hpp"
 
 void parameterFunction(asIScriptContext* context, std::size_t index, int value);
  
@@ -17,6 +18,8 @@ void parameterFunction(asIScriptContext* context, std::size_t index, uint32_t va
 void parameterFunction(asIScriptContext* context, std::size_t index, glm::i64vec3& value);
 
 void parameterFunction(asIScriptContext* context, std::size_t index, ScriptChunk& value);
+
+void parameterFunction(asIScriptContext* context, std::size_t index, ScriptEntity& value);
 
 template <std::size_t I, typename... Types>
 struct ParameterHelper;

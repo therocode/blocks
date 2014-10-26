@@ -1,3 +1,5 @@
+
+
 class Player : Entity
 {
     Player(EntityCore@ core, uint id)

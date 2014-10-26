@@ -13,6 +13,7 @@ class EntityInterface :
         EntityInterface(fea::MessageBus& bus, GameInterface& worldInterface, std::unordered_map<fea::EntityId, ScriptEntity>& scriptEntities);
         void registerInterface(asIScriptEngine* engine) override;
         asIScriptObject* createEntity(const std::string& type, WorldId worldId, const  glm::vec3 position);
+        asIScriptObject* getEntity(fea::EntityId id);
         void removeEntityFromId(fea::EntityId id);
         void handleMessage(const EntityCreatedMessage& message);
     private:

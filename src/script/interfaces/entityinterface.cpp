@@ -18,6 +18,7 @@ void EntityInterface::registerInterface(asIScriptEngine* engine)
 {
     int32_t r = engine->RegisterInterface("IEntity"); assert(r >= 0);
     r = engine->RegisterGlobalFunction("IEntity@ createIEntity(const string &in, uint32 worldId, const Vec3& in)", asMETHOD(EntityInterface, createEntity), asCALL_THISCALL_ASGLOBAL, this); assert(r >= 0);
+    r = engine->RegisterGlobalFunction("IEntity@ getIEntity(uint32 entityId)", asMETHOD(EntityInterface, getEntity), asCALL_THISCALL_ASGLOBAL, this); assert(r >= 0);
     r = engine->RegisterGlobalFunction("void removeEntity(uint id)", asMETHOD(EntityInterface, removeEntityFromId), asCALL_THISCALL_ASGLOBAL, this); assert(r >= 0);
 
     r = engine->RegisterObjectType("EntityCore", sizeof(ScriptEntityCore), asOBJ_REF); assert(r >= 0);
@@ -58,6 +59,20 @@ asIScriptObject* EntityInterface::createEntity(const std::string& type, WorldId 
     {
         return nullptr;
     }
+}
+
+asIScriptObject* EntityInterface::getEntity(fea::EntityId id)
+{
+    auto iterator = mScriptEntities.find(id);
+
+    if(iterator != mScriptEntities.end())
+    {
+        asIScriptObject* object = iterator->second.getScriptObject();
+        object->AddRef();
+        return object;
+    }
+    else
+        return nullptr;
 }
 
 void EntityInterface::removeEntityFromId(fea::EntityId id)

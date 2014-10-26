@@ -29,3 +29,8 @@ void parameterFunction(asIScriptContext* context, std::size_t index, ScriptChunk
 {
 	int32_t r = context->SetArgObject(index, &value); assert( r >= 0 );
 }
+
+void parameterFunction(asIScriptContext* context, std::size_t index, ScriptEntity& value)
+{
+	int32_t r = context->SetArgObject(index, value.getScriptObject()); assert( r >= 0 );
+}

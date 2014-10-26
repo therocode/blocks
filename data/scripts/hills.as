@@ -90,10 +90,10 @@ void spikes(const ChunkCoord &in coord, Chunk &chunk) {
 
 void chunkInitiallyGenerated(const uint32 worldId, const ChunkCoord &in coord, Chunk &in chunk)
 {
-    if(worldId == 0)
-        hills(coord, chunk);
-    else
-        spikes(coord, chunk);
+//    if(worldId == 0)
+//        hills(coord, chunk);
+//    else
+//        spikes(coord, chunk);
 }
 
 void chunkCandidate(const uint32 worldId, const ChunkCoord &in coord, Chunk &in chunk)

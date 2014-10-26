@@ -9,9 +9,10 @@ WorldController::WorldController(fea::MessageBus& bus) :
 
 void WorldController::handleMessage(const EntityWorldTransferRequestedMessage& received)
 {
-    std::cout << received.entity->getId() << " wants to enter world " << received.worldId << "\n";
-
     WorldId oldWorld = received.entity->getAttribute<WorldId>("current_world");
+
+    mBus.send(EntityTransferringWorldMessage{received.entity->getId(), oldWorld, received.worldId});
+
     received.entity->setAttribute("current_world", received.worldId);
 
     mBus.send(EntityTransferredWorldMessage{received.entity->getId(), oldWorld, received.worldId});

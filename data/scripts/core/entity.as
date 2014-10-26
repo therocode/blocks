@@ -3,6 +3,11 @@ Entity@ createEntity(const string type, uint32 worldId, Vec3 position)
     return cast<Entity@>(createIEntity(type, worldId, position));
 }
 
+Entity@ getEntity(uint32 entityId)
+{
+    return cast<Entity@>(getIEntity(entityId));
+}
+
 void removeEntity(Entity@ entity)
 {
     removeEntity(entity.getId());

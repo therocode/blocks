@@ -202,12 +202,10 @@ void PlayerController::handleMessage(const EntityTransferredWorldMessage& receiv
 {
     size_t id = received.entityId;
 
-    std::cout << "sent it?\n";
     if(mEntityIdToPlayerId.find(id) != mEntityIdToPlayerId.end())
     {
         size_t playerId = mEntityIdToPlayerId.at(id);
         mBus.send(PlayerEntersWorldMessage{playerId, received.newWorld});
-        std::cout << "sent it\n";
     }
 }
 

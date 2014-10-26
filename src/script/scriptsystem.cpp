@@ -7,7 +7,7 @@
 
 #include "interfaces/chunkinterface.hpp"
 #include "interfaces/entityinterface.hpp"
-#include "interfaces/landscapeinterface.hpp"
+#include "interfaces/worldinterface.hpp"
 #include "interfaces/mathsinterface.hpp"
 #include "interfaces/physicsinterface.hpp"
 #include "interfaces/printinterface.hpp"
@@ -18,6 +18,7 @@
 #include "callers/gameeventcaller.hpp"
 #include "callers/frametimecaller.hpp"
 #include "callers/chunkeventcaller.hpp"
+#include "callers/worldcaller.hpp"
 
 ScriptSystem::ScriptSystem(fea::MessageBus& bus, GameInterface& worldInterface) : 
     mBus(bus),
@@ -128,7 +129,7 @@ void ScriptSystem::setupInterfaces()
     mInterfaces.push_back(std::unique_ptr<ScriptInterface>(new MathsInterface(mBus, mGameInterface)));
     mInterfaces.push_back(std::unique_ptr<ScriptInterface>(new StringInterface(mBus, mGameInterface)));
     mInterfaces.push_back(std::unique_ptr<ScriptInterface>(new EntityInterface(mBus, mGameInterface, mScriptEntities)));
-    mInterfaces.push_back(std::unique_ptr<ScriptInterface>(new LandscapeInterface(mBus, mGameInterface)));
+    mInterfaces.push_back(std::unique_ptr<ScriptInterface>(new WorldInterface(mBus, mGameInterface)));
     mInterfaces.push_back(std::unique_ptr<ScriptInterface>(new PhysicsInterface(mBus, mGameInterface)));
     mInterfaces.push_back(std::unique_ptr<ScriptInterface>(new PrintInterface(mBus, mGameInterface)));
     mInterfaces.push_back(std::unique_ptr<ScriptInterface>(new RandomInterface(mBus, mGameInterface)));
@@ -151,6 +152,7 @@ void ScriptSystem::setupCallbacks()
     mCallers.push_back(std::unique_ptr<ScriptCaller>(new GameEventCaller(mBus, mEngine, mScriptEntities)));
     mCallers.push_back(std::unique_ptr<ScriptCaller>(new OnGroundCaller(mBus, mEngine, mScriptEntities)));
 	mCallers.push_back(std::unique_ptr<ScriptCaller>(new ChunkEventCaller(mBus, mEngine, mScriptEntities)));
+	mCallers.push_back(std::unique_ptr<ScriptCaller>(new WorldCaller(mBus, mEngine, mScriptEntities)));
 }
 
 void ScriptSystem::loadSources()
