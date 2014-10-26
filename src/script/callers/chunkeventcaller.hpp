@@ -19,7 +19,8 @@ class ChunkEventCaller :
 		void handleMessage(const ChunkInitiallyGeneratedMessage& received);
 		void handleMessage(const ChunkCandidateMessage& received);
 		void handleMessage(const ChunkFinishedMessage& received);
-
-
+	
+	private:
+		asIObjectType* mVoxelDataArrayType;
 };
 
