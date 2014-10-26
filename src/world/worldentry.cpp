@@ -234,8 +234,21 @@ void WorldEntry::requestChunk(const ChunkCoord& chunk)
     BiomeRegionChunkCoord biomeRegionChunk = ChunkToBiomeRegionChunk::convert(chunk);
     BiomeGrid& bigGrid = mWorldData.biomeGrids.at(ChunkToBiomeRegion::convert(chunk));
 
+    FieldMap fields;
+    const FieldMap& bigFieldMap = mWorldData.fieldGrids.at(ChunkToBiomeRegion::convert(chunk));
+
+
     uint32_t size = grid.getInnerSize();
     glm::uvec3 start = (glm::uvec3)biomeRegionChunk / biomeRegionWidthInChunks;
+
+    for(const auto& bigField : bigFieldMap)
+    {
+        FieldGrid newFieldGrid(16, 4);
+        newFieldGrid.setInterpolator(Interpolator<float>::nearestNeigbor);
+        fields.emplace(bigField.first, newFieldGrid);
+    }
+
+    glm::uvec3 coordinate;
 
     for(uint32_t z = 0; z < size; z++)
     {
@@ -243,12 +256,18 @@ void WorldEntry::requestChunk(const ChunkCoord& chunk)
         {
             for(uint32_t x = 0; x < size; x++)
             {
-                grid.setInner({x, y, z}, bigGrid.get(start + glm::uvec3(x, y, z)));
+                coordinate = start + glm::uvec3(x, y, z);
+                grid.setInner({x, y, z}, bigGrid.get(coordinate));
+
+                for(const auto& bigField : bigFieldMap)
+                {
+                    fields.at(bigField.first).setInner({x, y, z}, bigField.second.get(coordinate));
+                }
             }
         }
     }
 
-    mBus.send(ChunkGenerationRequestedMessage{0, mId, chunk, grid});
+    mBus.send(ChunkGenerationRequestedMessage{0, mId, chunk, grid, fields});
 }
 
 void WorldEntry::applyDifferenceAsMods(const ChunkCoord& coordinate, const VoxelTypeArray& before, const VoxelTypeArray& after)

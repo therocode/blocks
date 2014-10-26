@@ -27,7 +27,7 @@ void ChunkProvider::handleMessage(const BiomesLoadedMessage& received)
 void ChunkProvider::handleMessage(const ChunkGenerationRequestedMessage& received)
 {
     //add chunk to load to other thread
-    auto bound = std::bind(&ChunkProvider::generateChunk, this, received.worldId, received.coordinate, received.biomeData);
+    auto bound = std::bind(&ChunkProvider::generateChunk, this, received.worldId, received.coordinate, received.biomeData, received.fieldData);
     mChunksToDeliver.push_back(mWorkerPool.enqueue(bound, received.prio));
 }
 
@@ -48,7 +48,7 @@ void ChunkProvider::handleMessage(const FrameMessage& received)
     }
 }
 
-ChunkDelivery ChunkProvider::generateChunk(WorldId worldId, const ChunkCoord& coordinate, const BiomeGrid& biomeData)
+ChunkDelivery ChunkProvider::generateChunk(WorldId worldId, const ChunkCoord& coordinate, const BiomeGrid& biomeData, const FieldMap& fieldData)
 {
     ChunkDelivery delivery;
     ChunkGenerator generator;
@@ -56,7 +56,7 @@ ChunkDelivery ChunkProvider::generateChunk(WorldId worldId, const ChunkCoord& co
     delivery.id = worldId;
     delivery.coordinate = coordinate;
 
-    delivery.chunk = generator.generateChunk(coordinate, biomeData, mBiomes);
+    delivery.chunk = generator.generateChunk(coordinate, biomeData, fieldData, mBiomes);
 
     return delivery;
 }

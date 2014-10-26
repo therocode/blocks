@@ -43,7 +43,7 @@ struct BiomeGeneratedMessage
 
 struct ChunkGenerationRequestedMessage
 {
-    int32_t prio; WorldId worldId; const ChunkCoord& coordinate; const BiomeGrid& biomeData;
+    int32_t prio; WorldId worldId; const ChunkCoord& coordinate; const BiomeGrid& biomeData; const FieldMap& fieldData;
 };
 
 struct ChunkGeneratedMessage

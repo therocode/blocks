@@ -98,6 +98,8 @@ BiomeDelivery BiomeProvider::generateBiomeData(WorldId worldId, BiomeRegionCoord
 
         fieldGenerator.fill(coordinate, newGrid, field.noiseType);
 
+        newGrid.setInterpolator(Interpolator<float>::nearestNeigbor);
+
         fieldGrids.emplace(field.id, newGrid);
     }
 

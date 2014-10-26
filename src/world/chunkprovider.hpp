@@ -26,7 +26,7 @@ class ChunkProvider :
         void handleMessage(const BiomesLoadedMessage& received) override;
         void handleMessage(const FrameMessage& received) override;
     private:
-        ChunkDelivery generateChunk(WorldId worldId, const ChunkCoord& coordinate, const BiomeGrid& biomeData);
+        ChunkDelivery generateChunk(WorldId worldId, const ChunkCoord& coordinate, const BiomeGrid& biomeData, const FieldMap& fieldData);
         fea::MessageBus& mBus;
 
 
