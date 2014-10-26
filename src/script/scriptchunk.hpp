@@ -8,12 +8,13 @@ class ScriptChunk
 {
 	public:
 		ScriptChunk();
-		ScriptChunk(Chunk* chunk);
-		ScriptChunk(const Chunk* chunk);
+		ScriptChunk(Chunk* chunk, asIObjectType* voxelDataArrayType);
+		ScriptChunk(const Chunk* chunk, asIObjectType* voxelDataArrayType);
 		ScriptChunk(const ScriptChunk& other);
 		void addRef();
 		void release();
 		VoxelType getVoxelType(const ChunkVoxelCoord&);
+		CScriptArray* getVoxelData();
 		void setVoxelType(const ChunkVoxelCoord&, VoxelType);
 		void setVoxelData(const CScriptArray& types);
 	private:
@@ -21,6 +22,7 @@ class ScriptChunk
 		Chunk* mChunk;
 		int32_t mRefCount;
 		bool mReadOnly;
+		asIObjectType* mVoxelDataArrayType;
 };
 
 ScriptChunk* constructScriptChunk();

@@ -1,5 +1,7 @@
 #include "scriptchunk.hpp"
 #include <fea/assert.hpp>
+#include <fea/freetype-gl/vec234.h>
+#include "../world/worlddefines.hpp"
 
 ScriptChunk* constructScriptChunk() 
 {
@@ -16,13 +18,13 @@ ScriptChunk::ScriptChunk()
 {
 }
 
-ScriptChunk::ScriptChunk(Chunk* chunk) 
-	: mChunk(chunk), mChunkRO(nullptr), mReadOnly(false), mRefCount(1)
+ScriptChunk::ScriptChunk(Chunk* chunk, asIObjectType* voxelDataArrayType) 
+	: mChunk(chunk), mChunkRO(nullptr), mReadOnly(false), mRefCount(1), mVoxelDataArrayType(voxelDataArrayType)
 {
 }
 
-ScriptChunk::ScriptChunk(const Chunk* chunk)
-	: mChunk(nullptr), mChunkRO(chunk), mReadOnly(true), mRefCount(1)
+ScriptChunk::ScriptChunk(const Chunk* chunk, asIObjectType* voxelDataArrayType)
+	: mChunk(nullptr), mChunkRO(chunk), mReadOnly(true), mRefCount(1), mVoxelDataArrayType(voxelDataArrayType)
 {
 }
 	
@@ -53,7 +55,19 @@ uint16_t ScriptChunk::getVoxelType(const ChunkVoxelCoord& coord)
 		return mChunk->getVoxelType(coord);
 }
 
-void ScriptChunk::setVoxelType(const ChunkVoxelCoord& coord, uint16_t type)
+CScriptArray* ScriptChunk::getVoxelData()
+{
+	CScriptArray* outBuffer = CScriptArray::Create(mVoxelDataArrayType, chunkWidthPow3);
+	
+	VoxelTypeArray inBuffer = (mReadOnly ? mChunkRO : mChunk)->getFlatVoxelTypeData();
+	
+	for(int i = 0; i < inBuffer.size(); i++)
+		outBuffer->SetValue(i, &inBuffer[i]);
+	
+	return outBuffer;
+}
+
+void ScriptChunk::setVoxelType(const ChunkVoxelCoord& coord, VoxelType type)
 {
 	FEA_ASSERT(!mReadOnly, "setVoxelType() called on read-only ScriptChunk instance");
 	
@@ -67,7 +81,7 @@ void ScriptChunk::setVoxelData(const CScriptArray& types)
 	VoxelTypeArray arr;
 	
 	for(int i = 0; i < types.GetSize(); i++)
-		arr[i] = *((uint16_t*)types.At(i));
+		arr[i] = *((VoxelType*)types.At(i));
 	
 	mChunk->setVoxelData(arr);
 }
