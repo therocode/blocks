@@ -1,10 +1,11 @@
 #pragma once
 #include <unordered_map>
 #include "../utilities/glm.hpp"
+#include "../utilities/idprovider.hpp"
 #include <fea/util.hpp>
 #include "../rendering/renderingmessages.hpp"
 #include "worldmessages.hpp"
-#include "worldprovider.hpp"
+#include "chunkprovider.hpp"
 #include "biomeprovider.hpp"
 #include "worldentry.hpp"
 
@@ -34,13 +35,12 @@ class WorldSystem :
     private:
         void createWorld(const WorldParameters& parameters, const std::string& worldPath);
         fea::MessageBus& mBus;
-        WorldProvider mWorldProvider;
+        ChunkProvider mChunkProvider;
         BiomeProvider mBiomeProvider;
 
         //biome data
-        BiomeIndex mNextBiomeIndex;
+        IdProvider<std::string> mBiomeIds;
         std::unordered_map<BiomeIndex, Biome> mBiomes;
-        std::unordered_map<std::string, BiomeIndex> mBiomeIdentifierToIdMap;
 
         //worlds
         WorldId mNextId;

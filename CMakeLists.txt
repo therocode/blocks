@@ -85,7 +85,7 @@ set(server_source
     src/world/ranges.cpp
     src/world/raycaster.cpp
     src/world/worldentry.cpp
-    src/world/worldprovider.cpp
+    src/world/chunkprovider.cpp
     src/world/worldsystem.cpp
     src/world/worldloader.cpp
     src/world/generation/chunkgenerator.cpp
@@ -274,7 +274,7 @@ set(header_files
 	src/world/worldsystem.hpp
     src/world/worldloader.hpp
 	src/world/worldmessages.hpp
-    src/world/worldprovider.hpp
+    src/world/chunkprovider.hpp
     src/world/generation/chunkgenerator.hpp
 )
 

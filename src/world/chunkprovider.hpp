@@ -14,14 +14,14 @@ struct ChunkDelivery
     Chunk chunk;
 };
 
-class WorldProvider :
+class ChunkProvider :
     public fea::MessageReceiver<ChunkGenerationRequestedMessage,
                                 BiomesLoadedMessage,
                                 FrameMessage>
 {
     public:
-        WorldProvider(fea::MessageBus& b);
-        ~WorldProvider();
+        ChunkProvider(fea::MessageBus& b);
+        ~ChunkProvider();
         void handleMessage(const ChunkGenerationRequestedMessage& received) override;
         void handleMessage(const BiomesLoadedMessage& received) override;
         void handleMessage(const FrameMessage& received) override;

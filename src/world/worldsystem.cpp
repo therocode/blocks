@@ -9,9 +9,8 @@
 
 WorldSystem::WorldSystem(fea::MessageBus& messageBus) 
 :   mBus(messageBus),
-    mWorldProvider(mBus),
+    mChunkProvider(mBus),
     mBiomeProvider(mBus),
-    mNextBiomeIndex(0),
     mNextId(0)
 {
     mBus.send(LogMessage{"Setting up world system", worldName, LogLevel::INFO});
@@ -26,8 +25,7 @@ WorldSystem::WorldSystem(fea::MessageBus& messageBus)
             {"rainfall", BiomeRequirement(0.5f, 1.0f)}
         });
 
-    mBiomes.emplace(mNextBiomeIndex++, grass);
-    mBiomeIdentifierToIdMap.emplace(grass.mName, mNextBiomeIndex - 1);
+    mBiomes.emplace(mBiomeIds.getId(grass.mName), grass);
 
     Biome desert("desert", 3,
         {
@@ -36,8 +34,7 @@ WorldSystem::WorldSystem(fea::MessageBus& messageBus)
             {"rainfall", BiomeRequirement(0.0f, 0.5f)}
         });
 
-    mBiomes.emplace(mNextBiomeIndex++, desert);
-    mBiomeIdentifierToIdMap.emplace(desert.mName, mNextBiomeIndex - 1);
+    mBiomes.emplace(mBiomeIds.getId(desert.mName), desert);
 
     mBus.send(BiomesLoadedMessage{mBiomes});
 
@@ -170,8 +167,8 @@ void WorldSystem::createWorld(const WorldParameters& parameters, const std::stri
     worldData.range = parameters.ranges;
     worldData.title = parameters.title;
 
-    worldData.biomeSettings.biomes.push_back(mBiomeIdentifierToIdMap.at("grass"));
-    worldData.biomeSettings.biomes.push_back(mBiomeIdentifierToIdMap.at("desert"));
+    worldData.biomeSettings.biomes.push_back(mBiomeIds.getId("grass"));
+    worldData.biomeSettings.biomes.push_back(mBiomeIds.getId("desert"));
 
     //make sure world directory exists.
     std::string path = worldPath + "/" + parameters.identifier;
