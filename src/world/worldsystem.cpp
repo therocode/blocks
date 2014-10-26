@@ -183,12 +183,12 @@ void WorldSystem::createWorld(const WorldParameters& parameters, const std::stri
 
     worldData.biomeSettings.fields =
     {
-        Field{mFieldIds.getId("height")},
-        Field{mFieldIds.getId("rainfall")},
-        Field{mFieldIds.getId("temperature")},
-        Field{mFieldIds.getId("selector")}
+        Field{mFieldIds.getId("height"), NoiseType::SIMPLEX, false},
+        Field{mFieldIds.getId("rainfall"), NoiseType::SIMPLEX, false},
+        Field{mFieldIds.getId("temperature"), NoiseType::SIMPLEX, false},
+        Field{mFieldIds.getId("selector"), NoiseType::VORONOI, true}
     };
 
 
-    auto createdIterator = mWorlds.emplace(newId, WorldEntry(mBus, newId, parameters.identifier, worldData, path)).first;
+    auto createdIterator = mWorlds.emplace(newId, WorldEntry(mBus, mBiomes, newId, parameters.identifier, worldData, path)).first;
 }

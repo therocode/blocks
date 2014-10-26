@@ -8,4 +8,5 @@ struct Field
 {
     uint32_t id;
     NoiseType noiseType;
+    bool isSelector;
 };

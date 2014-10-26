@@ -12,7 +12,7 @@
 class WorldEntry
 {
     public:
-        WorldEntry(fea::MessageBus& bus, WorldId id, const std::string& identifier, const WorldData& data, const std::string& path);
+        WorldEntry(fea::MessageBus& bus, const std::unordered_map<BiomeId, Biome>& biomes, WorldId id, const std::string& identifier, const WorldData& data, const std::string& path);
         ~WorldEntry();
         void addHighlightEntity(uint32_t id, const ChunkCoord& location, uint32_t radius);
         void moveHighlightEntity(uint32_t id, const ChunkCoord& location);
@@ -29,8 +29,9 @@ class WorldEntry
         void deactivateChunk(const ChunkCoord& chunk);
         void requestChunk(const ChunkCoord& chunk);
         void applyDifferenceAsMods(const ChunkCoord& coordinate, const VoxelTypeArray& before, const VoxelTypeArray& after);
-        BiomeGrid generateBiomes(const FieldMap& fields) const;
+        BiomeGrid generateBiomes(const ChunkCoord& coordinate, const FieldMap& fields) const;
         fea::MessageBus& mBus;
+        const std::unordered_map<BiomeId, Biome>& mBiomes;
         WorldId mId;
         std::string mIdentifier;
         WorldData mWorldData;
