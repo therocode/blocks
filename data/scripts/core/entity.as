@@ -43,4 +43,9 @@ shared class Entity : IEntity
     {
         return mId;
     }
+
+    uint32 getCurrentWorldId()
+    {
+        return mCore.getCurrentWorldId();
+    }
 }

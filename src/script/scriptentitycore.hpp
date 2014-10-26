@@ -4,6 +4,7 @@
 #include <fea/util.hpp>
 #include <fea/entitysystem.hpp>
 #include "../utilities/glm.hpp"
+#include "../world/worlddefines.hpp"
 
 class ScriptEntityCore
 {
@@ -16,6 +17,7 @@ class ScriptEntityCore
         glm::vec3 getPosition();
         bool isOnGround();
         void setId(size_t id);
+        WorldId getCurrentWorldId() const;
     private:
         fea::MessageBus& mBus;
         fea::EntityPtr mEntity;

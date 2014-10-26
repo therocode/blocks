@@ -26,6 +26,7 @@ void EntityInterface::registerInterface(asIScriptEngine* engine)
     r = engine->RegisterObjectMethod("EntityCore", "void setPosition(const Vec3& in)", asMETHODPR(ScriptEntityCore, setPosition, (const glm::vec3&), void), asCALL_THISCALL); assert(r >= 0);
     r = engine->RegisterObjectMethod("EntityCore", "Vec3 getPosition()", asMETHOD(ScriptEntityCore, getPosition), asCALL_THISCALL); assert(r >= 0);
     r = engine->RegisterObjectMethod("EntityCore", "bool isOnGround()", asMETHOD(ScriptEntityCore, isOnGround), asCALL_THISCALL); assert(r >= 0);
+    r = engine->RegisterObjectMethod("EntityCore", "uint32 getCurrentWorldId()", asMETHOD(ScriptEntityCore, getCurrentWorldId), asCALL_THISCALL); assert(r >= 0);
 }
 
 asIScriptObject* EntityInterface::createEntity(const std::string& type, WorldId worldId, const  glm::vec3 position)

@@ -48,3 +48,8 @@ void ScriptEntityCore::setId(size_t id)
 {
     mId = id;
 }
+
+WorldId ScriptEntityCore::getCurrentWorldId() const
+{
+    return mEntity->getAttribute<WorldId>("current_world");
+}

@@ -22,6 +22,7 @@ class Player : Entity
     {
         if(landed)
         {
+            uint32 worldId = getCurrentWorldId();
 			consolePrint(toString(getPosition()), VERBOSE);
             consolePrint("lalalaaaa i am on the ground");
             Vec3 originalPos = getPosition();
@@ -29,92 +30,92 @@ class Player : Entity
             position.y -= 1.0f;
             position.x = originalPos.x + 0.25;
             position.z = originalPos.z + 0.25;
-            uint16 type = getVoxelType(0, position);
+            uint16 type = getVoxelType(worldId, position);
 
             //consolePrint("stepped on a " + type);
             bool bounce = false;
             if(type == 12)
             {
-                setVoxelType(0, position, 13);
+                setVoxelType(worldId, position, 13);
                 bounce = true;
                 //applyImpulse(0.0f, 5.0f, 0.0f);
             }
             else if(type == 21)
             {
-                setVoxelType(0, position, 22);
+                setVoxelType(worldId, position, 22);
             }
             else if(type == 22)
             {
-                setVoxelType(0, position, 23);
+                setVoxelType(worldId, position, 23);
             }
             else if(type == 23)
             {
-                setVoxelType(0, position, 21);
+                setVoxelType(worldId, position, 21);
             }
 
             position.x = originalPos.x - 0.25;
             position.z = originalPos.z + 0.25;
-            type = getVoxelType(0, position);
+            type = getVoxelType(worldId, position);
             if(type == 12)
             {
-                setVoxelType(0, position, 13);
+                setVoxelType(worldId, position, 13);
               //  applyImpulse(0.0f, 5.0f, 0.0f);
               bounce = true;
             }
             else if(type == 21)
             {
-                setVoxelType(0, position, 22);
+                setVoxelType(worldId, position, 22);
             }
             else if(type == 22)
             {
-                setVoxelType(0, position, 23);
+                setVoxelType(worldId, position, 23);
             }
             else if(type == 23)
             {
-                setVoxelType(0, position, 21);
+                setVoxelType(worldId, position, 21);
             }
 
             position.x = originalPos.x - 0.25;
             position.z = originalPos.z - 0.25;
-            type = getVoxelType(0, position);
+            type = getVoxelType(worldId, position);
             if(type == 12)
             {
-                setVoxelType(0, position, 13);
+                setVoxelType(worldId, position, 13);
               //  applyImpulse(0.0f, 5.0f, 0.0f);
                bounce = true;
             }
             else if(type == 21)
             {
-                setVoxelType(0, position, 22);
+                setVoxelType(worldId, position, 22);
             }
             else if(type == 22)
             {
-                setVoxelType(0, position, 23);
+                setVoxelType(worldId, position, 23);
             }
             else if(type == 23)
             {
-                setVoxelType(0, position, 21);
+                setVoxelType(worldId, position, 21);
             }
 
             position.x = originalPos.x + 0.25;
             position.z = originalPos.z - 0.25;
-            type = getVoxelType(0, position);
+            type = getVoxelType(worldId, position);
             if(type == 12)
             {
-                setVoxelType(0, position, 13);
+                setVoxelType(worldId, position, 13);
                bounce = true;
             }
             else if(type == 21)
             {
-                setVoxelType(0, position, 22);
+                setVoxelType(worldId, position, 22);
             }
             else if(type == 22)
             {
-                setVoxelType(0, position, 23);
+                setVoxelType(worldId, position, 23);
             }
             else if(type == 23)
             {
-                setVoxelType(0, position, 21);
+                setVoxelType(worldId, position, 21);
             }
 
             if(bounce){
