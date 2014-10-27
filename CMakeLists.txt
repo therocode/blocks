@@ -410,6 +410,7 @@ if(BUILD_TESTS)
         "test/world/explorationmanagertest.cpp"
         "test/world/highlightmanagertest.cpp"
         "test/world/modmanagertest.cpp"
+		"test/script/scriptchunktest.cpp"
         
         "test/testhelpers.cpp"
         "test/scopeddirectory.cpp"
@@ -423,12 +424,25 @@ if(BUILD_TESTS)
         "src/world/chunk.cpp"
         "src/world/explorationmanager.cpp" "src/utilities/coordinateconverter.cpp"
         "src/networking/messageserializer.cpp"
-        "src/networking/chunkrequesthandler.cpp" 
+        "src/networking/chunkrequesthandler.cpp"
+        "src/script/scriptchunk.cpp"
+        "src/script/asaddons/scriptarray.cpp"
         )
 
     target_link_libraries(tests ${FEATHERKIT_LIBRARIES})
+    
+	include_directories(${ANGELSCRIPT_INCLUDE_DIRECTORY})
+    target_link_libraries(tests ${ANGELSCRIPT_LIBRARY} -lpthread)
 	
     #profiling
-    add_executable(profile_modmanager "profile/world/modmanagerprofile.cpp" "src/world/modmanager.cpp" "src/world/chunk.cpp" "src/utilities/directorycreator.cpp" "src/utilities/coordinateconverter.cpp")
+    add_executable(profile_modmanager 
+		"profile/world/modmanagerprofile.cpp" 
+		
+		"src/world/modmanager.cpp" 
+		"src/world/chunk.cpp" 
+		"src/utilities/directorycreator.cpp" 
+		"src/utilities/coordinateconverter.cpp"
+		)
+		
     target_link_libraries(profile_modmanager ${FEATHERKIT_LIBRARIES})
 endif(BUILD_TESTS)
