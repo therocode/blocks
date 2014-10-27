@@ -94,7 +94,7 @@ BiomeDelivery BiomeProvider::generateBiomeData(WorldId worldId, BiomeRegionCoord
 
     for(const auto& field : settings.fields)
     {
-        FieldGrid newGrid(biomeRegionWidth, 4);  //4 is amount of downsampling
+        FieldGrid newGrid(biomeRegionWidth, biomeDownSamplingAmount);
 
         fieldGenerator.fill(coordinate, newGrid, field.noiseType);
 

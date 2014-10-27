@@ -229,7 +229,7 @@ void WorldEntry::deactivateChunk(const ChunkCoord& chunkCoordinate)
 
 void WorldEntry::requestChunk(const ChunkCoord& chunk)
 {
-    BiomeGrid grid(16, 4);
+    BiomeGrid grid(16, biomeDownSamplingAmount);
     grid.setInterpolator(Interpolator<BiomeId>::nearestNeigbor);
     BiomeRegionChunkCoord biomeRegionChunk = ChunkToBiomeRegionChunk::convert(chunk);
     BiomeGrid& bigGrid = mWorldData.biomeGrids.at(ChunkToBiomeRegion::convert(chunk));
@@ -242,12 +242,14 @@ void WorldEntry::requestChunk(const ChunkCoord& chunk)
 
     for(const auto& bigField : bigFieldMap)
     {
-        FieldGrid newFieldGrid(16, 4);
+        FieldGrid newFieldGrid(16, biomeDownSamplingAmount);
         newFieldGrid.setInterpolator(Interpolator<float>::nearestNeigbor);
         fields.emplace(bigField.first, newFieldGrid);
     }
 
     glm::uvec3 coordinate;
+
+    std::cout << "SIZE: " << size << "\n";
 
     for(uint32_t z = 0; z < size; z++)
     {
@@ -260,7 +262,8 @@ void WorldEntry::requestChunk(const ChunkCoord& chunk)
 
                 for(const auto& bigField : bigFieldMap)
                 {
-                    std::cout << "here " << bigField.second.get(coordinate) << " ";
+                    if(z == 2 && y == 2)
+                        std::cout << "gere " << bigField.second.get(coordinate) << " at " << glm::to_string((glm::ivec3)coordinate) << "\n";
                     fields.at(bigField.first).setInner({x, y, z}, bigField.second.get(coordinate));
                 }
             }
@@ -292,7 +295,7 @@ void WorldEntry::applyDifferenceAsMods(const ChunkCoord& coordinate, const Voxel
 
 BiomeGrid WorldEntry::generateBiomes(const ChunkCoord& coordinate, const FieldMap& fields) const
 {
-    BiomeGrid result(biomeRegionWidth, 4);
+    BiomeGrid result(biomeRegionWidth, biomeDownSamplingAmount);
     uint32_t size = result.getInnerSize();
 
     //collect all possible biomes

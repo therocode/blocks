@@ -30,9 +30,9 @@ Type Interpolator<Type>::nearestNeigbor(const std::array<Type, 8>& corners, cons
     //std::cout << "011: " << corners[6] << "\n";
     //std::cout << "111: " << corners[7] << "\n";
 
-    uint32_t index = (point.x < 0.5f ? 0 : 1) +
-                     (point.y < 0.5f ? 0 : 2) +
-                     (point.z < 0.5f ? 0 : 4);
+    uint32_t index = (point.x < 0.4999f ? 0 : 1) +
+                     (point.y < 0.4999f ? 0 : 2) +
+                     (point.z < 0.4999f ? 0 : 4);
 
     return corners[index];
 }

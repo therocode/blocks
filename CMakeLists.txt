@@ -219,7 +219,7 @@ set(header_files
     src/utilities/namedenum.hpp
 	src/utilities/random.hpp
     src/utilities/signalcatcher.hpp
-<<<<<<< HEAD
+
 	src/utilities/timer.hpp
 	src/utilities/tinydir.hpp
 
@@ -284,72 +284,7 @@ find_package(GLM)
 find_package(SDL2)
 find_package(OpenGL REQUIRED)
 find_package(ENet)
-=======
-	src/utilities/timer.hpp
-	src/utilities/tinydir.hpp
 
-    src/script/scriptmessages.hpp
-    src/script/scriptchunk.hpp
-    src/script/scriptcallback.hpp
-    src/script/scriptengine.hpp
-    src/script/scriptentity.hpp
-    src/script/scriptentitycore.hpp
-    src/script/scriptsystem.hpp
-    src/script/scriptmodule.hpp
-    src/script/scriptstd.hpp
-    src/script/asaddons/scriptarray.hpp
-    src/script/asaddons/scriptmath.hpp
-    src/script/asaddons/scriptvectors.hpp
-    src/script/asaddons/scriptvec3.hpp
-    src/script/asaddons/scriptu8vec3.hpp
-    src/script/asaddons/scripti64vec3.hpp
-    src/script/asaddons/scriptbuilder.hpp
-    src/script/asaddons/scriptstdstring.hpp
-    src/script/asaddons/scriptprimitivealiases.hpp
-    src/script/callers/scriptcaller.hpp
-    src/script/callers/frametimecaller.hpp
-    src/script/callers/gameeventcaller.hpp
-    src/script/callers/ongroundcaller.hpp
-    src/script/callers/chunkeventcaller.hpp
-    src/script/callers/worldcaller.hpp
-    src/script/interfaces/chunkinterface.hpp
-    src/script/interfaces/entityinterface.hpp
-    src/script/interfaces/worldinterface.hpp
-    src/script/interfaces/mathsinterface.hpp
-    src/script/interfaces/physicsinterface.hpp
-    src/script/interfaces/printinterface.hpp
-    src/script/interfaces/randominterface.hpp
-    src/script/interfaces/scriptinterface.hpp
-    src/script/interfaces/stringinterface.hpp
-
-	src/world/explorationmanager.hpp
-	src/world/biome.hpp
-	src/world/biomedefines.hpp
-	src/world/biomeprovider.hpp
-	src/world/chunk.hpp
-	src/world/chunkmap.hpp
-    src/world/field.hpp
-    src/world/fieldgenerator.hpp
-    src/world/valuemap.hpp
-    src/world/highlightmanager.hpp
-    src/world/modmanager.hpp
-    src/world/raycaster.hpp
-    src/world/worlddata.hpp
-    src/world/worlddefines.hpp
-    src/world/worldentry.hpp
-	src/world/worldsystem.hpp
-    src/world/worldloader.hpp
-	src/world/worldmessages.hpp
-    src/world/worldprovider.hpp
-    src/world/generation/chunkgenerator.hpp
-)
-
-find_package(Featherkit REQUIRED COMPONENTS entity structure ui sdl2 util)
-find_package(GLM)
-find_package(SDL2)
-find_package(OpenGL REQUIRED)
-find_package(ENet)
->>>>>>> 12dc143da39591c991cc23c15c93b636ca843e8a
 if(NOT CLIENT_ONLY)
 find_package(angelscript)
 
