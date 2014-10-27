@@ -237,7 +237,6 @@ void WorldEntry::requestChunk(const ChunkCoord& chunk)
     FieldMap fields;
     const FieldMap& bigFieldMap = mWorldData.fieldGrids.at(ChunkToBiomeRegion::convert(chunk));
 
-
     uint32_t size = grid.getInnerSize();
     glm::uvec3 start = (glm::uvec3)biomeRegionChunk / biomeRegionWidthInChunks;
 
@@ -261,6 +260,7 @@ void WorldEntry::requestChunk(const ChunkCoord& chunk)
 
                 for(const auto& bigField : bigFieldMap)
                 {
+                    std::cout << "here " << bigField.second.get(coordinate) << " ";
                     fields.at(bigField.first).setInner({x, y, z}, bigField.second.get(coordinate));
                 }
             }

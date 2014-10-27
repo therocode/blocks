@@ -27,7 +27,7 @@ Chunk ChunkGenerator::generateChunk(const ChunkCoord& chunkCoordinate, const Bio
                 const Biome& biome = biomes.at(biomeData.get({x, y, z}));
                 VoxelType biomeType = biome.mType;
 
-                voxelData[zIndex + yIndex + x] = (worldY < 0) ? biomeType : 0;
+                voxelData[zIndex + yIndex + x] = (worldY < fieldData.at(0).get({x, y, z}) * 100) ? biomeType : 0;
             }
         }
     }
