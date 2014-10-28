@@ -7,6 +7,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_LIST_DIR}/cmake/modu
 
 set(BUILD_EXPBIOMES FALSE CACHE BOOL "build the biome experiment application")
 set(BUILD_TESTS TRUE CACHE BOOL "build the tests")
+set(BUILD_PROFILING TRUE CACHE BOOL "build the profiling tests")
 set(BUILD_GAME TRUE CACHE BOOL "build the actual game")
 set(CLIENT_ONLY FALSE CACHE BOOL "only build client functionality")
 
@@ -435,7 +436,10 @@ if(BUILD_TESTS)
     
 	include_directories(${ANGELSCRIPT_INCLUDE_DIRECTORY})
     target_link_libraries(tests ${ANGELSCRIPT_LIBRARY} -lpthread)
+endif(BUILD_TESTS)
 	
+	
+if(BUILD_PROFILING)
     #profiling
     add_executable(profile_modmanager 
 		"profile/world/modmanagerprofile.cpp" 
@@ -447,4 +451,4 @@ if(BUILD_TESTS)
 		)
 		
     target_link_libraries(profile_modmanager ${FEATHERKIT_LIBRARIES})
-endif(BUILD_TESTS)
+endif(BUILD_PROFILING)
