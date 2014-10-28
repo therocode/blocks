@@ -5,6 +5,7 @@
 #include "../src/world/chunk.hpp"
 #include <angelscript.h>
 #include <fea/assert.hpp>
+#include <algorithm>
 
 SCENARIO("Reading and writing voxel data to and from ScriptChunk causes corresponding changes to contained Chunk", "[set][get]")
 {
@@ -89,16 +90,14 @@ SCENARIO("Reading and writing voxel data to and from ScriptChunk causes correspo
 				
 				THEN("Retrieving them in array form through the wrapped chunk and the ScriptChunk yields the same result")
 				{
-					CScriptArray* csVoxelTypeArray = scriptChunk.getVoxelData();
-					VoxelTypeArray voxelTypeArray = wrappedChunk.getFlatVoxelTypeData();
+					VoxelTypeArray wrappedVoxelTypeArray = wrappedChunk.getFlatVoxelTypeData();
 					
+					VoxelTypeArray scriptVoxelTypeArray;
+					CScriptArray* csVoxelTypeArray = scriptChunk.getVoxelData();
 					for(int i = 0; i < chunkWidthPow3; i++)
-					{
-						VoxelType wrappedChunkType = voxelTypeArray[i];
-						VoxelType scriptChunkType = *(VoxelType*)csVoxelTypeArray->At(i);
-						
-						CHECK(wrappedChunkType == scriptChunkType);
-					}
+						scriptVoxelTypeArray[i] = *(VoxelType*)csVoxelTypeArray->At(i);
+					
+					CHECK(std::equal(scriptVoxelTypeArray.begin(), scriptVoxelTypeArray.end(), wrappedVoxelTypeArray.begin()));
 				}
 			}
 		}
