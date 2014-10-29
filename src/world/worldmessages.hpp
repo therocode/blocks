@@ -38,7 +38,7 @@ struct BiomeRequestedMessage
 
 struct BiomeGeneratedMessage
 {
-    WorldId worldId; const BiomeRegionCoord& coordinate; const FieldMap& fields;
+    WorldId worldId; const BiomeRegionCoord& coordinate; const BiomeGrid& biomeData; const FieldMap& fields;
 };
 
 struct ChunkGenerationRequestedMessage

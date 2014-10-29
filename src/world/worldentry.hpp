@@ -17,7 +17,7 @@ class WorldEntry
         void addHighlightEntity(uint32_t id, const ChunkCoord& location, uint32_t radius);
         void moveHighlightEntity(uint32_t id, const ChunkCoord& location);
         void removeHighlightEntity(uint32_t id);
-        void deliverBiome(const BiomeRegionCoord& coordinate, const FieldMap& biomeData);
+        void deliverBiome(const BiomeRegionCoord& coordinate, const BiomeGrid& biomeData, const FieldMap& fields);
         void deliverChunk(const ChunkCoord& coordinate, const Chunk& chunk);
         const ChunkMap& getChunkMap() const;
         ChunkMap& getChunkMap();
@@ -29,7 +29,6 @@ class WorldEntry
         void deactivateChunk(const ChunkCoord& chunk);
         void requestChunk(const ChunkCoord& chunk);
         void applyDifferenceAsMods(const ChunkCoord& coordinate, const VoxelTypeArray& before, const VoxelTypeArray& after);
-        BiomeGrid generateBiomes(const ChunkCoord& coordinate, const FieldMap& fields) const;
         fea::MessageBus& mBus;
         const std::unordered_map<BiomeId, Biome>& mBiomes;
         WorldId mId;

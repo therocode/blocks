@@ -84,7 +84,7 @@ void WorldSystem::handleMessage(const BiomeGeneratedMessage& received)
     auto iterator = mWorlds.find(received.worldId);
 
     if(iterator != mWorlds.end())
-        iterator->second.deliverBiome(received.coordinate, received.fields);
+        iterator->second.deliverBiome(received.coordinate, received.biomeData, received.fields);
 }
 
 void WorldSystem::handleMessage(const ChunkGeneratedMessage& received)

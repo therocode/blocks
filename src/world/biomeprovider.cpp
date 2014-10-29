@@ -75,7 +75,7 @@ void BiomeProvider::handleMessage(const FrameMessage& received)
         if(iter->wait_for(std::chrono::seconds(0)) == std::future_status::ready)
         {
             BiomeDelivery delivery = iter->get();
-            mBus.send(BiomeGeneratedMessage({delivery.id, delivery.coordinate, std::move(delivery.fields)}));
+            mBus.send(BiomeGeneratedMessage({delivery.id, delivery.coordinate, std::move(delivery.biomeData), std::move(delivery.fields)}));
             iter = mBiomesToDeliver.erase(iter);
         }
         else
@@ -103,6 +103,78 @@ BiomeDelivery BiomeProvider::generateBiomeData(WorldId worldId, BiomeRegionCoord
         fieldGrids.emplace(field.id, newGrid);
     }
 
-    BiomeDelivery delivery{worldId, coordinate, std::move(fieldGrids)};
+    BiomeGrid biomeData = generateBiomes(worldId, coordinate, fieldGrids);
+
+    BiomeDelivery delivery{worldId, coordinate, std::move(biomeData), std::move(fieldGrids)};
     return delivery;
+}
+
+BiomeGrid BiomeProvider::generateBiomes(WorldId worldId, const ChunkCoord& coordinate, const FieldMap& fields) const
+{
+    BiomeGrid result(biomeRegionWidth, biomeDownSamplingAmount);
+    uint32_t size = result.getInnerSize();
+
+    const auto& biomeSettings = mBiomeSettings.at(worldId);
+
+    //collect all possible biomes
+    std::vector<const Biome*> worldBiomes;
+    for(const auto& biomeIndex : biomeSettings.biomes)
+    {
+        worldBiomes.push_back(&mBiomes.at(biomeIndex));
+    }
+
+    std::vector<const Biome*> approvedPointBiomes;
+
+    uint32_t selectorId = -1;
+
+    for(uint32_t z = 0; z < size; z++)
+    {
+        for(uint32_t y = 0; y < size; y++)
+        {
+            for(uint32_t x = 0; x < size; x++)
+            {
+                approvedPointBiomes.clear();
+
+                for(uint32_t i = 0; i < worldBiomes.size(); i++)
+                {
+                    const Biome& biome = *worldBiomes[i];
+
+                    bool include = true;
+
+                    for(const auto& field : biomeSettings.fields)
+                    {
+                        if(field.isSelector)
+                        {
+                            selectorId = field.id;
+                            continue;
+                        }
+                        else if(biome.mRequirements.count(field.id) == 0)
+                        {
+                            continue;
+                        }
+
+                        if(!biome.mRequirements.at(field.id).isWithin(fields.at(field.id).getInner({x, y, z})))
+                        {
+                            include = false;
+                            break;
+                        }
+                    }
+
+                    if(include)
+                    {
+                        approvedPointBiomes.push_back(&biome);
+                    }
+                };
+
+                FEA_ASSERT(selectorId != -1, "selector noise missing!");
+                float selectPercent = fields.at(selectorId).getInner({x, y, z});
+                BiomeId selectedBiome = approvedPointBiomes[(uint32_t)((float)approvedPointBiomes.size() * selectPercent)]->mId;
+
+                result.setInner({x, y, z}, selectedBiome); 
+            }
+        }
+    }
+
+    result.setInterpolator(Interpolator<BiomeId>::nearestNeigbor);
+    return result;
 }

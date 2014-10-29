@@ -50,12 +50,12 @@ void WorldEntry::removeHighlightEntity(uint32_t id)
     mModManager.saveMods();  //this is a hack due to issue http://dev.pallkars.net/issues/21
 }
 
-void WorldEntry::deliverBiome(const BiomeRegionCoord& coordinate, const FieldMap& fields)
+void WorldEntry::deliverBiome(const BiomeRegionCoord& coordinate, const BiomeGrid& biomeData, const FieldMap& fields)
 {
     if(mBiomeGridNotifier.isActive(coordinate))
     {
         mWorldData.fieldGrids.emplace(coordinate, std::move(fields));
-        mWorldData.biomeGrids.emplace(coordinate, generateBiomes(coordinate, fields));
+        mWorldData.biomeGrids.emplace(coordinate, biomeData);
 
         auto iterator = mPendingChunksToRequests.find(coordinate);
 
@@ -66,7 +66,7 @@ void WorldEntry::deliverBiome(const BiomeRegionCoord& coordinate, const FieldMap
                 requestChunk(chunk);
             }
 
-            mPendingChunksToRequests.erase(coordinate);
+            mPendingChunksToRequests.erase(iterator);
         }
     }
 }
@@ -91,6 +91,7 @@ void WorldEntry::deliverChunk(const ChunkCoord& coordinate, const Chunk& chunk)
             mModManager.loadMods(coordinate, createdChunk);
         }
 
+        //std::cout << "explored: " << glm::to_string((glm::ivec3)coordinate) << "\n";
 		mExplorationManager.activateChunk(coordinate);
 		
         uint64_t timestamp = 0; //#C3# get proper timestamp, issue #133
@@ -223,7 +224,10 @@ void WorldEntry::deactivateChunk(const ChunkCoord& chunkCoordinate)
         auto iterator = mPendingChunksToRequests.find(biomeRegionCoord);
 
         if(iterator != mPendingChunksToRequests.end())
-            std::remove(iterator->second.begin(), iterator->second.end(), chunkCoordinate);
+        {
+            iterator->second.erase(std::remove(iterator->second.begin(), iterator->second.end(), chunkCoordinate),
+                                           iterator->second.end());
+        }
     }
 }
 
@@ -238,7 +242,7 @@ void WorldEntry::requestChunk(const ChunkCoord& chunk)
     const FieldMap& bigFieldMap = mWorldData.fieldGrids.at(ChunkToBiomeRegion::convert(chunk));
 
     uint32_t size = grid.getInnerSize();
-    glm::uvec3 start = (glm::uvec3)biomeRegionChunk / biomeRegionWidthInChunks;
+    glm::uvec3 start = (glm::uvec3)(((glm::vec3)biomeRegionChunk) * ((float)size - 1.0f));
 
     for(const auto& bigField : bigFieldMap)
     {
@@ -249,8 +253,6 @@ void WorldEntry::requestChunk(const ChunkCoord& chunk)
 
     glm::uvec3 coordinate;
 
-    std::cout << "SIZE: " << size << "\n";
-
     for(uint32_t z = 0; z < size; z++)
     {
         for(uint32_t y = 0; y < size; y++)
@@ -258,13 +260,11 @@ void WorldEntry::requestChunk(const ChunkCoord& chunk)
             for(uint32_t x = 0; x < size; x++)
             {
                 coordinate = start + glm::uvec3(x, y, z);
-                grid.setInner({x, y, z}, bigGrid.get(coordinate));
+                grid.setInner({x, y, z}, bigGrid.getInner(coordinate));
 
                 for(const auto& bigField : bigFieldMap)
                 {
-                    if(z == 2 && y == 2)
-                        std::cout << "gere " << bigField.second.get(coordinate) << " at " << glm::to_string((glm::ivec3)coordinate) << "\n";
-                    fields.at(bigField.first).setInner({x, y, z}, bigField.second.get(coordinate));
+                    fields.at(bigField.first).setInner({x, y, z}, bigField.second.getInner(coordinate));
                 }
             }
         }
@@ -291,74 +291,4 @@ void WorldEntry::applyDifferenceAsMods(const ChunkCoord& coordinate, const Voxel
             }
         }
     }
-}
-
-BiomeGrid WorldEntry::generateBiomes(const ChunkCoord& coordinate, const FieldMap& fields) const
-{
-    BiomeGrid result(biomeRegionWidth, biomeDownSamplingAmount);
-    uint32_t size = result.getInnerSize();
-
-    //collect all possible biomes
-     std::vector<const Biome*> worldBiomes;
-    for(const auto& biomeIndex : mWorldData.biomeSettings.biomes)
-    {
-        worldBiomes.push_back(&mBiomes.at(biomeIndex));
-    }
-
-    std::vector<const Biome*> approvedPointBiomes;
-
-    FEA_ASSERT(mWorldData.fieldGrids.count(coordinate) > 0, "Field grid missing");
-    const FieldMap& fieldGrids = mWorldData.fieldGrids.at(coordinate);
-    uint32_t selectorId = -1;
-
-    for(uint32_t z = 0; z < size; z++)
-    {
-        for(uint32_t y = 0; y < size; y++)
-        {
-            for(uint32_t x = 0; x < size; x++)
-            {
-                approvedPointBiomes.clear();
-
-                for(uint32_t i = 0; i < worldBiomes.size(); i++)
-                {
-                    const Biome& biome = *worldBiomes[i];
-
-                    bool include = true;
-
-                    for(const auto& field : mWorldData.biomeSettings.fields)
-                    {
-                        if(field.isSelector)
-                        {
-                            selectorId = field.id;
-                            continue;
-                        }
-                        else if(biome.mRequirements.count(field.id) == 0)
-                        {
-                            continue;
-                        }
-
-                        if(!biome.mRequirements.at(field.id).isWithin(fieldGrids.at(field.id).getInner({x, y, z})))
-                        {
-                            include = false;
-                            break;
-                        }
-                    }
-
-                    if(include)
-                    {
-                        approvedPointBiomes.push_back(&biome);
-                    }
-                };
-
-                FEA_ASSERT(selectorId != -1, "selector noise missing!");
-                float selectPercent = fieldGrids.at(selectorId).getInner({x, y, z});
-                BiomeId selectedBiome = approvedPointBiomes[(uint32_t)((float)approvedPointBiomes.size() * selectPercent)]->mId;
-
-                result.setInner({x, y, z}, selectedBiome); 
-            }
-        }
-    }
-
-    result.setInterpolator(Interpolator<BiomeId>::nearestNeigbor);
-    return result;
 }

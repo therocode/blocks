@@ -154,6 +154,7 @@ void Renderer::handleMessage(const ClientAttachedToEntityMessage& received)
 
 void Renderer::render()
 {
+    //glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
     cameraUpdate();
     //mGeneratorQueue.generateSomeChunks(vbos, VoxelCoord(cam.GetPosition()));
 	GLenum err = glGetError();

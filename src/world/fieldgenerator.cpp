@@ -17,8 +17,6 @@ void FieldGenerator::fill(const BiomeRegionCoord& coordinate, FieldGrid& grid, N
                     glm::vec3 noiseCoord = (glm::vec3)coordinate * (float)biomeRegionWidth + glm::vec3(x, y, z) * spacing;
 
                     grid.setInner({x, y, z}, (mNoise.simplexOctave2D(noiseCoord.x / 800.0f, noiseCoord.z / 800.0f) + 1.0f) / 2.0f);
-                    if(z == 8 && y == 8)
-                    std::cout << "jeje: " << glm::to_string(glm::uvec3(x, y, z)) << " " << (mNoise.simplexOctave3D((float)x, (float)y, (float)z) + 1.0f) / 2.0f << "\n";
                 }
                 else
                 {
