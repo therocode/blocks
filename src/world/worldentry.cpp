@@ -3,8 +3,6 @@
 #include "../utilities/interpolators.hpp"
 #include <algorithm>
 
-#include <iostream>
-
 WorldEntry::WorldEntry(fea::MessageBus& bus, const std::unordered_map<BiomeId, Biome>& biomes,  WorldId id, const std::string& identifier, const WorldData& data, const std::string& path) :
     mBus(bus),
     mBiomes(biomes),
@@ -107,7 +105,7 @@ void WorldEntry::deliverChunk(const ChunkCoord& coordinate, const Chunk& chunk)
             
             applyDifferenceAsMods(coordinate, before, createdChunk.getFlatVoxelTypeData());
 			
-			mModManager.setTimestamp(coordinate, mCurrentFrameNumber);
+			mModManager.setTimestamp(coordinate, 0);
 		}
         else       //apply possible modifications on chunks that are already explored
         {
@@ -197,8 +195,6 @@ const std::string& WorldEntry::getIdentifier() const
 
 void WorldEntry::handleMessage(const FrameMessage& received)
 {
-	std::cout << "WorldEntry Received FrameMessage" << std::endl;
-	
 	mCurrentFrameNumber = received.frameNumber;
 }
 

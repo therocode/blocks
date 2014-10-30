@@ -38,11 +38,8 @@ Server::~Server()
     mBus.send(LogMessage{"Shutting down server", serverName, LogLevel::INFO});
 }
 
-#include <iostream>
-
 void Server::doLogic()
 {
-	std::cout << "Sending FrameMessage" << std::endl;
     mBus.send(FrameMessage{mFrameNumber, (int32_t) mTimer.getDeltaTime()});
 
     mFPSController.frameEnd();

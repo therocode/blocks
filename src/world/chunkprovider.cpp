@@ -35,8 +35,6 @@ void ChunkProvider::handleMessage(const ChunkGenerationRequestedMessage& receive
 
 void ChunkProvider::handleMessage(const FrameMessage& received)
 {
-	std::cout << "ChunkProvider FrameMessage receiver called" << std::endl; 
-	
     for(auto iter = mChunksToDeliver.begin(); iter != mChunksToDeliver.end();)
     {
         if(iter->wait_for(std::chrono::seconds(0)) == std::future_status::ready)
