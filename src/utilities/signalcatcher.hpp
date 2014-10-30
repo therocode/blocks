@@ -7,6 +7,11 @@
 #include <unistd.h>
 #endif
 
+#if defined(__WIN32__)
+#include <windows.h>
+void WINAPI CtrlHandler(DWORD dwCtrlType);
+#endif
+
 enum Signal { NO_SIGNAL, QUIT_SIGNAL };
 
 class SignalCatcher

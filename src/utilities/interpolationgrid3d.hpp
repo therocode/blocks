@@ -20,6 +20,8 @@ class InterpolationGrid3D
         void setInner(const glm::uvec3& innerLocation, const Type& value);
         void setInterpolator(std::function<Type(const std::array<Type, 8>&, const glm::vec3& point)> interpolator);
         uint32_t getInnerSize() const;
+        uint32_t getSize() const;
+        uint32_t getRatio() const;
     private:
         inline uint32_t toIndex(const glm::uvec3& coordinates) const
         {
@@ -83,12 +85,12 @@ Type InterpolationGrid3D<Type>::get(const glm::uvec3& location) const
 {
     if(mDownSamplingFactor == 0)
     {
-        FEA_ASSERT(toIndex(location) < mSize * mSize * mSize, "Index out of bounds. None of the given coordinates " + glm::to_string(location) + " should exceed " + std::to_string(mSize -1));
+        FEA_ASSERT(location.x < mSize && location.y < mSize && location.z < mSize, "Coordinates out of bounds. " + glm::to_string(location) + " should not exceed " + std::to_string(mSize - 1));
         return mValues.at(toIndex(location));
     }
     else
     {
-        FEA_ASSERT(toIndex(location) < (mSize * mSize * mSize), "Index out of bounds. None of the given coordinates " + glm::to_string(location) + " should exceed " + std::to_string(mSize -1));
+        FEA_ASSERT(location.x < mSize && location.y < mSize && location.z < mSize, "Coordinates out of bounds. " + glm::to_string(location) + " should not exceed " + std::to_string(mSize - 1));
 
         std::array<Type, 8> interpolationPoints;
 
@@ -119,14 +121,14 @@ Type InterpolationGrid3D<Type>::get(const glm::uvec3& location) const
 template<typename Type> 
 Type InterpolationGrid3D<Type>::getInner(const glm::uvec3& innerLocation) const
 {
-    FEA_ASSERT(toInnerIndex(innerLocation) < mValues.size(), "Index out of bounds. None of the given coordinates " + glm::to_string(innerLocation) + " should exceed " + std::to_string(mInnerSize - 1));
+    FEA_ASSERT(innerLocation.x < mInnerSize && innerLocation.y < mInnerSize && innerLocation.z < mInnerSize, "coordinates given to getInner out of bounds. " + glm::to_string(innerLocation) + " should not exceed " + std::to_string(mInnerSize - 1));
     return mValues.at(toInnerIndex(innerLocation));
 }
 
 template<typename Type> 
 void InterpolationGrid3D<Type>::setInner(const glm::uvec3& innerLocation, const Type& value)
 {
-    FEA_ASSERT(toInnerIndex(innerLocation) < mValues.size(), "Index out of bounds. None of the given coordinates " + glm::to_string(innerLocation) + " should exceed " + std::to_string(mInnerSize - 1));
+    FEA_ASSERT(innerLocation.x < mInnerSize && innerLocation.y < mInnerSize && innerLocation.z < mInnerSize, "coordinates given to setInner out of bounds. " + glm::to_string(innerLocation) + " should not exceed " + std::to_string(mInnerSize - 1));
     mValues[toInnerIndex(innerLocation)] = value;
 }
 
@@ -140,4 +142,16 @@ template<typename Type>
 uint32_t InterpolationGrid3D<Type>::getInnerSize() const
 {
     return mInnerSize;
+}
+
+template<typename Type>
+uint32_t InterpolationGrid3D<Type>::getSize() const
+{
+    return mSize;
+}
+
+template<typename Type>
+uint32_t InterpolationGrid3D<Type>::getRatio() const
+{
+    return mDownSamplingPow;
 }
