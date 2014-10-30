@@ -91,7 +91,6 @@ void WorldEntry::deliverChunk(const ChunkCoord& coordinate, const Chunk& chunk)
             mModManager.loadMods(coordinate, createdChunk);
         }
 
-        //std::cout << "explored: " << glm::to_string((glm::ivec3)coordinate) << "\n";
 		mExplorationManager.activateChunk(coordinate);
 		
         uint64_t timestamp = 0; //#C3# get proper timestamp, issue #133
@@ -233,7 +232,7 @@ void WorldEntry::deactivateChunk(const ChunkCoord& chunkCoordinate)
 
 void WorldEntry::requestChunk(const ChunkCoord& chunk)
 {
-    BiomeGrid grid(16, biomeDownSamplingAmount);
+    BiomeGrid grid(chunkWidth, biomeDownSamplingAmount);
     grid.setInterpolator(Interpolator<BiomeId>::nearestNeigbor);
     BiomeRegionChunkCoord biomeRegionChunk = ChunkToBiomeRegionChunk::convert(chunk);
     BiomeGrid& bigGrid = mWorldData.biomeGrids.at(ChunkToBiomeRegion::convert(chunk));
@@ -241,17 +240,21 @@ void WorldEntry::requestChunk(const ChunkCoord& chunk)
     FieldMap fields;
     const FieldMap& bigFieldMap = mWorldData.fieldGrids.at(ChunkToBiomeRegion::convert(chunk));
 
+    uint32_t bigSize = bigGrid.getSize();
     uint32_t size = grid.getInnerSize();
-    glm::uvec3 start = (glm::uvec3)(((glm::vec3)biomeRegionChunk) * ((float)size - 1.0f));
+    uint32_t step = grid.getInnerSize() - 1;
+    uint32_t chunkStep = chunkWidth;
+    glm::uvec3 start = (glm::uvec3)biomeRegionChunk;
 
     for(const auto& bigField : bigFieldMap)
     {
-        FieldGrid newFieldGrid(16, biomeDownSamplingAmount);
+        FieldGrid newFieldGrid(chunkWidth, biomeDownSamplingAmount);
         newFieldGrid.setInterpolator(Interpolator<float>::nearestNeigbor);
         fields.emplace(bigField.first, newFieldGrid);
     }
 
     glm::uvec3 coordinate;
+    glm::uvec3 innerCoordinate;
 
     for(uint32_t z = 0; z < size; z++)
     {
@@ -259,12 +262,26 @@ void WorldEntry::requestChunk(const ChunkCoord& chunk)
         {
             for(uint32_t x = 0; x < size; x++)
             {
-                coordinate = start + glm::uvec3(x, y, z);
-                grid.setInner({x, y, z}, bigGrid.getInner(coordinate));
+                coordinate = start * chunkStep + glm::uvec3(x, y, z) * step;
 
-                for(const auto& bigField : bigFieldMap)
+                if(coordinate.z < bigSize && coordinate.y < bigSize && coordinate.x < bigSize)
                 {
-                    fields.at(bigField.first).setInner({x, y, z}, bigField.second.getInner(coordinate));
+                    grid.setInner({x, y, z}, bigGrid.get(coordinate));
+
+                    for(const auto& bigField : bigFieldMap)
+                    {
+                        fields.at(bigField.first).setInner({x, y, z}, bigField.second.get(coordinate));
+                    }
+                }
+                else
+                {
+                    innerCoordinate = (coordinate) / bigGrid.getRatio();
+                    grid.setInner({x, y, z}, bigGrid.getInner(innerCoordinate));
+
+                    for(const auto& bigField : bigFieldMap)
+                    {
+                        fields.at(bigField.first).setInner({x, y, z}, bigField.second.getInner(innerCoordinate));
+                    }
                 }
             }
         }

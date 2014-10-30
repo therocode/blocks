@@ -109,7 +109,7 @@ BiomeDelivery BiomeProvider::generateBiomeData(WorldId worldId, BiomeRegionCoord
     return delivery;
 }
 
-BiomeGrid BiomeProvider::generateBiomes(WorldId worldId, const ChunkCoord& coordinate, const FieldMap& fields) const
+BiomeGrid BiomeProvider::generateBiomes(WorldId worldId, const BiomeRegionCoord& coordinate, const FieldMap& fields) const
 {
     BiomeGrid result(biomeRegionWidth, biomeDownSamplingAmount);
     uint32_t size = result.getInnerSize();
