@@ -19,6 +19,22 @@ WorldEntry::WorldEntry(fea::MessageBus& bus, const std::unordered_map<BiomeId, B
 	fea::subscribe(mBus, *this);
 }
 
+WorldEntry::WorldEntry(WorldEntry&& other) :
+        mBus(other.mBus),
+        mBiomes(other.mBiomes),
+        mId(other.mId),
+        mIdentifier(other.mIdentifier),
+        mWorldData(std::move(other.mWorldData)),
+        mBiomeGridNotifier(std::move(other.mBiomeGridNotifier)),
+        mHighlightManager(std::move(other.mHighlightManager)),
+        mModManager(std::move(other.mModManager)),
+		mExplorationManager(std::move(other.mExplorationManager)),
+		mCurrentFrameNumber(other.mCurrentFrameNumber),
+        mPendingChunksToRequests(std::move(other.mPendingChunksToRequests))
+{
+	fea::subscribe(mBus, *this);
+}
+
 WorldEntry::~WorldEntry()
 {
     mModManager.saveMods();

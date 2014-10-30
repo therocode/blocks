@@ -15,6 +15,7 @@ class WorldEntry :
 {
     public:
         WorldEntry(fea::MessageBus& bus, const std::unordered_map<BiomeId, Biome>& biomes, WorldId id, const std::string& identifier, const WorldData& data, const std::string& path);
+        WorldEntry(WorldEntry&& other);
         ~WorldEntry();
         void addHighlightEntity(uint32_t id, const ChunkCoord& location, uint32_t radius);
         void moveHighlightEntity(uint32_t id, const ChunkCoord& location);

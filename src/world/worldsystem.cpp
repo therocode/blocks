@@ -7,6 +7,11 @@
 #include "../world/worldloader.hpp"
 #include "../utilities/directorycreator.hpp"
 
+void WorldSystem::handleMessage(const FrameMessage& received)
+{
+    std::cout << "hejhejehj\n";
+}
+
 WorldSystem::WorldSystem(fea::MessageBus& messageBus) 
 :   mBus(messageBus),
     mChunkProvider(mBus),

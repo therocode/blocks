@@ -16,7 +16,8 @@ class WorldSystem :
                                     HighlightEntityAddRequestedMessage,
                                     HighlightEntityMoveRequestedMessage,
                                     HighlightEntityRemoveRequestedMessage,
-                                    ChunksRequestedMessage>
+                                    ChunksRequestedMessage,
+                                    FrameMessage>
 {
     public:
         WorldSystem(fea::MessageBus& messageBus);
@@ -28,6 +29,7 @@ class WorldSystem :
         void handleMessage(const HighlightEntityMoveRequestedMessage& received) override;
         void handleMessage(const HighlightEntityRemoveRequestedMessage& received) override;
         void handleMessage(const ChunksRequestedMessage& received) override;
+        void handleMessage(const FrameMessage& received) override;
         const ChunkMap& getWorldVoxels(WorldId id) const;
         bool hasWorld(const std::string& identifier) const;
         WorldId worldIdentifierToId(const std::string& identifier) const;
