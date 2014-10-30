@@ -1,6 +1,8 @@
 #include "chunkprovider.hpp"
 #include "generation/chunkgenerator.hpp"
 
+#include <iostream>
+
 const std::string logName = "world_gen";
 const int32_t threadAmount = 3;
 
@@ -33,6 +35,8 @@ void ChunkProvider::handleMessage(const ChunkGenerationRequestedMessage& receive
 
 void ChunkProvider::handleMessage(const FrameMessage& received)
 {
+	std::cout << "ChunkProvider FrameMessage receiver called" << std::endl; 
+	
     for(auto iter = mChunksToDeliver.begin(); iter != mChunksToDeliver.end();)
     {
         if(iter->wait_for(std::chrono::seconds(0)) == std::future_status::ready)

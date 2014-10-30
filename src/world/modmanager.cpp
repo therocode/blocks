@@ -148,11 +148,8 @@ void ModManager::saveMods(ModRegionCoord modRegionLoc)
         oDataFile.write(reinterpret_cast<const char*>(&modCount), sizeof(modCount));
 
         ModRegionTimestampMap::const_iterator got = mTimestamps[modRegionLoc].find(it->first);
-        if(got == mTimestamps[modRegionLoc].end())
-        {
-            //throw ModManagerException("Chunk to be saved has not been timestamped");
-            mTimestamps[modRegionLoc][it->first] = 0;
-        }
+		
+		FEA_ASSERT(got != mTimestamps[modRegionLoc].end(), "Chunk to be saved has not been timestamped");
 
         uint64_t timestamp = mTimestamps[modRegionLoc][it->first];
         oDataFile.write(reinterpret_cast<const char*>(&timestamp), sizeof(timestamp));
@@ -222,12 +219,20 @@ bool ModManager::hasMods(const ChunkCoord& location)
     return result;
 }
 
-void ModManager::recordTimestamp(ChunkCoord loc, uint64_t timestamp)
+void ModManager::setTimestamp(ChunkCoord loc, uint64_t timestamp)
 {
     ModRegionCoord modRegionLoc = ChunkToModRegion::convert(loc);
     ModRegionChunkCoord chunkLoc = ChunkToModRegionChunk::convert(loc);
 
     mTimestamps[modRegionLoc][chunkLoc] = timestamp;
+}
+
+uint64_t ModManager::getTimestamp(ChunkCoord loc)
+{
+    ModRegionCoord modRegionLoc = ChunkToModRegion::convert(loc);
+    ModRegionChunkCoord chunkLoc = ChunkToModRegionChunk::convert(loc);
+	
+	return mTimestamps[modRegionLoc][chunkLoc];
 }
 
 ChunkIndex ModManager::getChunkIndex(ModRegionCoord modRegionLoc, ModRegionChunkCoord chunkLoc)

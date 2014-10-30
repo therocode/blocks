@@ -6,16 +6,31 @@
 
 TEST_CASE("set and get", "[set][get]")
 {
+    ScopedDirectory testDir("test_directory");
     VoxelCoord voxLoc(9, 8, 7);
     VoxelType type = 12;
+    ChunkCoord loc = VoxelToChunk::convert(voxLoc);
+    uint64_t timestamp = 123;
 
-    ModManager manager("test");
+    ModManager manager("test_directory");
 
     SECTION("set and get one voxel")
     {
         manager.setMod(voxLoc, type);
         REQUIRE(type == manager.getMod(voxLoc)); 
     }
+
+    SECTION("get a timestamp for chunk in a completely clean modmanager and mod directory") 
+	{
+		REQUIRE(0 == manager.getTimestamp(loc));
+	}
+    
+    SECTION("set and get a timestamp")
+	{
+		manager.setTimestamp(loc, timestamp);
+		REQUIRE(timestamp == manager.getTimestamp(loc));
+	}
+	
 }
 
 TEST_CASE("save and load", "[save][load]")
@@ -39,31 +54,17 @@ TEST_CASE("save and load", "[save][load]")
     ModManager manager("test_directory");
     ModManager manager2("test_directory");
 
-    //SECTION("load an untimestamped chunk")   //this test might need to me reintroduced, issue #133
-    //{
-    //    manager.loadMods(chunk);
+    SECTION("load an untimestamped chunk")
+    {
+        manager.loadMods(loc, chunk);
 
-    //    REQUIRE(0 == receiver.timestamp);
-    //}
-
-    //SECTION("save a region containing an untimestamped chunk") //this test might need to me reintroduced, issue #133
-    //{
-    //    manager.setMod(loc, voxLoc, type);
-    //    CHECK_THROWS_AS(manager.saveMods(regionLoc), ModManagerException);
-    //}
-
-    //SECTION("chunkmoddedmessage timestamp") //this test might need to me reintroduced, issue #133
-    //{
-    //    manager.recordTimestamp(loc, timestamp);
-    //    manager.loadMods(chunk);
-
-    //    REQUIRE(timestamp == receiver.timestamp); 
-    //}
+        REQUIRE(0 == manager.getTimestamp(loc));
+    }
 
     SECTION("one voxel")
     {
         manager.setMod(voxLoc, type);
-        manager.recordTimestamp(loc, timestamp);
+        manager.setTimestamp(loc, timestamp);
 
         REQUIRE_FALSE(manager2.hasMods(loc));
 
@@ -84,11 +85,11 @@ TEST_CASE("save and load", "[save][load]")
     SECTION("save and load twice")
     {
         manager.setMod(voxLoc, type);
-        manager.recordTimestamp(loc, timestamp);
+        manager.setTimestamp(loc, timestamp);
         manager.saveMods(regionLoc);
         manager.loadMods(loc, chunk);
         manager.setMod(voxLoc + VoxelCoord(1, 1, 1), type);
-        manager.recordTimestamp(loc, timestamp);
+        manager.setTimestamp(loc, timestamp);
         manager.saveMods(regionLoc);
         manager.loadMods(loc, chunkClone);
 
@@ -127,8 +128,8 @@ TEST_CASE("save and load", "[save][load]")
     {
         manager.setMod(voxLoc, type);
         manager.setMod(voxLoc2, type);
-        manager.recordTimestamp(loc, timestamp);
-        manager.recordTimestamp(loc2, timestamp);
+        manager.setTimestamp(loc, timestamp);
+        manager.setTimestamp(loc2, timestamp);
         manager.saveMods();
         manager2.loadMods(loc, chunk);
         manager2.loadMods(loc2, chunk2);

@@ -13,7 +13,8 @@ void ChunkEventCaller::handleMessage(const ChunkInitiallyGeneratedMessage& recei
 	{
 		ScriptChunk chunk(&(received.chunk), mVoxelDataArrayType);	
 		ScriptCallback<WorldId, ChunkCoord&, ScriptChunk&> scriptCallback(mEngine);
-		scriptCallback.setFunction(mEngine.getEngine()->GetModule("scripts")->GetFunctionByDecl("void chunkInitiallyGenerated(const uint32, const ChunkCoord &in, Chunk &in)"));
+		scriptCallback.setFunction(mEngine.getEngine()->GetModule("scripts")
+			->GetFunctionByDecl("void chunkInitiallyGenerated(const uint32, const ChunkCoord &in, Chunk &in)"));
 		scriptCallback.execute(received.worldId, (ChunkCoord&)received.coordinate, chunk);		
 	}
 }
@@ -23,9 +24,10 @@ void ChunkEventCaller::handleMessage(const ChunkCandidateMessage& received)
 	if(mActive) 
 	{
 		ScriptChunk chunk(&(received.chunk), mVoxelDataArrayType);	
-		ScriptCallback<WorldId, ChunkCoord&, ScriptChunk&> scriptCallback(mEngine);
-		scriptCallback.setFunction(mEngine.getEngine()->GetModule("scripts")->GetFunctionByDecl("void chunkCandidate(const uint32, const ChunkCoord &in, Chunk &in)"));
-		scriptCallback.execute(received.worldId, (ChunkCoord&)received.coordinate, chunk);		
+		ScriptCallback<WorldId, ChunkCoord&, ScriptChunk&, uint64_t> scriptCallback(mEngine);
+		scriptCallback.setFunction(mEngine.getEngine()->GetModule("scripts")
+			->GetFunctionByDecl("void chunkCandidate(const uint32, const ChunkCoord &in, Chunk &in, const uint64)"));
+		scriptCallback.execute(received.worldId, (ChunkCoord&)received.coordinate, chunk, received.frameNumberDelta);		
 	}
 }
 
@@ -35,7 +37,8 @@ void ChunkEventCaller::handleMessage(const ChunkFinishedMessage& received)
 	{
 		ScriptChunk chunk(&(received.chunk), mVoxelDataArrayType);	
 		ScriptCallback<WorldId, ChunkCoord&, ScriptChunk&> scriptCallback(mEngine);
-		scriptCallback.setFunction(mEngine.getEngine()->GetModule("scripts")->GetFunctionByDecl("void chunkFinished(const uint32, const ChunkCoord &in, const Chunk &in)"));
+		scriptCallback.setFunction(mEngine.getEngine()->GetModule("scripts")
+			->GetFunctionByDecl("void chunkFinished(const uint32, const ChunkCoord &in, const Chunk &in)"));
 		scriptCallback.execute(received.worldId, (ChunkCoord&)received.coordinate, chunk);
 	}
 }

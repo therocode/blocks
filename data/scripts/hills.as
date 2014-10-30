@@ -96,6 +96,7 @@ void chunkInitiallyGenerated(const uint32 worldId, const ChunkCoord &in coord, C
     //    spikes(coord, chunk);
 }
 
-void chunkCandidate(const uint32 worldId, const ChunkCoord &in coord, Chunk &in chunk)
+void chunkCandidate(const uint32 worldId, const ChunkCoord &in coord, Chunk &in chunk, const uint64 frameNumberDelta)
 {
+	// consolePrint("frameNumberDelta: " + frameNumberDelta);
 }

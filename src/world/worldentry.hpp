@@ -8,8 +8,10 @@
 #include "highlightmanager.hpp"
 #include "modmanager.hpp"
 #include "explorationmanager.hpp"
+#include "../application/applicationmessages.hpp"
 
-class WorldEntry
+class WorldEntry :
+    public fea::MessageReceiver<FrameMessage>
 {
     public:
         WorldEntry(fea::MessageBus& bus, const std::unordered_map<BiomeId, Biome>& biomes, WorldId id, const std::string& identifier, const WorldData& data, const std::string& path);
@@ -24,6 +26,7 @@ class WorldEntry
         void setVoxelType(const VoxelCoord& voxelCoordinate, VoxelType type);
         void chunksRequested(const std::vector<ChunkCoord>& coordinates);
         const std::string& getIdentifier() const;
+        void handleMessage(const FrameMessage& received) override;
     private:
         void activateChunk(const ChunkCoord& chunk);
         void deactivateChunk(const ChunkCoord& chunk);
@@ -38,6 +41,7 @@ class WorldEntry
         HighlightManager mHighlightManager;
         ModManager mModManager;
 		ExplorationManager mExplorationManager;
+		uint64_t mCurrentFrameNumber;
 		
         std::unordered_map<BiomeRegionCoord, std::vector<ChunkCoord>> mPendingChunksToRequests;
 };
