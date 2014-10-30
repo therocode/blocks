@@ -23,6 +23,26 @@ Signal SignalCatcher::getSignal() const
     return caughtSignal;
 }
 
+#elif defined(__WIN32__)
+
+Signal caughtSignal = NO_SIGNAL;
+
+void WINAPI CtrlHandler(DWORD dwCtrlType)
+{
+	if(dwCtrlType == CTRL_BREAK_EVENT)
+		caughtSignal = QUIT_SIGNAL;
+}
+
+SignalCatcher::SignalCatcher()
+{
+	SetConsoleCtrlHandler((PHANDLER_ROUTINE)CtrlHandler, TRUE);
+}
+
+Signal SignalCatcher::getSignal() const
+{
+    return caughtSignal;
+}
+
 #else
 #warning "Signal catcher not implemented for this system"
 SignalCatcher::SignalCatcher()
