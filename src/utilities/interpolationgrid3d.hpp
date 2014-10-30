@@ -47,7 +47,7 @@ InterpolationGrid3D<Type>::InterpolationGrid3D(uint32_t size, uint32_t downSampl
     mDownSamplingPow(std::pow(2, downSamplingFactor)),
     mSize(size),
     mSizePow2(mSize * mSize),
-    mInnerSize(size / mDownSamplingPow + (downSamplingFactor ? 1 : 0)),
+    mInnerSize(size / mDownSamplingPow),
     mInnerSizePow2(mInnerSize * mInnerSize)
 {
     mValues.resize(mInnerSize * mInnerSize * mInnerSize);
@@ -59,7 +59,7 @@ InterpolationGrid3D<Type>::InterpolationGrid3D(uint32_t size, uint32_t downSampl
     mDownSamplingPow(std::pow(2, downSamplingFactor)),
     mSize(size),
     mSizePow2(mSize * mSize),
-    mInnerSize(size / mDownSamplingPow + (downSamplingFactor ? 1 : 0)),
+    mInnerSize(size / mDownSamplingPow),
     mInnerSizePow2(mInnerSize * mInnerSize)
 {
     mValues.resize(mInnerSize * mInnerSize * mInnerSize);
@@ -72,7 +72,7 @@ InterpolationGrid3D<Type>::InterpolationGrid3D(uint32_t size, uint32_t downSampl
     mDownSamplingPow(std::pow(2, downSamplingFactor)),
     mSize(size),
     mSizePow2(mSize * mSize),
-    mInnerSize(size / mDownSamplingPow + (downSamplingFactor ? 1 : 0)),
+    mInnerSize(size / mDownSamplingPow),
     mInnerSizePow2(mInnerSize * mInnerSize)
 {
     FEA_ASSERT(values.size() == mInnerSize * mInnerSize * mInnerSize, "Value vector contains " + std::to_string(values.size()) + " instead of size * size * size which is " + std::to_string(values.size()));
