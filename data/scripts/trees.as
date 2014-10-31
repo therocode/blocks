@@ -112,8 +112,6 @@ void grow(Chunk &chunk, const uint64 frameNumberDelta)
 	
 	int growths = frameNumberDelta/framesPerGrowth;
 	
-	consolePrint("growths: " + growths);
-		
 	array<int> leafMods;
 		
 	for(int i = 0; i < growths; i++)
