@@ -95,7 +95,7 @@ void WorldEntry::deliverChunk(const ChunkCoord& coordinate, const Chunk& chunk)
     {
         Chunk& createdChunk = mWorldData.voxels.emplace(coordinate, chunk).first->second;
 
-		uint16_t frameNumberDelta = 0;
+		uint16_t frameNumberDelta = mCurrentFrameNumber;
 		if(!mExplorationManager.getChunkExplored(coordinate)) //explore the chunk and perform initial generation if not already explored
 		{
             VoxelTypeArray before = createdChunk.getFlatVoxelTypeData();
@@ -105,7 +105,7 @@ void WorldEntry::deliverChunk(const ChunkCoord& coordinate, const Chunk& chunk)
             
             applyDifferenceAsMods(coordinate, before, createdChunk.getFlatVoxelTypeData());
 			
-			mModManager.setTimestamp(coordinate, 0);
+			mModManager.setTimestamp(coordinate, mCurrentFrameNumber);
 		}
         else       //apply possible modifications on chunks that are already explored
         {
