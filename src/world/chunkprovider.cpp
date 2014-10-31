@@ -1,6 +1,8 @@
 #include "chunkprovider.hpp"
 #include "generation/chunkgenerator.hpp"
 
+#include <iostream>
+
 const std::string logName = "world_gen";
 const int32_t threadAmount = 3;
 

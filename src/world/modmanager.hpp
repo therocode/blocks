@@ -10,6 +10,8 @@
 #include <unordered_map>
 #include <vector>
 
+#include <fea/assert.hpp>
+
 #include "chunk.hpp"
 #include "worlddefines.hpp"
 
@@ -65,7 +67,8 @@ class ModManager
         void setMod(const VoxelCoord& voxLoc, VoxelType type);
         VoxelType getMod(const VoxelCoord& voxLoc);
         bool hasMods(const ChunkCoord& location);
-        void recordTimestamp(ChunkCoord loc, uint64_t timestamp);
+        void setTimestamp(ChunkCoord loc, uint64_t timestamp);
+		uint64_t getTimestamp(ChunkCoord loc);
         void setWorldName(const std::string& worldName);
 
     private:

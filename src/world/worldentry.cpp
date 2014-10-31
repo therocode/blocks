@@ -13,6 +13,24 @@ WorldEntry::WorldEntry(fea::MessageBus& bus, const std::unordered_map<BiomeId, B
 	mExplorationManager(path)
 {
     mBus.send(WorldBiomeSettingsMessage{id, mWorldData.biomeSettings});
+
+	fea::subscribe(mBus, *this);
+}
+
+WorldEntry::WorldEntry(WorldEntry&& other) :
+        mBus(other.mBus),
+        mBiomes(other.mBiomes),
+        mId(other.mId),
+        mIdentifier(other.mIdentifier),
+        mWorldData(std::move(other.mWorldData)),
+        mBiomeGridNotifier(std::move(other.mBiomeGridNotifier)),
+        mHighlightManager(std::move(other.mHighlightManager)),
+        mModManager(std::move(other.mModManager)),
+		mExplorationManager(std::move(other.mExplorationManager)),
+		mCurrentFrameNumber(other.mCurrentFrameNumber),
+        mPendingChunksToRequests(std::move(other.mPendingChunksToRequests))
+{
+	fea::subscribe(mBus, *this);
 }
 
 WorldEntry::~WorldEntry()
@@ -77,6 +95,7 @@ void WorldEntry::deliverChunk(const ChunkCoord& coordinate, const Chunk& chunk)
     {
         Chunk& createdChunk = mWorldData.voxels.emplace(coordinate, chunk).first->second;
 
+		uint16_t frameNumberDelta = mCurrentFrameNumber;
 		if(!mExplorationManager.getChunkExplored(coordinate)) //explore the chunk and perform initial generation if not already explored
 		{
             VoxelTypeArray before = createdChunk.getFlatVoxelTypeData();
@@ -85,19 +104,21 @@ void WorldEntry::deliverChunk(const ChunkCoord& coordinate, const Chunk& chunk)
 			mExplorationManager.setChunkExplored(coordinate);
             
             applyDifferenceAsMods(coordinate, before, createdChunk.getFlatVoxelTypeData());
+			
+			mModManager.setTimestamp(coordinate, mCurrentFrameNumber);
 		}
         else       //apply possible modifications on chunks that are already explored
         {
+			frameNumberDelta = mCurrentFrameNumber - mModManager.getTimestamp(coordinate);
             mModManager.loadMods(coordinate, createdChunk);
+			mModManager.setTimestamp(coordinate, mCurrentFrameNumber);
         }
 
 		mExplorationManager.activateChunk(coordinate);
 		
-        uint64_t timestamp = 0; //#C3# get proper timestamp, issue #133
-
         VoxelTypeArray before = createdChunk.getFlatVoxelTypeData();
 
-        mBus.send(ChunkCandidateMessage{mId, coordinate, createdChunk, timestamp}); //let others have a chance of modifying this chunk
+        mBus.send(ChunkCandidateMessage{mId, coordinate, createdChunk, frameNumberDelta}); //let others have a chance of modifying this chunk
 
         applyDifferenceAsMods(coordinate, before, createdChunk.getFlatVoxelTypeData());
 
@@ -170,6 +191,11 @@ void WorldEntry::chunksRequested(const std::vector<ChunkCoord>& coordinates)
 const std::string& WorldEntry::getIdentifier() const
 {
     return mIdentifier;
+}
+
+void WorldEntry::handleMessage(const FrameMessage& received)
+{
+	mCurrentFrameNumber = received.frameNumber;
 }
 
 void WorldEntry::activateChunk(const ChunkCoord& chunkCoordinate)

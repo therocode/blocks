@@ -20,6 +20,11 @@ void parameterFunction(asIScriptContext* context, std::size_t index, uint32_t va
     int32_t r = context->SetArgDWord(index, value); assert( r >= 0 );
 }
 
+void parameterFunction(asIScriptContext* context, std::size_t index, uint64_t value) 
+{
+    int32_t r = context->SetArgQWord(index, value); assert( r >= 0 );
+}
+
 void parameterFunction(asIScriptContext* context, std::size_t index, glm::i64vec3& value) 
 {
 	int32_t r = context->SetArgObject(index, &value); assert( r >= 0 );

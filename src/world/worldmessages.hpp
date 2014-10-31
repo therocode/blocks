@@ -58,7 +58,7 @@ struct ChunkInitiallyGeneratedMessage
 
 struct ChunkCandidateMessage
 {
-    WorldId worldId; const ChunkCoord& coordinate; Chunk& chunk; uint64_t timestamp;
+    WorldId worldId; const ChunkCoord& coordinate; Chunk& chunk; uint64_t frameNumberDelta;
 };
 
 struct ChunkFinishedMessage
