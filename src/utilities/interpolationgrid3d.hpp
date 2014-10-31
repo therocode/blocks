@@ -95,13 +95,15 @@ Type InterpolationGrid3D<Type>::get(const glm::uvec3& location) const
         std::array<Type, 8> interpolationPoints;
 
 
-        glm::vec3 divided = (glm::vec3)location / (float)mDownSamplingPow;
+        glm::vec3 divided = (glm::vec3)location / (float)(mDownSamplingPow);
         glm::vec3 point = glm::fract(divided);
         glm::uvec3 innerPoint = (glm::uvec3)divided;
         uint32_t innerIndex = toInnerIndex(innerPoint);
 
         if(glm::length(point) < 0.000005f)
             return mValues.at(innerIndex);
+
+        FEA_ASSERT(innerPoint.x != mInnerSize - 1 && innerPoint.y != mInnerSize - 1 && innerPoint.z != mInnerSize - 1, "Cannot interpolate on edge of interpolation grid. given coordinate " + glm::to_string(location) + " should not exceed " + glm::to_string(mInnerSize - 1));
 
         interpolationPoints[0 + 0 + 0] = mValues.at(innerIndex + 0 + 0          + 0             );
         interpolationPoints[1 + 0 + 0] = mValues.at(innerIndex + 1 + 0          + 0             );

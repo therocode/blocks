@@ -4,8 +4,8 @@
         "category":"living",
         "physics_type":"FALLING",
         "drag":0.01,
-        "walk_speed":100.19,
-        "run_speed":100.2,
+        "walk_speed":1.19,
+        "run_speed":1.2,
         "jump_strength":18.3,
     }
 }

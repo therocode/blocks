@@ -94,7 +94,7 @@ BiomeDelivery BiomeProvider::generateBiomeData(WorldId worldId, BiomeRegionCoord
 
     for(const auto& field : settings.fields)
     {
-        FieldGrid newGrid(biomeRegionWidth, biomeDownSamplingAmount);
+        FieldGrid newGrid(biomeRegionWidth + biomeInterpolationWidth * 2, biomeDownSamplingAmount);
 
         fieldGenerator.fill(coordinate, newGrid, field.noiseType);
 
@@ -111,7 +111,7 @@ BiomeDelivery BiomeProvider::generateBiomeData(WorldId worldId, BiomeRegionCoord
 
 BiomeGrid BiomeProvider::generateBiomes(WorldId worldId, const BiomeRegionCoord& coordinate, const FieldMap& fields) const
 {
-    BiomeGrid result(biomeRegionWidth, biomeDownSamplingAmount);
+    BiomeGrid result(biomeRegionWidth + biomeInterpolationWidth * 2, biomeDownSamplingAmount);
     uint32_t size = result.getInnerSize();
 
     const auto& biomeSettings = mBiomeSettings.at(worldId);

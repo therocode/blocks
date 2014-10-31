@@ -9,9 +9,10 @@ using BiomeId = uint16_t;
 const uint32_t biomeRegionWidthInChunks = 16;
 const uint32_t biomeRegionWidth = biomeRegionWidthInChunks * chunkWidth;
 const uint32_t biomeDownSamplingAmount = 2;
+const uint32_t biomeInterpolationWidth = std::pow(2, biomeDownSamplingAmount);
 using BiomeRegionCoord = glm::i64vec3;
 using BiomeRegionChunkCoord = glm::u8vec3;
-using BiomeGrid = InterpolationGrid3D<BiomeId>; //right now this uses no interpolation, should change when interpolation grid is capable of it
+using BiomeGrid = InterpolationGrid3D<BiomeId>;
 using BiomeStorage = std::unordered_map<BiomeRegionCoord, BiomeGrid>;
 
 using FieldMap = std::unordered_map<uint32_t, FieldGrid>;

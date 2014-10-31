@@ -4,7 +4,7 @@ void FieldGenerator::fill(const BiomeRegionCoord& coordinate, FieldGrid& grid, N
 {
     uint32_t size = grid.getInnerSize();
 
-    float spacing = (float)biomeRegionWidth / (float)(size - 1);
+    float spacing = biomeInterpolationWidth;
 
     for(uint32_t z = 0; z < size; z++)
     {
@@ -20,7 +20,7 @@ void FieldGenerator::fill(const BiomeRegionCoord& coordinate, FieldGrid& grid, N
                 }
                 else
                 {
-                    grid.setInner({x, y, z}, mNoise.voronoi2D((float)x, (float)z)); //should be 3d when alternative exists
+                    grid.setInner({x, y, z}, mNoise.voronoi2D((float)x, (float)z)); //should be 3d when alternative exists //should use noise coord
                 }
             }
         }

@@ -232,7 +232,7 @@ void WorldEntry::deactivateChunk(const ChunkCoord& chunkCoordinate)
 
 void WorldEntry::requestChunk(const ChunkCoord& chunk)
 {
-    BiomeGrid grid(chunkWidth, biomeDownSamplingAmount);
+    BiomeGrid grid(chunkWidth + biomeInterpolationWidth, biomeDownSamplingAmount);
     grid.setInterpolator(Interpolator<BiomeId>::nearestNeigbor);
     BiomeRegionChunkCoord biomeRegionChunk = ChunkToBiomeRegionChunk::convert(chunk);
     BiomeGrid& bigGrid = mWorldData.biomeGrids.at(ChunkToBiomeRegion::convert(chunk));
@@ -240,15 +240,13 @@ void WorldEntry::requestChunk(const ChunkCoord& chunk)
     FieldMap fields;
     const FieldMap& bigFieldMap = mWorldData.fieldGrids.at(ChunkToBiomeRegion::convert(chunk));
 
-    uint32_t bigSize = bigGrid.getSize();
     uint32_t size = grid.getInnerSize();
-    uint32_t step = grid.getInnerSize() - 1;
-    uint32_t chunkStep = chunkWidth;
-    glm::uvec3 start = (glm::uvec3)biomeRegionChunk;
+    uint32_t step = biomeInterpolationWidth;
+    glm::uvec3 start = (glm::uvec3)biomeRegionChunk * (uint32_t)chunkWidth;
 
     for(const auto& bigField : bigFieldMap)
     {
-        FieldGrid newFieldGrid(chunkWidth, biomeDownSamplingAmount);
+        FieldGrid newFieldGrid(chunkWidth + biomeInterpolationWidth, biomeDownSamplingAmount);
         newFieldGrid.setInterpolator(Interpolator<float>::nearestNeigbor);
         fields.emplace(bigField.first, newFieldGrid);
     }
@@ -262,26 +260,13 @@ void WorldEntry::requestChunk(const ChunkCoord& chunk)
         {
             for(uint32_t x = 0; x < size; x++)
             {
-                coordinate = start * chunkStep + glm::uvec3(x, y, z) * step;
+                coordinate = start + glm::uvec3(x, y, z) * step; //can trivially be optimised by using addition in the loops if necessary
 
-                if(coordinate.z < bigSize && coordinate.y < bigSize && coordinate.x < bigSize)
+                grid.setInner({x, y, z}, bigGrid.get(coordinate));
+
+                for(const auto& bigField : bigFieldMap)
                 {
-                    grid.setInner({x, y, z}, bigGrid.get(coordinate));
-
-                    for(const auto& bigField : bigFieldMap)
-                    {
-                        fields.at(bigField.first).setInner({x, y, z}, bigField.second.get(coordinate));
-                    }
-                }
-                else
-                {
-                    innerCoordinate = (coordinate) / bigGrid.getRatio();
-                    grid.setInner({x, y, z}, bigGrid.getInner(innerCoordinate));
-
-                    for(const auto& bigField : bigFieldMap)
-                    {
-                        fields.at(bigField.first).setInner({x, y, z}, bigField.second.getInner(innerCoordinate));
-                    }
+                    fields.at(bigField.first).setInner({x, y, z}, bigField.second.get(coordinate));
                 }
             }
         }
