@@ -1,3 +1,4 @@
+/*
 void setVoxelDataArray(array<uint16> &arr, uint x, uint y, uint z, uint16 type)
 {
 	arr[y*16*16 + z*16 + x] = type;
@@ -72,7 +73,7 @@ void spikes(const ChunkCoord &in coord, Chunk &chunk) {
                 }
 
                 if(empty)
-                    if(randomChance(0.0005))
+                    if(randomChance(0.0006))
                         createEntity("Elephant", 1, Vec3(x, y, z) + Vec3(coord.x, coord.y, coord.z) * 16);
                     else if(randomChance(0.001))
                     {
@@ -87,16 +88,4 @@ void spikes(const ChunkCoord &in coord, Chunk &chunk) {
 			
 	chunk.setVoxelData(voxelData);
 }
-
-void chunkInitiallyGenerated(const uint32 worldId, const ChunkCoord &in coord, Chunk &in chunk)
-{
-    //if(worldId == 0)
-    //    hills(coord, chunk);
-    //else
-    //    spikes(coord, chunk);
-}
-
-void chunkCandidate(const uint32 worldId, const ChunkCoord &in coord, Chunk &in chunk, const uint64 frameNumberDelta)
-{
-	consolePrint("frameNumberDelta: " + frameNumberDelta);
-}
+*/

@@ -21,7 +21,7 @@ void ChunkInterface::registerInterface(asIScriptEngine* engine)
 	r = engine->RegisterObjectMethod("Chunk", "uint16 getVoxelType(const ChunkVoxelCoord &in) const", 
 			asMETHODPR(ScriptChunk, getVoxelType, (const glm::u8vec3&), VoxelType), asCALL_THISCALL); assert(r >= 0);
 	
-	r = engine->RegisterObjectMethod("Chunk", "array<uint16> @getVoxelData() const",
+	r = engine->RegisterObjectMethod("Chunk", "array<uint16> @getVoxelData()",
 			asMETHODPR(ScriptChunk, getVoxelData, (), CScriptArray*), asCALL_THISCALL); assert(r >= 0);
 
 	r = engine->RegisterObjectMethod("Chunk", "void setVoxelType(ChunkVoxelCoord &in, uint16)", 
