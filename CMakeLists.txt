@@ -77,6 +77,7 @@ set(server_source
     src/script/interfaces/stringinterface.cpp
 
     src/utilities/signalcatcher.cpp
+    src/utilities/distancechecker.cpp
 
 	src/world/explorationmanager.cpp
     src/world/biome.cpp
@@ -424,6 +425,7 @@ if(BUILD_TESTS)
         "src/world/modmanager.cpp"
         "src/utilities/coordinateconverter.cpp"
         "src/utilities/directorycreator.cpp"
+        "src/utilities/distancechecker.cpp"
         "src/world/chunk.cpp"
         "src/world/explorationmanager.cpp" "src/utilities/coordinateconverter.cpp"
         "src/networking/messageserializer.cpp"

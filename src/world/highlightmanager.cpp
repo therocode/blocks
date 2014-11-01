@@ -1,4 +1,5 @@
 #include "highlightmanager.hpp"
+#include "../utilities/distancechecker.hpp"
 
 ChunkHighlightList HighlightManager::addHighlightEntity(fea::EntityId id, const ChunkCoord& coordinate, uint32_t radius)
 {
@@ -62,7 +63,7 @@ ChunkHighlightList HighlightManager::highlightShape(const ChunkCoord& loc, uint3
             {
                 ChunkCoord subLoc(x, y, z);
 
-                if(glm::distance(glm::vec3(loc), glm::vec3(subLoc)) <= (float)radius)
+                if(DistanceChecker::isWithinDistanceOf(loc, subLoc, radius))
                 {
                     if(highlightChunk(subLoc))
                     {
@@ -88,7 +89,7 @@ ChunkDehighlightList HighlightManager::dehighlightShape(const ChunkCoord& loc, u
             {
                 ChunkCoord subLoc(x, y, z);
 
-                if(glm::distance(glm::dvec3(loc), glm::dvec3(subLoc)) <= (double)radius)
+                if(DistanceChecker::isWithinDistanceOf(loc, subLoc, radius))
                 {
                     if(dehighlightChunk(subLoc))
                     {
