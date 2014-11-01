@@ -8,7 +8,7 @@ using BiomeId = uint16_t;
 
 const uint32_t biomeRegionWidthInChunks = 16;
 const uint32_t biomeRegionWidth = biomeRegionWidthInChunks * chunkWidth;
-const uint32_t biomeDownSamplingAmount = 2;
+const uint32_t biomeDownSamplingAmount = 4;
 const uint32_t biomeInterpolationWidth = std::pow(2, biomeDownSamplingAmount);
 using BiomeRegionCoord = glm::i64vec3;
 using BiomeRegionChunkCoord = glm::u8vec3;

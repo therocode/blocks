@@ -259,7 +259,7 @@ void WorldEntry::deactivateChunk(const ChunkCoord& chunkCoordinate)
 void WorldEntry::requestChunk(const ChunkCoord& chunk)
 {
     BiomeGrid grid(chunkWidth + biomeInterpolationWidth, biomeDownSamplingAmount);
-    grid.setInterpolator(Interpolator<BiomeId>::nearestNeigbor);
+    grid.setInterpolator(Interpolator<BiomeId>::trilinear);
     BiomeRegionChunkCoord biomeRegionChunk = ChunkToBiomeRegionChunk::convert(chunk);
     BiomeGrid& bigGrid = mWorldData.biomeGrids.at(ChunkToBiomeRegion::convert(chunk));
 
@@ -273,7 +273,7 @@ void WorldEntry::requestChunk(const ChunkCoord& chunk)
     for(const auto& bigField : bigFieldMap)
     {
         FieldGrid newFieldGrid(chunkWidth + biomeInterpolationWidth, biomeDownSamplingAmount);
-        newFieldGrid.setInterpolator(Interpolator<float>::nearestNeigbor);
+        newFieldGrid.setInterpolator(Interpolator<float>::trilinear);
         fields.emplace(bigField.first, newFieldGrid);
     }
 

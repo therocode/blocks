@@ -98,7 +98,7 @@ BiomeDelivery BiomeProvider::generateBiomeData(WorldId worldId, BiomeRegionCoord
 
         fieldGenerator.fill(coordinate, newGrid, field.noiseType);
 
-        newGrid.setInterpolator(Interpolator<float>::nearestNeigbor);
+        newGrid.setInterpolator(Interpolator<float>::trilinear);
 
         fieldGrids.emplace(field.id, newGrid);
     }
@@ -175,6 +175,6 @@ BiomeGrid BiomeProvider::generateBiomes(WorldId worldId, const BiomeRegionCoord&
         }
     }
 
-    result.setInterpolator(Interpolator<BiomeId>::nearestNeigbor);
+    result.setInterpolator(Interpolator<BiomeId>::trilinear);
     return result;
 }
