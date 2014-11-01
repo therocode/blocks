@@ -120,13 +120,12 @@ void Renderer::handleMessage(const ChunkVBODeletedMessage& received)
     vbos.erase(coordinate);
 }
 
-//void Renderer::handleMessage(const PlayerFacingBlockMessage& received)
-//{
-//	glm::vec3 v = (glm::vec3)received.voxelPosition;
-//    size_t playerId = received.playerId;
-//
-//    mCurrentlyFacingBlock = v;
-//}
+void Renderer::handleMessage(const FacingBlockMessage& received)
+{
+	glm::vec3 v = (glm::vec3)received.block;
+
+    mCurrentlyFacingBlock = v;
+}
 
 void Renderer::handleMessage(const WindowResizeMessage& received)
 {

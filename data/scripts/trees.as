@@ -151,10 +151,10 @@ void grow(Chunk &chunk, const uint64 frameNumberDelta)
 
 void chunkInitiallyGenerated(const uint32 worldId, const ChunkCoord &in coord, Chunk &in chunk)
 {
-	placeRoots(chunk);
+	//placeRoots(chunk);
 }
 
 void chunkCandidate(const uint32 worldId, const ChunkCoord &in coord, Chunk &in chunk, const uint64 frameNumberDelta)
 {
-	grow(chunk, frameNumberDelta);
+	//grow(chunk, frameNumberDelta);
 }

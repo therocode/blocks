@@ -39,6 +39,11 @@ struct CameraUpdatedMessage
     const glm::vec3& onevec; const glm::vec3& twovec;
 };
 
+struct FacingBlockMessage
+{
+    const VoxelCoord& block;
+};
+
 struct PlayerFacingBlockMessage
 {
     size_t playerId; const VoxelCoord& voxelPosition;

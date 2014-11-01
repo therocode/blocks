@@ -6,6 +6,7 @@
 #include "../application/applicationmessages.hpp"
 #include "../rendering/renderer.hpp"
 #include "../input/inputadaptor.hpp"
+#include "../world/raycaster.hpp"
 
 
 Client::Client(fea::MessageBus& bus, const NetworkParameters& parameters) :
@@ -193,6 +194,7 @@ void Client::handleMessage(const GameStartMessage& received)
 void Client::handleMessage(const ClientAttachedToEntityMessage& received)
 {
     mCurrentWorld = received.world;
+    mCurrentEntity = received.entityId;
     mHighlightRadius = received.highlightRange;
     auto highlighted = mHighlightedChunks.addHighlightEntity(0, WorldToChunk::convert(received.position), mHighlightRadius);
     mLastChunk = WorldToChunk::convert(received.position);
@@ -264,4 +266,33 @@ void Client::updateChunk(const ChunkCoord& coordinate)
         rightChunk = &right->second;
 
     mBus.send(UpdateChunkVboMessage{coordinate, mainChunk, topChunk, bottomChunk, frontChunk, backChunk, leftChunk, rightChunk});
+}
+
+void Client::updateVoxelLookAt()
+{
+	glm::vec3 direction = glm::vec3(glm::cos(mPitch) * glm::sin(mYaw), glm::sin(mPitch), glm::cos(mPitch) * glm::cos(mYaw));
+
+	VoxelCoord block;
+	uint32_t face;
+	bool f = RayCaster::getVoxelAtRay(mLocalChunks, mPosition + glm::vec3(0, 0.6f, 0), direction, 200.f, face, block);
+
+    mBus.send(FacingBlockMessage{block});
+}
+
+void Client::handleMessage(const MoveGfxEntityMessage& received)
+{
+    if(received.id == mCurrentEntity)
+    {
+        mPosition = received.position;
+        updateVoxelLookAt();
+    }
+}
+
+void Client::handleMessage(const RotateGfxEntityMessage& received)
+{
+    if(received.id == mCurrentEntity)
+    {
+        mPitch = received.pitch;
+        mYaw = received.yaw;
+    }
 }

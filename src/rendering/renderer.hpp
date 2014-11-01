@@ -24,7 +24,7 @@ class Renderer
                                     AddGfxEntityMessage,
                                     MoveGfxEntityMessage,
                                     RotateGfxEntityMessage,
-                                    //PlayerFacingBlockMessage,
+                                    FacingBlockMessage,
                                     RemoveGfxEntityMessage,
                                     ClientAttachedToEntityMessage>
                 
@@ -44,7 +44,7 @@ class Renderer
         virtual void handleMessage(const MoveGfxEntityMessage& received);
         virtual void handleMessage(const RotateGfxEntityMessage& received);
         virtual void handleMessage(const RemoveGfxEntityMessage& received);
-        //virtual void handleMessage(const PlayerFacingBlockMessage& received);
+        virtual void handleMessage(const FacingBlockMessage& received);
         virtual void handleMessage(const ClientAttachedToEntityMessage& received);
         void render();
 		void setCameraMatrix(const glm::mat4& m);

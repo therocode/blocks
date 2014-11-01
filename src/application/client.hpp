@@ -22,7 +22,9 @@ class Client :
                                 GameStartMessage,
                                 ClientAttachedToEntityMessage,
                                 ClientEnteredWorldMessage,
-                                ClientPositionMessage>
+                                ClientPositionMessage,
+                                MoveGfxEntityMessage,
+                                RotateGfxEntityMessage>
 {
     public:
         Client(fea::MessageBus& bus, const NetworkParameters& parameters);
@@ -39,12 +41,15 @@ class Client :
         void handleMessage(const ClientAttachedToEntityMessage& received) override;
         void handleMessage(const ClientEnteredWorldMessage& received) override;
         void handleMessage(const ClientPositionMessage& received) override;
+        void handleMessage(const MoveGfxEntityMessage& received) override;
+        void handleMessage(const RotateGfxEntityMessage& received) override;
         bool requestedQuit();
     private:
         int64_t mFrame = 0;
         uint64_t mFrameNumber;
         FPSController mFPSCounter;
         void updateChunk(const ChunkCoord& coordinate);
+        void updateVoxelLookAt();
         bool mLockedMouse;
         fea::MessageBus& mBus;
         Logger mLogger;
@@ -54,10 +59,15 @@ class Client :
         bool mQuit;
 
         std::string mCurrentWorld;
+        fea::EntityId mCurrentEntity;
         uint32_t mHighlightRadius;
         HighlightManager mHighlightedChunks;
         ChunkCoord mLastChunk;
         ChunkMap mLocalChunks;
 
         std::unique_ptr<ClientNetworkingSystem> mClientNetworkingSystem;
+
+        float mPitch;
+        float mYaw;
+        glm::vec3 mPosition;
 };
