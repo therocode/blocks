@@ -435,7 +435,7 @@ if(BUILD_TESTS)
     add_executable(interpolation_visual "test/visual/interpolationvisual.cpp")
 
     target_link_libraries(tests ${FEATHERKIT_LIBRARIES})
-    target_link_libraries(interpolation_visual ${FEATHERKIT_LIBRARIES})
+    target_link_libraries(interpolation_visual ${FEATHERKIT_LIBRARIES} ${SDL2_LIBRARY})
     
 	include_directories(${ANGELSCRIPT_INCLUDE_DIRECTORY})
     target_link_libraries(tests ${ANGELSCRIPT_LIBRARY} -lpthread)
