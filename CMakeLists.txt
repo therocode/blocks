@@ -280,7 +280,7 @@ set(header_files
     src/world/generation/chunkgenerator.hpp
 )
 
-find_package(Featherkit REQUIRED COMPONENTS entity structure ui sdl2 util)
+find_package(Featherkit REQUIRED COMPONENTS entity rendering structure ui sdl2 util)
 find_package(GLM)
 find_package(SDL2)
 find_package(OpenGL REQUIRED)
@@ -432,7 +432,10 @@ if(BUILD_TESTS)
         "src/script/asaddons/scriptarray.cpp"
         )
 
+    add_executable(interpolation_visual "test/visual/interpolationvisual.cpp")
+
     target_link_libraries(tests ${FEATHERKIT_LIBRARIES})
+    target_link_libraries(interpolation_visual ${FEATHERKIT_LIBRARIES})
     
 	include_directories(${ANGELSCRIPT_INCLUDE_DIRECTORY})
     target_link_libraries(tests ${ANGELSCRIPT_LIBRARY} -lpthread)
