@@ -8,7 +8,7 @@
 #include "../../src/utilities/interpolationgrid3d.hpp"
 #include "../../src/utilities/interpolators.hpp"
 
-int main()
+int main(int argc, char *argv[])
 {
     fea::Window window(new fea::SDL2WindowBackend());
     window.create(fea::VideoMode(800,800), "interpolation visual");
@@ -25,7 +25,7 @@ int main()
     const uint32_t downSampling = 5;
     float step = std::pow(2, downSampling);
     InterpolationGrid3D<float> interpolationgrid(800 + step, downSampling);
-    interpolationgrid.setInterpolator(Interpolator<float>::nearestNeigbor); //change this to trilinnear
+    interpolationgrid.setInterpolator(Interpolator<float>::trilinear);
 
     fea::Noise noise;
 

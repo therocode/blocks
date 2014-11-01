@@ -12,6 +12,7 @@ class Interpolator
 {
     public:
         static Type nearestNeigbor(const std::array<Type, 8>& corners, const glm::vec3& point);
+        static Type trilinear(const std::array<Type, 8>& corners, const glm::vec3& point);
 };
 
 template <typename Type>
@@ -35,4 +36,20 @@ Type Interpolator<Type>::nearestNeigbor(const std::array<Type, 8>& corners, cons
                      (point.z < 0.4999f ? 0 : 4);
 
     return corners[index];
+}
+
+template <typename Type>
+Type Interpolator<Type>::trilinear(const std::array<Type, 8>& corners, const glm::vec3& point)
+{
+	float c00 = corners[0] * (1.0f - point.x) + corners[1] * point.x;
+	float c10 = corners[2] * (1.0f - point.x) + corners[3] * point.x;
+	float c01 = corners[4] * (1.0f - point.x) + corners[5] * point.x;
+	float c11 = corners[6] * (1.0f - point.x) + corners[7] * point.x;
+
+	float c0 = c00 * (1.0f - point.y) + c10 * point.y;
+	float c1 = c01 * (1.0f - point.y) + c11 * point.y;
+	
+	float c = c0 * (1.0f - point.z) + c1 * point.z;
+	
+	return c;
 }
