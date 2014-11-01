@@ -53,7 +53,7 @@ int main()
     {
         for(uint32_t z = 0; z < 800; z++)
         {
-            uint8_t color = (uint8_t)(interpolationgrid.get({x, 50, z}) * 256.0f);
+            uint8_t color = (uint8_t)(interpolationgrid.get({x, 50u, z}) * 256.0f);
             canvas.setPixel(x, z, fea::Color(color, color, color));
         }
     }
