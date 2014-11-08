@@ -9,27 +9,25 @@ set(BUILD_EXPBIOMES FALSE CACHE BOOL "build the biome experiment application")
 set(BUILD_TESTS TRUE CACHE BOOL "build the tests")
 set(BUILD_PROFILING TRUE CACHE BOOL "build the profiling tests")
 set(BUILD_GAME TRUE CACHE BOOL "build the actual game")
-set(CLIENT_ONLY FALSE CACHE BOOL "only build client functionality")
 
 #project name
 set(project_name blocks)
 project(${project_name})
 
-if(CLIENT_ONLY)
-    add_definitions(-DCLIENT_ONLY=1)
-endif(CLIENT_ONLY)
-
 if(BUILD_EXPBIOMES)
     add_subdirectory(expbiomes)
 endif()
 
-if(NOT CLIENT_ONLY)
-set(server_source
+#Set source files.
+set(source_files
+    src/gameinterface.cpp
+
+	src/application/blocksapp.cpp
+    src/application/client.cpp
+	src/application/main.cpp
     src/application/server.cpp
 
-    src/networking/chunkrequesthandler.cpp
-    src/networking/enetserver.cpp
-    src/networking/servernetworkingsystem.cpp
+    src/console/console.cpp
 
     src/entity/entityfactory.cpp
     src/entity/entitydefinitionloader.cpp
@@ -38,10 +36,48 @@ set(server_source
     src/entity/controllers/entitycontroller.cpp
     src/entity/controllers/gfxcontroller.cpp
     src/entity/controllers/highlightcontroller.cpp
+    src/entity/controllers/movedirection.cpp
     src/entity/controllers/movementcontroller.cpp
     src/entity/controllers/physicscontroller.cpp
     src/entity/controllers/playercontroller.cpp
     src/entity/controllers/worldcontroller.cpp
+
+    src/input/inputadaptor.cpp
+
+    src/networking/chunkrequesthandler.cpp
+    src/networking/clientnetworkingsystem.cpp
+    src/networking/enet.cpp
+    src/networking/enetclient.cpp
+    src/networking/enetserver.cpp
+    src/networking/messageserializer.cpp
+    src/networking/servernetworkingsystem.cpp
+
+    src/utilities/coordinateconverter.cpp
+    src/utilities/directorycreator.cpp
+    src/utilities/distancechecker.cpp
+    src/utilities/folderexploder.cpp
+    src/utilities/fpscontroller.cpp
+    src/utilities/geomath.cpp
+    src/utilities/lodepng.cpp
+    src/utilities/logger.cpp
+    src/utilities/random.cpp
+    src/utilities/signalcatcher.cpp
+    src/utilities/timer.cpp
+
+    src/rendering/chunkgeneratorqueue.cpp
+    src/rendering/debugrenderer.cpp
+    src/rendering/billboard.cpp
+    src/rendering/camera.cpp
+    src/rendering/frustum.cpp
+    src/rendering/meshwalker.cpp
+    src/rendering/renderer.cpp
+    src/rendering/shader.cpp
+    src/rendering/shaderprogram.cpp
+    src/rendering/surfacemerger.cpp
+    src/rendering/texture.cpp
+    src/rendering/vbo.cpp
+    src/rendering/vbocreator.cpp
+    src/rendering/gl_core_3_2.c
 
     src/script/scriptcallback.cpp
     src/script/scriptchunk.cpp
@@ -76,72 +112,20 @@ set(server_source
     src/script/interfaces/scriptinterface.cpp
     src/script/interfaces/stringinterface.cpp
 
-    src/utilities/signalcatcher.cpp
-    src/utilities/distancechecker.cpp
-
-	src/world/explorationmanager.cpp
     src/world/biome.cpp
     src/world/biomeprovider.cpp
+    src/world/chunk.cpp
+    src/world/chunkprovider.cpp
+	src/world/explorationmanager.cpp
     src/world/fieldgenerator.cpp
+    src/world/highlightmanager.cpp
     src/world/modmanager.cpp
     src/world/ranges.cpp
     src/world/raycaster.cpp
     src/world/worldentry.cpp
-    src/world/chunkprovider.cpp
     src/world/worldsystem.cpp
     src/world/worldloader.cpp
     src/world/generation/chunkgenerator.cpp
-    )
-
-endif()
-
-#Set source files.
-set(source_files
-    src/gameinterface.cpp
-	src/application/blocksapp.cpp
-    src/application/client.cpp
-	src/application/main.cpp
-
-    src/console/console.cpp
-
-    src/entity/controllers/movedirection.cpp
-
-    src/input/inputadaptor.cpp
-
-    src/networking/clientnetworkingsystem.cpp
-    src/networking/enet.cpp
-    src/networking/enetclient.cpp
-    src/networking/messageserializer.cpp
-
-    src/utilities/coordinateconverter.cpp
-    src/utilities/directorycreator.cpp
-    src/utilities/folderexploder.cpp
-    src/utilities/fpscontroller.cpp
-    src/utilities/geomath.cpp
-    src/utilities/lodepng.cpp
-    src/utilities/logger.cpp
-    src/utilities/random.cpp
-    src/utilities/timer.cpp
-
-    src/rendering/chunkgeneratorqueue.cpp
-    src/rendering/debugrenderer.cpp
-    src/rendering/billboard.cpp
-    src/rendering/camera.cpp
-    src/rendering/frustum.cpp
-    src/rendering/meshwalker.cpp
-    src/rendering/renderer.cpp
-    src/rendering/shader.cpp
-    src/rendering/shaderprogram.cpp
-    src/rendering/surfacemerger.cpp
-    src/rendering/texture.cpp
-    src/rendering/vbo.cpp
-    src/rendering/vbocreator.cpp
-    src/rendering/gl_core_3_2.c
-
-    src/world/highlightmanager.cpp
-    src/world/chunk.cpp
-
-    ${server_source}
     )
 
 set(header_files
@@ -286,12 +270,8 @@ find_package(GLM)
 find_package(SDL2)
 find_package(OpenGL REQUIRED)
 find_package(ENet)
-
-if(NOT CLIENT_ONLY)
 find_package(angelscript)
-
 find_package(JsonCpp REQUIRED)
-endif()
 
 
 include_directories(include)
