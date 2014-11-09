@@ -70,7 +70,7 @@ set(source_files
     src/rendering/camera.cpp
     src/rendering/frustum.cpp
     src/rendering/meshwalker.cpp
-    src/rendering/renderer.cpp
+    #src/rendering/renderer.cpp
     src/rendering/shader.cpp
     src/rendering/shaderprogram.cpp
     src/rendering/surfacemerger.cpp
@@ -79,6 +79,7 @@ set(source_files
     src/rendering/vbocreator.cpp
     src/rendering/gl_core_3_2.c
     src/rendering/new/glcontext.cpp
+    src/rendering/new/renderable.cpp
     src/rendering/new/renderer.cpp
     src/rendering/new/renderingsystem.cpp
 
@@ -194,6 +195,7 @@ set(header_files
     src/rendering/gl_core_3_2.h
     src/rendering/opengl.hpp
     src/rendering/new/glcontext.hpp
+    src/rendering/new/renderable.hpp
     src/rendering/new/renderer.hpp
     src/rendering/new/renderingsystem.hpp
     

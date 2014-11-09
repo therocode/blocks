@@ -2,6 +2,9 @@
 #include "glcontext.hpp"
 #include <memory>
 #include <vector>
+#include <typeindex>
+#include <unordered_set>
+#include <unordered_map>
 
 class RenderModule;
 class Renderable;
@@ -14,5 +17,6 @@ class Renderer
         void queue(const Renderable& renderable);
         void render();
     private:
-        std::vector<std::unique_ptr<RenderModule>> mModules;
+        std::unordered_set<std::unique_ptr<RenderModule>> mModules;
+        std::unordered_map<std::type_index, std::vector<RenderModule*>> mModuleSubscriptions;
 };
