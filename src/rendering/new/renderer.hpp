@@ -1,4 +1,10 @@
 #pragma once
+#include "glcontext.hpp"
+#include <memory>
+#include <vector>
+
+class RenderModule;
+class Renderable;
 
 class Renderer
 {

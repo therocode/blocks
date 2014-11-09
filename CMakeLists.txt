@@ -78,6 +78,9 @@ set(source_files
     src/rendering/vbo.cpp
     src/rendering/vbocreator.cpp
     src/rendering/gl_core_3_2.c
+    src/rendering/new/glcontext.cpp
+    src/rendering/new/renderer.cpp
+    src/rendering/new/renderingsystem.cpp
 
     src/script/scriptcallback.cpp
     src/script/scriptchunk.cpp
@@ -190,6 +193,9 @@ set(header_files
     src/rendering/vbocreator.hpp
     src/rendering/gl_core_3_2.h
     src/rendering/opengl.hpp
+    src/rendering/new/glcontext.hpp
+    src/rendering/new/renderer.hpp
+    src/rendering/new/renderingsystem.hpp
     
     src/utilities/coordinateconverter.hpp
     src/utilities/directorycreator.hpp

@@ -4,7 +4,7 @@
 #include <fea/ui/sdl2inputbackend.hpp>
 #include "../lognames.hpp"
 #include "../application/applicationmessages.hpp"
-#include "../rendering/renderer.hpp"
+#include "../rendering/new/renderingsystem.hpp"
 #include "../input/inputadaptor.hpp"
 #include "../world/raycaster.hpp"
 
@@ -14,7 +14,6 @@ Client::Client(fea::MessageBus& bus, const NetworkParameters& parameters) :
     mBus(bus),
     mLogger(mBus, LogLevel::VERB),
 	mWindow(new fea::SDL2WindowBackend()),
-	mRenderer(std::unique_ptr<Renderer>(new Renderer(mBus))),
 	mInputAdaptor(std::unique_ptr<InputAdaptor>(new InputAdaptor(mBus))),
 	mQuit(false)
 {
@@ -24,8 +23,8 @@ Client::Client(fea::MessageBus& bus, const NetworkParameters& parameters) :
     mLockedMouse = true;
 	mWindow.lockCursor(true);
 	mWindow.setVSyncEnabled(false);
-	mRenderer->setup();
-	//mWindow.setFramerateLimit(30);
+	mRenderingSystem = std::unique_ptr<RenderingSystem>(std::unique_ptr<RenderingSystem>(new RenderingSystem(mBus)));
+	mWindow.setFramerateLimit(60);
 
 	mBus.send(WindowResizeMessage{800, 600});
 
@@ -68,7 +67,7 @@ void Client::update()
 void Client::render()
 {
     mFPSCounter.frameBegin();
-	mRenderer->render();
+	mRenderingSystem->render();
 	mWindow.swapBuffers();
     mFPSCounter.frameEnd();
     if(mFrame++ % 60 == 0)

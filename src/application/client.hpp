@@ -10,7 +10,7 @@
 #include "../world/highlightmanager.hpp"
 
 
-class Renderer;
+class RenderingSystem;
 class InputAdaptor;
 
 class Client :
@@ -54,7 +54,7 @@ class Client :
         fea::MessageBus& mBus;
         Logger mLogger;
         fea::Window mWindow;
-        std::unique_ptr<Renderer> mRenderer;
+        std::unique_ptr<RenderingSystem> mRenderingSystem;
         std::unique_ptr<InputAdaptor> mInputAdaptor;
         bool mQuit;
 
