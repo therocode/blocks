@@ -1,12 +1,12 @@
 #pragma once
 #include "glcontext.hpp"
+#include "rendermodule.hpp"
 #include <memory>
 #include <vector>
 #include <typeindex>
 #include <unordered_set>
 #include <unordered_map>
 
-class RenderModule;
 class Renderable;
 
 class Renderer

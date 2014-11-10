@@ -1,5 +1,7 @@
 #pragma once
 #include <fea/util.hpp>
+#include "renderer.hpp"
+#include "glcontext.hpp"
 
 class RenderingSystem
 {
@@ -8,4 +10,6 @@ class RenderingSystem
         void render();
     private:
         fea::MessageBus& mBus;
+        GLContext mGLContext;
+        Renderer mRenderer;
 };

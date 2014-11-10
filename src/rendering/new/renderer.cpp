@@ -1,5 +1,4 @@
 #include "renderer.hpp"
-#include "rendermodule.hpp"
 #include "renderable.hpp"
         
 Renderer::Renderer(const GLContext& glContext)
@@ -9,7 +8,7 @@ Renderer::Renderer(const GLContext& glContext)
 void Renderer::addModule(std::unique_ptr<RenderModule> module)
 {
     auto iterator = mModules.emplace(std::move(module)).first;
-    mModuleSubscriptions[module->getRenderableType()].push_back(&**iterator);
+    mModuleSubscriptions[(*iterator)->getRenderableType()].push_back(&**iterator);
 }
 
 void Renderer::queue(const Renderable& renderable)
