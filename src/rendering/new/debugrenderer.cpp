@@ -17,9 +17,7 @@ DebugRenderer::DebugRenderer()
     glGenVertexArrays(1, &mVertexArray);
     glBindVertexArray(mVertexArray);
 
-    // Generate a buffer for the indices
-    glGenBuffers(1, &mVertexBuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer.getId());
     glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
     
 
@@ -82,7 +80,7 @@ DebugRenderer::DebugRenderer()
     glUseProgram(shaderProgram);
      
     /* Enable attribute index 0(shaderAttribute) as being used */
-    glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer.getId());
 
     glEnableVertexAttribArray(shaderAttribute);
 
@@ -104,7 +102,7 @@ void DebugRenderer::queue(const Renderable& renderable)
 void DebugRenderer::render()
 {
     glBindVertexArray(mVertexArray);
-    glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer.getId());
     glDrawArrays(GL_TRIANGLES, 0, 3);
 }
 

@@ -1,0 +1,19 @@
+#include "buffer.hpp"
+#include <fea/assert.hpp>
+
+Buffer::Buffer()
+{
+    glGenBuffers(1, &mBufferId);
+
+    FEA_ASSERT(mBufferId != 0, "Generated zero buffer");
+}
+
+Buffer::~Buffer()
+{
+    glDeleteBuffers(1, &mBufferId);
+}
+
+GLuint Buffer::getId() const
+{
+    return mBufferId;
+}

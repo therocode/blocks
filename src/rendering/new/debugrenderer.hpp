@@ -2,6 +2,7 @@
 #include "rendermodule.hpp"
 #include "debugrenderable.hpp"
 #include "../opengl.hpp"
+#include "buffer.hpp"
 
 class DebugRenderer : public RenderModule
 {
@@ -11,7 +12,7 @@ class DebugRenderer : public RenderModule
         virtual void render();
         virtual std::type_index getRenderableType() const;
     private:
-        GLuint mVertexBuffer;
+        Buffer mVertexBuffer;
         GLuint mVertexArray;
 
         GLuint shaderProgram;

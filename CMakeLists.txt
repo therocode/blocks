@@ -78,6 +78,7 @@ set(source_files
     src/rendering/vbo.cpp
     src/rendering/vbocreator.cpp
     src/rendering/gl_core_3_2.c
+    src/rendering/new/buffer.cpp
     src/rendering/new/debugrenderable.cpp
     src/rendering/new/debugrenderer.cpp
     src/rendering/new/glcontext.cpp
@@ -197,6 +198,7 @@ set(header_files
     src/rendering/vbocreator.hpp
     src/rendering/gl_core_3_2.h
     src/rendering/opengl.hpp
+    src/rendering/new/buffer.hpp
     src/rendering/new/debugrenderable.hpp
     src/rendering/new/debugrenderer.hpp
     src/rendering/new/glcontext.hpp
