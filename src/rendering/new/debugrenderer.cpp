@@ -17,9 +17,7 @@ DebugRenderer::DebugRenderer()
     glGenVertexArrays(1, &mVertexArray);
     glBindVertexArray(mVertexArray);
 
-    glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer.getId());
-    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
-    
+    mVertexBuffer.setData(vertices);
 
     vertexShader = glCreateShader(GL_VERTEX_SHADER);
 // in_Position was bound to attribute index 0(\"shaderAttribute\")

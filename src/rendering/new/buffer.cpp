@@ -17,3 +17,9 @@ GLuint Buffer::getId() const
 {
     return mBufferId;
 }
+
+void Buffer::setData(const std::vector<float>& data)
+{
+    glBindBuffer(GL_ARRAY_BUFFER, mBufferId);
+    glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(float), data.data(), GL_STATIC_DRAW);
+}

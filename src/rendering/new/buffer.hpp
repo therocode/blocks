@@ -1,4 +1,5 @@
 #pragma once
+#include <vector>
 #include "../opengl.hpp"
 
 class Buffer
@@ -9,6 +10,7 @@ class Buffer
         Buffer(const Buffer&) = delete;
         Buffer& operator=(const Buffer&) = delete;
         GLuint getId() const;
+        void setData(const std::vector<float>& data);
     private:
         GLuint mBufferId;
 };
