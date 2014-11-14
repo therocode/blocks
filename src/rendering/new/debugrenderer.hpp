@@ -2,6 +2,7 @@
 #include "rendermodule.hpp"
 #include "debugrenderable.hpp"
 #include "../opengl.hpp"
+#include "vao.hpp"
 #include "buffer.hpp"
 
 class DebugRenderer : public RenderModule
@@ -12,8 +13,8 @@ class DebugRenderer : public RenderModule
         virtual void render();
         virtual std::type_index getRenderableType() const;
     private:
+        VAO mVertexArray;
         Buffer mVertexBuffer;
-        GLuint mVertexArray;
 
         GLuint shaderProgram;
         GLuint vertexShader, fragmentShader;

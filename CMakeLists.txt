@@ -86,6 +86,7 @@ set(source_files
     src/rendering/new/renderer.cpp
     src/rendering/new/renderingsystem.cpp
     src/rendering/new/rendermodule.cpp
+    src/rendering/new/vao.cpp
 
     src/script/scriptcallback.cpp
     src/script/scriptchunk.cpp
@@ -206,6 +207,7 @@ set(header_files
     src/rendering/new/renderer.hpp
     src/rendering/new/renderingsystem.hpp
     src/rendering/new/rendermodule.hpp
+    src/rendering/new/vao.hpp
     
     src/utilities/coordinateconverter.hpp
     src/utilities/directorycreator.hpp

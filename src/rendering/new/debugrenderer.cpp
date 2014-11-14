@@ -14,8 +14,8 @@ DebugRenderer::DebugRenderer()
                0.0f,  1.0f, 0.0f,
     };
 
-    glGenVertexArrays(1, &mVertexArray);
-    glBindVertexArray(mVertexArray);
+    mVertexArray.bind();
+    mVertexBuffer.bind();
 
     mVertexBuffer.setData(vertices);
 
@@ -99,8 +99,8 @@ void DebugRenderer::queue(const Renderable& renderable)
 
 void DebugRenderer::render()
 {
-    glBindVertexArray(mVertexArray);
-    glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer.getId());
+    mVertexArray.bind();
+    mVertexBuffer.bind();
     glDrawArrays(GL_TRIANGLES, 0, 3);
 }
 
