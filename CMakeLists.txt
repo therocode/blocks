@@ -64,19 +64,19 @@ set(source_files
     src/utilities/signalcatcher.cpp
     src/utilities/timer.cpp
 
-    src/rendering/chunkgeneratorqueue.cpp
-    src/rendering/debugrenderer.cpp
-    src/rendering/billboard.cpp
-    src/rendering/camera.cpp
-    src/rendering/frustum.cpp
-    src/rendering/meshwalker.cpp
+    #src/rendering/chunkgeneratorqueue.cpp
+    #src/rendering/debugrenderer.cpp
+    #src/rendering/billboard.cpp
+    #src/rendering/camera.cpp
+    #src/rendering/frustum.cpp
+    #src/rendering/meshwalker.cpp
     #src/rendering/renderer.cpp
-    src/rendering/shader.cpp
-    src/rendering/shaderprogram.cpp
-    src/rendering/surfacemerger.cpp
-    src/rendering/texture.cpp
-    src/rendering/vbo.cpp
-    src/rendering/vbocreator.cpp
+    #src/rendering/shader.cpp
+    #src/rendering/shaderprogram.cpp
+    #src/rendering/surfacemerger.cpp
+    #src/rendering/texture.cpp
+    #src/rendering/vbo.cpp
+    #src/rendering/vbocreator.cpp
     src/rendering/gl_core_3_2.c
     src/rendering/new/buffer.cpp
     src/rendering/new/debugrenderable.cpp
@@ -86,7 +86,10 @@ set(source_files
     src/rendering/new/renderer.cpp
     src/rendering/new/renderingsystem.cpp
     src/rendering/new/rendermodule.cpp
+    src/rendering/new/shader.cpp
+    src/rendering/new/uniform.cpp
     src/rendering/new/vao.cpp
+    src/rendering/new/vertexattribute.cpp
 
     src/script/scriptcallback.cpp
     src/script/scriptchunk.cpp
@@ -182,21 +185,21 @@ set(header_files
     src/networking/networkingprotocol.hpp
     src/networking/servernetworkingsystem.hpp
 
-    src/rendering/chunkgeneratorqueue.hpp
-    src/rendering/debugrenderer.hpp
-    src/rendering/renderingmessages.hpp
-    src/rendering/billboard.hpp
-    src/rendering/camera.hpp
-    src/rendering/frustum.hpp
-    src/rendering/mesh.hpp
-    src/rendering/meshwalker.hpp
-    src/rendering/renderer.hpp
-    src/rendering/shader.hpp
-    src/rendering/shaderprogram.hpp
-    src/rendering/surfacemerger.hpp
-    src/rendering/texture.hpp
-    src/rendering/vbo.hpp
-    src/rendering/vbocreator.hpp
+    #src/rendering/chunkgeneratorqueue.hpp
+    #src/rendering/debugrenderer.hpp
+    #src/rendering/renderingmessages.hpp
+    #src/rendering/billboard.hpp
+    #src/rendering/camera.hpp
+    #src/rendering/frustum.hpp
+    #src/rendering/mesh.hpp
+    #src/rendering/meshwalker.hpp
+    #src/rendering/renderer.hpp
+    #src/rendering/shader.hpp
+    #src/rendering/shaderprogram.hpp
+    #src/rendering/surfacemerger.hpp
+    #src/rendering/texture.hpp
+    #src/rendering/vbo.hpp
+    #src/rendering/vbocreator.hpp
     src/rendering/gl_core_3_2.h
     src/rendering/opengl.hpp
     src/rendering/new/buffer.hpp
@@ -207,7 +210,10 @@ set(header_files
     src/rendering/new/renderer.hpp
     src/rendering/new/renderingsystem.hpp
     src/rendering/new/rendermodule.hpp
+    src/rendering/new/shader.hpp
+    src/rendering/new/uniform.hpp
     src/rendering/new/vao.hpp
+    src/rendering/new/vertexattribute.hpp
     
     src/utilities/coordinateconverter.hpp
     src/utilities/directorycreator.hpp
@@ -283,7 +289,7 @@ set(header_files
     src/world/generation/chunkgenerator.hpp
 )
 
-find_package(Featherkit REQUIRED COMPONENTS entity rendering structure ui sdl2 util)
+find_package(Featherkit REQUIRED COMPONENTS entity structure ui sdl2 util rendering)
 find_package(GLM)
 find_package(SDL2)
 find_package(OpenGL REQUIRED)

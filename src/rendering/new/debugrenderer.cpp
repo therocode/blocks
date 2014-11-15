@@ -19,77 +19,31 @@ DebugRenderer::DebugRenderer()
 
     mVertexBuffer.setData(vertices);
 
-    vertexShader = glCreateShader(GL_VERTEX_SHADER);
-// in_Position was bound to attribute index 0(\"shaderAttribute\")
-    std::string vertexSource = "#version 150\r\
-        in  vec3 in_Position; \
-      \
-    void main() \
-    {\
-            gl_Position = vec4(in_Position.x, in_Position.y, in_Position.z, 1.0);\
-    }";
+    std::string vertexSource = R"(
+#version 150
+attribute vec3 in_position;
 
-    const GLchar* ptr = vertexSource.data();
+void main()
+{
+    gl_Position = vec4(in_position.x, in_position.y, in_position.z, 1.0);
+})";
 
-    glShaderSource(vertexShader, 1, (const GLchar**)&ptr, 0);
+    std::string fragmentSource = R"(
+#version 150
+precision highp float;
 
-    glCompileShader(vertexShader);
+out vec4 fragColor;
 
-    GLint success = 0;
-    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-    if(success == GL_FALSE)
-    {
-        std::cout << "vertex shader failed compilation\n";
-    }
+void main()
+{
+    fragColor = vec4(1.0,1.0,1.0,1.0);
+})";
 
-    fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-   
-    std::string fragmentSource = "#version 150\rprecision highp float;\
-         \
-        out vec4 fragColor;\
-     \
-    void main()\
-    { \
-            fragColor = vec4(1.0,1.0,1.0,1.0);\
-    }";
+    mShader.setSource(vertexSource, fragmentSource);
+    mShader.compile();
 
-    ptr = fragmentSource.data();
-    glShaderSource(fragmentShader, 1, (const GLchar**)&ptr, 0);
+    mShader.setVertexAttribute("in_position", 3, 0);
 
-    glCompileShader(fragmentShader);
-
-    glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-    if(success == GL_FALSE)
-    {
-        std::cout << "fragment shader failed compilation\n";
-    }
-
-    shaderProgram = glCreateProgram();
-
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragmentShader);
-
-    /* Specify that our coordinate data is going into attribute index 0(shaderAttribute), and contains three floats per vertex */
-    GLuint shaderAttribute = 0;
-    glBindAttribLocation(shaderProgram, shaderAttribute, "in_Position");
-
-    glLinkProgram(shaderProgram);
-
-    glUseProgram(shaderProgram);
-     
-    /* Enable attribute index 0(shaderAttribute) as being used */
-    glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer.getId());
-
-    glEnableVertexAttribArray(shaderAttribute);
-
-    glVertexAttribPointer(shaderAttribute, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-
-    GLint isLinked = 0;
-    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &isLinked);
-
-    if(isLinked == GL_FALSE)
-        std::cout << "not linked\n";
     std::cout << "error: " << gluErrorString(glGetError()) << "\n";
 }
 
@@ -99,6 +53,7 @@ void DebugRenderer::queue(const Renderable& renderable)
 
 void DebugRenderer::render()
 {
+    mShader.activate();
     mVertexArray.bind();
     mVertexBuffer.bind();
     glDrawArrays(GL_TRIANGLES, 0, 3);

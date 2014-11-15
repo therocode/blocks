@@ -4,6 +4,7 @@
 #include "../opengl.hpp"
 #include "vao.hpp"
 #include "buffer.hpp"
+#include "shader.hpp"
 
 class DebugRenderer : public RenderModule
 {
@@ -15,6 +16,7 @@ class DebugRenderer : public RenderModule
     private:
         VAO mVertexArray;
         Buffer mVertexBuffer;
+        Shader mShader;
 
         GLuint shaderProgram;
         GLuint vertexShader, fragmentShader;
