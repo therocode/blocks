@@ -17,8 +17,13 @@ class DebugRenderer : public RenderModule
         VAO mVertexArray;
         Buffer mVertexBuffer;
         Buffer mOffsetBuffer;
+        Buffer mColorBuffer;
         Shader mShader;
 
         GLuint shaderProgram;
         GLuint vertexShader, fragmentShader;
+
+        //frame data
+        std::vector<float> mPositionData;
+        std::vector<float> mColorData;
 };
