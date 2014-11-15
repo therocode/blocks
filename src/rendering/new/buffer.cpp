@@ -18,7 +18,7 @@ GLuint Buffer::getId() const
     return mBufferId;
 }
 
-void Buffer::bind()
+void Buffer::bind() const
 {
     glBindBuffer(GL_ARRAY_BUFFER, mBufferId);
 }

@@ -77,7 +77,7 @@ set(source_files
     #src/rendering/texture.cpp
     #src/rendering/vbo.cpp
     #src/rendering/vbocreator.cpp
-    src/rendering/gl_core_3_2.c
+    src/rendering/gl_core_3_3.c
     src/rendering/new/buffer.cpp
     src/rendering/new/debugrenderable.cpp
     src/rendering/new/debugrenderer.cpp
@@ -200,7 +200,7 @@ set(header_files
     #src/rendering/texture.hpp
     #src/rendering/vbo.hpp
     #src/rendering/vbocreator.hpp
-    src/rendering/gl_core_3_2.h
+    src/rendering/gl_core_3_3.h
     src/rendering/opengl.hpp
     src/rendering/new/buffer.hpp
     src/rendering/new/debugrenderable.hpp

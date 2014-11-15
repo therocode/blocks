@@ -4,6 +4,6 @@
 
 GLContext::GLContext()
 {
-    auto glStatus = blocksogl_LoadFunctions();
-    FEA_ASSERT(glStatus != blocksogl_LOAD_FAILED, "Could not initialize gl! Make sure there is a valid OpenGL context!");
+    auto glStatus = ogl_LoadFunctions();
+    FEA_ASSERT(glStatus != ogl_LOAD_FAILED, "Could not initialize gl! Make sure there is a valid OpenGL context!");
 }

@@ -16,6 +16,7 @@ class DebugRenderer : public RenderModule
     private:
         VAO mVertexArray;
         Buffer mVertexBuffer;
+        Buffer mOffsetBuffer;
         Shader mShader;
 
         GLuint shaderProgram;

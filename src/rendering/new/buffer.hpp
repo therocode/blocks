@@ -10,7 +10,7 @@ class Buffer
         Buffer(const Buffer&) = delete;
         Buffer& operator=(const Buffer&) = delete;
         GLuint getId() const;
-        void bind();
+        void bind() const;
         void setData(const std::vector<float>& data);
     private:
         GLuint mBufferId;

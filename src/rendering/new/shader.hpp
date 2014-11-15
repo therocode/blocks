@@ -1,6 +1,7 @@
 #pragma once
 #include "uniform.hpp"
 #include "vertexattribute.hpp"
+#include "buffer.hpp"
 #include <unordered_map>
 #include <vector>
 #include <string>
@@ -27,7 +28,11 @@ class Shader
         void deactivate() const;
         void setUniform(const std::string& name, UniformType type, const void* value) const;
         void setUniform(const std::string& name, UniformType type, int32_t count, const void* value) const;
+        GLint getUniform(const std::string& name) const;
         void setVertexAttribute(const std::string& name, const uint32_t floatAmount, const float* data) const;
+        void setVertexAttribute(const std::string& name, const uint32_t floatAmount, const Buffer& dataBuffer) const;
+        void setInstanceAttribute(const std::string& name, const uint32_t floatAmount, const Buffer& dataBuffer, uint32_t divisor) const;
+        GLint getVertexAttribute(const std::string& name) const;
         void compile();
     private:
         GLuint mProgramId;
