@@ -5,12 +5,15 @@
 #include "../renderingmessages.hpp"
 #include "../../networking/networkingprotocol.hpp"
 
-class RenderingSystem : public fea::MessageReceiver<RotateGfxEntityMessage,
-                                                    ClientAttachedToEntityMessage>
+class RenderingSystem :
+    public fea::MessageReceiver<RotateGfxEntityMessage,
+                                MoveGfxEntityMessage,
+                                ClientAttachedToEntityMessage>
 {
     public:
         RenderingSystem(fea::MessageBus& bus);
         void handleMessage(const RotateGfxEntityMessage& received) override;
+        void handleMessage(const MoveGfxEntityMessage& received) override;
         void handleMessage(const ClientAttachedToEntityMessage& received) override;
         void render();
     private:

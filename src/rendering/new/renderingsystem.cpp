@@ -22,6 +22,17 @@ void RenderingSystem::handleMessage(const RotateGfxEntityMessage& received)
     }
 }
 
+void RenderingSystem::handleMessage(const MoveGfxEntityMessage& received)
+{
+    size_t id = received.id;
+    const glm::vec3& position = received.position;
+
+    if(id == mCameraEntity)
+    {
+        mRenderer.getCamera().setPosition(position);
+    }
+}
+
 void RenderingSystem::handleMessage(const ClientAttachedToEntityMessage& received)
 {
     mCameraEntity = received.entityId;
@@ -33,13 +44,13 @@ void RenderingSystem::render()
     DebugRenderable debug2;
     DebugRenderable debug3;
 
-    debug.setPosition({0.0f, 0.0f, 0.0f});
+    debug.setPosition({0.0f, -43.0f, 0.0f});
     debug.setColor({1.0f, 0.0f, 0.4f});
 
-    debug2.setPosition({0.3f, 0.0f, 0.0f});
+    debug2.setPosition({0.3f, -43.0f, 0.0f});
     debug2.setColor({0.0f, 1.0f, 0.4f});
 
-    debug3.setPosition({0.6f, 0.0f, 0.0f});
+    debug3.setPosition({0.6f, -43.0f, 0.0f});
     debug3.setColor({0.4f, 0.0f, 1.0f});
 
     mRenderer.queue(debug);
