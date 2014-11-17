@@ -1,5 +1,10 @@
 #include "debugrenderable.hpp"
 
+DebugRenderable::DebugRenderable() : 
+    mColor(1.0f, 1.0f, 1.0f)
+{
+}
+
 std::type_index DebugRenderable::getType() const
 {
     return std::type_index(typeid(DebugRenderable));

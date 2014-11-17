@@ -8,6 +8,20 @@ RenderingSystem::RenderingSystem(fea::MessageBus& bus) :
 {
     subscribe(bus, *this);
     mRenderer.addModule(std::unique_ptr<DebugRenderer>(new DebugRenderer()));
+
+    for(uint32_t x = 0; x < 50; x++)
+    {
+        for(uint32_t y = 0; y < 50; y++)
+        {
+            for(uint32_t z = 0; z < 50; z++)
+            {
+                DebugRenderable newDeb;
+                newDeb.setPosition(glm::vec3(x * 5, y * 5, z * 5) + glm::vec3(0.3f, -43.0f, 0.0f));
+                newDeb.setColor(glm::vec3(0.02f, 0.02f, 0.02f) * glm::vec3(x, y, z));
+                mDebuggers.push_back(newDeb);
+            }
+        }
+    }
 }
 
 void RenderingSystem::handleMessage(const RotateGfxEntityMessage& received)
@@ -40,21 +54,8 @@ void RenderingSystem::handleMessage(const ClientAttachedToEntityMessage& receive
 
 void RenderingSystem::render()
 {
-    DebugRenderable debug;
-    DebugRenderable debug2;
-    DebugRenderable debug3;
+    for(const auto& debbie : mDebuggers)
+        mRenderer.queue(debbie);
 
-    debug.setPosition({0.0f, -43.0f, 0.0f});
-    debug.setColor({1.0f, 0.0f, 0.4f});
-
-    debug2.setPosition({0.3f, -43.0f, 0.0f});
-    debug2.setColor({0.0f, 1.0f, 0.4f});
-
-    debug3.setPosition({0.6f, -43.0f, 0.0f});
-    debug3.setColor({0.4f, 0.0f, 1.0f});
-
-    mRenderer.queue(debug);
-    mRenderer.queue(debug2);
-    mRenderer.queue(debug3);
     mRenderer.render();
 }

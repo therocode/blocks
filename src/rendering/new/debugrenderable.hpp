@@ -5,6 +5,7 @@
 class DebugRenderable : public Renderable
 {
     public:
+        DebugRenderable();
         virtual std::type_index getType() const;
         void setPosition(const glm::vec3& position);
         const glm::vec3& getPosition() const;

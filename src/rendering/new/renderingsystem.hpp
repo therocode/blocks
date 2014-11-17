@@ -4,6 +4,7 @@
 #include "glcontext.hpp"
 #include "../renderingmessages.hpp"
 #include "../../networking/networkingprotocol.hpp"
+#include "debugrenderable.hpp"
 
 class RenderingSystem :
     public fea::MessageReceiver<RotateGfxEntityMessage,
@@ -21,4 +22,6 @@ class RenderingSystem :
         GLContext mGLContext;
         Renderer mRenderer;
         uint32_t mCameraEntity;
+
+        std::vector<DebugRenderable> mDebuggers;
 };
