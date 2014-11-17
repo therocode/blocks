@@ -20,8 +20,10 @@ class Renderer
         const Camera& getCamera() const;
         Camera& getCamera();
         void setCamera(const Camera& camera);
+        void setViewSize(const glm::uvec2& size);
     private:
         std::unordered_set<std::unique_ptr<RenderModule>> mModules;
         std::unordered_map<std::type_index, std::vector<RenderModule*>> mModuleSubscriptions;
         Camera mCamera;
+        glm::mat4 mPerspective;
 };

@@ -52,6 +52,14 @@ void RenderingSystem::handleMessage(const ClientAttachedToEntityMessage& receive
     mCameraEntity = received.entityId;
 }
 
+void RenderingSystem::handleMessage(const WindowResizeMessage& received)
+{
+	uint32_t width = received.width;
+	uint32_t height = received.height;
+
+    mRenderer.setViewSize({width, height});
+}
+
 void RenderingSystem::render()
 {
     for(const auto& debbie : mDebuggers)

@@ -74,7 +74,7 @@ void DebugRenderer::queue(const Renderable& renderable)
     mColorData.push_back(color.z);
 }
 
-void DebugRenderer::render(const Camera& camera)
+void DebugRenderer::render(const Camera& camera, const glm::mat4& perspective)
 {
     uint32_t renderAmount = mModelMatrixData1.size() / 4;
     mModelMatrixBuffer1.setData(mModelMatrixData1);
@@ -95,7 +95,7 @@ void DebugRenderer::render(const Camera& camera)
     mShader.setInstanceAttribute("modelMatrix4", 4, mModelMatrixBuffer4, 1);
     mShader.setInstanceAttribute("color", 3, mColorBuffer, 1);
 
-    mShader.setUniform("viewProjectionMatrix", MAT4X4, glm::value_ptr(glm::perspective(glm::radians(80.0f), 800.0f/600.0f, 0.1f, 100.0f) * camera.getMatrix()));
+    mShader.setUniform("viewProjectionMatrix", MAT4X4, glm::value_ptr(perspective * camera.getMatrix()));
 
     mShader.activate();
 

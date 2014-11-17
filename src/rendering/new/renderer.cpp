@@ -31,7 +31,7 @@ void Renderer::render()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     for(auto& module : mModules)
-        module->render(mCamera);
+        module->render(mCamera, mPerspective);
 }
 
 const Camera& Renderer::getCamera() const
@@ -47,4 +47,11 @@ Camera& Renderer::getCamera()
 void Renderer::setCamera(const Camera& camera)
 {
     mCamera = camera;
+}
+
+void Renderer::setViewSize(const glm::uvec2& size)
+{
+	glViewport(0, 0, size.x, size.y);
+
+    mPerspective = glm::perspective(90.0f, (float)size.x / (float)size.y, 0.1f, 100.0f);
 }

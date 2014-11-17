@@ -11,7 +11,7 @@ class DebugRenderer : public RenderModule
     public:
         DebugRenderer();
         void queue(const Renderable& renderable) override;
-        void render(const Camera& camera) override;
+        void render(const Camera& camera, const glm::mat4& perspective) override;
         std::type_index getRenderableType() const override;
     private:
         VAO mVertexArray;
