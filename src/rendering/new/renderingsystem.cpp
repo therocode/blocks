@@ -6,7 +6,25 @@ RenderingSystem::RenderingSystem(fea::MessageBus& bus) :
     mRenderer(mGLContext)
 
 {
+    subscribe(bus, *this);
     mRenderer.addModule(std::unique_ptr<DebugRenderer>(new DebugRenderer()));
+}
+
+void RenderingSystem::handleMessage(const RotateGfxEntityMessage& received)
+{
+    size_t id = received.id;
+    float pitch = received.pitch;
+    float yaw = received.yaw;
+
+    if(id == mCameraEntity)
+    {
+        mRenderer.getCamera().setPitchYaw(pitch, yaw);
+    }
+}
+
+void RenderingSystem::handleMessage(const ClientAttachedToEntityMessage& received)
+{
+    mCameraEntity = received.entityId;
 }
 
 void RenderingSystem::render()

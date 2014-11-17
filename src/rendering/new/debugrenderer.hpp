@@ -10,9 +10,9 @@ class DebugRenderer : public RenderModule
 {
     public:
         DebugRenderer();
-        virtual void queue(const Renderable& renderable);
-        virtual void render();
-        virtual std::type_index getRenderableType() const;
+        void queue(const Renderable& renderable) override;
+        void render(const Camera& camera) override;
+        std::type_index getRenderableType() const override;
     private:
         VAO mVertexArray;
         Buffer mVertexBuffer;

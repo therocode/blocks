@@ -31,5 +31,20 @@ void Renderer::render()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     for(auto& module : mModules)
-        module->render();
+        module->render(mCamera);
+}
+
+const Camera& Renderer::getCamera() const
+{
+    return mCamera;
+}
+
+Camera& Renderer::getCamera()
+{
+    return mCamera;
+}
+
+void Renderer::setCamera(const Camera& camera)
+{
+    mCamera = camera;
 }

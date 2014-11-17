@@ -1,4 +1,5 @@
 #include "debugrenderer.hpp"
+#include "camera.hpp"
 #include <vector>
 #include <string>
 #include <iostream>
@@ -8,6 +9,8 @@ DebugRenderer::DebugRenderer()
     std::string vertexSource = R"(
 #version 150
 
+uniform mat4 viewMatrix;
+
 attribute vec3 in_position;
 attribute vec3 offset;
 attribute vec3 color;
@@ -16,7 +19,7 @@ out vec3 objectColor;
 
 void main()
 {
-    gl_Position = vec4(vec3(in_position.x, in_position.y, in_position.z) + offset, 1.0);
+    gl_Position = vec4(vec3(in_position.x, in_position.y, in_position.z) + offset, 1.0) * viewMatrix;
     objectColor = color;
 })";
 
@@ -61,7 +64,7 @@ void DebugRenderer::queue(const Renderable& renderable)
     mColorData.push_back(color.z);
 }
 
-void DebugRenderer::render()
+void DebugRenderer::render(const Camera& camera)
 {
     uint32_t renderAmount = mPositionData.size() / 3;
     mOffsetBuffer.setData(mPositionData);
@@ -72,6 +75,8 @@ void DebugRenderer::render()
 
     mShader.setInstanceAttribute("offset", 3, mOffsetBuffer, 1);
     mShader.setInstanceAttribute("color", 3, mColorBuffer, 1);
+
+    mShader.setUniform("viewMatrix", MAT4X4, glm::value_ptr(camera.getMatrix()));
 
     mShader.activate();
 
