@@ -4,7 +4,8 @@
 #include <string>
 #include <iostream>
 
-DebugRenderer::DebugRenderer()
+DebugRenderer::DebugRenderer() :
+    mRenderAmount(0)
 {
     std::string vertexSource = R"(
 #version 150
@@ -43,9 +44,60 @@ void main()
     mShader.compile();
 
     std::vector<float> vertices = {
-             -1.0f, -1.0f, -2.0f,
-            1.0f, -1.0f, -2.0f,
-               0.0f,  1.0f, -2.0f,
+             -0.5f, -0.5f,  0.5f,
+              0.5f, -0.5f,  0.5f,
+             -0.5f,  0.5f,  0.5f,
+
+             -0.5f,  0.5f,  0.5f,
+              0.5f, -0.5f,  0.5f,
+              0.5f,  0.5f,  0.5f,
+
+
+             -0.5f, -0.5f, -0.5f,
+             -0.5f,  0.5f, -0.5f,
+              0.5f, -0.5f, -0.5f,
+
+             -0.5f,  0.5f, -0.5f,
+              0.5f,  0.5f, -0.5f,
+              0.5f, -0.5f, -0.5f,
+
+
+
+             -0.5f, -0.5f,  0.5f,
+             -0.5f,  0.5f,  0.5f,
+             -0.5f, -0.5f, -0.5f,
+
+             -0.5f, -0.5f, -0.5f,
+             -0.5f,  0.5f,  0.5f,
+             -0.5f,  0.5f, -0.5f,
+
+
+              0.5f, -0.5f,  0.5f,
+              0.5f, -0.5f, -0.5f,
+              0.5f,  0.5f,  0.5f,
+
+              0.5f, -0.5f, -0.5f,
+              0.5f,  0.5f, -0.5f,
+              0.5f,  0.5f,  0.5f,
+
+
+
+             -0.5f,  0.5f,  0.5f,
+              0.5f,  0.5f,  0.5f,
+             -0.5f,  0.5f, -0.5f,
+
+              0.5f,  0.5f,  0.5f,
+              0.5f,  0.5f, -0.5f,
+             -0.5f,  0.5f, -0.5f,
+
+
+             -0.5f, -0.5f,  0.5f,
+             -0.5f, -0.5f, -0.5f,
+              0.5f, -0.5f,  0.5f,
+
+              0.5f, -0.5f,  0.5f,
+             -0.5f, -0.5f, -0.5f,
+              0.5f, -0.5f, -0.5f,
     };
 
     mVertexArray.bind();
@@ -72,11 +124,12 @@ void DebugRenderer::queue(const Renderable& renderable)
     mColorData.push_back(color.x);
     mColorData.push_back(color.y);
     mColorData.push_back(color.z);
+
+    mRenderAmount++;
 }
 
 void DebugRenderer::render(const Camera& camera, const glm::mat4& perspective)
 {
-    uint32_t renderAmount = mModelMatrixData1.size() / 4;
     mModelMatrixBuffer1.setData(mModelMatrixData1);
     mModelMatrixBuffer2.setData(mModelMatrixData2);
     mModelMatrixBuffer3.setData(mModelMatrixData3);
@@ -99,7 +152,8 @@ void DebugRenderer::render(const Camera& camera, const glm::mat4& perspective)
 
     mShader.activate();
 
-    glDrawArraysInstanced(GL_TRIANGLES, 0, 3, renderAmount);
+    glDrawArraysInstanced(GL_TRIANGLES, 0, 36, mRenderAmount);
+    mRenderAmount = 0;
 }
 
 std::type_index DebugRenderer::getRenderableType() const

@@ -32,4 +32,6 @@ class DebugRenderer : public RenderModule
         std::vector<float> mModelMatrixData3;
         std::vector<float> mModelMatrixData4;
         std::vector<float> mColorData;
+
+        uint32_t mRenderAmount;
 };

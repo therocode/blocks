@@ -6,6 +6,7 @@ Renderer::Renderer(const GLContext& glContext)
 {
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
+    glEnable(GL_CULL_FACE);
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
 }
@@ -53,5 +54,5 @@ void Renderer::setViewSize(const glm::uvec2& size)
 {
 	glViewport(0, 0, size.x, size.y);
 
-    mPerspective = glm::perspective(90.0f, (float)size.x / (float)size.y, 0.1f, 100.0f);
+    mPerspective = glm::perspective(glm::radians(90.0f), (float)size.x / (float)size.y, 0.1f, 100.0f);
 }
