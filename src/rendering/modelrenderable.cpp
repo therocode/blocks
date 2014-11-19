@@ -1,7 +1,8 @@
 #include "modelrenderable.hpp"
 
 ModelRenderable::ModelRenderable() : 
-    mColor(1.0f, 1.0f, 1.0f)
+    mColor(1.0f, 1.0f, 1.0f),
+    mModel(nullptr)
 {
 }
 
@@ -28,4 +29,14 @@ void ModelRenderable::setColor(const glm::vec3& color)
 const glm::vec3& ModelRenderable::getColor() const
 {
     return mColor;
+}
+
+void ModelRenderable::setModel(const Model& model)
+{
+    mModel = &model;
+}
+
+const Model* ModelRenderable::findModel() const
+{
+    return mModel;
 }

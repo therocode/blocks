@@ -71,7 +71,9 @@ set(source_files
     src/rendering/frustum.cpp
     src/rendering/gl_core_3_3.c
     src/rendering/glcontext.cpp
+    src/rendering/mesh.cpp
     src/rendering/meshwalker.cpp
+    src/rendering/model.cpp
     src/rendering/modelrenderer.cpp
     src/rendering/modelrenderable.cpp
     src/rendering/renderable.cpp
@@ -186,7 +188,9 @@ set(header_files
     src/rendering/frustum.hpp
     src/rendering/gl_core_3_3.h
     src/rendering/glcontext.hpp
+    src/rendering/mesh.hpp
     src/rendering/meshwalker.hpp
+    src/rendering/model.hpp
     src/rendering/modelrenderer.hpp
     src/rendering/modelrenderable.hpp
     src/rendering/opengl.hpp

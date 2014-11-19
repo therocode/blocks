@@ -2,6 +2,8 @@
 #include "renderable.hpp"
 #include "../utilities/glm.hpp"
 
+class Model;
+
 class ModelRenderable : public Renderable
 {
     public:
@@ -11,7 +13,10 @@ class ModelRenderable : public Renderable
         const glm::vec3& getPosition() const;
         void setColor(const glm::vec3& color);
         const glm::vec3& getColor() const;
+        void setModel(const Model& model);
+        const Model* findModel() const;
     private:
         glm::vec3 mPosition;
         glm::vec3 mColor;
+        const Model* mModel;
 };
