@@ -32,7 +32,12 @@ void Renderer::render()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     for(auto& module : mModules)
+    {
+        mRenderMode.activate();
         module->render(mCamera, mPerspective);
+    }
+
+    mRenderMode.deactivate();
 }
 
 const Camera& Renderer::getCamera() const
@@ -55,4 +60,19 @@ void Renderer::setViewSize(const glm::uvec2& size)
 	glViewport(0, 0, size.x, size.y);
 
     mPerspective = glm::perspective(glm::radians(90.0f), (float)size.x / (float)size.y, 0.1f, 100.0f);
+}
+
+const RenderMode& Renderer::getRenderMode() const
+{
+    return mRenderMode;
+}
+
+RenderMode& Renderer::getRenderMode()
+{
+    return mRenderMode;
+}
+
+void Renderer::setRenderMode(const RenderMode& renderMode)
+{
+    mRenderMode = renderMode;
 }

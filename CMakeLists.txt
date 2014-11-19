@@ -76,6 +76,7 @@ set(source_files
     src/rendering/renderer.cpp
     src/rendering/renderingsystem.cpp
     src/rendering/rendermodule.cpp
+    src/rendering/rendermode.cpp
     src/rendering/shader.cpp
     src/rendering/surfacemerger.cpp
     src/rendering/uniform.cpp
@@ -190,6 +191,7 @@ set(header_files
     src/rendering/renderingmessages.hpp
     src/rendering/renderingsystem.hpp
     src/rendering/rendermodule.hpp
+    src/rendering/rendermode.hpp
     src/rendering/shader.hpp
     src/rendering/surfacemerger.hpp
     src/rendering/uniform.hpp

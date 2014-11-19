@@ -22,6 +22,8 @@ RenderingSystem::RenderingSystem(fea::MessageBus& bus) :
             }
         }
     }
+
+    mRenderer.getRenderMode().setPolygonMode(LINE);
 }
 
 void RenderingSystem::handleMessage(const RotateGfxEntityMessage& received)
