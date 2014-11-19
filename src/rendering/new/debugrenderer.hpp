@@ -34,4 +34,9 @@ class DebugRenderer : public RenderModule
         std::vector<float> mColorData;
 
         uint32_t mRenderAmount;
+
+        std::vector<float> data1;
+        std::vector<float> data2;
+        std::vector<float> data3;
+        std::vector<float> data4;
 };

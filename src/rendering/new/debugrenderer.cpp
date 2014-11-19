@@ -2,7 +2,6 @@
 #include "camera.hpp"
 #include <vector>
 #include <string>
-#include <iostream>
 
 DebugRenderer::DebugRenderer() :
     mRenderAmount(0)
@@ -103,6 +102,11 @@ void main()
     mVertexArray.bind();
     mVertexBuffer.setData(vertices);
     mShader.setVertexAttribute("in_position", 3, mVertexBuffer);
+
+    data1 = { 1.0f, 0.0f, 0.0f, 0.0f };
+    data2 = { 0.0f, 1.0f, 0.0f, 0.0f };
+    data3 = { 0.0f, 0.0f, 1.0f, 0.0f };
+    data4 = { 0.0f, 0.0f, 0.0f, 1.0f };
 }
 
 void DebugRenderer::queue(const Renderable& renderable)
@@ -112,10 +116,9 @@ void DebugRenderer::queue(const Renderable& renderable)
     const glm::vec3& position = debugRenderable.getPosition();
     const glm::vec3& color = debugRenderable.getColor();
 
-    std::vector<float> data1 = { 1.0f, 0.0f, 0.0f, 0.0f };
-    std::vector<float> data2 = { 0.0f, 1.0f, 0.0f, 0.0f };
-    std::vector<float> data3 = { 0.0f, 0.0f, 1.0f, 0.0f };
-    std::vector<float> data4 = { position.x, position.y, position.z , 1.0f };
+    data4[0] = position.x;
+    data4[1] = position.y;
+    data4[2] = position.z;
 
     mModelMatrixData1.insert(mModelMatrixData1.end(), data1.begin(), data1.end());
     mModelMatrixData2.insert(mModelMatrixData2.end(), data2.begin(), data2.end());
