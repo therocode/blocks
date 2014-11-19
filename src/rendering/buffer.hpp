@@ -1,6 +1,6 @@
 #pragma once
 #include <vector>
-#include "../opengl.hpp"
+#include "opengl.hpp"
 
 class Buffer
 {

@@ -1,80 +1,80 @@
 #include "camera.hpp"
-Camera::Camera()
+Camera::Camera()  :
+    mDirection(glm::vec3(0.0f, 0.0f, -1.0f))
 {
-	position[0]=position[1]=position[2]=0;
-	direction[0]=direction[1]=0;
-	direction[2]=-1.f;
-	phi=glm::pi<float>()*0.5f;
-	theta=glm::pi<float>()*0.5f;
-	upDirection[0]=0;
-	upDirection[1]=1.f;
-	upDirection[2]=0.0f;
-	AddDirection(0.f,0.f);
+	mUpDirection[0]=0;
+	mUpDirection[1]=1.f;
+	mUpDirection[2]=0.0f;
+
+    update();
 }
 Camera::~Camera()
 {
 
 }
-glm::vec3 Camera::GetPosition()
+const glm::vec3& Camera::getPosition() const
 {
-	return position;
+	return mPosition;
 }
-glm::vec3 Camera::GetDirection(){
-	return direction;
+const glm::vec3& Camera::getDirection() const
+{
+	return mDirection;
 }
 
-void Camera::MoveForward(float speed)
+void Camera::moveForward(float speed)
 {
-	glm::vec3 p = position;
-	glm::vec3 dd = direction;
-#if 1 
+	glm::vec3 p = mPosition;
+	glm::vec3 dd = mDirection;
 	dd.y = 0.f;
 	if(glm::length2(dd) != 0)
 	dd = glm::normalize(dd);
-#endif
-	position = p + dd*speed;
-// 	Update();
+	mPosition = p + dd*speed;
+ 	update();
 }
-void Camera::Strafe(float speed)
+void Camera::strafe(float speed)
 {
-	glm::vec3 v=direction;
+	glm::vec3 v=mDirection;
 	v.y = 0;
-	v.x = -direction.z;
-	v.z = direction.x;
+	v.x = -mDirection.z;
+	v.z = mDirection.x;
 	if(glm::length2(v) != 0)
 	v  = glm::normalize(v);
 	v*=speed;
-	position+=v;
+	mPosition+=v;
+ 	update();
 }
 
-void Camera::SetDirection(glm::vec3 dir)
+void Camera::setDirection(const glm::vec3& dir)
 {
-	direction = dir;
-	if(glm::length2(direction) != 0)
-		direction = glm::normalize(direction);
-	theta = glm::acos(direction.y);
+	mDirection = dir;
+	if(glm::length2(mDirection) != 0)
+		mDirection = glm::normalize(mDirection);
+    update();
 }
-void Camera::SetPosition(glm::vec3 pos)
+void Camera::setPosition(const glm::vec3& pos)
 {
-	position=pos;
+	mPosition=pos;
+    update();
 }
-void Camera::AddPosition(glm::vec3 p)
+void Camera::addPosition(const glm::vec3& p)
 {
-	position+=p;
+	mPosition+=p;
+    update();
 }
 
-void Camera::SetUpDir(glm::vec3 upDir)
+void Camera::setUpDir(const glm::vec3& upDir)
 {
 	if(glm::length2(upDir) != 0)
-		upDirection=glm::normalize(upDir);
+		mUpDirection=glm::normalize(upDir);
 	else 
-		upDirection = upDir;
+		mUpDirection = upDir;
+    update();
 }
 
-void Camera::Update()
+void Camera::update()
 {
 
-	/*float x = position.x, y = position.y, z = position.z;
+	/*float x = mPosition.x, y = mPosition.y, z = mPosition.z;
 	matrix = glm::mat4();
 	
 	float	ax, ay, az;
@@ -82,9 +82,9 @@ void Camera::Update()
 	float	cx, cy, cz;
 	float	r;
 	
-	cx = -direction[0];
-	cy = -direction[1];
-	cz = -direction[2];
+	cx = -mDirection[0];
+	cy = -mDirection[1];
+	cz = -mDirection[2];
 	r = sqrt( cx * cx + cy * cy + cz * cz );
 	cx /= r;
 	cy /= r;
@@ -107,10 +107,10 @@ void Camera::Update()
 	by /= r;
 	bz /= r;
 	#else
-	r =  upDirection[0] * cx + upDirection[1] * cy + upDirection[2] * cz;
-	bx = upDirection[0] - r * cx;
-	by = upDirection[1] - r * cy;
-	bz = upDirection[2] - r * cz;
+	r =  mUpDirection[0] * cx + mUpDirection[1] * cy + mUpDirection[2] * cz;
+	bx = mUpDirection[0] - r * cx;
+	by = mUpDirection[1] - r * cy;
+	bz = mUpDirection[2] - r * cz;
 	r = sqrt( bx * bx + by * by + bz * bz );
 	bx /= r;
 	by /= r;
@@ -144,50 +144,30 @@ void Camera::Update()
 	matrix[0][ 1 ] = -( bx * x + by * y + bz * z );
 	matrix[0][ 2 ] = -( cx * x + cy * y + cz * z );
 	matrix[0][ 3 ] = 1.0f;*/
-	matrix = glm::lookAt(position, position + direction * 10.f, upDirection);
+	mMatrix = glm::lookAt(mPosition, mPosition + mDirection * 10.f, mUpDirection);
 
 }
 
-void Camera::LookAt(float eyeX, float eyeY, float eyeZ, float centerX, float centerY, float centerZ, float upX, float upY, float upZ)
+void Camera::lookAt(const glm::vec3& eye, const glm::vec3& center, const glm::vec3& up)
 {
-	SetPosition(glm::vec3(eyeX,eyeY,eyeZ));
-	SetDirection(glm::vec3(centerX-eyeX,centerY-eyeY,centerZ-eyeZ));
-	SetUpDir(glm::vec3(upX,upY,upZ));
-	Update();
-}
-void Camera::AddDirection(float x, float y)
-{
-	phi   +=x;
-	theta +=y;
-	
-	if(theta >= glm::pi<float>() * 0.5f)
-		theta = glm::pi<float>() * 0.5f - 0.001f;
-	if(theta <= -glm::pi<float>() * 0.5f)
-		theta = -glm::pi<float>() * 0.5f + 0.001f;
-		
-	float fSinTheta = glm::sin(theta);
-	float fCosTheta = glm::cos(theta);
-	float fCosPhi = glm::cos(-phi);
-	float fSinPhi = glm::sin(-phi);
-	
-	direction.x = (fCosTheta*fSinPhi);
-	direction.y = (fSinTheta);
-	direction.z = (fCosTheta*fCosPhi);
-	if(glm::length2(direction) != 0)
-	direction = glm::normalize(direction);
-	Update();
+	setPosition(eye);
+	setDirection(center - eye);
+	setUpDir(up);
+	update();
 }
 
-void Camera::SetPitchYaw(float pitch, float yaw)
+void Camera::setPitchYaw(float pitch, float yaw)
 {
-	//phi	 =0.001;
-	//theta=0.001;
 	if(pitch >= glm::pi<float>() * 0.5f)
 		pitch = glm::pi<float>() * 0.5f - 0.001f;
 	if(pitch <= -glm::pi<float>() * 0.5f)
 		pitch = -glm::pi<float>() * 0.5f + 0.001f;
 		
-	SetDirection(glm::vec3(glm::cos(pitch)*glm::sin(yaw), glm::sin(pitch), glm::cos(pitch) * glm::cos(yaw)));
-	//AddDirection(pitch, yaw);
-	//printf("direction2:%f, %f, %f\n---\n", pitch, yaw,0);//s direction.z);
+	setDirection(glm::vec3(glm::cos(pitch)*glm::sin(yaw), glm::sin(pitch), glm::cos(pitch) * glm::cos(yaw)));
+    update();
+}
+
+const glm::mat4& Camera::getMatrix() const
+{
+    return mMatrix;
 }

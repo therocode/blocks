@@ -2,9 +2,9 @@
 #include <fea/util.hpp>
 #include "renderer.hpp"
 #include "glcontext.hpp"
-#include "../renderingmessages.hpp"
-#include "../../networking/networkingprotocol.hpp"
-#include "../../input/inputmessages.hpp"
+#include "renderingmessages.hpp"
+#include "../networking/networkingprotocol.hpp"
+#include "../input/inputmessages.hpp"
 #include "debugrenderable.hpp"
 
 class RenderingSystem :

@@ -4,7 +4,7 @@
 #include <fea/ui/sdl2inputbackend.hpp>
 #include "../lognames.hpp"
 #include "../application/applicationmessages.hpp"
-#include "../rendering/new/renderingsystem.hpp"
+#include "../rendering/renderingsystem.hpp"
 #include "../input/inputadaptor.hpp"
 #include "../world/raycaster.hpp"
 

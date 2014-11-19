@@ -1,5 +1,5 @@
 #pragma once
-#include "../opengl.hpp"
+#include "opengl.hpp"
 
 class VAO
 {

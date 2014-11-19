@@ -1,5 +1,5 @@
 #include "glcontext.hpp"
-#include "../opengl.hpp"
+#include "opengl.hpp"
 #include <fea/assert.hpp>
 
 GLContext::GLContext()

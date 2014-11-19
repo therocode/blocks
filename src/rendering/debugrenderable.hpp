@@ -1,6 +1,6 @@
 #pragma once
 #include "renderable.hpp"
-#include "../../utilities/glm.hpp"
+#include "../utilities/glm.hpp"
 
 class DebugRenderable : public Renderable
 {

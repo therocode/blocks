@@ -64,33 +64,23 @@ set(source_files
     src/utilities/signalcatcher.cpp
     src/utilities/timer.cpp
 
-    #src/rendering/chunkgeneratorqueue.cpp
-    #src/rendering/debugrenderer.cpp
-    #src/rendering/billboard.cpp
-    #src/rendering/camera.cpp
-    #src/rendering/frustum.cpp
-    #src/rendering/meshwalker.cpp
-    #src/rendering/renderer.cpp
-    #src/rendering/shader.cpp
-    #src/rendering/shaderprogram.cpp
-    #src/rendering/surfacemerger.cpp
-    #src/rendering/texture.cpp
-    #src/rendering/vbo.cpp
-    #src/rendering/vbocreator.cpp
+    src/rendering/buffer.cpp
+    src/rendering/camera.cpp
+    src/rendering/debugrenderable.cpp
+    src/rendering/debugrenderer.cpp
+    src/rendering/frustum.cpp
     src/rendering/gl_core_3_3.c
-    src/rendering/new/buffer.cpp
-    src/rendering/new/camera.cpp
-    src/rendering/new/debugrenderable.cpp
-    src/rendering/new/debugrenderer.cpp
-    src/rendering/new/glcontext.cpp
-    src/rendering/new/renderable.cpp
-    src/rendering/new/renderer.cpp
-    src/rendering/new/renderingsystem.cpp
-    src/rendering/new/rendermodule.cpp
-    src/rendering/new/shader.cpp
-    src/rendering/new/uniform.cpp
-    src/rendering/new/vao.cpp
-    src/rendering/new/vertexattribute.cpp
+    src/rendering/glcontext.cpp
+    src/rendering/meshwalker.cpp
+    src/rendering/renderable.cpp
+    src/rendering/renderer.cpp
+    src/rendering/renderingsystem.cpp
+    src/rendering/rendermodule.cpp
+    src/rendering/shader.cpp
+    src/rendering/surfacemerger.cpp
+    src/rendering/uniform.cpp
+    src/rendering/vao.cpp
+    src/rendering/vertexattribute.cpp
 
     src/script/scriptcallback.cpp
     src/script/scriptchunk.cpp
@@ -186,36 +176,25 @@ set(header_files
     src/networking/networkingprotocol.hpp
     src/networking/servernetworkingsystem.hpp
 
-    #src/rendering/chunkgeneratorqueue.hpp
-    #src/rendering/debugrenderer.hpp
-    #src/rendering/renderingmessages.hpp
-    #src/rendering/billboard.hpp
-    #src/rendering/camera.hpp
-    #src/rendering/frustum.hpp
-    #src/rendering/mesh.hpp
-    #src/rendering/meshwalker.hpp
-    #src/rendering/renderer.hpp
-    #src/rendering/shader.hpp
-    #src/rendering/shaderprogram.hpp
-    #src/rendering/surfacemerger.hpp
-    #src/rendering/texture.hpp
-    #src/rendering/vbo.hpp
-    #src/rendering/vbocreator.hpp
+    src/rendering/buffer.hpp
+    src/rendering/camera.hpp
+    src/rendering/debugrenderable.hpp
+    src/rendering/debugrenderer.hpp
+    src/rendering/frustum.hpp
+    src/rendering/meshwalker.hpp
     src/rendering/gl_core_3_3.h
+    src/rendering/glcontext.hpp
     src/rendering/opengl.hpp
-    src/rendering/new/buffer.hpp
-    src/rendering/new/camera.hpp
-    src/rendering/new/debugrenderable.hpp
-    src/rendering/new/debugrenderer.hpp
-    src/rendering/new/glcontext.hpp
-    src/rendering/new/renderable.hpp
-    src/rendering/new/renderer.hpp
-    src/rendering/new/renderingsystem.hpp
-    src/rendering/new/rendermodule.hpp
-    src/rendering/new/shader.hpp
-    src/rendering/new/uniform.hpp
-    src/rendering/new/vao.hpp
-    src/rendering/new/vertexattribute.hpp
+    src/rendering/renderable.hpp
+    src/rendering/renderer.hpp
+    src/rendering/renderingmessages.hpp
+    src/rendering/renderingsystem.hpp
+    src/rendering/rendermodule.hpp
+    src/rendering/shader.hpp
+    src/rendering/surfacemerger.hpp
+    src/rendering/uniform.hpp
+    src/rendering/vao.hpp
+    src/rendering/vertexattribute.hpp
     
     src/utilities/coordinateconverter.hpp
     src/utilities/directorycreator.hpp

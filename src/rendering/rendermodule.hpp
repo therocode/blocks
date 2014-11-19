@@ -1,6 +1,6 @@
 #pragma once
 #include <typeindex>
-#include "../../utilities/glm.hpp"
+#include "../utilities/glm.hpp"
 
 class Renderable;
 class Camera;
