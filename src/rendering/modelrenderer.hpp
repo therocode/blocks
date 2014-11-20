@@ -6,6 +6,11 @@
 #include "buffer.hpp"
 #include "shader.hpp"
 
+struct ModelOrder
+{
+    const Model* model;
+};
+
 class ModelRenderer : public RenderModule
 {
     public:
@@ -14,4 +19,7 @@ class ModelRenderer : public RenderModule
         void render(const Camera& camera, const glm::mat4& perspective) override;
         std::type_index getRenderableType() const override;
     private:
+        Shader mShader;
+
+        std::vector<ModelOrder> mOrders;
 };

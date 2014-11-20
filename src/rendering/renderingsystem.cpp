@@ -1,4 +1,5 @@
 #include "renderingsystem.hpp"
+#include "modelrenderer.hpp"
 #include "debugrenderer.hpp"
 
 RenderingSystem::RenderingSystem(fea::MessageBus& bus) :
@@ -7,7 +8,10 @@ RenderingSystem::RenderingSystem(fea::MessageBus& bus) :
 
 {
     subscribe(bus, *this);
+    mRenderer.addModule(std::unique_ptr<ModelRenderer>(new ModelRenderer()));
     mRenderer.addModule(std::unique_ptr<DebugRenderer>(new DebugRenderer()));
+
+    mModelRenderable.setModel(mModel);
 
     for(uint32_t x = 0; x < 50; x++)
     {
@@ -24,9 +28,6 @@ RenderingSystem::RenderingSystem(fea::MessageBus& bus) :
     }
 
     mRenderer.getRenderMode().setPolygonMode(PolygonMode::LINE);
-
-
-    
 }
 
 void RenderingSystem::handleMessage(const RotateGfxEntityMessage& received)
@@ -69,6 +70,8 @@ void RenderingSystem::render()
 {
     for(const auto& debbie : mDebuggers)
         mRenderer.queue(debbie);
+
+    mRenderer.queue(mModelRenderable);
 
     mRenderer.render();
 }
