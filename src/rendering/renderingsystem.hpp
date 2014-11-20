@@ -5,7 +5,11 @@
 #include "renderingmessages.hpp"
 #include "../networking/networkingprotocol.hpp"
 #include "../input/inputmessages.hpp"
+//test
 #include "debugrenderable.hpp"
+#include "mesh.hpp"
+#include "model.hpp"
+#include "modelrenderable.hpp"
 
 class RenderingSystem :
     public fea::MessageReceiver<RotateGfxEntityMessage,
@@ -26,5 +30,11 @@ class RenderingSystem :
         Renderer mRenderer;
         uint32_t mCameraEntity;
 
+        //test
         std::vector<DebugRenderable> mDebuggers;
+
+
+        Mesh mMesh;
+        Model mModel;
+        ModelRenderable mModelRenderable;
 };

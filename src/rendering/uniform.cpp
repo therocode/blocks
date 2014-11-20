@@ -4,7 +4,7 @@
 
 Uniform::Uniform()
 {
-    mType = NO_TYPE;
+    mType = UniformType::NO_TYPE;
 }
 
 Uniform::Uniform(const std::string& name, UniformType t, float val)
@@ -89,28 +89,28 @@ Uniform::Uniform(const Uniform& other)
 
     switch(mType)
     {
-        case FLOAT:
+        case UniformType::FLOAT:
             mFloatVal = other.mFloatVal;
             break;
-        case VEC2:
+        case UniformType::VEC2:
             std::copy(other.mVec2Val, other.mVec2Val + 2, mVec2Val);
             break;
-        case VEC3:
+        case UniformType::VEC3:
             std::copy(other.mVec3Val, other.mVec3Val + 3, mVec3Val);
             break;
-        case VEC4:
+        case UniformType::VEC4:
             std::copy(other.mVec4Val, other.mVec4Val + 4, mVec4Val);
             break;
-        case MAT2X2:
+        case UniformType::MAT2X2:
             std::copy(other.mMat2x2Val, other.mMat2x2Val + 4, mMat2x2Val);
             break;
-        case MAT4X4:
+        case UniformType::MAT4X4:
             std::copy(other.mMat4x4Val, other.mMat4x4Val + 16, mMat4x4Val);
             break;
-        case TEXTURE:
+        case UniformType::TEXTURE:
             mTextureVal = other.mTextureVal;
             break;
-        case NO_TYPE:
+        case UniformType::NO_TYPE:
             break;
     }
 }

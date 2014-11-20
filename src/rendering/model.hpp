@@ -1,7 +1,8 @@
 #pragma once
 #include <cstdint>
 #include <unordered_map>
-#include "mesh.hpp"
+
+class Mesh;
 
 class Model
 {

@@ -4,7 +4,7 @@
 #include <glm/glm.hpp>
 #include "opengl.hpp"
 
-enum UniformType{NO_TYPE, FLOAT, VEC2, VEC3, VEC4, MAT2X2, MAT4X4, TEXTURE};
+enum class UniformType{NO_TYPE, FLOAT, VEC2, VEC3, VEC4, MAT2X2, MAT4X4, TEXTURE};
 
 struct Uniform
 {

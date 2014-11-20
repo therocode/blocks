@@ -151,7 +151,7 @@ void DebugRenderer::render(const Camera& camera, const glm::mat4& perspective)
     mShader.setInstanceAttribute("modelMatrix4", 4, mModelMatrixBuffer4, 1);
     mShader.setInstanceAttribute("color", 3, mColorBuffer, 1);
 
-    mShader.setUniform("viewProjectionMatrix", MAT4X4, glm::value_ptr(perspective * camera.getMatrix()));
+    mShader.setUniform("viewProjectionMatrix", UniformType::MAT4X4, glm::value_ptr(perspective * camera.getMatrix()));
 
     mShader.activate();
 

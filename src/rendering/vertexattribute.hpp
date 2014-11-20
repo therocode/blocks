@@ -3,7 +3,7 @@
 #include <cstddef>
 #include <string>
 
-enum VertexAttributeType{AVEC2, AVEC4};
+enum class VertexAttributeType{AVEC2, AVEC4};
 
 struct VertexAttribute
 {
