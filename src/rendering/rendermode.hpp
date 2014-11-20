@@ -1,7 +1,7 @@
 #pragma once
 #include "opengl.hpp"
 
-enum PolygonMode { FILL, LINE, POINT };
+enum class PolygonMode { FILL, LINE, POINT };
 
 class RenderMode
 {

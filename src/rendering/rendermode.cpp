@@ -4,7 +4,7 @@
 const int32_t defaultPolygonMode = GL_FILL;
 
 RenderMode::RenderMode() :
-    mPolygonMode(FILL)
+    mPolygonMode(PolygonMode::FILL)
 {
 }
 
@@ -15,7 +15,7 @@ PolygonMode RenderMode::getPolygonMode() const
 
 void RenderMode::setPolygonMode(PolygonMode polygonMode)
 {
-    FEA_ASSERT(polygonMode == FILL || polygonMode == LINE || polygonMode == POINT, "Invalid polygon mode given");
+    FEA_ASSERT(polygonMode == PolygonMode::FILL || polygonMode == PolygonMode::LINE || polygonMode == PolygonMode::POINT, "Invalid polygon mode given");
 
     mPolygonMode = polygonMode;
 }
@@ -24,9 +24,9 @@ void RenderMode::activate() const
 {
     GLint mode;
 
-    if(mPolygonMode == FILL)
+    if(mPolygonMode == PolygonMode::FILL)
         mode = GL_FILL;
-    else if(mPolygonMode == LINE)
+    else if(mPolygonMode == PolygonMode::LINE)
         mode = GL_LINE;
     else
         mode = GL_POINT;
