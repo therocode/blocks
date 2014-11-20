@@ -19,7 +19,7 @@ Client::Client(fea::MessageBus& bus, const NetworkParameters& parameters) :
 {
     subscribe(mBus, *this);
 
-	mWindow.create(fea::VideoMode(800, 600, 32), "Blocky", fea::Style::Default, fea::ContextSettings(32));
+	mWindow.create(fea::VideoMode(800, 600, 32), "Blocky", fea::Style::Default, fea::ContextSettings(32, 32, 0, 3, 3));
     mLockedMouse = true;
 	mWindow.lockCursor(true);
 	mWindow.setVSyncEnabled(false);
