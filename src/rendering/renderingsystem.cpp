@@ -11,6 +11,7 @@ RenderingSystem::RenderingSystem(fea::MessageBus& bus) :
     mRenderer.addModule(std::unique_ptr<ModelRenderer>(new ModelRenderer()));
     mRenderer.addModule(std::unique_ptr<DebugRenderer>(new DebugRenderer()));
 
+    mModel.addMesh(0, mMesh);
     mModelRenderable.setModel(mModel);
 
     for(uint32_t x = 0; x < 50; x++)

@@ -1,5 +1,6 @@
 #include "modelrenderer.hpp"
 #include "camera.hpp"
+#include "model.hpp"
 #include <vector>
 #include <string>
 #include <fea/assert.hpp>
@@ -52,6 +53,7 @@ void ModelRenderer::queue(const Renderable& renderable)
     order.model = modelRenderable.findModel();
     
     FEA_ASSERT(order.model != nullptr, "Trying to render a model renderable which doesn't have a model");
+    FEA_ASSERT(order.model->findMesh(0) != nullptr, "Trying to render a model renderable which has a model without a primary mesh");
 
     mOrders.push_back(order);
 }
