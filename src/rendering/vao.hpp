@@ -10,6 +10,7 @@ class VAO
         VAO& operator=(const VAO&) = delete;
         GLuint getId() const;
         void bind();
+        void unbind();
     private:
         GLuint mVAOId;
 };

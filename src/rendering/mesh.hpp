@@ -4,6 +4,7 @@
 class Mesh
 {
     public:
+        const Buffer& getPositionBuffer() const;
     private:
-        Buffer mVertexBuffer;
+        Buffer mPositionBuffer;
 };

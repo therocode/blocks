@@ -2,10 +2,12 @@
 #include "camera.hpp"
 #include <vector>
 #include <string>
+#include <iostream>
 
 DebugRenderer::DebugRenderer() :
     mRenderAmount(0)
 {
+
     std::string vertexSource = R"(
 #version 150
 
@@ -133,6 +135,9 @@ void DebugRenderer::queue(const Renderable& renderable)
 
 void DebugRenderer::render(const Camera& camera, const glm::mat4& perspective)
 {
+    //mVertexArray.bind();
+    mShader.activate();
+
     mModelMatrixBuffer1.setData(mModelMatrixData1);
     mModelMatrixBuffer2.setData(mModelMatrixData2);
     mModelMatrixBuffer3.setData(mModelMatrixData3);
@@ -153,10 +158,10 @@ void DebugRenderer::render(const Camera& camera, const glm::mat4& perspective)
 
     mShader.setUniform("viewProjectionMatrix", UniformType::MAT4X4, glm::value_ptr(perspective * camera.getMatrix()));
 
-    mShader.activate();
-
     glDrawArraysInstanced(GL_TRIANGLES, 0, 36, mRenderAmount);
     mRenderAmount = 0;
+    mShader.deactivate();
+    //mVertexArray.unbind();
 }
 
 std::type_index DebugRenderer::getRenderableType() const

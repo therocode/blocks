@@ -12,6 +12,8 @@ class Buffer
         GLuint getId() const;
         void bind() const;
         void setData(const std::vector<float>& data);
+        int32_t getElementAmount() const;
     private:
         GLuint mBufferId;
+        int32_t mElementAmount;
 };

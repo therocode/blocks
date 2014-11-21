@@ -25,6 +25,12 @@ void Buffer::bind() const
 
 void Buffer::setData(const std::vector<float>& data)
 {
+    mElementAmount = data.size();
     bind();
     glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(float), data.data(), GL_STATIC_DRAW);
+}
+
+int32_t Buffer::getElementAmount() const
+{
+    return mElementAmount;
 }

@@ -22,3 +22,8 @@ void VAO::bind()
 {
     glBindVertexArray(mVAOId);
 }
+
+void VAO::unbind()
+{
+    glBindVertexArray(0);
+}

@@ -19,6 +19,7 @@ class ModelRenderer : public RenderModule
         void render(const Camera& camera, const glm::mat4& perspective) override;
         std::type_index getRenderableType() const override;
     private:
+        //VAO mVertexArray;
         Shader mShader;
 
         std::vector<ModelOrder> mOrders;
