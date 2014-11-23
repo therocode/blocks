@@ -8,7 +8,7 @@ RenderingSystem::RenderingSystem(fea::MessageBus& bus) :
 
 {
     subscribe(bus, *this);
-    ////mRenderer.addModule(std::unique_ptr<ModelRenderer>(new ModelRenderer()));
+    mRenderer.addModule(std::unique_ptr<ModelRenderer>(new ModelRenderer()));
     mRenderer.addModule(std::unique_ptr<DebugRenderer>(new DebugRenderer()));
 
     mModel.addMesh(0, mMesh);
@@ -69,8 +69,11 @@ void RenderingSystem::handleMessage(const WindowResizeMessage& received)
 
 void RenderingSystem::render()
 {
-    for(const auto& debbie : mDebuggers)
+    for(auto& debbie : mDebuggers)
+    {
+        debbie.setColor({(float)(rand() % 256) / 256.0f,(float)(rand() % 256) / 256.0f, (float)(rand() % 256) / 256.0f});
         mRenderer.queue(debbie);
+    }
 
     mRenderer.queue(mModelRenderable);
 

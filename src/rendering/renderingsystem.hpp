@@ -33,7 +33,6 @@ class RenderingSystem :
         //test
         std::vector<DebugRenderable> mDebuggers;
 
-
         Mesh mMesh;
         Model mModel;
         ModelRenderable mModelRenderable;

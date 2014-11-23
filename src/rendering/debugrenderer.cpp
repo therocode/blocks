@@ -110,7 +110,14 @@ void main()
 
     mVertexArray.bind();
     mVertexBuffer.setData(vertices);
+
     mVertexArray.setVertexAttribute(DebugAttribute::POSITION, 3, mVertexBuffer);
+
+    mVertexArray.setInstanceAttribute(MODELMATRIX1, 4, mModelMatrixBuffer1, 1);
+    mVertexArray.setInstanceAttribute(MODELMATRIX2, 4, mModelMatrixBuffer2, 1);
+    mVertexArray.setInstanceAttribute(MODELMATRIX3, 4, mModelMatrixBuffer3, 1);
+    mVertexArray.setInstanceAttribute(MODELMATRIX4, 4, mModelMatrixBuffer4, 1);
+    mVertexArray.setInstanceAttribute(COLOR, 3, mColorBuffer, 1);
 
     data1 = { 1.0f, 0.0f, 0.0f, 0.0f };
     data2 = { 0.0f, 1.0f, 0.0f, 0.0f };
@@ -156,12 +163,6 @@ void DebugRenderer::render(const Camera& camera, const glm::mat4& perspective)
     mModelMatrixData3.clear();
     mModelMatrixData4.clear();
     mColorData.clear();
-
-    mVertexArray.setInstanceAttribute(MODELMATRIX1, 4, mModelMatrixBuffer1, 1);
-    mVertexArray.setInstanceAttribute(MODELMATRIX2, 4, mModelMatrixBuffer2, 1);
-    mVertexArray.setInstanceAttribute(MODELMATRIX3, 4, mModelMatrixBuffer3, 1);
-    mVertexArray.setInstanceAttribute(MODELMATRIX4, 4, mModelMatrixBuffer4, 1);
-    mVertexArray.setInstanceAttribute(COLOR, 3, mColorBuffer, 1);
 
     mShader.setUniform("viewProjectionMatrix", UniformType::MAT4X4, glm::value_ptr(perspective * camera.getMatrix()));
 
