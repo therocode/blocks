@@ -21,7 +21,7 @@ RenderingSystem::RenderingSystem(fea::MessageBus& bus) :
             for(uint32_t z = 0; z < 50; z++)
             {
                 DebugRenderable newDeb;
-                newDeb.setPosition(glm::vec3(x * 5, y * 5, z * 5) + glm::vec3(0.3f, -43.0f, 0.0f));
+                newDeb.setPosition(glm::vec3(x * 5 + (float)(rand() % 20 - 10) / 5.0f, y * 5 + (float)(rand() % 20 - 10) / 5.0f, z * 5 + (float)(rand() % 20 - 10) / 5.0f) + glm::vec3(0.3f, -43.0f, 0.0f));
                 newDeb.setColor(glm::vec3(0.02f, 0.02f, 0.02f) * glm::vec3(x, y, z));
                 mDebuggers.push_back(newDeb);
             }
