@@ -9,16 +9,16 @@ DebugRenderer::DebugRenderer() :
 {
 
     std::string vertexSource = R"(
-#version 150
+#version 330
 
 uniform mat4 viewProjectionMatrix;
 
-attribute vec3 in_position;
-attribute vec4 modelMatrix1;
-attribute vec4 modelMatrix2;
-attribute vec4 modelMatrix3;
-attribute vec4 modelMatrix4;
-attribute vec3 color;
+layout(location = 0) in vec3 in_position;
+layout(location = 1) in vec3 color;
+layout(location = 2) in vec4 modelMatrix1;
+layout(location = 3) in vec4 modelMatrix2;
+layout(location = 4) in vec4 modelMatrix3;
+layout(location = 5) in vec4 modelMatrix4;
 
 out vec3 objectColor;
 
@@ -30,7 +30,7 @@ void main()
 })";
 
     std::string fragmentSource = R"(
-#version 150
+#version 330
 precision highp float;
 
 in vec3 objectColor;
@@ -103,7 +103,7 @@ void main()
 
     mVertexArray.bind();
     mVertexBuffer.setData(vertices);
-    mShader.setVertexAttribute("in_position", 3, mVertexBuffer);
+    mVertexArray.setVertexAttribute(DebugAttribute::POSITION, 3, mVertexBuffer);
 
     data1 = { 1.0f, 0.0f, 0.0f, 0.0f };
     data2 = { 0.0f, 1.0f, 0.0f, 0.0f };
@@ -135,7 +135,7 @@ void DebugRenderer::queue(const Renderable& renderable)
 
 void DebugRenderer::render(const Camera& camera, const glm::mat4& perspective)
 {
-    //mVertexArray.bind();
+    mVertexArray.bind();
     mShader.activate();
 
     mModelMatrixBuffer1.setData(mModelMatrixData1);
@@ -150,18 +150,18 @@ void DebugRenderer::render(const Camera& camera, const glm::mat4& perspective)
     mModelMatrixData4.clear();
     mColorData.clear();
 
-    mShader.setInstanceAttribute("modelMatrix1", 4, mModelMatrixBuffer1, 1);
-    mShader.setInstanceAttribute("modelMatrix2", 4, mModelMatrixBuffer2, 1);
-    mShader.setInstanceAttribute("modelMatrix3", 4, mModelMatrixBuffer3, 1);
-    mShader.setInstanceAttribute("modelMatrix4", 4, mModelMatrixBuffer4, 1);
-    mShader.setInstanceAttribute("color", 3, mColorBuffer, 1);
+    mVertexArray.setInstanceAttribute(MODELMATRIX1, 4, mModelMatrixBuffer1, 1);
+    mVertexArray.setInstanceAttribute(MODELMATRIX2, 4, mModelMatrixBuffer2, 1);
+    mVertexArray.setInstanceAttribute(MODELMATRIX3, 4, mModelMatrixBuffer3, 1);
+    mVertexArray.setInstanceAttribute(MODELMATRIX4, 4, mModelMatrixBuffer4, 1);
+    mVertexArray.setInstanceAttribute(COLOR, 3, mColorBuffer, 1);
 
     mShader.setUniform("viewProjectionMatrix", UniformType::MAT4X4, glm::value_ptr(perspective * camera.getMatrix()));
 
     glDrawArraysInstanced(GL_TRIANGLES, 0, 36, mRenderAmount);
     mRenderAmount = 0;
     mShader.deactivate();
-    //mVertexArray.unbind();
+    mVertexArray.unbind();
 }
 
 std::type_index DebugRenderer::getRenderableType() const

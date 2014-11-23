@@ -25,7 +25,6 @@ Shader::Shader(Shader&& other) :
     mVertexAttributeLocations = std::move(other.mVertexAttributeLocations);
     mVertexSource = std::move(other.mVertexSource);
     mFragmentSource = std::move(other.mFragmentSource);
-    mEnabledVertexAttributes = std::move(other.mEnabledVertexAttributes);
     std::swap(mProgramId, other.mProgramId);
     std::swap(mVertexShader, other.mVertexShader);
     std::swap(mFragmentShader, other.mFragmentShader);
@@ -37,7 +36,6 @@ Shader& Shader::operator=(Shader&& other)
     mVertexAttributeLocations = std::move(other.mVertexAttributeLocations);
     mVertexSource = std::move(other.mVertexSource);
     mFragmentSource = std::move(other.mFragmentSource);
-    mEnabledVertexAttributes = std::move(other.mEnabledVertexAttributes);
     std::swap(mProgramId, other.mProgramId);
     std::swap(mVertexShader, other.mVertexShader);
     std::swap(mFragmentShader, other.mFragmentShader);
@@ -67,11 +65,6 @@ void Shader::activate() const
 
 void Shader::deactivate() const
 {
-    for(auto location : mEnabledVertexAttributes)
-    {
-        glDisableVertexAttribArray(location);
-    }
-    mEnabledVertexAttributes.clear();
     glUseProgram(0);
 }
 
@@ -187,40 +180,6 @@ GLint Shader::getUniform(const std::string& name) const
     FEA_ASSERT(mUniformLocations.count(name) != 0, "No uniform named " + name + " exists in the shader");
 
     return mUniformLocations.at(name);
-}
-
-void Shader::setVertexAttribute(const std::string& name, const uint32_t floatAmount, const float* data) const
-{
-    FEA_ASSERT(mVertexAttributeLocations.count(name) != 0, "No attribute named " + name + " exists in the shader");
-    glEnableVertexAttribArray(mVertexAttributeLocations.at(name));
-    mEnabledVertexAttributes.push_back(mVertexAttributeLocations.at(name));
-    glVertexAttribPointer(mVertexAttributeLocations.at(name), floatAmount, GL_FLOAT, false, 0, data);
-}
-
-void Shader::setVertexAttribute(const std::string& name, const uint32_t floatAmount, const Buffer& dataBuffer) const
-{
-    FEA_ASSERT(mVertexAttributeLocations.count(name) != 0, "No attribute named " + name + " exists in the shader");
-    glEnableVertexAttribArray(mVertexAttributeLocations.at(name));
-    mEnabledVertexAttributes.push_back(mVertexAttributeLocations.at(name));
-    dataBuffer.bind();
-    glVertexAttribPointer(mVertexAttributeLocations.at(name), floatAmount, GL_FLOAT, false, 0, nullptr);
-}
-
-void Shader::setInstanceAttribute(const std::string& name, const uint32_t floatAmount, const Buffer& dataBuffer, uint32_t divisor) const
-{
-    FEA_ASSERT(mVertexAttributeLocations.count(name) != 0, "No attribute named " + name + " exists in the shader");
-    glEnableVertexAttribArray(mVertexAttributeLocations.at(name));
-    mEnabledVertexAttributes.push_back(mVertexAttributeLocations.at(name));
-    dataBuffer.bind();
-    glVertexAttribPointer(mVertexAttributeLocations.at(name), floatAmount, GL_FLOAT, false, 0, nullptr);
-    glVertexAttribDivisor(mVertexAttributeLocations.at(name), divisor);
-}
-
-GLint Shader::getVertexAttribute(const std::string& name) const
-{
-    FEA_ASSERT(mVertexAttributeLocations.count(name) != 0, "No attribute named " + name + " exists in the shader");
-
-    return mVertexAttributeLocations.at(name);
 }
 
 void Shader::compile()

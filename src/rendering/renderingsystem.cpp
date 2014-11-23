@@ -8,7 +8,7 @@ RenderingSystem::RenderingSystem(fea::MessageBus& bus) :
 
 {
     subscribe(bus, *this);
-    mRenderer.addModule(std::unique_ptr<ModelRenderer>(new ModelRenderer()));
+    ////mRenderer.addModule(std::unique_ptr<ModelRenderer>(new ModelRenderer()));
     mRenderer.addModule(std::unique_ptr<DebugRenderer>(new DebugRenderer()));
 
     mModel.addMesh(0, mMesh);
