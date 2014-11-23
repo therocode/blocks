@@ -13,12 +13,12 @@ DebugRenderer::DebugRenderer() :
 
 uniform mat4 viewProjectionMatrix;
 
-layout(location = 0) in vec3 in_position;
-layout(location = 1) in vec3 color;
-layout(location = 2) in vec4 modelMatrix1;
-layout(location = 3) in vec4 modelMatrix2;
-layout(location = 4) in vec4 modelMatrix3;
-layout(location = 5) in vec4 modelMatrix4;
+layout(location = ~POSITION~) in vec3 in_position;
+layout(location = ~COLOR~) in vec3 color;
+layout(location = ~MODELMATRIX1~) in vec4 modelMatrix1;
+layout(location = ~MODELMATRIX2~) in vec4 modelMatrix2;
+layout(location = ~MODELMATRIX3~) in vec4 modelMatrix3;
+layout(location = ~MODELMATRIX4~) in vec4 modelMatrix4;
 
 out vec3 objectColor;
 
@@ -42,7 +42,14 @@ void main()
 })";
 
     mShader.setSource(vertexSource, fragmentSource);
-    mShader.compile();
+    mShader.compile({
+            {"POSITION", DebugAttribute::POSITION},
+            {"COLOR", DebugAttribute::COLOR},
+            {"MODELMATRIX1", DebugAttribute::MODELMATRIX1},
+            {"MODELMATRIX2", DebugAttribute::MODELMATRIX2},
+            {"MODELMATRIX3", DebugAttribute::MODELMATRIX3},
+            {"MODELMATRIX4", DebugAttribute::MODELMATRIX4}
+            });
 
     std::vector<float> vertices = {
              -0.5f, -0.5f,  0.5f,

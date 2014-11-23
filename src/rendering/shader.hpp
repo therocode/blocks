@@ -28,8 +28,9 @@ class Shader
         void setUniform(const std::string& name, UniformType type, const void* value) const;
         void setUniform(const std::string& name, UniformType type, int32_t count, const void* value) const;
         GLint getUniform(const std::string& name) const;
-        void compile();
+        void compile(const std::unordered_map<std::string, int32_t>& attributeBindings = std::unordered_map<std::string, int32_t>());
     private:
+        std::string bindAttributesToSource(const std::string& source, const std::unordered_map<std::string, int32_t>& attributeBindings);
         GLuint mProgramId;
         std::unordered_map<std::string, GLint> mUniformLocations;
         std::unordered_map<std::string, GLint> mVertexAttributeLocations;

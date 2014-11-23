@@ -182,10 +182,12 @@ GLint Shader::getUniform(const std::string& name) const
     return mUniformLocations.at(name);
 }
 
-void Shader::compile()
+void Shader::compile(const std::unordered_map<std::string, int32_t>& attributeBindings)
 {
-    const char* mVertexShaderSourcePointer = &mVertexSource[0];
-    const char* mFragmentShaderSourcePointer = &mFragmentSource[0];
+    std::string boundVertexSource = bindAttributesToSource(mVertexSource, attributeBindings);
+
+    const char* mVertexShaderSourcePointer = boundVertexSource.data();
+    const char* mFragmentShaderSourcePointer = mFragmentSource.data();
 
     mVertexShader = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(mVertexShader, 1, &mVertexShaderSourcePointer, NULL);
@@ -231,13 +233,7 @@ void Shader::compile()
 
     for(std::string line; std::getline(vertStream, line);)
     {
-        if(line.find("attribute") != std::string::npos)
-        {
-            std::string name = line.substr( line.find_first_of(" ", line.find_first_of(" ") + 1) + 1, line.find_first_of(";") - line.find_first_of(" ", line.find_first_of(" ") + 1));
-            name.resize(name.size() - 1);
-            mVertexAttributeLocations.emplace(name, glGetAttribLocation(mProgramId , name.c_str()));
-        }
-        else if(line.find("uniform") != std::string::npos)
+        if(line.find("uniform") != std::string::npos)
         {
             std::string name = line.substr( line.find_first_of(" ", line.find_first_of(" ") + 1) + 1, line.find_first_of("[;") - line.find_first_of(" ", line.find_first_of(" ") + 1));
             name.resize(name.size() - 1);
@@ -249,17 +245,36 @@ void Shader::compile()
 
     for(std::string line; std::getline(fragStream, line);)
     {
-        if(line.find("attribute") != std::string::npos)
-        {
-            std::string name = line.substr( line.find_first_of(" ", line.find_first_of(" ") + 1) + 1, line.find_first_of(";") - line.find_first_of(" ", line.find_first_of(" ") + 1));
-            name.resize(name.size() - 1);
-            mVertexAttributeLocations.emplace(name, glGetAttribLocation(mProgramId , name.c_str()));
-        }
-        else if(line.find("uniform") != std::string::npos)
+        if(line.find("uniform") != std::string::npos)
         {
             std::string name = line.substr( line.find_first_of(" ", line.find_first_of(" ") + 1) + 1, line.find_first_of("[;") - line.find_first_of(" ", line.find_first_of(" ") + 1));
             name.resize(name.size() - 1);
             mUniformLocations.emplace(name, glGetUniformLocation(mProgramId , name.c_str()));
         }
     }
+}
+
+std::string Shader::bindAttributesToSource(const std::string& source, const std::unordered_map<std::string, int32_t>& attributeBindings)
+{
+    std::string result = source;
+
+    int32_t startPos;
+
+    while((startPos = result.find_first_of("~", 0)) != std::string::npos)
+    {
+        int32_t endPos = result.find_first_of("~", startPos + 1);
+
+        std::string attributeName = result.substr(startPos + 1, endPos - startPos - 1);
+
+        const auto& attributeIterator = attributeBindings.find(attributeName);
+
+        if(attributeIterator != attributeBindings.end())
+        {
+            result.replace(startPos, endPos - startPos + 1, std::to_string(attributeIterator->second));
+        }
+        else
+            throw(GLSLException("Attribute binding '" + attributeName + "' has not been specified"));
+    }
+
+    return result;
 }
