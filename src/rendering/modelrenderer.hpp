@@ -6,9 +6,17 @@
 #include "buffer.hpp"
 #include "shader.hpp"
 
+class Mesh;
+
 struct ModelOrder
 {
     const Model* model;
+};
+
+struct MeshObject
+{
+    VAO vertexArray;
+    Buffer positions;
 };
 
 class ModelRenderer : public RenderModule
@@ -25,4 +33,7 @@ class ModelRenderer : public RenderModule
         Shader mShader;
 
         std::vector<ModelOrder> mOrders;
+
+        //mesh vao cache
+        std::unordered_map<const Mesh*, std::unique_ptr<MeshObject>> mMeshCache;
 };

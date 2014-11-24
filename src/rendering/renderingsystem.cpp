@@ -82,6 +82,14 @@ RenderingSystem::RenderingSystem(fea::MessageBus& bus, const glm::uvec2& viewSiz
              -0.5f,  0.0f, -0.5f,
 
               0.0f,  1.0f,  0.0f,
+              0.5f,  0.0f,  0.5f,
+              0.5f,  0.0f, -0.5f,
+
+             -0.5f,  0.0f,  0.5f,
+             -0.5f,  0.0f, -0.5f,
+              0.5f,  0.0f, -0.5f,
+
+             -0.5f,  0.0f,  0.5f,
               0.5f,  0.0f, -0.5f,
               0.5f,  0.0f,  0.5f
     };

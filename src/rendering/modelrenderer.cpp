@@ -80,13 +80,36 @@ void ModelRenderer::render(const Camera& camera, const glm::mat4& perspective)
     for(const auto order : mOrders)
     {
         const Mesh& mesh = *order.model->findMesh(0);
-        mVertexArray.setVertexAttribute(ModelAttribute::POSITION, 3, mesh.getPositionBuffer());
-        glDrawArrays(GL_TRIANGLES, 0, mesh.getPositionBuffer().getElementAmount() / 3);
+
+        const auto iterator = mMeshCache.find(&mesh);
+
+        if(iterator == mMeshCache.end())
+        {
+            //create gpu side mesh
+            std::unique_ptr<MeshObject> newMeshObject = std::unique_ptr<MeshObject>(new MeshObject());
+
+            newMeshObject->vertexArray.setVertexAttribute(ModelAttribute::POSITION, 3, mesh.getPositionBuffer());
+
+            //render it
+            newMeshObject->vertexArray.bind();
+            glDrawArrays(GL_TRIANGLES, 0, mesh.getPositionBuffer().getElementAmount() / 3);
+            newMeshObject->vertexArray.unbind();
+
+            //store it
+            mMeshCache.emplace(&mesh, std::move(newMeshObject));
+        }
+        else
+        {
+            auto& meshObject = iterator->second;
+            
+            meshObject->vertexArray.bind();
+            glDrawArrays(GL_TRIANGLES, 0, mesh.getPositionBuffer().getElementAmount() / 3);
+            meshObject->vertexArray.unbind();
+        }
     }
 
     mOrders.clear();
     mShader.deactivate();
-    mVertexArray.unbind();
 }
 
 std::type_index ModelRenderer::getRenderableType() const
