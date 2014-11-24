@@ -70,6 +70,7 @@ void Renderer::setCamera(const Camera& camera)
 
 void Renderer::setViewSize(const glm::uvec2& size)
 {
+    mViewSize = size;
 	glViewport(0, 0, size.x, size.y);
 
     setPerspective(mFov, mNear, mFar);

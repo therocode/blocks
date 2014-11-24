@@ -11,7 +11,66 @@ RenderingSystem::RenderingSystem(fea::MessageBus& bus, const glm::uvec2& viewSiz
     mRenderer.addModule(RenderModule::MODEL, std::unique_ptr<ModelRenderer>(new ModelRenderer()));
     mRenderer.addModule(RenderModule::DEBUG, std::unique_ptr<DebugRenderer>(new DebugRenderer()));
 
-    mModel.addMesh(0, mMesh);
+    std::vector<float> vertices = {
+             -0.5f, -0.5f,  0.5f,
+              0.5f, -0.5f,  0.5f,
+             -0.5f,  0.5f,  0.5f,
+
+             -0.5f,  0.5f,  0.5f,
+              0.5f, -0.5f,  0.5f,
+              0.5f,  0.5f,  0.5f,
+
+
+             -0.5f, -0.5f, -0.5f,
+             -0.5f,  0.5f, -0.5f,
+              0.5f, -0.5f, -0.5f,
+
+             -0.5f,  0.5f, -0.5f,
+              0.5f,  0.5f, -0.5f,
+              0.5f, -0.5f, -0.5f,
+
+
+
+             -0.5f, -0.5f,  0.5f,
+             -0.5f,  0.5f,  0.5f,
+             -0.5f, -0.5f, -0.5f,
+
+             -0.5f, -0.5f, -0.5f,
+             -0.5f,  0.5f,  0.5f,
+             -0.5f,  0.5f, -0.5f,
+
+
+              0.5f, -0.5f,  0.5f,
+              0.5f, -0.5f, -0.5f,
+              0.5f,  0.5f,  0.5f,
+
+              0.5f, -0.5f, -0.5f,
+              0.5f,  0.5f, -0.5f,
+              0.5f,  0.5f,  0.5f,
+
+
+
+             -0.5f,  0.5f,  0.5f,
+              0.5f,  0.5f,  0.5f,
+             -0.5f,  0.5f, -0.5f,
+
+              0.5f,  0.5f,  0.5f,
+              0.5f,  0.5f, -0.5f,
+             -0.5f,  0.5f, -0.5f,
+
+
+             -0.5f, -0.5f,  0.5f,
+             -0.5f, -0.5f, -0.5f,
+              0.5f, -0.5f,  0.5f,
+
+              0.5f, -0.5f,  0.5f,
+             -0.5f, -0.5f, -0.5f,
+              0.5f, -0.5f, -0.5f,
+    };
+
+    mMesh = std::unique_ptr<Mesh>(new Mesh(vertices));
+
+    mModel.addMesh(0, *mMesh);
     mModelRenderable.setModel(mModel);
 
     for(uint32_t x = 0; x < 50; x++)
