@@ -2,6 +2,7 @@
 #include <iostream>
 
 RenderModule::RenderModule() :
+    mModeEnabled(false),
     mEnabled(true)
 {
 }
@@ -20,29 +21,34 @@ void RenderModule::metaRender(const Camera& camera, const glm::mat4& perspective
 {
     if(mEnabled)
     {
-        if(mRenderMode)
-            mRenderMode->activate();
+        if(mModeEnabled)
+            mRenderMode.activate();
 
         render(camera, perspective);
 
-        if(mRenderMode)
-            mRenderMode->deactivate();
+        if(mModeEnabled)
+            mRenderMode.deactivate();
     }
 }
 
-const RenderMode* RenderModule::findRenderMode() const
+void RenderModule::enableRenderMode(bool enabled)
 {
-    return mRenderMode.get();
+    mModeEnabled = enabled;
 }
 
-RenderMode* RenderModule::findRenderMode()
+const RenderMode& RenderModule::getRenderMode() const
 {
-    return mRenderMode.get();
+    return mRenderMode;
+}
+
+RenderMode& RenderModule::getRenderMode()
+{
+    return mRenderMode;
 }
 
 void RenderModule::setRenderMode(const RenderMode& renderMode)
 {
-    mRenderMode = std::unique_ptr<RenderMode>(new RenderMode(renderMode));
+    mRenderMode = renderMode;
 }
 
 bool RenderModule::isEnabled() const

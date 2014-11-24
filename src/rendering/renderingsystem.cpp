@@ -82,11 +82,10 @@ void RenderingSystem::handleMessage(const RenderModeMessage& received)
         mRenderer.setEnabled(RenderModule::DEBUG, true);
     else if(received.type == TOGGLE_MODE_DEBUG)
     {
-        if(mRenderer.findRenderMode(RenderModule::DEBUG) == nullptr)
-            mRenderer.setRenderMode(RenderModule::DEBUG, RenderMode());
+        mRenderer.enableRenderMode(RenderModule::DEBUG, true);
 
-        PolygonMode current = mRenderer.findRenderMode(RenderModule::DEBUG)->getPolygonMode();
-        mRenderer.findRenderMode(RenderModule::DEBUG)->setPolygonMode((int32_t)current + 1 > (int32_t)PolygonMode::POINT ? PolygonMode::FILL : (PolygonMode)((int32_t)current + 1));
+        PolygonMode current = mRenderer.getRenderMode(RenderModule::DEBUG).getPolygonMode();
+        mRenderer.getRenderMode(RenderModule::DEBUG).setPolygonMode((int32_t)current + 1 > (int32_t)PolygonMode::POINT ? PolygonMode::FILL : (PolygonMode)((int32_t)current + 1));
     }
     else if(received.type == DISABLE_MODEL)
         mRenderer.setEnabled(RenderModule::MODEL, false);
@@ -94,11 +93,10 @@ void RenderingSystem::handleMessage(const RenderModeMessage& received)
         mRenderer.setEnabled(RenderModule::MODEL, true);
     else if(received.type == TOGGLE_MODE_MODEL)
     {
-        if(mRenderer.findRenderMode(RenderModule::MODEL) == nullptr)
-            mRenderer.setRenderMode(RenderModule::MODEL, RenderMode());
+        mRenderer.enableRenderMode(RenderModule::MODEL, true);
 
-        PolygonMode current = mRenderer.findRenderMode(RenderModule::MODEL)->getPolygonMode();
-        mRenderer.findRenderMode(RenderModule::MODEL)->setPolygonMode((int32_t)current + 1 > (int32_t)PolygonMode::POINT ? PolygonMode::FILL : (PolygonMode)((int32_t)current + 1));
+        PolygonMode current = mRenderer.getRenderMode(RenderModule::MODEL).getPolygonMode();
+        mRenderer.getRenderMode(RenderModule::MODEL).setPolygonMode((int32_t)current + 1 > (int32_t)PolygonMode::POINT ? PolygonMode::FILL : (PolygonMode)((int32_t)current + 1));
     }
 }
 

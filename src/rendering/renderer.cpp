@@ -85,23 +85,30 @@ RenderMode& Renderer::getRenderMode()
     return mRenderMode;
 }
 
+void Renderer::enableRenderMode(int32_t moduleId, bool enabled)
+{
+    FEA_ASSERT(mModules.count(moduleId) != 0, "render module id " + std::to_string(moduleId) + " does not exist");
+
+    mModules.at(moduleId)->enableRenderMode(enabled);
+}
+
 void Renderer::setRenderMode(const RenderMode& renderMode)
 {
     mRenderMode = renderMode;
 }
 
-const RenderMode* Renderer::findRenderMode(int32_t moduleId) const
+const RenderMode& Renderer::getRenderMode(int32_t moduleId) const
 {
     FEA_ASSERT(mModules.count(moduleId) != 0, "render module id " + std::to_string(moduleId) + " does not exist");
 
-    return mModules.at(moduleId)->findRenderMode();
+    return mModules.at(moduleId)->getRenderMode();
 }
 
-RenderMode* Renderer::findRenderMode(int32_t moduleId)
+RenderMode& Renderer::getRenderMode(int32_t moduleId)
 {
     FEA_ASSERT(mModules.count(moduleId) != 0, "render module id " + std::to_string(moduleId) + " does not exist");
 
-    return mModules.at(moduleId)->findRenderMode();
+    return mModules.at(moduleId)->getRenderMode();
 }
 
 void Renderer::setRenderMode(int32_t moduleId, const RenderMode& renderMode)

@@ -24,9 +24,10 @@ class Renderer
         void setViewSize(const glm::uvec2& size);
         const RenderMode& getRenderMode() const;
         RenderMode& getRenderMode();
+        void enableRenderMode(int32_t moduleId, bool enabled);
         void setRenderMode(const RenderMode& renderMode);
-        const RenderMode* findRenderMode(int32_t moduleId) const;
-        RenderMode* findRenderMode(int32_t moduleId);
+        const RenderMode& getRenderMode(int32_t moduleId) const;
+        RenderMode& getRenderMode(int32_t moduleId);
         void setRenderMode(int32_t moduleId, const RenderMode& renderMode);
         bool isEnabled() const;
         void setEnabled(bool enabled);
