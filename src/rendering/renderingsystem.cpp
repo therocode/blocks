@@ -11,7 +11,7 @@ RenderingSystem::RenderingSystem(fea::MessageBus& bus, const glm::uvec2& viewSiz
     mRenderer.addModule(RenderModule::MODEL, std::unique_ptr<ModelRenderer>(new ModelRenderer()));
     mRenderer.addModule(RenderModule::DEBUG, std::unique_ptr<DebugRenderer>(new DebugRenderer()));
 
-    std::vector<float> vertices = {
+    std::vector<float> squareVertices = {
              -0.5f, -0.5f,  0.5f,
               0.5f, -0.5f,  0.5f,
              -0.5f,  0.5f,  0.5f,
@@ -68,10 +68,31 @@ RenderingSystem::RenderingSystem(fea::MessageBus& bus, const glm::uvec2& viewSiz
               0.5f, -0.5f, -0.5f,
     };
 
-    mMesh = std::unique_ptr<Mesh>(new Mesh(vertices));
+    std::vector<float> tetraVertices = {
+              0.0f,  1.0f,  0.0f,
+             -0.5f,  0.0f,  0.5f,
+              0.5f,  0.0f,  0.5f,
 
-    mModel.addMesh(0, *mMesh);
-    mModelRenderable.setModel(mModel);
+              0.0f,  1.0f,  0.0f,
+             -0.5f,  0.0f, -0.5f,
+             -0.5f,  0.0f,  0.5f,
+
+              0.0f,  1.0f,  0.0f,
+              0.5f,  0.0f, -0.5f,
+             -0.5f,  0.0f, -0.5f,
+
+              0.0f,  1.0f,  0.0f,
+              0.5f,  0.0f, -0.5f,
+              0.5f,  0.0f,  0.5f
+    };
+
+    mCubeMesh = std::unique_ptr<Mesh>(new Mesh(squareVertices));
+    mTetraMesh = std::unique_ptr<Mesh>(new Mesh(tetraVertices));
+
+    mCubeModel.addMesh(0, *mCubeMesh);
+    mTetraModel.addMesh(0, *mTetraMesh);
+    mCubeModelRenderable.setModel(mCubeModel);
+    mTetraModelRenderable.setModel(mTetraModel);
 
     for(uint32_t x = 0; x < 50; x++)
     {
@@ -167,7 +188,8 @@ void RenderingSystem::render()
         mRenderer.queue(debbie);
     }
 
-    mRenderer.queue(mModelRenderable);
+    mRenderer.queue(mCubeModelRenderable);
+    mRenderer.queue(mTetraModelRenderable);
 
     mRenderer.render();
 }

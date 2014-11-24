@@ -36,7 +36,10 @@ class RenderingSystem :
         //test
         std::vector<DebugRenderable> mDebuggers;
 
-        std::unique_ptr<Mesh> mMesh;
-        Model mModel;
-        ModelRenderable mModelRenderable;
+        std::unique_ptr<Mesh> mCubeMesh;
+        std::unique_ptr<Mesh> mTetraMesh;
+        Model mCubeModel;
+        Model mTetraModel;
+        ModelRenderable mCubeModelRenderable;
+        ModelRenderable mTetraModelRenderable;
 };
