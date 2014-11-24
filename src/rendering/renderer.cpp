@@ -39,6 +39,7 @@ void Renderer::queue(const Renderable& renderable)
 
 void Renderer::render()
 {
+    glClearColor(mClearColor.r, mClearColor.g, mClearColor.b, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     if(mEnabled)
@@ -51,6 +52,8 @@ void Renderer::render()
 
         mRenderMode.deactivate();
     }
+
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 }
 
 const Camera& Renderer::getCamera() const
@@ -150,4 +153,14 @@ void Renderer::setPerspective(float fov, float near, float far)
     mFar = far;
 
     mPerspective = glm::perspective(glm::radians(mFov), (float)mViewSize.x / (float)mViewSize.y, mNear, mFar);
+}
+
+void Renderer::setClearColor(const glm::vec3& color)
+{
+    mClearColor = color;
+}
+
+const glm::vec3& Renderer::getClearColor() const
+{
+    return mClearColor;
 }

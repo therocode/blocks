@@ -34,6 +34,8 @@ class Renderer
         bool isEnabled(int32_t moduleId) const;
         void setEnabled(int32_t moduleId, bool enabled);
         void setPerspective(float fov, float near, float far);
+        void setClearColor(const glm::vec3& color);
+        const glm::vec3& getClearColor() const;
     private:
         std::map<int32_t, std::unique_ptr<RenderModule>> mModules;
         std::unordered_map<std::type_index, std::vector<RenderModule*>> mModuleSubscriptions;
@@ -45,4 +47,5 @@ class Renderer
         RenderMode mRenderMode;
         bool mEnabled;
         glm::mat4 mPerspective;
+        glm::vec3 mClearColor;
 };
