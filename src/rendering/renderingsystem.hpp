@@ -15,7 +15,8 @@ class RenderingSystem :
     public fea::MessageReceiver<RotateGfxEntityMessage,
                                 MoveGfxEntityMessage,
                                 ClientAttachedToEntityMessage,
-                                WindowResizeMessage>
+                                WindowResizeMessage,
+                                RenderModeMessage>
 {
     enum RenderModule{ DEBUG, MODEL };
     public:
@@ -24,6 +25,7 @@ class RenderingSystem :
         void handleMessage(const MoveGfxEntityMessage& received) override;
         void handleMessage(const ClientAttachedToEntityMessage& received) override;
         void handleMessage(const WindowResizeMessage& received) override;
+        void handleMessage(const RenderModeMessage& received) override;
         void render();
     private:
         fea::MessageBus& mBus;

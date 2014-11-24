@@ -54,3 +54,10 @@ struct UpdateChunkVboMessage
     const ChunkCoord& mainChunkCoord;
     Chunk* main; Chunk* top; Chunk* bottom; Chunk* front; Chunk* back; Chunk* left; Chunk* right;
 };
+
+enum { DISABLE_ALL, ENABLE_ALL, TOGGLE_MODE_ALL, DISABLE_DEBUG, ENABLE_DEBUG, TOGGLE_MODE_DEBUG, DISABLE_MODEL, ENABLE_MODEL, TOGGLE_MODE_MODEL };
+
+struct RenderModeMessage
+{
+    int32_t type;
+};

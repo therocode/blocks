@@ -26,11 +26,14 @@ void Renderer::addModule(int32_t id, std::unique_ptr<RenderModule> module)
 
 void Renderer::queue(const Renderable& renderable)
 {
-    auto iterator = mModuleSubscriptions.find(renderable.getType());
-    if(iterator != mModuleSubscriptions.end())
+    if(mEnabled)
     {
-        for(auto& module : iterator->second)
-            module->queue(renderable);
+        auto iterator = mModuleSubscriptions.find(renderable.getType());
+        if(iterator != mModuleSubscriptions.end())
+        {
+            for(auto& module : iterator->second)
+                module->metaQueue(renderable);
+        }
     }
 }
 
@@ -45,9 +48,9 @@ void Renderer::render()
             mRenderMode.activate();
             module.second->metaRender(mCamera, mPerspective);
         }
-    }
 
-    mRenderMode.deactivate();
+        mRenderMode.deactivate();
+    }
 }
 
 const Camera& Renderer::getCamera() const

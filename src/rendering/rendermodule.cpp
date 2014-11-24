@@ -1,4 +1,5 @@
 #include "rendermodule.hpp"
+#include <iostream>
 
 RenderModule::RenderModule() :
     mEnabled(true)
@@ -7,6 +8,12 @@ RenderModule::RenderModule() :
 
 RenderModule::~RenderModule()
 {
+}
+
+void RenderModule::metaQueue(const Renderable& renderable)
+{
+    if(mEnabled)
+        queue(renderable);
 }
 
 void RenderModule::metaRender(const Camera& camera, const glm::mat4& perspective)

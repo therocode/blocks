@@ -65,6 +65,43 @@ void RenderingSystem::handleMessage(const WindowResizeMessage& received)
     mRenderer.setViewSize({width, height});
 }
 
+void RenderingSystem::handleMessage(const RenderModeMessage& received)
+{
+    if(received.type == DISABLE_ALL)
+        mRenderer.setEnabled(false);
+    else if(received.type == ENABLE_ALL)
+        mRenderer.setEnabled(true);
+    else if(received.type == TOGGLE_MODE_ALL)
+    {
+        PolygonMode current = mRenderer.getRenderMode().getPolygonMode();
+        mRenderer.getRenderMode().setPolygonMode((int32_t)current + 1 > (int32_t)PolygonMode::POINT ? PolygonMode::FILL : (PolygonMode)((int32_t)current + 1));
+    }
+    else if(received.type == DISABLE_DEBUG)
+        mRenderer.setEnabled(RenderModule::DEBUG, false);
+    else if(received.type == ENABLE_DEBUG)
+        mRenderer.setEnabled(RenderModule::DEBUG, true);
+    else if(received.type == TOGGLE_MODE_DEBUG)
+    {
+        if(mRenderer.findRenderMode(RenderModule::DEBUG) == nullptr)
+            mRenderer.setRenderMode(RenderModule::DEBUG, RenderMode());
+
+        PolygonMode current = mRenderer.findRenderMode(RenderModule::DEBUG)->getPolygonMode();
+        mRenderer.findRenderMode(RenderModule::DEBUG)->setPolygonMode((int32_t)current + 1 > (int32_t)PolygonMode::POINT ? PolygonMode::FILL : (PolygonMode)((int32_t)current + 1));
+    }
+    else if(received.type == DISABLE_MODEL)
+        mRenderer.setEnabled(RenderModule::MODEL, false);
+    else if(received.type == ENABLE_MODEL)
+        mRenderer.setEnabled(RenderModule::MODEL, true);
+    else if(received.type == TOGGLE_MODE_MODEL)
+    {
+        if(mRenderer.findRenderMode(RenderModule::MODEL) == nullptr)
+            mRenderer.setRenderMode(RenderModule::MODEL, RenderMode());
+
+        PolygonMode current = mRenderer.findRenderMode(RenderModule::MODEL)->getPolygonMode();
+        mRenderer.findRenderMode(RenderModule::MODEL)->setPolygonMode((int32_t)current + 1 > (int32_t)PolygonMode::POINT ? PolygonMode::FILL : (PolygonMode)((int32_t)current + 1));
+    }
+}
+
 void RenderingSystem::render()
 {
     for(auto& debbie : mDebuggers)

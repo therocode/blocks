@@ -1,7 +1,8 @@
 #include "buffer.hpp"
 #include <fea/assert.hpp>
 
-Buffer::Buffer()
+Buffer::Buffer() :
+    mElementAmount(0)
 {
     glGenBuffers(1, &mBufferId);
 

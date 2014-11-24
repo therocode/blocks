@@ -1,5 +1,6 @@
 #include "inputmessages.hpp"
 #include "../script/scriptmessages.hpp"
+#include "../rendering/renderingmessages.hpp"
 #include "inputadaptor.hpp"
 #include "inputactions.hpp"
 #include <fea/ui/sdl2inputbackend.hpp>
@@ -151,6 +152,27 @@ void InputAdaptor::update()
         else if(event.type == fea::Event::RESIZED)
         {
             mBus.send(WindowResizeMessage{event.size.width, event.size.height});
+        }
+        else if(event.type == fea::Event::KEYPRESSED)
+        {
+            if(event.key.code == fea::Keyboard::NUM7)
+                mBus.send(RenderModeMessage{DISABLE_ALL});
+            else if(event.key.code == fea::Keyboard::NUM8)
+                mBus.send(RenderModeMessage{DISABLE_DEBUG});
+            else if(event.key.code == fea::Keyboard::NUM9)
+                mBus.send(RenderModeMessage{DISABLE_MODEL});
+            else if(event.key.code == fea::Keyboard::U)
+                mBus.send(RenderModeMessage{ENABLE_ALL});
+            else if(event.key.code == fea::Keyboard::I)
+                mBus.send(RenderModeMessage{ENABLE_DEBUG});
+            else if(event.key.code == fea::Keyboard::O)
+                mBus.send(RenderModeMessage{ENABLE_MODEL});
+            else if(event.key.code == fea::Keyboard::J)
+                mBus.send(RenderModeMessage{TOGGLE_MODE_ALL});
+            else if(event.key.code == fea::Keyboard::K)
+                mBus.send(RenderModeMessage{TOGGLE_MODE_DEBUG});
+            else if(event.key.code == fea::Keyboard::L)
+                mBus.send(RenderModeMessage{TOGGLE_MODE_MODEL});
         }
     }
 
