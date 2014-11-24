@@ -168,6 +168,7 @@ void DebugRenderer::render(const Camera& camera, const glm::mat4& perspective)
 
     glDrawArraysInstanced(GL_TRIANGLES, 0, 36, mRenderAmount);
     mRenderAmount = 0;
+
     mShader.deactivate();
     mVertexArray.unbind();
 }

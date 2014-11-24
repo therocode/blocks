@@ -17,8 +17,9 @@ class RenderingSystem :
                                 ClientAttachedToEntityMessage,
                                 WindowResizeMessage>
 {
+    enum RenderModule{ DEBUG, MODEL };
     public:
-        RenderingSystem(fea::MessageBus& bus);
+        RenderingSystem(fea::MessageBus& bus, const glm::uvec2& viewSize);
         void handleMessage(const RotateGfxEntityMessage& received) override;
         void handleMessage(const MoveGfxEntityMessage& received) override;
         void handleMessage(const ClientAttachedToEntityMessage& received) override;

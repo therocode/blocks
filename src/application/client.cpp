@@ -23,7 +23,7 @@ Client::Client(fea::MessageBus& bus, const NetworkParameters& parameters) :
     mLockedMouse = true;
 	mWindow.lockCursor(true);
 	mWindow.setVSyncEnabled(false);
-	mRenderingSystem = std::unique_ptr<RenderingSystem>(std::unique_ptr<RenderingSystem>(new RenderingSystem(mBus)));
+	mRenderingSystem = std::unique_ptr<RenderingSystem>(std::unique_ptr<RenderingSystem>(new RenderingSystem(mBus, {800, 600})));
 	mWindow.setFramerateLimit(60);
 
 	mBus.send(WindowResizeMessage{800, 600});

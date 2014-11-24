@@ -2,14 +2,14 @@
 #include "modelrenderer.hpp"
 #include "debugrenderer.hpp"
 
-RenderingSystem::RenderingSystem(fea::MessageBus& bus) :
+RenderingSystem::RenderingSystem(fea::MessageBus& bus, const glm::uvec2& viewSize) :
     mBus(bus),
-    mRenderer(mGLContext)
+    mRenderer(mGLContext, viewSize)
 
 {
     subscribe(bus, *this);
-    mRenderer.addModule(std::unique_ptr<ModelRenderer>(new ModelRenderer()));
-    mRenderer.addModule(std::unique_ptr<DebugRenderer>(new DebugRenderer()));
+    mRenderer.addModule(RenderModule::MODEL, std::unique_ptr<ModelRenderer>(new ModelRenderer()));
+    mRenderer.addModule(RenderModule::DEBUG, std::unique_ptr<DebugRenderer>(new DebugRenderer()));
 
     mModel.addMesh(0, mMesh);
     mModelRenderable.setModel(mModel);
@@ -27,8 +27,6 @@ RenderingSystem::RenderingSystem(fea::MessageBus& bus) :
             }
         }
     }
-
-    mRenderer.getRenderMode().setPolygonMode(PolygonMode::LINE);
 }
 
 void RenderingSystem::handleMessage(const RotateGfxEntityMessage& received)
