@@ -67,7 +67,7 @@ void ModelRenderer::queue(const Renderable& renderable)
     FEA_ASSERT(order.model != nullptr, "Trying to render a model renderable which doesn't have a model");
     FEA_ASSERT(order.model->findMesh(0) != nullptr, "Trying to render a model renderable which has a model without a primary mesh");
 
-    mOrders.emplace(order.model->findMesh(0), std::vector<ModelOrder>({order}));
+    mOrders[order.model->findMesh(0)].push_back(order);
 }
 
 void ModelRenderer::render(const Camera& camera, const glm::mat4& perspective)
@@ -95,6 +95,7 @@ void ModelRenderer::render(const Camera& camera, const glm::mat4& perspective)
 
             mMeshCache.emplace(&mesh, std::move(newMeshObject));
         }
+
 
         const auto& meshObject = mMeshCache.at(&mesh);
 

@@ -99,13 +99,6 @@ RenderingSystem::RenderingSystem(fea::MessageBus& bus, const glm::uvec2& viewSiz
 
     mCubeModel.addMesh(0, *mCubeMesh);
     mTetraModel.addMesh(0, *mTetraMesh);
-    mCubeModelRenderable.setModel(mCubeModel);
-    mTetraModelRenderable.setModel(mTetraModel);
-
-    mCubeModelRenderable.setColor({0.8f, 0.1f, 1.0f});
-    mTetraModelRenderable.setColor({1.0f, 0.4f, 0.2f});
-
-    mCubeModelRenderable.setPosition({4.0f, 1.0f, -5.0f});
 
     for(uint32_t x = 0; x < 50; x++)
     {
@@ -120,6 +113,16 @@ RenderingSystem::RenderingSystem(fea::MessageBus& bus, const glm::uvec2& viewSiz
             }
         }
     }
+}
+
+void RenderingSystem::handleMessage(const AddGfxEntityMessage& received)
+{
+    ModelRenderable newModel;
+    
+    newModel.setModel(mTetraModel);
+    newModel.setPosition(received.position);
+
+    mModels.emplace(received.id, newModel);
 }
 
 void RenderingSystem::handleMessage(const RotateGfxEntityMessage& received)
@@ -143,6 +146,13 @@ void RenderingSystem::handleMessage(const MoveGfxEntityMessage& received)
     {
         mRenderer.getCamera().setPosition(position);
     }
+
+    mModels.at(received.id).setPosition(position);
+}
+
+void RenderingSystem::handleMessage(const RemoveGfxEntityMessage& received)
+{
+    mModels.erase(received.id);
 }
 
 void RenderingSystem::handleMessage(const ClientAttachedToEntityMessage& received)
@@ -201,8 +211,10 @@ void RenderingSystem::render()
         mRenderer.queue(debbie);
     }
 
-    mRenderer.queue(mCubeModelRenderable);
-    mRenderer.queue(mTetraModelRenderable);
+    for(auto& moddie : mModels)
+    {
+        mRenderer.queue(moddie.second);
+    }
 
     mRenderer.render();
 }

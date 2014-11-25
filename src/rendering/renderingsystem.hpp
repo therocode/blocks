@@ -12,8 +12,10 @@
 #include "modelrenderable.hpp"
 
 class RenderingSystem :
-    public fea::MessageReceiver<RotateGfxEntityMessage,
+    public fea::MessageReceiver<AddGfxEntityMessage,
+                                RotateGfxEntityMessage,
                                 MoveGfxEntityMessage,
+                                RemoveGfxEntityMessage,
                                 ClientAttachedToEntityMessage,
                                 WindowResizeMessage,
                                 RenderModeMessage>
@@ -21,8 +23,10 @@ class RenderingSystem :
     enum RenderModule{ DEBUG, MODEL };
     public:
         RenderingSystem(fea::MessageBus& bus, const glm::uvec2& viewSize);
+        void handleMessage(const AddGfxEntityMessage& received) override;
         void handleMessage(const RotateGfxEntityMessage& received) override;
         void handleMessage(const MoveGfxEntityMessage& received) override;
+        void handleMessage(const RemoveGfxEntityMessage& received) override;
         void handleMessage(const ClientAttachedToEntityMessage& received) override;
         void handleMessage(const WindowResizeMessage& received) override;
         void handleMessage(const RenderModeMessage& received) override;
@@ -40,6 +44,6 @@ class RenderingSystem :
         std::unique_ptr<Mesh> mTetraMesh;
         Model mCubeModel;
         Model mTetraModel;
-        ModelRenderable mCubeModelRenderable;
-        ModelRenderable mTetraModelRenderable;
+
+        std::unordered_map<int32_t, ModelRenderable> mModels;
 };
