@@ -12,12 +12,17 @@ struct ModelOrder
 {
     const Model* model;
     glm::vec3 color;
+    glm::vec3 position;
 };
 
 struct MeshObject
 {
     VAO vertexArray;
     Buffer colors;
+    Buffer modelMatrix1;
+    Buffer modelMatrix2;
+    Buffer modelMatrix3;
+    Buffer modelMatrix4;
 };
 
 class ModelRenderer : public RenderModule

@@ -105,6 +105,8 @@ RenderingSystem::RenderingSystem(fea::MessageBus& bus, const glm::uvec2& viewSiz
     mCubeModelRenderable.setColor({0.8f, 0.1f, 1.0f});
     mTetraModelRenderable.setColor({1.0f, 0.4f, 0.2f});
 
+    mCubeModelRenderable.setPosition({4.0f, 1.0f, -5.0f});
+
     for(uint32_t x = 0; x < 50; x++)
     {
         for(uint32_t y = 0; y < 50; y++)
