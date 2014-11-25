@@ -119,8 +119,9 @@ void RenderingSystem::handleMessage(const AddGfxEntityMessage& received)
 {
     ModelRenderable newModel;
     
-    newModel.setModel(mTetraModel);
+    newModel.setModel(rand() % 2 ? mTetraModel : mCubeModel);
     newModel.setPosition(received.position);
+    newModel.setColor({(float)(rand() % 256) / 256.0f,(float)(rand() % 256) / 256.0f, (float)(rand() % 256) / 256.0f});
 
     mModels.emplace(received.id, newModel);
 }
