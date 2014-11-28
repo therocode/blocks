@@ -219,6 +219,7 @@ set(header_files
     src/utilities/logger.hpp
     src/utilities/namedenum.hpp
 	src/utilities/random.hpp
+	src/utilities/resourcecache.hpp
     src/utilities/signalcatcher.hpp
 
 	src/utilities/timer.hpp
@@ -402,6 +403,7 @@ if(BUILD_TESTS)
         "test/utilities/interpolationgrid3dtest.cpp"
         "test/utilities/directorycreatortest.cpp"
         "test/utilities/scopeddirectorytest.cpp"
+        "test/utilities/resourcecachetest.cpp"
         "test/utilities/idprovidertest.cpp"
         "test/utilities/namedenumtest.cpp"
         "test/world/chunktest.cpp"
