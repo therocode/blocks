@@ -33,7 +33,7 @@ class Renderer
         void setEnabled(bool enabled);
         bool isEnabled(int32_t moduleId) const;
         void setEnabled(int32_t moduleId, bool enabled);
-        void setPerspective(float fov, float near, float far);
+        void setPerspective(float fov, float rnear, float rfar);
         void setClearColor(const glm::vec3& color);
         const glm::vec3& getClearColor() const;
     private:
