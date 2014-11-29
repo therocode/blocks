@@ -1,5 +1,5 @@
 #include "../catch.hpp"
-#include "../../src/utilities/resourcecache.hpp"
+#include "../../src/resources/resourcecache.hpp"
 
 class IntFromStringLoader
 {

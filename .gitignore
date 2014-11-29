@@ -31,3 +31,7 @@ zlib-1.2.8/*
 *.exp
 docs/gen/*
 *.kdev4
+assets/*
+.gd/*
+pullassets.sh
+pushassets.sh

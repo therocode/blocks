@@ -87,6 +87,9 @@ set(source_files
     src/rendering/vao.cpp
     src/rendering/vertexattribute.cpp
 
+    src/resources/clientresourcesystem.cpp
+    src/resources/iqmfromfileloader.cpp
+
     src/script/scriptcallback.cpp
     src/script/scriptchunk.cpp
     src/script/scriptengine.cpp
@@ -205,6 +208,11 @@ set(header_files
     src/rendering/uniform.hpp
     src/rendering/vao.hpp
     src/rendering/vertexattribute.hpp
+
+    src/resources/clientresourcesystem.hpp
+    src/resources/iqm.h
+    src/resources/iqmfromfileloader.hpp
+	src/resources/resourcecache.hpp
     
     src/utilities/coordinateconverter.hpp
     src/utilities/directorycreator.hpp
@@ -219,7 +227,6 @@ set(header_files
     src/utilities/logger.hpp
     src/utilities/namedenum.hpp
 	src/utilities/random.hpp
-	src/utilities/resourcecache.hpp
     src/utilities/signalcatcher.hpp
 
 	src/utilities/timer.hpp
@@ -399,11 +406,11 @@ endif(BUILD_GAME)
 #tests
 if(BUILD_TESTS)
     add_executable(tests "test/main.cpp"
+        "test/resources/resourcecachetest.cpp"
         "test/utilities/gridnotifiertest.cpp"
         "test/utilities/interpolationgrid3dtest.cpp"
         "test/utilities/directorycreatortest.cpp"
         "test/utilities/scopeddirectorytest.cpp"
-        "test/utilities/resourcecachetest.cpp"
         "test/utilities/idprovidertest.cpp"
         "test/utilities/namedenumtest.cpp"
         "test/world/chunktest.cpp"
