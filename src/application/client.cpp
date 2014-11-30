@@ -7,6 +7,7 @@
 #include "../rendering/renderingsystem.hpp"
 #include "../input/inputadaptor.hpp"
 #include "../world/raycaster.hpp"
+#include "../resources/clientresourcesystem.hpp"
 
 
 Client::Client(fea::MessageBus& bus, const NetworkParameters& parameters) :
@@ -34,6 +35,8 @@ Client::Client(fea::MessageBus& bus, const NetworkParameters& parameters) :
     mFPSCounter.setMaxFPS(0);
     mFPSCounter.setSampleTime(0.5f);
 	//if there's an error, display it
+    
+    mResourceSystem = std::unique_ptr<ClientResourceSystem>(new ClientResourceSystem(bus));
 
     mClientNetworkingSystem = std::unique_ptr<ClientNetworkingSystem>(new ClientNetworkingSystem(bus, parameters));
 }

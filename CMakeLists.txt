@@ -212,6 +212,7 @@ set(header_files
     src/resources/clientresourcesystem.hpp
     src/resources/iqm.h
     src/resources/iqmfromfileloader.hpp
+	src/resources/rawmodel.hpp
 	src/resources/resourcecache.hpp
     
     src/utilities/coordinateconverter.hpp

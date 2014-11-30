@@ -1,9 +1,9 @@
 #pragma once
 #include <string>
-#include "iqm.h"
+#include "rawmodel.hpp"
 
 class IQMFromFileLoader
 {
     public:
-        int load(const std::string& filename);
+        RawModel load(const std::string& filename);
 };
