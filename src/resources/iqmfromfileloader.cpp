@@ -80,5 +80,29 @@ RawModel IQMFromFileLoader::load(const std::string& filename)
         exit(0); //exception
     }
 
+    std::cout << "now loading vertex arrays, offset of arrays is " << header.ofs_vertexarrays << "\n";
+
+    file.seekg(header.ofs_vertexarrays);
+
+    for(uint32_t i = 0; i < header.num_vertexarrays; i++)
+    {
+        iqmvertexarray vertexArray;
+
+        file.read((char*)&vertexArray.type, sizeof(vertexArray.type));
+        file.read((char*)&vertexArray.flags, sizeof(vertexArray.flags));
+        file.read((char*)&vertexArray.format, sizeof(vertexArray.format));
+        file.read((char*)&vertexArray.size, sizeof(vertexArray.size));
+        file.read((char*)&vertexArray.offset, sizeof(vertexArray.offset));
+
+        std::cout << "this vertex array has:\n";
+        std::cout << "type: " << vertexArray.type << "\n";
+        std::cout << "format: " << vertexArray.format << "\n";
+        std::cout << "size: " << vertexArray.size << "\n";
+        std::cout << "offset: " << vertexArray.offset << "\n";
+
+
+        //read number of vertices from array data at offset
+    }
+
     return rawModel;
 }
