@@ -146,11 +146,11 @@ void Renderer::setEnabled(int32_t moduleId, bool enabled)
     mModules.at(moduleId)->setEnabled(enabled);
 }
 
-void Renderer::setPerspective(float fov, float near, float far)
+void Renderer::setPerspective(float fov, float rnear, float rfar)
 {
     mFov = fov;
-    mNear = near;
-    mFar = far;
+    mNear = rnear;
+    mFar = rfar;
 
     mPerspective = glm::perspective(glm::radians(mFov), (float)mViewSize.x / (float)mViewSize.y, mNear, mFar);
 }
