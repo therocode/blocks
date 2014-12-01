@@ -11,7 +11,13 @@ class DebugRenderable : public Renderable
         const glm::vec3& getPosition() const;
         void setColor(const glm::vec3& color);
         const glm::vec3& getColor() const;
+		void setPitch(float pitch);
+		const float getPitch() const;
+		void setYaw(float yaw);
+		const float getYaw() const;
     private:
         glm::vec3 mPosition;
         glm::vec3 mColor;
+		float mPitch;
+		float mYaw;
 };

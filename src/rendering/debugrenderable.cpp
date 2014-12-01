@@ -29,3 +29,23 @@ const glm::vec3& DebugRenderable::getColor() const
 {
     return mColor;
 }
+
+void DebugRenderable::setPitch(float pitch)
+{
+	mPitch = pitch;
+}
+
+const float DebugRenderable::getPitch() const
+{
+	return mPitch;
+}
+
+void DebugRenderable::setYaw(float yaw)
+{
+	mYaw = yaw;
+}
+
+const float DebugRenderable::getYaw() const
+{
+	return mYaw;
+}
