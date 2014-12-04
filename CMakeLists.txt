@@ -214,6 +214,7 @@ set(header_files
     src/resources/iqmfromfileloader.hpp
 	src/resources/rawmodel.hpp
 	src/resources/resourcecache.hpp
+	src/resources/resourcemessages.hpp
     
     src/utilities/coordinateconverter.hpp
     src/utilities/directorycreator.hpp

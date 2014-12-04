@@ -1,7 +1,7 @@
 #include "modelrenderer.hpp"
 #include "camera.hpp"
 #include "model.hpp"
-#include "mesh.hpp"
+#include "model.hpp"
 #include <vector>
 #include <string>
 #include <fea/assert.hpp>
@@ -65,9 +65,9 @@ void ModelRenderer::queue(const Renderable& renderable)
     order.position = modelRenderable.getPosition();
     
     FEA_ASSERT(order.model != nullptr, "Trying to render a model renderable which doesn't have a model");
-    FEA_ASSERT(order.model->findMesh(0) != nullptr, "Trying to render a model renderable which has a model without a primary mesh");
+    FEA_ASSERT(order.model->findMesh(0) != nullptr, "Trying to render a model renderable which has a model without a primary model");
 
-    mOrders[order.model->findMesh(0)].push_back(order);
+    mOrders[order.model].push_back(order);
 }
 
 void ModelRenderer::render(const Camera& camera, const glm::mat4& perspective)
@@ -77,27 +77,33 @@ void ModelRenderer::render(const Camera& camera, const glm::mat4& perspective)
 
     mShader.setUniform("viewProjectionMatrix", UniformType::MAT4X4, glm::value_ptr(perspective * camera.getMatrix()));
     
-    for(const auto meshIterator : mOrders)
+    for(const auto modelIterator : mOrders)
     {
-        const Mesh& mesh = *meshIterator.first;
+        const Model& model = *modelIterator.first;
 
-        const auto iterator = mMeshCache.find(&mesh);
-        if(iterator == mMeshCache.end())
+        const auto iterator = mModelCache.find(&model);
+        if(iterator == mModelCache.end())
         {
-            std::unique_ptr<MeshObject> newMeshObject = std::unique_ptr<MeshObject>(new MeshObject());
+            std::unique_ptr<ModelObject> newModelObject = std::unique_ptr<ModelObject>(new ModelObject());
 
-            newMeshObject->vertexArray.setVertexAttribute(ModelAttribute::POSITION, 3, mesh.getPositionBuffer());
-            newMeshObject->vertexArray.setInstanceAttribute(ModelAttribute::COLOR, 3, newMeshObject->colors, 1);
-            newMeshObject->vertexArray.setInstanceAttribute(ModelAttribute::MODELMATRIX1, 4, newMeshObject->modelMatrix1, 1);
-            newMeshObject->vertexArray.setInstanceAttribute(ModelAttribute::MODELMATRIX2, 4, newMeshObject->modelMatrix2, 1);
-            newMeshObject->vertexArray.setInstanceAttribute(ModelAttribute::MODELMATRIX3, 4, newMeshObject->modelMatrix3, 1);
-            newMeshObject->vertexArray.setInstanceAttribute(ModelAttribute::MODELMATRIX4, 4, newMeshObject->modelMatrix4, 1);
+            newModelObject->vertexArray.setVertexAttribute(ModelAttribute::POSITION, 3, *model.findVertexArray(Model::POSITIONS));
 
-            mMeshCache.emplace(&mesh, std::move(newMeshObject));
+            newModelObject->vertexArray.setInstanceAttribute(ModelAttribute::COLOR, 3, newModelObject->colors, 1);
+            newModelObject->vertexArray.setInstanceAttribute(ModelAttribute::MODELMATRIX1, 4, newModelObject->modelMatrix1, 1);
+            newModelObject->vertexArray.setInstanceAttribute(ModelAttribute::MODELMATRIX2, 4, newModelObject->modelMatrix2, 1);
+            newModelObject->vertexArray.setInstanceAttribute(ModelAttribute::MODELMATRIX3, 4, newModelObject->modelMatrix3, 1);
+            newModelObject->vertexArray.setInstanceAttribute(ModelAttribute::MODELMATRIX4, 4, newModelObject->modelMatrix4, 1);
+
+            for(const auto& mesh : model.getMeshes())
+            {
+                newModelObject->meshes.push_back(mesh.second.get());
+            }
+
+            mModelCache.emplace(&model, std::move(newModelObject));
         }
 
 
-        const auto& meshObject = mMeshCache.at(&mesh);
+        const auto& modelObject = mModelCache.at(&model);
 
         std::vector<float> colors;
         std::vector<float> modelMatrix1;
@@ -110,7 +116,7 @@ void ModelRenderer::render(const Camera& camera, const glm::mat4& perspective)
         std::vector<float> data3 = { 0.0f, 0.0f, 1.0f, 0.0f };
         std::vector<float> data4 = { 0.0f, 0.0f, 0.0f, 1.0f };
         
-        for(const auto order : meshIterator.second)
+        for(const auto order : modelIterator.second)
         {
             colors.push_back(order.color.r);
             colors.push_back(order.color.g);
@@ -126,15 +132,21 @@ void ModelRenderer::render(const Camera& camera, const glm::mat4& perspective)
             modelMatrix4.insert(modelMatrix4.end(), data4.begin(), data4.end());
         }
 
-        meshObject->colors.setData(colors);
-        meshObject->modelMatrix1.setData(modelMatrix1);
-        meshObject->modelMatrix2.setData(modelMatrix2);
-        meshObject->modelMatrix3.setData(modelMatrix3);
-        meshObject->modelMatrix4.setData(modelMatrix4);
+        modelObject->colors.setData(colors);
+        modelObject->modelMatrix1.setData(modelMatrix1);
+        modelObject->modelMatrix2.setData(modelMatrix2);
+        modelObject->modelMatrix3.setData(modelMatrix3);
+        modelObject->modelMatrix4.setData(modelMatrix4);
 
-        meshObject->vertexArray.bind();
-        glDrawArraysInstanced(GL_TRIANGLES, 0, mesh.getPositionBuffer().getElementAmount() / 3, meshIterator.second.size());
-        meshObject->vertexArray.unbind();
+        modelObject->vertexArray.bind();
+
+        for(const auto& mesh : modelObject->meshes)
+        {
+            mesh->getIndexBuffer().bind();
+            glDrawElementsInstanced(GL_TRIANGLES, mesh->getIndexBuffer().getElementAmount(), GL_UNSIGNED_INT, 0, modelIterator.second.size());
+        }
+
+        modelObject->vertexArray.unbind();
     }
 
     mOrders.clear();

@@ -1,11 +1,12 @@
 #include "mesh.hpp"
 
-Mesh::Mesh(const std::vector<float>& positions)
+Mesh::Mesh(const std::vector<uint32_t>& positions) :
+    mIndexBuffer(Buffer::ELEMENT_ARRAY_BUFFER)
 {
-    mPositionBuffer.setData(positions);
+    mIndexBuffer.setData(positions);
 }
 
-const Buffer& Mesh::getPositionBuffer() const
+const Buffer& Mesh::getIndexBuffer() const
 {
-    return mPositionBuffer;
+    return mIndexBuffer;
 }

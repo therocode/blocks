@@ -12,60 +12,35 @@ RenderingSystem::RenderingSystem(fea::MessageBus& bus, const glm::uvec2& viewSiz
     mRenderer.addModule(RenderModule::DEBUG, std::unique_ptr<DebugRenderer>(new DebugRenderer()));
 
     std::vector<float> squareVertices = {
-             -0.5f, -0.5f,  0.5f,
-              0.5f, -0.5f,  0.5f,
-             -0.5f,  0.5f,  0.5f,
+             -0.5f, -0.5f, -0.5f, //0
+              0.5f, -0.5f, -0.5f, //1
+             -0.5f,  0.5f, -0.5f, //2
+              0.5f,  0.5f, -0.5f, //3
 
-             -0.5f,  0.5f,  0.5f,
-              0.5f, -0.5f,  0.5f,
-              0.5f,  0.5f,  0.5f,
+             -0.5f, -0.5f,  0.5f, //4
+              0.5f, -0.5f,  0.5f, //5
+             -0.5f,  0.5f,  0.5f, //6
+              0.5f,  0.5f,  0.5f  //7
+    };
 
+    std::vector<uint32_t> squareIndices = {
+             0, 2, 1,
+             2, 3, 1,
+             
+             4, 6, 2,
+             2, 0, 4,
 
-             -0.5f, -0.5f, -0.5f,
-             -0.5f,  0.5f, -0.5f,
-              0.5f, -0.5f, -0.5f,
+             4, 0, 1,
+             4, 1, 5,
 
-             -0.5f,  0.5f, -0.5f,
-              0.5f,  0.5f, -0.5f,
-              0.5f, -0.5f, -0.5f,
+             4, 5, 6,
+             6, 5, 7,
+             
+             0, 6, 2
+             //6, 0 ,4
 
-
-
-             -0.5f, -0.5f,  0.5f,
-             -0.5f,  0.5f,  0.5f,
-             -0.5f, -0.5f, -0.5f,
-
-             -0.5f, -0.5f, -0.5f,
-             -0.5f,  0.5f,  0.5f,
-             -0.5f,  0.5f, -0.5f,
-
-
-              0.5f, -0.5f,  0.5f,
-              0.5f, -0.5f, -0.5f,
-              0.5f,  0.5f,  0.5f,
-
-              0.5f, -0.5f, -0.5f,
-              0.5f,  0.5f, -0.5f,
-              0.5f,  0.5f,  0.5f,
-
-
-
-             -0.5f,  0.5f,  0.5f,
-              0.5f,  0.5f,  0.5f,
-             -0.5f,  0.5f, -0.5f,
-
-              0.5f,  0.5f,  0.5f,
-              0.5f,  0.5f, -0.5f,
-             -0.5f,  0.5f, -0.5f,
-
-
-             -0.5f, -0.5f,  0.5f,
-             -0.5f, -0.5f, -0.5f,
-              0.5f, -0.5f,  0.5f,
-
-              0.5f, -0.5f,  0.5f,
-             -0.5f, -0.5f, -0.5f,
-              0.5f, -0.5f, -0.5f,
+             //0, 5, 4,
+             //0, 1, 5
     };
 
     std::vector<float> tetraVertices = {
@@ -94,17 +69,18 @@ RenderingSystem::RenderingSystem(fea::MessageBus& bus, const glm::uvec2& viewSiz
               0.5f,  0.0f,  0.5f
     };
 
-    mCubeMesh = std::unique_ptr<Mesh>(new Mesh(squareVertices));
-    mTetraMesh = std::unique_ptr<Mesh>(new Mesh(tetraVertices));
+    std::unique_ptr<Mesh> cubeMesh = std::unique_ptr<Mesh>(new Mesh(squareIndices));
+    //mTetraMesh = std::unique_ptr<Mesh>(new Mesh(tetraVertices));
 
-    mCubeModel.addMesh(0, *mCubeMesh);
-    mTetraModel.addMesh(0, *mTetraMesh);
+    mCubeModel.addVertexArray(Model::POSITIONS, squareVertices);
+    mCubeModel.addMesh(0, std::move(cubeMesh));
+    //mTetraModel.addMesh(0, *mTetraMesh);
 
-    for(uint32_t x = 0; x < 50; x++)
+    for(uint32_t x = 0; x < 25; x++)
     {
-        for(uint32_t y = 0; y < 50; y++)
+        for(uint32_t y = 0; y < 25; y++)
         {
-            for(uint32_t z = 0; z < 50; z++)
+            for(uint32_t z = 0; z < 25; z++)
             {
                 DebugRenderable newDeb;
                 newDeb.setPosition(glm::vec3(x * 5 + (float)(rand() % 20 - 10) / 5.0f, y * 5 + (float)(rand() % 20 - 10) / 5.0f, z * 5 + (float)(rand() % 20 - 10) / 5.0f) + glm::vec3(0.3f, -43.0f, 0.0f));
@@ -203,6 +179,16 @@ void RenderingSystem::handleMessage(const RenderModeMessage& received)
 
         PolygonMode current = mRenderer.getRenderMode(RenderModule::MODEL).getPolygonMode();
         mRenderer.getRenderMode(RenderModule::MODEL).setPolygonMode((int32_t)current + 1 > (int32_t)PolygonMode::POINT ? PolygonMode::FILL : (PolygonMode)((int32_t)current + 1));
+    }
+}
+
+void RenderingSystem::handleMessage(const ModelDeliverMessage& received)
+{
+    if(mTetraMesh == nullptr)
+    {
+        std::unique_ptr<Mesh> mesh = std::unique_ptr<Mesh>(new Mesh(received.model->indices[0]));
+        mTetraModel.addMesh(0, std::move(mesh));
+        mTetraModel.addVertexArray(Model::POSITIONS, received.model->positions);
     }
 }
 

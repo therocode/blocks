@@ -3,6 +3,7 @@
 #include <cstring>
 #include <iostream>
 #include <fstream>
+#include <memory>
 
 RawModel IQMFromFileLoader::load(const std::string& filename)
 {
@@ -100,8 +101,77 @@ RawModel IQMFromFileLoader::load(const std::string& filename)
         std::cout << "size: " << vertexArray.size << "\n";
         std::cout << "offset: " << vertexArray.offset << "\n";
 
+        file.seekg(vertexArray.offset);
 
-        //read number of vertices from array data at offset
+        //to read others, read all array headers at once
+        if(vertexArray.type == IQM_POSITION && i == 0)
+        {
+            std::vector<float> positions;
+            positions.resize(header.num_vertexes * 3);
+            file.read((char*) positions.data(), sizeof(float) * header.num_vertexes * 3);
+
+            std::cout << "position vertices:\n";
+
+            for(int32_t j = 0; j < header.num_vertexes * 3; j++)
+            {
+                std::cout << positions[j] << " ";
+
+                if(j % 3 == 2)
+                    std::cout << "\n";
+            }
+
+            for(uint32_t j = 0; j < positions.size() / 3; j++)
+            {
+                std::swap(positions[j * 3 + 1], positions[j * 3 + 2]);
+            }
+
+            rawModel.positions = std::move(positions);
+        }
+    }
+
+    file.seekg(header.ofs_meshes);
+
+    std::cout << "loading meshes:\n";
+
+    for(uint32_t i = 0; i < header.num_meshes; i++)
+    {
+        if(i == 0)
+        {
+        iqmmesh mesh;
+    
+        file.read((char*)&mesh.name, sizeof(mesh.name));
+        file.read((char*)&mesh.material, sizeof(mesh.material));
+        file.read((char*)&mesh.first_vertex, sizeof(mesh.first_vertex));
+        file.read((char*)&mesh.num_vertexes, sizeof(mesh.num_vertexes));
+        file.read((char*)&mesh.first_triangle, sizeof(mesh.first_triangle));
+        file.read((char*)&mesh.num_triangles, sizeof(mesh.num_triangles));
+
+        std::vector<uint32_t> indices;
+        indices.resize(mesh.num_triangles * 3);
+
+        file.seekg(header.ofs_triangles);
+
+        iqmtriangle triangle;
+
+        for(uint32_t j = mesh.first_triangle; j > 0; j--)
+            file.read((char*)&triangle, sizeof(triangle));
+
+        for(uint32_t j = 0; j < mesh.num_triangles; j++)
+        {
+            file.read((char*)&triangle, sizeof(triangle));
+
+            indices.push_back(triangle.vertex[0]);
+            indices.push_back(triangle.vertex[1]);
+            indices.push_back(triangle.vertex[2]);
+        }
+
+        rawModel.indices.push_back(indices);
+
+        std::cout << "indices were: \n";
+
+        for(auto num : indices)
+            std::cout << num << "\n";
+        }
     }
 
     return rawModel;

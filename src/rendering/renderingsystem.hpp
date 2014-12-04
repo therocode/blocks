@@ -3,6 +3,7 @@
 #include "renderer.hpp"
 #include "glcontext.hpp"
 #include "renderingmessages.hpp"
+#include "../resources/resourcemessages.hpp"
 #include "../networking/networkingprotocol.hpp"
 #include "../input/inputmessages.hpp"
 //test
@@ -18,7 +19,8 @@ class RenderingSystem :
                                 RemoveGfxEntityMessage,
                                 ClientAttachedToEntityMessage,
                                 WindowResizeMessage,
-                                RenderModeMessage>
+                                RenderModeMessage,
+                                ModelDeliverMessage>
 {
     enum RenderModule{ DEBUG, MODEL };
     public:
@@ -30,6 +32,7 @@ class RenderingSystem :
         void handleMessage(const ClientAttachedToEntityMessage& received) override;
         void handleMessage(const WindowResizeMessage& received) override;
         void handleMessage(const RenderModeMessage& received) override;
+        void handleMessage(const ModelDeliverMessage& received) override;
         void render();
     private:
         fea::MessageBus& mBus;
@@ -40,7 +43,6 @@ class RenderingSystem :
         //test
         std::vector<DebugRenderable> mDebuggers;
 
-        std::unique_ptr<Mesh> mCubeMesh;
         std::unique_ptr<Mesh> mTetraMesh;
         Model mCubeModel;
         Model mTetraModel;

@@ -15,9 +15,10 @@ struct ModelOrder
     glm::vec3 position;
 };
 
-struct MeshObject
+struct ModelObject
 {
     VAO vertexArray;
+    std::vector<const Mesh*> meshes;
     Buffer colors;
     Buffer modelMatrix1;
     Buffer modelMatrix2;
@@ -38,8 +39,8 @@ class ModelRenderer : public RenderModule
         VAO mVertexArray;
         Shader mShader;
 
-        std::unordered_map<const Mesh*, std::vector<ModelOrder>> mOrders;
+        std::unordered_map<const Model*, std::vector<ModelOrder>> mOrders;
 
         //mesh vao cache
-        std::unordered_map<const Mesh*, std::unique_ptr<MeshObject>> mMeshCache;
+        std::unordered_map<const Model*, std::unique_ptr<ModelObject>> mModelCache;
 };
