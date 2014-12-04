@@ -42,10 +42,7 @@ class RenderingSystem :
 
         //test
         std::vector<DebugRenderable> mDebuggers;
+        std::vector<std::unique_ptr<Model>> mModels;
 
-        std::unique_ptr<Mesh> mTetraMesh;
-        Model mCubeModel;
-        Model mTetraModel;
-
-        std::unordered_map<int32_t, ModelRenderable> mModels;
+        std::unordered_map<int32_t, ModelRenderable> mModelRenderables;
 };

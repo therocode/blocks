@@ -11,71 +11,6 @@ RenderingSystem::RenderingSystem(fea::MessageBus& bus, const glm::uvec2& viewSiz
     mRenderer.addModule(RenderModule::MODEL, std::unique_ptr<ModelRenderer>(new ModelRenderer()));
     mRenderer.addModule(RenderModule::DEBUG, std::unique_ptr<DebugRenderer>(new DebugRenderer()));
 
-    std::vector<float> squareVertices = {
-             -0.5f, -0.5f, -0.5f, //0
-              0.5f, -0.5f, -0.5f, //1
-             -0.5f,  0.5f, -0.5f, //2
-              0.5f,  0.5f, -0.5f, //3
-
-             -0.5f, -0.5f,  0.5f, //4
-              0.5f, -0.5f,  0.5f, //5
-             -0.5f,  0.5f,  0.5f, //6
-              0.5f,  0.5f,  0.5f  //7
-    };
-
-    std::vector<uint32_t> squareIndices = {
-             0, 2, 1,
-             2, 3, 1,
-             
-             4, 6, 2,
-             2, 0, 4,
-
-             4, 0, 1,
-             4, 1, 5,
-
-             4, 5, 6,
-             6, 5, 7,
-             
-             0, 6, 2
-             //6, 0 ,4
-
-             //0, 5, 4,
-             //0, 1, 5
-    };
-
-    std::vector<float> tetraVertices = {
-              0.0f,  1.0f,  0.0f,
-             -0.5f,  0.0f,  0.5f,
-              0.5f,  0.0f,  0.5f,
-
-              0.0f,  1.0f,  0.0f,
-             -0.5f,  0.0f, -0.5f,
-             -0.5f,  0.0f,  0.5f,
-
-              0.0f,  1.0f,  0.0f,
-              0.5f,  0.0f, -0.5f,
-             -0.5f,  0.0f, -0.5f,
-
-              0.0f,  1.0f,  0.0f,
-              0.5f,  0.0f,  0.5f,
-              0.5f,  0.0f, -0.5f,
-
-             -0.5f,  0.0f,  0.5f,
-             -0.5f,  0.0f, -0.5f,
-              0.5f,  0.0f, -0.5f,
-
-             -0.5f,  0.0f,  0.5f,
-              0.5f,  0.0f, -0.5f,
-              0.5f,  0.0f,  0.5f
-    };
-
-    std::unique_ptr<Mesh> cubeMesh = std::unique_ptr<Mesh>(new Mesh(squareIndices));
-    //mTetraMesh = std::unique_ptr<Mesh>(new Mesh(tetraVertices));
-
-    mCubeModel.addVertexArray(Model::POSITIONS, squareVertices);
-    mCubeModel.addMesh(0, std::move(cubeMesh));
-    //mTetraModel.addMesh(0, *mTetraMesh);
-
     for(uint32_t x = 0; x < 25; x++)
     {
         for(uint32_t y = 0; y < 25; y++)
@@ -97,11 +32,11 @@ void RenderingSystem::handleMessage(const AddGfxEntityMessage& received)
 {
     ModelRenderable newModel;
     
-    newModel.setModel(rand() % 2 ? mTetraModel : mCubeModel);
+    newModel.setModel(**mModels.begin());
     newModel.setPosition(received.position);
     newModel.setColor({(float)(rand() % 256) / 256.0f,(float)(rand() % 256) / 256.0f, (float)(rand() % 256) / 256.0f});
 
-    mModels.emplace(received.id, newModel);
+    mModelRenderables.emplace(received.id, newModel);
 }
 
 void RenderingSystem::handleMessage(const RotateGfxEntityMessage& received)
@@ -126,12 +61,12 @@ void RenderingSystem::handleMessage(const MoveGfxEntityMessage& received)
         mRenderer.getCamera().setPosition(position);
     }
 
-    mModels.at(received.id).setPosition(position);
+    mModelRenderables.at(received.id).setPosition(position);
 }
 
 void RenderingSystem::handleMessage(const RemoveGfxEntityMessage& received)
 {
-    mModels.erase(received.id);
+    mModelRenderables.erase(received.id);
 }
 
 void RenderingSystem::handleMessage(const ClientAttachedToEntityMessage& received)
@@ -184,18 +119,18 @@ void RenderingSystem::handleMessage(const RenderModeMessage& received)
 
 void RenderingSystem::handleMessage(const ModelDeliverMessage& received)
 {
-    if(mTetraMesh == nullptr)
-    {
-        mTetraModel.addVertexArray(Model::POSITIONS, received.model->positions);
+    std::unique_ptr<Model> newModel = std::unique_ptr<Model>(new Model());
+    newModel->addVertexArray(Model::POSITIONS, received.model->positions);
 
-        int32_t meshNumber = 0;
-        for(const auto& indices : received.model->indices)
-        {
-            std::unique_ptr<Mesh> mesh = std::unique_ptr<Mesh>(new Mesh(indices));
-            mTetraModel.addMesh(meshNumber, std::move(mesh));
-            meshNumber++;
-        }
+    int32_t meshNumber = 0;
+    for(const auto& indices : received.model->indices)
+    {
+        std::unique_ptr<Mesh> mesh = std::unique_ptr<Mesh>(new Mesh(indices));
+        newModel->addMesh(meshNumber, std::move(mesh));
+        meshNumber++;
     }
+
+    mModels.push_back(std::move(newModel));
 }
 
 void RenderingSystem::render()
@@ -208,7 +143,7 @@ void RenderingSystem::render()
 		mRenderer.queue(debbie);
     }
 
-    for(auto& moddie : mModels)
+    for(auto& moddie : mModelRenderables)
     {
         mRenderer.queue(moddie.second);
     }

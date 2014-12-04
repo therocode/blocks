@@ -32,20 +32,6 @@ RawModel IQMFromFileLoader::load(const std::string& filename)
     iqmheader header;
     readIqmHeader(headerBytes, header);
 
-    std::cout << "Magic: " << header.magic << "\n";
-    std::cout << "Version: " << header.version << "\n";
-    std::cout << "Filesize: " << header.filesize << "\n";
-    std::cout << "Num meshes: " << header.num_meshes << "\n";
-    std::cout << "Num vertexarrays: " << header.num_vertexarrays << "\n";
-    std::cout << "Num vertices: " << header.num_vertexes << "\n";
-    std::cout << "Num triangles: " << header.num_triangles << "\n";
-    std::cout << "Num joints: " << header.num_joints << "\n";
-    std::cout << "Num poses: " << header.num_poses << "\n";
-    std::cout << "Num anims: " << header.num_anims << "\n";
-    std::cout << "Num frames: " << header.num_frames << "\n";
-    std::cout << "Num comment: " << header.num_comment << "\n";
-    std::cout << "Num extensions: " << header.num_extensions << "\n";
-
     if(std::string(header.magic) != std::string(IQM_MAGIC))
     {
         std::cout << "ERROR: not an IQM file. Start string should be '" << IQM_MAGIC << "' but was '" << header.magic << "'\n";
@@ -62,8 +48,6 @@ RawModel IQMFromFileLoader::load(const std::string& filename)
         exit(0); //exception
     }
 
-    std::cout << "now loading vertex arrays, offset of arrays is " << header.ofs_vertexarrays << "\n";
-
     char* vertexArrayBytesIterator = headerBytes + header.ofs_vertexarrays;
     
     for(uint32_t i = 0; i < header.num_vertexarrays; i++)
@@ -71,27 +55,11 @@ RawModel IQMFromFileLoader::load(const std::string& filename)
         iqmvertexarray vertexArray;
         vertexArrayBytesIterator = readIqmVertexArray(vertexArrayBytesIterator, vertexArray);
 
-        std::cout << "this vertex array has:\n";
-        std::cout << "type: " << vertexArray.type << "\n";
-        std::cout << "format: " << vertexArray.format << "\n";
-        std::cout << "size: " << vertexArray.size << "\n";
-        std::cout << "offset: " << vertexArray.offset << "\n";
-
         //to read others, read all array headers at once
         if(vertexArray.type == IQM_POSITION && i == 0)
         {
             std::vector<float> positions(header.num_vertexes * 3);
             std::copy(headerBytes + vertexArray.offset, headerBytes + vertexArray.offset + sizeof(float) * header.num_vertexes * 3, (char*)positions.data());
-
-            std::cout << "position vertices:\n";
-
-            for(int32_t j = 0; j < header.num_vertexes * 3; j++)
-            {
-                std::cout << positions[j] << " ";
-
-                if(j % 3 == 2)
-                    std::cout << "\n";
-            }
 
             rawModel.positions = std::move(positions);
         }
@@ -99,14 +67,10 @@ RawModel IQMFromFileLoader::load(const std::string& filename)
 
     char* meshBytesIterator = headerBytes + header.ofs_meshes;
 
-    std::cout << "loading meshes:\n";
-
     for(uint32_t i = 0; i < header.num_meshes; i++)
     {
         iqmmesh mesh;
         meshBytesIterator = readIqmMesh(meshBytesIterator, mesh);
-
-        std::cout << "tri: " << mesh.num_triangles << "\n";
 
         iqmtriangle triangle;
         char* triangleIterator = headerBytes + header.ofs_triangles + (mesh.first_triangle * sizeof(triangle.vertex));
@@ -123,11 +87,6 @@ RawModel IQMFromFileLoader::load(const std::string& filename)
         }
 
         rawModel.indices.push_back(indices);
-
-        std::cout << "indices were: \n";
-
-        for(auto num : indices)
-            std::cout << num << "\n";
     }
 
     return rawModel;
