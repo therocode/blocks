@@ -1,5 +1,4 @@
 #include "iqmfromfileloader.hpp"
-#include "iqm.h"
 #include <cstring>
 #include <iostream>
 #include <fstream>
@@ -18,38 +17,20 @@ RawModel IQMFromFileLoader::load(const std::string& filename)
         exit(0); //should be exception
     }
 
+    file.seekg(0, std::ios::end);
+    size_t fileSize = file.tellg();
+    file.seekg(0, std::ios::beg);
+
+    std::vector<char> iqmData(fileSize);
+    file.read((char*)iqmData.data(), fileSize);
+
+    char* headerBytes = iqmData.data();
+    char* headerBytesIter = headerBytes;
+
+    file.seekg(0);
+
     iqmheader header;
-
-    file.read((char*)&header.magic, sizeof(header.magic));
-    file.read((char*)&header.version, sizeof(header.version));
-    file.read((char*)&header.filesize, sizeof(header.filesize));
-    file.read((char*)&header.flags, sizeof(header.flags));
-    file.read((char*)&header.num_text, sizeof(header.num_text));
-    file.read((char*)&header.ofs_text, sizeof(header.ofs_text));
-    file.read((char*)&header.num_meshes, sizeof(header.num_meshes));
-    file.read((char*)&header.ofs_meshes, sizeof(header.ofs_meshes));
-    file.read((char*)&header.num_vertexarrays, sizeof(header.num_vertexarrays));
-    file.read((char*)&header.num_vertexes, sizeof(header.num_vertexes));
-    file.read((char*)&header.ofs_vertexarrays, sizeof(header.ofs_vertexarrays));
-    file.read((char*)&header.num_triangles, sizeof(header.num_triangles));
-    file.read((char*)&header.ofs_triangles, sizeof(header.ofs_triangles));
-    file.read((char*)&header.ofs_adjacency, sizeof(header.ofs_adjacency));
-    file.read((char*)&header.num_joints, sizeof(header.num_joints));
-    file.read((char*)&header.ofs_joints, sizeof(header.ofs_joints));
-    file.read((char*)&header.num_poses, sizeof(header.num_poses));
-    file.read((char*)&header.ofs_poses, sizeof(header.ofs_poses));
-    file.read((char*)&header.num_anims, sizeof(header.num_anims));
-    file.read((char*)&header.ofs_anims, sizeof(header.ofs_anims));
-    file.read((char*)&header.num_frames, sizeof(header.num_frames));
-    file.read((char*)&header.num_framechannels, sizeof(header.num_framechannels));
-    file.read((char*)&header.ofs_frames, sizeof(header.ofs_frames));
-    file.read((char*)&header.ofs_bounds, sizeof(header.ofs_bounds));
-    file.read((char*)&header.num_comment, sizeof(header.num_comment));
-    file.read((char*)&header.ofs_comment, sizeof(header.ofs_comment));
-    file.read((char*)&header.num_extensions, sizeof(header.num_extensions));
-    file.read((char*)&header.ofs_extensions, sizeof(header.ofs_extensions));
-
-
+    readIqmHeader(headerBytes, header);
 
     std::cout << "Magic: " << header.magic << "\n";
     std::cout << "Version: " << header.version << "\n";
@@ -83,17 +64,12 @@ RawModel IQMFromFileLoader::load(const std::string& filename)
 
     std::cout << "now loading vertex arrays, offset of arrays is " << header.ofs_vertexarrays << "\n";
 
-    file.seekg(header.ofs_vertexarrays);
-
+    char* vertexArrayBytesIterator = headerBytes + header.ofs_vertexarrays;
+    
     for(uint32_t i = 0; i < header.num_vertexarrays; i++)
     {
         iqmvertexarray vertexArray;
-
-        file.read((char*)&vertexArray.type, sizeof(vertexArray.type));
-        file.read((char*)&vertexArray.flags, sizeof(vertexArray.flags));
-        file.read((char*)&vertexArray.format, sizeof(vertexArray.format));
-        file.read((char*)&vertexArray.size, sizeof(vertexArray.size));
-        file.read((char*)&vertexArray.offset, sizeof(vertexArray.offset));
+        vertexArrayBytesIterator = readIqmVertexArray(vertexArrayBytesIterator, vertexArray);
 
         std::cout << "this vertex array has:\n";
         std::cout << "type: " << vertexArray.type << "\n";
@@ -101,14 +77,11 @@ RawModel IQMFromFileLoader::load(const std::string& filename)
         std::cout << "size: " << vertexArray.size << "\n";
         std::cout << "offset: " << vertexArray.offset << "\n";
 
-        file.seekg(vertexArray.offset);
-
         //to read others, read all array headers at once
         if(vertexArray.type == IQM_POSITION && i == 0)
         {
-            std::vector<float> positions;
-            positions.resize(header.num_vertexes * 3);
-            file.read((char*) positions.data(), sizeof(float) * header.num_vertexes * 3);
+            std::vector<float> positions(header.num_vertexes * 3);
+            std::copy(headerBytes + vertexArray.offset, headerBytes + vertexArray.offset + sizeof(float) * header.num_vertexes * 3, (char*)positions.data());
 
             std::cout << "position vertices:\n";
 
@@ -120,45 +93,29 @@ RawModel IQMFromFileLoader::load(const std::string& filename)
                     std::cout << "\n";
             }
 
-            for(uint32_t j = 0; j < positions.size() / 3; j++)
-            {
-                std::swap(positions[j * 3 + 1], positions[j * 3 + 2]);
-            }
-
             rawModel.positions = std::move(positions);
         }
     }
 
-    file.seekg(header.ofs_meshes);
+    char* meshBytesIterator = headerBytes + header.ofs_meshes;
 
     std::cout << "loading meshes:\n";
 
     for(uint32_t i = 0; i < header.num_meshes; i++)
     {
-        if(i == 0)
-        {
         iqmmesh mesh;
-    
-        file.read((char*)&mesh.name, sizeof(mesh.name));
-        file.read((char*)&mesh.material, sizeof(mesh.material));
-        file.read((char*)&mesh.first_vertex, sizeof(mesh.first_vertex));
-        file.read((char*)&mesh.num_vertexes, sizeof(mesh.num_vertexes));
-        file.read((char*)&mesh.first_triangle, sizeof(mesh.first_triangle));
-        file.read((char*)&mesh.num_triangles, sizeof(mesh.num_triangles));
+        meshBytesIterator = readIqmMesh(meshBytesIterator, mesh);
 
-        std::vector<uint32_t> indices;
-        indices.resize(mesh.num_triangles * 3);
-
-        file.seekg(header.ofs_triangles);
+        std::cout << "tri: " << mesh.num_triangles << "\n";
 
         iqmtriangle triangle;
-
-        for(uint32_t j = mesh.first_triangle; j > 0; j--)
-            file.read((char*)&triangle, sizeof(triangle));
+        char* triangleIterator = headerBytes + header.ofs_triangles + (mesh.first_triangle * sizeof(triangle.vertex));
+        std::vector<uint32_t> indices(mesh.num_triangles * 3);
 
         for(uint32_t j = 0; j < mesh.num_triangles; j++)
         {
-            file.read((char*)&triangle, sizeof(triangle));
+            std::copy(triangleIterator, triangleIterator + sizeof(triangle.vertex), (char*)&triangle.vertex);
+            triangleIterator += sizeof(triangle.vertex);
 
             indices.push_back(triangle.vertex[0]);
             indices.push_back(triangle.vertex[1]);
@@ -171,8 +128,103 @@ RawModel IQMFromFileLoader::load(const std::string& filename)
 
         for(auto num : indices)
             std::cout << num << "\n";
-        }
     }
 
     return rawModel;
+}
+
+char* IQMFromFileLoader::readIqmHeader(char* headerPointer, iqmheader& result)
+{
+    std::copy(headerPointer, headerPointer + sizeof(result.magic), (char*)&result.magic);
+    headerPointer += sizeof(result.magic);
+    std::copy(headerPointer, headerPointer + sizeof(result.version), (char*)&result.version);
+    headerPointer += sizeof(result.version);
+    std::copy(headerPointer, headerPointer + sizeof(result.filesize), (char*)&result.filesize);
+    headerPointer += sizeof(result.filesize);
+    std::copy(headerPointer, headerPointer + sizeof(result.flags), (char*)&result.flags);
+    headerPointer += sizeof(result.flags);
+    std::copy(headerPointer, headerPointer + sizeof(result.num_text), (char*)&result.num_text);
+    headerPointer += sizeof(result.num_text);
+    std::copy(headerPointer, headerPointer + sizeof(result.ofs_text), (char*)&result.ofs_text);
+    headerPointer += sizeof(result.ofs_text);
+    std::copy(headerPointer, headerPointer + sizeof(result.num_meshes), (char*)&result.num_meshes);
+    headerPointer += sizeof(result.num_meshes);
+    std::copy(headerPointer, headerPointer + sizeof(result.ofs_meshes), (char*)&result.ofs_meshes);
+    headerPointer += sizeof(result.ofs_meshes);
+    std::copy(headerPointer, headerPointer + sizeof(result.num_vertexarrays), (char*)&result.num_vertexarrays);
+    headerPointer += sizeof(result.num_vertexarrays);
+    std::copy(headerPointer, headerPointer + sizeof(result.num_vertexes), (char*)&result.num_vertexes);
+    headerPointer += sizeof(result.num_vertexes);
+    std::copy(headerPointer, headerPointer + sizeof(result.ofs_vertexarrays), (char*)&result.ofs_vertexarrays);
+    headerPointer += sizeof(result.ofs_vertexarrays);
+    std::copy(headerPointer, headerPointer + sizeof(result.num_triangles), (char*)&result.num_triangles);
+    headerPointer += sizeof(result.num_triangles);
+    std::copy(headerPointer, headerPointer + sizeof(result.ofs_triangles), (char*)&result.ofs_triangles);
+    headerPointer += sizeof(result.ofs_triangles);
+    std::copy(headerPointer, headerPointer + sizeof(result.ofs_adjacency), (char*)&result.ofs_adjacency);
+    headerPointer += sizeof(result.ofs_adjacency);
+    std::copy(headerPointer, headerPointer + sizeof(result.num_joints), (char*)&result.num_joints);
+    headerPointer += sizeof(result.num_joints);
+    std::copy(headerPointer, headerPointer + sizeof(result.ofs_joints), (char*)&result.ofs_joints);
+    headerPointer += sizeof(result.ofs_joints);
+    std::copy(headerPointer, headerPointer + sizeof(result.num_poses), (char*)&result.num_poses);
+    headerPointer += sizeof(result.num_poses);
+    std::copy(headerPointer, headerPointer + sizeof(result.ofs_poses), (char*)&result.ofs_poses);
+    headerPointer += sizeof(result.ofs_poses);
+    std::copy(headerPointer, headerPointer + sizeof(result.num_anims), (char*)&result.num_anims);
+    headerPointer += sizeof(result.num_anims);
+    std::copy(headerPointer, headerPointer + sizeof(result.ofs_anims), (char*)&result.ofs_anims);
+    headerPointer += sizeof(result.ofs_anims);
+    std::copy(headerPointer, headerPointer + sizeof(result.num_frames), (char*)&result.num_frames);
+    headerPointer += sizeof(result.num_frames);
+    std::copy(headerPointer, headerPointer + sizeof(result.num_framechannels), (char*)&result.num_framechannels);
+    headerPointer += sizeof(result.num_framechannels);
+    std::copy(headerPointer, headerPointer + sizeof(result.ofs_frames), (char*)&result.ofs_frames);
+    headerPointer += sizeof(result.ofs_frames);
+    std::copy(headerPointer, headerPointer + sizeof(result.ofs_bounds), (char*)&result.ofs_bounds);
+    headerPointer += sizeof(result.ofs_bounds);
+    std::copy(headerPointer, headerPointer + sizeof(result.num_comment), (char*)&result.num_comment);
+    headerPointer += sizeof(result.num_comment);
+    std::copy(headerPointer, headerPointer + sizeof(result.ofs_comment), (char*)&result.ofs_comment);
+    headerPointer += sizeof(result.ofs_comment);
+    std::copy(headerPointer, headerPointer + sizeof(result.num_extensions), (char*)&result.num_extensions);
+    headerPointer += sizeof(result.num_extensions);
+    std::copy(headerPointer, headerPointer + sizeof(result.ofs_extensions), (char*)&result.ofs_extensions);
+    headerPointer += sizeof(result.ofs_extensions);
+
+    return headerPointer;
+}
+
+char* IQMFromFileLoader::readIqmVertexArray(char* vertexArrayPointer, iqmvertexarray& result)
+{
+    std::copy(vertexArrayPointer, vertexArrayPointer + sizeof(result.type), (char*)&result.type);
+    vertexArrayPointer += sizeof(result.type);
+    std::copy(vertexArrayPointer, vertexArrayPointer + sizeof(result.flags), (char*)&result.flags);
+    vertexArrayPointer += sizeof(result.flags);
+    std::copy(vertexArrayPointer, vertexArrayPointer + sizeof(result.format), (char*)&result.format);
+    vertexArrayPointer += sizeof(result.format);
+    std::copy(vertexArrayPointer, vertexArrayPointer + sizeof(result.size), (char*)&result.size);
+    vertexArrayPointer += sizeof(result.size);
+    std::copy(vertexArrayPointer, vertexArrayPointer + sizeof(result.offset), (char*)&result.offset);
+    vertexArrayPointer += sizeof(result.offset);
+
+    return vertexArrayPointer;
+}
+
+char* IQMFromFileLoader::readIqmMesh(char* meshArrayPointer, iqmmesh& result)
+{
+    std::copy(meshArrayPointer, meshArrayPointer + sizeof(result.name), (char*)&result.name);
+    meshArrayPointer += sizeof(result.name);
+    std::copy(meshArrayPointer, meshArrayPointer + sizeof(result.material), (char*)&result.material);
+    meshArrayPointer += sizeof(result.material);
+    std::copy(meshArrayPointer, meshArrayPointer + sizeof(result.first_vertex), (char*)&result.first_vertex);
+    meshArrayPointer += sizeof(result.first_vertex);
+    std::copy(meshArrayPointer, meshArrayPointer + sizeof(result.num_vertexes), (char*)&result.num_vertexes);
+    meshArrayPointer += sizeof(result.num_vertexes);
+    std::copy(meshArrayPointer, meshArrayPointer + sizeof(result.first_triangle), (char*)&result.first_triangle);
+    meshArrayPointer += sizeof(result.first_triangle);
+    std::copy(meshArrayPointer, meshArrayPointer + sizeof(result.num_triangles), (char*)&result.num_triangles);
+    meshArrayPointer += sizeof(result.num_triangles);
+
+    return meshArrayPointer;
 }

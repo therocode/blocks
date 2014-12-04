@@ -186,9 +186,15 @@ void RenderingSystem::handleMessage(const ModelDeliverMessage& received)
 {
     if(mTetraMesh == nullptr)
     {
-        std::unique_ptr<Mesh> mesh = std::unique_ptr<Mesh>(new Mesh(received.model->indices[0]));
-        mTetraModel.addMesh(0, std::move(mesh));
         mTetraModel.addVertexArray(Model::POSITIONS, received.model->positions);
+
+        int32_t meshNumber = 0;
+        for(const auto& indices : received.model->indices)
+        {
+            std::unique_ptr<Mesh> mesh = std::unique_ptr<Mesh>(new Mesh(indices));
+            mTetraModel.addMesh(meshNumber, std::move(mesh));
+            meshNumber++;
+        }
     }
 }
 
