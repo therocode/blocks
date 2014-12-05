@@ -17,14 +17,14 @@ void RenderModule::metaQueue(const Renderable& renderable)
         queue(renderable);
 }
 
-void RenderModule::metaRender(const Camera& camera, const glm::mat4& perspective)
+void RenderModule::metaRender(const Camera& camera, const glm::mat4& perspective, const Shader& shader)
 {
     if(mEnabled)
     {
         if(mModeEnabled)
             mRenderMode.activate();
 
-        render(camera, perspective);
+        render(camera, perspective, shader);
 
         if(mModeEnabled)
             mRenderMode.deactivate();

@@ -14,7 +14,7 @@ class DebugRenderer : public RenderModule
     public:
         DebugRenderer();
         void queue(const Renderable& renderable) override;
-        void render(const Camera& camera, const glm::mat4& perspective) override;
+        void render(const Camera& camera, const glm::mat4& perspective, const Shader& shader) override;
         std::type_index getRenderableType() const override;
     private:
         VAO mVertexArray;
@@ -24,10 +24,6 @@ class DebugRenderer : public RenderModule
         Buffer mModelMatrixBuffer3;
         Buffer mModelMatrixBuffer4;
         Buffer mColorBuffer;
-        Shader mShader;
-
-        GLuint shaderProgram;
-        GLuint vertexShader, fragmentShader;
 
         //frame data
         std::vector<float> mModelMatrixData1;

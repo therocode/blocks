@@ -20,7 +20,9 @@ class RenderingSystem :
                                 ClientAttachedToEntityMessage,
                                 WindowResizeMessage,
                                 RenderModeMessage,
-                                ModelDeliverMessage>
+                                ModelDeliverMessage,
+                                ShaderSourceDeliverMessage,
+                                ShaderDefinitionDeliverMessage>
 {
     enum RenderModule{ DEBUG, MODEL };
     public:
@@ -33,6 +35,8 @@ class RenderingSystem :
         void handleMessage(const WindowResizeMessage& received) override;
         void handleMessage(const RenderModeMessage& received) override;
         void handleMessage(const ModelDeliverMessage& received) override;
+        void handleMessage(const ShaderSourceDeliverMessage& received) override;
+        void handleMessage(const ShaderDefinitionDeliverMessage& received) override;
         void render();
     private:
         fea::MessageBus& mBus;
@@ -45,4 +49,7 @@ class RenderingSystem :
         std::vector<std::unique_ptr<Model>> mModels;
 
         std::unordered_map<int32_t, ModelRenderable> mModelRenderables;
+        std::unordered_map<std::string, std::string> mVertexSources;
+        std::unordered_map<std::string, std::string> mFragmentSources;
+        std::unordered_map<std::string, std::unique_ptr<Shader>> mShaders;
 };

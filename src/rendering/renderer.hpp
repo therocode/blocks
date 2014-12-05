@@ -17,7 +17,7 @@ class Renderer
         Renderer(const GLContext& glContext, const glm::uvec2& viewSize);
         void addModule(int32_t id, std::unique_ptr<RenderModule> module);
         void queue(const Renderable& renderable);
-        void render();
+        void render(const Shader& shader);
         const Camera& getCamera() const;
         Camera& getCamera();
         void setCamera(const Camera& camera);

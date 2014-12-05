@@ -236,6 +236,7 @@ void Shader::compile(const std::unordered_map<std::string, int32_t>& attributeBi
         if(line.find("uniform") != std::string::npos)
         {
             std::string name = line.substr( line.find_first_of(" ", line.find_first_of(" ") + 1) + 1, line.find_first_of("[;") - line.find_first_of(" ", line.find_first_of(" ") + 1));
+
             name.resize(name.size() - 1);
             mUniformLocations.emplace(name, glGetUniformLocation(mProgramId , name.c_str()));
         }

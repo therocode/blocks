@@ -89,6 +89,8 @@ set(source_files
 
     src/resources/clientresourcesystem.cpp
     src/resources/iqmfromfileloader.cpp
+    src/resources/shaderdefinitionfromfileloader.cpp
+    src/resources/shadersourcefromfileloader.cpp
 
     src/script/scriptcallback.cpp
     src/script/scriptchunk.cpp
@@ -204,6 +206,7 @@ set(header_files
     src/rendering/rendermodule.hpp
     src/rendering/rendermode.hpp
     src/rendering/shader.hpp
+    src/rendering/shaderattribute.hpp
     src/rendering/surfacemerger.hpp
     src/rendering/uniform.hpp
     src/rendering/vao.hpp
@@ -215,6 +218,10 @@ set(header_files
 	src/resources/rawmodel.hpp
 	src/resources/resourcecache.hpp
 	src/resources/resourcemessages.hpp
+    src/resources/shaderdefinition.hpp
+    src/resources/shaderdefinitionfromfileloader.hpp
+    src/resources/shadersource.hpp
+    src/resources/shadersourcefromfileloader.hpp
     
     src/utilities/coordinateconverter.hpp
     src/utilities/directorycreator.hpp

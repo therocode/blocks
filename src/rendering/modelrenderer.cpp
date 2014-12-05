@@ -1,58 +1,13 @@
 #include "modelrenderer.hpp"
 #include "camera.hpp"
 #include "model.hpp"
-#include "model.hpp"
+#include "shaderattribute.hpp"
 #include <vector>
 #include <string>
 #include <fea/assert.hpp>
 
 ModelRenderer::ModelRenderer()
 {
-    mVertexArray.bind();
-    std::string vertexSource = R"(
-#version 330
-
-uniform mat4 viewProjectionMatrix;
-
-layout(location = ~POSITION~) in vec3 in_position;
-layout(location = ~COLOR~) in vec3 color;
-layout(location = ~MODELMATRIX1~) in vec4 modelMatrix1;
-layout(location = ~MODELMATRIX2~) in vec4 modelMatrix2;
-layout(location = ~MODELMATRIX3~) in vec4 modelMatrix3;
-layout(location = ~MODELMATRIX4~) in vec4 modelMatrix4;
-
-out vec3 objectColor;
-
-void main()
-{
-    mat4 modelMatrix = mat4( modelMatrix1, modelMatrix2, modelMatrix3, modelMatrix4 );
-    gl_Position = viewProjectionMatrix * modelMatrix * vec4(vec3(in_position.x, in_position.y, in_position.z), 1.0);
-    objectColor = color;
-})";
-
-    std::string fragmentSource = R"(
-#version 330
-precision highp float;
-
-in vec3 objectColor;
-out vec4 fragColor;
-
-void main()
-{
-    fragColor = vec4(objectColor, 1.0f);
-})";
-
-    mShader.setSource(vertexSource, fragmentSource);
-    mShader.compile({
-            {"POSITION", ModelAttribute::POSITION},
-            {"COLOR", ModelAttribute::COLOR},
-            {"MODELMATRIX1", ModelAttribute::MODELMATRIX1},
-            {"MODELMATRIX2", ModelAttribute::MODELMATRIX2},
-            {"MODELMATRIX3", ModelAttribute::MODELMATRIX3},
-            {"MODELMATRIX4", ModelAttribute::MODELMATRIX4}
-            });
-
-    mVertexArray.unbind();
 }
 
 void ModelRenderer::queue(const Renderable& renderable)
@@ -70,12 +25,11 @@ void ModelRenderer::queue(const Renderable& renderable)
     mOrders[order.model].push_back(order);
 }
 
-void ModelRenderer::render(const Camera& camera, const glm::mat4& perspective)
+void ModelRenderer::render(const Camera& camera, const glm::mat4& perspective, const Shader& shader)
 {
     mVertexArray.bind();
-    mShader.activate();
 
-    mShader.setUniform("viewProjectionMatrix", UniformType::MAT4X4, glm::value_ptr(perspective * camera.getMatrix()));
+    shader.setUniform("viewProjectionMatrix", UniformType::MAT4X4, glm::value_ptr(perspective * camera.getMatrix()));
     
     for(const auto modelIterator : mOrders)
     {
@@ -86,13 +40,13 @@ void ModelRenderer::render(const Camera& camera, const glm::mat4& perspective)
         {
             std::unique_ptr<ModelObject> newModelObject = std::unique_ptr<ModelObject>(new ModelObject());
 
-            newModelObject->vertexArray.setVertexAttribute(ModelAttribute::POSITION, 3, *model.findVertexArray(Model::POSITIONS));
+            newModelObject->vertexArray.setVertexAttribute(ShaderAttribute::POSITION, 3, *model.findVertexArray(Model::POSITIONS));
 
-            newModelObject->vertexArray.setInstanceAttribute(ModelAttribute::COLOR, 3, newModelObject->colors, 1);
-            newModelObject->vertexArray.setInstanceAttribute(ModelAttribute::MODELMATRIX1, 4, newModelObject->modelMatrix1, 1);
-            newModelObject->vertexArray.setInstanceAttribute(ModelAttribute::MODELMATRIX2, 4, newModelObject->modelMatrix2, 1);
-            newModelObject->vertexArray.setInstanceAttribute(ModelAttribute::MODELMATRIX3, 4, newModelObject->modelMatrix3, 1);
-            newModelObject->vertexArray.setInstanceAttribute(ModelAttribute::MODELMATRIX4, 4, newModelObject->modelMatrix4, 1);
+            newModelObject->vertexArray.setInstanceAttribute(ShaderAttribute::COLOR, 3, newModelObject->colors, 1);
+            newModelObject->vertexArray.setInstanceAttribute(ShaderAttribute::MODELMATRIX1, 4, newModelObject->modelMatrix1, 1);
+            newModelObject->vertexArray.setInstanceAttribute(ShaderAttribute::MODELMATRIX2, 4, newModelObject->modelMatrix2, 1);
+            newModelObject->vertexArray.setInstanceAttribute(ShaderAttribute::MODELMATRIX3, 4, newModelObject->modelMatrix3, 1);
+            newModelObject->vertexArray.setInstanceAttribute(ShaderAttribute::MODELMATRIX4, 4, newModelObject->modelMatrix4, 1);
 
             for(const auto& mesh : model.getMeshes())
             {
@@ -150,7 +104,6 @@ void ModelRenderer::render(const Camera& camera, const glm::mat4& perspective)
     }
 
     mOrders.clear();
-    mShader.deactivate();
 }
 
 std::type_index ModelRenderer::getRenderableType() const

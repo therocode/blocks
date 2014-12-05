@@ -1,6 +1,10 @@
 #include "renderingsystem.hpp"
 #include "modelrenderer.hpp"
 #include "debugrenderer.hpp"
+#include "../resources/rawmodel.hpp"
+#include "../resources/shadersource.hpp"
+#include "../resources/shaderdefinition.hpp"
+#include "shaderattribute.hpp"
 
 RenderingSystem::RenderingSystem(fea::MessageBus& bus, const glm::uvec2& viewSize) :
     mBus(bus),
@@ -133,6 +137,36 @@ void RenderingSystem::handleMessage(const ModelDeliverMessage& received)
     mModels.push_back(std::move(newModel));
 }
 
+void RenderingSystem::handleMessage(const ShaderSourceDeliverMessage& received) 
+{
+    if(received.shaderSource->type == ShaderSource::VERTEX)
+    {
+        mVertexSources.emplace(received.shaderSource->name, received.shaderSource->source);
+    }
+    else if(received.shaderSource->type == ShaderSource::FRAGMENT)
+    {
+        mFragmentSources.emplace(received.shaderSource->name, received.shaderSource->source);
+    }
+}
+
+void RenderingSystem::handleMessage(const ShaderDefinitionDeliverMessage& received) 
+{
+    std::unique_ptr<Shader> shader = std::unique_ptr<Shader>(new Shader());
+
+    shader->setSource(mVertexSources.at(received.shaderDefinition->vertexShader), mFragmentSources.at(received.shaderDefinition->fragmentShader));
+
+    shader->compile({
+            {"POSITION", ShaderAttribute::POSITION},
+            {"COLOR", ShaderAttribute::COLOR},
+            {"MODELMATRIX1", ShaderAttribute::MODELMATRIX1},
+            {"MODELMATRIX2", ShaderAttribute::MODELMATRIX2},
+            {"MODELMATRIX3", ShaderAttribute::MODELMATRIX3},
+            {"MODELMATRIX4", ShaderAttribute::MODELMATRIX4}
+            });
+
+    mShaders.emplace(received.shaderDefinition->name, std::move(shader));
+}
+
 void RenderingSystem::render()
 {
     for(auto& debbie : mDebuggers)
@@ -148,5 +182,7 @@ void RenderingSystem::render()
         mRenderer.queue(moddie.second);
     }
 
-    mRenderer.render();
+    mShaders.at("basic")->activate();
+    mRenderer.render(*mShaders.at("basic"));
+    mShaders.at("basic")->deactivate();
 }

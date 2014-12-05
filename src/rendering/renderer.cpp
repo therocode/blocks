@@ -37,7 +37,7 @@ void Renderer::queue(const Renderable& renderable)
     }
 }
 
-void Renderer::render()
+void Renderer::render(const Shader& shader)
 {
     glClearColor(mClearColor.r, mClearColor.g, mClearColor.b, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -47,7 +47,7 @@ void Renderer::render()
         for(auto& module : mModules)
         {
             mRenderMode.activate();
-            module.second->metaRender(mCamera, mPerspective);
+            module.second->metaRender(mCamera, mPerspective, shader);
         }
 
         mRenderMode.deactivate();
