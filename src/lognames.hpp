@@ -8,3 +8,4 @@ const std::string worldGenName = "world_gen";
 const std::string clientName = "client";
 const std::string serverName = "server";
 const std::string netName = "net";
+const std::string resourceName = "resource";
