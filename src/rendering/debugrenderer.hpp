@@ -9,8 +9,6 @@
 
 class DebugRenderer : public RenderModule
 {
-    enum DebugAttribute { POSITION = 0, COLOR, MODELMATRIX1, MODELMATRIX2, MODELMATRIX3, MODELMATRIX4};
-
     public:
         DebugRenderer();
         void queue(const Renderable& renderable) override;

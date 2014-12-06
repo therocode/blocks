@@ -41,6 +41,7 @@ void ModelRenderer::render(const Camera& camera, const glm::mat4& perspective, c
             std::unique_ptr<ModelObject> newModelObject = std::unique_ptr<ModelObject>(new ModelObject());
 
             newModelObject->vertexArray.setVertexAttribute(ShaderAttribute::POSITION, 3, *model.findVertexArray(Model::POSITIONS));
+            newModelObject->vertexArray.setVertexAttribute(ShaderAttribute::NORMAL, 3, *model.findVertexArray(Model::NORMALS));
 
             newModelObject->vertexArray.setInstanceAttribute(ShaderAttribute::COLOR, 3, newModelObject->colors, 1);
             newModelObject->vertexArray.setInstanceAttribute(ShaderAttribute::MODELMATRIX1, 4, newModelObject->modelMatrix1, 1);

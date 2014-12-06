@@ -1,4 +1,5 @@
 #include "debugrenderer.hpp"
+#include "shaderattribute.hpp"
 #include "camera.hpp"
 #include <vector>
 #include <string>
@@ -67,7 +68,8 @@ DebugRenderer::DebugRenderer() :
     mVertexArray.bind();
     mVertexBuffer.setData(vertices);
 
-    mVertexArray.setVertexAttribute(DebugAttribute::POSITION, 3, mVertexBuffer);
+    mVertexArray.setVertexAttribute(ShaderAttribute::POSITION, 3, mVertexBuffer);
+    mVertexArray.setVertexAttribute(ShaderAttribute::NORMAL, 3, mVertexBuffer);
 
     mVertexArray.setInstanceAttribute(MODELMATRIX1, 4, mModelMatrixBuffer1, 1);
     mVertexArray.setInstanceAttribute(MODELMATRIX2, 4, mModelMatrixBuffer2, 1);
