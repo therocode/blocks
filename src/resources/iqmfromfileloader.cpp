@@ -56,12 +56,19 @@ RawModel IQMFromFileLoader::load(const std::string& filename)
         vertexArrayBytesIterator = readIqmVertexArray(vertexArrayBytesIterator, vertexArray);
 
         //to read others, read all array headers at once
-        if(vertexArray.type == IQM_POSITION && i == 0)
+        if(vertexArray.type == IQM_POSITION)
         {
             std::vector<float> positions(header.num_vertexes * 3);
             std::copy(headerBytes + vertexArray.offset, headerBytes + vertexArray.offset + sizeof(float) * header.num_vertexes * 3, (char*)positions.data());
 
             rawModel.positions = std::move(positions);
+        }
+        else if(vertexArray.type == IQM_NORMAL)
+        {
+            std::vector<float> normals(header.num_vertexes * 3);
+            std::copy(headerBytes + vertexArray.offset, headerBytes + vertexArray.offset + sizeof(float) * header.num_vertexes * 3, (char*)normals.data());
+
+            rawModel.normals = std::move(normals);
         }
     }
 
