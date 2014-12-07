@@ -52,6 +52,22 @@ Uniform::Uniform(const std::string& name, UniformType t, glm::mat2x2 val)
     mMat2x2Val[3] = mat[3];
 }
 
+Uniform::Uniform(const std::string& name, UniformType t, glm::mat3x3 val)
+{
+    mName = name;
+    mType = t;
+    float* mat = glm::value_ptr(val);
+    mMat4x4Val[0] = mat[0];
+    mMat4x4Val[1] = mat[1];
+    mMat4x4Val[2] = mat[2];
+    mMat4x4Val[3] = mat[3];
+    mMat4x4Val[4] = mat[4];
+    mMat4x4Val[5] = mat[5];
+    mMat4x4Val[6] = mat[6];
+    mMat4x4Val[7] = mat[7];
+    mMat4x4Val[8] = mat[8];
+}
+
 Uniform::Uniform(const std::string& name, UniformType t, glm::mat4x4 val)
 {
     mName = name;

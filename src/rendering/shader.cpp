@@ -102,6 +102,12 @@ void Shader::setUniform(const std::string& name, UniformType type, const void* v
             glUniformMatrix2fv(mUniformLocations.at(name), 1, GL_FALSE, glm::value_ptr(mat));
             break;
         }
+        case UniformType::MAT3X3:
+        {
+            const glm::mat3x3 mat = *((glm::mat3x3*)value);
+            glUniformMatrix3fv(mUniformLocations.at(name), 1, GL_FALSE, glm::value_ptr(mat));
+            break;
+        }
         case UniformType::MAT4X4:
         {
             const glm::mat4x4 mat = *((glm::mat4x4*)value);
@@ -152,6 +158,12 @@ void Shader::setUniform(const std::string& name, UniformType type, int32_t count
         {
             const glm::mat2x2* mat = ((glm::mat2x2*)value);
             glUniformMatrix2fv(mUniformLocations.at(name), count, GL_FALSE, glm::value_ptr(*mat));
+            break;
+        }
+        case UniformType::MAT3X3:
+        {
+            const glm::mat3x3* mat = ((glm::mat3x3*)value);
+            glUniformMatrix3fv(mUniformLocations.at(name), count, GL_FALSE, glm::value_ptr(*mat));
             break;
         }
         case UniformType::MAT4X4:

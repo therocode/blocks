@@ -83,7 +83,7 @@ DebugRenderer::DebugRenderer() :
     data4 = { 0.0f, 0.0f, 0.0f, 1.0f };
 }
 
-void DebugRenderer::queue(const Renderable& renderable)
+void DebugRenderer::queue(const Renderable& renderable, const Camera& camera, const glm::mat4& perspective)
 {
     const DebugRenderable& debugRenderable = (const DebugRenderable&) renderable;
     

@@ -32,7 +32,7 @@ void Renderer::queue(const Renderable& renderable)
         if(iterator != mModuleSubscriptions.end())
         {
             for(auto& module : iterator->second)
-                module->metaQueue(renderable);
+                module->metaQueue(renderable, mCamera, mPerspective);
         }
     }
 }

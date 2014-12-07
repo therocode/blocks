@@ -34,13 +34,16 @@ RenderingSystem::RenderingSystem(fea::MessageBus& bus, const glm::uvec2& viewSiz
 
 void RenderingSystem::handleMessage(const AddGfxEntityMessage& received)
 {
-    ModelRenderable newModel;
-    
-    newModel.setModel(**mModels.begin());
-    newModel.setPosition(received.position);
-    newModel.setColor({(float)(rand() % 256) / 256.0f,(float)(rand() % 256) / 256.0f, (float)(rand() % 256) / 256.0f});
+    if(received.id != mCameraEntity)
+    {
+        ModelRenderable newModel;
 
-    mModelRenderables.emplace(received.id, newModel);
+        newModel.setModel(**(mModels.begin() + 0));
+        newModel.setPosition(received.position);
+        newModel.setColor({(float)(rand() % 256) / 256.0f,(float)(rand() % 256) / 256.0f, (float)(rand() % 256) / 256.0f});
+
+        mModelRenderables.emplace(received.id, newModel);
+    }
 }
 
 void RenderingSystem::handleMessage(const RotateGfxEntityMessage& received)
@@ -49,7 +52,11 @@ void RenderingSystem::handleMessage(const RotateGfxEntityMessage& received)
     float pitch = received.pitch;
     float yaw = received.yaw;
 
-    if(id == mCameraEntity)
+    if(received.id != mCameraEntity)
+    {
+        //rotate entities
+    }
+    else
     {
         mRenderer.getCamera().setPitchYaw(pitch, yaw);
     }
@@ -60,17 +67,23 @@ void RenderingSystem::handleMessage(const MoveGfxEntityMessage& received)
     size_t id = received.id;
     const glm::vec3& position = received.position;
 
-    if(id == mCameraEntity)
+    if(received.id != mCameraEntity)
+    {
+
+        mModelRenderables.at(received.id).setPosition(position);
+    }
+    else
     {
         mRenderer.getCamera().setPosition(position);
     }
-
-    mModelRenderables.at(received.id).setPosition(position);
 }
 
 void RenderingSystem::handleMessage(const RemoveGfxEntityMessage& received)
 {
-    mModelRenderables.erase(received.id);
+    if(received.id != mCameraEntity)
+    {
+        mModelRenderables.erase(received.id);
+    }
 }
 
 void RenderingSystem::handleMessage(const ClientAttachedToEntityMessage& received)
@@ -163,7 +176,11 @@ void RenderingSystem::handleMessage(const ShaderDefinitionDeliverMessage& receiv
             {"MODELMATRIX1", ShaderAttribute::MODELMATRIX1},
             {"MODELMATRIX2", ShaderAttribute::MODELMATRIX2},
             {"MODELMATRIX3", ShaderAttribute::MODELMATRIX3},
-            {"MODELMATRIX4", ShaderAttribute::MODELMATRIX4}
+            {"MODELMATRIX4", ShaderAttribute::MODELMATRIX4},
+            {"NORMALMATRIX1", ShaderAttribute::NORMALMATRIX1},
+            {"NORMALMATRIX2", ShaderAttribute::NORMALMATRIX2},
+            {"NORMALMATRIX3", ShaderAttribute::NORMALMATRIX3},
+            {"NORMALMATRIX4", ShaderAttribute::NORMALMATRIX4}
             });
 
     mShaders.emplace(received.shaderDefinition->name, std::move(shader));

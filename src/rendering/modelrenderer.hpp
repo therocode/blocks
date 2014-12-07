@@ -24,13 +24,17 @@ struct ModelObject
     Buffer modelMatrix2;
     Buffer modelMatrix3;
     Buffer modelMatrix4;
+    Buffer normalMatrix1;
+    Buffer normalMatrix2;
+    Buffer normalMatrix3;
+    Buffer normalMatrix4;
 };
 
 class ModelRenderer : public RenderModule
 {
     public:
         ModelRenderer();
-        void queue(const Renderable& renderable) override;
+        void queue(const Renderable& renderable, const Camera& camera, const glm::mat4& perspective) override;
         void render(const Camera& camera, const glm::mat4& perspective, const Shader& shader) override;
         std::type_index getRenderableType() const override;
     private:

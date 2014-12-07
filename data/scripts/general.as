@@ -16,7 +16,7 @@ void gameStarted()
 	{
 		for(int y = 0; y < 4; y++)
 		{
-            createEntity("Elephant", 0, Vec3(1.0f * x + 0.5f, 100.0f + randomFloatRange(0.f, 80.f), 1.0f * y + 0.5f));
+            createEntity("Elephant", 0, Vec3(5.0f * x + 0.5f, 100.0f + randomFloatRange(0.f, 80.f), 5.0f * y + 0.5f));
 		}
 	}
 }
