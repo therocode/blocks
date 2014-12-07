@@ -11,7 +11,7 @@ class DebugRenderer : public RenderModule
 {
     public:
         DebugRenderer();
-        void queue(const Renderable& renderable, const Camera& camera, const glm::mat4& perspective) override;
+        void queue(const Renderable& renderable) override;
         void render(const Camera& camera, const glm::mat4& perspective, const Shader& shader) override;
         std::type_index getRenderableType() const override;
     private:
@@ -28,6 +28,7 @@ class DebugRenderer : public RenderModule
         std::vector<float> mModelMatrixData2;
         std::vector<float> mModelMatrixData3;
         std::vector<float> mModelMatrixData4;
+
         std::vector<float> mColorData;
 
         uint32_t mRenderAmount;

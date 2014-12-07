@@ -13,7 +13,7 @@ class RenderModule
     public:
         RenderModule();
         virtual ~RenderModule();
-        void metaQueue(const Renderable& renderable, const Camera& camera, const glm::mat4& perspective);
+        void metaQueue(const Renderable& renderable);
         void metaRender(const Camera& camera, const glm::mat4& perspective, const Shader& shader);
         void enableRenderMode(bool enabled);
         virtual std::type_index getRenderableType() const = 0;
@@ -24,7 +24,7 @@ class RenderModule
         void setEnabled(bool enabled);
     protected:
         virtual void render(const Camera& camera, const glm::mat4& perspective, const Shader& shader) = 0;
-        virtual void queue(const Renderable& renderable, const Camera& camera, const glm::mat4& perspective) = 0;
+        virtual void queue(const Renderable& renderable) = 0;
         RenderMode mRenderMode;
         bool mModeEnabled;
         bool mEnabled;

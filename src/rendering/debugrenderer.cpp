@@ -75,6 +75,7 @@ DebugRenderer::DebugRenderer() :
     mVertexArray.setInstanceAttribute(MODELMATRIX2, 4, mModelMatrixBuffer2, 1);
     mVertexArray.setInstanceAttribute(MODELMATRIX3, 4, mModelMatrixBuffer3, 1);
     mVertexArray.setInstanceAttribute(MODELMATRIX4, 4, mModelMatrixBuffer4, 1);
+
     mVertexArray.setInstanceAttribute(COLOR, 3, mColorBuffer, 1);
 
     data1 = { 1.0f, 0.0f, 0.0f, 0.0f };
@@ -83,7 +84,7 @@ DebugRenderer::DebugRenderer() :
     data4 = { 0.0f, 0.0f, 0.0f, 1.0f };
 }
 
-void DebugRenderer::queue(const Renderable& renderable, const Camera& camera, const glm::mat4& perspective)
+void DebugRenderer::queue(const Renderable& renderable)
 {
     const DebugRenderable& debugRenderable = (const DebugRenderable&) renderable;
     
@@ -107,11 +108,12 @@ void DebugRenderer::queue(const Renderable& renderable, const Camera& camera, co
 	data3[0] = std::cos(pitch) * std::sin(yaw);
 	data3[1] = -std::sin(pitch);
 	data3[2] = std::cos(pitch) * std::cos(yaw);
-
+    
     mModelMatrixData1.insert(mModelMatrixData1.end(), data1.begin(), data1.end());
     mModelMatrixData2.insert(mModelMatrixData2.end(), data2.begin(), data2.end());
     mModelMatrixData3.insert(mModelMatrixData3.end(), data3.begin(), data3.end());
     mModelMatrixData4.insert(mModelMatrixData4.end(), data4.begin(), data4.end());
+
     mColorData.push_back(color.x);
     mColorData.push_back(color.y);
     mColorData.push_back(color.z);
@@ -127,6 +129,7 @@ void DebugRenderer::render(const Camera& camera, const glm::mat4& perspective, c
     mModelMatrixBuffer2.setData(mModelMatrixData2);
     mModelMatrixBuffer3.setData(mModelMatrixData3);
     mModelMatrixBuffer4.setData(mModelMatrixData4);
+
     mColorBuffer.setData(mColorData);
 
     mModelMatrixData1.clear();
@@ -136,6 +139,8 @@ void DebugRenderer::render(const Camera& camera, const glm::mat4& perspective, c
     mColorData.clear();
 
     shader.setUniform("viewProjectionMatrix", UniformType::MAT4X4, glm::value_ptr(perspective * camera.getMatrix()));
+    float shadedRatio = 0.0f;
+    shader.setUniform("shadedRatio", UniformType::FLOAT, &shadedRatio);
 
     glDrawArraysInstanced(GL_TRIANGLES, 0, 36, mRenderAmount);
     mRenderAmount = 0;

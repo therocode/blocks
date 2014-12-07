@@ -34,7 +34,7 @@ class ModelRenderer : public RenderModule
 {
     public:
         ModelRenderer();
-        void queue(const Renderable& renderable, const Camera& camera, const glm::mat4& perspective) override;
+        void queue(const Renderable& renderable) override;
         void render(const Camera& camera, const glm::mat4& perspective, const Shader& shader) override;
         std::type_index getRenderableType() const override;
     private:

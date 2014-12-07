@@ -38,7 +38,7 @@ void RenderingSystem::handleMessage(const AddGfxEntityMessage& received)
     {
         ModelRenderable newModel;
 
-        newModel.setModel(**(mModels.begin() + 0));
+        newModel.setModel(**(mModels.begin() + rand() % 2));
         newModel.setPosition(received.position);
         newModel.setColor({(float)(rand() % 256) / 256.0f,(float)(rand() % 256) / 256.0f, (float)(rand() % 256) / 256.0f});
 

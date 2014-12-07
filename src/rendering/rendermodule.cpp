@@ -11,10 +11,10 @@ RenderModule::~RenderModule()
 {
 }
 
-void RenderModule::metaQueue(const Renderable& renderable, const Camera& camera, const glm::mat4& perspective)
+void RenderModule::metaQueue(const Renderable& renderable)
 {
     if(mEnabled)
-        queue(renderable, camera, perspective);
+        queue(renderable);
 }
 
 void RenderModule::metaRender(const Camera& camera, const glm::mat4& perspective, const Shader& shader)

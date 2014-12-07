@@ -10,7 +10,7 @@ ModelRenderer::ModelRenderer()
 {
 }
 
-void ModelRenderer::queue(const Renderable& renderable, const Camera& camera, const glm::mat4& perspective)
+void ModelRenderer::queue(const Renderable& renderable)
 {
     const ModelRenderable& modelRenderable = (const ModelRenderable&) renderable;
 
@@ -30,6 +30,8 @@ void ModelRenderer::render(const Camera& camera, const glm::mat4& perspective, c
     mVertexArray.bind();
 
     shader.setUniform("viewProjectionMatrix", UniformType::MAT4X4, glm::value_ptr(perspective * camera.getMatrix()));
+    float shadedRatio = 1.0f;
+    shader.setUniform("shadedRatio", UniformType::FLOAT, &shadedRatio);
     
     for(const auto modelIterator : mOrders)
     {
