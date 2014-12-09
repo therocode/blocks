@@ -2,12 +2,11 @@
 #include <fea/userinterface.hpp>
 #include "../world/chunk.hpp"
 #include "../networking/clientnetworkingsystem.hpp"
-#include "../world/chunkmap.hpp"
-#include "../utilities/lodepng.hpp"
 #include "../utilities/logger.hpp"
 #include "../utilities/fpscontroller.hpp"
 #include "../world/worldmessages.hpp"
 #include "../world/highlightmanager.hpp"
+#include "../client/clientworld.hpp"
 
 
 class RenderingSystem;
@@ -30,7 +29,6 @@ class Client :
     public:
         Client(fea::MessageBus& bus, const NetworkParameters& parameters);
         ~Client();
-        bool loadTexture(const std::string& path, uint32_t width, uint32_t height, std::vector<unsigned char>& result);
         void update();
         void render();
         void handleMessage(const ClientActionMessage& received) override;
@@ -49,7 +47,6 @@ class Client :
         int64_t mFrame = 0;
         uint64_t mFrameNumber;
         FPSController mFPSCounter;
-        void updateChunk(const ChunkCoord& coordinate);
         void updateVoxelLookAt();
         bool mLockedMouse;
         fea::MessageBus& mBus;
@@ -60,12 +57,11 @@ class Client :
         std::unique_ptr<ClientResourceSystem> mResourceSystem;
         bool mQuit;
 
+        ClientWorld mClientWorld;
         std::string mCurrentWorld;
         fea::EntityId mCurrentEntity;
         uint32_t mHighlightRadius;
-        HighlightManager mHighlightedChunks;
         ChunkCoord mLastChunk;
-        ChunkMap mLocalChunks;
 
         std::unique_ptr<ClientNetworkingSystem> mClientNetworkingSystem;
 
