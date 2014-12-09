@@ -15,14 +15,11 @@ class ClientResourceSystem;
 
 class Client :
     public fea::MessageReceiver<ClientActionMessage,
-                                ClientChunksDeliveredMessage,
-                                VoxelUpdatedMessage,
-                                ClientChunkDeletedMessage,
                                 CursorLockedMessage,
                                 GameStartMessage,
                                 ClientAttachedToEntityMessage,
-                                ClientEnteredWorldMessage,
-                                ClientPositionMessage,
+                                //ClientEnteredWorldMessage,
+                                //ClientPositionMessage,
                                 MoveGfxEntityMessage,
                                 RotateGfxEntityMessage>
 {
@@ -32,14 +29,11 @@ class Client :
         void update();
         void render();
         void handleMessage(const ClientActionMessage& received) override;
-        void handleMessage(const ClientChunksDeliveredMessage& received) override;
-        void handleMessage(const VoxelUpdatedMessage& received) override;
-        void handleMessage(const ClientChunkDeletedMessage& received) override;
         void handleMessage(const CursorLockedMessage& received) override;
         void handleMessage(const GameStartMessage& received) override;
         void handleMessage(const ClientAttachedToEntityMessage& received) override;
-        void handleMessage(const ClientEnteredWorldMessage& received) override;
-        void handleMessage(const ClientPositionMessage& received) override;
+        //void handleMessage(const ClientEnteredWorldMessage& received) override;
+        //void handleMessage(const ClientPositionMessage& received) override;
         void handleMessage(const MoveGfxEntityMessage& received) override;
         void handleMessage(const RotateGfxEntityMessage& received) override;
         bool requestedQuit();

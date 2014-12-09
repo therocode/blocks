@@ -27,7 +27,6 @@ set(source_files
 	src/application/main.cpp
     src/application/server.cpp
 
-    src/client/clientchunkhandler.cpp
     src/client/clientworld.cpp
 
     src/console/console.cpp
@@ -152,8 +151,8 @@ set(header_files
     src/application/client.hpp
     src/application/server.hpp
 
-    src/client/clientchunkhandler.hpp
     src/client/clientworld.hpp
+    src/client/clientmessages.hpp
 
     src/console/consolecolor.hpp
     src/console/console.hpp

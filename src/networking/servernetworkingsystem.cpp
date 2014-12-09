@@ -198,21 +198,22 @@ void ServerNetworkingSystem::handleMessage(const PlayerAttachedToEntityMessage& 
 
     const std::string worldIdentifier = mGameInterface.getWorldSystem().worldIdToIdentifier(mPlayerWorlds.at(received.playerId));
 
-    sendToOne(received.playerId, ClientAttachedToEntityMessage{received.entityId, worldIdentifier, mPlayerPositions.at(received.playerId), highlightRadius}, true, CHANNEL_DEFAULT);
+    //sendToOne(received.playerId, ClientAttachedToEntityMessage{received.entityId, worldIdentifier, mPlayerPositions.at(received.playerId), highlightRadius}, true, CHANNEL_DEFAULT);
+    sendToOne(received.playerId, ClientAttachedToEntityMessage{received.entityId, highlightRadius}, true, CHANNEL_DEFAULT);
 }
 
 void ServerNetworkingSystem::handleMessage(const PlayerEntityMovedMessage& received)
 {
     mPlayerPositions.at(received.playerId) = received.position;
 
-    sendToOne(received.playerId, ClientPositionMessage{received.position}, false, CHANNEL_DEFAULT);
+    //sendToOne(received.playerId, ClientPositionMessage{received.position}, false, CHANNEL_DEFAULT);
 }
 
 void ServerNetworkingSystem::handleMessage(const PlayerEntersWorldMessage& received)
 {
     mPlayerWorlds.at(received.playerId) = received.worldId;
 
-    sendToOne(received.playerId, ClientEnteredWorldMessage{mGameInterface.getWorldSystem().worldIdToIdentifier(mPlayerWorlds.at(received.playerId))}, true, CHANNEL_DEFAULT);
+    //sendToOne(received.playerId, ClientEnteredWorldMessage{mGameInterface.getWorldSystem().worldIdToIdentifier(mPlayerWorlds.at(received.playerId))}, true, CHANNEL_DEFAULT);
 }
 
 void ServerNetworkingSystem::handleMessage(const EntityCreatedMessage& received)

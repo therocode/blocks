@@ -4,11 +4,6 @@
 
 class Chunk;
 
-struct ClientChunkDeletedMessage
-{
-    const ChunkCoord& coordinate;
-};
-
 struct ChunkVBODeletedMessage
 {
     const ChunkCoord& coordinate;

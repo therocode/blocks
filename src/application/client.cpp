@@ -16,7 +16,8 @@ Client::Client(fea::MessageBus& bus, const NetworkParameters& parameters) :
     mLogger(mBus, LogLevel::VERB),
 	mWindow(new fea::SDL2WindowBackend()),
 	mInputAdaptor(std::unique_ptr<InputAdaptor>(new InputAdaptor(mBus))),
-	mQuit(false)
+	mQuit(false),
+    mClientWorld(bus)
 {
     subscribe(mBus, *this);
 
@@ -78,42 +79,43 @@ void Client::handleMessage(const GameStartMessage& received)
 
 void Client::handleMessage(const ClientAttachedToEntityMessage& received)
 {
-    mCurrentWorld = received.world;
+    //set current world???????
     mCurrentEntity = received.entityId;
     mHighlightRadius = received.highlightRange;
-    auto highlighted = mHighlightedChunks.addHighlightEntity(0, WorldToChunk::convert(received.position), mHighlightRadius);
-    mLastChunk = WorldToChunk::convert(received.position);
+    //mBus.send(HighlightEntityAddRequestedMessage{received.world, 0, WorldToChunk::convert(received.position), mHighlightRadius});
+    //auto highlighted = mHighlightedChunks.addHighlightEntity(0, WorldToChunk::convert(received.position), mHighlightRadius);
+    //mLastChunk = WorldToChunk::convert(received.position);
 
-    if(highlighted.size() > 0)
-        mBus.send(ClientRequestedChunksMessage{mCurrentWorld, highlighted});
+    //if(highlighted.size() > 0)
+    //    mBus.send(ClientRequestedChunksMessage{mCurrentWorld, highlighted});
 }
 
-void Client::handleMessage(const ClientEnteredWorldMessage& received)
-{
-    mCurrentWorld = received.world;
-
-    auto dehighlighted = mHighlightedChunks.removeHighlightEntity(0);
-
-    auto highlighted = mHighlightedChunks.addHighlightEntity(0, mLastChunk, mHighlightRadius);
-
-    if(highlighted.size() > 0)
-        mBus.send(ClientRequestedChunksMessage{mCurrentWorld, highlighted});
-
-    for(const auto& chunk : dehighlighted)
-        mBus.send(ClientChunkDeletedMessage{chunk});
-}
-
-void Client::handleMessage(const ClientPositionMessage& received)
-{
-    const auto& highlighted = mHighlightedChunks.moveHighlightEntity(0, WorldToChunk::convert(received.position));
-    mLastChunk = WorldToChunk::convert(received.position);
-
-    if(highlighted.first.size() > 0)
-        mBus.send(ClientRequestedChunksMessage{mCurrentWorld, highlighted.first});
-
-    for(const auto& chunk : highlighted.second)
-        mBus.send(ClientChunkDeletedMessage{chunk});
-}
+//void Client::handleMessage(const ClientEnteredWorldMessage& received)
+//{
+//    mCurrentWorld = received.world;
+//
+//    auto dehighlighted = mHighlightedChunks.removeHighlightEntity(0);
+//
+//    auto highlighted = mHighlightedChunks.addHighlightEntity(0, mLastChunk, mHighlightRadius);
+//
+//    if(highlighted.size() > 0)
+//        mBus.send(ClientRequestedChunksMessage{mCurrentWorld, highlighted});
+//
+//    for(const auto& chunk : dehighlighted)
+//        mBus.send(ClientChunkDeletedMessage{chunk});
+//}
+//
+//void Client::handleMessage(const ClientPositionMessage& received)
+//{
+//    const auto& highlighted = mHighlightedChunks.moveHighlightEntity(0, WorldToChunk::convert(received.position));
+//    mLastChunk = WorldToChunk::convert(received.position);
+//
+//    if(highlighted.first.size() > 0)
+//        mBus.send(ClientRequestedChunksMessage{mCurrentWorld, highlighted.first});
+//
+//    for(const auto& chunk : highlighted.second)
+//        mBus.send(ClientChunkDeletedMessage{chunk});
+//}
 
 bool Client::requestedQuit()
 {
@@ -125,7 +127,7 @@ void Client::handleMessage(const MoveGfxEntityMessage& received)
     if(received.id == mCurrentEntity)
     {
         mPosition = received.position;
-        updateVoxelLookAt();
+        //updateVoxelLookAt();
     }
 }
 

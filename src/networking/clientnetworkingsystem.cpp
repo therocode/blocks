@@ -232,13 +232,13 @@ void ClientNetworkingSystem::handleServerData(const std::vector<uint8_t>& data)
     }
     else if(type == CLIENT_ENTERED_WORLD)
     {
-        ClientEnteredWorldMessage received = deserializeMessage<ClientEnteredWorldMessage>(data);
-        mBus.send(received);
+        //ClientEnteredWorldMessage received = deserializeMessage<ClientEnteredWorldMessage>(data);
+        //mBus.send(received);
     }
     else if(type == CLIENT_POSITION)
     {
-        ClientPositionMessage received = deserializeMessage<ClientPositionMessage>(data);
-        mBus.send(received);
+        //ClientPositionMessage received = deserializeMessage<ClientPositionMessage>(data);
+        //mBus.send(received);
     }
     else if(type == TEST_1)
         mBus.send(LogMessage{"Received meaningless test message", clientName, LogLevel::WARN});

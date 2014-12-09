@@ -219,12 +219,13 @@ struct ClientAttachedToEntityMessage
     template<class Archive>
     void serialize(Archive& archive)
     {
-        archive(entityId, world, position.x, position.y, position.z, highlightRange);
+        //archive(entityId, world, position.x, position.y, position.z, highlightRange);
+        archive(entityId, highlightRange);
     }
 
     fea::EntityId entityId;
-    std::string world;
-    glm::vec3 position;
+    //std::string world;
+    //glm::vec3 position;
     uint32_t highlightRange;
 };
 
@@ -317,31 +318,31 @@ struct EntityLeftRangeMessage
     fea::EntityId id;
 };
 
-struct ClientEnteredWorldMessage
-{
-    PacketType getType() const {return CLIENT_ENTERED_WORLD;}
-
-    template<class Archive>
-    void serialize(Archive& archive)
-    {
-        archive(world);
-    }
-
-    std::string world;
-};
-
-struct ClientPositionMessage
-{
-    PacketType getType() const {return CLIENT_POSITION;}
-
-    template<class Archive>
-    void serialize(Archive& archive)
-    {
-        archive(position.x, position.y, position.z);
-    }
-
-    glm::vec3 position;
-};
+//struct ClientEnteredWorldMessage
+//{
+//    PacketType getType() const {return CLIENT_ENTERED_WORLD;}
+//
+//    template<class Archive>
+//    void serialize(Archive& archive)
+//    {
+//        archive(world);
+//    }
+//
+//    std::string world;
+//};
+//
+//struct ClientPositionMessage
+//{
+//    PacketType getType() const {return CLIENT_POSITION;}
+//
+//    template<class Archive>
+//    void serialize(Archive& archive)
+//    {
+//        archive(position.x, position.y, position.z);
+//    }
+//
+//    glm::vec3 position;
+//};
 
 //messages for testing:
 struct TestMessage1
