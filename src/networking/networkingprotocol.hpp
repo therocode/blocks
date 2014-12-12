@@ -153,9 +153,10 @@ struct VoxelUpdatedMessage
     template<class Archive>
     void serialize(Archive& archive)
     {
-        archive(voxel.x, voxel.y, voxel.z, type);
+        archive(id, voxel.x, voxel.y, voxel.z, type);
     }
 
+    WorldId id;
     VoxelCoord voxel;
     VoxelType type;
 };
@@ -219,13 +220,12 @@ struct ClientAttachedToEntityMessage
     template<class Archive>
     void serialize(Archive& archive)
     {
-        //archive(entityId, world, position.x, position.y, position.z, highlightRange);
-        archive(entityId, highlightRange);
+        archive(entityId, worldId, position.x, position.y, position.z, highlightRange);
     }
 
     fea::EntityId entityId;
-    //std::string world;
-    //glm::vec3 position;
+    std::string worldId;
+    glm::vec3 position;
     uint32_t highlightRange;
 };
 

@@ -1,6 +1,7 @@
 #include "clientnetworkingsystem.hpp"
 #include "networkingmessages.hpp"
 #include "../world/worldmessages.hpp"
+#include "../client/clientmessages.hpp"
 #include "../lognames.hpp"
 #include "enetclient.hpp"
 #include "channels.hpp"
@@ -70,11 +71,11 @@ void ClientNetworkingSystem::handleMessage(const FrameMessage& received)
 void ClientNetworkingSystem::handleMessage(const LocalConnectionEstablishedMessage& received)
 {
     mServerBus = received.serverBus;
+    mIsConnected = true;
     mBus.send(LogMessage{"Connected locally to server", clientName, LogLevel::INFO});
 
     mBus.send(LogMessage{"Requesting to join game as '" + std::string("Tobbe") + "'", clientName, LogLevel::INFO});
     ClientJoinRequestedMessage message{"Tobbe"};
-    mIsConnected = true;
     send(message, true, CHANNEL_DEFAULT);
 }
 
@@ -96,10 +97,13 @@ void ClientNetworkingSystem::handleMessage(const ClientJoinAcceptedMessage& rece
         send(SubscriptionRequestedMessage{chunkWidth}, true, CHANNEL_DEFAULT);
 }
 
-void ClientNetworkingSystem::handleMessage(const ClientRequestedChunksMessage& received)
+void ClientNetworkingSystem::handleMessage(const ChunksRequestedMessage& received)
 {
     if(mIsConnected)
-        send(received, true, CHANNEL_CHUNKS);
+    {
+        std::cout << "lagoooo\n";
+        send(ClientRequestedChunksMessage{mWorldIds.valueFromId(received.worldId), received.coordinates}, true, CHANNEL_CHUNKS);
+    }
 }
 
 void ClientNetworkingSystem::handleMessage(const ClientChunksDeniedMessage& received)
@@ -159,6 +163,11 @@ void ClientNetworkingSystem::handleMessage(const EntityLeftRangeMessage& receive
     mBus.send(RemoveGfxEntityMessage{received.id});
 }
 
+void ClientNetworkingSystem::handleMessage(const ClientAttachedToEntityMessage& received)
+{
+    mBus.send(LocalPlayerAttachedToEntityMessage{received.entityId, mWorldIds.getId(received.worldId), received.position, received.highlightRange});
+}
+
 void ClientNetworkingSystem::connectedToServer()
 {
     mBus.send(LogMessage{"Successfully connected to server", clientName, LogLevel::INFO});
@@ -175,79 +184,91 @@ void ClientNetworkingSystem::handleServerData(const std::vector<uint8_t>& data)
 
     try
     {
-    if(type == CLIENT_JOIN_DENIED)
-    {
-        ClientJoinDeniedMessage received = deserializeMessage<ClientJoinDeniedMessage>(data);
-        mBus.send(received);
-    }
-    else if(type == CLIENT_JOIN_ACCEPTED)
-    {
-        ClientJoinAcceptedMessage received = deserializeMessage<ClientJoinAcceptedMessage>(data);
-        mBus.send(received);
-    }
-    else if(type == CLIENT_CHUNKS_DENIED)
-    {
-        ClientChunksDeniedMessage received = deserializeMessage<ClientChunksDeniedMessage>(data);
-        mBus.send(received);
-    }
-    else if(type == SUBSCRIPTION_REPLY)
-    {
-        SubscriptionReplyMessage received = deserializeMessage<SubscriptionReplyMessage>(data);
-        mBus.send(received);
-    }
-    else if(type == CLIENT_CHUNKS_DELIVERY)
-    {
-        ClientChunksDeliveredMessage received = deserializeMessage<ClientChunksDeliveredMessage>(data);
-        mBus.send(received);
-    }
-    else if(type == VOXEL_UPDATED)
-    {
-        VoxelUpdatedMessage received = deserializeMessage<VoxelUpdatedMessage>(data);
-        mBus.send(received);
-    }
-    else if(type == ENTITY_ENTERED_RANGE)
-    {
-        EntityEnteredRangeMessage received = deserializeMessage<EntityEnteredRangeMessage>(data);
-        mBus.send(received);
-    }
-    else if(type == ENTITY_POSITION_UPDATED)
-    {
-        EntityPositionUpdatedMessage received = deserializeMessage<EntityPositionUpdatedMessage>(data);
-        mBus.send(received);
-    }
-    else if(type == ENTITY_ROTATION_UPDATED)
-    {
-        EntityRotationUpdatedMessage received = deserializeMessage<EntityRotationUpdatedMessage>(data);
-        mBus.send(received);
-    }
-    else if(type == ENTITY_LEFT_RANGE)
-    {
-        EntityLeftRangeMessage received = deserializeMessage<EntityLeftRangeMessage>(data);
-        mBus.send(received);
-    }
-    else if(type == CLIENT_ATTACHED_TO_ENTITY)
-    {
-        ClientAttachedToEntityMessage received = deserializeMessage<ClientAttachedToEntityMessage>(data);
-        mBus.send(received);
-    }
-    else if(type == CLIENT_ENTERED_WORLD)
-    {
-        //ClientEnteredWorldMessage received = deserializeMessage<ClientEnteredWorldMessage>(data);
-        //mBus.send(received);
-    }
-    else if(type == CLIENT_POSITION)
-    {
-        //ClientPositionMessage received = deserializeMessage<ClientPositionMessage>(data);
-        //mBus.send(received);
-    }
-    else if(type == TEST_1)
-        mBus.send(LogMessage{"Received meaningless test message", clientName, LogLevel::WARN});
-    else if(type == TEST_2)
-        mBus.send(LogMessage{"Received meaningless test message", clientName, LogLevel::WARN});
-    else if(type == INVALID)
-        mBus.send(LogMessage{"Received invalid message", clientName, LogLevel::WARN});
-    else
-        mBus.send(LogMessage{"Received message of unknown type", clientName, LogLevel::WARN});
+        if(type == CLIENT_JOIN_DENIED)
+        {
+            ClientJoinDeniedMessage received = deserializeMessage<ClientJoinDeniedMessage>(data);
+            mBus.send(received);
+        }
+        else if(type == CLIENT_JOIN_ACCEPTED)
+        {
+            ClientJoinAcceptedMessage received = deserializeMessage<ClientJoinAcceptedMessage>(data);
+            mBus.send(received);
+        }
+        else if(type == CLIENT_CHUNKS_DENIED)
+        {
+            std::cout << "weeeeeeeew!\n";
+            ClientChunksDeniedMessage received = deserializeMessage<ClientChunksDeniedMessage>(data);
+            mBus.send(received);
+        }
+        else if(type == SUBSCRIPTION_REPLY)
+        {
+            SubscriptionReplyMessage received = deserializeMessage<SubscriptionReplyMessage>(data);
+            mBus.send(received);
+        }
+        else if(type == CLIENT_CHUNKS_DELIVERY)
+        {
+            std::cout << "woooooow!\n";
+            ClientChunksDeliveredMessage received = deserializeMessage<ClientChunksDeliveredMessage>(data);
+
+            std::unordered_map<ChunkCoord, Chunk> chunks;
+
+            for(int32_t i = 0; i < received.coordinates.size(); i++)
+            {
+                Chunk chunk(received.rleIndices[i], received.rleSegments[i]);
+                chunks.emplace(received.coordinates[i], std::move(chunk));
+            }
+
+            mBus.send(ChunksDataDeliveredMessage{mWorldIds.getId(received.worldIdentifier), chunks});
+        }
+        else if(type == VOXEL_UPDATED)
+        {
+            VoxelUpdatedMessage received = deserializeMessage<VoxelUpdatedMessage>(data);
+            mBus.send(VoxelSetMessage{received.id, received.voxel, received.type});
+        }
+        else if(type == ENTITY_ENTERED_RANGE)
+        {
+            EntityEnteredRangeMessage received = deserializeMessage<EntityEnteredRangeMessage>(data);
+            mBus.send(received);
+        }
+        else if(type == ENTITY_POSITION_UPDATED)
+        {
+            EntityPositionUpdatedMessage received = deserializeMessage<EntityPositionUpdatedMessage>(data);
+            mBus.send(received);
+        }
+        else if(type == ENTITY_ROTATION_UPDATED)
+        {
+            EntityRotationUpdatedMessage received = deserializeMessage<EntityRotationUpdatedMessage>(data);
+            mBus.send(received);
+        }
+        else if(type == ENTITY_LEFT_RANGE)
+        {
+            EntityLeftRangeMessage received = deserializeMessage<EntityLeftRangeMessage>(data);
+            mBus.send(received);
+        }
+        else if(type == CLIENT_ATTACHED_TO_ENTITY)
+        {
+            std::cout << "hohoo\n";
+            ClientAttachedToEntityMessage received = deserializeMessage<ClientAttachedToEntityMessage>(data);
+            mBus.send(LocalPlayerAttachedToEntityMessage{received.entityId, mWorldIds.getId(received.worldId), received.position, received.highlightRange});
+        }
+        else if(type == CLIENT_ENTERED_WORLD)
+        {
+            //ClientEnteredWorldMessage received = deserializeMessage<ClientEnteredWorldMessage>(data);
+            //mBus.send(received);
+        }
+        else if(type == CLIENT_POSITION)
+        {
+            //ClientPositionMessage received = deserializeMessage<ClientPositionMessage>(data);
+            //mBus.send(received);
+        }
+        else if(type == TEST_1)
+            mBus.send(LogMessage{"Received meaningless test message", clientName, LogLevel::WARN});
+        else if(type == TEST_2)
+            mBus.send(LogMessage{"Received meaningless test message", clientName, LogLevel::WARN});
+        else if(type == INVALID)
+            mBus.send(LogMessage{"Received invalid message", clientName, LogLevel::WARN});
+        else
+            mBus.send(LogMessage{"Received message of unknown type", clientName, LogLevel::WARN});
     } 
     catch(const DeserializeException& e)
     {

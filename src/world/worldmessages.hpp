@@ -6,9 +6,9 @@
 #include "biome.hpp"
 #include "biomedefines.hpp"
 #include "worldbiomesettings.hpp"
+#include "chunk.hpp"
 
 class Region;
-class Chunk;
 class RegionDataFragment;
 
 struct SetVoxelMessage
@@ -66,6 +66,11 @@ struct ChunkFinishedMessage
     WorldId worldId; const ChunkCoord& coordinate; const Chunk& chunk;
 };
 
+struct ChunkDeletedMessage
+{
+    WorldId worldId; const ChunkCoord& coordinate;
+};
+
 struct HighlightEntityAddRequestedMessage
 {
     WorldId worldId;
@@ -99,8 +104,14 @@ struct ChunksDataDeniedMessage
     const std::vector<ChunkCoord>& coordinates;
 };
 
-struct ChunksDataDeliveredMessage
+struct ChunksRefDataDeliveredMessage
 {
     WorldId worldId;
     std::unordered_map<ChunkCoord, const Chunk&> chunks;
+};
+
+struct ChunksDataDeliveredMessage
+{
+    WorldId worldId;
+    std::unordered_map<ChunkCoord, Chunk> chunks;
 };

@@ -44,6 +44,17 @@ Client::~Client()
 	mBus.send(LogMessage{"Shutting down client", clientName, LogLevel::INFO});
 }
 
+void Client::updateVoxelLookAt()
+{
+	glm::vec3 direction = glm::vec3(glm::cos(mPitch) * glm::sin(mYaw), glm::sin(mPitch), glm::cos(mPitch) * glm::cos(mYaw));
+
+	VoxelCoord block;
+	uint32_t face = 0;
+	bool f = RayCaster::getVoxelAtRay(mClientWorld.getVoxels(mCurrentWorld), mPosition + glm::vec3(0, 0.6f, 0), direction, 200.f, face, block);
+
+    mBus.send(FacingBlockMessage{block});
+}
+
 void Client::update()
 {
     mBus.send(FrameMessage{mFrameNumber++});
@@ -77,17 +88,13 @@ void Client::handleMessage(const GameStartMessage& received)
 {
 }
 
-void Client::handleMessage(const ClientAttachedToEntityMessage& received)
+void Client::handleMessage(const LocalPlayerAttachedToEntityMessage& received)
 {
-    //set current world???????
+    mCurrentWorld = received.worldId;
     mCurrentEntity = received.entityId;
+    mPosition = received.position;
     mHighlightRadius = received.highlightRange;
-    //mBus.send(HighlightEntityAddRequestedMessage{received.world, 0, WorldToChunk::convert(received.position), mHighlightRadius});
-    //auto highlighted = mHighlightedChunks.addHighlightEntity(0, WorldToChunk::convert(received.position), mHighlightRadius);
-    //mLastChunk = WorldToChunk::convert(received.position);
-
-    //if(highlighted.size() > 0)
-    //    mBus.send(ClientRequestedChunksMessage{mCurrentWorld, highlighted});
+    mBus.send(HighlightEntityAddRequestedMessage{received.worldId, 0, WorldToChunk::convert(received.position), mHighlightRadius});
 }
 
 //void Client::handleMessage(const ClientEnteredWorldMessage& received)

@@ -64,3 +64,30 @@ SCENARIO("IdProviders reuse freed IDs","[utilities]")
         }   
     }
 }
+
+SCENARIO("IdProviders can give out the value given to an ID","[utilities]")
+{
+    GIVEN("An IdProvider with values added")
+    {
+        IdProvider<std::string> provider;
+
+        uint32_t id1 = provider.getId("hej");
+        uint32_t id2 = provider.getId("kalle");
+        uint32_t id3 = provider.getId("glass");
+
+
+        WHEN("Original values are requested by the given ID")
+        {   
+            std::string val1 = provider.valueFromId(id1);
+            std::string val2 = provider.valueFromId(id2);
+            std::string val3 = provider.valueFromId(id3);
+
+            THEN("They are properly received")
+            {
+                CHECK(val1 == "hej");
+                CHECK(val2 == "kalle");
+                CHECK(val3 == "glass");
+            }   
+        }   
+    }
+}

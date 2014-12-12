@@ -39,7 +39,7 @@ class ServerNetworkingSystem : public fea::MessageReceiver<
                                            EntityRotatedMessage,
                                            EntityRemovedMessage,
                                            ChunksDataDeniedMessage,
-                                           ChunksDataDeliveredMessage,
+                                           ChunksRefDataDeliveredMessage,
                                            ChunkFinishedMessage,
                                            VoxelSetMessage>
 {
@@ -64,7 +64,7 @@ class ServerNetworkingSystem : public fea::MessageReceiver<
         void handleMessage(const EntityRotatedMessage& received) override;
         void handleMessage(const EntityRemovedMessage& received) override;
         void handleMessage(const ChunksDataDeniedMessage& received) override;
-        void handleMessage(const ChunksDataDeliveredMessage& received) override;
+        void handleMessage(const ChunksRefDataDeliveredMessage& received) override;
         void handleMessage(const ChunkFinishedMessage& received) override;
         void handleMessage(const VoxelSetMessage& received) override;
     private:

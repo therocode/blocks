@@ -1,4 +1,6 @@
 #include "clientworld.hpp"
+#include "../rendering/renderingmessages.hpp"
+#include "../networking/networkingprotocol.hpp"
 
 ClientWorld::ClientWorld(fea::MessageBus& bus) :
     mBus(bus)
@@ -6,120 +8,128 @@ ClientWorld::ClientWorld(fea::MessageBus& bus) :
     subscribe(mBus, *this);
 }
 
-void ClientWorld::handleMessage(const ClientChunksDeliveredMessage& received)
+void ClientWorld::handleMessage(const ChunksDataDeliveredMessage& received)
 {
-}
-
-void ClientWorld::updateVoxelLookAt()
-{
-	glm::vec3 direction = glm::vec3(glm::cos(mPitch) * glm::sin(mYaw), glm::sin(mPitch), glm::cos(mPitch) * glm::cos(mYaw));
-
-	VoxelCoord block;
-	uint32_t face = 0;
-	bool f = RayCaster::getVoxelAtRay(mLocalChunks, mPosition + glm::vec3(0, 0.6f, 0), direction, 200.f, face, block);
-
-    mBus.send(FacingBlockMessage{block});
-}
-
-void ClientWorld::handleMessage(const ClientChunksDeliveredMessage& received)
-{
-    for(uint32_t i = 0; i < received.coordinates.size(); i++)
+    std::cout << "HEJHEJHEJHEJEHJ\n";
+    for(const auto& chunkIter : received.chunks)
     {
-        const ChunkCoord& coordinate = received.coordinates[i];
-        if(mHighlightedChunks.chunkIsHighlighted(coordinate))
+        const ChunkCoord& coordinate = chunkIter.first;
+
+        if(mHighlightManager.chunkIsHighlighted(coordinate))
         {
-            Chunk chunk(received.rleIndices[i], received.rleSegments[i]);
+            WorldId id = received.worldId;
+            const Chunk& chunk = chunkIter.second;
 
-            mLocalChunks[coordinate] = chunk;
+            FEA_ASSERT(mVoxels.count(id) > 0, "The world is not added, something is wrong!");
 
-            updateChunk(coordinate);
+            auto& voxels = mVoxels.at(id);
 
-            if(mLocalChunks.find(ChunkCoord(coordinate.x + 1, coordinate.y, coordinate.z)) != mLocalChunks.end())
+            voxels[coordinate] = chunk;
+
+            updateChunk(id, coordinate);
+
+            if(voxels.find(ChunkCoord(coordinate.x + 1, coordinate.y, coordinate.z)) != voxels.end())
             {
-                updateChunk(ChunkCoord(coordinate.x + 1, coordinate.y, coordinate.z));
+                updateChunk(id, ChunkCoord(coordinate.x + 1, coordinate.y, coordinate.z));
             }
-            if(mLocalChunks.find(ChunkCoord(coordinate.x - 1, coordinate.y, coordinate.z)) != mLocalChunks.end())
+            if(voxels.find(ChunkCoord(coordinate.x - 1, coordinate.y, coordinate.z)) != voxels.end())
             {
-                updateChunk(ChunkCoord(coordinate.x - 1, coordinate.y, coordinate.z));
+                updateChunk(id, ChunkCoord(coordinate.x - 1, coordinate.y, coordinate.z));
             }
-            if(mLocalChunks.find(ChunkCoord(coordinate.x, coordinate.y + 1, coordinate.z)) != mLocalChunks.end())
+            if(voxels.find(ChunkCoord(coordinate.x, coordinate.y + 1, coordinate.z)) != voxels.end())
             {
-                updateChunk(ChunkCoord(coordinate.x, coordinate.y + 1, coordinate.z));
+                updateChunk(id, ChunkCoord(coordinate.x, coordinate.y + 1, coordinate.z));
             }
-            if(mLocalChunks.find(ChunkCoord(coordinate.x, coordinate.y - 1, coordinate.z)) != mLocalChunks.end())
+            if(voxels.find(ChunkCoord(coordinate.x, coordinate.y - 1, coordinate.z)) != voxels.end())
             {
-                updateChunk(ChunkCoord(coordinate.x, coordinate.y - 1, coordinate.z));
+                updateChunk(id, ChunkCoord(coordinate.x, coordinate.y - 1, coordinate.z));
             }
-            if(mLocalChunks.find(ChunkCoord(coordinate.x, coordinate.y, coordinate.z + 1)) != mLocalChunks.end())
+            if(voxels.find(ChunkCoord(coordinate.x, coordinate.y, coordinate.z + 1)) != voxels.end())
             {
-                updateChunk(ChunkCoord(coordinate.x, coordinate.y, coordinate.z + 1));
+                updateChunk(id, ChunkCoord(coordinate.x, coordinate.y, coordinate.z + 1));
             }
-            if(mLocalChunks.find(ChunkCoord(coordinate.x, coordinate.y, coordinate.z - 1)) != mLocalChunks.end())
+            if(voxels.find(ChunkCoord(coordinate.x, coordinate.y, coordinate.z - 1)) != voxels.end())
             {
-                updateChunk(ChunkCoord(coordinate.x, coordinate.y, coordinate.z - 1));
+                updateChunk(id, ChunkCoord(coordinate.x, coordinate.y, coordinate.z - 1));
             }
         }
     }
 }
 
-void ClientWorld::handleMessage(const VoxelUpdatedMessage& received)
+void ClientWorld::handleMessage(const VoxelSetMessage& received)
 {
     ChunkCoord chunkCoord = VoxelToChunk::convert(received.voxel);
     ChunkVoxelCoord chunkVoxelCoord = VoxelToChunkVoxel::convert(received.voxel);
+    WorldId id = received.worldId;
+    auto& voxels = mVoxels.at(id);
 
-    auto chunk = mLocalChunks.find(chunkCoord);
+    auto chunk = voxels.find(chunkCoord);
 
-    if(chunk != mLocalChunks.end())
+    if(chunk != voxels.end())
     {
         chunk->second.setVoxelType(chunkVoxelCoord, received.type);
-        updateChunk(chunkCoord);
+        updateChunk(id, chunkCoord);
     }
 
     ChunkCoord leftNeighbour = ChunkCoord(chunkCoord.x - 1, chunkCoord.y, chunkCoord.z);
-    if(chunkVoxelCoord.x == 0 && mLocalChunks.find(leftNeighbour) != mLocalChunks.end())
+    if(chunkVoxelCoord.x == 0 && voxels.find(leftNeighbour) != voxels.end())
     {
-        updateChunk(leftNeighbour);
+        updateChunk(id, leftNeighbour);
     }
 
     ChunkCoord rightNeighbour = ChunkCoord(chunkCoord.x + 1, chunkCoord.y, chunkCoord.z);
-    if(chunkVoxelCoord.x == chunkWidth - 1 && mLocalChunks.find(rightNeighbour) != mLocalChunks.end())
+    if(chunkVoxelCoord.x == chunkWidth - 1 && voxels.find(rightNeighbour) != voxels.end())
     {
-        updateChunk(rightNeighbour);
+        updateChunk(id, rightNeighbour);
     }
 
     ChunkCoord topNeighbour = ChunkCoord(chunkCoord.x, chunkCoord.y + 1, chunkCoord.z);
-    if(chunkVoxelCoord.y == chunkWidth - 1 && mLocalChunks.find(topNeighbour) != mLocalChunks.end())
+    if(chunkVoxelCoord.y == chunkWidth - 1 && voxels.find(topNeighbour) != voxels.end())
     {
-        updateChunk(topNeighbour);
+        updateChunk(id, topNeighbour);
     }
 
     ChunkCoord bottomNeighbour = ChunkCoord(chunkCoord.x, chunkCoord.y - 1, chunkCoord.z);
-    if(chunkVoxelCoord.y == 0 && mLocalChunks.find(bottomNeighbour) != mLocalChunks.end())
+    if(chunkVoxelCoord.y == 0 && voxels.find(bottomNeighbour) != voxels.end())
     {
-        updateChunk(bottomNeighbour);
+        updateChunk(id, bottomNeighbour);
     }
 
     ChunkCoord frontNeighbour = ChunkCoord(chunkCoord.x, chunkCoord.y, chunkCoord.z + 1);
-    if(chunkVoxelCoord.z == chunkWidth - 1 && mLocalChunks.find(frontNeighbour) != mLocalChunks.end())
+    if(chunkVoxelCoord.z == chunkWidth - 1 && voxels.find(frontNeighbour) != voxels.end())
     {
-        updateChunk(frontNeighbour);
+        updateChunk(id, frontNeighbour);
     }
 
     ChunkCoord backNeighbour = ChunkCoord(chunkCoord.x, chunkCoord.y, chunkCoord.z - 1);
-    if(chunkVoxelCoord.z == 0 && mLocalChunks.find(backNeighbour) != mLocalChunks.end())
+    if(chunkVoxelCoord.z == 0 && voxels.find(backNeighbour) != voxels.end())
     {
-        updateChunk(backNeighbour);
+        updateChunk(id, backNeighbour);
     }
 }
 
-void ClientWorld::handleMessage(const ClientChunkDeletedMessage& received)
+void ClientWorld::handleMessage(const ChunkDeletedMessage& received)
 {
-    mLocalChunks.erase(received.coordinate);
+    mVoxels.at(received.worldId).erase(received.coordinate);
 }
 
-void ClientWorld::updateChunk(const ChunkCoord& coordinate)
+void ClientWorld::handleMessage(const HighlightEntityAddRequestedMessage& received)
 {
-    Chunk* mainChunk = &mLocalChunks.at(coordinate);
+    std::cout << "wahoo\n";
+    auto highlighted = mHighlightManager.addHighlightEntity(0, received.coordinate, received.radius);
+    //mLastChunk = WorldToChunk::convert(received.position);
+
+    if(highlighted.size() > 0)
+        mBus.send(ChunksRequestedMessage{received.worldId, highlighted});
+}
+
+void ClientWorld::updateChunk(WorldId id, const ChunkCoord& coordinate)
+{
+    FEA_ASSERT(mVoxels.count(id), "Updating non-existing chunk? weird");
+
+    auto& voxels = mVoxels.at(id);
+
+    Chunk* mainChunk = &voxels.at(coordinate);
     Chunk* topChunk = nullptr;
     Chunk* bottomChunk = nullptr;
     Chunk* frontChunk = nullptr;
@@ -127,25 +137,31 @@ void ClientWorld::updateChunk(const ChunkCoord& coordinate)
     Chunk* leftChunk = nullptr;
     Chunk* rightChunk = nullptr;
 
-    auto top    = mLocalChunks.find(ChunkCoord(coordinate.x, coordinate.y + 1, coordinate.z));
-    auto bottom = mLocalChunks.find(ChunkCoord(coordinate.x, coordinate.y - 1, coordinate.z));
-    auto front  = mLocalChunks.find(ChunkCoord(coordinate.x, coordinate.y, coordinate.z + 1));
-    auto back   = mLocalChunks.find(ChunkCoord(coordinate.x, coordinate.y, coordinate.z - 1));
-    auto left   = mLocalChunks.find(ChunkCoord(coordinate.x - 1, coordinate.y, coordinate.z));
-    auto right  = mLocalChunks.find(ChunkCoord(coordinate.x + 1, coordinate.y, coordinate.z));
+    auto top    = voxels.find(ChunkCoord(coordinate.x, coordinate.y + 1, coordinate.z));
+    auto bottom = voxels.find(ChunkCoord(coordinate.x, coordinate.y - 1, coordinate.z));
+    auto front  = voxels.find(ChunkCoord(coordinate.x, coordinate.y, coordinate.z + 1));
+    auto back   = voxels.find(ChunkCoord(coordinate.x, coordinate.y, coordinate.z - 1));
+    auto left   = voxels.find(ChunkCoord(coordinate.x - 1, coordinate.y, coordinate.z));
+    auto right  = voxels.find(ChunkCoord(coordinate.x + 1, coordinate.y, coordinate.z));
 
-    if(top != mLocalChunks.end())
+    if(top != voxels.end())
         topChunk = &top->second;
-    if(bottom != mLocalChunks.end())
+    if(bottom != voxels.end())
         bottomChunk = &bottom->second;
-    if(front != mLocalChunks.end())
+    if(front != voxels.end())
         frontChunk = &front->second;
-    if(back != mLocalChunks.end())
+    if(back != voxels.end())
         backChunk = &back->second;
-    if(left != mLocalChunks.end())
+    if(left != voxels.end())
         leftChunk = &left->second;
-    if(right != mLocalChunks.end())
+    if(right != voxels.end())
         rightChunk = &right->second;
 
     mBus.send(UpdateChunkVboMessage{coordinate, mainChunk, topChunk, bottomChunk, frontChunk, backChunk, leftChunk, rightChunk});
+}
+
+const ChunkMap& ClientWorld::getVoxels(WorldId worldId) const
+{
+    FEA_ASSERT(mVoxels.count(worldId) > 0, "Cannot get voxels of unexisting world");
+    return mVoxels.at(worldId);
 }

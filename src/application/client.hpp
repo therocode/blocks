@@ -17,7 +17,7 @@ class Client :
     public fea::MessageReceiver<ClientActionMessage,
                                 CursorLockedMessage,
                                 GameStartMessage,
-                                ClientAttachedToEntityMessage,
+                                LocalPlayerAttachedToEntityMessage,
                                 //ClientEnteredWorldMessage,
                                 //ClientPositionMessage,
                                 MoveGfxEntityMessage,
@@ -31,7 +31,7 @@ class Client :
         void handleMessage(const ClientActionMessage& received) override;
         void handleMessage(const CursorLockedMessage& received) override;
         void handleMessage(const GameStartMessage& received) override;
-        void handleMessage(const ClientAttachedToEntityMessage& received) override;
+        void handleMessage(const LocalPlayerAttachedToEntityMessage& received) override;
         //void handleMessage(const ClientEnteredWorldMessage& received) override;
         //void handleMessage(const ClientPositionMessage& received) override;
         void handleMessage(const MoveGfxEntityMessage& received) override;
@@ -52,7 +52,7 @@ class Client :
         bool mQuit;
 
         ClientWorld mClientWorld;
-        std::string mCurrentWorld;
+        WorldId mCurrentWorld;
         fea::EntityId mCurrentEntity;
         uint32_t mHighlightRadius;
         ChunkCoord mLastChunk;

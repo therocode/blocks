@@ -176,7 +176,7 @@ void WorldEntry::chunksRequested(const std::vector<ChunkCoord>& coordinates)
 
     if(grantedChunks.size() > 0)
     {
-        ChunksDataDeliveredMessage message{mId, grantedChunks};
+        ChunksRefDataDeliveredMessage message{mId, grantedChunks};
 
         mBus.send(message);
     }
@@ -241,7 +241,7 @@ void WorldEntry::deactivateChunk(const ChunkCoord& chunkCoordinate)
         if(mWorldData.voxels.erase(chunkCoordinate) != 0)
         {
 			mExplorationManager.deactivateChunk(chunkCoordinate);
-            //mBus.send(ChunkDeletedMessage{chunkCoordinate}); there is no such message atm
+            mBus.send(ChunkDeletedMessage{mId, chunkCoordinate});
         }
 
         //we don't need to send pending requests for this chunk

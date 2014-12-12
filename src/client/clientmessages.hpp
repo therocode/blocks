@@ -5,3 +5,11 @@ struct ClientChunkDeletedMessage
 {
     const ChunkCoord& coordinate;
 };
+
+struct LocalPlayerAttachedToEntityMessage
+{
+    fea::EntityId entityId;
+    WorldId worldId;
+    glm::vec3 position;
+    uint32_t highlightRange;
+};

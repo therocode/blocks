@@ -198,8 +198,8 @@ void ServerNetworkingSystem::handleMessage(const PlayerAttachedToEntityMessage& 
 
     const std::string worldIdentifier = mGameInterface.getWorldSystem().worldIdToIdentifier(mPlayerWorlds.at(received.playerId));
 
-    //sendToOne(received.playerId, ClientAttachedToEntityMessage{received.entityId, worldIdentifier, mPlayerPositions.at(received.playerId), highlightRadius}, true, CHANNEL_DEFAULT);
-    sendToOne(received.playerId, ClientAttachedToEntityMessage{received.entityId, highlightRadius}, true, CHANNEL_DEFAULT);
+    std::cout << "yaooo\n";
+    sendToOne(received.playerId, ClientAttachedToEntityMessage{received.entityId, worldIdentifier, mPlayerPositions.at(received.playerId), highlightRadius}, true, CHANNEL_DEFAULT);
 }
 
 void ServerNetworkingSystem::handleMessage(const PlayerEntityMovedMessage& received)
@@ -344,7 +344,7 @@ void ServerNetworkingSystem::handleMessage(const ChunksDataDeniedMessage& receiv
     }
 }
 
-void ServerNetworkingSystem::handleMessage(const ChunksDataDeliveredMessage& received)
+void ServerNetworkingSystem::handleMessage(const ChunksRefDataDeliveredMessage& received)
 {
     if(received.chunks.size() > 0)
     {
@@ -412,7 +412,7 @@ void ServerNetworkingSystem::handleMessage(const VoxelSetMessage& received)
 
                 if(DistanceChecker::isWithinDistanceOf(chunk, playerChunk, mSettings.maxChunkViewDistance))
                 {
-                    VoxelUpdatedMessage message{received.voxel, received.type};
+                    VoxelUpdatedMessage message{received.worldId, received.voxel, received.type};
                     sendToOne(playerId, message, true, CHANNEL_DEFAULT);
                 }
             }

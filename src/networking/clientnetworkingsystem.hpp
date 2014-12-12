@@ -7,6 +7,8 @@
 #include "../rendering/renderingmessages.hpp"
 #include "../script/scriptmessages.hpp"
 #include "../input/inputmessages.hpp"
+#include "../utilities/idprovider.hpp"
+#include "../world/worldmessages.hpp"
 #include "enet.hpp"
 #include "enetclient.hpp"
 #include "networkingprotocol.hpp"
@@ -19,7 +21,7 @@ class ClientNetworkingSystem : public
                          LocalConnectionEstablishedMessage,
                          ClientJoinDeniedMessage,
                          ClientJoinAcceptedMessage,
-                         ClientRequestedChunksMessage,
+                         ChunksRequestedMessage,
                          ClientChunksDeniedMessage,
                          SubscriptionReplyMessage,
                          ClientActionMessage,
@@ -29,7 +31,8 @@ class ClientNetworkingSystem : public
                          EntityEnteredRangeMessage,
                          EntityPositionUpdatedMessage,
                          EntityRotationUpdatedMessage,
-                         EntityLeftRangeMessage>
+                         EntityLeftRangeMessage,
+                         ClientAttachedToEntityMessage>
 {
     public:
         ClientNetworkingSystem(fea::MessageBus& bus, const NetworkParameters& parameters);
@@ -38,7 +41,7 @@ class ClientNetworkingSystem : public
         void handleMessage(const LocalConnectionEstablishedMessage& received) override;
         void handleMessage(const ClientJoinDeniedMessage& received) override;
         void handleMessage(const ClientJoinAcceptedMessage& received) override;
-        void handleMessage(const ClientRequestedChunksMessage& received) override;
+        void handleMessage(const ChunksRequestedMessage& received) override;
         void handleMessage(const ClientChunksDeniedMessage& received) override;
         void handleMessage(const SubscriptionReplyMessage& received) override;
         void handleMessage(const ClientActionMessage& received) override;
@@ -49,6 +52,7 @@ class ClientNetworkingSystem : public
         void handleMessage(const EntityPositionUpdatedMessage& received) override;
         void handleMessage(const EntityRotationUpdatedMessage& received) override;
         void handleMessage(const EntityLeftRangeMessage& received) override;
+        void handleMessage(const ClientAttachedToEntityMessage& received) override;
     private:
         void connectedToServer();
         void handleServerData(const std::vector<uint8_t>& data);
@@ -62,6 +66,7 @@ class ClientNetworkingSystem : public
         std::unique_ptr<ENet> mENet;
         std::unique_ptr<ENetClient> mENetClient;
         bool mIsConnected;
+        IdProvider<std::string, WorldId> mWorldIds;
 };
 
 template <typename Message>
