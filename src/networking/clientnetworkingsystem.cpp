@@ -162,6 +162,7 @@ void ClientNetworkingSystem::handleMessage(const EntityEnteredRangeMessage& rece
 
 void ClientNetworkingSystem::handleMessage(const EntityPositionUpdatedMessage& received)
 {
+    mBus.send(EntityMovedMessage{received.id, received.worldId, received.position});
     mBus.send(MoveGfxEntityMessage{received.id, received.position});
 }
 
@@ -240,7 +241,7 @@ void ClientNetworkingSystem::handleServerData(const std::vector<uint8_t>& data)
         else if(type == ENTITY_POSITION_UPDATED)
         {
             EntityPositionUpdatedMessage received = deserializeMessage<EntityPositionUpdatedMessage>(data);
-            mBus.send(received);
+            handleMessage(received);
         }
         else if(type == ENTITY_ROTATION_UPDATED)
         {
