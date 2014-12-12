@@ -33,7 +33,8 @@ class ClientNetworkingSystem : public
                          EntityPositionUpdatedMessage,
                          EntityRotationUpdatedMessage,
                          EntityLeftRangeMessage,
-                         ClientAttachedToEntityMessage>
+                         ClientAttachedToEntityMessage,
+                         VoxelUpdatedMessage>
 {
     public:
         ClientNetworkingSystem(fea::MessageBus& bus, const NetworkParameters& parameters);
@@ -55,6 +56,7 @@ class ClientNetworkingSystem : public
         void handleMessage(const EntityRotationUpdatedMessage& received) override;
         void handleMessage(const EntityLeftRangeMessage& received) override;
         void handleMessage(const ClientAttachedToEntityMessage& received) override;
+        void handleMessage(const VoxelUpdatedMessage& received) override;
     private:
         void connectedToServer();
         void handleServerData(const std::vector<uint8_t>& data);

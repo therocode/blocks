@@ -101,7 +101,6 @@ void ClientNetworkingSystem::handleMessage(const ChunksRequestedMessage& receive
 {
     if(mIsConnected)
     {
-        std::cout << "lagoooo\n";
         send(ClientRequestedChunksMessage{mWorldIds.valueFromId(received.worldId), received.coordinates}, true, CHANNEL_CHUNKS);
     }
 }
@@ -181,6 +180,11 @@ void ClientNetworkingSystem::handleMessage(const ClientAttachedToEntityMessage& 
     mBus.send(LocalPlayerAttachedToEntityMessage{received.entityId, mWorldIds.getId(received.worldId), received.position, received.highlightRange});
 }
 
+void ClientNetworkingSystem::handleMessage(const VoxelUpdatedMessage& received)
+{
+    mBus.send(VoxelSetMessage{received.id, received.voxel, received.type});
+}
+
 void ClientNetworkingSystem::connectedToServer()
 {
     mBus.send(LogMessage{"Successfully connected to server", clientName, LogLevel::INFO});
@@ -209,7 +213,6 @@ void ClientNetworkingSystem::handleServerData(const std::vector<uint8_t>& data)
         }
         else if(type == CLIENT_CHUNKS_DENIED)
         {
-            std::cout << "weeeeeeeew!\n";
             ClientChunksDeniedMessage received = deserializeMessage<ClientChunksDeniedMessage>(data);
             mBus.send(received);
         }
@@ -220,7 +223,6 @@ void ClientNetworkingSystem::handleServerData(const std::vector<uint8_t>& data)
         }
         else if(type == CLIENT_CHUNKS_DELIVERY)
         {
-            std::cout << "woooooow!\n";
             ClientChunksDeliveredMessage received = deserializeMessage<ClientChunksDeliveredMessage>(data);
 
             handleMessage(received);
@@ -228,7 +230,7 @@ void ClientNetworkingSystem::handleServerData(const std::vector<uint8_t>& data)
         else if(type == VOXEL_UPDATED)
         {
             VoxelUpdatedMessage received = deserializeMessage<VoxelUpdatedMessage>(data);
-            mBus.send(VoxelSetMessage{received.id, received.voxel, received.type});
+            handleMessage(received);
         }
         else if(type == ENTITY_ENTERED_RANGE)
         {
@@ -252,7 +254,6 @@ void ClientNetworkingSystem::handleServerData(const std::vector<uint8_t>& data)
         }
         else if(type == CLIENT_ATTACHED_TO_ENTITY)
         {
-            std::cout << "hohoo\n";
             ClientAttachedToEntityMessage received = deserializeMessage<ClientAttachedToEntityMessage>(data);
             mBus.send(LocalPlayerAttachedToEntityMessage{received.entityId, mWorldIds.getId(received.worldId), received.position, received.highlightRange});
         }

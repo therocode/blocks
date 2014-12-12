@@ -10,7 +10,6 @@ ClientWorld::ClientWorld(fea::MessageBus& bus) :
 
 void ClientWorld::handleMessage(const ChunksDataDeliveredMessage& received)
 {
-    std::cout << "HEJHEJHEJHEJEHJ\n";
     for(const auto& chunkIter : received.chunks)
     {
         const ChunkCoord& coordinate = chunkIter.first;
@@ -130,7 +129,6 @@ void ClientWorld::handleMessage(const ChunkDeletedMessage& received)
 
 void ClientWorld::handleMessage(const HighlightEntityAddRequestedMessage& received)
 {
-    std::cout << "wahoo\n";
     auto highlighted = mWorldEntries[received.worldId].highlightManager.addHighlightEntity(0, received.coordinate, received.radius);
     //mLastChunk = WorldToChunk::convert(received.position);
 

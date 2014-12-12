@@ -211,8 +211,6 @@ void RenderingSystem::handleMessage(const UpdateChunkVboMessage& received)
     Chunk* rightChunk = received.right;
 
     mChunkModels[mainChunkCoord] = mChunkModelCreator.generateChunkModel(mainChunkCoord, mainChunk, topChunk, bottomChunk, frontChunk, backChunk, leftChunk, rightChunk);
-
-    std::cout << "bloh\n";
 }
 
 void RenderingSystem::render()

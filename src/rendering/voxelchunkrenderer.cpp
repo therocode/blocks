@@ -34,7 +34,7 @@ void VoxelChunkRenderer::render(const Camera& camera, const glm::mat4& perspecti
     mVertexArray.bind();
 
     shader.setUniform("viewProjectionMatrix", UniformType::MAT4X4, glm::value_ptr(perspective * camera.getMatrix()));
-    float shadedRatio = 0.5f;
+    float shadedRatio = 1.0f;
     shader.setUniform("shadedRatio", UniformType::FLOAT, &shadedRatio);
     
     for(const auto model : mOrders)

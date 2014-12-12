@@ -198,7 +198,6 @@ void ServerNetworkingSystem::handleMessage(const PlayerAttachedToEntityMessage& 
 
     const std::string worldIdentifier = mGameInterface.getWorldSystem().worldIdToIdentifier(mPlayerWorlds.at(received.playerId));
 
-    std::cout << "yaooo\n";
     sendToOne(received.playerId, ClientAttachedToEntityMessage{received.entityId, worldIdentifier, mPlayerPositions.at(received.playerId), highlightRadius}, true, CHANNEL_DEFAULT);
 }
 
