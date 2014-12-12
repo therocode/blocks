@@ -1,5 +1,6 @@
 #include "renderingsystem.hpp"
 #include "modelrenderer.hpp"
+#include "voxelchunkrenderer.hpp"
 #include "debugrenderer.hpp"
 #include "../resources/rawmodel.hpp"
 #include "../resources/shadersource.hpp"
@@ -13,6 +14,7 @@ RenderingSystem::RenderingSystem(fea::MessageBus& bus, const glm::uvec2& viewSiz
 {
     subscribe(bus, *this);
     mRenderer.addModule(RenderModule::MODEL, std::unique_ptr<ModelRenderer>(new ModelRenderer()));
+    mRenderer.addModule(RenderModule::VOXEL, std::unique_ptr<VoxelChunkRenderer>(new VoxelChunkRenderer()));
     mRenderer.addModule(RenderModule::DEBUG, std::unique_ptr<DebugRenderer>(new DebugRenderer()));
 
     for(uint32_t x = 0; x < 25; x++)
@@ -132,6 +134,17 @@ void RenderingSystem::handleMessage(const RenderModeMessage& received)
         PolygonMode current = mRenderer.getRenderMode(RenderModule::MODEL).getPolygonMode();
         mRenderer.getRenderMode(RenderModule::MODEL).setPolygonMode((int32_t)current + 1 > (int32_t)PolygonMode::POINT ? PolygonMode::FILL : (PolygonMode)((int32_t)current + 1));
     }
+    else if(received.type == DISABLE_VOXEL)
+        mRenderer.setEnabled(RenderModule::VOXEL, false);
+    else if(received.type == ENABLE_VOXEL)
+        mRenderer.setEnabled(RenderModule::VOXEL, true);
+    else if(received.type == TOGGLE_MODE_VOXEL)
+    {
+        mRenderer.enableRenderMode(RenderModule::VOXEL, true);
+
+        PolygonMode current = mRenderer.getRenderMode(RenderModule::VOXEL).getPolygonMode();
+        mRenderer.getRenderMode(RenderModule::VOXEL).setPolygonMode((int32_t)current + 1 > (int32_t)PolygonMode::POINT ? PolygonMode::FILL : (PolygonMode)((int32_t)current + 1));
+    }
 }
 
 void RenderingSystem::handleMessage(const ModelDeliverMessage& received)
@@ -186,6 +199,22 @@ void RenderingSystem::handleMessage(const ShaderDefinitionDeliverMessage& receiv
     mShaders.emplace(received.shaderDefinition->name, std::move(shader));
 }
 
+void RenderingSystem::handleMessage(const UpdateChunkVboMessage& received)
+{
+    const ChunkCoord& mainChunkCoord = received.mainChunkCoord;
+    Chunk* mainChunk = received.main;
+    Chunk* topChunk = received.top;
+    Chunk* bottomChunk = received.bottom;
+    Chunk* frontChunk = received.front;
+    Chunk* backChunk = received.back;
+    Chunk* leftChunk = received.left;
+    Chunk* rightChunk = received.right;
+
+    mChunkModels[mainChunkCoord] = mChunkModelCreator.generateChunkModel(mainChunkCoord, mainChunk, topChunk, bottomChunk, frontChunk, backChunk, leftChunk, rightChunk);
+
+    std::cout << "bloh\n";
+}
+
 void RenderingSystem::render()
 {
     for(auto& debbie : mDebuggers)
@@ -199,6 +228,13 @@ void RenderingSystem::render()
     for(auto& moddie : mModelRenderables)
     {
         mRenderer.queue(moddie.second);
+    }
+
+    for(auto& voxie : mChunkModels)
+    {
+        VoxelChunkRenderable renderable;
+        renderable.setModel(voxie.second);
+        mRenderer.queue(renderable);
     }
 
     mShaders.at("basic")->activate();

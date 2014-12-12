@@ -22,6 +22,7 @@ class ClientNetworkingSystem : public
                          ClientJoinDeniedMessage,
                          ClientJoinAcceptedMessage,
                          ChunksRequestedMessage,
+                         ClientChunksDeliveredMessage,
                          ClientChunksDeniedMessage,
                          SubscriptionReplyMessage,
                          ClientActionMessage,
@@ -42,6 +43,7 @@ class ClientNetworkingSystem : public
         void handleMessage(const ClientJoinDeniedMessage& received) override;
         void handleMessage(const ClientJoinAcceptedMessage& received) override;
         void handleMessage(const ChunksRequestedMessage& received) override;
+        void handleMessage(const ClientChunksDeliveredMessage& received) override;
         void handleMessage(const ClientChunksDeniedMessage& received) override;
         void handleMessage(const SubscriptionReplyMessage& received) override;
         void handleMessage(const ClientActionMessage& received) override;

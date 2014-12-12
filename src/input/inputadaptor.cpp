@@ -155,24 +155,30 @@ void InputAdaptor::update()
         }
         else if(event.type == fea::Event::KEYPRESSED)
         {
-            if(event.key.code == fea::Keyboard::NUM7)
+            if(event.key.code == fea::Keyboard::NUM6)
                 mBus.send(RenderModeMessage{DISABLE_ALL});
-            else if(event.key.code == fea::Keyboard::NUM8)
+            else if(event.key.code == fea::Keyboard::NUM7)
                 mBus.send(RenderModeMessage{DISABLE_DEBUG});
-            else if(event.key.code == fea::Keyboard::NUM9)
+            else if(event.key.code == fea::Keyboard::NUM8)
                 mBus.send(RenderModeMessage{DISABLE_MODEL});
-            else if(event.key.code == fea::Keyboard::U)
+            else if(event.key.code == fea::Keyboard::NUM9)
+                mBus.send(RenderModeMessage{DISABLE_VOXEL});
+            else if(event.key.code == fea::Keyboard::Y)
                 mBus.send(RenderModeMessage{ENABLE_ALL});
-            else if(event.key.code == fea::Keyboard::I)
+            else if(event.key.code == fea::Keyboard::U)
                 mBus.send(RenderModeMessage{ENABLE_DEBUG});
-            else if(event.key.code == fea::Keyboard::O)
+            else if(event.key.code == fea::Keyboard::I)
                 mBus.send(RenderModeMessage{ENABLE_MODEL});
-            else if(event.key.code == fea::Keyboard::J)
+            else if(event.key.code == fea::Keyboard::O)
+                mBus.send(RenderModeMessage{ENABLE_VOXEL});
+            else if(event.key.code == fea::Keyboard::H)
                 mBus.send(RenderModeMessage{TOGGLE_MODE_ALL});
-            else if(event.key.code == fea::Keyboard::K)
+            else if(event.key.code == fea::Keyboard::J)
                 mBus.send(RenderModeMessage{TOGGLE_MODE_DEBUG});
-            else if(event.key.code == fea::Keyboard::L)
+            else if(event.key.code == fea::Keyboard::K)
                 mBus.send(RenderModeMessage{TOGGLE_MODE_MODEL});
+            else if(event.key.code == fea::Keyboard::L)
+                mBus.send(RenderModeMessage{TOGGLE_MODE_VOXEL});
         }
     }
 

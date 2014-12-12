@@ -68,6 +68,7 @@ set(source_files
 
     src/rendering/buffer.cpp
     src/rendering/camera.cpp
+    src/rendering/chunkmodelcreator.cpp
     src/rendering/debugrenderable.cpp
     src/rendering/debugrenderer.cpp
     src/rendering/frustum.cpp
@@ -88,6 +89,8 @@ set(source_files
     src/rendering/uniform.cpp
     src/rendering/vao.cpp
     src/rendering/vertexattribute.cpp
+    src/rendering/voxelchunkrenderer.cpp
+    src/rendering/voxelchunkrenderable.cpp
 
     src/resources/clientresourcesystem.cpp
     src/resources/iqmfromfileloader.cpp
@@ -193,6 +196,7 @@ set(header_files
 
     src/rendering/buffer.hpp
     src/rendering/camera.hpp
+    src/rendering/chunkmodelcreator.hpp
     src/rendering/debugrenderable.hpp
     src/rendering/debugrenderer.hpp
     src/rendering/frustum.hpp
@@ -216,6 +220,8 @@ set(header_files
     src/rendering/uniform.hpp
     src/rendering/vao.hpp
     src/rendering/vertexattribute.hpp
+    src/rendering/voxelchunkrenderer.hpp
+    src/rendering/voxelchunkrenderable.hpp
 
     src/resources/clientresourcesystem.hpp
     src/resources/iqm.h

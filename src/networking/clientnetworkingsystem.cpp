@@ -106,6 +106,19 @@ void ClientNetworkingSystem::handleMessage(const ChunksRequestedMessage& receive
     }
 }
 
+void ClientNetworkingSystem::handleMessage(const ClientChunksDeliveredMessage& received)
+{
+    std::unordered_map<ChunkCoord, Chunk> chunks;
+
+    for(int32_t i = 0; i < received.coordinates.size(); i++)
+    {
+        Chunk chunk(received.rleIndices[i], received.rleSegments[i]);
+        chunks.emplace(received.coordinates[i], std::move(chunk));
+    }
+
+    mBus.send(ChunksDataDeliveredMessage{mWorldIds.getId(received.worldIdentifier), chunks});
+}
+
 void ClientNetworkingSystem::handleMessage(const ClientChunksDeniedMessage& received)
 {
     std::cout << "got " << received.coordinates.size() << " chunks denied!\n";
@@ -210,15 +223,7 @@ void ClientNetworkingSystem::handleServerData(const std::vector<uint8_t>& data)
             std::cout << "woooooow!\n";
             ClientChunksDeliveredMessage received = deserializeMessage<ClientChunksDeliveredMessage>(data);
 
-            std::unordered_map<ChunkCoord, Chunk> chunks;
-
-            for(int32_t i = 0; i < received.coordinates.size(); i++)
-            {
-                Chunk chunk(received.rleIndices[i], received.rleSegments[i]);
-                chunks.emplace(received.coordinates[i], std::move(chunk));
-            }
-
-            mBus.send(ChunksDataDeliveredMessage{mWorldIds.getId(received.worldIdentifier), chunks});
+            handleMessage(received);
         }
         else if(type == VOXEL_UPDATED)
         {

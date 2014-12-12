@@ -11,6 +11,7 @@
 #include "mesh.hpp"
 #include "model.hpp"
 #include "modelrenderable.hpp"
+#include "chunkmodelcreator.hpp"
 
 class RenderingSystem :
     public fea::MessageReceiver<AddGfxEntityMessage,
@@ -22,9 +23,10 @@ class RenderingSystem :
                                 RenderModeMessage,
                                 ModelDeliverMessage,
                                 ShaderSourceDeliverMessage,
-                                ShaderDefinitionDeliverMessage>
+                                ShaderDefinitionDeliverMessage,
+                                UpdateChunkVboMessage>
 {
-    enum RenderModule{ DEBUG, MODEL };
+    enum RenderModule{ DEBUG, MODEL, VOXEL };
     public:
         RenderingSystem(fea::MessageBus& bus, const glm::uvec2& viewSize);
         void handleMessage(const AddGfxEntityMessage& received) override;
@@ -37,6 +39,7 @@ class RenderingSystem :
         void handleMessage(const ModelDeliverMessage& received) override;
         void handleMessage(const ShaderSourceDeliverMessage& received) override;
         void handleMessage(const ShaderDefinitionDeliverMessage& received) override;
+        void handleMessage(const UpdateChunkVboMessage& received) override;
         void render();
     private:
         fea::MessageBus& mBus;
@@ -52,4 +55,7 @@ class RenderingSystem :
         std::unordered_map<std::string, std::string> mVertexSources;
         std::unordered_map<std::string, std::string> mFragmentSources;
         std::unordered_map<std::string, std::unique_ptr<Shader>> mShaders;
+
+        ChunkModelCreator mChunkModelCreator;
+        std::unordered_map<ChunkCoord, Model> mChunkModels;
 };

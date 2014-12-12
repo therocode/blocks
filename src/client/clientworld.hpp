@@ -5,6 +5,12 @@
 #include "clientmessages.hpp"
 #include <fea/util.hpp>
 
+struct ClientWorldEntry
+{
+    HighlightManager highlightManager;
+    ChunkMap voxels;
+};
+
 class ClientWorld : fea::MessageReceiver<
     ChunksDataDeliveredMessage,
     VoxelSetMessage,
@@ -21,6 +27,5 @@ class ClientWorld : fea::MessageReceiver<
     private:
         void updateChunk(WorldId id, const ChunkCoord& coordinate);
         fea::MessageBus& mBus;
-        HighlightManager mHighlightManager;
-        std::unordered_map<WorldId, ChunkMap> mVoxels;
+        std::unordered_map<WorldId, ClientWorldEntry> mWorldEntries;
 };

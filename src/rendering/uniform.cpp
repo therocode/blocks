@@ -120,6 +120,9 @@ Uniform::Uniform(const Uniform& other)
         case UniformType::MAT2X2:
             std::copy(other.mMat2x2Val, other.mMat2x2Val + 4, mMat2x2Val);
             break;
+        case UniformType::MAT3X3:
+            std::copy(other.mMat3x3Val, other.mMat3x3Val + 9, mMat2x2Val);
+            break;
         case UniformType::MAT4X4:
             std::copy(other.mMat4x4Val, other.mMat4x4Val + 16, mMat4x4Val);
             break;
