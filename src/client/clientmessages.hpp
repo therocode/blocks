@@ -10,6 +10,12 @@ struct LocalPlayerAttachedToEntityMessage
 {
     fea::EntityId entityId;
     WorldId worldId;
-    glm::vec3 position;
+    const glm::vec3& position;
     uint32_t highlightRange;
+};
+
+struct ClientEntityMovedMessage
+{
+    fea::EntityId id;
+    const glm::vec3& position;
 };

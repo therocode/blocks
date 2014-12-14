@@ -124,6 +124,16 @@ void Client::handleMessage(const LocalPlayerAttachedToEntityMessage& received)
 //        mBus.send(ClientChunkDeletedMessage{chunk});
 //}
 
+void Client::handleMessage(const ClientEntityMovedMessage& received)
+{
+    if(received.id == mCurrentEntity)
+    {
+        mPosition = received.position;
+        mBus.send(HighlightEntityMoveRequestedMessage{0, 0, WorldToChunk::convert(received.position)});
+        //updateVoxelLookAt();
+    }
+}
+
 bool Client::requestedQuit()
 {
 	return mQuit;
@@ -131,11 +141,6 @@ bool Client::requestedQuit()
 
 void Client::handleMessage(const MoveGfxEntityMessage& received)
 {
-    if(received.id == mCurrentEntity)
-    {
-        mPosition = received.position;
-        //updateVoxelLookAt();
-    }
 }
 
 void Client::handleMessage(const RotateGfxEntityMessage& received)

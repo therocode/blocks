@@ -136,6 +136,17 @@ void ClientWorld::handleMessage(const HighlightEntityAddRequestedMessage& receiv
         mBus.send(ChunksRequestedMessage{received.worldId, highlighted});
 }
 
+void ClientWorld::handleMessage(const HighlightEntityMoveRequestedMessage& received)
+{
+    auto changed = mWorldEntries[received.worldId].highlightManager.moveHighlightEntity(0, received.coordinate);
+
+    if(changed.first.size() > 0)
+        mBus.send(ChunksRequestedMessage{received.worldId, changed.first});
+
+    for(const auto& deleted : changed.second)
+        mBus.send(ChunkDeletedMessage{received.worldId, deleted});
+}
+
 void ClientWorld::updateChunk(WorldId id, const ChunkCoord& coordinate)
 {
     FEA_ASSERT(mWorldEntries.count(id), "Updating non-existing chunk? weird");

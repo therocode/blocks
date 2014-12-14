@@ -71,6 +71,7 @@ class ClientNetworkingSystem : public
         std::unique_ptr<ENetClient> mENetClient;
         bool mIsConnected;
         IdProvider<std::string, WorldId> mWorldIds;
+        std::unordered_map<WorldId, std::vector<ChunkCoord>> mChunksToRequest;
 };
 
 template <typename Message>

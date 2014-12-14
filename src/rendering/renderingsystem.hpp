@@ -6,6 +6,7 @@
 #include "../resources/resourcemessages.hpp"
 #include "../networking/networkingprotocol.hpp"
 #include "../input/inputmessages.hpp"
+#include "../world/worldmessages.hpp"
 //test
 #include "debugrenderable.hpp"
 #include "mesh.hpp"
@@ -24,7 +25,8 @@ class RenderingSystem :
                                 ModelDeliverMessage,
                                 ShaderSourceDeliverMessage,
                                 ShaderDefinitionDeliverMessage,
-                                UpdateChunkVboMessage>
+                                UpdateChunkVboMessage,
+                                ChunkDeletedMessage>
 {
     enum RenderModule{ DEBUG, MODEL, VOXEL };
     public:
@@ -40,6 +42,7 @@ class RenderingSystem :
         void handleMessage(const ShaderSourceDeliverMessage& received) override;
         void handleMessage(const ShaderDefinitionDeliverMessage& received) override;
         void handleMessage(const UpdateChunkVboMessage& received) override;
+        void handleMessage(const ChunkDeletedMessage& received) override;
         void render();
     private:
         fea::MessageBus& mBus;

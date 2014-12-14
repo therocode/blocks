@@ -15,7 +15,8 @@ class ClientWorld : fea::MessageReceiver<
     ChunksDataDeliveredMessage,
     VoxelSetMessage,
     ChunkDeletedMessage,
-    HighlightEntityAddRequestedMessage>
+    HighlightEntityAddRequestedMessage,
+    HighlightEntityMoveRequestedMessage>
 {
     public:
         ClientWorld(fea::MessageBus& bus);
@@ -23,6 +24,7 @@ class ClientWorld : fea::MessageReceiver<
         void handleMessage(const VoxelSetMessage& received) override;
         void handleMessage(const ChunkDeletedMessage& received) override;
         void handleMessage(const HighlightEntityAddRequestedMessage& received) override;
+        void handleMessage(const HighlightEntityMoveRequestedMessage& received) override;
         const ChunkMap& getVoxels(WorldId worldId) const;
     private:
         void updateChunk(WorldId id, const ChunkCoord& coordinate);

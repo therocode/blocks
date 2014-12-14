@@ -20,6 +20,7 @@ class Client :
                                 LocalPlayerAttachedToEntityMessage,
                                 //ClientEnteredWorldMessage,
                                 //ClientPositionMessage,
+                                ClientEntityMovedMessage,
                                 MoveGfxEntityMessage,
                                 RotateGfxEntityMessage>
 {
@@ -34,6 +35,7 @@ class Client :
         void handleMessage(const LocalPlayerAttachedToEntityMessage& received) override;
         //void handleMessage(const ClientEnteredWorldMessage& received) override;
         //void handleMessage(const ClientPositionMessage& received) override;
+        void handleMessage(const ClientEntityMovedMessage& received) override;
         void handleMessage(const MoveGfxEntityMessage& received) override;
         void handleMessage(const RotateGfxEntityMessage& received) override;
         bool requestedQuit();

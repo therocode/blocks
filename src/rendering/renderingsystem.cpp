@@ -213,6 +213,11 @@ void RenderingSystem::handleMessage(const UpdateChunkVboMessage& received)
     mChunkModels[mainChunkCoord] = mChunkModelCreator.generateChunkModel(mainChunkCoord, mainChunk, topChunk, bottomChunk, frontChunk, backChunk, leftChunk, rightChunk);
 }
 
+void RenderingSystem::handleMessage(const ChunkDeletedMessage& received)
+{
+    mChunkModels.erase(received.coordinate);
+}
+
 void RenderingSystem::render()
 {
     for(auto& debbie : mDebuggers)

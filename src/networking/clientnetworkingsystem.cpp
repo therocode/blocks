@@ -64,6 +64,16 @@ void ClientNetworkingSystem::handleMessage(const FrameMessage& received)
         mBus.send(GameStartMessage{});
     }
 
+    if(mIsConnected)
+    {
+        for(const auto worldIter : mChunksToRequest)
+        {
+            send(ClientRequestedChunksMessage{mWorldIds.valueFromId(worldIter.first), worldIter.second}, true, CHANNEL_CHUNKS);
+        }
+
+        mChunksToRequest.clear();
+    }
+
     if(mENetClient)
         mENetClient->update(0);
 }
@@ -99,10 +109,7 @@ void ClientNetworkingSystem::handleMessage(const ClientJoinAcceptedMessage& rece
 
 void ClientNetworkingSystem::handleMessage(const ChunksRequestedMessage& received)
 {
-    if(mIsConnected)
-    {
-        send(ClientRequestedChunksMessage{mWorldIds.valueFromId(received.worldId), received.coordinates}, true, CHANNEL_CHUNKS);
-    }
+    mChunksToRequest[received.worldId].insert(mChunksToRequest[received.worldId].end(), received.coordinates.begin(), received.coordinates.end());
 }
 
 void ClientNetworkingSystem::handleMessage(const ClientChunksDeliveredMessage& received)
@@ -162,7 +169,7 @@ void ClientNetworkingSystem::handleMessage(const EntityEnteredRangeMessage& rece
 
 void ClientNetworkingSystem::handleMessage(const EntityPositionUpdatedMessage& received)
 {
-    mBus.send(EntityMovedMessage{received.id, received.worldId, received.position});
+    mBus.send(ClientEntityMovedMessage{received.id, received.position});
     mBus.send(MoveGfxEntityMessage{received.id, received.position});
 }
 
