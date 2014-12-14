@@ -32,6 +32,20 @@ RawModel IQMFromFileLoader::load(const std::string& filename)
     iqmheader header;
     readIqmHeader(headerBytes, header);
 
+    std::cout << header.num_text << "\n";
+
+    char* textIterator = headerBytes + header.ofs_text;
+
+    std::string strings;
+    strings.resize(header.num_text);
+
+    std::copy(textIterator, textIterator + header.num_text, &strings[0]);
+
+    std::cout << "numstrings " << header.num_text << "\n";
+    std::cout << "texts: " << strings << "\n";
+
+    std::cout << std::string(headerBytes + header.ofs_text) << "\n";
+
     if(std::string(header.magic) != std::string(IQM_MAGIC))
     {
         std::cout << "ERROR: not an IQM file. Start string should be '" << IQM_MAGIC << "' but was '" << header.magic << "'\n";
@@ -93,6 +107,7 @@ RawModel IQMFromFileLoader::load(const std::string& filename)
             indices.push_back(triangle.vertex[2]);
         }
 
+        std::cout << "loaded mesh with material: '" << std::string(&strings[mesh.material]) << "'\n";
         rawModel.indices.push_back(indices);
     }
 
