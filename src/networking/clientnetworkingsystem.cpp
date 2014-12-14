@@ -18,6 +18,8 @@ ClientNetworkingSystem::ClientNetworkingSystem(fea::MessageBus& bus, const Netwo
     {
         mBus.send(LogMessage{"Setting up single player client", clientName, LogLevel::INFO});
         mBus.send(LocalConnectionAttemptMessage{&bus});
+
+        mENet = 
     }
     else if(parameters.mode == NetworkMode::JOIN)
     {

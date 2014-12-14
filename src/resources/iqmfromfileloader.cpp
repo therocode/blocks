@@ -32,7 +32,7 @@ RawModel IQMFromFileLoader::load(const std::string& filename)
     iqmheader header;
     readIqmHeader(headerBytes, header);
 
-    std::cout << header.num_text << "\n";
+    //std::cout << header.num_text << "\n";
 
     char* textIterator = headerBytes + header.ofs_text;
 
@@ -41,10 +41,10 @@ RawModel IQMFromFileLoader::load(const std::string& filename)
 
     std::copy(textIterator, textIterator + header.num_text, &strings[0]);
 
-    std::cout << "numstrings " << header.num_text << "\n";
-    std::cout << "texts: " << strings << "\n";
+    //std::cout << "numstrings " << header.num_text << "\n";
+    //std::cout << "texts: " << strings << "\n";
 
-    std::cout << std::string(headerBytes + header.ofs_text) << "\n";
+    //std::cout << std::string(headerBytes + header.ofs_text) << "\n";
 
     if(std::string(header.magic) != std::string(IQM_MAGIC))
     {
@@ -107,7 +107,7 @@ RawModel IQMFromFileLoader::load(const std::string& filename)
             indices.push_back(triangle.vertex[2]);
         }
 
-        std::cout << "loaded mesh with material: '" << std::string(&strings[mesh.material]) << "'\n";
+        //std::cout << "loaded mesh with material: '" << std::string(&strings[mesh.material]) << "'\n";
         rawModel.indices.push_back(indices);
     }
 

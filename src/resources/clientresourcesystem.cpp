@@ -20,10 +20,10 @@ ClientResourceSystem::ClientResourceSystem(fea::MessageBus& bus) :
 
     exploder.explodeFolder("assets", 
 ".*\\.iqm|\
-.*\\.blend|\
 .*\\.vert|\
 .*\\.frag|\
-.*\\.shad", mResources);
+.*\\.shad|\
+.*\\.png", mResources);
 
     mBus.send(LogMessage{"Found " + std::to_string(mResources.size()) + " resources to load.", resourceName, LogLevel::INFO});
 
@@ -38,6 +38,7 @@ ClientResourceSystem::ClientResourceSystem(fea::MessageBus& bus) :
     loadVertexShaders(mResourceList["vert"]);
     loadFragmentShaders(mResourceList["frag"]);
     loadShaderDefinitions(mResourceList["shad"]);
+    loadTextures(mResourceList["png"]);
 }
 
 void ClientResourceSystem::loadModels(const std::vector<std::string>& models)
@@ -93,5 +94,20 @@ void ClientResourceSystem::loadShaderDefinitions(const std::vector<std::string>&
         {
             mBus.send(ShaderDefinitionDeliverMessage{shaderDefinition});
         }
+    }
+}
+
+void ClientResourceSystem::loadTextures(const std::vector<std::string>& textures)
+{
+    mBus.send(LogMessage{"Loading textures. " + std::to_string(textures.size()) + " textures to load.", resourceName, LogLevel::INFO});
+    for(const auto& path : textures)
+    {
+        mBus.send(LogMessage{"Loading " + path + ".", resourceName, LogLevel::VERB});
+    //    std::shared_ptr<Texture> textures = mCache.access<TextureFromFileLoader>(path);
+    //    if(texture)
+    //    {
+    //        mTextureIDs.getId(path);
+    //        mBus.send(TextureDeliverMessage{texture});
+    //    }
     }
 }

@@ -11,6 +11,7 @@ class ClientResourceSystem
         void loadVertexShaders(const std::vector<std::string>& vertexShaders);
         void loadFragmentShaders(const std::vector<std::string>& fragmentShaders);
         void loadShaderDefinitions(const std::vector<std::string>& shaderDefinitions);
+        void loadTextures(const std::vector<std::string>& textures);
         fea::MessageBus& mBus;
         ResourceCache mCache;
 
