@@ -125,8 +125,10 @@ Model ChunkModelCreator::generateChunkModel(const ChunkCoord& mainChunkCoord, Ch
 
     for(auto& quad : topQuads)
     {
+        quadPositions.clear();
+        quadNormals.clear();
         float worldX = quad.mX + chunkOffset.x;
-        float worldY = quad.mDepth + chunkOffset.y;
+        float worldY = quad.mDepth + chunkOffset.y + 1.0f; //top alignmetn
         float worldZ = quad.mY + chunkOffset.z;
         int resId = quad.mType;
         textureLocation.x = (resId - 1) % 8;
@@ -154,8 +156,10 @@ Model ChunkModelCreator::generateChunkModel(const ChunkCoord& mainChunkCoord, Ch
 
     for(auto& quad : bottomQuads)
     {
+        quadPositions.clear();
+        quadNormals.clear();
         float worldX = quad.mX + chunkOffset.x;
-        float worldY = quad.mDepth + chunkOffset.y - 1.0f; //adjust for bottom alignment
+        float worldY = quad.mDepth + chunkOffset.y;
         float worldZ = quad.mY + chunkOffset.z;
 		int resId = quad.mType;
 		if(quad.mType == 1)resId = 2;
@@ -182,33 +186,38 @@ Model ChunkModelCreator::generateChunkModel(const ChunkCoord& mainChunkCoord, Ch
         allQuadNormals.insert(allQuadNormals.end(), quadNormals.begin(), quadNormals.end());
     }
 
-    //for(auto& quad : frontQuads)
-    //{
-    //    quadPositions.clear();
-    //    float worldX = quad.mX + chunkOffset.x;
-    //    float worldY = quad.mY + chunkOffset.y;
-    //    float worldZ = quad.mDepth + chunkOffset.z;
+    for(auto& quad : frontQuads)
+    {
+        quadPositions.clear();
+        quadNormals.clear();
+        float worldX = quad.mX + chunkOffset.x;
+        float worldY = quad.mY + chunkOffset.y;
+        float worldZ = quad.mDepth + chunkOffset.z + 1.0f;
 
-	//	int resId = quad.mType;
-	//	if(quad.mType == 1)resId = 3;
-    //    textureLocation.x = (resId - 1) % 8;
-    //    textureLocation.y = (resId - 1) / 8;
+		int resId = quad.mType;
+		if(quad.mType == 1)resId = 3;
+        textureLocation.x = (resId - 1) % 8;
+        textureLocation.y = (resId - 1) / 8;
 
-	//	//rect->pushIndicesIntoVBO(nvbo);
-    //    //rect = (ChunkRect*)nvbo.getNextVertexPtr(4);
-    //    //rect->reset();
-    //    //setChunkRectData(*rect, worldX, worldY, worldZ, FRONT, textureLocation.x, textureLocation.y, quad.mWidth, quad.mHeight);
-    //    //rect->setBounds(rect->vs[0].uv[0], rect->vs[0].uv[1], rect->vs[2].uv[0], rect->vs[2].uv[1]);
-    //    //rect->calculateNormal();
-	//	//rect->setUV(0, 0, 0);
-    //    //rect->setUV(1, 0, quad.mHeight);
-    //    //rect->setUV(2, quad.mWidth, quad.mHeight);
-    //    //rect->setUV(3, quad.mWidth, 0);
+        quadPositions = { worldX              , worldY,                worldZ,
+                          worldX + quad.mWidth, worldY + quad.mHeight, worldZ,
+                          worldX              , worldY + quad.mHeight, worldZ,
+                            
+                          worldX              , worldY,                worldZ,
+                          worldX + quad.mWidth, worldY,                worldZ,
+                          worldX + quad.mWidth, worldY + quad.mHeight, worldZ};
 
-    //    verts +=4;indices+=6;
+        quadNormals   = { -0.577f, -0.577f,  0.577f,
+                           0.577f,  0.577f,  0.577f,
+                          -0.577f,  0.577f,  0.577f,
+        
+                          -0.577f, -0.577f,  0.577f,
+                           0.577f, -0.577f,  0.577f,
+                           0.577f,  0.577f,  0.577f};
 
-    //    quadPositions = { 5.0f };
-    //}
+        allQuadPositions.insert(allQuadPositions.end(), quadPositions.begin(), quadPositions.end());
+        allQuadNormals.insert(allQuadNormals.end(), quadNormals.begin(), quadNormals.end());
+    }
 
     //for(auto& quad : backQuads)
     //{
