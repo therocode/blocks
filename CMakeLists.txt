@@ -96,6 +96,8 @@ set(source_files
     src/resources/iqmfromfileloader.cpp
     src/resources/shaderdefinitionfromfileloader.cpp
     src/resources/shadersourcefromfileloader.cpp
+    src/resources/texture.cpp
+    src/resources/texturefromfileloader.cpp
 
     src/script/scriptcallback.cpp
     src/script/scriptchunk.cpp
@@ -233,6 +235,8 @@ set(header_files
     src/resources/shaderdefinitionfromfileloader.hpp
     src/resources/shadersource.hpp
     src/resources/shadersourcefromfileloader.hpp
+    src/resources/texture.hpp
+    src/resources/texturefromfileloader.hpp
     
     src/utilities/coordinateconverter.hpp
     src/utilities/directorycreator.hpp

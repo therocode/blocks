@@ -5,6 +5,7 @@
 #include "../resources/rawmodel.hpp"
 #include "../resources/shadersource.hpp"
 #include "../resources/shaderdefinition.hpp"
+#include "../resources/texture.hpp"
 #include "shaderattribute.hpp"
 
 RenderingSystem::RenderingSystem(fea::MessageBus& bus, const glm::uvec2& viewSize) :
@@ -197,6 +198,11 @@ void RenderingSystem::handleMessage(const ShaderDefinitionDeliverMessage& receiv
             });
 
     mShaders.emplace(received.shaderDefinition->name, std::move(shader));
+}
+
+void RenderingSystem::handleMessage(const TextureDeliverMessage& received)
+{
+    std::cout << "got a texture of size " << received.texture->getSize() << "\n";
 }
 
 void RenderingSystem::handleMessage(const UpdateChunkVboMessage& received)

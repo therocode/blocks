@@ -4,6 +4,7 @@
 class RawModel;
 class ShaderSource;
 class ShaderDefinition;
+class Texture;
 
 struct ModelDeliverMessage
 {
@@ -18,4 +19,9 @@ struct ShaderSourceDeliverMessage
 struct ShaderDefinitionDeliverMessage
 {
     std::shared_ptr<ShaderDefinition> shaderDefinition;
+};
+
+struct TextureDeliverMessage
+{
+    std::shared_ptr<Texture> texture;
 };

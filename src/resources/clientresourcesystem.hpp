@@ -1,6 +1,8 @@
 #pragma once
 #include <fea/util.hpp>
+#include <string>
 #include "resourcecache.hpp"
+#include "../utilities/idprovider.hpp"
 
 class ClientResourceSystem
 {
@@ -16,4 +18,6 @@ class ClientResourceSystem
         ResourceCache mCache;
 
         std::unordered_map<std::string, std::vector<std::string>> mResourceList;
+
+        IdProvider<std::string> mTextureIDs;
 };

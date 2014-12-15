@@ -8,6 +8,7 @@
 #include "shadersourcefromfileloader.hpp"
 #include "shaderdefinition.hpp"
 #include "shaderdefinitionfromfileloader.hpp"
+#include "texturefromfileloader.hpp"
 
 ClientResourceSystem::ClientResourceSystem(fea::MessageBus& bus) :
     mBus(bus)
@@ -103,11 +104,12 @@ void ClientResourceSystem::loadTextures(const std::vector<std::string>& textures
     for(const auto& path : textures)
     {
         mBus.send(LogMessage{"Loading " + path + ".", resourceName, LogLevel::VERB});
-    //    std::shared_ptr<Texture> textures = mCache.access<TextureFromFileLoader>(path);
-    //    if(texture)
-    //    {
-    //        mTextureIDs.getId(path);
-    //        mBus.send(TextureDeliverMessage{texture});
-    //    }
+        std::shared_ptr<Texture> texture = mCache.access<TextureFromFileLoader>(path);
+
+        if(texture)
+        {
+            mTextureIDs.getId(path);
+            mBus.send(TextureDeliverMessage{texture});
+        }
     }
 }

@@ -25,6 +25,7 @@ class RenderingSystem :
                                 ModelDeliverMessage,
                                 ShaderSourceDeliverMessage,
                                 ShaderDefinitionDeliverMessage,
+                                TextureDeliverMessage,
                                 UpdateChunkVboMessage,
                                 ChunkDeletedMessage>
 {
@@ -41,6 +42,7 @@ class RenderingSystem :
         void handleMessage(const ModelDeliverMessage& received) override;
         void handleMessage(const ShaderSourceDeliverMessage& received) override;
         void handleMessage(const ShaderDefinitionDeliverMessage& received) override;
+        void handleMessage(const TextureDeliverMessage& received) override;
         void handleMessage(const UpdateChunkVboMessage& received) override;
         void handleMessage(const ChunkDeletedMessage& received) override;
         void render();
