@@ -5,6 +5,7 @@
 #include "vao.hpp"
 #include "buffer.hpp"
 #include "shader.hpp"
+#include "../resources/texture.hpp"
 
 class Mesh;
 
@@ -20,13 +21,15 @@ class VoxelChunkRenderer : public RenderModule
 
         std::vector<const Model*> mOrders;
 
-    Buffer mColors;
-    Buffer mModelMatrix1;
-    Buffer mModelMatrix2;
-    Buffer mModelMatrix3;
-    Buffer mModelMatrix4;
-    Buffer mNormalMatrix1;
-    Buffer mNormalMatrix2;
-    Buffer mNormalMatrix3;
-    Buffer mNormalMatrix4;
+        Buffer mColors;
+        Buffer mModelMatrix1;
+        Buffer mModelMatrix2;
+        Buffer mModelMatrix3;
+        Buffer mModelMatrix4;
+        Buffer mNormalMatrix1;
+        Buffer mNormalMatrix2;
+        Buffer mNormalMatrix3;
+        Buffer mNormalMatrix4;
+
+        Texture mWhiteTexture;
 };

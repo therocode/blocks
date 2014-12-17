@@ -17,6 +17,8 @@ VoxelChunkRenderer::VoxelChunkRenderer()
     mNormalMatrix2.setData(std::vector<float>({0.0f, 1.0f, 0.0f, 0.0f }));
     mNormalMatrix3.setData(std::vector<float>({0.0f, 0.0f, 1.0f, 0.0f }));
     mNormalMatrix4.setData(std::vector<float>({0.0f, 0.0f, 0.0f, 1.0f }));
+
+    mWhiteTexture.create(16, 16, fea::Color(1.0f, 1.0f, 1.0f));
 }
 
 void VoxelChunkRenderer::queue(const Renderable& renderable)
@@ -33,6 +35,7 @@ void VoxelChunkRenderer::render(const Camera& camera, const glm::mat4& perspecti
 {
     mVertexArray.bind();
 
+    shader.setUniform("texture", UniformType::TEXTURE, &mWhiteTexture);
     shader.setUniform("viewProjectionMatrix", UniformType::MAT4X4, glm::value_ptr(perspective * camera.getMatrix()));
     float shadedRatio = 0.3f;
     shader.setUniform("shadedRatio", UniformType::FLOAT, &shadedRatio);

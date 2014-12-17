@@ -40,3 +40,13 @@ const Model* ModelRenderable::findModel() const
 {
     return mModel;
 }
+
+void ModelRenderable::setTexture(const Texture& texture)
+{
+    mTexture = &texture;
+}
+
+const Texture* ModelRenderable::findTexture() const
+{
+    return mTexture;
+}

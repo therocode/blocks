@@ -83,6 +83,8 @@ DebugRenderer::DebugRenderer() :
     data2 = { 0.0f, 1.0f, 0.0f, 0.0f };
     data3 = { 0.0f, 0.0f, 1.0f, 0.0f };
     data4 = { 0.0f, 0.0f, 0.0f, 1.0f };
+
+    mWhiteTexture.create(16, 16, fea::Color(1.0f, 1.0f, 1.0f));
 }
 
 void DebugRenderer::queue(const Renderable& renderable)
@@ -124,6 +126,8 @@ void DebugRenderer::queue(const Renderable& renderable)
 
 void DebugRenderer::render(const Camera& camera, const glm::mat4& perspective, const Shader& shader)
 {
+    shader.setUniform("texture", UniformType::TEXTURE, &mWhiteTexture);
+
     mVertexArray.bind();
 
     mModelMatrixBuffer1.setData(mModelMatrixData1);

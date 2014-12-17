@@ -60,6 +60,7 @@ class RenderingSystem :
         std::unordered_map<std::string, std::string> mVertexSources;
         std::unordered_map<std::string, std::string> mFragmentSources;
         std::unordered_map<std::string, std::unique_ptr<Shader>> mShaders;
+        std::vector<std::shared_ptr<Texture>> mTextures;
 
         ChunkModelCreator mChunkModelCreator;
         std::unordered_map<ChunkCoord, Model> mChunkModels;

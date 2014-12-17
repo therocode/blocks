@@ -204,7 +204,7 @@ void RenderingSystem::handleMessage(const ShaderDefinitionDeliverMessage& receiv
 
 void RenderingSystem::handleMessage(const TextureDeliverMessage& received)
 {
-    std::cout << "got a texture of size " << received.texture->getSize() << "\n";
+    mTextures.push_back(received.texture);
 }
 
 void RenderingSystem::handleMessage(const UpdateChunkVboMessage& received)
@@ -238,6 +238,7 @@ void RenderingSystem::render()
 
     for(auto& moddie : mModelRenderables)
     {
+        moddie.second.setTexture(*mTextures.front());
         mRenderer.queue(moddie.second);
     }
 

@@ -3,6 +3,7 @@
 #include "../utilities/glm.hpp"
 
 class Model;
+class Texture;
 
 class ModelRenderable : public Renderable
 {
@@ -15,8 +16,11 @@ class ModelRenderable : public Renderable
         const glm::vec3& getColor() const;
         void setModel(const Model& model);
         const Model* findModel() const;
+        void setTexture(const Texture& texture);
+        const Texture* findTexture() const;
     private:
         glm::vec3 mPosition;
         glm::vec3 mColor;
         const Model* mModel;
+        const Texture* mTexture;
 };
