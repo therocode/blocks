@@ -153,6 +153,7 @@ void RenderingSystem::handleMessage(const ModelDeliverMessage& received)
     std::unique_ptr<Model> newModel = std::unique_ptr<Model>(new Model());
     newModel->addVertexArray(Model::POSITIONS, received.model->positions);
     newModel->addVertexArray(Model::NORMALS, received.model->normals);
+    newModel->addVertexArray(Model::TEXCOORDS, received.model->texCoords);
 
     int32_t meshNumber = 0;
     for(const auto& indices : received.model->indices)
@@ -186,6 +187,7 @@ void RenderingSystem::handleMessage(const ShaderDefinitionDeliverMessage& receiv
     shader->compile({
             {"POSITION", ShaderAttribute::POSITION},
             {"NORMAL", ShaderAttribute::NORMAL},
+            {"TEXCOORD", ShaderAttribute::TEXCOORD},
             {"COLOR", ShaderAttribute::COLOR},
             {"MODELMATRIX1", ShaderAttribute::MODELMATRIX1},
             {"MODELMATRIX2", ShaderAttribute::MODELMATRIX2},

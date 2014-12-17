@@ -70,6 +70,7 @@ DebugRenderer::DebugRenderer() :
 
     mVertexArray.setVertexAttribute(ShaderAttribute::POSITION, 3, mVertexBuffer);
     mVertexArray.setVertexAttribute(ShaderAttribute::NORMAL, 3, mVertexBuffer);
+    //mVertexArray.setVertexAttribute(ShaderAttribute::TEXCOORD, 2, mVertexBuffer);
 
     mVertexArray.setInstanceAttribute(MODELMATRIX1, 4, mModelMatrixBuffer1, 1);
     mVertexArray.setInstanceAttribute(MODELMATRIX2, 4, mModelMatrixBuffer2, 1);

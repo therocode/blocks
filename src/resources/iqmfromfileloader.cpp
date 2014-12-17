@@ -89,9 +89,6 @@ RawModel IQMFromFileLoader::load(const std::string& filename)
             std::vector<float> texCoords(header.num_vertexes * 2);
             std::copy(headerBytes + vertexArray.offset, headerBytes + vertexArray.offset + sizeof(float) * header.num_vertexes * 2, (char*)texCoords.data());
 
-            for(float texCoord : texCoords)
-                std::cout << texCoord << "\n";
-
             rawModel.texCoords = std::move(texCoords);
         }
     }
