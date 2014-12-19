@@ -1,8 +1,6 @@
 #include "folderexploder.hpp"
 #include "tinydir.hpp"
 #include <regex>
-#include <iostream>
-#include <iostream>
 
 void FolderExploder::explodeFolder(const std::string& directory, const std::vector<std::string>& types, std::vector<std::string>& result)
 {
@@ -41,8 +39,6 @@ void FolderExploder::explodeFolder(const std::string& directory, const std::vect
         }
         else
         {
-            std::cout << "investigating " << fileName << "\n";
-
             if(regex_match(fileName, rx))
             {
                 result.push_back(directory + "/" + fileName);
