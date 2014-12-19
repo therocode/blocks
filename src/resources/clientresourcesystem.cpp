@@ -61,7 +61,8 @@ void ClientResourceSystem::loadModels(const std::vector<ResourceEntry>& models)
         std::shared_ptr<RawModel> model = mCache.access<IQMFromFileLoader>(modelFile.path);
         if(model)
         {
-            mBus.send(ModelDeliverMessage{model});
+            uint32_t id = mModelIDs.getId(modelFile.name);
+            mBus.send(ResourceDeliverMessage<RawModel>{id, model});
         }
     }
 }
@@ -75,7 +76,8 @@ void ClientResourceSystem::loadVertexShaders(const std::vector<ResourceEntry>& v
         std::shared_ptr<ShaderSource> vertexShader = mCache.access<ShaderSourceFromFileLoader>(vertexShaderFile.path);
         if(vertexShader)
         {
-            mBus.send(ShaderSourceDeliverMessage{vertexShader});
+            uint32_t id = mVertexShaderIDs.getId(vertexShaderFile.name);
+            mBus.send(ResourceDeliverMessage<ShaderSource>{id, vertexShader});
         }
     }
 }
@@ -89,7 +91,8 @@ void ClientResourceSystem::loadFragmentShaders(const std::vector<ResourceEntry>&
         std::shared_ptr<ShaderSource> fragmentShader = mCache.access<ShaderSourceFromFileLoader>(fragmentShaderFile.path);
         if(fragmentShader)
         {
-            mBus.send(ShaderSourceDeliverMessage{fragmentShader});
+            uint32_t id = mFragmentShaderIDs.getId(fragmentShaderFile.name);
+            mBus.send(ResourceDeliverMessage<ShaderSource>{id, fragmentShader});
         }
     }
 }
@@ -103,7 +106,8 @@ void ClientResourceSystem::loadShaderDefinitions(const std::vector<ResourceEntry
         std::shared_ptr<ShaderDefinition> shaderDefinition = mCache.access<ShaderDefinitionFromFileLoader>(shaderDefinitionFile.path);
         if(shaderDefinition)
         {
-            mBus.send(ShaderDefinitionDeliverMessage{shaderDefinitionFile.name, shaderDefinition});
+            uint32_t id = mShaderDefinitionIDs.getId(shaderDefinitionFile.name);
+            mBus.send(ResourceDeliverMessage<ShaderDefinition>{id, shaderDefinition});
         }
     }
 }
@@ -118,8 +122,8 @@ void ClientResourceSystem::loadTextures(const std::vector<ResourceEntry>& textur
 
         if(texture)
         {
-            mTextureIDs.getId(textureFile.name);
-            mBus.send(TextureDeliverMessage{texture});
+            uint32_t id = mTextureIDs.getId(textureFile.name);
+            mBus.send(ResourceDeliverMessage<Texture>{id, texture});
         }
     }
 }

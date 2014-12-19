@@ -21,5 +21,9 @@ class ClientResourceSystem
 
         std::unordered_map<std::string, std::vector<ResourceEntry>> mResourceList;
 
+        IdProvider<std::string> mModelIDs;
+        IdProvider<std::string> mVertexShaderIDs;
+        IdProvider<std::string> mFragmentShaderIDs;
+        IdProvider<std::string> mShaderDefinitionIDs;
         IdProvider<std::string> mTextureIDs;
 };

@@ -148,15 +148,15 @@ void RenderingSystem::handleMessage(const RenderModeMessage& received)
     }
 }
 
-void RenderingSystem::handleMessage(const ModelDeliverMessage& received)
+void RenderingSystem::handleMessage(const ResourceDeliverMessage<RawModel>& received)
 {
     std::unique_ptr<Model> newModel = std::unique_ptr<Model>(new Model());
-    newModel->addVertexArray(Model::POSITIONS, received.model->positions);
-    newModel->addVertexArray(Model::NORMALS, received.model->normals);
-    newModel->addVertexArray(Model::TEXCOORDS, received.model->texCoords);
+    newModel->addVertexArray(Model::POSITIONS, received.resource->positions);
+    newModel->addVertexArray(Model::NORMALS, received.resource->normals);
+    newModel->addVertexArray(Model::TEXCOORDS, received.resource->texCoords);
 
     int32_t meshNumber = 0;
-    for(const auto& indices : received.model->indices)
+    for(const auto& indices : received.resource->indices)
     {
         std::unique_ptr<Mesh> mesh = std::unique_ptr<Mesh>(new Mesh(indices));
         newModel->addMesh(meshNumber, std::move(mesh));
@@ -166,23 +166,23 @@ void RenderingSystem::handleMessage(const ModelDeliverMessage& received)
     mModels.push_back(std::move(newModel));
 }
 
-void RenderingSystem::handleMessage(const ShaderSourceDeliverMessage& received) 
+void RenderingSystem::handleMessage(const ResourceDeliverMessage<ShaderSource>& received) 
 {
-    if(received.shaderSource->type == ShaderSource::VERTEX)
+    if(received.resource->type == ShaderSource::VERTEX)
     {
-        mVertexSources.emplace(received.shaderSource->name, received.shaderSource->source);
+        mVertexSources.emplace(received.resource->name, received.resource->source);
     }
-    else if(received.shaderSource->type == ShaderSource::FRAGMENT)
+    else if(received.resource->type == ShaderSource::FRAGMENT)
     {
-        mFragmentSources.emplace(received.shaderSource->name, received.shaderSource->source);
+        mFragmentSources.emplace(received.resource->name, received.resource->source);
     }
 }
 
-void RenderingSystem::handleMessage(const ShaderDefinitionDeliverMessage& received) 
+void RenderingSystem::handleMessage(const ResourceDeliverMessage<ShaderDefinition>& received) 
 {
     std::unique_ptr<Shader> shader = std::unique_ptr<Shader>(new Shader());
 
-    shader->setSource(mVertexSources.at(received.shaderDefinition->vertexShader), mFragmentSources.at(received.shaderDefinition->fragmentShader));
+    shader->setSource(mVertexSources.at(received.resource->vertexShader), mFragmentSources.at(received.resource->fragmentShader));
 
     shader->compile({
             {"POSITION", ShaderAttribute::POSITION},
@@ -199,12 +199,12 @@ void RenderingSystem::handleMessage(const ShaderDefinitionDeliverMessage& receiv
             {"NORMALMATRIX4", ShaderAttribute::NORMALMATRIX4}
             });
 
-    mShaders.emplace(received.name, std::move(shader));
+    mShaders.emplace(received.id, std::move(shader));
 }
 
-void RenderingSystem::handleMessage(const TextureDeliverMessage& received)
+void RenderingSystem::handleMessage(const ResourceDeliverMessage<Texture>& received)
 {
-    mTextures.push_back(received.texture);
+    mTextures.push_back(received.resource);
 }
 
 void RenderingSystem::handleMessage(const UpdateChunkVboMessage& received)
@@ -249,5 +249,5 @@ void RenderingSystem::render()
         mRenderer.queue(renderable);
     }
 
-    mRenderer.render(*mShaders.at("test.shaders.basic"));
+    mRenderer.render(*mShaders.begin()->second);
 }

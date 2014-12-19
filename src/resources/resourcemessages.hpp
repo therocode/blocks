@@ -6,23 +6,9 @@ class ShaderSource;
 class ShaderDefinition;
 class Texture;
 
-struct ModelDeliverMessage
+template<typename Resource>
+struct ResourceDeliverMessage
 {
-    std::shared_ptr<RawModel> model;
-};
-
-struct ShaderSourceDeliverMessage
-{
-    std::shared_ptr<ShaderSource> shaderSource;
-};
-
-struct ShaderDefinitionDeliverMessage
-{
-    std::string name;
-    std::shared_ptr<ShaderDefinition> shaderDefinition;
-};
-
-struct TextureDeliverMessage
-{
-    std::shared_ptr<Texture> texture;
+    uint32_t id;
+    std::shared_ptr<Resource> resource;
 };

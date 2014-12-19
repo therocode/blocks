@@ -22,10 +22,10 @@ class RenderingSystem :
                                 ClientAttachedToEntityMessage,
                                 WindowResizeMessage,
                                 RenderModeMessage,
-                                ModelDeliverMessage,
-                                ShaderSourceDeliverMessage,
-                                ShaderDefinitionDeliverMessage,
-                                TextureDeliverMessage,
+                                ResourceDeliverMessage<RawModel>,
+                                ResourceDeliverMessage<ShaderSource>,
+                                ResourceDeliverMessage<ShaderDefinition>,
+                                ResourceDeliverMessage<Texture>,
                                 UpdateChunkVboMessage,
                                 ChunkDeletedMessage>
 {
@@ -39,10 +39,10 @@ class RenderingSystem :
         void handleMessage(const ClientAttachedToEntityMessage& received) override;
         void handleMessage(const WindowResizeMessage& received) override;
         void handleMessage(const RenderModeMessage& received) override;
-        void handleMessage(const ModelDeliverMessage& received) override;
-        void handleMessage(const ShaderSourceDeliverMessage& received) override;
-        void handleMessage(const ShaderDefinitionDeliverMessage& received) override;
-        void handleMessage(const TextureDeliverMessage& received) override;
+        void handleMessage(const ResourceDeliverMessage<RawModel>& received) override;
+        void handleMessage(const ResourceDeliverMessage<ShaderSource>& received) override;
+        void handleMessage(const ResourceDeliverMessage<ShaderDefinition>& received) override;
+        void handleMessage(const ResourceDeliverMessage<Texture>& received) override;
         void handleMessage(const UpdateChunkVboMessage& received) override;
         void handleMessage(const ChunkDeletedMessage& received) override;
         void render();
@@ -59,7 +59,7 @@ class RenderingSystem :
         std::unordered_map<int32_t, ModelRenderable> mModelRenderables;
         std::unordered_map<std::string, std::string> mVertexSources;
         std::unordered_map<std::string, std::string> mFragmentSources;
-        std::unordered_map<std::string, std::unique_ptr<Shader>> mShaders;
+        std::unordered_map<uint32_t, std::unique_ptr<Shader>> mShaders;
         std::vector<std::shared_ptr<Texture>> mTextures;
 
         ChunkModelCreator mChunkModelCreator;
