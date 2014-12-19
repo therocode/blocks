@@ -44,6 +44,7 @@ void Renderer::render(const Shader& shader)
 
     if(mEnabled)
     {
+        shader.activate();
         for(auto& module : mModules)
         {
             mRenderMode.activate();
@@ -51,6 +52,7 @@ void Renderer::render(const Shader& shader)
         }
 
         mRenderMode.deactivate();
+        shader.deactivate();
     }
 
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);

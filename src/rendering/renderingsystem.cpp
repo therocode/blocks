@@ -249,7 +249,5 @@ void RenderingSystem::render()
         mRenderer.queue(renderable);
     }
 
-    mShaders.at("test.shaders.basic")->activate();
     mRenderer.render(*mShaders.at("test.shaders.basic"));
-    mShaders.at("test.shaders.basic")->deactivate();
 }
