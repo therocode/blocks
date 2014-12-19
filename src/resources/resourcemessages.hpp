@@ -18,6 +18,7 @@ struct ShaderSourceDeliverMessage
 
 struct ShaderDefinitionDeliverMessage
 {
+    std::string name;
     std::shared_ptr<ShaderDefinition> shaderDefinition;
 };
 

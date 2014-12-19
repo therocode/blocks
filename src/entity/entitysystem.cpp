@@ -21,7 +21,7 @@ EntitySystem::EntitySystem(fea::MessageBus& bus) :
 
     FolderExploder exploder;
     std::vector<std::string> definitionFiles;
-    exploder.explodeFolder("data", ".*\\.def", definitionFiles);
+    exploder.explodeFolder("data", {"def"}, definitionFiles);
 
     mBus.send(LogMessage{"Found " + std::to_string(definitionFiles.size()) + " entity definitions", entityName, LogLevel::INFO});
     for(auto& fileName : definitionFiles)

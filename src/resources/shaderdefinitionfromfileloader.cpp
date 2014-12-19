@@ -20,7 +20,6 @@ ShaderDefinition ShaderDefinitionFromFileLoader::load(const std::string& filenam
     
     json::read(file, root);
 
-    definition.name = root.GetStringMember("name");
     definition.vertexShader = root.GetStringMember("vertex");
     definition.fragmentShader = root.GetStringMember("fragment");
 

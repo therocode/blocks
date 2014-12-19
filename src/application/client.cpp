@@ -33,7 +33,7 @@ Client::Client(fea::MessageBus& bus, const NetworkParameters& parameters) :
     mFPSCounter.setMaxFPS(0);
     mFPSCounter.setSampleTime(0.5f);
     
-    mResourceSystem = std::unique_ptr<ClientResourceSystem>(new ClientResourceSystem(bus));
+    mResourceSystem = std::unique_ptr<ClientResourceSystem>(new ClientResourceSystem(bus, "assets")); //make configurable
 
     mClientNetworkingSystem = std::unique_ptr<ClientNetworkingSystem>(new ClientNetworkingSystem(bus, parameters));
 }

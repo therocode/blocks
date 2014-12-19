@@ -199,7 +199,7 @@ void RenderingSystem::handleMessage(const ShaderDefinitionDeliverMessage& receiv
             {"NORMALMATRIX4", ShaderAttribute::NORMALMATRIX4}
             });
 
-    mShaders.emplace(received.shaderDefinition->name, std::move(shader));
+    mShaders.emplace(received.name, std::move(shader));
 }
 
 void RenderingSystem::handleMessage(const TextureDeliverMessage& received)
@@ -249,7 +249,7 @@ void RenderingSystem::render()
         mRenderer.queue(renderable);
     }
 
-    mShaders.at("basic")->activate();
-    mRenderer.render(*mShaders.at("basic"));
-    mShaders.at("basic")->deactivate();
+    mShaders.at("test.shaders.basic")->activate();
+    mRenderer.render(*mShaders.at("test.shaders.basic"));
+    mShaders.at("test.shaders.basic")->deactivate();
 }

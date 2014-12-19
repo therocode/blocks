@@ -161,7 +161,7 @@ void ScriptSystem::loadSources()
 
     mSourceFiles.clear();
 
-    exploder.explodeFolder("data/scripts", ".*\\.as", mSourceFiles);
+    exploder.explodeFolder("data/scripts", {"as"}, mSourceFiles);
     for(auto& string : mSourceFiles)
     {
         mBus.send(LogMessage{"Adding " + string + " for compilation.", scriptName, LogLevel::VERB});

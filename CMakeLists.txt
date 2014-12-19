@@ -94,6 +94,7 @@ set(source_files
 
     src/resources/clientresourcesystem.cpp
     src/resources/iqmfromfileloader.cpp
+    src/resources/resourcepathtoname.cpp
     src/resources/shaderdefinitionfromfileloader.cpp
     src/resources/shadersourcefromfileloader.cpp
     src/resources/texture.cpp
@@ -230,7 +231,9 @@ set(header_files
     src/resources/iqmfromfileloader.hpp
 	src/resources/rawmodel.hpp
 	src/resources/resourcecache.hpp
+	src/resources/resourceentry.hpp
 	src/resources/resourcemessages.hpp
+	src/resources/resourcepathtoname.hpp
     src/resources/shaderdefinition.hpp
     src/resources/shaderdefinitionfromfileloader.hpp
     src/resources/shadersource.hpp
@@ -431,6 +434,7 @@ endif(BUILD_GAME)
 if(BUILD_TESTS)
     add_executable(tests "test/main.cpp"
         "test/resources/resourcecachetest.cpp"
+        "test/resources/resourcepathtonametest.cpp"
         "test/utilities/gridnotifiertest.cpp"
         "test/utilities/interpolationgrid3dtest.cpp"
         "test/utilities/directorycreatortest.cpp"
@@ -454,12 +458,14 @@ if(BUILD_TESTS)
         "src/utilities/coordinateconverter.cpp"
         "src/utilities/directorycreator.cpp"
         "src/utilities/distancechecker.cpp"
+        "src/utilities/folderexploder.cpp"
         "src/world/chunk.cpp"
         "src/world/explorationmanager.cpp" "src/utilities/coordinateconverter.cpp"
         "src/networking/messageserializer.cpp"
         "src/networking/chunkrequesthandler.cpp"
         "src/script/scriptchunk.cpp"
         "src/script/asaddons/scriptarray.cpp"
+        "src/resources/resourcepathtoname.cpp"
         )
 
     add_executable(interpolation_visual "test/visual/interpolationvisual.cpp")
