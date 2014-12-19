@@ -31,5 +31,5 @@ class VoxelChunkRenderer : public RenderModule
         Buffer mNormalMatrix3;
         Buffer mNormalMatrix4;
 
-        Texture mWhiteTexture;
+        const Texture* mCurrentTexture;
 };

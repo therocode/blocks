@@ -238,13 +238,14 @@ void RenderingSystem::render()
 
     for(auto& moddie : mModelRenderables)
     {
-        moddie.second.setTexture(*mTextures.front());
+        moddie.second.setTexture(*mTextures.back());
         mRenderer.queue(moddie.second);
     }
 
     for(auto& voxie : mChunkModels)
     {
         VoxelChunkRenderable renderable;
+        renderable.setTexture(*mTextures.front());
         renderable.setModel(voxie.second);
         mRenderer.queue(renderable);
     }

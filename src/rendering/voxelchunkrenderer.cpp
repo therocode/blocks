@@ -17,33 +17,35 @@ VoxelChunkRenderer::VoxelChunkRenderer()
     mNormalMatrix2.setData(std::vector<float>({0.0f, 1.0f, 0.0f, 0.0f }));
     mNormalMatrix3.setData(std::vector<float>({0.0f, 0.0f, 1.0f, 0.0f }));
     mNormalMatrix4.setData(std::vector<float>({0.0f, 0.0f, 0.0f, 1.0f }));
-
-    mWhiteTexture.create(16, 16, fea::Color(1.0f, 1.0f, 1.0f));
 }
 
 void VoxelChunkRenderer::queue(const Renderable& renderable)
 {
-    const VoxelChunkRenderable& modelRenderable = (const VoxelChunkRenderable&) renderable;
+    const VoxelChunkRenderable& voxelChunkRenderable = (const VoxelChunkRenderable&) renderable;
 
-    const Model* model = modelRenderable.findModel();
+    const Model* voxelChunk = voxelChunkRenderable.findModel();
     
-    if(model != nullptr)
-        mOrders.push_back(model);
+    if(voxelChunk != nullptr)
+        mOrders.push_back(voxelChunk);
+
+    mCurrentTexture = voxelChunkRenderable.findTexture();
 }
 
 void VoxelChunkRenderer::render(const Camera& camera, const glm::mat4& perspective, const Shader& shader)
 {
     mVertexArray.bind();
 
-    shader.setUniform("texture", UniformType::TEXTURE, &mWhiteTexture);
+    GLuint textureId = mCurrentTexture->getId();
+    shader.setUniform("texture", UniformType::TEXTURE, &textureId);
     shader.setUniform("viewProjectionMatrix", UniformType::MAT4X4, glm::value_ptr(perspective * camera.getMatrix()));
-    float shadedRatio = 0.3f;
+    float shadedRatio = 1.0f;
     shader.setUniform("shadedRatio", UniformType::FLOAT, &shadedRatio);
     
     for(const auto model : mOrders)
     {
         mVertexArray.setVertexAttribute(ShaderAttribute::POSITION, 3, *model->findVertexArray(Model::POSITIONS));
         mVertexArray.setVertexAttribute(ShaderAttribute::NORMAL, 3, *model->findVertexArray(Model::NORMALS));
+        mVertexArray.setVertexAttribute(ShaderAttribute::TEXCOORD, 3, *model->findVertexArray(Model::TEXCOORDS));
 
         mVertexArray.setInstanceAttribute(ShaderAttribute::COLOR, 3, mColors, 1);
         mVertexArray.setInstanceAttribute(ShaderAttribute::MODELMATRIX1, 4, mModelMatrix1, 1);

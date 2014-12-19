@@ -1,7 +1,8 @@
 #include "voxelchunkrenderable.hpp"
 
 VoxelChunkRenderable::VoxelChunkRenderable() : 
-    mModel(nullptr)
+    mModel(nullptr),
+    mTexture(nullptr)
 {
 }
 
@@ -18,4 +19,14 @@ void VoxelChunkRenderable::setModel(const Model& model)
 const Model* VoxelChunkRenderable::findModel() const
 {
     return mModel;
+}
+
+void VoxelChunkRenderable::setTexture(const Texture& texture)
+{
+    mTexture = &texture;
+}
+
+const Texture* VoxelChunkRenderable::findTexture() const
+{
+    return mTexture;
 }
