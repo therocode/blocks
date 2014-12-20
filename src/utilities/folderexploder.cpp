@@ -30,6 +30,7 @@ void FolderExploder::explodeFolder(const std::string& directory, const std::vect
 
             for(const auto& type : types)
             {
+                //fileName.find_la
                 if(fileName.find(std::string(".") + type) != std::string::npos)
                 {
                     found = true;

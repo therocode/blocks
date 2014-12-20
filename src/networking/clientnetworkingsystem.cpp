@@ -232,7 +232,6 @@ void ClientNetworkingSystem::handleServerData(const std::vector<uint8_t>& data)
         else if(type == CLIENT_CHUNKS_DELIVERY)
         {
             ClientChunksDeliveredMessage received = deserializeMessage<ClientChunksDeliveredMessage>(data);
-
             handleMessage(received);
         }
         else if(type == VOXEL_UPDATED)
@@ -263,7 +262,7 @@ void ClientNetworkingSystem::handleServerData(const std::vector<uint8_t>& data)
         else if(type == CLIENT_ATTACHED_TO_ENTITY)
         {
             ClientAttachedToEntityMessage received = deserializeMessage<ClientAttachedToEntityMessage>(data);
-            mBus.send(LocalPlayerAttachedToEntityMessage{received.entityId, mWorldIds.getId(received.worldId), received.position, received.highlightRange});
+            mBus.send(received);
         }
         else if(type == CLIENT_ENTERED_WORLD)
         {

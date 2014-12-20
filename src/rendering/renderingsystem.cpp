@@ -92,6 +92,7 @@ void RenderingSystem::handleMessage(const RemoveGfxEntityMessage& received)
 void RenderingSystem::handleMessage(const ClientAttachedToEntityMessage& received)
 {
     mCameraEntity = received.entityId;
+    std::cout << "renderer thinks player is attached to " << mCameraEntity << "\n";
 }
 
 void RenderingSystem::handleMessage(const WindowResizeMessage& received)
