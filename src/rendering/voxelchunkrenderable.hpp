@@ -12,7 +12,7 @@ class VoxelChunkRenderable : public Renderable
         virtual std::type_index getType() const;
         void setModel(const Model& model);
         const Model* findModel() const;
-        void setTexture(const Texture& model);
+        void setTexture(const Texture& texture);
         const Texture* findTexture() const;
     private:
         const Model* mModel;

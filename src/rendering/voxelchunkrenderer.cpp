@@ -6,7 +6,8 @@
 #include <string>
 #include <fea/assert.hpp>
 
-VoxelChunkRenderer::VoxelChunkRenderer()
+VoxelChunkRenderer::VoxelChunkRenderer() :
+    mCurrentTexture(nullptr)
 {
     mColors.setData(std::vector<float>({0.3f, 0.55555f,.0f}));
     mModelMatrix1.setData(std::vector<float>({1.0f, 0.0f, 0.0f, 0.0f }));
@@ -35,8 +36,12 @@ void VoxelChunkRenderer::render(const Camera& camera, const glm::mat4& perspecti
 {
     mVertexArray.bind();
 
-    GLuint textureId = mCurrentTexture->getId();
-    shader.setUniform("texture", UniformType::TEXTURE, &textureId);
+    if(mCurrentTexture)
+    {
+        GLuint textureId = mCurrentTexture->getId();
+        shader.setUniform("texture", UniformType::TEXTURE, &textureId);
+    }
+
     shader.setUniform("viewProjectionMatrix", UniformType::MAT4X4, glm::value_ptr(perspective * camera.getMatrix()));
     float shadedRatio = 1.0f;
     shader.setUniform("shadedRatio", UniformType::FLOAT, &shadedRatio);
@@ -45,7 +50,7 @@ void VoxelChunkRenderer::render(const Camera& camera, const glm::mat4& perspecti
     {
         mVertexArray.setVertexAttribute(ShaderAttribute::POSITION, 3, *model->findVertexArray(Model::POSITIONS));
         mVertexArray.setVertexAttribute(ShaderAttribute::NORMAL, 3, *model->findVertexArray(Model::NORMALS));
-        mVertexArray.setVertexAttribute(ShaderAttribute::TEXCOORD, 3, *model->findVertexArray(Model::TEXCOORDS));
+        mVertexArray.setVertexAttribute(ShaderAttribute::TEXCOORD, 2, *model->findVertexArray(Model::TEXCOORDS));
 
         mVertexArray.setInstanceAttribute(ShaderAttribute::COLOR, 3, mColors, 1);
         mVertexArray.setInstanceAttribute(ShaderAttribute::MODELMATRIX1, 4, mModelMatrix1, 1);

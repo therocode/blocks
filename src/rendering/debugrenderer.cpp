@@ -126,7 +126,9 @@ void DebugRenderer::queue(const Renderable& renderable)
 
 void DebugRenderer::render(const Camera& camera, const glm::mat4& perspective, const Shader& shader)
 {
-    shader.setUniform("texture", UniformType::TEXTURE, &mWhiteTexture);
+    GLuint id = mWhiteTexture.getId();
+    
+    shader.setUniform("texture", UniformType::TEXTURE, &id);
 
     mVertexArray.bind();
 

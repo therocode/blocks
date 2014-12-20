@@ -120,13 +120,17 @@ Model ChunkModelCreator::generateChunkModel(const ChunkCoord& mainChunkCoord, Ch
     
     std::vector<float> quadPositions;
     std::vector<float> quadNormals;
+    std::vector<float> quadTexCoords;
     std::vector<float> allQuadPositions;
     std::vector<float> allQuadNormals;
+    std::vector<float> allQuadTexCoords;
 
     for(auto& quad : topQuads)
     {
         quadPositions.clear();
         quadNormals.clear();
+        quadTexCoords.clear();
+
         float worldX = quad.mX + chunkOffset.x;
         float worldY = quad.mDepth + chunkOffset.y + 1.0f; //top alignmetn
         float worldZ = quad.mY + chunkOffset.z;
@@ -150,175 +154,209 @@ Model ChunkModelCreator::generateChunkModel(const ChunkCoord& mainChunkCoord, Ch
                            0.577f,  0.577f,  0.577f,
                            0.577f,  0.577f, -0.577f};
 
-        allQuadPositions.insert(allQuadPositions.end(), quadPositions.begin(), quadPositions.end());
-        allQuadNormals.insert(allQuadNormals.end(), quadNormals.begin(), quadNormals.end());
-    }
+        glm::vec2 texLoc = ((glm::vec2)textureLocation) / 8.0f;
+        float plus = 1.0f / 8.0f;
 
-    for(auto& quad : bottomQuads)
-    {
-        quadPositions.clear();
-        quadNormals.clear();
-        float worldX = quad.mX + chunkOffset.x;
-        float worldY = quad.mDepth + chunkOffset.y;
-        float worldZ = quad.mY + chunkOffset.z;
-		int resId = quad.mType;
-		if(quad.mType == 1)resId = 2;
-        textureLocation.x = (resId - 1) % 8;
-        textureLocation.y = (resId - 1) / 8;
+        std::cout << texLoc << "\n";
 
-        quadPositions = { worldX              , worldY, worldZ,
-                          worldX + quad.mWidth, worldY, worldZ + quad.mHeight,
-                          worldX              , worldY, worldZ + quad.mHeight,
-                            
-                          worldX              , worldY, worldZ,
-                          worldX + quad.mWidth, worldY, worldZ,
-                          worldX + quad.mWidth, worldY, worldZ + quad.mHeight};
-
-        quadNormals   = { -0.577f,  0.577f, -0.577f,
-                           0.577f,  0.577f,  0.577f,
-                          -0.577f,  0.577f,  0.577f,
+        quadTexCoords = {  texLoc.x       ,  texLoc.y       ,
+                           texLoc.x       ,  texLoc.y + plus,
+                           texLoc.x + plus,  texLoc.y + plus,
         
-                          -0.577f,  0.577f, -0.577f,
-                           0.577f,  0.577f, -0.577f,
-                           0.577f,  0.577f,  0.577f};
+                           texLoc.x       ,  texLoc.y       ,
+                           texLoc.x + plus,  texLoc.y + plus,
+                           texLoc.x + plus,  texLoc.y};
 
         allQuadPositions.insert(allQuadPositions.end(), quadPositions.begin(), quadPositions.end());
         allQuadNormals.insert(allQuadNormals.end(), quadNormals.begin(), quadNormals.end());
+        allQuadTexCoords.insert(allQuadTexCoords.end(), quadTexCoords.begin(), quadTexCoords.end());
     }
 
-    for(auto& quad : frontQuads)
-    {
-        quadPositions.clear();
-        quadNormals.clear();
-        float worldX = quad.mX + chunkOffset.x;
-        float worldY = quad.mY + chunkOffset.y;
-        float worldZ = quad.mDepth + chunkOffset.z + 1.0f;
+    //for(auto& quad : bottomQuads)
+    //{
+    //    quadPositions.clear();
+    //    quadNormals.clear();
+    //    quadTexCoords.clear();
 
-		int resId = quad.mType;
-		if(quad.mType == 1)resId = 3;
-        textureLocation.x = (resId - 1) % 8;
-        textureLocation.y = (resId - 1) / 8;
+    //    float worldX = quad.mX + chunkOffset.x;
+    //    float worldY = quad.mDepth + chunkOffset.y;
+    //    float worldZ = quad.mY + chunkOffset.z;
+	//	int resId = quad.mType;
+	//	if(quad.mType == 1)resId = 2;
+    //    textureLocation.x = (resId - 1) % 8;
+    //    textureLocation.y = (resId - 1) / 8;
 
-        quadPositions = { worldX              , worldY,                worldZ,
-                          worldX + quad.mWidth, worldY + quad.mHeight, worldZ,
-                          worldX              , worldY + quad.mHeight, worldZ,
-                            
-                          worldX              , worldY,                worldZ,
-                          worldX + quad.mWidth, worldY,                worldZ,
-                          worldX + quad.mWidth, worldY + quad.mHeight, worldZ};
+    //    quadPositions = { worldX              , worldY, worldZ,
+    //                      worldX + quad.mWidth, worldY, worldZ + quad.mHeight,
+    //                      worldX              , worldY, worldZ + quad.mHeight,
+    //                        
+    //                      worldX              , worldY, worldZ,
+    //                      worldX + quad.mWidth, worldY, worldZ,
+    //                      worldX + quad.mWidth, worldY, worldZ + quad.mHeight};
 
-        quadNormals   = { -0.577f, -0.577f,  0.577f,
-                           0.577f,  0.577f,  0.577f,
-                          -0.577f,  0.577f,  0.577f,
-        
-                          -0.577f, -0.577f,  0.577f,
-                           0.577f, -0.577f,  0.577f,
-                           0.577f,  0.577f,  0.577f};
+    //    quadNormals   = { -0.577f,  0.577f, -0.577f,
+    //                       0.577f,  0.577f,  0.577f,
+    //                      -0.577f,  0.577f,  0.577f,
+    //    
+    //                      -0.577f,  0.577f, -0.577f,
+    //                       0.577f,  0.577f, -0.577f,
+    //                       0.577f,  0.577f,  0.577f};
 
-        allQuadPositions.insert(allQuadPositions.end(), quadPositions.begin(), quadPositions.end());
-        allQuadNormals.insert(allQuadNormals.end(), quadNormals.begin(), quadNormals.end());
-    }
+    //    allQuadPositions.insert(allQuadPositions.end(), quadPositions.begin(), quadPositions.end());
+    //    allQuadNormals.insert(allQuadNormals.end(), quadNormals.begin(), quadNormals.end());
+    //    allQuadTexCoords.insert(allQuadTexCoords.end(), quadTexCoords.begin(), quadTexCoords.end());
+    //}
 
-    for(auto& quad : backQuads)
-    {
-        quadPositions.clear();
-        quadNormals.clear();
-        float worldX = quad.mX + chunkOffset.x;
-        float worldY = quad.mY + chunkOffset.y;
-        float worldZ = quad.mDepth + chunkOffset.z;
+    //for(auto& quad : frontQuads)
+    //{
+    //    quadPositions.clear();
+    //    quadNormals.clear();
+    //    quadTexCoords.clear();
 
-		int resId = quad.mType;
-		if(quad.mType == 1)resId = 3;
-        textureLocation.x = (resId - 1) % 8;
-        textureLocation.y = (resId - 1) / 8;
+    //    float worldX = quad.mX + chunkOffset.x;
+    //    float worldY = quad.mY + chunkOffset.y;
+    //    float worldZ = quad.mDepth + chunkOffset.z + 1.0f;
 
-        quadPositions = { worldX              , worldY,                worldZ,
-                          worldX              , worldY + quad.mHeight, worldZ,
-                          worldX + quad.mWidth, worldY + quad.mHeight, worldZ,
-                            
-                          worldX              , worldY,                worldZ,
-                          worldX + quad.mWidth, worldY + quad.mHeight, worldZ,
-                          worldX + quad.mWidth, worldY,                worldZ};
+	//	int resId = quad.mType;
+	//	if(quad.mType == 1)resId = 3;
+    //    textureLocation.x = (resId - 1) % 8;
+    //    textureLocation.y = (resId - 1) / 8;
 
-        quadNormals   = { -0.577f, -0.577f,  0.577f,
-                          -0.577f,  0.577f,  0.577f,
-                           0.577f,  0.577f,  0.577f,
-        
-                          -0.577f, -0.577f,  0.577f,
-                           0.577f,  0.577f,  0.577f,
-                           0.577f, -0.577f,  0.577f};
+    //    quadPositions = { worldX              , worldY,                worldZ,
+    //                      worldX + quad.mWidth, worldY + quad.mHeight, worldZ,
+    //                      worldX              , worldY + quad.mHeight, worldZ,
+    //                        
+    //                      worldX              , worldY,                worldZ,
+    //                      worldX + quad.mWidth, worldY,                worldZ,
+    //                      worldX + quad.mWidth, worldY + quad.mHeight, worldZ};
 
-        allQuadPositions.insert(allQuadPositions.end(), quadPositions.begin(), quadPositions.end());
-        allQuadNormals.insert(allQuadNormals.end(), quadNormals.begin(), quadNormals.end());
-    }
+    //    quadNormals   = { -0.577f, -0.577f,  0.577f,
+    //                       0.577f,  0.577f,  0.577f,
+    //                      -0.577f,  0.577f,  0.577f,
+    //    
+    //                      -0.577f, -0.577f,  0.577f,
+    //                       0.577f, -0.577f,  0.577f,
+    //                       0.577f,  0.577f,  0.577f};
 
-    for(auto& quad : leftQuads)
-    {
-        float worldX = quad.mDepth + chunkOffset.x;
-        float worldY = quad.mY + chunkOffset.y;
-        float worldZ = quad.mX + chunkOffset.z;
+    //    allQuadPositions.insert(allQuadPositions.end(), quadPositions.begin(), quadPositions.end());
+    //    allQuadNormals.insert(allQuadNormals.end(), quadNormals.begin(), quadNormals.end());
+    //    allQuadTexCoords.insert(allQuadTexCoords.end(), quadTexCoords.begin(), quadTexCoords.end());
+    //}
 
-		int resId = quad.mType;
-		if(quad.mType == 1)resId = 3;
-        textureLocation.x = (resId - 1) % 8;
-        textureLocation.y = (resId - 1) / 8;
+    //for(auto& quad : backQuads)
+    //{
+    //    quadPositions.clear();
+    //    quadNormals.clear();
+    //    quadTexCoords.clear();
 
-        quadPositions = { worldX              , worldY,                worldZ,
-                          worldX              , worldY + quad.mHeight, worldZ + quad.mWidth,
-                          worldX              , worldY + quad.mHeight, worldZ,
-                            
-                          worldX              , worldY,                worldZ,
-                          worldX              , worldY,                worldZ + quad.mWidth,
-                          worldX              , worldY + quad.mHeight, worldZ + quad.mWidth};
+    //    float worldX = quad.mX + chunkOffset.x;
+    //    float worldY = quad.mY + chunkOffset.y;
+    //    float worldZ = quad.mDepth + chunkOffset.z;
 
-        quadNormals   = { -0.577f, -0.577f, -0.577f,
-                          -0.577f,  0.577f,  0.577f,
-                          -0.577f,  0.577f, -0.577f,
-        
-                          -0.577f, -0.577f, -0.577f,
-                          -0.577f, -0.577f,  0.577f,
-                          -0.577f,  0.577f,  0.577f};
+	//	int resId = quad.mType;
+	//	if(quad.mType == 1)resId = 3;
+    //    textureLocation.x = (resId - 1) % 8;
+    //    textureLocation.y = (resId - 1) / 8;
 
-        allQuadPositions.insert(allQuadPositions.end(), quadPositions.begin(), quadPositions.end());
-        allQuadNormals.insert(allQuadNormals.end(), quadNormals.begin(), quadNormals.end());
-    }
+    //    quadPositions = { worldX              , worldY,                worldZ,
+    //                      worldX              , worldY + quad.mHeight, worldZ,
+    //                      worldX + quad.mWidth, worldY + quad.mHeight, worldZ,
+    //                        
+    //                      worldX              , worldY,                worldZ,
+    //                      worldX + quad.mWidth, worldY + quad.mHeight, worldZ,
+    //                      worldX + quad.mWidth, worldY,                worldZ};
 
-    for(auto& quad : rightQuads)
-    {
-        float worldX = quad.mDepth + chunkOffset.x;
-        float worldY = quad.mY + chunkOffset.y;
-        float worldZ = quad.mX + chunkOffset.z;
+    //    quadNormals   = { -0.577f, -0.577f,  0.577f,
+    //                      -0.577f,  0.577f,  0.577f,
+    //                       0.577f,  0.577f,  0.577f,
+    //    
+    //                      -0.577f, -0.577f,  0.577f,
+    //                       0.577f,  0.577f,  0.577f,
+    //                       0.577f, -0.577f,  0.577f};
 
-		int resId = quad.mType;
-		if(quad.mType == 1)resId = 3;
-        textureLocation.x = (resId - 1) % 8;
-        textureLocation.y = (resId - 1) / 8;
+    //    allQuadPositions.insert(allQuadPositions.end(), quadPositions.begin(), quadPositions.end());
+    //    allQuadNormals.insert(allQuadNormals.end(), quadNormals.begin(), quadNormals.end());
+    //    allQuadTexCoords.insert(allQuadTexCoords.end(), quadTexCoords.begin(), quadTexCoords.end());
+    //}
 
-        quadPositions = { worldX              , worldY,                worldZ,
-                          worldX              , worldY + quad.mHeight, worldZ,
-                          worldX              , worldY + quad.mHeight, worldZ + quad.mWidth,
-                            
-                          worldX              , worldY,                worldZ,
-                          worldX              , worldY + quad.mHeight, worldZ + quad.mWidth,
-                          worldX              , worldY,                worldZ + quad.mWidth};
+    //for(auto& quad : leftQuads)
+    //{
+    //    quadPositions.clear();
+    //    quadNormals.clear();
+    //    quadTexCoords.clear();
 
-        quadNormals   = { -0.577f, -0.577f, -0.577f,
-                          -0.577f,  0.577f, -0.577f,
-                          -0.577f,  0.577f,  0.577f,
-        
-                          -0.577f, -0.577f, -0.577f,
-                          -0.577f,  0.577f,  0.577f,
-                          -0.577f, -0.577f,  0.577f};
+    //    float worldX = quad.mDepth + chunkOffset.x;
+    //    float worldY = quad.mY + chunkOffset.y;
+    //    float worldZ = quad.mX + chunkOffset.z;
 
-        allQuadPositions.insert(allQuadPositions.end(), quadPositions.begin(), quadPositions.end());
-        allQuadNormals.insert(allQuadNormals.end(), quadNormals.begin(), quadNormals.end());
-    }
+	//	int resId = quad.mType;
+	//	if(quad.mType == 1)resId = 3;
+    //    textureLocation.x = (resId - 1) % 8;
+    //    textureLocation.y = (resId - 1) / 8;
+
+    //    quadPositions = { worldX              , worldY,                worldZ,
+    //                      worldX              , worldY + quad.mHeight, worldZ + quad.mWidth,
+    //                      worldX              , worldY + quad.mHeight, worldZ,
+    //                        
+    //                      worldX              , worldY,                worldZ,
+    //                      worldX              , worldY,                worldZ + quad.mWidth,
+    //                      worldX              , worldY + quad.mHeight, worldZ + quad.mWidth};
+
+    //    quadNormals   = { -0.577f, -0.577f, -0.577f,
+    //                      -0.577f,  0.577f,  0.577f,
+    //                      -0.577f,  0.577f, -0.577f,
+    //    
+    //                      -0.577f, -0.577f, -0.577f,
+    //                      -0.577f, -0.577f,  0.577f,
+    //                      -0.577f,  0.577f,  0.577f};
+
+    //    allQuadPositions.insert(allQuadPositions.end(), quadPositions.begin(), quadPositions.end());
+    //    allQuadNormals.insert(allQuadNormals.end(), quadNormals.begin(), quadNormals.end());
+    //    allQuadTexCoords.insert(allQuadTexCoords.end(), quadTexCoords.begin(), quadTexCoords.end());
+    //}
+
+    //for(auto& quad : rightQuads)
+    //{
+    //    quadPositions.clear();
+    //    quadNormals.clear();
+    //    quadTexCoords.clear();
+
+    //    float worldX = quad.mDepth + chunkOffset.x;
+    //    float worldY = quad.mY + chunkOffset.y;
+    //    float worldZ = quad.mX + chunkOffset.z;
+
+	//	int resId = quad.mType;
+	//	if(quad.mType == 1)resId = 3;
+    //    textureLocation.x = (resId - 1) % 8;
+    //    textureLocation.y = (resId - 1) / 8;
+
+    //    quadPositions = { worldX              , worldY,                worldZ,
+    //                      worldX              , worldY + quad.mHeight, worldZ,
+    //                      worldX              , worldY + quad.mHeight, worldZ + quad.mWidth,
+    //                        
+    //                      worldX              , worldY,                worldZ,
+    //                      worldX              , worldY + quad.mHeight, worldZ + quad.mWidth,
+    //                      worldX              , worldY,                worldZ + quad.mWidth};
+
+    //    quadNormals   = { -0.577f, -0.577f, -0.577f,
+    //                      -0.577f,  0.577f, -0.577f,
+    //                      -0.577f,  0.577f,  0.577f,
+    //    
+    //                      -0.577f, -0.577f, -0.577f,
+    //                      -0.577f,  0.577f,  0.577f,
+    //                      -0.577f, -0.577f,  0.577f};
+
+    //    allQuadPositions.insert(allQuadPositions.end(), quadPositions.begin(), quadPositions.end());
+    //    allQuadNormals.insert(allQuadNormals.end(), quadNormals.begin(), quadNormals.end());
+    //    allQuadTexCoords.insert(allQuadTexCoords.end(), quadTexCoords.begin(), quadTexCoords.end());
+    //}
     
     //printf("Generated %u vertices and %u indices\n", verts, indices);
     //After stuff has been added, you have to update the gpu vbo data.
 
     newModel.addVertexArray(Model::POSITIONS, allQuadPositions);
     newModel.addVertexArray(Model::NORMALS, allQuadNormals);
+    newModel.addVertexArray(Model::TEXCOORDS, allQuadTexCoords);
 
     return newModel;
 }
