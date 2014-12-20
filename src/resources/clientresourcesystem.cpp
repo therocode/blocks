@@ -10,6 +10,8 @@
 #include "shaderdefinition.hpp"
 #include "shaderdefinitionfromfileloader.hpp"
 #include "texturefromfileloader.hpp"
+#include "extensionmetadata.hpp"
+#include "extensionmetadatafromfileloader.hpp"
 
 ClientResourceSystem::ClientResourceSystem(fea::MessageBus& bus, const std::string assetsPath) :
     mBus(bus),
@@ -32,7 +34,8 @@ ClientResourceSystem::ClientResourceSystem(fea::MessageBus& bus, const std::stri
                 "vert",
                 "frag",
                 "shad",
-                "png"
+                "png",
+                "meta"
                 }, mResources);
 
         mBus.send(LogMessage{"Found " + std::to_string(mResources.size()) + " resources to load.", resourceName, LogLevel::INFO});
@@ -44,6 +47,7 @@ ClientResourceSystem::ClientResourceSystem(fea::MessageBus& bus, const std::stri
             mResourceList[fileType].push_back({resourcePath, resourcePathToName(assetsPath, resourcePath)});
         }
 
+        loadExtensionMetadata(mResourceList["meta"]);
         loadModels(mResourceList["iqm"]);
         loadVertexShaders(mResourceList["vert"]);
         loadFragmentShaders(mResourceList["frag"]);
@@ -124,6 +128,22 @@ void ClientResourceSystem::loadTextures(const std::vector<ResourceEntry>& textur
         {
             uint32_t id = mTextureIDs.getId(textureFile.name);
             mBus.send(ResourceDeliverMessage<Texture>{id, texture});
+        }
+    }
+}
+
+void ClientResourceSystem::loadExtensionMetadata(const std::vector<ResourceEntry>& extensionMetadata)
+{
+    mBus.send(LogMessage{"Loading extension metadata files. " + std::to_string(extensionMetadata.size()) + " files to load.", resourceName, LogLevel::INFO});
+    for(const auto& metadataFile : extensionMetadata)
+    {
+        mBus.send(LogMessage{"Loading " + metadataFile.name + ".", resourceName, LogLevel::VERB});
+        std::shared_ptr<ExtensionMetadata> metadata = mCache.access<ExtensionMetadataFromFileLoader>(metadataFile.path);
+
+        if(metadata)
+        {
+            uint32_t id = mExtensionMetadataIDs.getId(metadataFile.name);
+            mBus.send(ResourceDeliverMessage<ExtensionMetadata>{id, metadata});
         }
     }
 }

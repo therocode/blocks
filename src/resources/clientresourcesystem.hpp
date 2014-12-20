@@ -15,6 +15,8 @@ class ClientResourceSystem
         void loadFragmentShaders(const std::vector<ResourceEntry>& fragmentShaders);
         void loadShaderDefinitions(const std::vector<ResourceEntry>& shaderDefinitions);
         void loadTextures(const std::vector<ResourceEntry>& textures);
+        void loadExtensionMetadata(const std::vector<ResourceEntry>& extensionMetadata);
+
         fea::MessageBus& mBus;
         std::string mAssetsPath;
         ResourceCache mCache;
@@ -26,4 +28,5 @@ class ClientResourceSystem
         IdProvider<std::string> mFragmentShaderIDs;
         IdProvider<std::string> mShaderDefinitionIDs;
         IdProvider<std::string> mTextureIDs;
+        IdProvider<std::string> mExtensionMetadataIDs;
 };

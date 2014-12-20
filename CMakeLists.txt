@@ -93,6 +93,8 @@ set(source_files
     src/rendering/voxelchunkrenderable.cpp
 
     src/resources/clientresourcesystem.cpp
+    src/resources/extensionmetadata.cpp
+    src/resources/extensionmetadatafromfileloader.cpp
     src/resources/iqmfromfileloader.cpp
     src/resources/resourcepathtoname.cpp
     src/resources/shaderdefinitionfromfileloader.cpp
@@ -227,6 +229,8 @@ set(header_files
     src/rendering/voxelchunkrenderable.hpp
 
     src/resources/clientresourcesystem.hpp
+    src/resources/extensionmetadata.hpp
+    src/resources/extensionmetadatafromfileloader.hpp
     src/resources/iqm.h
     src/resources/iqmfromfileloader.hpp
 	src/resources/rawmodel.hpp
