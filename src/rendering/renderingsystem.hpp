@@ -13,6 +13,7 @@
 #include "model.hpp"
 #include "modelrenderable.hpp"
 #include "chunkmodelcreator.hpp"
+#include "../resources/texture.hpp"
 
 class RenderingSystem :
     public fea::MessageReceiver<AddGfxEntityMessage,
@@ -61,6 +62,7 @@ class RenderingSystem :
         std::unordered_map<std::string, std::string> mFragmentSources;
         std::unordered_map<uint32_t, std::unique_ptr<Shader>> mShaders;
         std::vector<std::shared_ptr<Texture>> mTextures;
+        Texture mWhite;
 
         ChunkModelCreator mChunkModelCreator;
         std::unordered_map<ChunkCoord, Model> mChunkModels;

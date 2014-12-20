@@ -9,7 +9,7 @@
 #include "shadersourcefromfileloader.hpp"
 #include "shaderdefinition.hpp"
 #include "shaderdefinitionfromfileloader.hpp"
-#include "texturefromfileloader.hpp"
+#include "imagefromfileloader.hpp"
 
 ClientResourceSystem::ClientResourceSystem(fea::MessageBus& bus, const std::string assetsPath) :
     mBus(bus),
@@ -48,7 +48,7 @@ ClientResourceSystem::ClientResourceSystem(fea::MessageBus& bus, const std::stri
         loadVertexShaders(mResourceList["vert"]);
         loadFragmentShaders(mResourceList["frag"]);
         loadShaderDefinitions(mResourceList["shad"]);
-        loadTextures(mResourceList["png"]);
+        loadImages(mResourceList["png"]);
     }
 }
 
@@ -112,18 +112,18 @@ void ClientResourceSystem::loadShaderDefinitions(const std::vector<ResourceEntry
     }
 }
 
-void ClientResourceSystem::loadTextures(const std::vector<ResourceEntry>& textures)
+void ClientResourceSystem::loadImages(const std::vector<ResourceEntry>& images)
 {
-    mBus.send(LogMessage{"Loading textures. " + std::to_string(textures.size()) + " textures to load.", resourceName, LogLevel::INFO});
-    for(const auto& textureFile : textures)
+    mBus.send(LogMessage{"Loading images. " + std::to_string(images.size()) + " images to load.", resourceName, LogLevel::INFO});
+    for(const auto& imageFile : images)
     {
-        mBus.send(LogMessage{"Loading " + textureFile.name + ".", resourceName, LogLevel::VERB});
-        std::shared_ptr<Texture> texture = mCache.access<TextureFromFileLoader>(textureFile.path);
+        mBus.send(LogMessage{"Loading " + imageFile.name + ".", resourceName, LogLevel::VERB});
+        std::shared_ptr<Image> image = mCache.access<ImageFromFileLoader>(imageFile.path);
 
-        if(texture)
+        if(image)
         {
-            uint32_t id = mTextureIDs.getId(textureFile.name);
-            mBus.send(ResourceDeliverMessage<Texture>{id, texture});
+            uint32_t id = mTextureIDs.getId(imageFile.name);
+            mBus.send(ResourceDeliverMessage<Image>{id, image});
         }
     }
 }

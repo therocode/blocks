@@ -5,7 +5,6 @@
 #include "../resources/rawmodel.hpp"
 #include "../resources/shadersource.hpp"
 #include "../resources/shaderdefinition.hpp"
-#include "../resources/texture.hpp"
 #include "shaderattribute.hpp"
 #include "opengl.hpp"
 #include "../lognames.hpp"
@@ -51,6 +50,8 @@ RenderingSystem::RenderingSystem(fea::MessageBus& bus, const glm::uvec2& viewSiz
 
     if(maxSize < 2048)
         mBus.send(LogMessage{"Only supporting " + std::to_string(maxSize) + " texture layers.", renderingName, LogLevel::WARN});
+
+    mWhite.create(16, 16, fea::Color(1.0f, 1.0f, 1.0f));
 }
 
 void RenderingSystem::handleMessage(const AddGfxEntityMessage& received)
@@ -256,14 +257,14 @@ void RenderingSystem::render()
 
     for(auto& moddie : mModelRenderables)
     {
-        moddie.second.setTexture(*mTextures.back());
+        moddie.second.setTexture(mWhite);
         mRenderer.queue(moddie.second);
     }
 
     for(auto& voxie : mChunkModels)
     {
         VoxelChunkRenderable renderable;
-        renderable.setTexture(*mTextures.front());
+        renderable.setTexture(mWhite);
         renderable.setModel(voxie.second);
         mRenderer.queue(renderable);
     }

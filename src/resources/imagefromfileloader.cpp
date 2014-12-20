@@ -1,8 +1,8 @@
-#include "texturefromfileloader.hpp"
+#include "imagefromfileloader.hpp"
 #include "../utilities/lodepng.hpp"
 #include <iostream>
 
-Texture TextureFromFileLoader::load(const std::string& filename)
+Image ImageFromFileLoader::load(const std::string& filename)
 {
     uint32_t width;
     uint32_t height;
@@ -17,8 +17,7 @@ Texture TextureFromFileLoader::load(const std::string& filename)
         exit(0); //should be exception
     }
 
-    Texture texture;
-    texture.create(width, height, image.data());
+    Image result({width, height}, image);
 
-    return texture;
+    return result;
 }

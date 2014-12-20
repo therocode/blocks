@@ -100,7 +100,7 @@ set(source_files
     src/resources/shaderdefinitionfromfileloader.cpp
     src/resources/shadersourcefromfileloader.cpp
     src/resources/texture.cpp
-    src/resources/texturefromfileloader.cpp
+    src/resources/imagefromfileloader.cpp
 
     src/script/scriptcallback.cpp
     src/script/scriptchunk.cpp
@@ -242,7 +242,7 @@ set(header_files
     src/resources/shadersource.hpp
     src/resources/shadersourcefromfileloader.hpp
     src/resources/texture.hpp
-    src/resources/texturefromfileloader.hpp
+    src/resources/imagefromfileloader.hpp
     
     src/utilities/coordinateconverter.hpp
     src/utilities/directorycreator.hpp
