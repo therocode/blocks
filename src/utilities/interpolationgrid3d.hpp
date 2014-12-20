@@ -4,6 +4,7 @@
 #include <functional>
 #include <array>
 #include <vector>
+#include <string>
 
 //interpolator arguments follows the standard: x + y * width + z * width*width 
 //where width = 2. 
@@ -103,7 +104,7 @@ Type InterpolationGrid3D<Type>::get(const glm::uvec3& location) const
         if(glm::length(point) < 0.000005f)
             return mValues.at(innerIndex);
 
-        FEA_ASSERT(innerPoint.x != mInnerSize - 1 && innerPoint.y != mInnerSize - 1 && innerPoint.z != mInnerSize - 1, "Cannot interpolate on edge of interpolation grid. given coordinate " + glm::to_string(location) + " should not exceed " + glm::to_string(mInnerSize - 1));
+        FEA_ASSERT(innerPoint.x != mInnerSize - 1 && innerPoint.y != mInnerSize - 1 && innerPoint.z != mInnerSize - 1, "Cannot interpolate on edge of interpolation grid. given coordinate " + glm::to_string(location) + " should not exceed " + std::to_string(mInnerSize - 1));
 
         interpolationPoints[0 + 0 + 0] = mValues.at(innerIndex + 0 + 0          + 0             );
         interpolationPoints[1 + 0 + 0] = mValues.at(innerIndex + 1 + 0          + 0             );
