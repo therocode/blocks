@@ -157,8 +157,6 @@ Model ChunkModelCreator::generateChunkModel(const ChunkCoord& mainChunkCoord, Ch
         glm::vec2 texLoc = ((glm::vec2)textureLocation) / 8.0f;
         float plus = 1.0f / 8.0f;
 
-        std::cout << texLoc << "\n";
-
         quadTexCoords = {  texLoc.x       ,  texLoc.y       ,
                            texLoc.x       ,  texLoc.y + plus,
                            texLoc.x + plus,  texLoc.y + plus,
@@ -172,184 +170,240 @@ Model ChunkModelCreator::generateChunkModel(const ChunkCoord& mainChunkCoord, Ch
         allQuadTexCoords.insert(allQuadTexCoords.end(), quadTexCoords.begin(), quadTexCoords.end());
     }
 
-    //for(auto& quad : bottomQuads)
-    //{
-    //    quadPositions.clear();
-    //    quadNormals.clear();
-    //    quadTexCoords.clear();
+    for(auto& quad : bottomQuads)
+    {
+        quadPositions.clear();
+        quadNormals.clear();
+        quadTexCoords.clear();
 
-    //    float worldX = quad.mX + chunkOffset.x;
-    //    float worldY = quad.mDepth + chunkOffset.y;
-    //    float worldZ = quad.mY + chunkOffset.z;
-	//	int resId = quad.mType;
-	//	if(quad.mType == 1)resId = 2;
-    //    textureLocation.x = (resId - 1) % 8;
-    //    textureLocation.y = (resId - 1) / 8;
+        float worldX = quad.mX + chunkOffset.x;
+        float worldY = quad.mDepth + chunkOffset.y;
+        float worldZ = quad.mY + chunkOffset.z;
+		int resId = quad.mType;
+		if(quad.mType == 1)resId = 2;
+        textureLocation.x = (resId - 1) % 8;
+        textureLocation.y = (resId - 1) / 8;
 
-    //    quadPositions = { worldX              , worldY, worldZ,
-    //                      worldX + quad.mWidth, worldY, worldZ + quad.mHeight,
-    //                      worldX              , worldY, worldZ + quad.mHeight,
-    //                        
-    //                      worldX              , worldY, worldZ,
-    //                      worldX + quad.mWidth, worldY, worldZ,
-    //                      worldX + quad.mWidth, worldY, worldZ + quad.mHeight};
+        quadPositions = { worldX              , worldY, worldZ,
+                          worldX + quad.mWidth, worldY, worldZ + quad.mHeight,
+                          worldX              , worldY, worldZ + quad.mHeight,
+                            
+                          worldX              , worldY, worldZ,
+                          worldX + quad.mWidth, worldY, worldZ,
+                          worldX + quad.mWidth, worldY, worldZ + quad.mHeight};
 
-    //    quadNormals   = { -0.577f,  0.577f, -0.577f,
-    //                       0.577f,  0.577f,  0.577f,
-    //                      -0.577f,  0.577f,  0.577f,
-    //    
-    //                      -0.577f,  0.577f, -0.577f,
-    //                       0.577f,  0.577f, -0.577f,
-    //                       0.577f,  0.577f,  0.577f};
+        quadNormals   = { -0.577f,  0.577f, -0.577f,
+                           0.577f,  0.577f,  0.577f,
+                          -0.577f,  0.577f,  0.577f,
+        
+                          -0.577f,  0.577f, -0.577f,
+                           0.577f,  0.577f, -0.577f,
+                           0.577f,  0.577f,  0.577f};
 
-    //    allQuadPositions.insert(allQuadPositions.end(), quadPositions.begin(), quadPositions.end());
-    //    allQuadNormals.insert(allQuadNormals.end(), quadNormals.begin(), quadNormals.end());
-    //    allQuadTexCoords.insert(allQuadTexCoords.end(), quadTexCoords.begin(), quadTexCoords.end());
-    //}
+        glm::vec2 texLoc = ((glm::vec2)textureLocation) / 8.0f;
+        float plus = 1.0f / 8.0f;
 
-    //for(auto& quad : frontQuads)
-    //{
-    //    quadPositions.clear();
-    //    quadNormals.clear();
-    //    quadTexCoords.clear();
+        quadTexCoords = {  texLoc.x       ,  texLoc.y       ,
+                           texLoc.x + plus,  texLoc.y + plus,
+                           texLoc.x       ,  texLoc.y + plus,
+        
+                           texLoc.x       ,  texLoc.y       ,
+                           texLoc.x + plus,  texLoc.y       ,
+                           texLoc.x + plus,  texLoc.y + plus};
 
-    //    float worldX = quad.mX + chunkOffset.x;
-    //    float worldY = quad.mY + chunkOffset.y;
-    //    float worldZ = quad.mDepth + chunkOffset.z + 1.0f;
 
-	//	int resId = quad.mType;
-	//	if(quad.mType == 1)resId = 3;
-    //    textureLocation.x = (resId - 1) % 8;
-    //    textureLocation.y = (resId - 1) / 8;
+        allQuadPositions.insert(allQuadPositions.end(), quadPositions.begin(), quadPositions.end());
+        allQuadNormals.insert(allQuadNormals.end(), quadNormals.begin(), quadNormals.end());
+        allQuadTexCoords.insert(allQuadTexCoords.end(), quadTexCoords.begin(), quadTexCoords.end());
+    }
 
-    //    quadPositions = { worldX              , worldY,                worldZ,
-    //                      worldX + quad.mWidth, worldY + quad.mHeight, worldZ,
-    //                      worldX              , worldY + quad.mHeight, worldZ,
-    //                        
-    //                      worldX              , worldY,                worldZ,
-    //                      worldX + quad.mWidth, worldY,                worldZ,
-    //                      worldX + quad.mWidth, worldY + quad.mHeight, worldZ};
+    for(auto& quad : frontQuads)
+    {
+        quadPositions.clear();
+        quadNormals.clear();
+        quadTexCoords.clear();
 
-    //    quadNormals   = { -0.577f, -0.577f,  0.577f,
-    //                       0.577f,  0.577f,  0.577f,
-    //                      -0.577f,  0.577f,  0.577f,
-    //    
-    //                      -0.577f, -0.577f,  0.577f,
-    //                       0.577f, -0.577f,  0.577f,
-    //                       0.577f,  0.577f,  0.577f};
+        float worldX = quad.mX + chunkOffset.x;
+        float worldY = quad.mY + chunkOffset.y;
+        float worldZ = quad.mDepth + chunkOffset.z + 1.0f;
 
-    //    allQuadPositions.insert(allQuadPositions.end(), quadPositions.begin(), quadPositions.end());
-    //    allQuadNormals.insert(allQuadNormals.end(), quadNormals.begin(), quadNormals.end());
-    //    allQuadTexCoords.insert(allQuadTexCoords.end(), quadTexCoords.begin(), quadTexCoords.end());
-    //}
+		int resId = quad.mType;
+		if(quad.mType == 1)resId = 3;
+        textureLocation.x = (resId - 1) % 8;
+        textureLocation.y = (resId - 1) / 8;
 
-    //for(auto& quad : backQuads)
-    //{
-    //    quadPositions.clear();
-    //    quadNormals.clear();
-    //    quadTexCoords.clear();
+        quadPositions = { worldX              , worldY,                worldZ,
+                          worldX + quad.mWidth, worldY + quad.mHeight, worldZ,
+                          worldX              , worldY + quad.mHeight, worldZ,
+                            
+                          worldX              , worldY,                worldZ,
+                          worldX + quad.mWidth, worldY,                worldZ,
+                          worldX + quad.mWidth, worldY + quad.mHeight, worldZ};
 
-    //    float worldX = quad.mX + chunkOffset.x;
-    //    float worldY = quad.mY + chunkOffset.y;
-    //    float worldZ = quad.mDepth + chunkOffset.z;
+        quadNormals   = { -0.577f, -0.577f,  0.577f,
+                           0.577f,  0.577f,  0.577f,
+                          -0.577f,  0.577f,  0.577f,
+        
+                          -0.577f, -0.577f,  0.577f,
+                           0.577f, -0.577f,  0.577f,
+                           0.577f,  0.577f,  0.577f};
 
-	//	int resId = quad.mType;
-	//	if(quad.mType == 1)resId = 3;
-    //    textureLocation.x = (resId - 1) % 8;
-    //    textureLocation.y = (resId - 1) / 8;
+        glm::vec2 texLoc = ((glm::vec2)textureLocation) / 8.0f;
+        float plus = 1.0f / 8.0f;
 
-    //    quadPositions = { worldX              , worldY,                worldZ,
-    //                      worldX              , worldY + quad.mHeight, worldZ,
-    //                      worldX + quad.mWidth, worldY + quad.mHeight, worldZ,
-    //                        
-    //                      worldX              , worldY,                worldZ,
-    //                      worldX + quad.mWidth, worldY + quad.mHeight, worldZ,
-    //                      worldX + quad.mWidth, worldY,                worldZ};
+        quadTexCoords = {  texLoc.x       ,  texLoc.y       ,
+                           texLoc.x + plus,  texLoc.y + plus,
+                           texLoc.x       ,  texLoc.y + plus,
+        
+                           texLoc.x       ,  texLoc.y       ,
+                           texLoc.x + plus,  texLoc.y       ,
+                           texLoc.x + plus,  texLoc.y + plus};
 
-    //    quadNormals   = { -0.577f, -0.577f,  0.577f,
-    //                      -0.577f,  0.577f,  0.577f,
-    //                       0.577f,  0.577f,  0.577f,
-    //    
-    //                      -0.577f, -0.577f,  0.577f,
-    //                       0.577f,  0.577f,  0.577f,
-    //                       0.577f, -0.577f,  0.577f};
+        allQuadPositions.insert(allQuadPositions.end(), quadPositions.begin(), quadPositions.end());
+        allQuadNormals.insert(allQuadNormals.end(), quadNormals.begin(), quadNormals.end());
+        allQuadTexCoords.insert(allQuadTexCoords.end(), quadTexCoords.begin(), quadTexCoords.end());
+    }
 
-    //    allQuadPositions.insert(allQuadPositions.end(), quadPositions.begin(), quadPositions.end());
-    //    allQuadNormals.insert(allQuadNormals.end(), quadNormals.begin(), quadNormals.end());
-    //    allQuadTexCoords.insert(allQuadTexCoords.end(), quadTexCoords.begin(), quadTexCoords.end());
-    //}
+    for(auto& quad : backQuads)
+    {
+        quadPositions.clear();
+        quadNormals.clear();
+        quadTexCoords.clear();
 
-    //for(auto& quad : leftQuads)
-    //{
-    //    quadPositions.clear();
-    //    quadNormals.clear();
-    //    quadTexCoords.clear();
+        float worldX = quad.mX + chunkOffset.x;
+        float worldY = quad.mY + chunkOffset.y;
+        float worldZ = quad.mDepth + chunkOffset.z;
 
-    //    float worldX = quad.mDepth + chunkOffset.x;
-    //    float worldY = quad.mY + chunkOffset.y;
-    //    float worldZ = quad.mX + chunkOffset.z;
+		int resId = quad.mType;
+		if(quad.mType == 1)resId = 3;
+        textureLocation.x = (resId - 1) % 8;
+        textureLocation.y = (resId - 1) / 8;
 
-	//	int resId = quad.mType;
-	//	if(quad.mType == 1)resId = 3;
-    //    textureLocation.x = (resId - 1) % 8;
-    //    textureLocation.y = (resId - 1) / 8;
+        quadPositions = { worldX              , worldY,                worldZ,
+                          worldX              , worldY + quad.mHeight, worldZ,
+                          worldX + quad.mWidth, worldY + quad.mHeight, worldZ,
+                            
+                          worldX              , worldY,                worldZ,
+                          worldX + quad.mWidth, worldY + quad.mHeight, worldZ,
+                          worldX + quad.mWidth, worldY,                worldZ};
 
-    //    quadPositions = { worldX              , worldY,                worldZ,
-    //                      worldX              , worldY + quad.mHeight, worldZ + quad.mWidth,
-    //                      worldX              , worldY + quad.mHeight, worldZ,
-    //                        
-    //                      worldX              , worldY,                worldZ,
-    //                      worldX              , worldY,                worldZ + quad.mWidth,
-    //                      worldX              , worldY + quad.mHeight, worldZ + quad.mWidth};
+        quadNormals   = { -0.577f, -0.577f,  0.577f,
+                          -0.577f,  0.577f,  0.577f,
+                           0.577f,  0.577f,  0.577f,
+        
+                          -0.577f, -0.577f,  0.577f,
+                           0.577f,  0.577f,  0.577f,
+                           0.577f, -0.577f,  0.577f};
 
-    //    quadNormals   = { -0.577f, -0.577f, -0.577f,
-    //                      -0.577f,  0.577f,  0.577f,
-    //                      -0.577f,  0.577f, -0.577f,
-    //    
-    //                      -0.577f, -0.577f, -0.577f,
-    //                      -0.577f, -0.577f,  0.577f,
-    //                      -0.577f,  0.577f,  0.577f};
+        glm::vec2 texLoc = ((glm::vec2)textureLocation) / 8.0f;
+        float plus = 1.0f / 8.0f;
 
-    //    allQuadPositions.insert(allQuadPositions.end(), quadPositions.begin(), quadPositions.end());
-    //    allQuadNormals.insert(allQuadNormals.end(), quadNormals.begin(), quadNormals.end());
-    //    allQuadTexCoords.insert(allQuadTexCoords.end(), quadTexCoords.begin(), quadTexCoords.end());
-    //}
+        quadTexCoords = {  texLoc.x       ,  texLoc.y       ,
+                           texLoc.x       ,  texLoc.y + plus,
+                           texLoc.x + plus,  texLoc.y + plus,
+        
+                           texLoc.x       ,  texLoc.y       ,
+                           texLoc.x + plus,  texLoc.y + plus,
+                           texLoc.x + plus,  texLoc.y       };
 
-    //for(auto& quad : rightQuads)
-    //{
-    //    quadPositions.clear();
-    //    quadNormals.clear();
-    //    quadTexCoords.clear();
+        allQuadPositions.insert(allQuadPositions.end(), quadPositions.begin(), quadPositions.end());
+        allQuadNormals.insert(allQuadNormals.end(), quadNormals.begin(), quadNormals.end());
+        allQuadTexCoords.insert(allQuadTexCoords.end(), quadTexCoords.begin(), quadTexCoords.end());
+    }
 
-    //    float worldX = quad.mDepth + chunkOffset.x;
-    //    float worldY = quad.mY + chunkOffset.y;
-    //    float worldZ = quad.mX + chunkOffset.z;
+    for(auto& quad : leftQuads)
+    {
+        quadPositions.clear();
+        quadNormals.clear();
+        quadTexCoords.clear();
 
-	//	int resId = quad.mType;
-	//	if(quad.mType == 1)resId = 3;
-    //    textureLocation.x = (resId - 1) % 8;
-    //    textureLocation.y = (resId - 1) / 8;
+        float worldX = quad.mDepth + chunkOffset.x;
+        float worldY = quad.mY + chunkOffset.y;
+        float worldZ = quad.mX + chunkOffset.z;
 
-    //    quadPositions = { worldX              , worldY,                worldZ,
-    //                      worldX              , worldY + quad.mHeight, worldZ,
-    //                      worldX              , worldY + quad.mHeight, worldZ + quad.mWidth,
-    //                        
-    //                      worldX              , worldY,                worldZ,
-    //                      worldX              , worldY + quad.mHeight, worldZ + quad.mWidth,
-    //                      worldX              , worldY,                worldZ + quad.mWidth};
+		int resId = quad.mType;
+		if(quad.mType == 1)resId = 3;
+        textureLocation.x = (resId - 1) % 8;
+        textureLocation.y = (resId - 1) / 8;
 
-    //    quadNormals   = { -0.577f, -0.577f, -0.577f,
-    //                      -0.577f,  0.577f, -0.577f,
-    //                      -0.577f,  0.577f,  0.577f,
-    //    
-    //                      -0.577f, -0.577f, -0.577f,
-    //                      -0.577f,  0.577f,  0.577f,
-    //                      -0.577f, -0.577f,  0.577f};
+        quadPositions = { worldX              , worldY,                worldZ,
+                          worldX              , worldY + quad.mHeight, worldZ + quad.mWidth,
+                          worldX              , worldY + quad.mHeight, worldZ,
+                            
+                          worldX              , worldY,                worldZ,
+                          worldX              , worldY,                worldZ + quad.mWidth,
+                          worldX              , worldY + quad.mHeight, worldZ + quad.mWidth};
 
-    //    allQuadPositions.insert(allQuadPositions.end(), quadPositions.begin(), quadPositions.end());
-    //    allQuadNormals.insert(allQuadNormals.end(), quadNormals.begin(), quadNormals.end());
-    //    allQuadTexCoords.insert(allQuadTexCoords.end(), quadTexCoords.begin(), quadTexCoords.end());
-    //}
+        quadNormals   = { -0.577f, -0.577f, -0.577f,
+                          -0.577f,  0.577f,  0.577f,
+                          -0.577f,  0.577f, -0.577f,
+        
+                          -0.577f, -0.577f, -0.577f,
+                          -0.577f, -0.577f,  0.577f,
+                          -0.577f,  0.577f,  0.577f};
+
+        glm::vec2 texLoc = ((glm::vec2)textureLocation) / 8.0f;
+        float plus = 1.0f / 8.0f;
+
+        quadTexCoords = {  texLoc.x       ,  texLoc.y       ,
+                           texLoc.x + plus,  texLoc.y + plus,
+                           texLoc.x       ,  texLoc.y + plus,
+        
+                           texLoc.x       ,  texLoc.y       ,
+                           texLoc.x + plus,  texLoc.y       ,
+                           texLoc.x + plus,  texLoc.y + plus};
+
+        allQuadPositions.insert(allQuadPositions.end(), quadPositions.begin(), quadPositions.end());
+        allQuadNormals.insert(allQuadNormals.end(), quadNormals.begin(), quadNormals.end());
+        allQuadTexCoords.insert(allQuadTexCoords.end(), quadTexCoords.begin(), quadTexCoords.end());
+    }
+
+    for(auto& quad : rightQuads)
+    {
+        quadPositions.clear();
+        quadNormals.clear();
+        quadTexCoords.clear();
+
+        float worldX = quad.mDepth + chunkOffset.x;
+        float worldY = quad.mY + chunkOffset.y;
+        float worldZ = quad.mX + chunkOffset.z;
+
+		int resId = quad.mType;
+		if(quad.mType == 1)resId = 3;
+        textureLocation.x = (resId - 1) % 8;
+        textureLocation.y = (resId - 1) / 8;
+
+        quadPositions = { worldX              , worldY,                worldZ,
+                          worldX              , worldY + quad.mHeight, worldZ,
+                          worldX              , worldY + quad.mHeight, worldZ + quad.mWidth,
+                            
+                          worldX              , worldY,                worldZ,
+                          worldX              , worldY + quad.mHeight, worldZ + quad.mWidth,
+                          worldX              , worldY,                worldZ + quad.mWidth};
+
+        quadNormals   = { -0.577f, -0.577f, -0.577f,
+                          -0.577f,  0.577f, -0.577f,
+                          -0.577f,  0.577f,  0.577f,
+        
+                          -0.577f, -0.577f, -0.577f,
+                          -0.577f,  0.577f,  0.577f,
+                          -0.577f, -0.577f,  0.577f};
+
+        glm::vec2 texLoc = ((glm::vec2)textureLocation) / 8.0f;
+        float plus = 1.0f / 8.0f;
+
+        quadTexCoords = {  texLoc.x       ,  texLoc.y       ,
+                           texLoc.x       ,  texLoc.y + plus,
+                           texLoc.x + plus,  texLoc.y + plus,
+        
+                           texLoc.x       ,  texLoc.y       ,
+                           texLoc.x + plus,  texLoc.y + plus,
+                           texLoc.x + plus,  texLoc.y       };
+
+        allQuadPositions.insert(allQuadPositions.end(), quadPositions.begin(), quadPositions.end());
+        allQuadNormals.insert(allQuadNormals.end(), quadNormals.begin(), quadNormals.end());
+        allQuadTexCoords.insert(allQuadTexCoords.end(), quadTexCoords.begin(), quadTexCoords.end());
+    }
     
     //printf("Generated %u vertices and %u indices\n", verts, indices);
     //After stuff has been added, you have to update the gpu vbo data.
