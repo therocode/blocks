@@ -27,6 +27,10 @@ DebugRenderer::DebugRenderer() :
 	mLineVertexArray.bind();
 	mLineVertexArray.setVertexAttribute(ShaderAttribute::POSITION, 3, mLineVertexBuffer);
 	mLineVertexArray.setVertexAttribute(COLOR, 3, mLineColorBuffer);
+    mLineVertexArray.setVertexAttribute(MODELMATRIX1, 4, mModelMatrixBuffer1);
+    mLineVertexArray.setVertexAttribute(MODELMATRIX2, 4, mModelMatrixBuffer2);
+    mLineVertexArray.setVertexAttribute(MODELMATRIX3, 4, mModelMatrixBuffer3);
+    mLineVertexArray.setVertexAttribute(MODELMATRIX4, 4, mModelMatrixBuffer4);
 	mLineVertexArray.unbind();
 
     data1 = { 1.0f, 0.0f, 0.0f, 0.0f };
@@ -45,6 +49,7 @@ void DebugRenderer::queue(const Renderable& renderable)
 	{
 		const glm::vec3& lineStart = debugRenderable.getLineStartPoint();
 		const glm::vec3& lineEnd = debugRenderable.getLineEndPoint();
+
 		mLineCoords.push_back(lineStart.x);
 		mLineCoords.push_back(lineStart.y);
 		mLineCoords.push_back(lineStart.z);
@@ -130,15 +135,40 @@ void DebugRenderer::render(const Camera& camera, const glm::mat4& perspective, c
     mVertexArray.unbind();
 
 	if(!mLineCoords.empty())
-	{
-		mLineVertexArray.bind();
-		mLineVertexBuffer.setData(mLineCoords);
-		mLineColorBuffer.setData(mLineColorData);
-		glDrawArrays(GL_LINES, 0, mLineCoords.size() / 3);
-		mLineCoords.clear();
-		mLineColorData.clear();
-		mLineVertexArray.unbind();
-	}
+    {
+        std::vector<float> data1 = { 1.0f, 0.0f, 0.0f, 0.0f };
+        std::vector<float> data2 = { 0.0f, 1.0f, 0.0f, 0.0f };
+        std::vector<float> data3 = { 0.0f, 0.0f, 1.0f, 0.0f };
+        std::vector<float> data4 = { 0.0f, 0.0f, 0.0f, 1.0f };
+
+        for(int32_t i = 0; i < mLineCoords.size() / 3; i++)
+        {
+            mModelMatrixData1.insert(mModelMatrixData1.begin(), data1.begin(), data1.end());
+            mModelMatrixData2.insert(mModelMatrixData2.begin(), data2.begin(), data2.end());
+            mModelMatrixData3.insert(mModelMatrixData3.begin(), data3.begin(), data3.end());
+            mModelMatrixData4.insert(mModelMatrixData4.begin(), data4.begin(), data4.end());
+        }
+
+        mLineVertexArray.bind();
+
+        mModelMatrixBuffer1.setData(mModelMatrixData1);
+        mModelMatrixBuffer2.setData(mModelMatrixData2);
+        mModelMatrixBuffer3.setData(mModelMatrixData3);
+        mModelMatrixBuffer4.setData(mModelMatrixData4);
+
+        mLineVertexBuffer.setData(mLineCoords);
+        mLineColorBuffer.setData(mLineColorData);
+        glDrawArrays(GL_LINES, 0, mLineCoords.size() / 3);
+        mLineCoords.clear();
+        mLineColorData.clear();
+
+        mModelMatrixData1.clear();
+        mModelMatrixData2.clear();
+        mModelMatrixData3.clear();
+        mModelMatrixData4.clear();
+
+        mLineVertexArray.unbind();
+    }
 }
 
 std::type_index DebugRenderer::getRenderableType() const

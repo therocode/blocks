@@ -32,14 +32,18 @@ RenderingSystem::RenderingSystem(fea::MessageBus& bus, const glm::uvec2& viewSiz
                 newDeb.setColor(glm::vec3(0.02f, 0.02f, 0.02f) * glm::vec3(x, y, z));
 				newDeb.setPitch(0.0f);
 				newDeb.setYaw(0.0f);
-                mDebuggers.push_back(newDeb);
-
-				DebugRenderable newDeb2(DebugRenderable::LINE);
-				newDeb2.setLinePoints(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(float(x), (-42.0f)-float(y), float(z)));
-				newDeb2.setLineColors(glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-				mDebuggers.push_back(newDeb2);
+                //mDebuggers.push_back(newDeb);
             }
         }
+    }
+
+    for(uint32_t i = 0; i < 100; i++)
+    {
+        glm::vec3 pos(-24 + i, 41.0f, -30.0f);
+        DebugRenderable newDeb2(DebugRenderable::LINE);
+        newDeb2.setLinePoints(pos, pos + glm::vec3(0.0f,  3.0f, 0.0f));
+        newDeb2.setLineColors({(float)(rand() % 256) / 256.0f,(float)(rand() % 256) / 256.0f, (float)(rand() % 256) / 256.0f}, {(float)(rand() % 256) / 256.0f,(float)(rand() % 256) / 256.0f, (float)(rand() % 256) / 256.0f});
+        mDebuggers.push_back(newDeb2);
     }
 
     GLint maxSize;
@@ -244,9 +248,9 @@ void RenderingSystem::render()
 {
     for(auto& debbie : mDebuggers)
     {
-        debbie.setColor({(float)(rand() % 256) / 256.0f,(float)(rand() % 256) / 256.0f, (float)(rand() % 256) / 256.0f});
-        debbie.setPitch(debbie.getPitch()+0.2f);
-        debbie.setYaw(debbie.getYaw()+0.1f);
+        //debbie.setColor({(float)(rand() % 256) / 256.0f,(float)(rand() % 256) / 256.0f, (float)(rand() % 256) / 256.0f});
+        //debbie.setPitch(debbie.getPitch()+0.2f);
+        //debbie.setYaw(debbie.getYaw()+0.1f);
 		mRenderer.queue(debbie);
     }
 
