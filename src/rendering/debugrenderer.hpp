@@ -24,6 +24,10 @@ class DebugRenderer : public RenderModule
         Buffer mModelMatrixBuffer4;
         Buffer mColorBuffer;
 
+		VAO mLineVertexArray;
+		Buffer mLineVertexBuffer;
+        Buffer mLineColorBuffer;
+
         //frame data
         std::vector<float> mModelMatrixData1;
         std::vector<float> mModelMatrixData2;
@@ -33,6 +37,9 @@ class DebugRenderer : public RenderModule
         std::vector<float> mColorData;
 
         uint32_t mRenderAmount;
+
+		std::vector<float> mLineCoords;
+		std::vector<float> mLineColorData;
 
         std::vector<float> data1;
         std::vector<float> data2;

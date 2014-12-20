@@ -91,6 +91,7 @@ set(source_files
     src/rendering/vertexattribute.cpp
     src/rendering/voxelchunkrenderer.cpp
     src/rendering/voxelchunkrenderable.cpp
+    src/rendering/shapes.hpp
 
     src/resources/clientresourcesystem.cpp
     src/resources/iqmfromfileloader.cpp
