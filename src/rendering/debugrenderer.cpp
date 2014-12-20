@@ -1,4 +1,5 @@
 #include "debugrenderer.hpp"
+#include "shapes.hpp"
 #include "shaderattribute.hpp"
 #include "camera.hpp"
 #include <vector>
@@ -8,65 +9,8 @@
 DebugRenderer::DebugRenderer() :
     mRenderAmount(0)
 {
-    std::vector<float> vertices = {
-             -0.5f, -0.5f,  0.5f,
-              0.5f, -0.5f,  0.5f,
-             -0.5f,  0.5f,  0.5f,
-
-             -0.5f,  0.5f,  0.5f,
-              0.5f, -0.5f,  0.5f,
-              0.5f,  0.5f,  0.5f,
-
-
-             -0.5f, -0.5f, -0.5f,
-             -0.5f,  0.5f, -0.5f,
-              0.5f, -0.5f, -0.5f,
-
-             -0.5f,  0.5f, -0.5f,
-              0.5f,  0.5f, -0.5f,
-              0.5f, -0.5f, -0.5f,
-
-
-
-             -0.5f, -0.5f,  0.5f,
-             -0.5f,  0.5f,  0.5f,
-             -0.5f, -0.5f, -0.5f,
-
-             -0.5f, -0.5f, -0.5f,
-             -0.5f,  0.5f,  0.5f,
-             -0.5f,  0.5f, -0.5f,
-
-
-              0.5f, -0.5f,  0.5f,
-              0.5f, -0.5f, -0.5f,
-              0.5f,  0.5f,  0.5f,
-
-              0.5f, -0.5f, -0.5f,
-              0.5f,  0.5f, -0.5f,
-              0.5f,  0.5f,  0.5f,
-
-
-
-             -0.5f,  0.5f,  0.5f,
-              0.5f,  0.5f,  0.5f,
-             -0.5f,  0.5f, -0.5f,
-
-              0.5f,  0.5f,  0.5f,
-              0.5f,  0.5f, -0.5f,
-             -0.5f,  0.5f, -0.5f,
-
-
-             -0.5f, -0.5f,  0.5f,
-             -0.5f, -0.5f, -0.5f,
-              0.5f, -0.5f,  0.5f,
-
-              0.5f, -0.5f,  0.5f,
-             -0.5f, -0.5f, -0.5f,
-              0.5f, -0.5f, -0.5f,
-    };
-
     mVertexArray.bind();
-    mVertexBuffer.setData(vertices);
+    mVertexBuffer.setData(cubeVertices);
 
     mVertexArray.setVertexAttribute(ShaderAttribute::POSITION, 3, mVertexBuffer);
     mVertexArray.setVertexAttribute(ShaderAttribute::NORMAL, 3, mVertexBuffer);
@@ -78,6 +22,12 @@ DebugRenderer::DebugRenderer() :
     mVertexArray.setInstanceAttribute(MODELMATRIX4, 4, mModelMatrixBuffer4, 1);
 
     mVertexArray.setInstanceAttribute(COLOR, 3, mColorBuffer, 1);
+	mVertexArray.unbind();
+
+	mLineVertexArray.bind();
+	mLineVertexArray.setVertexAttribute(ShaderAttribute::POSITION, 3, mLineVertexBuffer);
+	mLineVertexArray.setVertexAttribute(COLOR, 3, mLineColorBuffer);
+	mLineVertexArray.unbind();
 
     data1 = { 1.0f, 0.0f, 0.0f, 0.0f };
     data2 = { 0.0f, 1.0f, 0.0f, 0.0f };
@@ -90,38 +40,63 @@ DebugRenderer::DebugRenderer() :
 void DebugRenderer::queue(const Renderable& renderable)
 {
     const DebugRenderable& debugRenderable = (const DebugRenderable&) renderable;
-    
-    const glm::vec3& position = debugRenderable.getPosition();
-    const glm::vec3& color = debugRenderable.getColor();
-	const float pitch = debugRenderable.getPitch();
-	const float yaw = debugRenderable.getYaw();
 
-    data4[0] = position.x;
-    data4[1] = position.y;
-    data4[2] = position.z;
+	if(debugRenderable.getShape() == DebugRenderable::LINE)
+	{
+		const glm::vec3& lineStart = debugRenderable.getLineStartPoint();
+		const glm::vec3& lineEnd = debugRenderable.getLineEndPoint();
+		mLineCoords.push_back(lineStart.x);
+		mLineCoords.push_back(lineStart.y);
+		mLineCoords.push_back(lineStart.z);
+		mLineCoords.push_back(lineEnd.x);
+		mLineCoords.push_back(lineEnd.y);
+		mLineCoords.push_back(lineEnd.z);
 
-	data1[0] = std::cos(yaw);
-	// data1[1] = 0;
-	data1[2] = -std::sin(yaw);
+		const glm::vec3& startColor = debugRenderable.getLineStartColor();
+		const glm::vec3& endColor = debugRenderable.getLineEndColor();
+		mLineColorData.push_back(startColor.x);
+		mLineColorData.push_back(startColor.y);
+		mLineColorData.push_back(startColor.z);
+		mLineColorData.push_back(endColor.x);
+		mLineColorData.push_back(endColor.y);
+		mLineColorData.push_back(endColor.z);
+	}
+	else
+	{
+		const glm::vec3& position = debugRenderable.getPosition();
+		const glm::vec3& color = debugRenderable.getColor();
+		const float pitch = debugRenderable.getPitch();
+		const float yaw = debugRenderable.getYaw();
 
-	data2[0] = std::sin(pitch) * std::sin(yaw);
-	data2[1] = std::cos(pitch);
-	data2[2] = std::sin(pitch) * std::cos(yaw);
+		data4[0] = position.x;
+		data4[1] = position.y;
+		data4[2] = position.z;
 
-	data3[0] = std::cos(pitch) * std::sin(yaw);
-	data3[1] = -std::sin(pitch);
-	data3[2] = std::cos(pitch) * std::cos(yaw);
-    
-    mModelMatrixData1.insert(mModelMatrixData1.end(), data1.begin(), data1.end());
-    mModelMatrixData2.insert(mModelMatrixData2.end(), data2.begin(), data2.end());
-    mModelMatrixData3.insert(mModelMatrixData3.end(), data3.begin(), data3.end());
-    mModelMatrixData4.insert(mModelMatrixData4.end(), data4.begin(), data4.end());
+		const float sinPitch = std::sin(pitch);
+		const float cosPitch = std::cos(pitch);
+		const float sinYaw = std::sin(yaw);
+		const float cosYaw = std::cos(yaw);
+		data1[0] = cosYaw;
+		// data1[1] = 0;
+		data1[2] = -sinYaw;
+		data2[0] = sinPitch * sinYaw;
+		data2[1] = cosPitch;
+		data2[2] = sinPitch * cosYaw;
+		data3[0] = cosPitch * sinYaw;
+		data3[1] = -sinPitch;
+		data3[2] = cosPitch * cosYaw;
+		
+		mModelMatrixData1.insert(mModelMatrixData1.end(), data1.begin(), data1.end());
+		mModelMatrixData2.insert(mModelMatrixData2.end(), data2.begin(), data2.end());
+		mModelMatrixData3.insert(mModelMatrixData3.end(), data3.begin(), data3.end());
+		mModelMatrixData4.insert(mModelMatrixData4.end(), data4.begin(), data4.end());
 
-    mColorData.push_back(color.x);
-    mColorData.push_back(color.y);
-    mColorData.push_back(color.z);
+		mColorData.push_back(color.x);
+		mColorData.push_back(color.y);
+		mColorData.push_back(color.z);
 
-    mRenderAmount++;
+		mRenderAmount++;
+	}
 }
 
 void DebugRenderer::render(const Camera& camera, const glm::mat4& perspective, const Shader& shader)
@@ -153,6 +128,17 @@ void DebugRenderer::render(const Camera& camera, const glm::mat4& perspective, c
     mRenderAmount = 0;
 
     mVertexArray.unbind();
+
+	if(!mLineCoords.empty())
+	{
+		mLineVertexArray.bind();
+		mLineVertexBuffer.setData(mLineCoords);
+		mLineColorBuffer.setData(mLineColorData);
+		glDrawArrays(GL_LINES, 0, mLineCoords.size() / 3);
+		mLineCoords.clear();
+		mLineColorData.clear();
+		mLineVertexArray.unbind();
+	}
 }
 
 std::type_index DebugRenderer::getRenderableType() const

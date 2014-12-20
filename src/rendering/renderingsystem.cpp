@@ -24,12 +24,17 @@ RenderingSystem::RenderingSystem(fea::MessageBus& bus, const glm::uvec2& viewSiz
         {
             for(uint32_t z = 0; z < 25; z++)
             {
-                DebugRenderable newDeb;
+                DebugRenderable newDeb(DebugRenderable::CUBE);
                 newDeb.setPosition(glm::vec3(x * 5 + (float)(rand() % 20 - 10) / 5.0f, y * 5 + (float)(rand() % 20 - 10) / 5.0f, z * 5 + (float)(rand() % 20 - 10) / 5.0f) + glm::vec3(0.3f, -43.0f, 0.0f));
                 newDeb.setColor(glm::vec3(0.02f, 0.02f, 0.02f) * glm::vec3(x, y, z));
 				newDeb.setPitch(0.0f);
 				newDeb.setYaw(0.0f);
                 mDebuggers.push_back(newDeb);
+
+				DebugRenderable newDeb2(DebugRenderable::LINE);
+				newDeb2.setLinePoints(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(float(x), (-42.0f)-float(y), float(z)));
+				newDeb2.setLineColors(glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+				mDebuggers.push_back(newDeb2);
             }
         }
     }
