@@ -1,24 +1,11 @@
 #include "folderexploder.hpp"
 #include "tinydir.hpp"
-#include <regex>
+#include <iostream>
 
 void FolderExploder::explodeFolder(const std::string& directory, const std::vector<std::string>& types, std::vector<std::string>& result)
 {
     std::string regex;
 
-    //".*\\.iqm|\
-    //.*\\.vert|\
-    //.*\\.frag|\
-    //.*\\.shad|\
-    //.*\\.png"
-    
-    for(int32_t i = 0; i < types.size(); i++)
-    {
-        regex += ".*\\." + types[i] + (i != types.size() ? "|" : "");
-    }
-
-    std::regex rx(regex);
-    
     tinydir_dir dir;
 
     tinydir_open(&dir, directory.c_str());
@@ -39,9 +26,21 @@ void FolderExploder::explodeFolder(const std::string& directory, const std::vect
         }
         else
         {
-            if(regex_match(fileName, rx))
+            bool found = false;
+
+            for(const auto& type : types)
+            {
+                if(fileName.find(type) != std::string::npos)
+                {
+                    found = true;
+                    break;
+                }
+            }
+
+            if(found)
             {
                 result.push_back(directory + "/" + fileName);
+                std::cout << "found and saved " << fileName << "\n";
             }
         }
 
