@@ -7,6 +7,9 @@
 #include "../resources/shaderdefinition.hpp"
 #include "../resources/texture.hpp"
 #include "shaderattribute.hpp"
+#include "opengl.hpp"
+#include "../lognames.hpp"
+#include "../application/applicationmessages.hpp"
 
 RenderingSystem::RenderingSystem(fea::MessageBus& bus, const glm::uvec2& viewSize) :
     mBus(bus),
@@ -33,6 +36,12 @@ RenderingSystem::RenderingSystem(fea::MessageBus& bus, const glm::uvec2& viewSiz
             }
         }
     }
+
+    GLint maxSize;
+    glGetIntegerv(GL_MAX_ARRAY_TEXTURE_LAYERS, &maxSize);
+
+    if(maxSize < 2048)
+        mBus.send(LogMessage{"Only supporting " + std::to_string(maxSize) + " texture layers.", renderingName, LogLevel::WARN});
 }
 
 void RenderingSystem::handleMessage(const AddGfxEntityMessage& received)
@@ -92,7 +101,6 @@ void RenderingSystem::handleMessage(const RemoveGfxEntityMessage& received)
 void RenderingSystem::handleMessage(const ClientAttachedToEntityMessage& received)
 {
     mCameraEntity = received.entityId;
-    std::cout << "renderer thinks player is attached to " << mCameraEntity << "\n";
 }
 
 void RenderingSystem::handleMessage(const WindowResizeMessage& received)
