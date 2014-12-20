@@ -27,15 +27,15 @@ void parameterFunction(asIScriptContext* context, std::size_t index, uint64_t va
 
 void parameterFunction(asIScriptContext* context, std::size_t index, glm::i64vec3& value) 
 {
-	int32_t r = context->SetArgObject(index, &value); assert( r >= 0 );
+    int32_t r = context->SetArgObject(index, &value); assert( r >= 0 );
 }
 
 void parameterFunction(asIScriptContext* context, std::size_t index, ScriptChunk& value)
 {
-	int32_t r = context->SetArgObject(index, &value); assert( r >= 0 );
+    int32_t r = context->SetArgObject(index, &value); assert( r >= 0 );
 }
 
 void parameterFunction(asIScriptContext* context, std::size_t index, ScriptEntity& value)
 {
-	int32_t r = context->SetArgObject(index, value.getScriptObject()); assert( r >= 0 );
+    int32_t r = context->SetArgObject(index, value.getScriptObject()); assert( r >= 0 );
 }

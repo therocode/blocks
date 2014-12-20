@@ -6,21 +6,21 @@
 #include "../scriptchunk.hpp"
 
 class ChunkEventCaller :
-	public ScriptCaller,
-	public fea::MessageReceiver<ChunkInitiallyGeneratedMessage, 
-								ChunkCandidateMessage, 
-								ChunkFinishedMessage>
+    public ScriptCaller,
+    public fea::MessageReceiver<ChunkInitiallyGeneratedMessage, 
+                                ChunkCandidateMessage, 
+                                ChunkFinishedMessage>
 {
-	public:
-		ChunkEventCaller(fea::MessageBus& bus, 
-						 ScriptEngine& engine, 
-						 ScriptEntityMap& scriptEntities);
+    public:
+        ChunkEventCaller(fea::MessageBus& bus, 
+                         ScriptEngine& engine, 
+                         ScriptEntityMap& scriptEntities);
 
-		void handleMessage(const ChunkInitiallyGeneratedMessage& received);
-		void handleMessage(const ChunkCandidateMessage& received);
-		void handleMessage(const ChunkFinishedMessage& received);
-	
-	private:
-		asIObjectType* mVoxelDataArrayType;
+        void handleMessage(const ChunkInitiallyGeneratedMessage& received);
+        void handleMessage(const ChunkCandidateMessage& received);
+        void handleMessage(const ChunkFinishedMessage& received);
+    
+    private:
+        asIObjectType* mVoxelDataArrayType;
 };
 
