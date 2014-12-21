@@ -10,10 +10,12 @@
 #include "shaderdefinition.hpp"
 #include "shaderdefinitionfromfileloader.hpp"
 #include "imagefromfileloader.hpp"
+#include "../utilities/glmhash.hpp"
 
 ClientResourceSystem::ClientResourceSystem(fea::MessageBus& bus, const std::string assetsPath) :
     mBus(bus),
-    mAssetsPath(assetsPath)
+    mAssetsPath(assetsPath),
+    mNextTextureId(0)
 {
     mBus.send(LogMessage{"Loading extensions...", resourceName, LogLevel::INFO});
 
@@ -114,6 +116,8 @@ void ClientResourceSystem::loadShaderDefinitions(const std::vector<ResourceEntry
 
 void ClientResourceSystem::loadImages(const std::vector<ResourceEntry>& images)
 {
+    std::unordered_map<glm::uvec2, std::vector<std::pair<std::string, std::shared_ptr<Image>>>> loadedImages;
+
     mBus.send(LogMessage{"Loading images. " + std::to_string(images.size()) + " images to load.", resourceName, LogLevel::INFO});
     for(const auto& imageFile : images)
     {
@@ -122,8 +126,33 @@ void ClientResourceSystem::loadImages(const std::vector<ResourceEntry>& images)
 
         if(image)
         {
-            uint32_t id = mTextureIDs.getId(imageFile.name);
-            mBus.send(ResourceDeliverMessage<Image>{id, image});
+            loadedImages[image->getSize()].push_back({imageFile.name, image});
         }
+    }
+
+    for(const auto& imagesToMakeTextureFrom : loadedImages)
+    {
+        const glm::uvec2& size = imagesToMakeTextureFrom.first;
+        uint32_t amount = imagesToMakeTextureFrom.second.size();
+        std::vector<uint8_t> pixels;
+        uint32_t newId = mNextTextureId++;
+        uint32_t index = 0;
+
+        for(const auto& imageEntry : imagesToMakeTextureFrom.second)
+        {
+            const auto name = imageEntry.first;
+            const auto image = imageEntry.second;
+            pixels.insert(pixels.end(), image->getPixelsPointer(), image->getPixelsPointer() + image->getSize().x * image->getSize().y);
+
+            TextureDefinition textureDefinition{newId, index};
+            index++;
+
+            mTextureDefinitions.emplace(mTextureIDs.getId(name), textureDefinition);
+        }
+
+        std::shared_ptr<TextureArray> textureArray = std::make_shared<TextureArray>();
+        textureArray->create(size, amount, pixels.data());
+
+        mBus.send(ResourceDeliverMessage<TextureArray>{newId, textureArray});
     }
 }

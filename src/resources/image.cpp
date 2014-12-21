@@ -14,3 +14,8 @@ const uint8_t* Image::getPixelsPointer() const
 {
     return mPixels.data();
 }
+
+const glm::uvec2& Image::getSize() const
+{
+    return mSize;
+}

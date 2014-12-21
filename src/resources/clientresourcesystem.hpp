@@ -4,6 +4,13 @@
 #include "resourcecache.hpp"
 #include "resourceentry.hpp"
 #include "../utilities/idprovider.hpp"
+#include "../rendering/texturearray.hpp"
+
+struct TextureDefinition
+{
+    uint32_t textureArrayId;
+    uint32_t index;
+};
 
 class ClientResourceSystem
 {
@@ -26,4 +33,7 @@ class ClientResourceSystem
         IdProvider<std::string> mFragmentShaderIDs;
         IdProvider<std::string> mShaderDefinitionIDs;
         IdProvider<std::string> mTextureIDs;
+        uint32_t mNextTextureId;
+        std::unordered_map<uint32_t, std::shared_ptr<TextureArray>> mTextureArrays;
+        std::unordered_map<uint32_t, TextureDefinition> mTextureDefinitions;
 };

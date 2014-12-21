@@ -86,6 +86,7 @@ set(source_files
     src/rendering/rendermode.cpp
     src/rendering/shader.cpp
     src/rendering/surfacemerger.cpp
+    src/rendering/texturearray.cpp
     src/rendering/uniform.cpp
     src/rendering/vao.cpp
     src/rendering/vertexattribute.cpp
@@ -222,6 +223,7 @@ set(header_files
     src/rendering/shader.hpp
     src/rendering/shaderattribute.hpp
     src/rendering/surfacemerger.hpp
+    src/rendering/texturearray.hpp
     src/rendering/uniform.hpp
     src/rendering/vao.hpp
     src/rendering/vertexattribute.hpp
@@ -243,7 +245,7 @@ set(header_files
     src/resources/shadersourcefromfileloader.hpp
     src/resources/texture.hpp
     src/resources/imagefromfileloader.hpp
-    
+
     src/utilities/coordinateconverter.hpp
     src/utilities/directorycreator.hpp
     src/utilities/folderexploder.hpp
