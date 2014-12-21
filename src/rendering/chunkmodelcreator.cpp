@@ -146,13 +146,13 @@ Model ChunkModelCreator::generateChunkModel(const ChunkCoord& mainChunkCoord, Ch
                           worldX + quad.mWidth, worldY, worldZ + quad.mHeight,
                           worldX + quad.mWidth, worldY, worldZ };
 
-        quadNormals   = { -0.577f,  0.577f, -0.577f,
-                          -0.577f,  0.577f,  0.577f,
-                           0.577f,  0.577f,  0.577f,
+        quadNormals   = { 0.0f,  1.0f, 0.0f,
+                          0.0f,  1.0f, 0.0f,
+                          0.0f,  1.0f, 0.0f,
         
-                          -0.577f,  0.577f, -0.577f,
-                           0.577f,  0.577f,  0.577f,
-                           0.577f,  0.577f, -0.577f};
+                          0.0f,  1.0f, 0.0f,
+                          0.0f,  1.0f, 0.0f,
+                          0.0f,  1.0f, 0.0f};
 
         glm::vec2 texLoc;
         glm::vec2 plus(1.0f * quad.mWidth, 1.0f * quad.mHeight);
@@ -192,13 +192,13 @@ Model ChunkModelCreator::generateChunkModel(const ChunkCoord& mainChunkCoord, Ch
                           worldX + quad.mWidth, worldY, worldZ,
                           worldX + quad.mWidth, worldY, worldZ + quad.mHeight};
 
-        quadNormals   = { -0.577f,  0.577f, -0.577f,
-                           0.577f,  0.577f,  0.577f,
-                          -0.577f,  0.577f,  0.577f,
+        quadNormals   = { 0.0f, -1.0f, 0.0f,
+                          0.0f, -1.0f, 0.0f,
+                          0.0f, -1.0f, 0.0f,
         
-                          -0.577f,  0.577f, -0.577f,
-                           0.577f,  0.577f, -0.577f,
-                           0.577f,  0.577f,  0.577f};
+                          0.0f, -1.0f, 0.0f,
+                          0.0f, -1.0f, 0.0f,
+                          0.0f, -1.0f, 0.0f};
 
         glm::vec2 texLoc;
         glm::vec2 plus(1.0f * quad.mWidth, 1.0f * quad.mHeight);
@@ -240,13 +240,13 @@ Model ChunkModelCreator::generateChunkModel(const ChunkCoord& mainChunkCoord, Ch
                           worldX + quad.mWidth, worldY,                worldZ,
                           worldX + quad.mWidth, worldY + quad.mHeight, worldZ};
 
-        quadNormals   = { -0.577f, -0.577f,  0.577f,
-                           0.577f,  0.577f,  0.577f,
-                          -0.577f,  0.577f,  0.577f,
+        quadNormals   = { 0.0f, 0.0f,  1.0f,
+                          0.0f, 0.0f,  1.0f,
+                          0.0f, 0.0f,  1.0f,
         
-                          -0.577f, -0.577f,  0.577f,
-                           0.577f, -0.577f,  0.577f,
-                           0.577f,  0.577f,  0.577f};
+                          0.0f, 0.0f,  1.0f,
+                          0.0f, 0.0f,  1.0f,
+                          0.0f, 0.0f,  1.0f};
 
         glm::vec2 texLoc;
         glm::vec2 plus(1.0f * quad.mWidth, 1.0f * quad.mHeight);
@@ -287,13 +287,13 @@ Model ChunkModelCreator::generateChunkModel(const ChunkCoord& mainChunkCoord, Ch
                           worldX + quad.mWidth, worldY + quad.mHeight, worldZ,
                           worldX + quad.mWidth, worldY,                worldZ};
 
-        quadNormals   = { -0.577f, -0.577f,  0.577f,
-                          -0.577f,  0.577f,  0.577f,
-                           0.577f,  0.577f,  0.577f,
+        quadNormals   = { 0.0f, 0.0f,  -1.0f,
+                          0.0f, 0.0f,  -1.0f,
+                          0.0f, 0.0f,  -1.0f,
         
-                          -0.577f, -0.577f,  0.577f,
-                           0.577f,  0.577f,  0.577f,
-                           0.577f, -0.577f,  0.577f};
+                          0.0f, 0.0f,  -1.0f,
+                          0.0f, 0.0f,  -1.0f,
+                          0.0f, 0.0f,  -1.0f};
 
         glm::vec2 texLoc;
         glm::vec2 plus(1.0f * quad.mWidth, 1.0f * quad.mHeight);
@@ -334,13 +334,13 @@ Model ChunkModelCreator::generateChunkModel(const ChunkCoord& mainChunkCoord, Ch
                           worldX              , worldY,                worldZ + quad.mWidth,
                           worldX              , worldY + quad.mHeight, worldZ + quad.mWidth};
 
-        quadNormals   = { -0.577f, -0.577f, -0.577f,
-                          -0.577f,  0.577f,  0.577f,
-                          -0.577f,  0.577f, -0.577f,
+        quadNormals   = { -1.0f, 0.0f, 0.0f,
+                          -1.0f, 0.0f, 0.0f,
+                          -1.0f, 0.0f, 0.0f,
         
-                          -0.577f, -0.577f, -0.577f,
-                          -0.577f, -0.577f,  0.577f,
-                          -0.577f,  0.577f,  0.577f};
+                          -1.0f, 0.0f, 0.0f,
+                          -1.0f, 0.0f, 0.0f,
+                          -1.0f, 0.0f, 0.0f};
 
         glm::vec2 texLoc;
         glm::vec2 plus(1.0f * quad.mWidth, 1.0f * quad.mHeight);
@@ -381,13 +381,13 @@ Model ChunkModelCreator::generateChunkModel(const ChunkCoord& mainChunkCoord, Ch
                           worldX              , worldY + quad.mHeight, worldZ + quad.mWidth,
                           worldX              , worldY,                worldZ + quad.mWidth};
 
-        quadNormals   = { -0.577f, -0.577f, -0.577f,
-                          -0.577f,  0.577f, -0.577f,
-                          -0.577f,  0.577f,  0.577f,
+        quadNormals   = { 1.0f, 0.0f, 0.0f,
+                          1.0f, 0.0f, 0.0f,
+                          1.0f, 0.0f, 0.0f,
         
-                          -0.577f, -0.577f, -0.577f,
-                          -0.577f,  0.577f,  0.577f,
-                          -0.577f, -0.577f,  0.577f};
+                          1.0f, 0.0f, 0.0f,
+                          1.0f, 0.0f, 0.0f,
+                          1.0f, 0.0f, 0.0f};
 
         glm::vec2 texLoc;
         glm::vec2 plus(1.0f * quad.mWidth, 1.0f * quad.mHeight);
