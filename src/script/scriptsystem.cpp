@@ -7,6 +7,7 @@
 
 #include "interfaces/chunkinterface.hpp"
 #include "interfaces/entityinterface.hpp"
+#include "interfaces/extensioninterface.hpp"
 #include "interfaces/worldinterface.hpp"
 #include "interfaces/mathsinterface.hpp"
 #include "interfaces/physicsinterface.hpp"
@@ -134,6 +135,7 @@ void ScriptSystem::setupInterfaces()
     mInterfaces.push_back(std::unique_ptr<ScriptInterface>(new PrintInterface(mBus, mGameInterface)));
     mInterfaces.push_back(std::unique_ptr<ScriptInterface>(new RandomInterface(mBus, mGameInterface)));
 	mInterfaces.push_back(std::unique_ptr<ScriptInterface>(new ChunkInterface(mBus, mGameInterface)));
+    mInterfaces.push_back(std::unique_ptr<ScriptInterface>(new ExtensionInterface(mBus, mGameInterface)));
 
     registerInterfaces();
 }

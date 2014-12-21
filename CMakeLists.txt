@@ -130,6 +130,7 @@ set(source_files
     src/script/callers/worldcaller.cpp
     src/script/interfaces/chunkinterface.cpp
     src/script/interfaces/entityinterface.cpp
+    src/script/interfaces/extensioninterface.cpp
     src/script/interfaces/worldinterface.cpp
     src/script/interfaces/mathsinterface.cpp
     src/script/interfaces/physicsinterface.cpp
@@ -294,6 +295,7 @@ set(header_files
     src/script/callers/worldcaller.hpp
     src/script/interfaces/chunkinterface.hpp
     src/script/interfaces/entityinterface.hpp
+    src/script/interfaces/extensioninterface.hpp
     src/script/interfaces/worldinterface.hpp
     src/script/interfaces/mathsinterface.hpp
     src/script/interfaces/physicsinterface.hpp
