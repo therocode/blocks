@@ -1,7 +1,7 @@
 #include "chunkeventcaller.hpp"
 
-ChunkEventCaller::ChunkEventCaller(fea::MessageBus& bus, ScriptEngine& engine, ScriptEntityMap& scriptEntities) :
-    ScriptCaller(bus, engine, scriptEntities), 
+ChunkEventCaller::ChunkEventCaller(fea::MessageBus& bus, ScriptEngine& engine, ScriptEntityMap& scriptEntities, std::vector<asIScriptObject*>& extensions) :
+    ScriptCaller(bus, engine, scriptEntities, extensions), 
     mVoxelDataArrayType(engine.getEngine()->GetObjectTypeByDecl("array<uint16>"))
 {
     subscribe(mBus, *this);

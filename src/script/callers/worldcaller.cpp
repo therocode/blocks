@@ -1,7 +1,7 @@
 #include "worldcaller.hpp"
 
-WorldCaller::WorldCaller(fea::MessageBus& bus, ScriptEngine& engine, ScriptEntityMap& scriptEntities) :
-	ScriptCaller(bus, engine, scriptEntities)
+WorldCaller::WorldCaller(fea::MessageBus& bus, ScriptEngine& engine, ScriptEntityMap& scriptEntities, std::vector<asIScriptObject*>& extensions) :
+	ScriptCaller(bus, engine, scriptEntities, extensions)
 {
 	subscribe(mBus, *this);
 }

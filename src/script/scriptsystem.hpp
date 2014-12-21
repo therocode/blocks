@@ -25,12 +25,14 @@ class ScriptSystem :
         void registerInterfaces();
         void setupCallbacks();
         void loadSources();
+        void instantiateExtensions();
         fea::MessageBus& mBus;
         GameInterface& mGameInterface;
         ScriptEngine mEngine;
         ScriptModule mScripts;
         std::vector<std::string> mSourceFiles;
         ScriptEntityMap mScriptEntities;
+        std::vector<asIScriptObject*> mExtensions;
 
         std::vector<std::unique_ptr<ScriptInterface>> mInterfaces;
         std::vector<std::unique_ptr<ScriptCaller>> mCallers;

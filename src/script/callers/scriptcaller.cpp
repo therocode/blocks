@@ -1,6 +1,6 @@
 #include "scriptcaller.hpp"
 
-ScriptCaller::ScriptCaller(fea::MessageBus& bus, ScriptEngine& engine, ScriptEntityMap& scriptEntities) : mBus(bus), mEngine(engine), mActive(false), mScriptEntities(scriptEntities)
+ScriptCaller::ScriptCaller(fea::MessageBus& bus, ScriptEngine& engine, ScriptEntityMap& scriptEntities, std::vector<asIScriptObject*>& extensions) : mBus(bus), mEngine(engine), mActive(false), mScriptEntities(scriptEntities), mExtensions(extensions)
 {
 }
 

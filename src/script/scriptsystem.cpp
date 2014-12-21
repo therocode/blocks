@@ -35,11 +35,19 @@ ScriptSystem::ScriptSystem(fea::MessageBus& bus, GameInterface& worldInterface) 
     setupCallbacks();
     mBus.send(LogMessage{"Loading script sources", gScriptName, LogLevel::VERB});
     loadSources();
+    mBus.send(LogMessage{"Instantiating extension classes", gScriptName, LogLevel::VERB});
+    instantiateExtensions();
 }
 
 ScriptSystem::~ScriptSystem()
 {
     mBus.send(LogMessage{"Shutting down script system", gScriptName, LogLevel::INFO});
+
+    for(asIScriptObject* extension : mExtensions)
+    {
+        extension->Release();
+    }
+
     mScriptEntities.clear();
     mEngine.destroyModule(mScripts);
 }
@@ -150,11 +158,11 @@ void ScriptSystem::registerInterfaces()
 
 void ScriptSystem::setupCallbacks()
 {
-    mCallers.push_back(std::unique_ptr<ScriptCaller>(new FrameTimeCaller(mBus, mEngine, mScriptEntities)));
-    mCallers.push_back(std::unique_ptr<ScriptCaller>(new GameEventCaller(mBus, mEngine, mScriptEntities)));
-    mCallers.push_back(std::unique_ptr<ScriptCaller>(new OnGroundCaller(mBus, mEngine, mScriptEntities)));
-	mCallers.push_back(std::unique_ptr<ScriptCaller>(new ChunkEventCaller(mBus, mEngine, mScriptEntities)));
-	mCallers.push_back(std::unique_ptr<ScriptCaller>(new WorldCaller(mBus, mEngine, mScriptEntities)));
+    mCallers.push_back(std::unique_ptr<ScriptCaller>(new FrameTimeCaller(mBus, mEngine, mScriptEntities, mExtensions)));
+    mCallers.push_back(std::unique_ptr<ScriptCaller>(new GameEventCaller(mBus, mEngine, mScriptEntities, mExtensions)));
+    mCallers.push_back(std::unique_ptr<ScriptCaller>(new OnGroundCaller(mBus, mEngine, mScriptEntities, mExtensions)));
+	mCallers.push_back(std::unique_ptr<ScriptCaller>(new ChunkEventCaller(mBus, mEngine, mScriptEntities, mExtensions)));
+	mCallers.push_back(std::unique_ptr<ScriptCaller>(new WorldCaller(mBus, mEngine, mScriptEntities, mExtensions)));
 }
 
 void ScriptSystem::loadSources()
@@ -181,6 +189,24 @@ void ScriptSystem::loadSources()
         for(auto& caller : mCallers)
         {
             caller->setActive(true);
+        }
+    }
+}
+
+void ScriptSystem::instantiateExtensions() 
+{
+    asIObjectType* extensionInterface = mEngine.getEngine()->GetObjectTypeByName("IExtension");
+
+    for(asIObjectType* type : mScripts.getObjectTypes())
+    {
+        mBus.send(LogMessage{"Checking type " + std::string(type->GetName()) + "...", gScriptName, LogLevel::VERB});
+
+        if(type->Implements(extensionInterface))
+        {
+            mBus.send(LogMessage{std::string(type->GetName()) + " is an extension class, instantiating...", gScriptName, LogLevel::VERB});
+
+            asIScriptObject *extension = (asIScriptObject*)mEngine.getEngine()->CreateScriptObject(type);
+            mExtensions.push_back(extension);
         }
     }
 }

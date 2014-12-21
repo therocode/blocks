@@ -14,7 +14,8 @@ class ChunkEventCaller :
     public:
         ChunkEventCaller(fea::MessageBus& bus, 
                          ScriptEngine& engine, 
-                         ScriptEntityMap& scriptEntities);
+                         ScriptEntityMap& scriptEntities,
+                         std::vector<asIScriptObject*>& extensions);
 
         void handleMessage(const ChunkInitiallyGeneratedMessage& received);
         void handleMessage(const ChunkCandidateMessage& received);
