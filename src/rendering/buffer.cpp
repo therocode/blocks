@@ -56,7 +56,7 @@ void Buffer::setData(const std::vector<uint32_t>& data)
 {
     mElementAmount = data.size();
     bind();
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, data.size() * sizeof(uint32_t), data.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, data.size() * sizeof(uint32_t), data.data(), GL_STATIC_DRAW); //ELEMENT!!! NOOO, it should lasdk
 }
 
 int32_t Buffer::getElementAmount() const

@@ -13,9 +13,9 @@ class VAO
         bool isBound() const;
         void bind();
         void unbind();
-        void setVertexAttribute(GLuint index, const uint32_t floatAmount, const float* data);
-        void setVertexAttribute(GLuint index, const uint32_t floatAmount, const Buffer& dataBuffer);
-        void setInstanceAttribute(GLuint index, const uint32_t floatAmount, const Buffer& dataBuffer, uint32_t divisor);
+        void setVertexAttribute(GLuint index, const uint32_t floatAmount, const float* data, GLint type = GL_FLOAT);
+        void setVertexAttribute(GLuint index, const uint32_t floatAmount, const Buffer& dataBuffer, GLint type = GL_FLOAT);
+        void setInstanceAttribute(GLuint index, const uint32_t floatAmount, const Buffer& dataBuffer, uint32_t divisor, GLint type = GL_FLOAT);
     private:
         std::vector<GLint> mEnabledVertexAttributes;
         GLuint mVAOId;

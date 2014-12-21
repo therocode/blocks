@@ -22,6 +22,7 @@ struct ModelObject
     VAO vertexArray;
     std::vector<const Mesh*> meshes;
     Buffer colors;
+    Buffer textureIndices;
     Buffer modelMatrix1;
     Buffer modelMatrix2;
     Buffer modelMatrix3;
