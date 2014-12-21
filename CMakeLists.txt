@@ -94,10 +94,10 @@ set(source_files
     src/rendering/voxelchunkrenderable.cpp
     src/rendering/shapes.hpp
 
-    src/resources/clientresourcesystem.cpp
     src/resources/image.cpp
     src/resources/iqmfromfileloader.cpp
     src/resources/resourcepathtoname.cpp
+    src/resources/resourcesystem.cpp
     src/resources/shaderdefinitionfromfileloader.cpp
     src/resources/shadersourcefromfileloader.cpp
     src/resources/texture.cpp
@@ -230,7 +230,6 @@ set(header_files
     src/rendering/voxelchunkrenderer.hpp
     src/rendering/voxelchunkrenderable.hpp
 
-    src/resources/clientresourcesystem.hpp
     src/resources/image.hpp
     src/resources/iqm.h
     src/resources/iqmfromfileloader.hpp
@@ -239,6 +238,7 @@ set(header_files
 	src/resources/resourceentry.hpp
 	src/resources/resourcemessages.hpp
 	src/resources/resourcepathtoname.hpp
+    src/resources/resourcesystem.hpp
     src/resources/shaderdefinition.hpp
     src/resources/shaderdefinitionfromfileloader.hpp
     src/resources/shadersource.hpp

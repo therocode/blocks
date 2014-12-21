@@ -12,10 +12,10 @@ struct TextureDefinition
     uint32_t index;
 };
 
-class ClientResourceSystem
+class ResourceSystem
 {
     public:
-        ClientResourceSystem(fea::MessageBus& bus, const std::string assetsPath);
+        ResourceSystem(fea::MessageBus& bus, const std::string assetsPath, const std::vector<std::string> fileTypes);
     private:
         void loadModels(const std::vector<ResourceEntry>& models);
         void loadVertexShaders(const std::vector<ResourceEntry>& vertexShaders);
