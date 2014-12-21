@@ -30,6 +30,13 @@ Server::Server(fea::MessageBus& bus, const NetworkParameters& parameters) :
 	mEntitySystem.addController(std::unique_ptr<EntityController>(new PlayerController(mBus, mGameInterface)));
 
     mFPSController.setMaxFPS(60);
+
+    mResourceSystem = std::unique_ptr<ResourceSystem>(new ResourceSystem(bus, "assets", {"lax",
+                                                                                         "vax",
+                                                                                         "max",
+                                                                                         "tax",
+                                                                                         "hax"})); //replace these with real resource file type endings
+
     mBus.send(GameStartMessage{});
 }
 

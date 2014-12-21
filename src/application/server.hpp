@@ -8,6 +8,7 @@
 #include "../entity/entitysystem.hpp"
 #include "../gameinterface.hpp"
 #include "../networking/servernetworkingsystem.hpp"
+#include "../resources/resourcesystem.hpp"
 
 class NetworkParameters;
 
@@ -30,6 +31,7 @@ class Server
         FPSController mFPSController;
         SignalCatcher mSignalCatcher;
 
+        std::unique_ptr<ResourceSystem> mResourceSystem;
         uint32_t mFrameNumber;
         bool mQuit;
 };
