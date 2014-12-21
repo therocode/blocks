@@ -145,9 +145,10 @@ void ClientResourceSystem::loadImages(const std::vector<ResourceEntry>& images)
             pixels.insert(pixels.end(), image->getPixelsPointer(), image->getPixelsPointer() + image->getSize().x * image->getSize().y);
 
             TextureDefinition textureDefinition{newId, index};
-            index++;
 
             mTextureDefinitions.emplace(mTextureIDs.getId(name), textureDefinition);
+
+            index++;
         }
 
         std::shared_ptr<TextureArray> textureArray = std::make_shared<TextureArray>();
