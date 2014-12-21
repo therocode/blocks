@@ -13,11 +13,11 @@ WorldSystem::WorldSystem(fea::MessageBus& messageBus)
     mBiomeProvider(mBus),
     mNextId(0)
 {
-    mBus.send(LogMessage{"Setting up world system", worldName, LogLevel::INFO});
+    mBus.send(LogMessage{"Setting up world system", gWorldName, LogLevel::INFO});
     subscribe(mBus, *this);
 
     //load biomes
-    mBus.send(LogMessage{"Loading biomes", worldName, LogLevel::INFO});
+    mBus.send(LogMessage{"Loading biomes", gWorldName, LogLevel::INFO});
     Biome grass(mBiomeIds.getId("grass"), 2,
         {
             {mFieldIds.getId("height"), BiomeRequirement(0.0f, 1.0f)},
@@ -42,11 +42,11 @@ WorldSystem::WorldSystem(fea::MessageBus& messageBus)
     std::string worldPath = "worlds";
     if(!DirectoryCreator::directoryExists(worldPath))
     {
-        mBus.send(LogMessage{"Creating directory '" + worldPath + "' to store worlds in", worldName, LogLevel::INFO});
+        mBus.send(LogMessage{"Creating directory '" + worldPath + "' to store worlds in", gWorldName, LogLevel::INFO});
         bool success = DirectoryCreator::createDirectory(worldPath);
 
         if(!success)
-            mBus.send(LogMessage{"Failed creating world data directory '" + worldPath + "'!", worldName, LogLevel::ERR});
+            mBus.send(LogMessage{"Failed creating world data directory '" + worldPath + "'!", gWorldName, LogLevel::ERR});
     }
 
     //load worlds
@@ -63,14 +63,14 @@ WorldSystem::WorldSystem(fea::MessageBus& messageBus)
     }
     else
     {
-        mBus.send(LogMessage{"World loading error: " + mWorldLoader.getErrorString(), worldName, LogLevel::ERR});
+        mBus.send(LogMessage{"World loading error: " + mWorldLoader.getErrorString(), gWorldName, LogLevel::ERR});
     }
     
 }
 
 WorldSystem::~WorldSystem()
 {
-    mBus.send(LogMessage{"Shutting down world system", worldName, LogLevel::INFO});
+    mBus.send(LogMessage{"Shutting down world system", gWorldName, LogLevel::INFO});
 }
 
 void WorldSystem::handleMessage(const SetVoxelMessage& received)
@@ -157,7 +157,7 @@ const std::string& WorldSystem::worldIdToIdentifier(WorldId id) const
 
 void WorldSystem::createWorld(const WorldParameters& parameters, const std::string& worldPath)
 {
-    mBus.send(LogMessage{"Loading world " + parameters.identifier, worldName, LogLevel::INFO});
+    mBus.send(LogMessage{"Loading world " + parameters.identifier, gWorldName, LogLevel::INFO});
     WorldId newId = mNextId++;
 
     mIdentifierToIdMap.emplace(parameters.identifier, newId);   
@@ -174,11 +174,11 @@ void WorldSystem::createWorld(const WorldParameters& parameters, const std::stri
     std::string path = worldPath + "/" + parameters.identifier;
     if(!DirectoryCreator::directoryExists(path))
     {
-        mBus.send(LogMessage{"Creating directory '" + path + "' for world " + parameters.identifier, worldName, LogLevel::INFO});
+        mBus.send(LogMessage{"Creating directory '" + path + "' for world " + parameters.identifier, gWorldName, LogLevel::INFO});
         bool success = DirectoryCreator::createDirectory(path);
 
         if(!success)
-            mBus.send(LogMessage{"Failed creating world directory '" + path + "'!", worldName, LogLevel::ERR});
+            mBus.send(LogMessage{"Failed creating world directory '" + path + "'!", gWorldName, LogLevel::ERR});
     }
 
     worldData.biomeSettings.fields =

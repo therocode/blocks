@@ -1,12 +1,12 @@
 #pragma once
 #include <string>
 
-const std::string worldName = "world";
-const std::string entityName = "entity";
-const std::string scriptName = "script";
-const std::string worldGenName = "world_gen";
-const std::string clientName = "client";
-const std::string serverName = "server";
-const std::string netName = "net";
-const std::string resourceName = "resource";
-const std::string renderingName = "rendering";
+const std::string gWorldName = "world";
+const std::string gEntityName = "entity";
+const std::string gScriptName = "script";
+const std::string gWorldGenName = "world_gen";
+const std::string gClientName = "client";
+const std::string gServerName = "server";
+const std::string gNetName = "net";
+const std::string gResourceName = "resource";
+const std::string gRenderingName = "rendering";

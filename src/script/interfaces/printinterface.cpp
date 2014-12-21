@@ -17,12 +17,12 @@ void PrintInterface::registerInterface(asIScriptEngine* engine)
 
 void PrintInterface::scriptPrint(const std::string& text)
 {
-    mBus.send(LogMessage{text, scriptName, LogLevel::INFO});
+    mBus.send(LogMessage{text, gScriptName, LogLevel::INFO});
 }
 
 void PrintInterface::scriptPrint(const std::string& text, uint32_t level)
 {
-    mBus.send(LogMessage{text, scriptName, level});
+    mBus.send(LogMessage{text, gScriptName, level});
 }
 
 void PrintInterface::scriptPrint(const std::string& text, const std::string& tag)

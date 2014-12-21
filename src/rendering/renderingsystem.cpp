@@ -49,7 +49,7 @@ RenderingSystem::RenderingSystem(fea::MessageBus& bus, const glm::uvec2& viewSiz
     glGetIntegerv(GL_MAX_ARRAY_TEXTURE_LAYERS, &maxSize);
 
     if(maxSize < 2048)
-        mBus.send(LogMessage{"Only supporting " + std::to_string(maxSize) + " texture layers.", renderingName, LogLevel::WARN});
+        mBus.send(LogMessage{"Only supporting " + std::to_string(maxSize) + " texture layers.", gRenderingName, LogLevel::WARN});
 }
 
 void RenderingSystem::handleMessage(const AddGfxEntityMessage& received)

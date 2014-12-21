@@ -41,7 +41,7 @@ Client::Client(fea::MessageBus& bus, const NetworkParameters& parameters) :
 Client::~Client()
 {
 	mWindow.close();
-	mBus.send(LogMessage{"Shutting down client", clientName, LogLevel::INFO});
+	mBus.send(LogMessage{"Shutting down client", gClientName, LogLevel::INFO});
 }
 
 void Client::updateVoxelLookAt()

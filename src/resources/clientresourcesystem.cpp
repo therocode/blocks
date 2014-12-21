@@ -17,7 +17,7 @@ ClientResourceSystem::ClientResourceSystem(fea::MessageBus& bus, const std::stri
     mAssetsPath(assetsPath),
     mNextTextureId(0)
 {
-    mBus.send(LogMessage{"Loading extensions...", resourceName, LogLevel::INFO});
+    mBus.send(LogMessage{"Loading extensions...", gResourceName, LogLevel::INFO});
 
     FolderExploder exploder;
 
@@ -26,7 +26,7 @@ ClientResourceSystem::ClientResourceSystem(fea::MessageBus& bus, const std::stri
     for(const auto extensionName : extensions)
     {
         std::string extensionPath = assetsPath + "/" + extensionName;
-        mBus.send(LogMessage{"Found extension '" + extensionPath + "'. Scanning for resources...", resourceName, LogLevel::INFO});
+        mBus.send(LogMessage{"Found extension '" + extensionPath + "'. Scanning for resources...", gResourceName, LogLevel::INFO});
         std::vector<std::string> mResources;
 
         exploder.explodeFolder(extensionPath, {
@@ -37,7 +37,7 @@ ClientResourceSystem::ClientResourceSystem(fea::MessageBus& bus, const std::stri
                 "png"
                 }, mResources);
 
-        mBus.send(LogMessage{"Found " + std::to_string(mResources.size()) + " resources to load.", resourceName, LogLevel::INFO});
+        mBus.send(LogMessage{"Found " + std::to_string(mResources.size()) + " resources to load.", gResourceName, LogLevel::INFO});
 
         for(auto& resourcePath : mResources)
         {
@@ -56,10 +56,10 @@ ClientResourceSystem::ClientResourceSystem(fea::MessageBus& bus, const std::stri
 
 void ClientResourceSystem::loadModels(const std::vector<ResourceEntry>& models)
 {
-    mBus.send(LogMessage{"Loading models. " + std::to_string(models.size()) + " models to load.", resourceName, LogLevel::INFO});
+    mBus.send(LogMessage{"Loading models. " + std::to_string(models.size()) + " models to load.", gResourceName, LogLevel::INFO});
     for(const auto& modelFile : models)
     {
-        mBus.send(LogMessage{"Loading " + modelFile.name + ".", resourceName, LogLevel::VERB});
+        mBus.send(LogMessage{"Loading " + modelFile.name + ".", gResourceName, LogLevel::VERB});
         std::shared_ptr<RawModel> model = mCache.access<IQMFromFileLoader>(modelFile.path);
         if(model)
         {
@@ -71,10 +71,10 @@ void ClientResourceSystem::loadModels(const std::vector<ResourceEntry>& models)
 
 void ClientResourceSystem::loadVertexShaders(const std::vector<ResourceEntry>& vertexShaders)
 {
-    mBus.send(LogMessage{"Loading vertex shaders. " + std::to_string(vertexShaders.size()) + " vertex shaders to load.", resourceName, LogLevel::INFO});
+    mBus.send(LogMessage{"Loading vertex shaders. " + std::to_string(vertexShaders.size()) + " vertex shaders to load.", gResourceName, LogLevel::INFO});
     for(const auto& vertexShaderFile : vertexShaders)
     {
-        mBus.send(LogMessage{"Loading " + vertexShaderFile.name + ".", resourceName, LogLevel::VERB});
+        mBus.send(LogMessage{"Loading " + vertexShaderFile.name + ".", gResourceName, LogLevel::VERB});
         std::shared_ptr<ShaderSource> vertexShader = mCache.access<ShaderSourceFromFileLoader>(vertexShaderFile.path);
         if(vertexShader)
         {
@@ -86,10 +86,10 @@ void ClientResourceSystem::loadVertexShaders(const std::vector<ResourceEntry>& v
 
 void ClientResourceSystem::loadFragmentShaders(const std::vector<ResourceEntry>& fragmentShaders)
 {
-    mBus.send(LogMessage{"Loading fragment shaders. " + std::to_string(fragmentShaders.size()) + " fragment shaders to load.", resourceName, LogLevel::INFO});
+    mBus.send(LogMessage{"Loading fragment shaders. " + std::to_string(fragmentShaders.size()) + " fragment shaders to load.", gResourceName, LogLevel::INFO});
     for(const auto& fragmentShaderFile : fragmentShaders)
     {
-        mBus.send(LogMessage{"Loading " + fragmentShaderFile.name + ".", resourceName, LogLevel::VERB});
+        mBus.send(LogMessage{"Loading " + fragmentShaderFile.name + ".", gResourceName, LogLevel::VERB});
         std::shared_ptr<ShaderSource> fragmentShader = mCache.access<ShaderSourceFromFileLoader>(fragmentShaderFile.path);
         if(fragmentShader)
         {
@@ -101,10 +101,10 @@ void ClientResourceSystem::loadFragmentShaders(const std::vector<ResourceEntry>&
 
 void ClientResourceSystem::loadShaderDefinitions(const std::vector<ResourceEntry>& shaderDefinitions)
 {
-    mBus.send(LogMessage{"Loading shader definitions. " + std::to_string(shaderDefinitions.size()) + " shader definitions to load.", resourceName, LogLevel::INFO});
+    mBus.send(LogMessage{"Loading shader definitions. " + std::to_string(shaderDefinitions.size()) + " shader definitions to load.", gResourceName, LogLevel::INFO});
     for(const auto& shaderDefinitionFile : shaderDefinitions)
     {
-        mBus.send(LogMessage{"Loading " + shaderDefinitionFile.name + ".", resourceName, LogLevel::VERB});
+        mBus.send(LogMessage{"Loading " + shaderDefinitionFile.name + ".", gResourceName, LogLevel::VERB});
         std::shared_ptr<ShaderDefinition> shaderDefinition = mCache.access<ShaderDefinitionFromFileLoader>(shaderDefinitionFile.path);
         if(shaderDefinition)
         {
@@ -118,10 +118,10 @@ void ClientResourceSystem::loadImages(const std::vector<ResourceEntry>& images)
 {
     std::unordered_map<glm::uvec2, std::vector<std::pair<std::string, std::shared_ptr<Image>>>> loadedImages;
 
-    mBus.send(LogMessage{"Loading images. " + std::to_string(images.size()) + " images to load.", resourceName, LogLevel::INFO});
+    mBus.send(LogMessage{"Loading images. " + std::to_string(images.size()) + " images to load.", gResourceName, LogLevel::INFO});
     for(const auto& imageFile : images)
     {
-        mBus.send(LogMessage{"Loading " + imageFile.name + ".", resourceName, LogLevel::VERB});
+        mBus.send(LogMessage{"Loading " + imageFile.name + ".", gResourceName, LogLevel::VERB});
         std::shared_ptr<Image> image = mCache.access<ImageFromFileLoader>(imageFile.path);
 
         if(image)

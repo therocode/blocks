@@ -35,7 +35,7 @@ Server::Server(fea::MessageBus& bus, const NetworkParameters& parameters) :
 
 Server::~Server()
 {
-    mBus.send(LogMessage{"Shutting down server", serverName, LogLevel::INFO});
+    mBus.send(LogMessage{"Shutting down server", gServerName, LogLevel::INFO});
 }
 
 void Server::doLogic()
@@ -47,7 +47,7 @@ void Server::doLogic()
 
     if(mSignalCatcher.getSignal() == QUIT_SIGNAL)
     {
-        mBus.send(LogMessage{"Received quit signal. Requesting to quit!", serverName, LogLevel::INFO});
+        mBus.send(LogMessage{"Received quit signal. Requesting to quit!", gServerName, LogLevel::INFO});
         mQuit = true;
     }
 }

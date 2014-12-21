@@ -27,30 +27,30 @@ ScriptSystem::ScriptSystem(fea::MessageBus& bus, GameInterface& worldInterface) 
     mScripts(mEngine.createModule("scripts"))
 {
     subscribe(mBus, *this);
-    mBus.send(LogMessage{"Setting up script system", scriptName, LogLevel::INFO});
-    mBus.send(LogMessage{"Setting up interfaces", scriptName, LogLevel::VERB});
+    mBus.send(LogMessage{"Setting up script system", gScriptName, LogLevel::INFO});
+    mBus.send(LogMessage{"Setting up interfaces", gScriptName, LogLevel::VERB});
     setupInterfaces();
-    mBus.send(LogMessage{"Setting up callbacks", scriptName, LogLevel::VERB});
+    mBus.send(LogMessage{"Setting up callbacks", gScriptName, LogLevel::VERB});
     setupCallbacks();
-    mBus.send(LogMessage{"Loading script sources", scriptName, LogLevel::VERB});
+    mBus.send(LogMessage{"Loading script sources", gScriptName, LogLevel::VERB});
     loadSources();
 }
 
 ScriptSystem::~ScriptSystem()
 {
-    mBus.send(LogMessage{"Shutting down script system", scriptName, LogLevel::INFO});
+    mBus.send(LogMessage{"Shutting down script system", gScriptName, LogLevel::INFO});
     mScriptEntities.clear();
     mEngine.destroyModule(mScripts);
 }
 
 void ScriptSystem::handleMessage(const RebuildScriptsRequestedMessage& received)
 {
-    mBus.send(LogMessage{"Compiling scripts...", scriptName, LogLevel::INFO});
+    mBus.send(LogMessage{"Compiling scripts...", gScriptName, LogLevel::INFO});
     bool succeeded = mScripts.compileFromSourceList(mSourceFiles);
 
     if(succeeded)
     {
-        mBus.send(LogMessage{"Compilation process over.", scriptName, LogLevel::INFO});
+        mBus.send(LogMessage{"Compilation process over.", gScriptName, LogLevel::INFO});
         for(auto& caller : mCallers)
         {
             caller->setActive(true);
@@ -73,7 +73,7 @@ void ScriptSystem::handleMessage(const EntityCreatedMessage& received)
     asIObjectType* objectType = mScripts.getObjectTypeByDecl(type);
     if(!objectType)
     {
-        mBus.send(LogMessage{"Script runtime error: Trying to create entity of invalid type '" + type + "'", scriptName, LogLevel::ERR});
+        mBus.send(LogMessage{"Script runtime error: Trying to create entity of invalid type '" + type + "'", gScriptName, LogLevel::ERR});
         return;
     }
 
@@ -99,7 +99,7 @@ void ScriptSystem::handleMessage(const EntityCreatedMessage& received)
         // otherwise it will be destroyed when the context is reused or destroyed.
         obj->AddRef();
 
-        //mBus.send(LogMessage{"Created entity id " + std::to_string(id) + " of type '" + type + "'", scriptName, LogLevel::VERB});
+        //mBus.send(LogMessage{"Created entity id " + std::to_string(id) + " of type '" + type + "'", gScriptName, LogLevel::VERB});
 
         mEngine.freeContext(ctx);
 
@@ -108,7 +108,7 @@ void ScriptSystem::handleMessage(const EntityCreatedMessage& received)
     }
     else
     {
-        mBus.send(LogMessage{"Script runtime error: Entity of type '" + type + "' has no valid factory function", scriptName, LogLevel::ERR});
+        mBus.send(LogMessage{"Script runtime error: Entity of type '" + type + "' has no valid factory function", gScriptName, LogLevel::ERR});
     }
 }
 
@@ -164,17 +164,17 @@ void ScriptSystem::loadSources()
     exploder.explodeFolder("data/scripts", {"as"}, mSourceFiles);
     for(auto& string : mSourceFiles)
     {
-        mBus.send(LogMessage{"Adding " + string + " for compilation.", scriptName, LogLevel::VERB});
+        mBus.send(LogMessage{"Adding " + string + " for compilation.", gScriptName, LogLevel::VERB});
     }
 
-    mBus.send(LogMessage{"Compiling scripts...", scriptName, LogLevel::INFO});
+    mBus.send(LogMessage{"Compiling scripts...", gScriptName, LogLevel::INFO});
     bool succeeded = mScripts.compileFromSourceList(mSourceFiles);
-    mBus.send(LogMessage{"Compilation process over.", scriptName, LogLevel::INFO});
+    mBus.send(LogMessage{"Compilation process over.", gScriptName, LogLevel::INFO});
 
     if(succeeded)
     {
-        mBus.send(LogMessage{"Compilation process over.", scriptName, LogLevel::VERB});
-        mBus.send(LogMessage{"Done setting up callbacks.", scriptName, LogLevel::VERB});
+        mBus.send(LogMessage{"Compilation process over.", gScriptName, LogLevel::VERB});
+        mBus.send(LogMessage{"Done setting up callbacks.", gScriptName, LogLevel::VERB});
 
         for(auto& caller : mCallers)
         {
