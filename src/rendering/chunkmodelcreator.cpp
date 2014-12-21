@@ -154,16 +154,16 @@ Model ChunkModelCreator::generateChunkModel(const ChunkCoord& mainChunkCoord, Ch
                            0.577f,  0.577f,  0.577f,
                            0.577f,  0.577f, -0.577f};
 
-        glm::vec2 texLoc = ((glm::vec2)textureLocation) / 8.0f;
-        float plus = 1.0f / 8.0f;
+        glm::vec2 texLoc;
+        glm::vec2 plus(1.0f * quad.mWidth, 1.0f * quad.mHeight);
 
-        quadTexCoords = {  texLoc.x       ,  texLoc.y       ,
-                           texLoc.x       ,  texLoc.y + plus,
-                           texLoc.x + plus,  texLoc.y + plus,
+        quadTexCoords = {  texLoc.x         ,  texLoc.y         ,
+                           texLoc.x         ,  texLoc.y + plus.y,
+                           texLoc.x + plus.x,  texLoc.y + plus.y,
         
-                           texLoc.x       ,  texLoc.y       ,
-                           texLoc.x + plus,  texLoc.y + plus,
-                           texLoc.x + plus,  texLoc.y};
+                           texLoc.x         ,  texLoc.y         ,
+                           texLoc.x + plus.x,  texLoc.y + plus.y,
+                           texLoc.x + plus.x,  texLoc.y};
 
         allQuadPositions.insert(allQuadPositions.end(), quadPositions.begin(), quadPositions.end());
         allQuadNormals.insert(allQuadNormals.end(), quadNormals.begin(), quadNormals.end());
@@ -200,16 +200,16 @@ Model ChunkModelCreator::generateChunkModel(const ChunkCoord& mainChunkCoord, Ch
                            0.577f,  0.577f, -0.577f,
                            0.577f,  0.577f,  0.577f};
 
-        glm::vec2 texLoc = ((glm::vec2)textureLocation) / 8.0f;
-        float plus = 1.0f / 8.0f;
+        glm::vec2 texLoc;
+        glm::vec2 plus(1.0f * quad.mWidth, 1.0f * quad.mHeight);
 
-        quadTexCoords = {  texLoc.x       ,  texLoc.y       ,
-                           texLoc.x + plus,  texLoc.y + plus,
-                           texLoc.x       ,  texLoc.y + plus,
+        quadTexCoords = {  texLoc.x         ,  texLoc.y         ,
+                           texLoc.x + plus.x,  texLoc.y + plus.y,
+                           texLoc.x         ,  texLoc.y + plus.y,
         
-                           texLoc.x       ,  texLoc.y       ,
-                           texLoc.x + plus,  texLoc.y       ,
-                           texLoc.x + plus,  texLoc.y + plus};
+                           texLoc.x         ,  texLoc.y         ,
+                           texLoc.x + plus.x,  texLoc.y         ,
+                           texLoc.x + plus.x,  texLoc.y + plus.y};
 
 
         allQuadPositions.insert(allQuadPositions.end(), quadPositions.begin(), quadPositions.end());
@@ -248,16 +248,16 @@ Model ChunkModelCreator::generateChunkModel(const ChunkCoord& mainChunkCoord, Ch
                            0.577f, -0.577f,  0.577f,
                            0.577f,  0.577f,  0.577f};
 
-        glm::vec2 texLoc = ((glm::vec2)textureLocation) / 8.0f;
-        float plus = 1.0f / 8.0f;
+        glm::vec2 texLoc;
+        glm::vec2 plus(1.0f * quad.mWidth, 1.0f * quad.mHeight);
 
-        quadTexCoords = {  texLoc.x       ,  texLoc.y       ,
-                           texLoc.x + plus,  texLoc.y + plus,
-                           texLoc.x       ,  texLoc.y + plus,
+        quadTexCoords = {  texLoc.x         ,  texLoc.y         ,
+                           texLoc.x + plus.x,  texLoc.y + plus.y,
+                           texLoc.x         ,  texLoc.y + plus.y,
         
-                           texLoc.x       ,  texLoc.y       ,
-                           texLoc.x + plus,  texLoc.y       ,
-                           texLoc.x + plus,  texLoc.y + plus};
+                           texLoc.x         ,  texLoc.y         ,
+                           texLoc.x + plus.x,  texLoc.y         ,
+                           texLoc.x + plus.x,  texLoc.y + plus.y};
 
         allQuadPositions.insert(allQuadPositions.end(), quadPositions.begin(), quadPositions.end());
         allQuadNormals.insert(allQuadNormals.end(), quadNormals.begin(), quadNormals.end());
@@ -295,16 +295,16 @@ Model ChunkModelCreator::generateChunkModel(const ChunkCoord& mainChunkCoord, Ch
                            0.577f,  0.577f,  0.577f,
                            0.577f, -0.577f,  0.577f};
 
-        glm::vec2 texLoc = ((glm::vec2)textureLocation) / 8.0f;
-        float plus = 1.0f / 8.0f;
+        glm::vec2 texLoc;
+        glm::vec2 plus(1.0f * quad.mWidth, 1.0f * quad.mHeight);
 
-        quadTexCoords = {  texLoc.x       ,  texLoc.y       ,
-                           texLoc.x       ,  texLoc.y + plus,
-                           texLoc.x + plus,  texLoc.y + plus,
+        quadTexCoords = {  texLoc.x         ,  texLoc.y         ,
+                           texLoc.x         ,  texLoc.y + plus.y,
+                           texLoc.x + plus.x,  texLoc.y + plus.y,
         
-                           texLoc.x       ,  texLoc.y       ,
-                           texLoc.x + plus,  texLoc.y + plus,
-                           texLoc.x + plus,  texLoc.y       };
+                           texLoc.x         ,  texLoc.y         ,
+                           texLoc.x + plus.x,  texLoc.y + plus.y,
+                           texLoc.x + plus.x,  texLoc.y         };
 
         allQuadPositions.insert(allQuadPositions.end(), quadPositions.begin(), quadPositions.end());
         allQuadNormals.insert(allQuadNormals.end(), quadNormals.begin(), quadNormals.end());
@@ -342,16 +342,16 @@ Model ChunkModelCreator::generateChunkModel(const ChunkCoord& mainChunkCoord, Ch
                           -0.577f, -0.577f,  0.577f,
                           -0.577f,  0.577f,  0.577f};
 
-        glm::vec2 texLoc = ((glm::vec2)textureLocation) / 8.0f;
-        float plus = 1.0f / 8.0f;
+        glm::vec2 texLoc;
+        glm::vec2 plus(1.0f * quad.mWidth, 1.0f * quad.mHeight);
 
-        quadTexCoords = {  texLoc.x       ,  texLoc.y       ,
-                           texLoc.x + plus,  texLoc.y + plus,
-                           texLoc.x       ,  texLoc.y + plus,
+        quadTexCoords = {  texLoc.x         ,  texLoc.y         ,
+                           texLoc.x + plus.x,  texLoc.y + plus.y,
+                           texLoc.x         ,  texLoc.y + plus.y,
         
-                           texLoc.x       ,  texLoc.y       ,
-                           texLoc.x + plus,  texLoc.y       ,
-                           texLoc.x + plus,  texLoc.y + plus};
+                           texLoc.x         ,  texLoc.y         ,
+                           texLoc.x + plus.x,  texLoc.y         ,
+                           texLoc.x + plus.x,  texLoc.y + plus.y};
 
         allQuadPositions.insert(allQuadPositions.end(), quadPositions.begin(), quadPositions.end());
         allQuadNormals.insert(allQuadNormals.end(), quadNormals.begin(), quadNormals.end());
@@ -389,16 +389,16 @@ Model ChunkModelCreator::generateChunkModel(const ChunkCoord& mainChunkCoord, Ch
                           -0.577f,  0.577f,  0.577f,
                           -0.577f, -0.577f,  0.577f};
 
-        glm::vec2 texLoc = ((glm::vec2)textureLocation) / 8.0f;
-        float plus = 1.0f / 8.0f;
+        glm::vec2 texLoc;
+        glm::vec2 plus(1.0f * quad.mWidth, 1.0f * quad.mHeight);
 
-        quadTexCoords = {  texLoc.x       ,  texLoc.y       ,
-                           texLoc.x       ,  texLoc.y + plus,
-                           texLoc.x + plus,  texLoc.y + plus,
+        quadTexCoords = {  texLoc.x         ,  texLoc.y         ,
+                           texLoc.x         ,  texLoc.y + plus.y,
+                           texLoc.x + plus.x,  texLoc.y + plus.y,
         
-                           texLoc.x       ,  texLoc.y       ,
-                           texLoc.x + plus,  texLoc.y + plus,
-                           texLoc.x + plus,  texLoc.y       };
+                           texLoc.x         ,  texLoc.y         ,
+                           texLoc.x + plus.x,  texLoc.y + plus.y,
+                           texLoc.x + plus.x,  texLoc.y         };
 
         allQuadPositions.insert(allQuadPositions.end(), quadPositions.begin(), quadPositions.end());
         allQuadNormals.insert(allQuadNormals.end(), quadNormals.begin(), quadNormals.end());
