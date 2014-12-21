@@ -35,3 +35,4 @@ assets/*
 .gd/*
 pullassets.sh
 pushassets.sh
+tags

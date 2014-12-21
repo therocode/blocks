@@ -9,6 +9,7 @@ set(BUILD_EXPBIOMES FALSE CACHE BOOL "build the biome experiment application")
 set(BUILD_TESTS TRUE CACHE BOOL "build the tests")
 set(BUILD_PROFILING TRUE CACHE BOOL "build the profiling tests")
 set(BUILD_GAME TRUE CACHE BOOL "build the actual game")
+set(USE_CTAGS FALSE CACHE BOOL "use ctags to generate source symbol information")
 
 #project name
 set(project_name blocks)
@@ -334,6 +335,9 @@ find_package(ENet)
 find_package(angelscript)
 find_package(JsonCpp REQUIRED)
 
+if(USE_CTAGS)
+    find_program(CTAGS_FOUND ctags)
+endif(USE_CTAGS)
 
 include_directories(include)
 
@@ -439,6 +443,17 @@ if(BUILD_GAME)
     else(OPENGL_FOUND)
     	target_link_libraries(${project_name} opengl32)
     endif(OPENGL_FOUND)
+
+    if(USE_CTAGS)
+        if(CTAGS_FOUND)
+            set_source_files_properties(tags PROPERTIES GENERATED true)
+            add_custom_target(tags
+                COMMAND ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .
+                WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+            add_dependencies(${project_name} tags)
+        endif(CTAGS_FOUND)
+    endif(USE_CTAGS)
+
 endif(BUILD_GAME)
 
 #tests
@@ -502,3 +517,5 @@ if(BUILD_PROFILING)
 		
     target_link_libraries(profile_modmanager ${FEATHERKIT_LIBRARIES})
 endif(BUILD_PROFILING)
+
+
