@@ -10,8 +10,8 @@ Buffer::Buffer(int32_t type) :
     FEA_ASSERT(mBufferId != 0, "Generated zero buffer");
 }
 
-Buffer::Buffer(const std::vector<float>& data) :
-    mType(ARRAY_BUFFER)
+Buffer::Buffer(const std::vector<float>& data, int32_t type) :
+    mType(type)
 {
     glGenBuffers(1, &mBufferId);
 
@@ -20,8 +20,8 @@ Buffer::Buffer(const std::vector<float>& data) :
     setData(data);
 }
 
-Buffer::Buffer(const std::vector<uint32_t>& data) :
-    mType(ELEMENT_ARRAY_BUFFER)
+Buffer::Buffer(const std::vector<uint32_t>& data, int32_t type)  :
+    mType(type)
 {
     glGenBuffers(1, &mBufferId);
 
@@ -49,14 +49,14 @@ void Buffer::setData(const std::vector<float>& data)
 {
     mElementAmount = data.size();
     bind();
-    glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(float), data.data(), GL_STATIC_DRAW);
+    glBufferData(mType == ARRAY_BUFFER ? GL_ARRAY_BUFFER : GL_ELEMENT_ARRAY_BUFFER, data.size() * sizeof(float), data.data(), GL_STATIC_DRAW);
 }
 
 void Buffer::setData(const std::vector<uint32_t>& data)
 {
     mElementAmount = data.size();
     bind();
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, data.size() * sizeof(uint32_t), data.data(), GL_STATIC_DRAW); //ELEMENT!!! NOOO, it should lasdk
+    glBufferData(mType == ARRAY_BUFFER ? GL_ARRAY_BUFFER : GL_ELEMENT_ARRAY_BUFFER, data.size() * sizeof(uint32_t), data.data(), GL_STATIC_DRAW);
 }
 
 int32_t Buffer::getElementAmount() const
