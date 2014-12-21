@@ -36,7 +36,7 @@ void VAO::unbind()
     mIsBound = false;
 }
 
-void VAO::setVertexAttribute(GLuint index, const uint32_t floatAmount, const float* data)
+void VAO::setVertexAttribute(GLuint index, const uint32_t amount, const float* data, GLint type)
 {
     bool wasBound = isBound();
 
@@ -45,13 +45,13 @@ void VAO::setVertexAttribute(GLuint index, const uint32_t floatAmount, const flo
 
     glEnableVertexAttribArray(index);
     mEnabledVertexAttributes.push_back(index);
-    glVertexAttribPointer(index, floatAmount, GL_FLOAT, false, 0, data);
+    glVertexAttribPointer(index, amount, type, false, 0, data);
 
     if(!wasBound)
         unbind();
 }
 
-void VAO::setVertexAttribute(GLuint index, const uint32_t floatAmount, const Buffer& dataBuffer)
+void VAO::setVertexAttribute(GLuint index, const uint32_t amount, const Buffer& dataBuffer, GLint type)
 {
     bool wasBound = isBound();
 
@@ -61,13 +61,13 @@ void VAO::setVertexAttribute(GLuint index, const uint32_t floatAmount, const Buf
     glEnableVertexAttribArray(index);
     mEnabledVertexAttributes.push_back(index);
     dataBuffer.bind();
-    glVertexAttribPointer(index, floatAmount, GL_FLOAT, false, 0, nullptr);
+    glVertexAttribPointer(index, amount, type, false, 0, nullptr);
 
     if(!wasBound)
         unbind();
 }
 
-void VAO::setInstanceAttribute(GLuint index, const uint32_t floatAmount, const Buffer& dataBuffer, uint32_t divisor)
+void VAO::setInstanceAttribute(GLuint index, const uint32_t amount, const Buffer& dataBuffer, uint32_t divisor, GLint type)
 {
     bool wasBound = isBound();
 
@@ -77,7 +77,7 @@ void VAO::setInstanceAttribute(GLuint index, const uint32_t floatAmount, const B
     glEnableVertexAttribArray(index);
     mEnabledVertexAttributes.push_back(index);
     dataBuffer.bind();
-    glVertexAttribPointer(index, floatAmount, GL_FLOAT, false, 0, nullptr);
+    glVertexAttribPointer(index, amount, type, false, 0, nullptr);
     glVertexAttribDivisor(index, divisor);
 
     if(!wasBound)

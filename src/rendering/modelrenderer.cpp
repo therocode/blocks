@@ -51,6 +51,7 @@ void ModelRenderer::render(const Camera& camera, const glm::mat4& perspective, c
             newModelObject->vertexArray.setVertexAttribute(ShaderAttribute::TEXCOORD, 2, *model.findVertexArray(Model::TEXCOORDS));
 
             newModelObject->vertexArray.setInstanceAttribute(ShaderAttribute::COLOR, 3, newModelObject->colors, 1);
+            newModelObject->vertexArray.setInstanceAttribute(ShaderAttribute::TEXTUREINDEX, 1, newModelObject->textureIndices, 1, GL_UNSIGNED_INT);
             newModelObject->vertexArray.setInstanceAttribute(ShaderAttribute::MODELMATRIX1, 4, newModelObject->modelMatrix1, 1);
             newModelObject->vertexArray.setInstanceAttribute(ShaderAttribute::MODELMATRIX2, 4, newModelObject->modelMatrix2, 1);
             newModelObject->vertexArray.setInstanceAttribute(ShaderAttribute::MODELMATRIX3, 4, newModelObject->modelMatrix3, 1);
@@ -72,6 +73,7 @@ void ModelRenderer::render(const Camera& camera, const glm::mat4& perspective, c
         const auto& modelObject = mModelCache.at(&model);
 
         std::vector<float> colors;
+        std::vector<uint32_t> textureIndices;
         std::vector<float> modelMatrix1;
         std::vector<float> modelMatrix2;
         std::vector<float> modelMatrix3;
@@ -96,6 +98,8 @@ void ModelRenderer::render(const Camera& camera, const glm::mat4& perspective, c
             colors.push_back(order.color.r);
             colors.push_back(order.color.g);
             colors.push_back(order.color.b);
+
+            textureIndices.push_back(order.textureIndex);
 
             data4[0] = order.position.x;
             data4[1] = order.position.y;
@@ -160,6 +164,7 @@ void ModelRenderer::render(const Camera& camera, const glm::mat4& perspective, c
         }
 
         modelObject->colors.setData(colors);
+        modelObject->textureIndices.setData(textureIndices);
         modelObject->modelMatrix1.setData(modelMatrix1);
         modelObject->modelMatrix2.setData(modelMatrix2);
         modelObject->modelMatrix3.setData(modelMatrix3);

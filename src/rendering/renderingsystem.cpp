@@ -206,6 +206,7 @@ void RenderingSystem::handleMessage(const ResourceDeliverMessage<ShaderDefinitio
             {"NORMAL", ShaderAttribute::NORMAL},
             {"TEXCOORD", ShaderAttribute::TEXCOORD},
             {"COLOR", ShaderAttribute::COLOR},
+            {"TEXTUREINDEX", ShaderAttribute::TEXTUREINDEX},
             {"MODELMATRIX1", ShaderAttribute::MODELMATRIX1},
             {"MODELMATRIX2", ShaderAttribute::MODELMATRIX2},
             {"MODELMATRIX3", ShaderAttribute::MODELMATRIX3},
@@ -255,7 +256,7 @@ void RenderingSystem::render()
 
     for(auto& moddie : mModelRenderables)
     {
-        moddie.second.setTexture(*mTextureArrays.at(0), 0);
+        moddie.second.setTexture(*mTextureArrays.at(0), rand() % 2);
         mRenderer.queue(moddie.second);
     }
 
