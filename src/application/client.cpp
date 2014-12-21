@@ -7,7 +7,7 @@
 #include "../rendering/renderingsystem.hpp"
 #include "../input/inputadaptor.hpp"
 #include "../world/raycaster.hpp"
-#include "../resources/clientresourcesystem.hpp"
+#include "../resources/resourcesystem.hpp"
 
 
 Client::Client(fea::MessageBus& bus, const NetworkParameters& parameters) :
@@ -33,7 +33,12 @@ Client::Client(fea::MessageBus& bus, const NetworkParameters& parameters) :
     mFPSCounter.setMaxFPS(0);
     mFPSCounter.setSampleTime(0.5f);
     
-    mResourceSystem = std::unique_ptr<ClientResourceSystem>(new ClientResourceSystem(bus, "assets")); //make configurable
+    mResourceSystem = std::unique_ptr<ResourceSystem>(new ResourceSystem(bus, "assets", {"iqm",
+                                                                                         "png",
+                                                                                         "vert",
+                                                                                         "frag",
+                                                                                         "shad",
+                                                                                         "meta"}));
 
     mClientNetworkingSystem = std::unique_ptr<ClientNetworkingSystem>(new ClientNetworkingSystem(bus, parameters));
 }
@@ -41,7 +46,7 @@ Client::Client(fea::MessageBus& bus, const NetworkParameters& parameters) :
 Client::~Client()
 {
 	mWindow.close();
-	mBus.send(LogMessage{"Shutting down client", clientName, LogLevel::INFO});
+	mBus.send(LogMessage{"Shutting down client", gClientName, LogLevel::INFO});
 }
 
 void Client::updateVoxelLookAt()

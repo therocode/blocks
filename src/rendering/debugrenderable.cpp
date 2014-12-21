@@ -1,8 +1,9 @@
 #include "debugrenderable.hpp"
 
-DebugRenderable::DebugRenderable() : 
+DebugRenderable::DebugRenderable(DebugShape shape) :
     mColor(1.0f, 1.0f, 1.0f)
 {
+	mDebugShape = shape;
 }
 
 std::type_index DebugRenderable::getType() const
@@ -48,4 +49,41 @@ void DebugRenderable::setYaw(float yaw)
 const float DebugRenderable::getYaw() const
 {
 	return mYaw;
+}
+
+void DebugRenderable::setLineColors(const glm::vec3& startColor, const glm::vec3& endColor)
+{
+	mLineStartColor = startColor;
+	mLineEndColor = endColor;
+}
+
+const glm::vec3& DebugRenderable::getLineStartColor() const
+{
+	return mLineStartColor;
+}
+
+const glm::vec3& DebugRenderable::getLineEndColor() const
+{
+	return mLineEndColor;
+}
+
+void DebugRenderable::setLinePoints(const glm::vec3& startPoint, const glm::vec3& endPoint)
+{
+	mLineStartPoint = startPoint;
+	mLineEndPoint = endPoint;
+}
+
+const glm::vec3& DebugRenderable::getLineStartPoint() const
+{
+	return mLineStartPoint;
+}
+
+const glm::vec3& DebugRenderable::getLineEndPoint() const
+{
+	return mLineEndPoint;
+}
+
+const DebugRenderable::DebugShape DebugRenderable::getShape() const
+{
+	return mDebugShape;
 }

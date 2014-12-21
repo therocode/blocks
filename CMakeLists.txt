@@ -86,21 +86,24 @@ set(source_files
     src/rendering/rendermode.cpp
     src/rendering/shader.cpp
     src/rendering/surfacemerger.cpp
+    src/rendering/texturearray.cpp
     src/rendering/uniform.cpp
     src/rendering/vao.cpp
     src/rendering/vertexattribute.cpp
     src/rendering/voxelchunkrenderer.cpp
     src/rendering/voxelchunkrenderable.cpp
+    src/rendering/shapes.hpp
 
-    src/resources/clientresourcesystem.cpp
     src/resources/extensionmetadata.cpp
     src/resources/extensionmetadatafromfileloader.cpp
+    src/resources/image.cpp
     src/resources/iqmfromfileloader.cpp
     src/resources/resourcepathtoname.cpp
+    src/resources/resourcesystem.cpp
     src/resources/shaderdefinitionfromfileloader.cpp
     src/resources/shadersourcefromfileloader.cpp
     src/resources/texture.cpp
-    src/resources/texturefromfileloader.cpp
+    src/resources/imagefromfileloader.cpp
 
     src/script/scriptcallback.cpp
     src/script/scriptchunk.cpp
@@ -222,15 +225,16 @@ set(header_files
     src/rendering/shader.hpp
     src/rendering/shaderattribute.hpp
     src/rendering/surfacemerger.hpp
+    src/rendering/texturearray.hpp
     src/rendering/uniform.hpp
     src/rendering/vao.hpp
     src/rendering/vertexattribute.hpp
     src/rendering/voxelchunkrenderer.hpp
     src/rendering/voxelchunkrenderable.hpp
 
-    src/resources/clientresourcesystem.hpp
     src/resources/extensionmetadata.hpp
     src/resources/extensionmetadatafromfileloader.hpp
+    src/resources/image.hpp
     src/resources/iqm.h
     src/resources/iqmfromfileloader.hpp
 	src/resources/rawmodel.hpp
@@ -238,13 +242,14 @@ set(header_files
 	src/resources/resourceentry.hpp
 	src/resources/resourcemessages.hpp
 	src/resources/resourcepathtoname.hpp
+    src/resources/resourcesystem.hpp
     src/resources/shaderdefinition.hpp
     src/resources/shaderdefinitionfromfileloader.hpp
     src/resources/shadersource.hpp
     src/resources/shadersourcefromfileloader.hpp
     src/resources/texture.hpp
-    src/resources/texturefromfileloader.hpp
-    
+    src/resources/imagefromfileloader.hpp
+
     src/utilities/coordinateconverter.hpp
     src/utilities/directorycreator.hpp
     src/utilities/folderexploder.hpp

@@ -41,12 +41,18 @@ const Model* ModelRenderable::findModel() const
     return mModel;
 }
 
-void ModelRenderable::setTexture(const Texture& texture)
+void ModelRenderable::setTexture(const TextureArray& textureArray, uint32_t index)
 {
-    mTexture = &texture;
+    mTextureArray = &textureArray;
+    mTextureIndex = index;
 }
 
-const Texture* ModelRenderable::findTexture() const
+const TextureArray* ModelRenderable::findTextureArray() const
 {
-    return mTexture;
+    return mTextureArray;
+}
+
+uint32_t ModelRenderable::getTextureIndex() const
+{
+    return mTextureIndex;
 }

@@ -5,7 +5,7 @@
 #include "vao.hpp"
 #include "buffer.hpp"
 #include "shader.hpp"
-#include "../resources/texture.hpp"
+#include "texturearray.hpp"
 
 class Mesh;
 
@@ -31,5 +31,5 @@ class VoxelChunkRenderer : public RenderModule
         Buffer mNormalMatrix3;
         Buffer mNormalMatrix4;
 
-        const Texture* mCurrentTexture;
+        const TextureArray* mCurrentTextureArray;
 };

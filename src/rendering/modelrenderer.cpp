@@ -1,7 +1,7 @@
 #include "modelrenderer.hpp"
 #include "camera.hpp"
 #include "model.hpp"
-#include "../resources/texture.hpp"
+#include "texturearray.hpp"
 #include "shaderattribute.hpp"
 #include <vector>
 #include <string>
@@ -17,7 +17,8 @@ void ModelRenderer::queue(const Renderable& renderable)
 
     ModelOrder order;
     order.model = modelRenderable.findModel();
-    order.texture = modelRenderable.findTexture();
+    order.textureArray = modelRenderable.findTextureArray();
+    order.textureIndex = modelRenderable.getTextureIndex();
     order.color = modelRenderable.getColor();
     order.position = modelRenderable.getPosition();
     
@@ -150,10 +151,10 @@ void ModelRenderer::render(const Camera& camera, const glm::mat4& perspective, c
             normalMatrix3.insert(normalMatrix3.end(), nData3.begin(), nData3.end());
             normalMatrix4.insert(normalMatrix4.end(), nData4.begin(), nData4.end());
 
-        if(order.texture != nullptr)
+        if(order.textureArray != nullptr)
         {
-            GLuint textureId = order.texture->getId();
-            shader.setUniform("texture", UniformType::TEXTURE, &textureId);
+            GLuint textureId = order.textureArray->getId();
+            shader.setUniform("textureArray", UniformType::TEXTURE_ARRAY, &textureId);
         }
 
         }

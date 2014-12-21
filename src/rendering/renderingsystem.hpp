@@ -13,6 +13,7 @@
 #include "model.hpp"
 #include "modelrenderable.hpp"
 #include "chunkmodelcreator.hpp"
+#include "texturearray.hpp"
 
 class RenderingSystem :
     public fea::MessageReceiver<AddGfxEntityMessage,
@@ -25,7 +26,7 @@ class RenderingSystem :
                                 ResourceDeliverMessage<RawModel>,
                                 ResourceDeliverMessage<ShaderSource>,
                                 ResourceDeliverMessage<ShaderDefinition>,
-                                ResourceDeliverMessage<Texture>,
+                                ResourceDeliverMessage<TextureArray>,
                                 UpdateChunkVboMessage,
                                 ChunkDeletedMessage>
 {
@@ -42,7 +43,7 @@ class RenderingSystem :
         void handleMessage(const ResourceDeliverMessage<RawModel>& received) override;
         void handleMessage(const ResourceDeliverMessage<ShaderSource>& received) override;
         void handleMessage(const ResourceDeliverMessage<ShaderDefinition>& received) override;
-        void handleMessage(const ResourceDeliverMessage<Texture>& received) override;
+        void handleMessage(const ResourceDeliverMessage<TextureArray>& received) override;
         void handleMessage(const UpdateChunkVboMessage& received) override;
         void handleMessage(const ChunkDeletedMessage& received) override;
         void render();
@@ -60,7 +61,7 @@ class RenderingSystem :
         std::unordered_map<std::string, std::string> mVertexSources;
         std::unordered_map<std::string, std::string> mFragmentSources;
         std::unordered_map<uint32_t, std::unique_ptr<Shader>> mShaders;
-        std::vector<std::shared_ptr<Texture>> mTextures;
+        std::vector<std::shared_ptr<TextureArray>> mTextureArrays;
 
         ChunkModelCreator mChunkModelCreator;
         std::unordered_map<ChunkCoord, Model> mChunkModels;

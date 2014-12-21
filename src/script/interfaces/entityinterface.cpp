@@ -43,7 +43,7 @@ asIScriptObject* EntityInterface::createEntity(const std::string& type, WorldId 
 
     if(createdEntity.expired())
     {
-        mBus.send(LogMessage{"Script runtime error: Id of created entity of type '" + type + "' is invalid", scriptName, LogLevel::ERR});
+        mBus.send(LogMessage{"Script runtime error: Id of created entity of type '" + type + "' is invalid", gScriptName, LogLevel::ERR});
         return nullptr;
     }
 

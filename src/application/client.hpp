@@ -11,7 +11,7 @@
 
 class RenderingSystem;
 class InputAdaptor;
-class ClientResourceSystem;
+class ResourceSystem;
 
 class Client :
     public fea::MessageReceiver<ClientActionMessage,
@@ -50,7 +50,7 @@ class Client :
         fea::Window mWindow;
         std::unique_ptr<RenderingSystem> mRenderingSystem;
         std::unique_ptr<InputAdaptor> mInputAdaptor;
-        std::unique_ptr<ClientResourceSystem> mResourceSystem;
+        std::unique_ptr<ResourceSystem> mResourceSystem;
         bool mQuit;
 
         ClientWorld mClientWorld;

@@ -30,12 +30,15 @@ Server::Server(fea::MessageBus& bus, const NetworkParameters& parameters) :
 	mEntitySystem.addController(std::unique_ptr<EntityController>(new PlayerController(mBus, mGameInterface)));
 
     mFPSController.setMaxFPS(60);
+
+    mResourceSystem = std::unique_ptr<ResourceSystem>(new ResourceSystem(bus, "assets", {"meta"})); 
+
     mBus.send(GameStartMessage{});
 }
 
 Server::~Server()
 {
-    mBus.send(LogMessage{"Shutting down server", serverName, LogLevel::INFO});
+    mBus.send(LogMessage{"Shutting down server", gServerName, LogLevel::INFO});
 }
 
 void Server::doLogic()
@@ -47,7 +50,7 @@ void Server::doLogic()
 
     if(mSignalCatcher.getSignal() == QUIT_SIGNAL)
     {
-        mBus.send(LogMessage{"Received quit signal. Requesting to quit!", serverName, LogLevel::INFO});
+        mBus.send(LogMessage{"Received quit signal. Requesting to quit!", gServerName, LogLevel::INFO});
         mQuit = true;
     }
 }

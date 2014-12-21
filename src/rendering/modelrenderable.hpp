@@ -3,7 +3,7 @@
 #include "../utilities/glm.hpp"
 
 class Model;
-class Texture;
+class TextureArray;
 
 class ModelRenderable : public Renderable
 {
@@ -16,11 +16,13 @@ class ModelRenderable : public Renderable
         const glm::vec3& getColor() const;
         void setModel(const Model& model);
         const Model* findModel() const;
-        void setTexture(const Texture& texture);
-        const Texture* findTexture() const;
+        void setTexture(const TextureArray& texture, uint32_t index);
+        const TextureArray* findTextureArray() const;
+        uint32_t getTextureIndex() const;
     private:
         glm::vec3 mPosition;
         glm::vec3 mColor;
         const Model* mModel;
-        const Texture* mTexture;
+        const TextureArray* mTextureArray;
+        uint32_t mTextureIndex;
 };

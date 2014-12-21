@@ -5,8 +5,10 @@
 #include "../resources/rawmodel.hpp"
 #include "../resources/shadersource.hpp"
 #include "../resources/shaderdefinition.hpp"
-#include "../resources/texture.hpp"
 #include "shaderattribute.hpp"
+#include "opengl.hpp"
+#include "../lognames.hpp"
+#include "../application/applicationmessages.hpp"
 
 RenderingSystem::RenderingSystem(fea::MessageBus& bus, const glm::uvec2& viewSize) :
     mBus(bus),
@@ -24,15 +26,30 @@ RenderingSystem::RenderingSystem(fea::MessageBus& bus, const glm::uvec2& viewSiz
         {
             for(uint32_t z = 0; z < 25; z++)
             {
-                DebugRenderable newDeb;
+                DebugRenderable newDeb(DebugRenderable::CUBE);
                 newDeb.setPosition(glm::vec3(x * 5 + (float)(rand() % 20 - 10) / 5.0f, y * 5 + (float)(rand() % 20 - 10) / 5.0f, z * 5 + (float)(rand() % 20 - 10) / 5.0f) + glm::vec3(0.3f, -43.0f, 0.0f));
                 newDeb.setColor(glm::vec3(0.02f, 0.02f, 0.02f) * glm::vec3(x, y, z));
 				newDeb.setPitch(0.0f);
 				newDeb.setYaw(0.0f);
-                mDebuggers.push_back(newDeb);
+                //mDebuggers.push_back(newDeb);
             }
         }
     }
+
+    for(uint32_t i = 0; i < 100; i++)
+    {
+        glm::vec3 pos(-24 + i, 41.0f, -30.0f);
+        DebugRenderable newDeb2(DebugRenderable::LINE);
+        newDeb2.setLinePoints(pos, pos + glm::vec3(0.0f,  3.0f, 0.0f));
+        newDeb2.setLineColors({(float)(rand() % 256) / 256.0f,(float)(rand() % 256) / 256.0f, (float)(rand() % 256) / 256.0f}, {(float)(rand() % 256) / 256.0f,(float)(rand() % 256) / 256.0f, (float)(rand() % 256) / 256.0f});
+        mDebuggers.push_back(newDeb2);
+    }
+
+    GLint maxSize;
+    glGetIntegerv(GL_MAX_ARRAY_TEXTURE_LAYERS, &maxSize);
+
+    if(maxSize < 2048)
+        mBus.send(LogMessage{"Only supporting " + std::to_string(maxSize) + " texture layers.", gRenderingName, LogLevel::WARN});
 }
 
 void RenderingSystem::handleMessage(const AddGfxEntityMessage& received)
@@ -202,9 +219,9 @@ void RenderingSystem::handleMessage(const ResourceDeliverMessage<ShaderDefinitio
     mShaders.emplace(received.id, std::move(shader));
 }
 
-void RenderingSystem::handleMessage(const ResourceDeliverMessage<Texture>& received)
+void RenderingSystem::handleMessage(const ResourceDeliverMessage<TextureArray>& received)
 {
-    mTextures.push_back(received.resource);
+    mTextureArrays.push_back(received.resource);
 }
 
 void RenderingSystem::handleMessage(const UpdateChunkVboMessage& received)
@@ -230,22 +247,22 @@ void RenderingSystem::render()
 {
     for(auto& debbie : mDebuggers)
     {
-        debbie.setColor({(float)(rand() % 256) / 256.0f,(float)(rand() % 256) / 256.0f, (float)(rand() % 256) / 256.0f});
-        debbie.setPitch(debbie.getPitch()+0.2f);
-        debbie.setYaw(debbie.getYaw()+0.1f);
+        //debbie.setColor({(float)(rand() % 256) / 256.0f,(float)(rand() % 256) / 256.0f, (float)(rand() % 256) / 256.0f});
+        //debbie.setPitch(debbie.getPitch()+0.2f);
+        //debbie.setYaw(debbie.getYaw()+0.1f);
 		mRenderer.queue(debbie);
     }
 
     for(auto& moddie : mModelRenderables)
     {
-        moddie.second.setTexture(*mTextures.back());
+        moddie.second.setTexture(*mTextureArrays.at(0), 0);
         mRenderer.queue(moddie.second);
     }
 
     for(auto& voxie : mChunkModels)
     {
         VoxelChunkRenderable renderable;
-        renderable.setTexture(*mTextures.front());
+        renderable.setTexture(*mTextureArrays.at(1), 0);
         renderable.setModel(voxie.second);
         mRenderer.queue(renderable);
     }
