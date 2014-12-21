@@ -7,7 +7,7 @@
 #include <fea/assert.hpp>
 
 VoxelChunkRenderer::VoxelChunkRenderer() :
-    mCurrentTexture(nullptr)
+    mCurrentTextureArray(nullptr)
 {
     mColors.setData(std::vector<float>({0.3f, 0.55555f,.0f}));
     mModelMatrix1.setData(std::vector<float>({1.0f, 0.0f, 0.0f, 0.0f }));
@@ -29,17 +29,17 @@ void VoxelChunkRenderer::queue(const Renderable& renderable)
     if(voxelChunk != nullptr)
         mOrders.push_back(voxelChunk);
 
-    mCurrentTexture = voxelChunkRenderable.findTexture();
+    mCurrentTextureArray = voxelChunkRenderable.findTextureArray();
 }
 
 void VoxelChunkRenderer::render(const Camera& camera, const glm::mat4& perspective, const Shader& shader)
 {
     mVertexArray.bind();
 
-    if(mCurrentTexture)
+    if(mCurrentTextureArray)
     {
-        GLuint textureId = mCurrentTexture->getId();
-        shader.setUniform("texture", UniformType::TEXTURE, &textureId);
+        GLuint textureId = mCurrentTextureArray->getId();
+        shader.setUniform("textureArray", UniformType::TEXTURE_ARRAY, &textureId);
     }
 
     shader.setUniform("viewProjectionMatrix", UniformType::MAT4X4, glm::value_ptr(perspective * camera.getMatrix()));

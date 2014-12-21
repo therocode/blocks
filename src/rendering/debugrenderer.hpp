@@ -5,7 +5,7 @@
 #include "vao.hpp"
 #include "buffer.hpp"
 #include "shader.hpp"
-#include "../resources/texture.hpp"
+#include "texturearray.hpp"
 
 
 class DebugRenderer : public RenderModule
@@ -46,5 +46,5 @@ class DebugRenderer : public RenderModule
         std::vector<float> data3;
         std::vector<float> data4;
 
-        Texture mWhiteTexture;
+        TextureArray mWhiteTextureArray;
 };

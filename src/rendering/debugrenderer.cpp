@@ -5,6 +5,7 @@
 #include <vector>
 #include <string>
 #include <iostream>
+#include "../resources/image.hpp"
 
 DebugRenderer::DebugRenderer() :
     mRenderAmount(0)
@@ -38,7 +39,8 @@ DebugRenderer::DebugRenderer() :
     data3 = { 0.0f, 0.0f, 1.0f, 0.0f };
     data4 = { 0.0f, 0.0f, 0.0f, 1.0f };
 
-    mWhiteTexture.create(16, 16, fea::Color(1.0f, 1.0f, 1.0f));
+    Image image({16, 16}, fea::Color::White);
+    mWhiteTextureArray.create({16, 16}, 1, image.getPixelsPointer());
 }
 
 void DebugRenderer::queue(const Renderable& renderable)
@@ -106,9 +108,9 @@ void DebugRenderer::queue(const Renderable& renderable)
 
 void DebugRenderer::render(const Camera& camera, const glm::mat4& perspective, const Shader& shader)
 {
-    GLuint id = mWhiteTexture.getId();
+    GLuint id = mWhiteTextureArray.getId();
     
-    shader.setUniform("texture", UniformType::TEXTURE, &id);
+    shader.setUniform("textureArray", UniformType::TEXTURE_ARRAY, &id);
 
     mVertexArray.bind();
 

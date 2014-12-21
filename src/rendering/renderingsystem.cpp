@@ -50,8 +50,6 @@ RenderingSystem::RenderingSystem(fea::MessageBus& bus, const glm::uvec2& viewSiz
 
     if(maxSize < 2048)
         mBus.send(LogMessage{"Only supporting " + std::to_string(maxSize) + " texture layers.", renderingName, LogLevel::WARN});
-
-    mWhite.create(16, 16, fea::Color(1.0f, 1.0f, 1.0f));
 }
 
 void RenderingSystem::handleMessage(const AddGfxEntityMessage& received)
@@ -221,9 +219,9 @@ void RenderingSystem::handleMessage(const ResourceDeliverMessage<ShaderDefinitio
     mShaders.emplace(received.id, std::move(shader));
 }
 
-void RenderingSystem::handleMessage(const ResourceDeliverMessage<Texture>& received)
+void RenderingSystem::handleMessage(const ResourceDeliverMessage<TextureArray>& received)
 {
-    mTextures.push_back(received.resource);
+    mTextureArrays.push_back(received.resource);
 }
 
 void RenderingSystem::handleMessage(const UpdateChunkVboMessage& received)
@@ -257,14 +255,14 @@ void RenderingSystem::render()
 
     for(auto& moddie : mModelRenderables)
     {
-        moddie.second.setTexture(mWhite);
+        moddie.second.setTexture(*mTextureArrays.at(0), 0);
         mRenderer.queue(moddie.second);
     }
 
     for(auto& voxie : mChunkModels)
     {
         VoxelChunkRenderable renderable;
-        renderable.setTexture(mWhite);
+        renderable.setTexture(*mTextureArrays.at(1), 0);
         renderable.setModel(voxie.second);
         mRenderer.queue(renderable);
     }

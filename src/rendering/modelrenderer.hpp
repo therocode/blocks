@@ -11,7 +11,8 @@ class Mesh;
 struct ModelOrder
 {
     const Model* model;
-    const Texture* texture;
+    const TextureArray* textureArray;
+    uint32_t textureIndex;
     glm::vec3 color;
     glm::vec3 position;
 };

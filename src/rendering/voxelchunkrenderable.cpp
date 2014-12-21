@@ -2,7 +2,7 @@
 
 VoxelChunkRenderable::VoxelChunkRenderable() : 
     mModel(nullptr),
-    mTexture(nullptr)
+    mTextureArray(nullptr)
 {
 }
 
@@ -21,12 +21,18 @@ const Model* VoxelChunkRenderable::findModel() const
     return mModel;
 }
 
-void VoxelChunkRenderable::setTexture(const Texture& texture)
+void VoxelChunkRenderable::setTexture(const TextureArray& textureArray, uint32_t index)
 {
-    mTexture = &texture;
+    mTextureArray = &textureArray;
+    mTextureIndex = index;
 }
 
-const Texture* VoxelChunkRenderable::findTexture() const
+const TextureArray* VoxelChunkRenderable::findTextureArray() const
 {
-    return mTexture;
+    return mTextureArray;
+}
+
+uint32_t VoxelChunkRenderable::getTextureIndex() const
+{
+    return mTextureIndex;
 }

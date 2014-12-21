@@ -3,7 +3,7 @@
 #include "../utilities/glm.hpp"
 
 class Model;
-class Texture;
+class TextureArray;
 
 class VoxelChunkRenderable : public Renderable
 {
@@ -12,9 +12,11 @@ class VoxelChunkRenderable : public Renderable
         virtual std::type_index getType() const;
         void setModel(const Model& model);
         const Model* findModel() const;
-        void setTexture(const Texture& texture);
-        const Texture* findTexture() const;
+        void setTexture(const TextureArray& texture, uint32_t index);
+        const TextureArray* findTextureArray() const;
+        uint32_t getTextureIndex() const;
     private:
         const Model* mModel;
-        const Texture* mTexture;
+        const TextureArray* mTextureArray;
+        uint32_t mTextureIndex;
 };

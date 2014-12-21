@@ -121,6 +121,13 @@ void Shader::setUniform(const std::string& name, UniformType type, const void* v
             glBindTexture(GL_TEXTURE_2D, *((GLuint*)value));
             break;
         }
+        case UniformType::TEXTURE_ARRAY:
+        {
+            glActiveTexture(GL_TEXTURE0);
+            glUniform1i(mUniformLocations.at(name), 0);
+            glBindTexture(GL_TEXTURE_2D_ARRAY, *((GLuint*)value));
+            break;
+        }
         case UniformType::NO_TYPE:
         {
             FEA_ASSERT(false, "Cannot set null uniform on shader!\n");
@@ -177,6 +184,13 @@ void Shader::setUniform(const std::string& name, UniformType type, int32_t count
             glActiveTexture(GL_TEXTURE0);
             glUniform1i(mUniformLocations.at(name), 0);
             glBindTexture(GL_TEXTURE_2D, *((GLuint*)value));
+            break;
+        }
+        case UniformType::TEXTURE_ARRAY:
+        {
+            glActiveTexture(GL_TEXTURE0);
+            glUniform1i(mUniformLocations.at(name), 0);
+            glBindTexture(GL_TEXTURE_2D_ARRAY, *((GLuint*)value));
             break;
         }
         case UniformType::NO_TYPE:

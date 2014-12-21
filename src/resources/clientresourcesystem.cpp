@@ -142,18 +142,22 @@ void ClientResourceSystem::loadImages(const std::vector<ResourceEntry>& images)
         {
             const auto name = imageEntry.first;
             const auto image = imageEntry.second;
-            pixels.insert(pixels.end(), image->getPixelsPointer(), image->getPixelsPointer() + image->getSize().x * image->getSize().y);
+            pixels.insert(pixels.end(), image->getPixelsPointer(), image->getPixelsPointer() + image->getSize().x * image->getSize().y * 4);
 
             TextureDefinition textureDefinition{newId, index};
 
             mTextureDefinitions.emplace(mTextureIDs.getId(name), textureDefinition);
 
+            std::cout << "created definition for '" << name << "' where " << newId << " is the ID and " << index << " is the index\n";
             index++;
+
         }
 
         std::shared_ptr<TextureArray> textureArray = std::make_shared<TextureArray>();
         textureArray->create(size, amount, pixels.data());
 
         mBus.send(ResourceDeliverMessage<TextureArray>{newId, textureArray});
+
+        std::cout << "created texture array id " << newId << " of size " << size << "\n";
     }
 }

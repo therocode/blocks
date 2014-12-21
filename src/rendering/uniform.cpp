@@ -129,6 +129,9 @@ Uniform::Uniform(const Uniform& other)
         case UniformType::TEXTURE:
             mTextureVal = other.mTextureVal;
             break;
+        case UniformType::TEXTURE_ARRAY:
+            mTextureVal = other.mTextureVal;
+            break;
         case UniformType::NO_TYPE:
             break;
     }
