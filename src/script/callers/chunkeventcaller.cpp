@@ -12,10 +12,23 @@ void ChunkEventCaller::handleMessage(const ChunkInitiallyGeneratedMessage& recei
     if(mActive) 
     {
         ScriptChunk chunk(&(received.chunk), mVoxelDataArrayType);    
-        ScriptCallback<WorldId, ChunkCoord&, ScriptChunk&> scriptCallback(mEngine);
-        scriptCallback.setFunction(mEngine.getEngine()->GetModule("scripts")
-            ->GetFunctionByDecl("void chunkInitiallyGenerated(const uint32, const ChunkCoord &in, Chunk &in)"));
-        scriptCallback.execute(received.worldId, (ChunkCoord&)received.coordinate, chunk);        
+
+        asIScriptContext *context = mEngine.requestContext();
+
+        for(asIScriptObject* extensionObj : mExtensions)
+        {
+            asIObjectType* extensionType = extensionObj->GetObjectType();
+            asIScriptFunction *function = extensionType->GetMethodByDecl("void chunkInitiallyGenerated(const uint32, const ChunkCoord &in, Chunk &in)");
+
+            if(function)
+            {
+                ScriptMemberCallback<WorldId, ChunkCoord&, ScriptChunk&> callback(mEngine);
+                callback.setFunction(function);
+                callback.execute(extensionObj, received.worldId, (ChunkCoord&)received.coordinate, chunk);
+            }
+        }
+
+        mEngine.freeContext(context);
     }
 }
 
@@ -24,10 +37,23 @@ void ChunkEventCaller::handleMessage(const ChunkCandidateMessage& received)
     if(mActive) 
     {
         ScriptChunk chunk(&(received.chunk), mVoxelDataArrayType);    
-        ScriptCallback<WorldId, ChunkCoord&, ScriptChunk&, uint64_t> scriptCallback(mEngine);
-        scriptCallback.setFunction(mEngine.getEngine()->GetModule("scripts")
-            ->GetFunctionByDecl("void chunkCandidate(const uint32, const ChunkCoord &in, Chunk &in, const uint64)"));
-        scriptCallback.execute(received.worldId, (ChunkCoord&)received.coordinate, chunk, received.frameNumberDelta);        
+
+        asIScriptContext *context = mEngine.requestContext();
+
+        for(asIScriptObject* extensionObj : mExtensions)
+        {
+            asIObjectType* extensionType = extensionObj->GetObjectType();
+            asIScriptFunction *function = extensionType->GetMethodByDecl("void chunkCandidate(const uint32, const ChunkCoord &in, Chunk &in, const uint64)");
+
+            if(function)
+            {
+                ScriptMemberCallback<WorldId, ChunkCoord&, ScriptChunk&, uint64_t> callback(mEngine);
+                callback.setFunction(function);
+                callback.execute(extensionObj, received.worldId, (ChunkCoord&)received.coordinate, chunk, received.frameNumberDelta);        
+            }
+        }
+
+        mEngine.freeContext(context);
     }
 }
 
@@ -35,10 +61,23 @@ void ChunkEventCaller::handleMessage(const ChunkFinishedMessage& received)
 {
     if(mActive) 
     {
-        ScriptChunk chunk(&(received.chunk), mVoxelDataArrayType);    
-        ScriptCallback<WorldId, ChunkCoord&, ScriptChunk&> scriptCallback(mEngine);
-        scriptCallback.setFunction(mEngine.getEngine()->GetModule("scripts")
-            ->GetFunctionByDecl("void chunkFinished(const uint32, const ChunkCoord &in, const Chunk &in)"));
-        scriptCallback.execute(received.worldId, (ChunkCoord&)received.coordinate, chunk);
+         ScriptChunk chunk(&(received.chunk), mVoxelDataArrayType);    
+
+        asIScriptContext *context = mEngine.requestContext();
+
+        for(asIScriptObject* extensionObj : mExtensions)
+        {
+            asIObjectType* extensionType = extensionObj->GetObjectType();
+            asIScriptFunction *function = extensionType->GetMethodByDecl("void chunkFinished(const uint32, const ChunkCoord &in, const Chunk &in)");
+
+            if(function)
+            {
+                ScriptMemberCallback<WorldId, ChunkCoord&, ScriptChunk&> callback(mEngine);
+                callback.setFunction(function);
+                callback.execute(extensionObj, received.worldId, (ChunkCoord&)received.coordinate, chunk);
+            }
+        }
+
+        mEngine.freeContext(context);
     }
 }
