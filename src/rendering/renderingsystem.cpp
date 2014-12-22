@@ -75,7 +75,8 @@ void RenderingSystem::handleMessage(const RotateGfxEntityMessage& received)
 
     if(received.id != mCameraEntity)
     {
-        //rotate entities
+        mModelRenderables.at(received.id).setPitch(pitch);
+        mModelRenderables.at(received.id).setYaw(yaw);
     }
     else
     {
@@ -90,7 +91,6 @@ void RenderingSystem::handleMessage(const MoveGfxEntityMessage& received)
 
     if(received.id != mCameraEntity)
     {
-
         mModelRenderables.at(received.id).setPosition(position);
     }
     else
