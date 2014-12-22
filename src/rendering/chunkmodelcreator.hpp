@@ -1,6 +1,6 @@
 #pragma once
 #include "../utilities/glm.hpp"
-#include "model.hpp"
+#include "chunkmodel.hpp"
 #include "../world/worlddefines.hpp"
 
 class Chunk;
@@ -8,5 +8,5 @@ class Chunk;
 class ChunkModelCreator
 {
     public:
-        Model generateChunkModel(const ChunkCoord& mainChunkCoord, Chunk* mainChunk, Chunk* topChunk, Chunk* bottomChunk, Chunk* frontChunk, Chunk* backChunk, Chunk* leftChunk, Chunk* rightChunk);
+        ChunkModel generateChunkModel(const ChunkCoord& mainChunkCoord, Chunk* mainChunk, Chunk* topChunk, Chunk* bottomChunk, Chunk* frontChunk, Chunk* backChunk, Chunk* leftChunk, Chunk* rightChunk);
 };

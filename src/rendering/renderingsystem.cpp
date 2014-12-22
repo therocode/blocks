@@ -59,6 +59,7 @@ void RenderingSystem::handleMessage(const AddGfxEntityMessage& received)
         ModelRenderable newModel;
 
         newModel.setModel(**(mModels.begin() + rand() % mModels.size()));
+        newModel.setTexture(*mTextureArrays.at(0), rand() % 2);
         newModel.setPosition(received.position);
         newModel.setColor({(float)(rand() % 256) / 256.0f,(float)(rand() % 256) / 256.0f, (float)(rand() % 256) / 256.0f});
 
@@ -256,14 +257,13 @@ void RenderingSystem::render()
 
     for(auto& moddie : mModelRenderables)
     {
-        moddie.second.setTexture(*mTextureArrays.at(0), rand() % 2);
         mRenderer.queue(moddie.second);
     }
 
     for(auto& voxie : mChunkModels)
     {
         VoxelChunkRenderable renderable;
-        renderable.setTexture(*mTextureArrays.at(1), 0);
+        renderable.setTexture(*mTextureArrays.at(1));
         renderable.setModel(voxie.second);
         mRenderer.queue(renderable);
     }

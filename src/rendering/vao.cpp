@@ -83,3 +83,36 @@ void VAO::setInstanceAttribute(GLuint index, const uint32_t amount, const Buffer
     if(!wasBound)
         unbind();
 }
+
+void VAO::setVertexIntegerAttribute(GLuint index, const uint32_t amount, const Buffer& dataBuffer, GLint type)
+{
+    bool wasBound = isBound();
+
+    if(!isBound())
+        bind();
+
+    glEnableVertexAttribArray(index);
+    mEnabledVertexAttributes.push_back(index);
+    dataBuffer.bind();
+    glVertexAttribIPointer(index, amount, type, 0, nullptr);
+
+    if(!wasBound)
+        unbind();
+}
+
+void VAO::setInstanceIntegerAttribute(GLuint index, const uint32_t amount, const Buffer& dataBuffer, uint32_t divisor, GLint type)
+{
+    bool wasBound = isBound();
+
+    if(!isBound())
+        bind();
+
+    glEnableVertexAttribArray(index);
+    mEnabledVertexAttributes.push_back(index);
+    dataBuffer.bind();
+    glVertexAttribIPointer(index, amount, type, 0, nullptr);
+    glVertexAttribDivisor(index, divisor);
+
+    if(!wasBound)
+        unbind();
+}

@@ -32,7 +32,27 @@ Buffer::Buffer(const std::vector<uint32_t>& data, int32_t type)  :
 
 Buffer::~Buffer()
 {
-    glDeleteBuffers(1, &mBufferId);
+    if(mBufferId)
+        glDeleteBuffers(1, &mBufferId);
+}
+
+Buffer::Buffer(Buffer&& other) : 
+    mBufferId(0),
+    mType(0),
+    mElementAmount(0)
+{
+    std::swap(mBufferId, other.mBufferId);
+    std::swap(mType, other.mType);
+    std::swap(mElementAmount, other.mElementAmount);
+}
+
+Buffer& Buffer::operator=(Buffer&& other)
+{
+    std::swap(mBufferId, other.mBufferId);
+    std::swap(mType, other.mType);
+    std::swap(mElementAmount, other.mElementAmount);
+
+    return *this;
 }
 
 GLuint Buffer::getId() const

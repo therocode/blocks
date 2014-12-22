@@ -64,5 +64,5 @@ class RenderingSystem :
         std::vector<std::shared_ptr<TextureArray>> mTextureArrays;
 
         ChunkModelCreator mChunkModelCreator;
-        std::unordered_map<ChunkCoord, Model> mChunkModels;
+        std::unordered_map<ChunkCoord, ChunkModel> mChunkModels;
 };

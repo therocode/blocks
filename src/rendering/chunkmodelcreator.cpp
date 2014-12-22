@@ -4,9 +4,9 @@
 #include "meshwalker.hpp"
 #include "../world/chunk.hpp"
 
-Model ChunkModelCreator::generateChunkModel(const ChunkCoord& mainChunkCoord, Chunk* mainChunk, Chunk* topChunk, Chunk* bottomChunk, Chunk* frontChunk, Chunk* backChunk, Chunk* leftChunk, Chunk* rightChunk)
+ChunkModel ChunkModelCreator::generateChunkModel(const ChunkCoord& mainChunkCoord, Chunk* mainChunk, Chunk* topChunk, Chunk* bottomChunk, Chunk* frontChunk, Chunk* backChunk, Chunk* leftChunk, Chunk* rightChunk)
 {
-    Model newModel;
+    ChunkModel newModel;
 
     glm::vec3 chunkOffset(mainChunkCoord.x * (float)chunkWidth, mainChunkCoord.y * (float)chunkWidth, mainChunkCoord.z * (float)chunkWidth);
 
@@ -124,6 +124,7 @@ Model ChunkModelCreator::generateChunkModel(const ChunkCoord& mainChunkCoord, Ch
     std::vector<float> allQuadPositions;
     std::vector<float> allQuadNormals;
     std::vector<float> allQuadTexCoords;
+    std::vector<uint32_t> allTextureIndices;
 
     for(auto& quad : topQuads)
     {
@@ -134,9 +135,13 @@ Model ChunkModelCreator::generateChunkModel(const ChunkCoord& mainChunkCoord, Ch
         float worldX = quad.mX + chunkOffset.x;
         float worldY = quad.mDepth + chunkOffset.y + 1.0f; //top alignmetn
         float worldZ = quad.mY + chunkOffset.z;
-        int resId = quad.mType;
-        textureLocation.x = (resId - 1) % 8;
-        textureLocation.y = (resId - 1) / 8;
+
+        allTextureIndices.push_back(quad.mType);
+        allTextureIndices.push_back(quad.mType);
+        allTextureIndices.push_back(quad.mType);
+        allTextureIndices.push_back(quad.mType);
+        allTextureIndices.push_back(quad.mType);
+        allTextureIndices.push_back(quad.mType);
 
         quadPositions = { worldX              , worldY, worldZ,
                           worldX              , worldY, worldZ + quad.mHeight,
@@ -179,10 +184,13 @@ Model ChunkModelCreator::generateChunkModel(const ChunkCoord& mainChunkCoord, Ch
         float worldX = quad.mX + chunkOffset.x;
         float worldY = quad.mDepth + chunkOffset.y;
         float worldZ = quad.mY + chunkOffset.z;
-		int resId = quad.mType;
-		if(quad.mType == 1)resId = 2;
-        textureLocation.x = (resId - 1) % 8;
-        textureLocation.y = (resId - 1) / 8;
+
+        allTextureIndices.push_back(quad.mType);
+        allTextureIndices.push_back(quad.mType);
+        allTextureIndices.push_back(quad.mType);
+        allTextureIndices.push_back(quad.mType);
+        allTextureIndices.push_back(quad.mType);
+        allTextureIndices.push_back(quad.mType);
 
         quadPositions = { worldX              , worldY, worldZ,
                           worldX + quad.mWidth, worldY, worldZ + quad.mHeight,
@@ -227,10 +235,12 @@ Model ChunkModelCreator::generateChunkModel(const ChunkCoord& mainChunkCoord, Ch
         float worldY = quad.mY + chunkOffset.y;
         float worldZ = quad.mDepth + chunkOffset.z + 1.0f;
 
-		int resId = quad.mType;
-		if(quad.mType == 1)resId = 3;
-        textureLocation.x = (resId - 1) % 8;
-        textureLocation.y = (resId - 1) / 8;
+        allTextureIndices.push_back(quad.mType);
+        allTextureIndices.push_back(quad.mType);
+        allTextureIndices.push_back(quad.mType);
+        allTextureIndices.push_back(quad.mType);
+        allTextureIndices.push_back(quad.mType);
+        allTextureIndices.push_back(quad.mType);
 
         quadPositions = { worldX              , worldY,                worldZ,
                           worldX + quad.mWidth, worldY + quad.mHeight, worldZ,
@@ -274,10 +284,12 @@ Model ChunkModelCreator::generateChunkModel(const ChunkCoord& mainChunkCoord, Ch
         float worldY = quad.mY + chunkOffset.y;
         float worldZ = quad.mDepth + chunkOffset.z;
 
-		int resId = quad.mType;
-		if(quad.mType == 1)resId = 3;
-        textureLocation.x = (resId - 1) % 8;
-        textureLocation.y = (resId - 1) / 8;
+        allTextureIndices.push_back(quad.mType);
+        allTextureIndices.push_back(quad.mType);
+        allTextureIndices.push_back(quad.mType);
+        allTextureIndices.push_back(quad.mType);
+        allTextureIndices.push_back(quad.mType);
+        allTextureIndices.push_back(quad.mType);
 
         quadPositions = { worldX              , worldY,                worldZ,
                           worldX              , worldY + quad.mHeight, worldZ,
@@ -321,10 +333,12 @@ Model ChunkModelCreator::generateChunkModel(const ChunkCoord& mainChunkCoord, Ch
         float worldY = quad.mY + chunkOffset.y;
         float worldZ = quad.mX + chunkOffset.z;
 
-		int resId = quad.mType;
-		if(quad.mType == 1)resId = 3;
-        textureLocation.x = (resId - 1) % 8;
-        textureLocation.y = (resId - 1) / 8;
+        allTextureIndices.push_back(quad.mType);
+        allTextureIndices.push_back(quad.mType);
+        allTextureIndices.push_back(quad.mType);
+        allTextureIndices.push_back(quad.mType);
+        allTextureIndices.push_back(quad.mType);
+        allTextureIndices.push_back(quad.mType);
 
         quadPositions = { worldX              , worldY,                worldZ,
                           worldX              , worldY + quad.mHeight, worldZ + quad.mWidth,
@@ -368,10 +382,12 @@ Model ChunkModelCreator::generateChunkModel(const ChunkCoord& mainChunkCoord, Ch
         float worldY = quad.mY + chunkOffset.y;
         float worldZ = quad.mX + chunkOffset.z;
 
-		int resId = quad.mType;
-		if(quad.mType == 1)resId = 3;
-        textureLocation.x = (resId - 1) % 8;
-        textureLocation.y = (resId - 1) / 8;
+        allTextureIndices.push_back(quad.mType);
+        allTextureIndices.push_back(quad.mType);
+        allTextureIndices.push_back(quad.mType);
+        allTextureIndices.push_back(quad.mType);
+        allTextureIndices.push_back(quad.mType);
+        allTextureIndices.push_back(quad.mType);
 
         quadPositions = { worldX              , worldY,                worldZ,
                           worldX              , worldY + quad.mHeight, worldZ,
@@ -408,9 +424,10 @@ Model ChunkModelCreator::generateChunkModel(const ChunkCoord& mainChunkCoord, Ch
     //printf("Generated %u vertices and %u indices\n", verts, indices);
     //After stuff has been added, you have to update the gpu vbo data.
 
-    newModel.addVertexArray(Model::POSITIONS, allQuadPositions);
-    newModel.addVertexArray(Model::NORMALS, allQuadNormals);
-    newModel.addVertexArray(Model::TEXCOORDS, allQuadTexCoords);
+    newModel.model.addVertexArray(Model::POSITIONS, allQuadPositions);
+    newModel.model.addVertexArray(Model::NORMALS, allQuadNormals);
+    newModel.model.addVertexArray(Model::TEXCOORDS, allQuadTexCoords);
+    newModel.textureIndices.setData(allTextureIndices);
 
     return newModel;
 }
