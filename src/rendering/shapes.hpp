@@ -1,6 +1,6 @@
 #pragma once
 
-std::vector<float> cubeVertices = {
+static std::vector<float> cubeVertices = {
 		 -0.5f, -0.5f,  0.5f,
 		  0.5f, -0.5f,  0.5f,
 		 -0.5f,  0.5f,  0.5f,
@@ -55,4 +55,45 @@ std::vector<float> cubeVertices = {
 		  0.5f, -0.5f,  0.5f,
 		 -0.5f, -0.5f, -0.5f,
 		  0.5f, -0.5f, -0.5f,
+};
+
+static std::vector<float> lineCageVertices = {
+    //front
+		 -0.5f, -0.5f,  0.5f,
+		  0.5f, -0.5f,  0.5f,
+
+		  0.5f, -0.5f,  0.5f,
+		  0.5f,  0.5f,  0.5f,
+
+		  0.5f,  0.5f,  0.5f,
+		 -0.5f,  0.5f,  0.5f,
+
+		 -0.5f,  0.5f,  0.5f,
+		 -0.5f, -0.5f,  0.5f,
+
+    //mid
+		 -0.5f, -0.5f,  0.5f,
+		 -0.5f, -0.5f, -0.5f,
+
+		  0.5f, -0.5f,  0.5f,
+		  0.5f, -0.5f, -0.5f,
+
+		  0.5f,  0.5f,  0.5f,
+		  0.5f,  0.5f, -0.5f,
+
+		 -0.5f,  0.5f,  0.5f,
+		 -0.5f,  0.5f, -0.5f,
+
+    //front
+		 -0.5f, -0.5f, -0.5f,
+		  0.5f, -0.5f, -0.5f,
+
+		  0.5f, -0.5f, -0.5f,
+		  0.5f,  0.5f, -0.5f,
+
+		  0.5f,  0.5f, -0.5f,
+		 -0.5f,  0.5f, -0.5f,
+
+		 -0.5f,  0.5f, -0.5f,
+		 -0.5f, -0.5f, -0.5f
 };
