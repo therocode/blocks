@@ -13,7 +13,8 @@
 
 RenderingSystem::RenderingSystem(fea::MessageBus& bus, const glm::uvec2& viewSize) :
     mBus(bus),
-    mRenderer(mGLContext, viewSize)
+    mRenderer(mGLContext, viewSize),
+    mIsFacing(false)
 
 {
     subscribe(bus, *this);
@@ -56,6 +57,8 @@ RenderingSystem::RenderingSystem(fea::MessageBus& bus, const glm::uvec2& viewSiz
 
 void RenderingSystem::handleMessage(const AddGfxEntityMessage& received)
 {
+    std::cout << " asked to add entity " << received.id << "\n";
+
     if(received.id != mCameraEntity)
     {
         ModelRenderable newModel;
@@ -91,6 +94,8 @@ void RenderingSystem::handleMessage(const MoveGfxEntityMessage& received)
     size_t id = received.id;
     const glm::vec3& position = received.position;
 
+    //std::cout << " asked to move entity " << id << "\n";
+
     if(received.id != mCameraEntity)
     {
         mModelRenderables.at(received.id).setPosition(position);
@@ -111,6 +116,7 @@ void RenderingSystem::handleMessage(const RemoveGfxEntityMessage& received)
 
 void RenderingSystem::handleMessage(const ClientAttachedToEntityMessage& received)
 {
+    std::cout << "got to know that camera entity is " << received.entityId << "\n";
     mCameraEntity = received.entityId;
 }
 

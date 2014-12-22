@@ -17,7 +17,9 @@ Client::Client(fea::MessageBus& bus, const NetworkParameters& parameters) :
 	mWindow(new fea::SDL2WindowBackend()),
 	mInputAdaptor(std::unique_ptr<InputAdaptor>(new InputAdaptor(mBus))),
 	mQuit(false),
-    mClientWorld(bus)
+    mClientWorld(bus),
+    mPitch(0.0f),
+    mYaw(0.0f)
 {
     subscribe(mBus, *this);
 

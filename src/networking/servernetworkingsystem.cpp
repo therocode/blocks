@@ -262,6 +262,7 @@ void ServerNetworkingSystem::handleMessage(const EntityMovedMessage& received)
 
                 if(result.second)
                 {
+                    std::cout << "will send that entity " << received.entityId << " has entered range to " << playerId << "\n";
                     EntityEnteredRangeMessage message{received.entityId, entityPosition};
                     sendToOne(playerId, message, true, CHANNEL_DEFAULT);
                 }
