@@ -19,9 +19,10 @@ class VoxelChunkRenderer : public RenderModule
     private:
         VAO mVertexArray;
 
-        std::vector<const Model*> mOrders;
+        std::vector<const ChunkModel*> mOrders;
 
         Buffer mColors;
+        Buffer mTextureIndices;
         Buffer mModelMatrix1;
         Buffer mModelMatrix2;
         Buffer mModelMatrix3;

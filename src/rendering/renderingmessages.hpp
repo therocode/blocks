@@ -36,6 +36,7 @@ struct CameraUpdatedMessage
 
 struct FacingBlockMessage
 {
+    bool inRange;
     const VoxelCoord& block;
 };
 

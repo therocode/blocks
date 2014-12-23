@@ -1,7 +1,9 @@
 #include "debugrenderable.hpp"
 
 DebugRenderable::DebugRenderable(DebugShape shape) :
-    mColor(1.0f, 1.0f, 1.0f)
+    mColor(1.0f, 1.0f, 1.0f),
+    mPitch(0.0f),
+    mYaw(0.0f)
 {
 	mDebugShape = shape;
 }

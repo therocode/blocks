@@ -61,6 +61,7 @@ void DebugRenderer::queue(const Renderable& renderable)
 
 		const glm::vec3& startColor = debugRenderable.getLineStartColor();
 		const glm::vec3& endColor = debugRenderable.getLineEndColor();
+
 		mLineColorData.push_back(startColor.x);
 		mLineColorData.push_back(startColor.y);
 		mLineColorData.push_back(startColor.z);
@@ -125,6 +126,7 @@ void DebugRenderer::render(const Camera& camera, const glm::mat4& perspective, c
     mModelMatrixData2.clear();
     mModelMatrixData3.clear();
     mModelMatrixData4.clear();
+
     mColorData.clear();
 
     shader.setUniform("viewProjectionMatrix", UniformType::MAT4X4, glm::value_ptr(perspective * camera.getMatrix()));

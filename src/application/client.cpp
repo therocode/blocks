@@ -17,7 +17,9 @@ Client::Client(fea::MessageBus& bus, const NetworkParameters& parameters) :
 	mWindow(new fea::SDL2WindowBackend()),
 	mInputAdaptor(std::unique_ptr<InputAdaptor>(new InputAdaptor(mBus))),
 	mQuit(false),
-    mClientWorld(bus)
+    mClientWorld(bus),
+    mPitch(0.0f),
+    mYaw(0.0f)
 {
     subscribe(mBus, *this);
 
@@ -57,7 +59,7 @@ void Client::updateVoxelLookAt()
 	uint32_t face = 0;
 	bool f = RayCaster::getVoxelAtRay(mClientWorld.getVoxels(mCurrentWorld), mPosition + glm::vec3(0, 0.6f, 0), direction, 200.f, face, block);
 
-    mBus.send(FacingBlockMessage{block});
+    mBus.send(FacingBlockMessage{f, block});
 }
 
 void Client::update()
@@ -135,7 +137,7 @@ void Client::handleMessage(const ClientEntityMovedMessage& received)
     {
         mPosition = received.position;
         mBus.send(HighlightEntityMoveRequestedMessage{0, 0, WorldToChunk::convert(received.position)});
-        //updateVoxelLookAt();
+        updateVoxelLookAt();
     }
 }
 

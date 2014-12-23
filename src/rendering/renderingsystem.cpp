@@ -1,6 +1,7 @@
 #include "renderingsystem.hpp"
 #include "modelrenderer.hpp"
 #include "voxelchunkrenderer.hpp"
+#include "extrarenderer.hpp"
 #include "debugrenderer.hpp"
 #include "../resources/rawmodel.hpp"
 #include "../resources/shadersource.hpp"
@@ -12,12 +13,14 @@
 
 RenderingSystem::RenderingSystem(fea::MessageBus& bus, const glm::uvec2& viewSize) :
     mBus(bus),
-    mRenderer(mGLContext, viewSize)
+    mRenderer(mGLContext, viewSize),
+    mIsFacing(false)
 
 {
     subscribe(bus, *this);
     mRenderer.addModule(RenderModule::MODEL, std::unique_ptr<ModelRenderer>(new ModelRenderer()));
     mRenderer.addModule(RenderModule::VOXEL, std::unique_ptr<VoxelChunkRenderer>(new VoxelChunkRenderer()));
+    mRenderer.addModule(RenderModule::EXTRA, std::unique_ptr<ExtraRenderer>(new ExtraRenderer()));
     mRenderer.addModule(RenderModule::DEBUG, std::unique_ptr<DebugRenderer>(new DebugRenderer()));
 
     for(uint32_t x = 0; x < 25; x++)
@@ -59,6 +62,7 @@ void RenderingSystem::handleMessage(const AddGfxEntityMessage& received)
         ModelRenderable newModel;
 
         newModel.setModel(**(mModels.begin() + rand() % mModels.size()));
+        newModel.setTexture(*mTextureArrays.at(0), rand() % 2);
         newModel.setPosition(received.position);
         newModel.setColor({(float)(rand() % 256) / 256.0f,(float)(rand() % 256) / 256.0f, (float)(rand() % 256) / 256.0f});
 
@@ -74,7 +78,12 @@ void RenderingSystem::handleMessage(const RotateGfxEntityMessage& received)
 
     if(received.id != mCameraEntity)
     {
-        //rotate entities
+        auto iterator = mModelRenderables.find(id);
+        if(iterator != mModelRenderables.end())
+        {
+            iterator->second.setPitch(pitch);
+            iterator->second.setYaw(yaw);
+        }
     }
     else
     {
@@ -89,8 +98,11 @@ void RenderingSystem::handleMessage(const MoveGfxEntityMessage& received)
 
     if(received.id != mCameraEntity)
     {
-
-        mModelRenderables.at(received.id).setPosition(position);
+        auto iterator = mModelRenderables.find(id);
+        if(iterator != mModelRenderables.end())
+        {
+            iterator->second.setPosition(position);
+        }
     }
     else
     {
@@ -244,6 +256,12 @@ void RenderingSystem::handleMessage(const ChunkDeletedMessage& received)
     mChunkModels.erase(received.coordinate);
 }
 
+void RenderingSystem::handleMessage(const FacingBlockMessage& received)
+{
+    mIsFacing = received.inRange;
+    mFacingBlock = received.block;
+}
+
 void RenderingSystem::render()
 {
     for(auto& debbie : mDebuggers)
@@ -256,16 +274,23 @@ void RenderingSystem::render()
 
     for(auto& moddie : mModelRenderables)
     {
-        moddie.second.setTexture(*mTextureArrays.at(0), rand() % 2);
         mRenderer.queue(moddie.second);
     }
 
     for(auto& voxie : mChunkModels)
     {
         VoxelChunkRenderable renderable;
-        renderable.setTexture(*mTextureArrays.at(1), 0);
+        renderable.setTexture(*mTextureArrays.at(1));
         renderable.setModel(voxie.second);
         mRenderer.queue(renderable);
+    }
+
+    if(mIsFacing)
+    {
+        ExtraRenderable extra;
+        extra.setPosition((glm::vec3)mFacingBlock + glm::vec3(0.5f, 0.5f, 0.5f));
+        extra.setColor({1.0f, 1.0f, 1.0f});
+        mRenderer.queue(extra);
     }
 
     mRenderer.render(*mShaders.begin()->second);

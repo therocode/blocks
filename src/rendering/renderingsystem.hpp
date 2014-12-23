@@ -28,9 +28,10 @@ class RenderingSystem :
                                 ResourceDeliverMessage<ShaderDefinition>,
                                 ResourceDeliverMessage<TextureArray>,
                                 UpdateChunkVboMessage,
-                                ChunkDeletedMessage>
+                                ChunkDeletedMessage,
+                                FacingBlockMessage>
 {
-    enum RenderModule{ DEBUG, MODEL, VOXEL };
+    enum RenderModule{ DEBUG, MODEL, VOXEL, EXTRA };
     public:
         RenderingSystem(fea::MessageBus& bus, const glm::uvec2& viewSize);
         void handleMessage(const AddGfxEntityMessage& received) override;
@@ -46,6 +47,7 @@ class RenderingSystem :
         void handleMessage(const ResourceDeliverMessage<TextureArray>& received) override;
         void handleMessage(const UpdateChunkVboMessage& received) override;
         void handleMessage(const ChunkDeletedMessage& received) override;
+        void handleMessage(const FacingBlockMessage& received) override;
         void render();
     private:
         fea::MessageBus& mBus;
@@ -64,5 +66,8 @@ class RenderingSystem :
         std::vector<std::shared_ptr<TextureArray>> mTextureArrays;
 
         ChunkModelCreator mChunkModelCreator;
-        std::unordered_map<ChunkCoord, Model> mChunkModels;
+        std::unordered_map<ChunkCoord, ChunkModel> mChunkModels;
+
+        bool mIsFacing;
+        glm::ivec3 mFacingBlock;
 };

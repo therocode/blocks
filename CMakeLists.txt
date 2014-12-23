@@ -72,6 +72,8 @@ set(source_files
     src/rendering/chunkmodelcreator.cpp
     src/rendering/debugrenderable.cpp
     src/rendering/debugrenderer.cpp
+    src/rendering/extrarenderable.cpp
+    src/rendering/extrarenderer.cpp
     src/rendering/frustum.cpp
     src/rendering/gl_core_3_3.c
     src/rendering/glcontext.cpp
@@ -209,6 +211,8 @@ set(header_files
     src/rendering/chunkmodelcreator.hpp
     src/rendering/debugrenderable.hpp
     src/rendering/debugrenderer.hpp
+    src/rendering/extrarenderable.hpp
+    src/rendering/extrarenderer.hpp
     src/rendering/frustum.hpp
     src/rendering/gl_core_3_3.h
     src/rendering/glcontext.hpp

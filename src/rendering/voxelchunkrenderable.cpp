@@ -11,28 +11,22 @@ std::type_index VoxelChunkRenderable::getType() const
     return std::type_index(typeid(VoxelChunkRenderable));
 }
 
-void VoxelChunkRenderable::setModel(const Model& model)
+void VoxelChunkRenderable::setModel(const ChunkModel& model)
 {
     mModel = &model;
 }
 
-const Model* VoxelChunkRenderable::findModel() const
+const ChunkModel* VoxelChunkRenderable::findModel() const
 {
     return mModel;
 }
 
-void VoxelChunkRenderable::setTexture(const TextureArray& textureArray, uint32_t index)
+void VoxelChunkRenderable::setTexture(const TextureArray& textureArray)
 {
     mTextureArray = &textureArray;
-    mTextureIndex = index;
 }
 
 const TextureArray* VoxelChunkRenderable::findTextureArray() const
 {
     return mTextureArray;
-}
-
-uint32_t VoxelChunkRenderable::getTextureIndex() const
-{
-    return mTextureIndex;
 }

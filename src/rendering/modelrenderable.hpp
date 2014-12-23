@@ -14,6 +14,10 @@ class ModelRenderable : public Renderable
         const glm::vec3& getPosition() const;
         void setColor(const glm::vec3& color);
         const glm::vec3& getColor() const;
+		void setPitch(float pitch);
+		const float getPitch() const;
+		void setYaw(float yaw);
+		const float getYaw() const;
         void setModel(const Model& model);
         const Model* findModel() const;
         void setTexture(const TextureArray& texture, uint32_t index);
@@ -22,6 +26,8 @@ class ModelRenderable : public Renderable
     private:
         glm::vec3 mPosition;
         glm::vec3 mColor;
+		float mPitch;
+		float mYaw;
         const Model* mModel;
         const TextureArray* mTextureArray;
         uint32_t mTextureIndex;
