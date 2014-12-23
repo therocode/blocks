@@ -36,3 +36,4 @@ assets/*
 pullassets.sh
 pushassets.sh
 tags
+driveassets/*
