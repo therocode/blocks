@@ -57,8 +57,6 @@ RenderingSystem::RenderingSystem(fea::MessageBus& bus, const glm::uvec2& viewSiz
 
 void RenderingSystem::handleMessage(const AddGfxEntityMessage& received)
 {
-    std::cout << " asked to add entity " << received.id << "\n";
-
     if(received.id != mCameraEntity)
     {
         ModelRenderable newModel;
@@ -80,8 +78,12 @@ void RenderingSystem::handleMessage(const RotateGfxEntityMessage& received)
 
     if(received.id != mCameraEntity)
     {
-        mModelRenderables.at(received.id).setPitch(pitch);
-        mModelRenderables.at(received.id).setYaw(yaw);
+        auto iterator = mModelRenderables.find(id);
+        if(iterator != mModelRenderables.end())
+        {
+            iterator->second.setPitch(pitch);
+            iterator->second.setYaw(yaw);
+        }
     }
     else
     {
@@ -94,11 +96,13 @@ void RenderingSystem::handleMessage(const MoveGfxEntityMessage& received)
     size_t id = received.id;
     const glm::vec3& position = received.position;
 
-    //std::cout << " asked to move entity " << id << "\n";
-
     if(received.id != mCameraEntity)
     {
-        mModelRenderables.at(received.id).setPosition(position);
+        auto iterator = mModelRenderables.find(id);
+        if(iterator != mModelRenderables.end())
+        {
+            iterator->second.setPosition(position);
+        }
     }
     else
     {
@@ -116,7 +120,6 @@ void RenderingSystem::handleMessage(const RemoveGfxEntityMessage& received)
 
 void RenderingSystem::handleMessage(const ClientAttachedToEntityMessage& received)
 {
-    std::cout << "got to know that camera entity is " << received.entityId << "\n";
     mCameraEntity = received.entityId;
 }
 

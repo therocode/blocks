@@ -242,7 +242,6 @@ void ClientNetworkingSystem::handleServerData(const std::vector<uint8_t>& data)
         else if(type == ENTITY_ENTERED_RANGE)
         {
             EntityEnteredRangeMessage received = deserializeMessage<EntityEnteredRangeMessage>(data);
-            std::cout << "entity entered range! The it was " << received.id << "\n";
             mBus.send(received);
         }
         else if(type == ENTITY_POSITION_UPDATED)
