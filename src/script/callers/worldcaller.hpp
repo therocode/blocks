@@ -10,7 +10,8 @@ class WorldCaller :
 	public:
 		WorldCaller(fea::MessageBus& bus, 
 						 ScriptEngine& engine, 
-						 ScriptEntityMap& scriptEntities);
+						 ScriptEntityMap& scriptEntities,
+                         std::vector<asIScriptObject*>& extensions);
 
 		void handleMessage(const EntityTransferringWorldMessage& received);
 };

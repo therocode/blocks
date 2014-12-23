@@ -8,7 +8,7 @@ class FrameTimeCaller :
     public fea::MessageReceiver<FrameMessage>
 {
     public:
-        FrameTimeCaller(fea::MessageBus& bus, ScriptEngine& engine, ScriptEntityMap& scriptEntities);
+        FrameTimeCaller(fea::MessageBus& bus, ScriptEngine& engine, ScriptEntityMap& scriptEntities, std::vector<asIScriptObject*>& extensions);
         void handleMessage(const FrameMessage& received);
     private:
         int32_t frameTick;

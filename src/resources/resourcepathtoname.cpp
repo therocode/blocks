@@ -24,6 +24,8 @@ std::string resourcePathToName(const std::string& rootPath, const std::string& p
         category = "shaders";
     else if(fileType == "png")
         category = "textures";
+    else if(fileType == "meta")
+        category = "metadata";
 
     result = extensionName + "." + category + "." + fileName;
 

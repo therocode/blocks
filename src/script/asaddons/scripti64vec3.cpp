@@ -5,16 +5,16 @@ void registerGlmI64Vec3(asIScriptEngine* engine, std::string alias)
 {    
     int32_t r = 0;
 
-	std::stringstream ss;
+    std::stringstream ss;
 
     r = engine->RegisterObjectType(alias.c_str(), sizeof(glm::i64vec3), asOBJ_VALUE|asOBJ_APP_CLASS_CDAK); assert(r >= 0);
-	r = engine->RegisterObjectBehaviour(alias.c_str(), asBEHAVE_CONSTRUCT, "void f()", asFUNCTION(constructGlmI64Vec3), asCALL_CDECL_OBJLAST); assert( r >= 0 );
-	r = engine->RegisterObjectBehaviour(alias.c_str(), asBEHAVE_CONSTRUCT, "void f(int64 x, int64 y, int64 z)", asFUNCTION(int64ConstructGlmI64Vec3), asCALL_CDECL_OBJLAST); assert( r >= 0 );
+    r = engine->RegisterObjectBehaviour(alias.c_str(), asBEHAVE_CONSTRUCT, "void f()", asFUNCTION(constructGlmI64Vec3), asCALL_CDECL_OBJLAST); assert( r >= 0 );
+    r = engine->RegisterObjectBehaviour(alias.c_str(), asBEHAVE_CONSTRUCT, "void f(int64 x, int64 y, int64 z)", asFUNCTION(int64ConstructGlmI64Vec3), asCALL_CDECL_OBJLAST); assert( r >= 0 );
 
-	ss << "void f(const " << alias << " &in)";
-	r = engine->RegisterObjectBehaviour(alias.c_str(), asBEHAVE_CONSTRUCT, ss.str().c_str(), asFUNCTION(copyConstructGlmI64Vec3), asCALL_CDECL_OBJLAST); assert( r >= 0 );
-	ss.str("");
-	r = engine->RegisterObjectBehaviour(alias.c_str(), asBEHAVE_DESTRUCT,  "void f()", asFUNCTION(destructGlmI64Vec3),  asCALL_CDECL_OBJLAST); assert( r >= 0 );
+    ss << "void f(const " << alias << " &in)";
+    r = engine->RegisterObjectBehaviour(alias.c_str(), asBEHAVE_CONSTRUCT, ss.str().c_str(), asFUNCTION(copyConstructGlmI64Vec3), asCALL_CDECL_OBJLAST); assert( r >= 0 );
+    ss.str("");
+    r = engine->RegisterObjectBehaviour(alias.c_str(), asBEHAVE_DESTRUCT,  "void f()", asFUNCTION(destructGlmI64Vec3),  asCALL_CDECL_OBJLAST); assert( r >= 0 );
 
     r = engine->RegisterObjectProperty(alias.c_str(), "int64 x", asOFFSET(glm::i64vec3, x)); assert(r >= 0);
     r = engine->RegisterObjectProperty(alias.c_str(), "int64 y", asOFFSET(glm::i64vec3, y)); assert(r >= 0);
@@ -22,37 +22,37 @@ void registerGlmI64Vec3(asIScriptEngine* engine, std::string alias)
 
     //r = engine->RegisterObjectMethod("Vec3", "Vec3 opSub(Vec3 vec) const", asMETHODPR(glm::i64vec3, operator-, (const glm::i64vec3&) const, glm::i64vec3), asCALL_THISCALL); assert(r >= 0);
 
-	ss << alias << " opAdd(const " << alias << "& in) const";
+    ss << alias << " opAdd(const " << alias << "& in) const";
     r = engine->RegisterObjectMethod(alias.c_str(), ss.str().c_str(), asFUNCTIONPR(glmI64Vec3Add, (const glm::i64vec3&, const glm::i64vec3&), glm::i64vec3), asCALL_CDECL_OBJLAST); assert(r >= 0);
-	ss.str("");
+    ss.str("");
 
-	ss << alias << " opSub(const " << alias << "& in) const";
+    ss << alias << " opSub(const " << alias << "& in) const";
     r = engine->RegisterObjectMethod(alias.c_str(), ss.str().c_str(), asFUNCTIONPR(glmI64Vec3Sub, (const glm::i64vec3&, const glm::i64vec3&), glm::i64vec3), asCALL_CDECL_OBJLAST); assert(r >= 0);
-	ss.str("");
+    ss.str("");
 
-	ss << alias << " opMul(const " << alias << "& in) const";
+    ss << alias << " opMul(const " << alias << "& in) const";
     r = engine->RegisterObjectMethod(alias.c_str(), ss.str().c_str(), asFUNCTIONPR(glmI64Vec3Mul, (const glm::i64vec3&, const glm::i64vec3&), glm::i64vec3), asCALL_CDECL_OBJLAST); assert(r >= 0);
-	ss.str("");
+    ss.str("");
 
-	ss << alias << " opDiv(const " << alias << "& in) const"; 
+    ss << alias << " opDiv(const " << alias << "& in) const"; 
     r = engine->RegisterObjectMethod(alias.c_str(), ss.str().c_str(), asFUNCTIONPR(glmI64Vec3Div, (const glm::i64vec3&, const glm::i64vec3&), glm::i64vec3), asCALL_CDECL_OBJLAST); assert(r >= 0);
-	ss.str("");
+    ss.str("");
 
-	ss << alias << " opMul(int64 val) const"; 
+    ss << alias << " opMul(int64 val) const"; 
     r = engine->RegisterObjectMethod(alias.c_str(), ss.str().c_str(), asFUNCTIONPR(glmI64Vec3Mul, (const glm::i64vec3&, int64_t), glm::i64vec3), asCALL_CDECL_OBJLAST); assert(r >= 0);
-	ss.str("");
+    ss.str("");
 
-	ss << alias << " opDiv(int64 val) const";
+    ss << alias << " opDiv(int64 val) const";
     r = engine->RegisterObjectMethod(alias.c_str(), ss.str().c_str(), asFUNCTIONPR(glmI64Vec3Div, (const glm::i64vec3&, int64_t), glm::i64vec3), asCALL_CDECL_OBJLAST); assert(r >= 0);
-	ss.str("");
+    ss.str("");
 
-	ss << alias << " &opAssign(const " << alias << " &in)";
+    ss << alias << " &opAssign(const " << alias << " &in)";
     r = engine->RegisterObjectMethod(alias.c_str(), ss.str().c_str(), asMETHODPR(glm::i64vec3, operator=, (const glm::i64vec3&), glm::i64vec3&), asCALL_THISCALL); assert( r >= 0 );
-	ss.str("");
+    ss.str("");
 
-	ss << "string toString(const " << alias << "& in)";
+    ss << "string toString(const " << alias << "& in)";
     r = engine->RegisterGlobalFunction(ss.str().c_str(), asFUNCTIONPR(glmI64Vec3ToString, (const glm::i64vec3&), std::string), asCALL_CDECL); assert(r >= 0);
-	ss.str("");
+    ss.str("");
 }
 
 using namespace glm;

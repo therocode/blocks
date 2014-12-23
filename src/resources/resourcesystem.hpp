@@ -21,7 +21,9 @@ class ResourceSystem
         void loadVertexShaders(const std::vector<ResourceEntry>& vertexShaders);
         void loadFragmentShaders(const std::vector<ResourceEntry>& fragmentShaders);
         void loadShaderDefinitions(const std::vector<ResourceEntry>& shaderDefinitions);
+        void loadExtensionMetadata(const std::vector<ResourceEntry>& extensionMetadata);
         void loadImages(const std::vector<ResourceEntry>& images);
+
         fea::MessageBus& mBus;
         std::string mAssetsPath;
         ResourceCache mCache;
@@ -33,6 +35,8 @@ class ResourceSystem
         IdProvider<std::string> mFragmentShaderIDs;
         IdProvider<std::string> mShaderDefinitionIDs;
         IdProvider<std::string> mTextureIDs;
+        IdProvider<std::string> mExtensionMetadataIDs;
+
         uint32_t mNextTextureId;
         std::unordered_map<uint32_t, std::shared_ptr<TextureArray>> mTextureArrays;
         std::unordered_map<uint32_t, TextureDefinition> mTextureDefinitions;

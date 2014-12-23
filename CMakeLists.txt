@@ -9,6 +9,7 @@ set(BUILD_EXPBIOMES FALSE CACHE BOOL "build the biome experiment application")
 set(BUILD_TESTS TRUE CACHE BOOL "build the tests")
 set(BUILD_PROFILING TRUE CACHE BOOL "build the profiling tests")
 set(BUILD_GAME TRUE CACHE BOOL "build the actual game")
+set(USE_CTAGS FALSE CACHE BOOL "use ctags to generate source symbol information")
 
 #project name
 set(project_name blocks)
@@ -96,6 +97,8 @@ set(source_files
     src/rendering/voxelchunkrenderable.cpp
     src/rendering/shapes.hpp
 
+    src/resources/extensionmetadata.cpp
+    src/resources/extensionmetadatafromfileloader.cpp
     src/resources/image.cpp
     src/resources/iqmfromfileloader.cpp
     src/resources/resourcepathtoname.cpp
@@ -130,6 +133,7 @@ set(source_files
     src/script/callers/worldcaller.cpp
     src/script/interfaces/chunkinterface.cpp
     src/script/interfaces/entityinterface.cpp
+    src/script/interfaces/extensioninterface.cpp
     src/script/interfaces/worldinterface.cpp
     src/script/interfaces/mathsinterface.cpp
     src/script/interfaces/physicsinterface.cpp
@@ -234,6 +238,8 @@ set(header_files
     src/rendering/voxelchunkrenderer.hpp
     src/rendering/voxelchunkrenderable.hpp
 
+    src/resources/extensionmetadata.hpp
+    src/resources/extensionmetadatafromfileloader.hpp
     src/resources/image.hpp
     src/resources/iqm.h
     src/resources/iqmfromfileloader.hpp
@@ -294,6 +300,7 @@ set(header_files
     src/script/callers/worldcaller.hpp
     src/script/interfaces/chunkinterface.hpp
     src/script/interfaces/entityinterface.hpp
+    src/script/interfaces/extensioninterface.hpp
     src/script/interfaces/worldinterface.hpp
     src/script/interfaces/mathsinterface.hpp
     src/script/interfaces/physicsinterface.hpp
@@ -332,6 +339,9 @@ find_package(ENet)
 find_package(angelscript)
 find_package(JsonCpp REQUIRED)
 
+if(USE_CTAGS)
+    find_program(CTAGS_FOUND ctags)
+endif(USE_CTAGS)
 
 include_directories(include)
 
@@ -437,6 +447,17 @@ if(BUILD_GAME)
     else(OPENGL_FOUND)
     	target_link_libraries(${project_name} opengl32)
     endif(OPENGL_FOUND)
+
+    if(USE_CTAGS)
+        if(CTAGS_FOUND)
+            set_source_files_properties(tags PROPERTIES GENERATED true)
+            add_custom_target(tags
+                COMMAND ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .
+                WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+            add_dependencies(${project_name} tags)
+        endif(CTAGS_FOUND)
+    endif(USE_CTAGS)
+
 endif(BUILD_GAME)
 
 #tests
@@ -500,3 +521,5 @@ if(BUILD_PROFILING)
 		
     target_link_libraries(profile_modmanager ${FEATHERKIT_LIBRARIES})
 endif(BUILD_PROFILING)
+
+

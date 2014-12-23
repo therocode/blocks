@@ -1,11 +1,11 @@
 #pragma once
 #include "scriptinterface.hpp"
 
-class ChunkInterface :
+class ExtensionInterface :
     public ScriptInterface
 {
     public:
-        ChunkInterface(fea::MessageBus& bus, GameInterface& worldInterface);
-        
+        ExtensionInterface(fea::MessageBus& bus, GameInterface& worldInterface);
+
         void registerInterface(asIScriptEngine* engine) override;
 };

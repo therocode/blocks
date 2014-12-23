@@ -1,6 +1,7 @@
 #include "frametimecaller.hpp"
 
-FrameTimeCaller::FrameTimeCaller(fea::MessageBus& bus, ScriptEngine& engine, ScriptEntityMap& scriptEntities) : ScriptCaller(bus, engine, scriptEntities),
+FrameTimeCaller::FrameTimeCaller(fea::MessageBus& bus, ScriptEngine& engine, ScriptEntityMap& scriptEntities, std::vector<asIScriptObject*>& extensions) 
+  : ScriptCaller(bus, engine, scriptEntities, extensions),
     frameTick(0),
     mMainCallback(mEngine),
     mEntityCallback(mEngine)

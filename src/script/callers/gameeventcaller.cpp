@@ -1,6 +1,7 @@
 #include "gameeventcaller.hpp"
 
-GameEventCaller::GameEventCaller(fea::MessageBus& bus, ScriptEngine& engine, ScriptEntityMap& scriptEntities) : ScriptCaller(bus, engine, scriptEntities)
+GameEventCaller::GameEventCaller(fea::MessageBus& bus, ScriptEngine& engine, ScriptEntityMap& scriptEntities, std::vector<asIScriptObject*>& extensions) 
+    : ScriptCaller(bus, engine, scriptEntities, extensions)
 {
     subscribe(mBus, *this);
 }

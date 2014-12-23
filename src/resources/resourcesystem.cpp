@@ -9,6 +9,8 @@
 #include "shadersourcefromfileloader.hpp"
 #include "shaderdefinition.hpp"
 #include "shaderdefinitionfromfileloader.hpp"
+#include "extensionmetadata.hpp"
+#include "extensionmetadatafromfileloader.hpp"
 #include "imagefromfileloader.hpp"
 #include "../utilities/glmhash.hpp"
 
@@ -40,6 +42,7 @@ ResourceSystem::ResourceSystem(fea::MessageBus& bus, const std::string assetsPat
             mResourceList[fileType].push_back({resourcePath, resourcePathToName(assetsPath, resourcePath)});
         }
 
+        loadExtensionMetadata(mResourceList["meta"]);
         loadModels(mResourceList["iqm"]);
         loadVertexShaders(mResourceList["vert"]);
         loadFragmentShaders(mResourceList["frag"]);
@@ -153,5 +156,21 @@ void ResourceSystem::loadImages(const std::vector<ResourceEntry>& images)
         mBus.send(ResourceDeliverMessage<TextureArray>{newId, textureArray});
 
         std::cout << "created texture array id " << newId << " of size " << size << "\n";
+    }
+}
+
+void ResourceSystem::loadExtensionMetadata(const std::vector<ResourceEntry>& extensionMetadata)
+{
+    mBus.send(LogMessage{"Loading extension metadata files. " + std::to_string(extensionMetadata.size()) + " files to load.", gResourceName, LogLevel::INFO});
+    for(const auto& metadataFile : extensionMetadata)
+    {
+        mBus.send(LogMessage{"Loading " + metadataFile.name + ".", gResourceName, LogLevel::VERB});
+        std::shared_ptr<ExtensionMetadata> metadata = mCache.access<ExtensionMetadataFromFileLoader>(metadataFile.path);
+
+        if(metadata)
+        {
+            uint32_t id = mExtensionMetadataIDs.getId(metadataFile.name);
+            mBus.send(ResourceDeliverMessage<ExtensionMetadata>{id, metadata});
+        }
     }
 }
