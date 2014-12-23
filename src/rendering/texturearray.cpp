@@ -46,11 +46,12 @@ void TextureArray::create(const glm::uvec2& size, uint32_t layers, const uint8_t
     FEA_ASSERT(mId != 0, "Failed to create texture. Make sure there is a valid OpenGL context available!");
     glBindTexture(GL_TEXTURE_2D_ARRAY, mId);
     glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_RGBA, (GLsizei)size.x, (GLsizei)size.y, (GLsizei)layers, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageData);
-
     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, smooth ? GL_LINEAR : GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, smooth ? GL_LINEAR_MIPMAP_LINEAR : GL_NEAREST_MIPMAP_NEAREST);
     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, smooth ? GL_LINEAR : GL_NEAREST);
+
+    glGenerateMipmap(GL_TEXTURE_2D_ARRAY);
 
     glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
 }
