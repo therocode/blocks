@@ -62,6 +62,11 @@ RawModel IQMFromFileLoader::load(const std::string& filename)
         exit(0); //exception
     }
 
+    std::cout << "num_anims:" << header.num_anims << "\n";
+    std::cout << "num_joints:" << header.num_joints << "\n";
+    std::cout << "num_poses:" << header.num_poses << "\n";
+    std::cout << "num_frames:" << header.num_frames << "\n";
+
     char* vertexArrayBytesIterator = headerBytes + header.ofs_vertexarrays;
     
     for(uint32_t i = 0; i < header.num_vertexarrays; i++)

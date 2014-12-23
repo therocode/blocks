@@ -15,29 +15,14 @@ ShaderSource ShaderSourceFromFileLoader::load(const std::string& filename)
         exit(0); //should be exception
     }
 
-    std::string firstLine;
+    std::string source((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
 
-    std::getline(file, firstLine);
+    result.source = source;
 
-    if(firstLine.size() != 0 && firstLine[0] == '~')
-    {
-        std::string name = firstLine.substr(1, std::string::npos);
-
-        std::string source((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-
-        result.name = name;
-        result.source = source;
-
-        if(fileType == "vert")
-            result.type = ShaderSource::VERTEX;
-        else if(fileType == "frag")
-            result.type = ShaderSource::FRAGMENT;
-    }
-    else
-    {
-        std::cout << "ERROR: Unnamed shader or empty shader file...\n";
-        exit(0); //should be exception
-    }
+    if(fileType == "vert")
+        result.type = ShaderSource::VERTEX;
+    else if(fileType == "frag")
+        result.type = ShaderSource::FRAGMENT;
 
     return result;
 }

@@ -76,6 +76,7 @@ void ResourceSystem::loadVertexShaders(const std::vector<ResourceEntry>& vertexS
         if(vertexShader)
         {
             uint32_t id = mVertexShaderIDs.getId(vertexShaderFile.name);
+            vertexShader->name = vertexShaderFile.name;
             mBus.send(ResourceDeliverMessage<ShaderSource>{id, vertexShader});
         }
     }
@@ -91,6 +92,7 @@ void ResourceSystem::loadFragmentShaders(const std::vector<ResourceEntry>& fragm
         if(fragmentShader)
         {
             uint32_t id = mFragmentShaderIDs.getId(fragmentShaderFile.name);
+            fragmentShader->name = fragmentShaderFile.name;
             mBus.send(ResourceDeliverMessage<ShaderSource>{id, fragmentShader});
         }
     }
