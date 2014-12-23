@@ -11,11 +11,14 @@
 #include <functional>
 #include <stdexcept>
 
-auto comp = [] (const std::pair<int32_t, std::function<void()>>& a, const std::pair<int32_t, std::function<void()>>& b)
+class TaskComparer
+{
+    public:
+        bool operator() (const std::pair<int32_t, std::function<void()>>& a, const std::pair<int32_t, std::function<void()>>& b)
         {
             return a.first > b.first;
-        };
-
+        }
+};
 
 class ThreadPool {
 public:
@@ -31,7 +34,7 @@ private:
     // the task queue
     std::priority_queue<std::pair<int32_t, std::function<void()>>, 
                         std::vector<std::pair<int32_t, std::function<void()>>>,
-                        decltype(comp)> tasks;
+                        TaskComparer> tasks;
     
     // synchronization
     std::mutex queue_mutex;
@@ -41,7 +44,7 @@ private:
  
 // the constructor just launches some amount of workers
 inline ThreadPool::ThreadPool(size_t threads) :
-    tasks(comp),
+    //tasks(comp),
     stop(false)
 {
     for(size_t i = 0;i<threads;++i)
