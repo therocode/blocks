@@ -211,9 +211,6 @@ void RenderingSystem::handleMessage(const ResourceDeliverMessage<ShaderSource>& 
 
 void RenderingSystem::handleMessage(const ResourceDeliverMessage<ShaderDefinition>& received) 
 {
-    std::unique_ptr<Shader> shader = std::unique_ptr<Shader>(new Shader());
-
-    //shader->setSource(mVertexSources.at(received.resource->vertexShader), mFragmentSources.at(received.resource->fragmentShader));
     std::vector<std::string> vertexModules;
 
     for(const auto& moduleName : received.resource->vertexModules)
@@ -225,9 +222,11 @@ void RenderingSystem::handleMessage(const ResourceDeliverMessage<ShaderDefinitio
         fragmentModules.push_back(mFragmentSources.at(moduleName));
 
     ShaderAssembler assembler;
-    shader->setSource(assembler.assemble(BaseShader::vertexSource, vertexModules), assembler.assemble(BaseShader::fragmentSource, fragmentModules));
 
-    shader->compile({
+    std::unique_ptr<Shader> baseShader = std::unique_ptr<Shader>(new Shader());
+    baseShader->setSource(assembler.assemble(BaseShader::vertexSource, vertexModules), assembler.assemble(BaseShader::fragmentSource, fragmentModules));
+
+    baseShader->compile({
             {"POSITION", ShaderAttribute::POSITION},
             {"NORMAL", ShaderAttribute::NORMAL},
             {"TEXCOORD", ShaderAttribute::TEXCOORD},
@@ -243,7 +242,28 @@ void RenderingSystem::handleMessage(const ResourceDeliverMessage<ShaderDefinitio
             {"NORMALMATRIX4", ShaderAttribute::NORMALMATRIX4}
             });
 
-    mShaders.emplace(received.id, std::move(shader));
+    mBaseShaders.emplace(received.id, std::move(baseShader));
+
+    std::unique_ptr<Shader> animationShader = std::unique_ptr<Shader>(new Shader());
+    animationShader->setSource(assembler.assemble(BaseShader::vertexSource, vertexModules), assembler.assemble(BaseShader::fragmentSource, fragmentModules));
+
+    animationShader->compile({
+            {"POSITION", ShaderAttribute::POSITION},
+            {"NORMAL", ShaderAttribute::NORMAL},
+            {"TEXCOORD", ShaderAttribute::TEXCOORD},
+            {"COLOR", ShaderAttribute::COLOR},
+            {"TEXTUREINDEX", ShaderAttribute::TEXTUREINDEX},
+            {"MODELMATRIX1", ShaderAttribute::MODELMATRIX1},
+            {"MODELMATRIX2", ShaderAttribute::MODELMATRIX2},
+            {"MODELMATRIX3", ShaderAttribute::MODELMATRIX3},
+            {"MODELMATRIX4", ShaderAttribute::MODELMATRIX4},
+            {"NORMALMATRIX1", ShaderAttribute::NORMALMATRIX1},
+            {"NORMALMATRIX2", ShaderAttribute::NORMALMATRIX2},
+            {"NORMALMATRIX3", ShaderAttribute::NORMALMATRIX3},
+            {"NORMALMATRIX4", ShaderAttribute::NORMALMATRIX4}
+            });
+
+    mAnimationShaders.emplace(received.id, std::move(animationShader));
 }
 
 void RenderingSystem::handleMessage(const ResourceDeliverMessage<TextureArray>& received)
@@ -278,17 +298,14 @@ void RenderingSystem::handleMessage(const FacingBlockMessage& received)
 
 void RenderingSystem::render()
 {
+    mRenderer.clear();
+
     for(auto& debbie : mDebuggers)
     {
         //debbie.setColor({(float)(rand() % 256) / 256.0f,(float)(rand() % 256) / 256.0f, (float)(rand() % 256) / 256.0f});
         //debbie.setPitch(debbie.getPitch()+0.2f);
         //debbie.setYaw(debbie.getYaw()+0.1f);
 		mRenderer.queue(debbie);
-    }
-
-    for(auto& moddie : mModelRenderables)
-    {
-        mRenderer.queue(moddie.second);
     }
 
     for(auto& voxie : mChunkModels)
@@ -307,5 +324,13 @@ void RenderingSystem::render()
         mRenderer.queue(extra);
     }
 
-    mRenderer.render(*mShaders.at(0));
+    mRenderer.render(*mBaseShaders.at(0));
+
+    for(auto& moddie : mModelRenderables)
+    {
+        mRenderer.queue(moddie.second);
+    }
+
+
+    mRenderer.render(*mAnimationShaders.at(0));
 }

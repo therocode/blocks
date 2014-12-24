@@ -67,6 +67,7 @@ set(source_files
     src/utilities/signalcatcher.cpp
     src/utilities/timer.cpp
 
+    src/rendering/animationshader.cpp
     src/rendering/baseshader.cpp
     src/rendering/buffer.cpp
     src/rendering/camera.cpp
@@ -208,6 +209,7 @@ set(header_files
     src/networking/networkingprotocol.hpp
     src/networking/servernetworkingsystem.hpp
 
+    src/rendering/animationshader.hpp
     src/rendering/baseshader.hpp
     src/rendering/buffer.hpp
     src/rendering/camera.hpp

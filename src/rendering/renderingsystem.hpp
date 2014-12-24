@@ -62,7 +62,8 @@ class RenderingSystem :
         std::unordered_map<int32_t, ModelRenderable> mModelRenderables;
         std::unordered_map<std::string, std::string> mVertexSources;
         std::unordered_map<std::string, std::string> mFragmentSources;
-        std::unordered_map<uint32_t, std::unique_ptr<Shader>> mShaders;
+        std::unordered_map<uint32_t, std::unique_ptr<Shader>> mBaseShaders;
+        std::unordered_map<uint32_t, std::unique_ptr<Shader>> mAnimationShaders;
         std::vector<std::shared_ptr<TextureArray>> mTextureArrays;
 
         ChunkModelCreator mChunkModelCreator;

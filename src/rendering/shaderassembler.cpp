@@ -4,8 +4,11 @@
 
 std::string ShaderAssembler::assemble(const std::string& source, const std::vector<std::string>& moduleSources)
 {
+    mOriginalMappings.clear();
+
     std::vector<ShaderModule> modules = parseModules(moduleSources);
     std::string result = source;
+
     if(source.find("~%~") != std::string::npos)
     {
         std::unordered_map<std::string, ShaderVariable> shaderVariables;
@@ -84,6 +87,7 @@ std::string ShaderAssembler::assemble(const std::string& source, const std::vect
 
             for(const auto& variableMapping : lastModule.variableMappings)
             {
+
                 shaderModuleSource += mOriginalMappings.at(variableMapping.first) + " = " + variableMapping.second + ";\n";
             }
 
