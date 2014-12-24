@@ -10,14 +10,8 @@ layout(location = ~NORMAL~) in vec3 in_normal;
 layout(location = ~TEXCOORD~) in vec2 in_texCoord;
 layout(location = ~COLOR~) in vec3 color;
 layout(location = ~TEXTUREINDEX~) in uint textureIndex;
-layout(location = ~MODELMATRIX1~) in vec4 modelMatrix1;
-layout(location = ~MODELMATRIX2~) in vec4 modelMatrix2;
-layout(location = ~MODELMATRIX3~) in vec4 modelMatrix3;
-layout(location = ~MODELMATRIX4~) in vec4 modelMatrix4;
-layout(location = ~NORMALMATRIX1~) in vec4 normalMatrix1;
-layout(location = ~NORMALMATRIX2~) in vec4 normalMatrix2;
-layout(location = ~NORMALMATRIX3~) in vec4 normalMatrix3;
-layout(location = ~NORMALMATRIX4~) in vec4 normalMatrix4;
+layout(location = ~MODELMATRIX1~) in mat4 modelMatrix;
+layout(location = ~NORMALMATRIX1~) in mat4 normalMatrix;
 
 out vec3 objectColor;
 
@@ -33,8 +27,6 @@ vec3 lightDirection = vec3(1.0f, -1.0f, -1.0f);
 
 void main()
 {
-    mat4 modelMatrix = mat4(modelMatrix1, modelMatrix2, modelMatrix3, modelMatrix4);
-    mat4 normalMatrix = mat4(normalMatrix1, normalMatrix2, normalMatrix3, normalMatrix4);
     gl_Position = viewProjectionMatrix * modelMatrix * vec4(vec3(in_position.x, in_position.y, in_position.z), 1.0);
     vec3 normal = (viewProjectionMatrix * modelMatrix * vec4(in_normal, 0.0)).xyz;
 
