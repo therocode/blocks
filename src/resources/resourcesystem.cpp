@@ -42,12 +42,18 @@ ResourceSystem::ResourceSystem(fea::MessageBus& bus, const std::string assetsPat
             mResourceList[fileType].push_back({resourcePath, resourcePathToName(assetsPath, resourcePath)});
         }
 
-        loadExtensionMetadata(mResourceList["meta"]);
-        loadModels(mResourceList["iqm"]);
-        loadVertexShaders(mResourceList["vert"]);
-        loadFragmentShaders(mResourceList["frag"]);
-        loadShaderDefinitions(mResourceList["shad"]);
-        loadImages(mResourceList["png"]);
+        if(std::find(fileTypes.begin(), fileTypes.end(), "meta") != fileTypes.end())
+            loadExtensionMetadata(mResourceList["meta"]);
+        if(std::find(fileTypes.begin(), fileTypes.end(), "iqm") != fileTypes.end())
+            loadModels(mResourceList["iqm"]);
+        if(std::find(fileTypes.begin(), fileTypes.end(), "vert") != fileTypes.end())
+            loadVertexShaders(mResourceList["vert"]);
+        if(std::find(fileTypes.begin(), fileTypes.end(), "frag") != fileTypes.end())
+            loadFragmentShaders(mResourceList["frag"]);
+        if(std::find(fileTypes.begin(), fileTypes.end(), "shad") != fileTypes.end())
+            loadShaderDefinitions(mResourceList["shad"]);
+        if(std::find(fileTypes.begin(), fileTypes.end(), "png") != fileTypes.end())
+            loadImages(mResourceList["png"]);
     }
 }
 
@@ -108,6 +114,7 @@ void ResourceSystem::loadShaderDefinitions(const std::vector<ResourceEntry>& sha
         if(shaderDefinition)
         {
             uint32_t id = mShaderDefinitionIDs.getId(shaderDefinitionFile.name);
+            std::cout << "shaders: " << shaderDefinition->vertexModules.size() << " " << shaderDefinition->fragmentModules.size() << "\n";
             mBus.send(ResourceDeliverMessage<ShaderDefinition>{id, shaderDefinition});
         }
     }

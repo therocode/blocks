@@ -67,6 +67,7 @@ set(source_files
     src/utilities/signalcatcher.cpp
     src/utilities/timer.cpp
 
+    src/rendering/baseshader.cpp
     src/rendering/buffer.cpp
     src/rendering/camera.cpp
     src/rendering/chunkmodelcreator.cpp
@@ -88,6 +89,7 @@ set(source_files
     src/rendering/rendermodule.cpp
     src/rendering/rendermode.cpp
     src/rendering/shader.cpp
+    src/rendering/shaderassembler.cpp
     src/rendering/surfacemerger.cpp
     src/rendering/texturearray.cpp
     src/rendering/uniform.cpp
@@ -206,6 +208,7 @@ set(header_files
     src/networking/networkingprotocol.hpp
     src/networking/servernetworkingsystem.hpp
 
+    src/rendering/baseshader.hpp
     src/rendering/buffer.hpp
     src/rendering/camera.hpp
     src/rendering/chunkmodelcreator.hpp
@@ -229,6 +232,7 @@ set(header_files
     src/rendering/rendermodule.hpp
     src/rendering/rendermode.hpp
     src/rendering/shader.hpp
+    src/rendering/shaderassembler.hpp
     src/rendering/shaderattribute.hpp
     src/rendering/surfacemerger.hpp
     src/rendering/texturearray.hpp

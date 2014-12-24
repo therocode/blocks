@@ -1,5 +1,6 @@
 #include "shaderdefinitionfromfileloader.hpp"
-#include <json/json.hpp>
+#include <json/reader.h>
+#include <json/value.h>
 #include <fstream>
 #include <iostream>
 
@@ -15,13 +16,30 @@ ShaderDefinition ShaderDefinitionFromFileLoader::load(const std::string& filenam
         exit(0); //should be exception
     }
 
-    json::Value root;
-    root.SetObject();
+    Json::Value root;
+    Json::Reader reader;
     
-    json::read(file, root);
+    reader.parse(file, root, false);
 
-    definition.vertexShader = root.GetStringMember("vertex");
-    definition.fragmentShader = root.GetStringMember("fragment");
+    const Json::Value& vertexNames = root["vertex_shaders"];
+
+    if(vertexNames.isArray())
+    {
+        for(const auto& vertexName : vertexNames)
+        {
+            definition.vertexModules.push_back(vertexName.asString());
+        }
+    }
+
+    const Json::Value& fragmentNames = root["fragment_shaders"];
+
+    if(fragmentNames.isArray())
+    {
+        for(const auto& fragmentName : fragmentNames)
+        {
+            definition.fragmentModules.push_back(fragmentName.asString());
+        }
+    }
 
     return definition;
 }

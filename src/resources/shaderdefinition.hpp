@@ -1,7 +1,9 @@
 #pragma once
+#include <vector>
+#include <string>
 
 struct ShaderDefinition
 {
-    std::string vertexShader;
-    std::string fragmentShader;
+    std::vector<std::string> vertexModules;
+    std::vector<std::string> fragmentModules;
 };

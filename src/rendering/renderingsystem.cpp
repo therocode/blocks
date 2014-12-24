@@ -1,4 +1,5 @@
 #include "renderingsystem.hpp"
+#include "baseshader.hpp"
 #include "modelrenderer.hpp"
 #include "voxelchunkrenderer.hpp"
 #include "extrarenderer.hpp"
@@ -10,6 +11,7 @@
 #include "opengl.hpp"
 #include "../lognames.hpp"
 #include "../application/applicationmessages.hpp"
+#include "shaderassembler.hpp"
 
 RenderingSystem::RenderingSystem(fea::MessageBus& bus, const glm::uvec2& viewSize) :
     mBus(bus),
@@ -211,7 +213,22 @@ void RenderingSystem::handleMessage(const ResourceDeliverMessage<ShaderDefinitio
 {
     std::unique_ptr<Shader> shader = std::unique_ptr<Shader>(new Shader());
 
-    shader->setSource(mVertexSources.at(received.resource->vertexShader), mFragmentSources.at(received.resource->fragmentShader));
+    //shader->setSource(mVertexSources.at(received.resource->vertexShader), mFragmentSources.at(received.resource->fragmentShader));
+    std::vector<std::string> vertexModules;
+
+    for(const auto& moduleName : received.resource->vertexModules)
+        vertexModules.push_back(mVertexSources.at(moduleName));
+
+    std::vector<std::string> fragmentModules;
+
+    for(const auto& moduleName : received.resource->fragmentModules)
+        fragmentModules.push_back(mFragmentSources.at(moduleName));
+
+    ShaderAssembler assembler;
+    shader->setSource(assembler.assemble(BaseShader::vertexSource, vertexModules), assembler.assemble(BaseShader::fragmentSource, fragmentModules));
+
+    std::cout << "vert: \n" << assembler.assemble(BaseShader::vertexSource, vertexModules) << "\n";
+    std::cout << "frag: \n" << assembler.assemble(BaseShader::fragmentSource, fragmentModules) << "\n";
 
     shader->compile({
             {"POSITION", ShaderAttribute::POSITION},
