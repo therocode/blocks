@@ -78,16 +78,19 @@ std::string ShaderAssembler::assemble(const std::string& source, const std::vect
             }
         }
 
-        const auto& lastModule = modules.back();
-
-        for(const auto& variableMapping : lastModule.variableMappings)
+        if(modules.size() > 0)
         {
-            shaderModuleSource += mOriginalMappings.at(variableMapping.first) + " = " + variableMapping.second + ";\n";
+            const auto& lastModule = modules.back();
+
+            for(const auto& variableMapping : lastModule.variableMappings)
+            {
+                shaderModuleSource += mOriginalMappings.at(variableMapping.first) + " = " + variableMapping.second + ";\n";
+            }
+
+            shaderModuleSource += "/////////END GENERATED CODE////////\n\n";
+
+            result.insert(insertLocation, shaderModuleSource);
         }
-
-        shaderModuleSource += "/////////END GENERATED CODE////////\n\n";
-
-        result.insert(insertLocation, shaderModuleSource);
     }
 
     return result;
