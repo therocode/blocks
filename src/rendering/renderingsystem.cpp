@@ -227,9 +227,6 @@ void RenderingSystem::handleMessage(const ResourceDeliverMessage<ShaderDefinitio
     ShaderAssembler assembler;
     shader->setSource(assembler.assemble(BaseShader::vertexSource, vertexModules), assembler.assemble(BaseShader::fragmentSource, fragmentModules));
 
-    std::cout << "vert: \n" << assembler.assemble(BaseShader::vertexSource, vertexModules) << "\n";
-    std::cout << "frag: \n" << assembler.assemble(BaseShader::fragmentSource, fragmentModules) << "\n";
-
     shader->compile({
             {"POSITION", ShaderAttribute::POSITION},
             {"NORMAL", ShaderAttribute::NORMAL},
@@ -310,5 +307,5 @@ void RenderingSystem::render()
         mRenderer.queue(extra);
     }
 
-    mRenderer.render(*mShaders.begin()->second);
+    mRenderer.render(*mShaders.at(0));
 }
