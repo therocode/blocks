@@ -96,6 +96,20 @@ RawModel IQMFromFileLoader::load(const std::string& filename)
 
             rawModel.texCoords = std::move(texCoords);
         }
+        else if(vertexArray.type == IQM_BLENDINDEXES)
+        {
+            std::vector<uint8_t> blendWeights(header.num_vertexes * 4);
+            std::copy(headerBytes + vertexArray.offset, headerBytes + vertexArray.offset + sizeof(uint8_t) * header.num_vertexes * 4, (char*)blendWeights.data());
+
+            rawModel.blendIndices = std::move(blendWeights);
+        }
+        else if(vertexArray.type == IQM_BLENDWEIGHTS)
+        {
+            std::vector<uint8_t> blendWeights(header.num_vertexes * 4);
+            std::copy(headerBytes + vertexArray.offset, headerBytes + vertexArray.offset + sizeof(uint8_t) * header.num_vertexes * 4, (char*)blendWeights.data());
+
+            rawModel.blendWeights = std::move(blendWeights);
+        }
     }
 
     char* meshBytesIterator = headerBytes + header.ofs_meshes;

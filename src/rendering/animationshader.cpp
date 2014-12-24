@@ -12,6 +12,8 @@ layout(location = ~COLOR~) in vec3 color;
 layout(location = ~TEXTUREINDEX~) in uint textureIndex;
 layout(location = ~MODELMATRIX1~) in mat4 modelMatrix;
 layout(location = ~NORMALMATRIX1~) in mat4 normalMatrix;
+layout(location = ~BLENDINDICES~) in uvec4 blendIndices;
+layout(location = ~BLENDWEIGHTS~) in uvec4 blendWeights;
 
 out vec3 objectColor;
 

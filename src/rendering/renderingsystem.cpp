@@ -1,5 +1,6 @@
 #include "renderingsystem.hpp"
 #include "baseshader.hpp"
+#include "animationshader.hpp"
 #include "modelrenderer.hpp"
 #include "voxelchunkrenderer.hpp"
 #include "extrarenderer.hpp"
@@ -245,7 +246,7 @@ void RenderingSystem::handleMessage(const ResourceDeliverMessage<ShaderDefinitio
     mBaseShaders.emplace(received.id, std::move(baseShader));
 
     std::unique_ptr<Shader> animationShader = std::unique_ptr<Shader>(new Shader());
-    animationShader->setSource(assembler.assemble(BaseShader::vertexSource, vertexModules), assembler.assemble(BaseShader::fragmentSource, fragmentModules));
+    animationShader->setSource(assembler.assemble(AnimationShader::vertexSource, vertexModules), assembler.assemble(AnimationShader::fragmentSource, fragmentModules));
 
     animationShader->compile({
             {"POSITION", ShaderAttribute::POSITION},
@@ -260,7 +261,9 @@ void RenderingSystem::handleMessage(const ResourceDeliverMessage<ShaderDefinitio
             {"NORMALMATRIX1", ShaderAttribute::NORMALMATRIX1},
             {"NORMALMATRIX2", ShaderAttribute::NORMALMATRIX2},
             {"NORMALMATRIX3", ShaderAttribute::NORMALMATRIX3},
-            {"NORMALMATRIX4", ShaderAttribute::NORMALMATRIX4}
+            {"NORMALMATRIX4", ShaderAttribute::NORMALMATRIX4},
+            {"BLENDINDICES", ShaderAttribute::BLENDINDICES},
+            {"BLENDWEIGHTS", ShaderAttribute::BLENDWEIGHTS}
             });
 
     mAnimationShaders.emplace(received.id, std::move(animationShader));
