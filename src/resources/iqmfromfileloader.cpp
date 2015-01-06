@@ -3,6 +3,7 @@
 #include <iostream>
 #include <fstream>
 #include <memory>
+#include "../utilities/glm.hpp"
 
 RawModel IQMFromFileLoader::load(const std::string& filename)
 {
@@ -137,6 +138,29 @@ RawModel IQMFromFileLoader::load(const std::string& filename)
         rawModel.indices.push_back(indices);
     }
 
+    char* jointBytesIterator = headerBytes + header.ofs_joints;
+
+    std::cout << "found " << header.num_joints << " joints\n";
+
+    std::vector<glm::mat4x4> skeleton(header.num_joints);
+
+    for(uint32_t i = 0; i < header.num_joints; i++)
+    {
+        iqmjoint joint;
+        jointBytesIterator = readIqmJoint(jointBytesIterator, joint);
+
+        glm::mat4x4 scaling = glm::scale(glm::vec3(joint.scale[0], joint.scale[1], joint.scale[2]));
+        glm::mat4x4 rotationAndScaling = scaling * glm::mat4_cast(glm::quat(joint.rotate[0], joint.rotate[1], joint.rotate[2], joint.rotate[3]));
+        glm::mat4x4 jointTransformation = glm::translate(rotationAndScaling, glm::vec3(joint.translate[0], joint.translate[1], joint.translate[2]));
+
+        if(joint.parent >= 0)
+            jointTransformation = skeleton[joint.parent] * jointTransformation;
+
+        std::cout << "joint " << i << " has:\nname: " << std::string(&strings[joint.name]) << "\nparent: " << joint.parent << "\ntranslation: " << glm::vec3(joint.translate[0], joint.translate[1], joint.translate[2]) << "\nrotation: " << glm::quat(joint.rotate[0], joint.rotate[1], joint.rotate[2], joint.rotate[3]) << "\nscale: " << glm::vec3(joint.scale[0], joint.scale[1], joint.scale[2]) << "\ntransform:\n" << jointTransformation << "\n\n";
+
+        skeleton[i] = jointTransformation;
+    }
+
     return rawModel;
 }
 
@@ -234,4 +258,20 @@ char* IQMFromFileLoader::readIqmMesh(char* meshArrayPointer, iqmmesh& result)
     meshArrayPointer += sizeof(result.num_triangles);
 
     return meshArrayPointer;
+}
+
+char* IQMFromFileLoader::readIqmJoint(char* jointArrayPointer, iqmjoint& result)
+{
+    std::copy(jointArrayPointer, jointArrayPointer + sizeof(result.name), (char*)&result.name);
+    jointArrayPointer += sizeof(result.name);
+    std::copy(jointArrayPointer, jointArrayPointer + sizeof(result.parent), (char*)&result.parent);
+    jointArrayPointer += sizeof(result.parent);
+    std::copy(jointArrayPointer, jointArrayPointer + sizeof(result.translate), (char*)&result.translate);
+    jointArrayPointer += sizeof(result.translate);
+    std::copy(jointArrayPointer, jointArrayPointer + sizeof(result.rotate), (char*)&result.rotate);
+    jointArrayPointer += sizeof(result.rotate);
+    std::copy(jointArrayPointer, jointArrayPointer + sizeof(result.scale), (char*)&result.scale);
+    jointArrayPointer += sizeof(result.scale);
+
+    return jointArrayPointer;
 }
