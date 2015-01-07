@@ -153,18 +153,13 @@ void ResourceSystem::loadImages(const std::vector<ResourceEntry>& images)
             TextureDefinition textureDefinition{newId, index};
 
             mTextureDefinitions.emplace(mTextureIDs.getId(name), textureDefinition);
-
-            std::cout << "created definition for '" << name << "' where " << newId << " is the ID and " << index << " is the index\n";
             index++;
-
         }
 
         std::shared_ptr<TextureArray> textureArray = std::make_shared<TextureArray>();
         textureArray->create(size, amount, pixels.data());
 
         mBus.send(ResourceDeliverMessage<TextureArray>{newId, textureArray});
-
-        std::cout << "created texture array id " << newId << " of size " << size << "\n";
     }
 }
 

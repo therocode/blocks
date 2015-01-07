@@ -2,6 +2,12 @@
 #include <vector>
 #include "../utilities/glm.hpp"
 
+struct Joint
+{
+    int32_t parent;
+    glm::mat4x4 transformation;
+};
+
 struct RawModel
 {
     std::vector<float> positions;
@@ -10,5 +16,5 @@ struct RawModel
     std::vector<std::vector<uint32_t>> indices;
     std::vector<uint8_t> blendIndices;
     std::vector<uint8_t> blendWeights;
-    std::vector<glm::mat4x4> skeleton;
+    std::vector<Joint> skeleton;
 };

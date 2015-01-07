@@ -142,7 +142,7 @@ RawModel IQMFromFileLoader::load(const std::string& filename)
 
     std::cout << "found " << header.num_joints << " joints\n";
 
-    std::vector<glm::mat4x4> skeleton(header.num_joints);
+    std::vector<Joint> skeleton(header.num_joints);
 
     for(uint32_t i = 0; i < header.num_joints; i++)
     {
@@ -154,11 +154,11 @@ RawModel IQMFromFileLoader::load(const std::string& filename)
         glm::mat4x4 jointTransformation = glm::translate(rotationAndScaling, glm::vec3(joint.translate[0], joint.translate[1], joint.translate[2]));
 
         if(joint.parent >= 0)
-            jointTransformation = skeleton[joint.parent] * jointTransformation;
+            jointTransformation = skeleton[joint.parent].transformation * jointTransformation;
 
         std::cout << "joint " << i << " has:\nname: " << std::string(&strings[joint.name]) << "\nparent: " << joint.parent << "\ntranslation: " << glm::vec3(joint.translate[0], joint.translate[1], joint.translate[2]) << "\nrotation: " << glm::quat(joint.rotate[0], joint.rotate[1], joint.rotate[2], joint.rotate[3]) << "\nscale: " << glm::vec3(joint.scale[0], joint.scale[1], joint.scale[2]) << "\ntransform:\n" << jointTransformation << "\n\n";
 
-        skeleton[i] = jointTransformation;
+        skeleton[i] = {joint.parent, jointTransformation};
     }
 
     rawModel.skeleton = skeleton;

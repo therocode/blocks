@@ -188,12 +188,21 @@ void RenderingSystem::handleMessage(const ResourceDeliverMessage<RawModel>& rece
 
     mModels.push_back(std::move(newModel));
 
-    for(int32_t i = 0; i < received.resource->skeleton.size(); i++)
+    for(int32_t i = 1; i < received.resource->skeleton.size(); i++)
     {
-        glm::vec3 pos(-24 + i, 41.0f, -30.0f);
+        glm::vec4 start(0.0f, 0.0f, 0.0f, 1.0f);
+        glm::vec4 end(0.0f, 0.0f, 0.0f, 1.0f);
+        const glm::mat4x4& transformation = received.resource->skeleton[i].transformation;
+        int32_t parent = received.resource->skeleton[i].parent;
+
+        start = transformation * start;
+        end  = received.resource->skeleton[parent].transformation * end;
+
         DebugRenderable newDeb2(DebugRenderable::LINE);
-        newDeb2.setLinePoints(pos, pos + glm::vec3(0.0f,  3.0f, 0.0f));
-        newDeb2.setLineColors({(float)(rand() % 256) / 256.0f,(float)(rand() % 256) / 256.0f, (float)(rand() % 256) / 256.0f}, {(float)(rand() % 256) / 256.0f,(float)(rand() % 256) / 256.0f, (float)(rand() % 256) / 256.0f});
+        newDeb2.setLinePoints(glm::vec3(start), glm::vec3(end));
+        float startColor = ((float)(i-1) / (float) received.resource->skeleton.size());
+        float endColor = ((float)i / (float) received.resource->skeleton.size());
+        newDeb2.setLineColors({1.0f, startColor, endColor}, {1.0f, startColor, endColor});
         mDebuggers.push_back(newDeb2);
     }
 }
