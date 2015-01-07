@@ -42,15 +42,6 @@ RenderingSystem::RenderingSystem(fea::MessageBus& bus, const glm::uvec2& viewSiz
         }
     }
 
-    for(uint32_t i = 0; i < 100; i++)
-    {
-        glm::vec3 pos(-24 + i, 41.0f, -30.0f);
-        DebugRenderable newDeb2(DebugRenderable::LINE);
-        newDeb2.setLinePoints(pos, pos + glm::vec3(0.0f,  3.0f, 0.0f));
-        newDeb2.setLineColors({(float)(rand() % 256) / 256.0f,(float)(rand() % 256) / 256.0f, (float)(rand() % 256) / 256.0f}, {(float)(rand() % 256) / 256.0f,(float)(rand() % 256) / 256.0f, (float)(rand() % 256) / 256.0f});
-        mDebuggers.push_back(newDeb2);
-    }
-
     GLint maxSize;
     glGetIntegerv(GL_MAX_ARRAY_TEXTURE_LAYERS, &maxSize);
 
@@ -196,6 +187,15 @@ void RenderingSystem::handleMessage(const ResourceDeliverMessage<RawModel>& rece
     }
 
     mModels.push_back(std::move(newModel));
+
+    for(int32_t i = 0; i < received.resource->skeleton.size(); i++)
+    {
+        glm::vec3 pos(-24 + i, 41.0f, -30.0f);
+        DebugRenderable newDeb2(DebugRenderable::LINE);
+        newDeb2.setLinePoints(pos, pos + glm::vec3(0.0f,  3.0f, 0.0f));
+        newDeb2.setLineColors({(float)(rand() % 256) / 256.0f,(float)(rand() % 256) / 256.0f, (float)(rand() % 256) / 256.0f}, {(float)(rand() % 256) / 256.0f,(float)(rand() % 256) / 256.0f, (float)(rand() % 256) / 256.0f});
+        mDebuggers.push_back(newDeb2);
+    }
 }
 
 void RenderingSystem::handleMessage(const ResourceDeliverMessage<ShaderSource>& received) 

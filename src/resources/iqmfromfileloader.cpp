@@ -161,6 +161,8 @@ RawModel IQMFromFileLoader::load(const std::string& filename)
         skeleton[i] = jointTransformation;
     }
 
+    rawModel.skeleton = skeleton;
+
     return rawModel;
 }
 

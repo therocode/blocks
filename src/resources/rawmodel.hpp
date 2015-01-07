@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include "../utilities/glm.hpp"
 
 struct RawModel
 {
@@ -9,4 +10,5 @@ struct RawModel
     std::vector<std::vector<uint32_t>> indices;
     std::vector<uint8_t> blendIndices;
     std::vector<uint8_t> blendWeights;
+    std::vector<glm::mat4x4> skeleton;
 };
