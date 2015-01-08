@@ -150,8 +150,8 @@ RawModel IQMFromFileLoader::load(const std::string& filename)
         jointBytesIterator = readIqmJoint(jointBytesIterator, joint);
 
         glm::mat4x4 scaling = glm::scale(glm::vec3(joint.scale[0], joint.scale[1], joint.scale[2]));
-        glm::mat4x4 rotationAndScaling = scaling * glm::mat4_cast(glm::quat(joint.rotate[0], joint.rotate[1], joint.rotate[2], joint.rotate[3]));
-        glm::mat4x4 jointTransformation = glm::translate(rotationAndScaling, glm::vec3(joint.translate[0], joint.translate[1], joint.translate[2]));
+        glm::mat4x4 rotationAndScaling = glm::mat4_cast(glm::normalize(glm::quat(joint.rotate[0], joint.rotate[1], joint.rotate[2], joint.rotate[3]))) * scaling;
+        glm::mat4x4 jointTransformation = glm::translate(glm::vec3(joint.translate[0], joint.translate[1], joint.translate[2])) * rotationAndScaling;
 
         if(joint.parent >= 0)
             jointTransformation = skeleton[joint.parent].transformation * jointTransformation;

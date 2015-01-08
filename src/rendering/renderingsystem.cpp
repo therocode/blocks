@@ -188,6 +188,7 @@ void RenderingSystem::handleMessage(const ResourceDeliverMessage<RawModel>& rece
 
     mModels.push_back(std::move(newModel));
 
+    if(received.resource->skeleton.size() == 15)
     for(int32_t i = 1; i < received.resource->skeleton.size(); i++)
     {
         glm::vec4 start(0.0f, 0.0f, 0.0f, 1.0f);
@@ -200,9 +201,9 @@ void RenderingSystem::handleMessage(const ResourceDeliverMessage<RawModel>& rece
 
         DebugRenderable newDeb2(DebugRenderable::LINE);
         newDeb2.setLinePoints(glm::vec3(start), glm::vec3(end));
-        float startColor = ((float)(i-1) / (float) received.resource->skeleton.size());
-        float endColor = ((float)i / (float) received.resource->skeleton.size());
-        newDeb2.setLineColors({1.0f, startColor, endColor}, {1.0f, startColor, endColor});
+        float startColor = ((float)(parent) / (float) received.resource->skeleton.size());
+        float endColor = ((float)(parent+1) / (float) received.resource->skeleton.size());
+        newDeb2.setLineColors({1.0f, startColor, startColor}, {1.0f, endColor, endColor});
         mDebuggers.push_back(newDeb2);
     }
 }

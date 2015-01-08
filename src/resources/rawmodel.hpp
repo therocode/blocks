@@ -6,6 +6,7 @@ struct Joint
 {
     int32_t parent;
     glm::mat4x4 transformation;
+    
 };
 
 struct RawModel
