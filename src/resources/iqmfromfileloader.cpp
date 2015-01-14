@@ -33,7 +33,7 @@ RawModel IQMFromFileLoader::load(const std::string& filename)
     iqmheader header;
     readIqmHeader(headerBytes, header);
 
-    //std::cout << header.num_text << "\n";
+    std::cout << "poses: " << header.num_poses << "\n";
 
     char* textIterator = headerBytes + header.ofs_text;
 
@@ -142,26 +142,71 @@ RawModel IQMFromFileLoader::load(const std::string& filename)
 
     std::cout << "found " << header.num_joints << " joints\n";
 
-    std::vector<Joint> skeleton(header.num_joints);
+    std::vector<Matrix3x4> baseframe(header.num_joints);
+    std::vector<Matrix3x4> inversebaseframe(header.num_joints);
 
     for(uint32_t i = 0; i < header.num_joints; i++)
     {
         iqmjoint joint;
         jointBytesIterator = readIqmJoint(jointBytesIterator, joint);
 
-        glm::mat4x4 scaling = glm::scale(glm::vec3(joint.scale[0], joint.scale[1], joint.scale[2]));
-        glm::mat4x4 rotationAndScaling = glm::mat4_cast(glm::normalize(glm::quat(joint.rotate[0], joint.rotate[1], joint.rotate[2], joint.rotate[3]))) * scaling;
-        glm::mat4x4 jointTransformation = glm::translate(glm::vec3(joint.translate[0], joint.translate[1], joint.translate[2])) * rotationAndScaling;
-
-        if(joint.parent >= 0)
-            jointTransformation = skeleton[joint.parent].transformation * jointTransformation;
-
-        std::cout << "joint " << i << " has:\nname: " << std::string(&strings[joint.name]) << "\nparent: " << joint.parent << "\ntranslation: " << glm::vec3(joint.translate[0], joint.translate[1], joint.translate[2]) << "\nrotation: " << glm::quat(joint.rotate[0], joint.rotate[1], joint.rotate[2], joint.rotate[3]) << "\nscale: " << glm::vec3(joint.scale[0], joint.scale[1], joint.scale[2]) << "\ntransform:\n" << jointTransformation << "\n\n";
-
-        skeleton[i] = {joint.parent, jointTransformation};
+        baseframe[i] = Matrix3x4(Quat(joint.rotate).normalize(), Vec3(joint.translate), Vec3(joint.scale));
+        inversebaseframe[i].invert(baseframe[i]);
+        if(joint.parent >= 0) 
+        {   
+            baseframe[i] = baseframe[joint.parent] * baseframe[i];
+            inversebaseframe[i] *= inversebaseframe[joint.parent];
+        }  
     }
 
-    rawModel.skeleton = skeleton;
+    std::vector<Matrix3x4> frames(header.num_frames * header.num_frames);
+    std::vector<ushort> framedata(headerBytes + header.ofs_frames, headerBytes + header.ofs_frames + header.num_frames * header.num_framechannels);
+    auto frameDataIter = framedata.begin();
+
+    for(uint32_t frameIndex = 0; frameIndex < header.num_frames; frameIndex++)
+    {
+        char* poseBytesIterator = headerBytes + header.ofs_frames;
+        for(uint32_t poseIndex = 0; poseIndex < header.num_frames; poseIndex++)
+        {
+            iqmpose pose;
+            poseBytesIterator = readIqmPose(poseBytesIterator, pose);
+
+            Quat rotate;
+            Vec3 translate, scale;
+            translate.x = pose.channeloffset[0]; if(pose.mask&0x01) translate.x += *frameDataIter++ * pose.channelscale[0];
+            translate.y = pose.channeloffset[1]; if(pose.mask&0x02) translate.y += *frameDataIter++ * pose.channelscale[1];
+            translate.z = pose.channeloffset[2]; if(pose.mask&0x04) translate.z += *frameDataIter++ * pose.channelscale[2];
+            rotate.x = pose.channeloffset[3]; if(pose.mask&0x08) rotate.x += *frameDataIter++ * pose.channelscale[3];
+            rotate.y = pose.channeloffset[4]; if(pose.mask&0x10) rotate.y += *frameDataIter++ * pose.channelscale[4];
+            rotate.z = pose.channeloffset[5]; if(pose.mask&0x20) rotate.z += *frameDataIter++ * pose.channelscale[5];
+            rotate.w = pose.channeloffset[6]; if(pose.mask&0x40) rotate.w += *frameDataIter++ * pose.channelscale[6];
+            scale.x = pose.channeloffset[7]; if(pose.mask&0x80) scale.x += *frameDataIter++ * pose.channelscale[7];
+            scale.y = pose.channeloffset[8]; if(pose.mask&0x100) scale.y += *frameDataIter++ * pose.channelscale[8];
+            scale.z = pose.channeloffset[9]; if(pose.mask&0x200) scale.z += *frameDataIter++ * pose.channelscale[9];
+            // Concatenate each pose with the inverse base pose to avoid doing this at animation time.
+            // If the joint has a parent, then it needs to be pre-concatenated with its parent's base pose.
+            // Thus it all negates at animation time like so: 
+            //   (parentPose * parentInverseBasePose) * (parentBasePose * childPose * childInverseBasePose) =>
+            //   parentPose * (parentInverseBasePose * parentBasePose) * childPose * childInverseBasePose =>
+            //   parentPose * childPose * childInverseBasePose
+            Matrix3x4 m(rotate.normalize(), translate, scale);
+
+            if(pose.parent >= 0)
+                frames[frameIndex * header.num_frames + poseIndex] = baseframe[pose.parent] * m * inversebaseframe[poseIndex];
+            else
+                frames[frameIndex * header.num_frames + poseIndex] = m * inversebaseframe[poseIndex];
+        }
+    }
+
+    char* animBytesIterator = headerBytes + header.ofs_anims;
+
+    for(uint32_t i = 0; i < header.num_anims; i++)
+    {
+        iqmanim animation;
+        animBytesIterator = readIqmAnim(animBytesIterator, animation);
+
+        std::cout << "found animation " << std::string(&strings[animation.name]) << "\n";
+    }
 
     return rawModel;
 }
@@ -276,4 +321,34 @@ char* IQMFromFileLoader::readIqmJoint(char* jointArrayPointer, iqmjoint& result)
     jointArrayPointer += sizeof(result.scale);
 
     return jointArrayPointer;
+}
+
+char* IQMFromFileLoader::readIqmPose(char* poseArrayPointer, iqmpose& result)
+{
+    std::copy(poseArrayPointer, poseArrayPointer + sizeof(result.parent), (char*)&result.parent);
+    poseArrayPointer += sizeof(result.parent);
+    std::copy(poseArrayPointer, poseArrayPointer + sizeof(result.mask), (char*)&result.mask);
+    poseArrayPointer += sizeof(result.mask);
+    std::copy(poseArrayPointer, poseArrayPointer + sizeof(result.channeloffset), (char*)&result.channeloffset);
+    poseArrayPointer += sizeof(result.channeloffset);
+    std::copy(poseArrayPointer, poseArrayPointer + sizeof(result.channelscale), (char*)&result.channelscale);
+    poseArrayPointer += sizeof(result.channelscale);
+
+    return poseArrayPointer;
+}
+
+char* IQMFromFileLoader::readIqmAnim(char* animArrayPointer, iqmanim& result)
+{
+    std::copy(animArrayPointer, animArrayPointer + sizeof(result.name), (char*)&result.name);
+    animArrayPointer += sizeof(result.name);
+    std::copy(animArrayPointer, animArrayPointer + sizeof(result.first_frame), (char*)&result.first_frame);
+    animArrayPointer += sizeof(result.first_frame);
+    std::copy(animArrayPointer, animArrayPointer + sizeof(result.num_frames), (char*)&result.num_frames);
+    animArrayPointer += sizeof(result.num_frames);
+    std::copy(animArrayPointer, animArrayPointer + sizeof(result.framerate), (char*)&result.framerate);
+    animArrayPointer += sizeof(result.framerate);
+    std::copy(animArrayPointer, animArrayPointer + sizeof(result.flags), (char*)&result.flags);
+    animArrayPointer += sizeof(result.flags);
+
+    return animArrayPointer;
 }

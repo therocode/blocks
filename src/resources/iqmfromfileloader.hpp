@@ -12,4 +12,6 @@ class IQMFromFileLoader
         char* readIqmVertexArray(char* vertexArrayPointer, iqmvertexarray& result);
         char* readIqmMesh(char* meshArrayPointer, iqmmesh& result);
         char* readIqmJoint(char* jointArrayPointer, iqmjoint& result);
+        char* readIqmPose(char* poseArrayPointer, iqmpose& result);
+        char* readIqmAnim(char* animArrayPointer, iqmanim& result);
 };
