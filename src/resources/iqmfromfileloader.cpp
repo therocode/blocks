@@ -145,6 +145,8 @@ RawModel IQMFromFileLoader::load(const std::string& filename)
     std::vector<Matrix3x4> baseframe(header.num_joints);
     std::vector<Matrix3x4> inversebaseframe(header.num_joints);
 
+    std::cout << header.num_joints << "\n";
+
     for(uint32_t i = 0; i < header.num_joints; i++)
     {
         iqmjoint joint;
@@ -165,10 +167,10 @@ RawModel IQMFromFileLoader::load(const std::string& filename)
 
     for(uint32_t frameIndex = 0; frameIndex < header.num_frames; frameIndex++)
     {
-        char* poseBytesIterator = headerBytes + header.ofs_frames;
-        for(uint32_t poseIndex = 0; poseIndex < header.num_frames; poseIndex++)
+        char* poseBytesIterator = headerBytes + header.ofs_poses;
+        for(uint32_t poseIndex = 0; poseIndex < header.num_poses; poseIndex++)
         {
-            iqmpose pose;
+            iqmpose pose; //should loop but doesn't, that's why crash
             poseBytesIterator = readIqmPose(poseBytesIterator, pose);
 
             Quat rotate;
@@ -190,6 +192,8 @@ RawModel IQMFromFileLoader::load(const std::string& filename)
             //   parentPose * (parentInverseBasePose * parentBasePose) * childPose * childInverseBasePose =>
             //   parentPose * childPose * childInverseBasePose
             Matrix3x4 m(rotate.normalize(), translate, scale);
+
+            std::cout << pose.parent << "\n";
 
             if(pose.parent >= 0)
                 frames[frameIndex * header.num_frames + poseIndex] = baseframe[pose.parent] * m * inversebaseframe[poseIndex];
