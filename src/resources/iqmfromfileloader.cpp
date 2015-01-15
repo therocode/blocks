@@ -202,6 +202,24 @@ RawModel IQMFromFileLoader::load(const std::string& filename)
         }
     }
 
+    rawModel.frames.resize(header.num_frames * header.num_poses);
+    for(uint32_t i = 0; i < header.num_frames * header.num_poses; i++)
+    {
+        rawModel.frames[i].rotation[0][0] = frames[i].a.x;
+        rawModel.frames[i].rotation[1][0] = frames[i].a.y;
+        rawModel.frames[i].rotation[2][0] = frames[i].a.z;
+        rawModel.frames[i].rotation[0][1] = frames[i].b.x;
+        rawModel.frames[i].rotation[1][1] = frames[i].b.y;
+        rawModel.frames[i].rotation[2][1] = frames[i].b.z;
+        rawModel.frames[i].rotation[0][2] = frames[i].c.x;
+        rawModel.frames[i].rotation[1][2] = frames[i].c.y;
+        rawModel.frames[i].rotation[2][2] = frames[i].c.z;
+
+        rawModel.frames[i].translation[0] = frames[i].a.w;
+        rawModel.frames[i].translation[1] = frames[i].b.w;
+        rawModel.frames[i].translation[2] = frames[i].c.w;
+    }
+
     char* animBytesIterator = headerBytes + header.ofs_anims;
 
     for(uint32_t i = 0; i < header.num_anims; i++)
