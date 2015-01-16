@@ -2,10 +2,12 @@
 #include <vector>
 #include "../utilities/glm.hpp"
 
-struct FrameTranslation
+struct RawAnimation
 {
-    glm::mat3x3 rotation;
-    glm::vec3 translation;
+    std::string name;
+    std::vector<glm::mat3x3> rotations;
+    std::vector<glm::vec3> translations;
+    float framerate;
 };
 
 struct RawModel
@@ -16,5 +18,5 @@ struct RawModel
     std::vector<std::vector<uint32_t>> indices;
     std::vector<uint8_t> blendIndices;
     std::vector<uint8_t> blendWeights;
-    std::vector<FrameTranslation> frames;
+    std::vector<RawAnimation> animations;
 };

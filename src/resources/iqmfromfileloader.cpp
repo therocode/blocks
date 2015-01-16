@@ -202,32 +202,42 @@ RawModel IQMFromFileLoader::load(const std::string& filename)
         }
     }
 
-    rawModel.frames.resize(header.num_frames * header.num_poses);
-    for(uint32_t i = 0; i < header.num_frames * header.num_poses; i++)
-    {
-        rawModel.frames[i].rotation[0][0] = frames[i].a.x;
-        rawModel.frames[i].rotation[1][0] = frames[i].a.y;
-        rawModel.frames[i].rotation[2][0] = frames[i].a.z;
-        rawModel.frames[i].rotation[0][1] = frames[i].b.x;
-        rawModel.frames[i].rotation[1][1] = frames[i].b.y;
-        rawModel.frames[i].rotation[2][1] = frames[i].b.z;
-        rawModel.frames[i].rotation[0][2] = frames[i].c.x;
-        rawModel.frames[i].rotation[1][2] = frames[i].c.y;
-        rawModel.frames[i].rotation[2][2] = frames[i].c.z;
-
-        rawModel.frames[i].translation[0] = frames[i].a.w;
-        rawModel.frames[i].translation[1] = frames[i].b.w;
-        rawModel.frames[i].translation[2] = frames[i].c.w;
-    }
-
     char* animBytesIterator = headerBytes + header.ofs_anims;
 
-    for(uint32_t i = 0; i < header.num_anims; i++)
+    for(uint32_t animationIndex = 0; animationIndex < header.num_anims; animationIndex++)
     {
         iqmanim animation;
         animBytesIterator = readIqmAnim(animBytesIterator, animation);
+        RawAnimation rawAnimation;
+
+        uint32_t firstFrame = animation.first_frame;
+        uint32_t frameAmount = animation.num_frames * header.num_poses;
+
+        rawAnimation.rotations.resize(frameAmount);
+        rawAnimation.translations.resize(frameAmount);
+
+        for(uint32_t i = 0; i < frameAmount; i++)
+        {
+            uint32_t frameIndex = i + firstFrame;
+            rawAnimation.rotations[i][0][0] = frames[frameIndex].a.x;
+            rawAnimation.rotations[i][1][0] = frames[frameIndex].a.y;
+            rawAnimation.rotations[i][2][0] = frames[frameIndex].a.z;
+            rawAnimation.rotations[i][0][1] = frames[frameIndex].b.x;
+            rawAnimation.rotations[i][1][1] = frames[frameIndex].b.y;
+            rawAnimation.rotations[i][2][1] = frames[frameIndex].b.z;
+            rawAnimation.rotations[i][0][2] = frames[frameIndex].c.x;
+            rawAnimation.rotations[i][1][2] = frames[frameIndex].c.y;
+            rawAnimation.rotations[i][2][2] = frames[frameIndex].c.z;
+
+            rawAnimation.translations[i][0] = frames[frameIndex].a.w;
+            rawAnimation.translations[i][1] = frames[frameIndex].b.w;
+            rawAnimation.translations[i][2] = frames[frameIndex].c.w;
+        }
 
         std::cout << "found animation " << std::string(&strings[animation.name]) << "\n";
+        rawAnimation.framerate = animation.framerate;
+
+        rawModel.animations.push_back(rawAnimation);
     }
 
     return rawModel;
