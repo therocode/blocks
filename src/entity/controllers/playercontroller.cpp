@@ -25,7 +25,7 @@ void PlayerController::handleMessage(const PlayerJoinedGameMessage& received)
                 e->setAttribute("current_world", 0u);
                 e->setAttribute("position", position);
                 e->setAttribute("is_highlighting", true);
-                e->setAttribute("highlight_radius", 6u);
+                e->setAttribute("highlight_radius", 2u);
                 playerEntity = e;
             }});
 
@@ -33,6 +33,7 @@ void PlayerController::handleMessage(const PlayerJoinedGameMessage& received)
     mEntityIdToPlayerId.emplace(playerEntity->getId(), playerId);
     mBus.send(PlayerEntersChunkMessage{playerId, WorldToChunk::convert(position)});
 
+    std::cout << "created entity of id " << playerEntity->getId() << "\n";
     ChunkCoord chunkAt = WorldToChunk::convert(position);
 
     mBus.send(PlayerAttachedToEntityMessage{(fea::EntityId)playerId, playerEntity->getId(), playerEntity});
