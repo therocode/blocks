@@ -4,6 +4,7 @@
 #include <memory>
 #include "buffer.hpp"
 #include "mesh.hpp"
+#include "animation.hpp"
 
 class Model
 {
@@ -14,7 +15,10 @@ class Model
         void addMesh(int32_t id, std::unique_ptr<Mesh> mesh);
         const Mesh* findMesh(int32_t id) const;
         const std::unordered_map<int32_t, std::unique_ptr<Mesh>>& getMeshes() const;
+        void addAnimation(const std::string& name, std::unique_ptr<Animation> animation);
+        const Animation* findAnimation(const std::string& name) const;
     private:
         std::unordered_map<int32_t, std::unique_ptr<Buffer>> mVertexArrays;
         std::unordered_map<int32_t, std::unique_ptr<Mesh>> mMeshes;
+        std::unordered_map<std::string, std::unique_ptr<Animation>> mAnimations;
 };

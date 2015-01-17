@@ -33,19 +33,12 @@ RawModel IQMFromFileLoader::load(const std::string& filename)
     iqmheader header;
     readIqmHeader(headerBytes, header);
 
-    std::cout << "poses: " << header.num_poses << "\n";
-
     char* textIterator = headerBytes + header.ofs_text;
 
     std::string strings;
     strings.resize(header.num_text);
 
     std::copy(textIterator, textIterator + header.num_text, &strings[0]);
-
-    //std::cout << "numstrings " << header.num_text << "\n";
-    //std::cout << "texts: " << strings << "\n";
-
-    //std::cout << std::string(headerBytes + header.ofs_text) << "\n";
 
     if(std::string(header.magic) != std::string(IQM_MAGIC))
     {
@@ -62,11 +55,6 @@ RawModel IQMFromFileLoader::load(const std::string& filename)
         std::cout << "IQM file bigger than 16MB error! It was " << header.filesize << " big!\n";
         exit(0); //exception
     }
-
-    std::cout << "num_anims:" << header.num_anims << "\n";
-    std::cout << "num_joints:" << header.num_joints << "\n";
-    std::cout << "num_poses:" << header.num_poses << "\n";
-    std::cout << "num_frames:" << header.num_frames << "\n";
 
     char* vertexArrayBytesIterator = headerBytes + header.ofs_vertexarrays;
     
@@ -134,18 +122,13 @@ RawModel IQMFromFileLoader::load(const std::string& filename)
             indices.push_back(triangle.vertex[2]);
         }
 
-        //std::cout << "loaded mesh with material: '" << std::string(&strings[mesh.material]) << "'\n";
         rawModel.indices.push_back(indices);
     }
 
     char* jointBytesIterator = headerBytes + header.ofs_joints;
 
-    std::cout << "found " << header.num_joints << " joints\n";
-
     std::vector<Matrix3x4> baseframe(header.num_joints);
     std::vector<Matrix3x4> inversebaseframe(header.num_joints);
-
-    std::cout << header.num_joints << "\n";
 
     for(uint32_t i = 0; i < header.num_joints; i++)
     {
@@ -193,8 +176,6 @@ RawModel IQMFromFileLoader::load(const std::string& filename)
             //   parentPose * childPose * childInverseBasePose
             Matrix3x4 m(rotate.normalize(), translate, scale);
 
-            std::cout << pose.parent << "\n";
-
             if(pose.parent >= 0)
                 frames[frameIndex * header.num_frames + poseIndex] = baseframe[pose.parent] * m * inversebaseframe[poseIndex];
             else
@@ -204,41 +185,41 @@ RawModel IQMFromFileLoader::load(const std::string& filename)
 
     char* animBytesIterator = headerBytes + header.ofs_anims;
 
-    //for(uint32_t animationIndex = 0; animationIndex < header.num_anims; animationIndex++)
-    //{
-    //    iqmanim animation;
-    //    animBytesIterator = readIqmAnim(animBytesIterator, animation);
-    //    RawAnimation rawAnimation;
+    for(uint32_t animationIndex = 0; animationIndex < header.num_anims; animationIndex++)
+    {
+        iqmanim animation;
+        animBytesIterator = readIqmAnim(animBytesIterator, animation);
+        RawAnimation rawAnimation;
 
-    //    uint32_t firstFrame = animation.first_frame;
-    //    uint32_t frameAmount = animation.num_frames * header.num_poses;
+        uint32_t firstFrame = animation.first_frame;
+        uint32_t frameAmount = animation.num_frames * header.num_poses;
 
-    //    rawAnimation.rotations.resize(frameAmount);
-    //    rawAnimation.translations.resize(frameAmount);
+        rawAnimation.rotations.resize(frameAmount);
+        rawAnimation.translations.resize(frameAmount);
 
-    //    for(uint32_t i = 0; i < frameAmount; i++)
-    //    {
-    //        uint32_t frameIndex = i + firstFrame;
-    //        rawAnimation.rotations[i][0][0] = frames[frameIndex].a.x;
-    //        rawAnimation.rotations[i][1][0] = frames[frameIndex].a.y;
-    //        rawAnimation.rotations[i][2][0] = frames[frameIndex].a.z;
-    //        rawAnimation.rotations[i][0][1] = frames[frameIndex].b.x;
-    //        rawAnimation.rotations[i][1][1] = frames[frameIndex].b.y;
-    //        rawAnimation.rotations[i][2][1] = frames[frameIndex].b.z;
-    //        rawAnimation.rotations[i][0][2] = frames[frameIndex].c.x;
-    //        rawAnimation.rotations[i][1][2] = frames[frameIndex].c.y;
-    //        rawAnimation.rotations[i][2][2] = frames[frameIndex].c.z;
+        for(uint32_t i = 0; i < frameAmount; i++)
+        {
+            uint32_t frameIndex = i + firstFrame;
+            rawAnimation.rotations[i][0][0] = frames[frameIndex].a.x;
+            rawAnimation.rotations[i][1][0] = frames[frameIndex].a.y;
+            rawAnimation.rotations[i][2][0] = frames[frameIndex].a.z;
+            rawAnimation.rotations[i][0][1] = frames[frameIndex].b.x;
+            rawAnimation.rotations[i][1][1] = frames[frameIndex].b.y;
+            rawAnimation.rotations[i][2][1] = frames[frameIndex].b.z;
+            rawAnimation.rotations[i][0][2] = frames[frameIndex].c.x;
+            rawAnimation.rotations[i][1][2] = frames[frameIndex].c.y;
+            rawAnimation.rotations[i][2][2] = frames[frameIndex].c.z;
 
-    //        rawAnimation.translations[i][0] = frames[frameIndex].a.w;
-    //        rawAnimation.translations[i][1] = frames[frameIndex].b.w;
-    //        rawAnimation.translations[i][2] = frames[frameIndex].c.w;
-    //    }
+            rawAnimation.translations[i][0] = frames[frameIndex].a.w;
+            rawAnimation.translations[i][1] = frames[frameIndex].b.w;
+            rawAnimation.translations[i][2] = frames[frameIndex].c.w;
+        }
 
-    //    std::cout << "found animation " << std::string(&strings[animation.name]) << "\n";
-    //    rawAnimation.framerate = animation.framerate;
+        rawAnimation.framerate = animation.framerate;
+        rawAnimation.name = std::string(&strings[animation.name]);
 
-    //    rawModel.animations.push_back(rawAnimation);
-    //}
+        rawModel.animations.push_back(rawAnimation);
+    }
 
     return rawModel;
 }

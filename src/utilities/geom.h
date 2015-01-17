@@ -294,11 +294,6 @@ struct Matrix3x4
 
     void invert(const Matrix3x4 &o)
     {
-        std::cout << "\nbefore transformation:\n";
-        std::cout << o.a.x << " " << o.a.y << " " << o.a.z << " " << o.a.w << "\n";
-        std::cout << o.b.x << " " << o.b.y << " " << o.b.z << " " << o.b.w << "\n";
-        std::cout << o.c.x << " " << o.c.y << " " << o.c.z << " " << o.c.w << "\n";
-
         Matrix3x3 invrot(Vec3(o.a.x, o.b.x, o.c.x), Vec3(o.a.y, o.b.y, o.c.y), Vec3(o.a.z, o.b.z, o.c.z));
         invrot.a /= invrot.a.squaredlen();
         invrot.b /= invrot.b.squaredlen();
@@ -307,43 +302,6 @@ struct Matrix3x4
         a = Vec4(invrot.a, -invrot.a.dot(trans));
         b = Vec4(invrot.b, -invrot.b.dot(trans));
         c = Vec4(invrot.c, -invrot.c.dot(trans));
-
-        std::cout << "after transformation:\n";
-        std::cout << a.x << " " << a.y << " " << a.z << " " << a.w << "\n";
-        std::cout << b.x << " " << b.y << " " << b.z << " " << b.w << "\n";
-        std::cout << c.x << " " << c.y << " " << c.z << " " << c.w << "\n";
-
-        glm::mat4 hej;
-        hej[0][0] = o.a.x;
-        hej[0][1] = o.b.x;
-        hej[0][2] = o.c.x;
-        hej[1][0] = o.a.y;
-        hej[1][1] = o.b.y;
-        hej[1][2] = o.c.y;
-        hej[2][0] = o.a.z;
-        hej[2][1] = o.b.z;
-        hej[2][2] = o.c.z;
-        hej[3][0] = o.a.w;
-        hej[3][1] = o.b.w;
-        hej[3][2] = o.c.w;
-
-        std::cout << "after transformation glm:\n" << glm::inverse(hej) << "\n";
-
-        glm::mat4 difference;
-        difference[0][0] = hej[0][0] - a.x;
-        difference[0][1] = hej[0][1] - b.x;
-        difference[0][2] = hej[0][2] - c.x;
-        difference[1][0] = hej[1][0] - a.y;
-        difference[1][1] = hej[1][1] - b.y;
-        difference[1][2] = hej[1][2] - c.y;
-        difference[2][0] = hej[2][0] - a.z;
-        difference[2][1] = hej[2][1] - b.z;
-        difference[2][2] = hej[2][2] - c.z;
-        difference[3][0] = hej[3][0] - a.w;
-        difference[3][1] = hej[3][1] - b.w;
-        difference[3][2] = hej[3][2] - c.w;
-
-        std::cout << "difference:\n" << difference << "\n";
     }
     void invert() { invert(Matrix3x4(*this)); }
 

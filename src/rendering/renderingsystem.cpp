@@ -186,6 +186,18 @@ void RenderingSystem::handleMessage(const ResourceDeliverMessage<RawModel>& rece
         meshNumber++;
     }
 
+    for(const auto anim : received.resource->animations)
+    {
+        std::unique_ptr<Animation> animation = std::unique_ptr<Animation>(new Animation());
+        std::cout << "anim name " << anim.name << " has framerate " << anim.framerate << "\n";
+
+        animation->framerate = anim.framerate;
+        animation->rotations = std::move(anim.rotations);
+        animation->translations = std::move(anim.translations);
+
+        newModel->addAnimation(anim.name, std::move(animation));
+    }
+
     mModels.push_back(std::move(newModel));
 }
 

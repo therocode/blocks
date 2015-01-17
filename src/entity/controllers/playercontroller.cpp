@@ -25,7 +25,7 @@ void PlayerController::handleMessage(const PlayerJoinedGameMessage& received)
                 e->setAttribute("current_world", 0u);
                 e->setAttribute("position", position);
                 e->setAttribute("is_highlighting", true);
-                e->setAttribute("highlight_radius", 2u);
+                e->setAttribute("highlight_radius", 6u);
                 playerEntity = e;
             }});
 

@@ -32,3 +32,15 @@ const std::unordered_map<int32_t, std::unique_ptr<Mesh>>& Model::getMeshes() con
 {
     return mMeshes;
 }
+        
+void Model::addAnimation(const std::string& name, std::unique_ptr<Animation> animation)
+{
+    mAnimations.emplace(name, std::move(animation));
+}
+
+const Animation* Model::findAnimation(const std::string& name) const
+{
+    const auto& iterator = mAnimations.find(name);
+
+    return iterator == mAnimations.end() ? nullptr : iterator->second.get();
+}
