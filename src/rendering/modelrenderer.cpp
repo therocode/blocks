@@ -62,6 +62,10 @@ void ModelRenderer::render(const Camera& camera, const glm::mat4& perspective, c
             newModelObject->vertexArray.setInstanceAttribute(ShaderAttribute::NORMALMATRIX2, 4, newModelObject->normalMatrix2, 1);
             newModelObject->vertexArray.setInstanceAttribute(ShaderAttribute::NORMALMATRIX3, 4, newModelObject->normalMatrix3, 1);
             newModelObject->vertexArray.setInstanceAttribute(ShaderAttribute::NORMALMATRIX4, 4, newModelObject->normalMatrix4, 1);
+            newModelObject->vertexArray.setInstanceAttribute(ShaderAttribute::ANIMROTMATRIX1, 3, newModelObject->animRotation1, 1);
+            newModelObject->vertexArray.setInstanceAttribute(ShaderAttribute::ANIMROTMATRIX2, 3, newModelObject->animRotation2, 1);
+            newModelObject->vertexArray.setInstanceAttribute(ShaderAttribute::ANIMROTMATRIX3, 3, newModelObject->animRotation3, 1);
+            newModelObject->vertexArray.setInstanceAttribute(ShaderAttribute::ANIMTRANSLATIONS, 3, newModelObject->animTranslation, 1);
 
             for(const auto& mesh : model.getMeshes())
             {
@@ -148,7 +152,7 @@ void ModelRenderer::render(const Camera& camera, const glm::mat4& perspective, c
             modelMatrix[3][3] = modelMatrix4[3];
 
             glm::mat4 normalMatrix = glm::transpose(glm::inverse(camera.getMatrix() * modelMatrix));
-            
+
             nData1[0] = normalMatrix[0][0];
             nData1[1] = normalMatrix[0][1];
             nData1[2] = normalMatrix[0][2];
@@ -171,12 +175,11 @@ void ModelRenderer::render(const Camera& camera, const glm::mat4& perspective, c
             normalMatrix3.insert(normalMatrix3.end(), nData3.begin(), nData3.end());
             normalMatrix4.insert(normalMatrix4.end(), nData4.begin(), nData4.end());
 
-        if(order.textureArray != nullptr)
-        {
-            GLuint textureId = order.textureArray->getId();
-            shader.setUniform("textureArray", UniformType::TEXTURE_ARRAY, &textureId);
-        }
-
+            if(order.textureArray != nullptr)
+            {
+                GLuint textureId = order.textureArray->getId();
+                shader.setUniform("textureArray", UniformType::TEXTURE_ARRAY, &textureId);
+            }
         }
 
         modelObject->colors.setData(colors);

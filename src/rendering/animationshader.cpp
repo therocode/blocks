@@ -12,6 +12,8 @@ layout(location = ~COLOR~) in vec3 color;
 layout(location = ~TEXTUREINDEX~) in uint textureIndex;
 layout(location = ~MODELMATRIX1~) in mat4 modelMatrix;
 layout(location = ~NORMALMATRIX1~) in mat4 normalMatrix;
+layout(location = ~ANIMROTMATRIX1~) in mat3 animationRotation;
+layout(location = ~ANIMTRANSLATIONS~) in vec3 animationTranslation;
 layout(location = ~BLENDINDICES~) in uvec4 blendIndices;
 layout(location = ~BLENDWEIGHTS~) in uvec4 blendWeights;
 
@@ -29,7 +31,8 @@ vec3 lightDirection = vec3(1.0f, -1.0f, -1.0f);
 
 void main()
 {
-    gl_Position = viewProjectionMatrix * modelMatrix * vec4(vec3(in_position.x, in_position.y, in_position.z), 1.0);
+    vec3 animatedPosition = animationRotation * in_position + animationTranslation;
+    gl_Position = viewProjectionMatrix * modelMatrix * vec4(animatedPosition, 1.0);
     vec3 normal = (viewProjectionMatrix * modelMatrix * vec4(in_normal, 0.0)).xyz;
 
     projectionNormal = normal;

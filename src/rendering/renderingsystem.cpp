@@ -265,6 +265,10 @@ void RenderingSystem::handleMessage(const ResourceDeliverMessage<ShaderDefinitio
             {"NORMALMATRIX2", ShaderAttribute::NORMALMATRIX2},
             {"NORMALMATRIX3", ShaderAttribute::NORMALMATRIX3},
             {"NORMALMATRIX4", ShaderAttribute::NORMALMATRIX4},
+            {"ANIMROTMATRIX1", ShaderAttribute::ANIMROTMATRIX1},
+            {"ANIMROTMATRIX2", ShaderAttribute::ANIMROTMATRIX2},
+            {"ANIMROTMATRIX3", ShaderAttribute::ANIMROTMATRIX3},
+            {"ANIMTRANSLATIONS", ShaderAttribute::ANIMTRANSLATIONS},
             {"BLENDINDICES", ShaderAttribute::BLENDINDICES},
             {"BLENDWEIGHTS", ShaderAttribute::BLENDWEIGHTS}
             });

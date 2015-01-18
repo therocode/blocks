@@ -33,6 +33,10 @@ struct ModelObject
     Buffer normalMatrix2;
     Buffer normalMatrix3;
     Buffer normalMatrix4;
+    Buffer animRotation1;
+    Buffer animRotation2;
+    Buffer animRotation3;
+    Buffer animTranslation;
 };
 
 class ModelRenderer : public RenderModule
