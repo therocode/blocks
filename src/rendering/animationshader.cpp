@@ -5,6 +5,12 @@ std::string AnimationShader::vertexSource = R"(
 
 uniform mat4 viewProjectionMatrix;
 
+layout(std140, location = ~ANIMATIONDATA~) uniform AnimationBlock
+{
+    mat3 animationRotations[50];
+    vec3 animationTranslations[50];
+};
+
 layout(location = ~POSITION~) in vec3 in_position;
 layout(location = ~NORMAL~) in vec3 in_normal;
 layout(location = ~TEXCOORD~) in vec2 in_texCoord;
@@ -12,8 +18,6 @@ layout(location = ~COLOR~) in vec3 color;
 layout(location = ~TEXTUREINDEX~) in uint textureIndex;
 layout(location = ~MODELMATRIX1~) in mat4 modelMatrix;
 layout(location = ~NORMALMATRIX1~) in mat4 normalMatrix;
-layout(location = ~ANIMROTMATRIX1~) in mat3 animationRotation;
-layout(location = ~ANIMTRANSLATIONS~) in vec3 animationTranslation;
 layout(location = ~BLENDINDICES~) in uvec4 blendIndices;
 layout(location = ~BLENDWEIGHTS~) in uvec4 blendWeights;
 
@@ -31,6 +35,16 @@ vec3 lightDirection = vec3(1.0f, -1.0f, -1.0f);
 
 void main()
 {
+    mat3 animationRotation = animationRotations[blendIndices.x] * blendWeights.x +
+                             animationRotations[blendIndices.y] * blendWeights.y +
+                             animationRotations[blendIndices.z] * blendWeights.z +
+                             animationRotations[blendIndices.w] * blendWeights.w;
+
+    vec3 animationTranslation = animationTranslations[blendIndices.x] * blendWeights.x +
+                                animationTranslations[blendIndices.y] * blendWeights.y +
+                                animationTranslations[blendIndices.z] * blendWeights.z +
+                                animationTranslations[blendIndices.w] * blendWeights.w;
+
     vec3 animatedPosition = animationRotation * in_position + animationTranslation;
     gl_Position = viewProjectionMatrix * modelMatrix * vec4(animatedPosition, 1.0);
     vec3 normal = (viewProjectionMatrix * modelMatrix * vec4(in_normal, 0.0)).xyz;

@@ -51,6 +51,10 @@ void ModelRenderer::render(const Camera& camera, const glm::mat4& perspective, c
             newModelObject->vertexArray.setVertexAttribute(ShaderAttribute::POSITION, 3, *model.findVertexArray(Model::POSITIONS));
             newModelObject->vertexArray.setVertexAttribute(ShaderAttribute::NORMAL, 3, *model.findVertexArray(Model::NORMALS));
             newModelObject->vertexArray.setVertexAttribute(ShaderAttribute::TEXCOORD, 2, *model.findVertexArray(Model::TEXCOORDS));
+            //newModelObject->vertexArray.setVertexAttribute(ShaderAttribute::ANIMROTMATRIX1, 3, newModelObject->animRotation1);
+            //newModelObject->vertexArray.setVertexAttribute(ShaderAttribute::ANIMROTMATRIX2, 3, newModelObject->animRotation2);
+            //newModelObject->vertexArray.setVertexAttribute(ShaderAttribute::ANIMROTMATRIX3, 3, newModelObject->animRotation3);
+            //newModelObject->vertexArray.setVertexAttribute(ShaderAttribute::ANIMTRANSLATIONS, 3, newModelObject->animTranslation);
 
             newModelObject->vertexArray.setInstanceAttribute(ShaderAttribute::COLOR, 3, newModelObject->colors, 1);
             newModelObject->vertexArray.setInstanceIntegerAttribute(ShaderAttribute::TEXTUREINDEX, 1, newModelObject->textureIndices, 1, GL_UNSIGNED_INT);
@@ -62,10 +66,6 @@ void ModelRenderer::render(const Camera& camera, const glm::mat4& perspective, c
             newModelObject->vertexArray.setInstanceAttribute(ShaderAttribute::NORMALMATRIX2, 4, newModelObject->normalMatrix2, 1);
             newModelObject->vertexArray.setInstanceAttribute(ShaderAttribute::NORMALMATRIX3, 4, newModelObject->normalMatrix3, 1);
             newModelObject->vertexArray.setInstanceAttribute(ShaderAttribute::NORMALMATRIX4, 4, newModelObject->normalMatrix4, 1);
-            newModelObject->vertexArray.setInstanceAttribute(ShaderAttribute::ANIMROTMATRIX1, 3, newModelObject->animRotation1, 1);
-            newModelObject->vertexArray.setInstanceAttribute(ShaderAttribute::ANIMROTMATRIX2, 3, newModelObject->animRotation2, 1);
-            newModelObject->vertexArray.setInstanceAttribute(ShaderAttribute::ANIMROTMATRIX3, 3, newModelObject->animRotation3, 1);
-            newModelObject->vertexArray.setInstanceAttribute(ShaderAttribute::ANIMTRANSLATIONS, 3, newModelObject->animTranslation, 1);
 
             for(const auto& mesh : model.getMeshes())
             {
