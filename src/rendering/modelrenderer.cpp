@@ -186,91 +186,65 @@ void ModelRenderer::render(const Camera& camera, const glm::mat4& perspective, c
         int32_t numJoints = model.getJointStructure().size();
 
         //animation
-        const Animation* animation = model.getAnimation();
-        //if(animation != nullptr)
-        //{
-        //    int32_t numFrames = animation->frameAmount;
-        //    int32_t frame1 = (int32_t)std::floor(mCurFrame);
-        //    int32_t frame2 = frame1 + 1;
-        //    float frameOffset = mCurFrame - frame1;
-        //    frame1 %= numFrames;
-        //    frame2 %= numFrames;
-
-        //    const auto rotation1 = animation->rotations.begin() + frame1 * numJoints;
-        //    const auto rotation2 = animation->rotations.begin() + frame2 * numJoints;
-        //    const auto translation1 = animation->translations.begin() + frame1 * numJoints;
-        //    const auto translation2 = animation->translations.begin() + frame2 * numJoints;
-
-        //    glm::mat3x3 rotation;
-        //    glm::vec3 translation;
-
-        //    const auto& jointStructure = model.getJointStructure();
-
-        //    std::vector<glm::mat3x3> outputRotations(numJoints);
-        //    std::vector<glm::vec3> outputTranslations(numJoints);
-
-        //    for(int32_t i = 0; i < numJoints; i++)
-        //    {
-        //        outputRotations[i] = rotation1[i] * (1.0f - frameOffset) + rotation2[i] * frameOffset;
-        //        outputTranslations[i] = translation1[i] * (1.0f - frameOffset) + translation2[i] * frameOffset;
-
-        //        if(jointStructure[i] >= 0)
-        //        {
-        //            outputRotations[i] = outputRotations[jointStructure[i]] * outputRotations[i];
-        //            outputTranslations[i] = outputTranslations[jointStructure[i]] * outputTranslations[i];
-        //        }
-
-        //        const float* floatIter = glm::value_ptr(outputRotations[i]);
-        //        animationData[0] = *floatIter;
-        //        animationData[1] = *(floatIter + 1);
-        //        animationData[2] = *(floatIter + 2);
-        //        animationData[3] = *(floatIter + 3);
-        //        animationData[4] = *(floatIter + 4);
-        //        animationData[5] = *(floatIter + 5);
-        //        animationData[6] = *(floatIter + 6);
-        //        animationData[7] = *(floatIter + 7);
-        //        animationData[8] = *(floatIter + 8);
-        //        floatIter = glm::value_ptr(outputTranslations[i]);
-        //        animationData[9] = *(floatIter);
-        //        animationData[10] = *(floatIter + 1);
-        //        animationData[11] = *(floatIter + 2);
-        //    }
-        //}
-        ////animation end
-        
         std::vector<float> rotData(12 * 128);
-        for(int32_t i = 0; i < rotData.size() / 12; i++)
-        {
-            int32_t index = i * 12;
-
-            rotData[index + 0]  = 0;
-            rotData[index + 1]  = 0;
-            rotData[index + 2]  = 0;
-            rotData[index + 3]  = 0;
-            rotData[index + 4]  = 0;
-            rotData[index + 5]  = 0;
-            rotData[index + 6]  = 0;
-            rotData[index + 7]  = 0;
-            rotData[index + 8]  = 0;
-            rotData[index + 9]  = 0;
-            rotData[index + 10]  = 0;
-            rotData[index + 11]  = 0;
-        }
-        
         std::vector<float> transData(4 * 128);
-        for(int32_t i = 0; i < transData.size() / 4; i++)
-        {
-            int32_t index = i * 4;
-            transData[index + 0] = 0;
-            transData[index + 1] = 0;
-            transData[index + 2] = 0;
-            transData[index + 3] = 0;
-        }
-
+        const Animation* animation = model.getAnimation();
         std::vector<float> animationData;
-        animationData.insert(animationData.end(), rotData.begin(), rotData.end());
-        animationData.insert(animationData.end(), transData.begin(), transData.end());
+        if(animation != nullptr)
+        {
+            int32_t numFrames = animation->frameAmount;
+            int32_t frame1 = (int32_t)std::floor(mCurFrame);
+            int32_t frame2 = frame1 + 1;
+            float frameOffset = mCurFrame - frame1;
+            frame1 %= numFrames;
+            frame2 %= numFrames;
 
+            const auto rotation1 = animation->rotations.begin() + frame1 * numJoints;
+            const auto rotation2 = animation->rotations.begin() + frame2 * numJoints;
+            const auto translation1 = animation->translations.begin() + frame1 * numJoints;
+            const auto translation2 = animation->translations.begin() + frame2 * numJoints;
+
+            glm::mat3x3 rotation;
+            glm::vec3 translation;
+
+            const auto& jointStructure = model.getJointStructure();
+
+            std::vector<glm::mat3x3> outputRotations(numJoints);
+            std::vector<glm::vec3> outputTranslations(numJoints);
+
+            for(int32_t i = 0; i < numJoints; i++)
+            {
+                int32_t rotIndex = i * 12;
+                int32_t transIndex = i * 4;
+                outputRotations[i] = rotation1[i] * (1.0f - frameOffset) + rotation2[i] * frameOffset;
+                outputTranslations[i] = translation1[i] * (1.0f - frameOffset) + translation2[i] * frameOffset;
+
+                if(jointStructure[i] >= 0)
+                {
+                    outputRotations[i] = outputRotations[jointStructure[i]] * outputRotations[i];
+                    outputTranslations[i] = outputTranslations[jointStructure[i]] * outputTranslations[i];
+                }
+
+                const float* floatIter = glm::value_ptr(outputRotations[i]);
+                rotData[rotIndex + 0] = *floatIter;
+                rotData[rotIndex + 1] = *(floatIter + 1);
+                rotData[rotIndex + 2] = *(floatIter + 2);
+                rotData[rotIndex + 4] = *(floatIter + 3);
+                rotData[rotIndex + 5] = *(floatIter + 4);
+                rotData[rotIndex + 6] = *(floatIter + 5);
+                rotData[rotIndex + 8] = *(floatIter + 6);
+                rotData[rotIndex + 9] = *(floatIter + 7);
+                rotData[rotIndex + 10] = *(floatIter + 8);
+                floatIter = glm::value_ptr(outputTranslations[i]);
+                transData[transIndex + 9] = *(floatIter);
+                transData[transIndex + 10] = *(floatIter + 1);
+                transData[transIndex + 11] = *(floatIter + 2);
+            }
+            animationData.insert(animationData.end(), rotData.begin(), rotData.end());
+            animationData.insert(animationData.end(), transData.begin(), transData.end());
+        }
+        //animation end
+        
         modelObject->colors.setData(colors);
         modelObject->textureIndices.setData(textureIndices);
         modelObject->modelMatrix1.setData(modelMatrix1);
@@ -281,10 +255,10 @@ void ModelRenderer::render(const Camera& camera, const glm::mat4& perspective, c
         modelObject->normalMatrix2.setData(normalMatrix2);
         modelObject->normalMatrix3.setData(normalMatrix3);
 
-        if(!bajs)
-        {
+        //if(!bajs)
+        //{
         modelObject->animData.setData(animationData);
-        }
+        //}
 
         modelObject->vertexArray.bind();
 
@@ -305,7 +279,7 @@ void ModelRenderer::render(const Camera& camera, const glm::mat4& perspective, c
 
         std::cout << "error: " << gluErrorString(glGetError()) << "\n";
     }
-        bajs = true;
+        //bajs = true;
 
     mOrders.clear();
 

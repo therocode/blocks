@@ -35,17 +35,17 @@ vec3 lightDirection = vec3(1.0f, -1.0f, -1.0f);
 
 void main()
 {
-    mat3 animationRotation = animationRotations[0];
-    vec3 animationTranslation = animationTranslations[0];
-    //mat3 animationRotation = animationRotations[blendIndices.x] * float(blendWeights.x) / 255.0 +
-    //                         animationRotations[blendIndices.y] * float(blendWeights.y) / 255.0 +
-    //                         animationRotations[blendIndices.z] * float(blendWeights.z) / 255.0 +
-    //                         animationRotations[blendIndices.w] * float(blendWeights.w) / 255.0;
+    //mat3 animationRotation = animationRotations[0];
+    //vec3 animationTranslation = animationTranslations[0];
+    mat3 animationRotation = animationRotations[blendIndices.x] * float(blendWeights.x) / 255.0 +
+                             animationRotations[blendIndices.y] * float(blendWeights.y) / 255.0 +
+                             animationRotations[blendIndices.z] * float(blendWeights.z) / 255.0 +
+                             animationRotations[blendIndices.w] * float(blendWeights.w) / 255.0;
 
-    //vec3 animationTranslation = animationTranslations[blendIndices.x] * float(blendWeights.x) / 255.0 +
-    //                            animationTranslations[blendIndices.y] * float(blendWeights.y) / 255.0 +
-    //                            animationTranslations[blendIndices.z] * float(blendWeights.z) / 255.0 +
-    //                            animationTranslations[blendIndices.w] * float(blendWeights.w) / 255.0;
+    vec3 animationTranslation = animationTranslations[blendIndices.x] * float(blendWeights.x) / 255.0 +
+                                animationTranslations[blendIndices.y] * float(blendWeights.y) / 255.0 +
+                                animationTranslations[blendIndices.z] * float(blendWeights.z) / 255.0 +
+                                animationTranslations[blendIndices.w] * float(blendWeights.w) / 255.0;
 
     vec3 animatedPosition = animationRotation * in_position + animationTranslation;
     gl_Position = viewProjectionMatrix * modelMatrix * vec4(animatedPosition, 1.0);
