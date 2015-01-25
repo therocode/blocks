@@ -17,7 +17,6 @@ class EntityInterface :
         void removeEntityFromId(fea::EntityId id);
         void handleMessage(const EntityCreatedMessage& message);
     private:
-        fea::MessageBus& mBus;
         std::unordered_map<fea::EntityId, ScriptEntity>& mScriptEntities;
         fea::WeakEntityPtr mNewlyCreated;
 };

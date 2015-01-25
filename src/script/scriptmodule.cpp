@@ -6,7 +6,8 @@
 ScriptModule::ScriptModule(const std::string& name, ScriptEngine& engine) : 
     mName(name),
     mEngine(engine),
-    mAsModule(nullptr)
+    mAsModule(nullptr),
+    mHasErrors(false)
 {
     
 }

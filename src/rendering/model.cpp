@@ -9,6 +9,14 @@ void Model::addVertexArray(int32_t type, std::vector<float> vertices)
     mVertexArrays.emplace(type, std::unique_ptr<Buffer>(new Buffer(vertices)));
 }
 
+void Model::addVertexArray(int32_t type, std::vector<uint8_t> vertices)
+{
+    FEA_ASSERT(type == BLENDWEIGHTS || type == BLENDINDICES, "invaltype vertex array type given");
+    FEA_ASSERT(mVertexArrays.count(type) == 0, "buffer of that type already added");
+
+    mVertexArrays.emplace(type, std::unique_ptr<Buffer>(new Buffer(vertices)));
+}
+
 const Buffer* Model::findVertexArray(int32_t type) const
 {
     const auto& iterator = mVertexArrays.find(type);
@@ -43,4 +51,21 @@ const Animation* Model::findAnimation(const std::string& name) const
     const auto& iterator = mAnimations.find(name);
 
     return iterator == mAnimations.end() ? nullptr : iterator->second.get();
+}
+
+void Model::setJointStructure(const std::vector<int32_t>& jointStructure)
+{
+    mJointStructure = jointStructure;
+}
+
+const std::vector<int32_t>& Model::getJointStructure() const
+{
+    return mJointStructure;
+}
+
+const Animation* Model::getAnimation() const
+{
+    if(mAnimations.size() > 0)
+        return mAnimations.begin()->second.get();
+    else return nullptr;
 }

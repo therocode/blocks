@@ -4,6 +4,7 @@
 #include <fstream>
 #include <memory>
 #include "../utilities/glm.hpp"
+#include <fea/assert.hpp>
 
 RawModel IQMFromFileLoader::load(const std::string& filename)
 {
@@ -87,10 +88,17 @@ RawModel IQMFromFileLoader::load(const std::string& filename)
         }
         else if(vertexArray.type == IQM_BLENDINDEXES)
         {
-            std::vector<uint8_t> blendWeights(header.num_vertexes * 4);
-            std::copy(headerBytes + vertexArray.offset, headerBytes + vertexArray.offset + sizeof(uint8_t) * header.num_vertexes * 4, (char*)blendWeights.data());
+            std::vector<uint8_t> blendIndices(header.num_vertexes * 4);
+            std::copy(headerBytes + vertexArray.offset, headerBytes + vertexArray.offset + sizeof(uint8_t) * header.num_vertexes * 4, (char*)blendIndices.data());
 
-            rawModel.blendIndices = std::move(blendWeights);
+            rawModel.blendIndices = std::move(blendIndices);
+
+            for(auto num : rawModel.blendIndices)
+            {
+                std::cout << "num: " << (uint32_t)num << "\n";
+            }
+
+            std::cout << "joints: " << header.num_joints << "\n";
         }
         else if(vertexArray.type == IQM_BLENDWEIGHTS)
         {
@@ -98,6 +106,19 @@ RawModel IQMFromFileLoader::load(const std::string& filename)
             std::copy(headerBytes + vertexArray.offset, headerBytes + vertexArray.offset + sizeof(uint8_t) * header.num_vertexes * 4, (char*)blendWeights.data());
 
             rawModel.blendWeights = std::move(blendWeights);
+
+            if(!rawModel.blendWeights.empty())
+            {
+                for(uint32_t i = 0; i < rawModel.blendWeights.size() / 4; i++)
+                {
+                    uint32_t index = i * 4;
+
+                    if(rawModel.blendWeights[index])
+                    {
+                        FEA_ASSERT(rawModel.blendWeights[index] + rawModel.blendWeights[index + 1] + rawModel.blendWeights[index + 2] + rawModel.blendWeights[index + 3] == 255u, "Blendweights don't add up! They are " + std::to_string(rawModel.blendWeights[index] + rawModel.blendWeights[index + 1] + rawModel.blendWeights[index + 2] + rawModel.blendWeights[index + 3]));
+                    }
+                }
+            }
         }
     }
 
@@ -130,6 +151,8 @@ RawModel IQMFromFileLoader::load(const std::string& filename)
     std::vector<Matrix3x4> baseframe(header.num_joints);
     std::vector<Matrix3x4> inversebaseframe(header.num_joints);
 
+    rawModel.jointStructure.resize(header.num_joints);
+
     for(uint32_t i = 0; i < header.num_joints; i++)
     {
         iqmjoint joint;
@@ -142,6 +165,8 @@ RawModel IQMFromFileLoader::load(const std::string& filename)
             baseframe[i] = baseframe[joint.parent] * baseframe[i];
             inversebaseframe[i] *= inversebaseframe[joint.parent];
         }  
+
+        rawModel.jointStructure[i] = joint.parent;
     }
 
     std::vector<Matrix3x4> frames(header.num_frames * header.num_frames);
@@ -216,6 +241,7 @@ RawModel IQMFromFileLoader::load(const std::string& filename)
         }
 
         rawAnimation.framerate = animation.framerate;
+        rawAnimation.frameAmount = animation.num_frames;
         rawAnimation.name = std::string(&strings[animation.name]);
 
         rawModel.animations.push_back(rawAnimation);

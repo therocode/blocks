@@ -8,6 +8,7 @@ struct RawAnimation
     std::vector<glm::mat3x3> rotations;
     std::vector<glm::vec3> translations;
     float framerate;
+    int32_t frameAmount;
 };
 
 struct RawModel
@@ -19,4 +20,5 @@ struct RawModel
     std::vector<uint8_t> blendIndices;
     std::vector<uint8_t> blendWeights;
     std::vector<RawAnimation> animations;
+    std::vector<int32_t> jointStructure;
 };

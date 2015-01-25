@@ -8,7 +8,6 @@
 
 EntityInterface::EntityInterface(fea::MessageBus& bus, GameInterface& worldInterface, ScriptEntityMap& scriptEntities) : 
     ScriptInterface(bus, worldInterface),
-    mBus(bus),
     mScriptEntities(scriptEntities)
 {
     subscribe(mBus, *this);

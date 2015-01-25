@@ -9,6 +9,7 @@ class Buffer
         Buffer(int32_t type = ARRAY_BUFFER);
         Buffer(const std::vector<float>& data, int32_t type = ARRAY_BUFFER);
         Buffer(const std::vector<uint32_t>& data, int32_t type = ARRAY_BUFFER);
+        Buffer(const std::vector<uint8_t>& data, int32_t type = ARRAY_BUFFER);
         ~Buffer();
         Buffer(const Buffer&) = delete;
         Buffer& operator=(const Buffer&) = delete;
@@ -18,6 +19,7 @@ class Buffer
         void bind() const;
         void setData(const std::vector<float>& data);
         void setData(const std::vector<uint32_t>& data);
+        void setData(const std::vector<uint8_t>& data);
         int32_t getElementAmount() const;
     private:
         GLuint mBufferId;

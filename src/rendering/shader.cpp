@@ -281,6 +281,11 @@ void Shader::compile(const std::unordered_map<std::string, int32_t>& attributeBi
     }
 }
 
+GLuint Shader::getId() const
+{
+    return mProgramId;
+}
+
 std::string Shader::bindAttributesToSource(const std::string& source, const std::unordered_map<std::string, int32_t>& attributeBindings)
 {
     std::string result = source;

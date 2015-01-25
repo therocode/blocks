@@ -5,10 +5,10 @@ std::string AnimationShader::vertexSource = R"(
 
 uniform mat4 viewProjectionMatrix;
 
-layout(std140, location = ~ANIMATIONDATA~) uniform AnimationBlock
+layout(std140) uniform AnimationBlock
 {
-    mat3 animationRotations[50];
-    vec3 animationTranslations[50];
+    mat3 animationRotations[128];
+    vec3 animationTranslations[128];
 };
 
 layout(location = ~POSITION~) in vec3 in_position;
@@ -35,15 +35,17 @@ vec3 lightDirection = vec3(1.0f, -1.0f, -1.0f);
 
 void main()
 {
-    mat3 animationRotation = animationRotations[blendIndices.x] * blendWeights.x +
-                             animationRotations[blendIndices.y] * blendWeights.y +
-                             animationRotations[blendIndices.z] * blendWeights.z +
-                             animationRotations[blendIndices.w] * blendWeights.w;
+    mat3 animationRotation = animationRotations[0];
+    vec3 animationTranslation = animationTranslations[0];
+    //mat3 animationRotation = animationRotations[blendIndices.x] * float(blendWeights.x) / 255.0 +
+    //                         animationRotations[blendIndices.y] * float(blendWeights.y) / 255.0 +
+    //                         animationRotations[blendIndices.z] * float(blendWeights.z) / 255.0 +
+    //                         animationRotations[blendIndices.w] * float(blendWeights.w) / 255.0;
 
-    vec3 animationTranslation = animationTranslations[blendIndices.x] * blendWeights.x +
-                                animationTranslations[blendIndices.y] * blendWeights.y +
-                                animationTranslations[blendIndices.z] * blendWeights.z +
-                                animationTranslations[blendIndices.w] * blendWeights.w;
+    //vec3 animationTranslation = animationTranslations[blendIndices.x] * float(blendWeights.x) / 255.0 +
+    //                            animationTranslations[blendIndices.y] * float(blendWeights.y) / 255.0 +
+    //                            animationTranslations[blendIndices.z] * float(blendWeights.z) / 255.0 +
+    //                            animationTranslations[blendIndices.w] * float(blendWeights.w) / 255.0;
 
     vec3 animatedPosition = animationRotation * in_position + animationTranslation;
     gl_Position = viewProjectionMatrix * modelMatrix * vec4(animatedPosition, 1.0);
@@ -61,6 +63,7 @@ void main()
     ~~position|vec4|gl_Position~~
 
     ~%~
+
 })";
 
 std::string AnimationShader::fragmentSource = R"(

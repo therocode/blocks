@@ -7,6 +7,7 @@
 #include "shader.hpp"
 
 class Mesh;
+class Animation;
 
 struct ModelOrder
 {
@@ -23,6 +24,7 @@ struct ModelObject
 {
     VAO vertexArray;
     std::vector<const Mesh*> meshes;
+    const Animation* animation;
     Buffer colors;
     Buffer textureIndices;
     Buffer modelMatrix1;
@@ -33,10 +35,7 @@ struct ModelObject
     Buffer normalMatrix2;
     Buffer normalMatrix3;
     Buffer normalMatrix4;
-    Buffer animRotation1;
-    Buffer animRotation2;
-    Buffer animRotation3;
-    Buffer animTranslation;
+    Buffer animData;
 };
 
 class ModelRenderer : public RenderModule
@@ -53,4 +52,7 @@ class ModelRenderer : public RenderModule
 
         //mesh vao cache
         std::unordered_map<const Model*, std::unique_ptr<ModelObject>> mModelCache;
+
+        float mCurFrame;
+        bool bajs = false;
 };

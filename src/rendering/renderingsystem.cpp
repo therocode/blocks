@@ -177,6 +177,8 @@ void RenderingSystem::handleMessage(const ResourceDeliverMessage<RawModel>& rece
     newModel->addVertexArray(Model::POSITIONS, received.resource->positions);
     newModel->addVertexArray(Model::NORMALS, received.resource->normals);
     newModel->addVertexArray(Model::TEXCOORDS, received.resource->texCoords);
+    newModel->addVertexArray(Model::BLENDWEIGHTS, received.resource->blendWeights);
+    newModel->addVertexArray(Model::BLENDINDICES, received.resource->blendIndices);
 
     int32_t meshNumber = 0;
     for(const auto& indices : received.resource->indices)
@@ -192,11 +194,14 @@ void RenderingSystem::handleMessage(const ResourceDeliverMessage<RawModel>& rece
         std::cout << "anim name " << anim.name << " has framerate " << anim.framerate << "\n";
 
         animation->framerate = anim.framerate;
+        animation->frameAmount = anim.frameAmount;
         animation->rotations = std::move(anim.rotations);
         animation->translations = std::move(anim.translations);
 
         newModel->addAnimation(anim.name, std::move(animation));
     }
+
+    newModel->setJointStructure(received.resource->jointStructure);
 
     mModels.push_back(std::move(newModel));
 }
