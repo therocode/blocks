@@ -2,7 +2,7 @@
 #include <json/reader.h>
 #include <json/value.h>
 #include <fstream>
-#include <iostream>
+#include "resourceexception.hpp"
 
 ShaderDefinition ShaderDefinitionFromFileLoader::load(const std::string& filename)
 {
@@ -12,8 +12,7 @@ ShaderDefinition ShaderDefinitionFromFileLoader::load(const std::string& filenam
 
     if(file.fail())
     {
-        std::cout << "ERROR: Cannot open the file...\n";
-        exit(0); //should be exception
+        throw ResourceException("Cannot open file " + filename);
     }
 
     Json::Value root;

@@ -1,6 +1,6 @@
 #include "imagefromfileloader.hpp"
 #include "../utilities/lodepng.hpp"
-#include <iostream>
+#include "resourceexception.hpp"
 
 Image ImageFromFileLoader::load(const std::string& filename)
 {
@@ -13,8 +13,7 @@ Image ImageFromFileLoader::load(const std::string& filename)
 
     if(error)
     {
-        std::cout << "decoder error " << error << ": " << lodepng_error_text(error) << std::endl;
-        exit(0); //should be exception
+        throw ResourceException("Could not decode image " + filename + ". Error: " + std::string(lodepng_error_text(error)));
     }
 
     Image result({width, height}, image);

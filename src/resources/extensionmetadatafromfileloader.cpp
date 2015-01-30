@@ -1,7 +1,7 @@
 #include "extensionmetadatafromfileloader.hpp"
 #include <json/json.hpp>
 #include <fstream>
-#include <iostream>
+#include "resourceexception.hpp"
 
 ExtensionMetadata ExtensionMetadataFromFileLoader::load(const std::string& filename)
 {
@@ -11,8 +11,7 @@ ExtensionMetadata ExtensionMetadataFromFileLoader::load(const std::string& filen
 
     if(file.fail())
     {
-        std::cerr << "ERROR: Cannot open extension metadata file " << filename << "..." << std::endl;
-        exit(0); // TODO: Should be exception
+        throw ResourceException("Cannot open file " + filename);
     }
 
     json::Value root;

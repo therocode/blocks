@@ -1,6 +1,6 @@
 #include "shadersourcefromfileloader.hpp"
 #include <fstream>
-#include <iostream>
+#include "resourceexception.hpp"
 
 ShaderSource ShaderSourceFromFileLoader::load(const std::string& filename)
 {
@@ -11,8 +11,7 @@ ShaderSource ShaderSourceFromFileLoader::load(const std::string& filename)
 
     if(file.fail())
     {
-        std::cout << "ERROR: Cannot open the file...\n";
-        exit(0); //should be exception
+        throw ResourceException("Cannot open file " + filename);
     }
 
     std::string source((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
