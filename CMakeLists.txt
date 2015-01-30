@@ -104,6 +104,7 @@ set(source_files
     src/resources/extensionmetadatafromfileloader.cpp
     src/resources/image.cpp
     src/resources/iqmfromfileloader.cpp
+    src/resources/resourceexception.cpp
     src/resources/resourcepathtoname.cpp
     src/resources/resourcesystem.cpp
     src/resources/shaderdefinitionfromfileloader.cpp
@@ -252,6 +253,7 @@ set(header_files
 	src/resources/rawmodel.hpp
 	src/resources/resourcecache.hpp
 	src/resources/resourceentry.hpp
+    src/resources/resourceexception.hpp
 	src/resources/resourcemessages.hpp
 	src/resources/resourcepathtoname.hpp
     src/resources/resourcesystem.hpp

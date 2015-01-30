@@ -2,6 +2,7 @@
 #include <string>
 #include "rawmodel.hpp"
 #include "iqm.h"
+#include "resourceexception.hpp"
 
 class IQMFromFileLoader
 {

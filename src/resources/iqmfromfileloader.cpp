@@ -5,6 +5,7 @@
 #include <memory>
 #include "../utilities/glm.hpp"
 #include <fea/assert.hpp>
+#include "resourceexception.hpp"
 
 RawModel IQMFromFileLoader::load(const std::string& filename)
 {
@@ -13,10 +14,9 @@ RawModel IQMFromFileLoader::load(const std::string& filename)
     std::fstream file;
     file.open(filename, std::ios::in | std::ios::out | std::ios::binary);
 
-    if (file.fail())
+    if(file.fail())
     {
-        std::cout << "ERROR: Cannot open the file...\n";
-        exit(0); //should be exception
+        throw ResourceException("Cannot open file " + filename);
     }
 
     file.seekg(0, std::ios::end);
@@ -43,18 +43,16 @@ RawModel IQMFromFileLoader::load(const std::string& filename)
 
     if(std::string(header.magic) != std::string(IQM_MAGIC))
     {
-        std::cout << "ERROR: not an IQM file. Start string should be '" << IQM_MAGIC << "' but was '" << header.magic << "'\n";
-        exit(0); //exception
+        throw ResourceException("Not an IQM file. File should start with '" + std::string(IQM_MAGIC) + "' but was '" + std::string(header.magic) + "'");
     }
+
     if(header.version != IQM_VERSION)
     {
-        std::cout << "Wrong IQM version: got " << header.version << " should be " << IQM_VERSION << "\n";
-        exit(0); //exception
+        throw ResourceException("Wrong IQM version. Got " + std::to_string(header.version) + " should be " + std::to_string(IQM_VERSION));
     }
     if(header.filesize > (16<<20))
     {
-        std::cout << "IQM file bigger than 16MB error! It was " << header.filesize << " big!\n";
-        exit(0); //exception
+        throw ResourceException("IQM file bigger than 16mb");
     }
 
     char* vertexArrayBytesIterator = headerBytes + header.ofs_vertexarrays;
@@ -93,11 +91,6 @@ RawModel IQMFromFileLoader::load(const std::string& filename)
 
             rawModel.blendIndices = std::move(blendIndices);
 
-            for(auto num : rawModel.blendIndices)
-            {
-                std::cout << "num: " << (uint32_t)num << "\n";
-            }
-
             std::cout << "joints: " << header.num_joints << "\n";
         }
         else if(vertexArray.type == IQM_BLENDWEIGHTS)
@@ -106,19 +99,6 @@ RawModel IQMFromFileLoader::load(const std::string& filename)
             std::copy(headerBytes + vertexArray.offset, headerBytes + vertexArray.offset + sizeof(uint8_t) * header.num_vertexes * 4, (char*)blendWeights.data());
 
             rawModel.blendWeights = std::move(blendWeights);
-
-            if(!rawModel.blendWeights.empty())
-            {
-                for(uint32_t i = 0; i < rawModel.blendWeights.size() / 4; i++)
-                {
-                    uint32_t index = i * 4;
-
-                    if(rawModel.blendWeights[index])
-                    {
-                        FEA_ASSERT(rawModel.blendWeights[index] + rawModel.blendWeights[index + 1] + rawModel.blendWeights[index + 2] + rawModel.blendWeights[index + 3] == 255u, "Blendweights don't add up! They are " + std::to_string(rawModel.blendWeights[index] + rawModel.blendWeights[index + 1] + rawModel.blendWeights[index + 2] + rawModel.blendWeights[index + 3]));
-                    }
-                }
-            }
         }
     }
 
@@ -167,18 +147,25 @@ RawModel IQMFromFileLoader::load(const std::string& filename)
         }  
 
         rawModel.jointStructure[i] = joint.parent;
+
+        std::cout << "joint loaded\n";
     }
 
-    std::vector<Matrix3x4> frames(header.num_frames * header.num_frames);
+    std::vector<Matrix3x4> frames(header.num_frames * header.num_poses);
     std::vector<ushort> framedata(headerBytes + header.ofs_frames, headerBytes + header.ofs_frames + header.num_frames * header.num_framechannels);
     auto frameDataIter = framedata.begin();
 
-    for(uint32_t frameIndex = 0; frameIndex < header.num_frames; frameIndex++)
+    if(header.num_frames > 0 && header.num_joints == 0)
+    {
+        throw ResourceException("iqm file with " + std::to_string(header.num_frames) + " frames have zero joints.");
+    }
+
+    for(int32_t frameIndex = 0; frameIndex < header.num_frames; frameIndex++)
     {
         char* poseBytesIterator = headerBytes + header.ofs_poses;
-        for(uint32_t poseIndex = 0; poseIndex < header.num_poses; poseIndex++)
+        for(int32_t poseIndex = 0; poseIndex < header.num_poses; poseIndex++)
         {
-            iqmpose pose; //should loop but doesn't, that's why crash
+            iqmpose pose;
             poseBytesIterator = readIqmPose(poseBytesIterator, pose);
 
             Quat rotate;
@@ -202,9 +189,13 @@ RawModel IQMFromFileLoader::load(const std::string& filename)
             Matrix3x4 m(rotate.normalize(), translate, scale);
 
             if(pose.parent >= 0)
-                frames[frameIndex * header.num_frames + poseIndex] = baseframe[pose.parent] * m * inversebaseframe[poseIndex];
+            {
+                frames[frameIndex * header.num_poses + poseIndex] = baseframe[pose.parent] * m * inversebaseframe[poseIndex];
+            }
             else
-                frames[frameIndex * header.num_frames + poseIndex] = m * inversebaseframe[poseIndex];
+            {
+                frames[frameIndex * header.num_poses + poseIndex] = m * inversebaseframe[poseIndex];
+            }
         }
     }
 

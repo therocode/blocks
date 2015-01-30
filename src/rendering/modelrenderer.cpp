@@ -204,9 +204,6 @@ void ModelRenderer::render(const Camera& camera, const glm::mat4& perspective, c
             const auto translation1 = animation->translations.begin() + frame1 * numJoints;
             const auto translation2 = animation->translations.begin() + frame2 * numJoints;
 
-            glm::mat3x3 rotation;
-            glm::vec3 translation;
-
             const auto& jointStructure = model.getJointStructure();
 
             std::vector<glm::mat3x3> outputRotations(numJoints);
@@ -226,19 +223,19 @@ void ModelRenderer::render(const Camera& camera, const glm::mat4& perspective, c
                 }
 
                 const float* floatIter = glm::value_ptr(outputRotations[i]);
-                rotData[rotIndex + 0] = *floatIter;
-                rotData[rotIndex + 1] = *(floatIter + 1);
-                rotData[rotIndex + 2] = *(floatIter + 2);
-                rotData[rotIndex + 4] = *(floatIter + 3);
-                rotData[rotIndex + 5] = *(floatIter + 4);
-                rotData[rotIndex + 6] = *(floatIter + 5);
-                rotData[rotIndex + 8] = *(floatIter + 6);
-                rotData[rotIndex + 9] = *(floatIter + 7);
+                rotData[rotIndex + 0]  = *floatIter;
+                rotData[rotIndex + 1]  = *(floatIter + 1);
+                rotData[rotIndex + 2]  = *(floatIter + 2);
+                rotData[rotIndex + 4]  = *(floatIter + 3);
+                rotData[rotIndex + 5]  = *(floatIter + 4);
+                rotData[rotIndex + 6]  = *(floatIter + 5);
+                rotData[rotIndex + 8]  = *(floatIter + 6);
+                rotData[rotIndex + 9]  = *(floatIter + 7);
                 rotData[rotIndex + 10] = *(floatIter + 8);
                 floatIter = glm::value_ptr(outputTranslations[i]);
-                transData[transIndex + 9] = *(floatIter);
-                transData[transIndex + 10] = *(floatIter + 1);
-                transData[transIndex + 11] = *(floatIter + 2);
+                transData[transIndex + 0] = *(floatIter);
+                transData[transIndex + 1] = *(floatIter + 1);
+                transData[transIndex + 2] = *(floatIter + 2);
             }
             animationData.insert(animationData.end(), rotData.begin(), rotData.end());
             animationData.insert(animationData.end(), transData.begin(), transData.end());
@@ -255,17 +252,13 @@ void ModelRenderer::render(const Camera& camera, const glm::mat4& perspective, c
         modelObject->normalMatrix2.setData(normalMatrix2);
         modelObject->normalMatrix3.setData(normalMatrix3);
 
-        //if(!bajs)
-        //{
         modelObject->animData.setData(animationData);
-        //}
 
         modelObject->vertexArray.bind();
 
         int32_t blockIndex = 0;
 
         int32_t location = glGetUniformBlockIndex(shader.getId(), "AnimationBlock");
-        std::cout << "animation block: " << location << "\n";
         glUniformBlockBinding(shader.getId(), location, blockIndex);
         glBindBufferBase(GL_UNIFORM_BUFFER, blockIndex, modelObject->animData.getId());
 
@@ -276,10 +269,7 @@ void ModelRenderer::render(const Camera& camera, const glm::mat4& perspective, c
         }
 
         modelObject->vertexArray.unbind();
-
-        std::cout << "error: " << gluErrorString(glGetError()) << "\n";
     }
-        //bajs = true;
 
     mOrders.clear();
 

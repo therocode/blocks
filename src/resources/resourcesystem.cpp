@@ -13,6 +13,7 @@
 #include "extensionmetadatafromfileloader.hpp"
 #include "imagefromfileloader.hpp"
 #include "../utilities/glmhash.hpp"
+#include "resourceexception.hpp"
 
 ResourceSystem::ResourceSystem(fea::MessageBus& bus, const std::string assetsPath, const std::vector<std::string> fileTypes) :
     mBus(bus),
@@ -62,12 +63,19 @@ void ResourceSystem::loadModels(const std::vector<ResourceEntry>& models)
     mBus.send(LogMessage{"Loading models. " + std::to_string(models.size()) + " models to load.", gResourceName, LogLevel::INFO});
     for(const auto& modelFile : models)
     {
-        mBus.send(LogMessage{"Loading " + modelFile.name + ".", gResourceName, LogLevel::VERB});
-        std::shared_ptr<RawModel> model = mCache.access<IQMFromFileLoader>(modelFile.path);
-        if(model)
+        try
         {
-            uint32_t id = mModelIDs.getId(modelFile.name);
-            mBus.send(ResourceDeliverMessage<RawModel>{id, model});
+            mBus.send(LogMessage{"Loading " + modelFile.name + ".", gResourceName, LogLevel::VERB});
+            std::shared_ptr<RawModel> model = mCache.access<IQMFromFileLoader>(modelFile.path);
+            if(model)
+            {
+                uint32_t id = mModelIDs.getId(modelFile.name);
+                mBus.send(ResourceDeliverMessage<RawModel>{id, model});
+            }
+        }
+        catch(ResourceException& exception)
+        {
+            mBus.send(LogMessage{modelFile.name + ": " + exception.what(), gResourceName, LogLevel::ERR});
         }
     }
 }
@@ -77,13 +85,20 @@ void ResourceSystem::loadVertexShaders(const std::vector<ResourceEntry>& vertexS
     mBus.send(LogMessage{"Loading vertex shaders. " + std::to_string(vertexShaders.size()) + " vertex shaders to load.", gResourceName, LogLevel::INFO});
     for(const auto& vertexShaderFile : vertexShaders)
     {
-        mBus.send(LogMessage{"Loading " + vertexShaderFile.name + ".", gResourceName, LogLevel::VERB});
-        std::shared_ptr<ShaderSource> vertexShader = mCache.access<ShaderSourceFromFileLoader>(vertexShaderFile.path);
-        if(vertexShader)
+        try
         {
-            uint32_t id = mVertexShaderIDs.getId(vertexShaderFile.name);
-            vertexShader->name = vertexShaderFile.name;
-            mBus.send(ResourceDeliverMessage<ShaderSource>{id, vertexShader});
+            mBus.send(LogMessage{"Loading " + vertexShaderFile.name + ".", gResourceName, LogLevel::VERB});
+            std::shared_ptr<ShaderSource> vertexShader = mCache.access<ShaderSourceFromFileLoader>(vertexShaderFile.path);
+            if(vertexShader)
+            {
+                uint32_t id = mVertexShaderIDs.getId(vertexShaderFile.name);
+                vertexShader->name = vertexShaderFile.name;
+                mBus.send(ResourceDeliverMessage<ShaderSource>{id, vertexShader});
+            }
+        }
+        catch(ResourceException& exception)
+        {
+            mBus.send(LogMessage{vertexShaderFile.name + ": " + exception.what(), gResourceName, LogLevel::ERR});
         }
     }
 }
@@ -93,13 +108,20 @@ void ResourceSystem::loadFragmentShaders(const std::vector<ResourceEntry>& fragm
     mBus.send(LogMessage{"Loading fragment shaders. " + std::to_string(fragmentShaders.size()) + " fragment shaders to load.", gResourceName, LogLevel::INFO});
     for(const auto& fragmentShaderFile : fragmentShaders)
     {
-        mBus.send(LogMessage{"Loading " + fragmentShaderFile.name + ".", gResourceName, LogLevel::VERB});
-        std::shared_ptr<ShaderSource> fragmentShader = mCache.access<ShaderSourceFromFileLoader>(fragmentShaderFile.path);
-        if(fragmentShader)
+        try
         {
-            uint32_t id = mFragmentShaderIDs.getId(fragmentShaderFile.name);
-            fragmentShader->name = fragmentShaderFile.name;
-            mBus.send(ResourceDeliverMessage<ShaderSource>{id, fragmentShader});
+            mBus.send(LogMessage{"Loading " + fragmentShaderFile.name + ".", gResourceName, LogLevel::VERB});
+            std::shared_ptr<ShaderSource> fragmentShader = mCache.access<ShaderSourceFromFileLoader>(fragmentShaderFile.path);
+            if(fragmentShader)
+            {
+                uint32_t id = mFragmentShaderIDs.getId(fragmentShaderFile.name);
+                fragmentShader->name = fragmentShaderFile.name;
+                mBus.send(ResourceDeliverMessage<ShaderSource>{id, fragmentShader});
+            }
+        }
+        catch(ResourceException& exception)
+        {
+            mBus.send(LogMessage{fragmentShaderFile.name + ": " + exception.what(), gResourceName, LogLevel::ERR});
         }
     }
 }
@@ -109,13 +131,20 @@ void ResourceSystem::loadShaderDefinitions(const std::vector<ResourceEntry>& sha
     mBus.send(LogMessage{"Loading shader definitions. " + std::to_string(shaderDefinitions.size()) + " shader definitions to load.", gResourceName, LogLevel::INFO});
     for(const auto& shaderDefinitionFile : shaderDefinitions)
     {
-        mBus.send(LogMessage{"Loading " + shaderDefinitionFile.name + ".", gResourceName, LogLevel::VERB});
-        std::shared_ptr<ShaderDefinition> shaderDefinition = mCache.access<ShaderDefinitionFromFileLoader>(shaderDefinitionFile.path);
-        if(shaderDefinition)
+        try
         {
-            uint32_t id = mShaderDefinitionIDs.getId(shaderDefinitionFile.name);
-            std::cout << "shaders: " << shaderDefinition->vertexModules.size() << " " << shaderDefinition->fragmentModules.size() << "\n";
-            mBus.send(ResourceDeliverMessage<ShaderDefinition>{id, shaderDefinition});
+            mBus.send(LogMessage{"Loading " + shaderDefinitionFile.name + ".", gResourceName, LogLevel::VERB});
+            std::shared_ptr<ShaderDefinition> shaderDefinition = mCache.access<ShaderDefinitionFromFileLoader>(shaderDefinitionFile.path);
+            if(shaderDefinition)
+            {
+                uint32_t id = mShaderDefinitionIDs.getId(shaderDefinitionFile.name);
+                std::cout << "shaders: " << shaderDefinition->vertexModules.size() << " " << shaderDefinition->fragmentModules.size() << "\n";
+                mBus.send(ResourceDeliverMessage<ShaderDefinition>{id, shaderDefinition});
+            }
+        }
+        catch(ResourceException& exception)
+        {
+            mBus.send(LogMessage{shaderDefinitionFile.name + ": " + exception.what(), gResourceName, LogLevel::ERR});
         }
     }
 }
@@ -127,12 +156,19 @@ void ResourceSystem::loadImages(const std::vector<ResourceEntry>& images)
     mBus.send(LogMessage{"Loading images. " + std::to_string(images.size()) + " images to load.", gResourceName, LogLevel::INFO});
     for(const auto& imageFile : images)
     {
-        mBus.send(LogMessage{"Loading " + imageFile.name + ".", gResourceName, LogLevel::VERB});
-        std::shared_ptr<Image> image = mCache.access<ImageFromFileLoader>(imageFile.path);
-
-        if(image)
+        try
         {
-            loadedImages[image->getSize()].push_back({imageFile.name, image});
+            mBus.send(LogMessage{"Loading " + imageFile.name + ".", gResourceName, LogLevel::VERB});
+            std::shared_ptr<Image> image = mCache.access<ImageFromFileLoader>(imageFile.path);
+
+            if(image)
+            {
+                loadedImages[image->getSize()].push_back({imageFile.name, image});
+            }
+        }
+        catch(ResourceException& exception)
+        {
+            mBus.send(LogMessage{imageFile.name + ": " + exception.what(), gResourceName, LogLevel::ERR});
         }
     }
 
@@ -168,13 +204,20 @@ void ResourceSystem::loadExtensionMetadata(const std::vector<ResourceEntry>& ext
     mBus.send(LogMessage{"Loading extension metadata files. " + std::to_string(extensionMetadata.size()) + " files to load.", gResourceName, LogLevel::INFO});
     for(const auto& metadataFile : extensionMetadata)
     {
-        mBus.send(LogMessage{"Loading " + metadataFile.name + ".", gResourceName, LogLevel::VERB});
-        std::shared_ptr<ExtensionMetadata> metadata = mCache.access<ExtensionMetadataFromFileLoader>(metadataFile.path);
-
-        if(metadata)
+        try
         {
-            uint32_t id = mExtensionMetadataIDs.getId(metadataFile.name);
-            mBus.send(ResourceDeliverMessage<ExtensionMetadata>{id, metadata});
+            mBus.send(LogMessage{"Loading " + metadataFile.name + ".", gResourceName, LogLevel::VERB});
+            std::shared_ptr<ExtensionMetadata> metadata = mCache.access<ExtensionMetadataFromFileLoader>(metadataFile.path);
+
+            if(metadata)
+            {
+                uint32_t id = mExtensionMetadataIDs.getId(metadataFile.name);
+                mBus.send(ResourceDeliverMessage<ExtensionMetadata>{id, metadata});
+            }
+        }
+        catch(ResourceException& exception)
+        {
+            mBus.send(LogMessage{metadataFile.name + ": " + exception.what(), gResourceName, LogLevel::ERR});
         }
     }
 }

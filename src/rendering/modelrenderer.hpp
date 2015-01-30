@@ -54,5 +54,4 @@ class ModelRenderer : public RenderModule
         std::unordered_map<const Model*, std::unique_ptr<ModelObject>> mModelCache;
 
         float mCurFrame;
-        bool bajs = false;
 };
