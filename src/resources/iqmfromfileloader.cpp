@@ -90,8 +90,6 @@ RawModel IQMFromFileLoader::load(const std::string& filename)
             std::copy(headerBytes + vertexArray.offset, headerBytes + vertexArray.offset + sizeof(uint8_t) * header.num_vertexes * 4, (char*)blendIndices.data());
 
             rawModel.blendIndices = std::move(blendIndices);
-
-            std::cout << "joints: " << header.num_joints << "\n";
         }
         else if(vertexArray.type == IQM_BLENDWEIGHTS)
         {
@@ -147,8 +145,6 @@ RawModel IQMFromFileLoader::load(const std::string& filename)
         }  
 
         rawModel.jointStructure[i] = joint.parent;
-
-        std::cout << "joint loaded\n";
     }
 
     std::vector<Matrix3x4> frames(header.num_frames * header.num_poses);
