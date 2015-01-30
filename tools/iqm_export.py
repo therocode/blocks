@@ -704,6 +704,11 @@ def derigifyBones(context, armature, scale):
 
     bones = {}
     worldmatrix = armature.matrix_world
+
+    yzflipper = axis_conversion(to_forward='-Z', to_up='Y').to_4x4()
+    if flipyz:
+      worldmatrix = yzflipper * worldmatrix
+
     worklist = [ bone for bone in defnames if bone not in defparent ]
     for index, bname in enumerate(worklist):
         bone = defbones[bname]
@@ -716,10 +721,15 @@ def derigifyBones(context, armature, scale):
     return bones
 
 
-def collectBones(context, armature, scale):
+def collectBones(context, armature, scale, flipyz = False):
     data = armature.data
     bones = {}
     worldmatrix = armature.matrix_world
+
+    yzflipper = axis_conversion(to_forward='-Z', to_up='Y').to_4x4()
+    if flipyz:
+      worldmatrix = yzflipper * worldmatrix
+
     worklist = [ bone for bone in data.bones.values() if not bone.parent ]
     for index, bone in enumerate(worklist):
         bonematrix = worldmatrix * bone.matrix_local
@@ -733,7 +743,7 @@ def collectBones(context, armature, scale):
     return bones
 
 
-def collectAnim(context, armature, scale, bones, action, startframe = None, endframe = None):
+def collectAnim(context, armature, scale, bones, action, startframe = None, endframe = None, flipyz = False):
     if not startframe or not endframe:
         startframe, endframe = action.frame_range
         startframe = int(startframe)
@@ -741,6 +751,11 @@ def collectAnim(context, armature, scale, bones, action, startframe = None, endf
     print('Exporting action "%s" frames %d-%d' % (action.name, startframe, endframe))
     scene = context.scene
     worldmatrix = armature.matrix_world
+
+    yzflipper = axis_conversion(to_forward='-Z', to_up='Y').to_4x4()
+    if flipyz:
+      worldmatrix = yzflipper * worldmatrix
+
     armature.animation_data.action = action
     outdata = []
     for time in range(startframe, endframe+1):
@@ -769,7 +784,7 @@ def collectAnim(context, armature, scale, bones, action, startframe = None, endf
     return outdata
 
 
-def collectAnims(context, armature, scale, bones, animspecs):
+def collectAnims(context, armature, scale, bones, animspecs, flipyz = False):
     if not armature.animation_data:
         print('Armature has no animation data')
         return []
@@ -801,7 +816,7 @@ def collectAnims(context, armature, scale, bones, animspecs):
             flags = int(animspec[4])
         except:
             flags = 0
-        framedata = collectAnim(context, armature, scale, bones, actions[animname], startframe, endframe)
+        framedata = collectAnim(context, armature, scale, bones, actions[animname], startframe, endframe, flipyz)
         anims.append(Animation(animname, framedata, fps, flags))
     armature.animation_data.action = oldaction
     scene.frame_set(oldframe)
@@ -979,6 +994,7 @@ def exportIQE(file, meshes, bones, anims):
             scale.x = round(scale.x*0x10000)/0x10000
             scale.y = round(scale.y*0x10000)/0x10000
             scale.z = round(scale.z*0x10000)/0x10000
+
             if scale.x == 1.0 and scale.y == 1.0 and scale.z == 1.0:
                 file.write('\tpq %.8f %.8f %.8f %.8f %.8f %.8f %.8f\n' % (pos.x, pos.y, pos.z, orient.x, orient.y, orient.z, orient.w))
             else:
@@ -1032,11 +1048,12 @@ def exportIQM(context, filename, usemesh = True, useskel = True, usebbox = True,
         print('Unknown file type: %s' % filename)
         return
 
+
     if useskel:
         if derigify:
             bones = derigifyBones(context, armature, scale)
         else:
-            bones = collectBones(context, armature, scale)
+            bones = collectBones(context, armature, scale, flipyz)
     else:
         bones = {}
 
@@ -1062,7 +1079,7 @@ def exportIQM(context, filename, usemesh = True, useskel = True, usebbox = True,
     else:
         meshes = []
     if useskel and animspecs:
-        anims = collectAnims(context, armature, scale, bonelist, animspecs)
+        anims = collectAnims(context, armature, scale, bonelist, animspecs, flipyz)
     else:
         anims = []
 
