@@ -191,7 +191,6 @@ void RenderingSystem::handleMessage(const ResourceDeliverMessage<RawModel>& rece
     for(const auto anim : received.resource->animations)
     {
         std::unique_ptr<Animation> animation = std::unique_ptr<Animation>(new Animation());
-        std::cout << "anim name " << anim.name << " has framerate " << anim.framerate << "\n";
 
         animation->framerate = anim.framerate;
         animation->frameAmount = anim.frameAmount;
