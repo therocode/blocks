@@ -153,11 +153,6 @@ RawModel IQMFromFileLoader::load(const std::string& filename)
     //auto frameDataIter = framedata.begin();
     ushort* frameDataIter = (ushort*)(headerBytes + header.ofs_frames);
 
-    std::cout << "START\n";
-    for(int32_t i = 0; i < header.num_frames * header.num_framechannels; i++)
-        std::cout << frameDataIter[i] << "\n";
-    std::cout << "END\n";
-
     if(header.num_frames > 0 && header.num_joints == 0)
     {
         throw ResourceException("iqm file with " + std::to_string(header.num_frames) + " frames have zero joints.");
@@ -200,7 +195,7 @@ RawModel IQMFromFileLoader::load(const std::string& filename)
             //   parentPose * childPose * childInverseBasePose
             Matrix3x4 m(rotate.normalize(), translate, scale);
 
-            Matrix3x4* f = &m;
+            //Matrix3x4* f = &m;
             //std::cout << std::setprecision(6)
             //    << std::setiosflags(std::ios::fixed)
             //    << std::setiosflags(std::ios::showpos);
@@ -220,6 +215,18 @@ RawModel IQMFromFileLoader::load(const std::string& filename)
             {
                 frames[frameIndex * header.num_poses + poseIndex] = m * inversebaseframe[poseIndex];
             }
+
+                //Matrix3x4* f = &frames[frameIndex * header.num_poses + poseIndex]; 
+                //std::cout << std::setprecision(6)
+                //    << std::setiosflags(std::ios::fixed)
+                //    << std::setiosflags(std::ios::showpos);
+
+                //std::cout << "rot:\n";
+                //std::cout << "|" << f->a.x << " " << f->a.y << " " << f->a.z << "|\n" <<
+                //    "|" << f->b.x << " " << f->b.y << " " << f->b.z << "|\n" <<  
+                //    "|" << f->c.x << " " << f->c.y << " " << f->c.z << "|\n";
+                //std::cout << "trans:\n";
+                //std::cout << "(" << f->a.w << "," << f->b.w << "," << f->c.w << ")\n\n";
         }
     }
 
@@ -255,18 +262,18 @@ RawModel IQMFromFileLoader::load(const std::string& filename)
             rawAnimation.translations[i][1] = frames[frameIndex].b.w;
             rawAnimation.translations[i][2] = frames[frameIndex].c.w;
 
-            float* f = &rawAnimation.rotations[i][0][0];
+            //auto& f = rawAnimation.rotations[i];
             //std::cout << std::setprecision(6) 
             //          << std::setiosflags(std::ios::fixed)
             //          << std::setiosflags(std::ios::showpos);
 
             //std::cout << "rot:\n";
-            //std::cout << "|" << f[0] << " " << f[1] << " " << f[2] << "|\n" <<
-            //             "|" << f[3] << " " << f[4] << " " << f[5] << "|\n" << 
-            //             "|" << f[6] << " " << f[7] << " " << f[8] << "|\n";
+            //std::cout << "|" << f[0][0] << " " << f[1][0] << " " << f[2][0] << "|\n" <<
+            //             "|" << f[0][1] << " " << f[1][1] << " " << f[2][1] << "|\n" << 
+            //             "|" << f[0][2] << " " << f[1][2] << " " << f[2][2] << "|\n";
             //std::cout << "trans:\n";
-            //f = &rawAnimation.translations[i][0];
-            //std::cout << "(" << f[0] << "," << f[1] << "," << f[2] << ")\n\n";
+            //auto& g = rawAnimation.translations[i];
+            //std::cout << "(" << g[0] << "," << g[1] << "," << g[2] << ")\n\n";
         }
 
         rawAnimation.framerate = animation.framerate;
