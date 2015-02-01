@@ -26,7 +26,7 @@ Client::Client(fea::MessageBus& bus, const NetworkParameters& parameters) :
 	mWindow.create(fea::VideoMode(800, 600, 32), "Blocky", fea::Style::Default, fea::ContextSettings(32, 32, 0, 3, 3));
     mLockedMouse = true;
 	mWindow.lockCursor(true);
-	mWindow.setVSyncEnabled(false);
+	mWindow.setVSyncEnabled(true);
 	mRenderingSystem = std::unique_ptr<RenderingSystem>(std::unique_ptr<RenderingSystem>(new RenderingSystem(mBus, {800, 600})));
 	mWindow.setFramerateLimit(60);
 
