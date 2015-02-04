@@ -200,52 +200,114 @@ void ModelRenderer::render(const Camera& camera, const glm::mat4& perspective, c
             frame1 %= numFrames;
             frame2 %= numFrames;
 
-            std::cout << "animating model with numFrames: " << numFrames << " currframe is: " << mCurFrame << "\n";
-            std::cout << "frame1: " << frame1 << " frame2: " << frame2 << " offset: " << frameOffset << "\n";
+            //std::cout << "animating model with numFrames: " << numFrames << " currframe is: " << mCurFrame << "\n";
+            //std::cout << "frame1: " << frame1 << " frame2: " << frame2 << " offset: " << frameOffset << "\n";
 
             const auto rotation1 = animation->rotations.begin() + frame1 * numJoints;
             const auto rotation2 = animation->rotations.begin() + frame2 * numJoints;
             const auto translation1 = animation->translations.begin() + frame1 * numJoints;
             const auto translation2 = animation->translations.begin() + frame2 * numJoints;
 
+
             const auto& jointStructure = model.getJointStructure();
 
-            std::vector<glm::mat3x3> outputRotations(numJoints);
-            std::vector<glm::vec3> outputTranslations(numJoints);
+            std::vector<Matrix3x4> outputTransformation(numJoints);
 
             for(int32_t i = 0; i < numJoints; i++)
             {
                 int32_t rotIndex = i * 12;
                 int32_t transIndex = i * 4;
-                outputRotations[i] = rotation1[i] * (1.0f - frameOffset) + rotation2[i] * frameOffset;
-                outputTranslations[i] = translation1[i] * (1.0f - frameOffset) + translation2[i] * frameOffset;
+                glm::mat3x3 rotation    = rotation1[i]    * (1.0f - frameOffset) + rotation2[i]    * frameOffset;
+                glm::vec3 translation = translation1[i] * (1.0f - frameOffset) + translation2[i] * frameOffset;
 
+                //glm::mat4x4 transformation = glm::translate(glm::mat4x4(rotation), translation);
+                Matrix3x4 transformation;
+                transformation.a.x = rotation[0][0];
+                transformation.a.y = rotation[1][0];
+                transformation.a.z = rotation[2][0];
+                transformation.b.x = rotation[0][1];
+                transformation.b.y = rotation[1][1];
+                transformation.b.z = rotation[2][1];
+                transformation.c.x = rotation[0][2];
+                transformation.c.y = rotation[1][2];
+                transformation.c.z = rotation[2][2];
+                transformation.a.w = translation[0];
+                transformation.b.w = translation[1];
+                transformation.c.w = translation[2];
+
+                FEA_ASSERT(i > jointStructure[i], "Parent structure messed up. Joint " + std::to_string(i) + " has the parent " + std::to_string(jointStructure[i]) + ".");
                 if(jointStructure[i] >= 0)
                 {
-                    outputRotations[i] = outputRotations[jointStructure[i]] * outputRotations[i];
-                    outputTranslations[i] = outputTranslations[jointStructure[i]] * outputTranslations[i];
+                    outputTransformation[i] = outputTransformation[jointStructure[i]] * transformation;
+                }
+                else
+                {
+                    outputTransformation[i] = transformation;
                 }
 
-                const float* floatIter = glm::value_ptr(outputRotations[i]);
-                rotData[rotIndex + 0]  = *floatIter;
-                rotData[rotIndex + 1]  = *(floatIter + 1);
-                rotData[rotIndex + 2]  = *(floatIter + 2);
+                //auto f = glm::mat3x3(outputTransformation[i]);
+                //auto m = outputTransformation[i];
+                //std::cout << std::setprecision(6) 
+                //    << std::setiosflags(std::ios::fixed)
+                //    << std::setiosflags(std::ios::showpos);
+                //std::cout << "rot:\n";
+                //std::cout << "|" << f[0][0] << " " << f[1][0] << " " << f[2][0] << "|\n" <<
+                //    "|" << f[0][1] << " " << f[1][1] << " " << f[2][1] << "|\n" << 
+                //    "|" << f[0][2] << " " << f[1][2] << " " << f[2][2] << "|\n";
+                //std::cout << "trans:\n";
+                //auto g = glm::vec3(m[3][0], m[3][1], m[3][2]);
+                //std::cout << "(" << g[0] << "," << g[1] << "," << g[2] << ")\n\n";
+
+                Matrix3x4* f = &outputTransformation[i];
+                std::cout << std::setprecision(6)
+                    << std::setiosflags(std::ios::fixed)
+                    << std::setiosflags(std::ios::showpos);
+
+                std::cout << "rot:\n";
+                std::cout << "|" << f->a.x << " " << f->a.y << " " << f->a.z << "|\n" <<
+                    "|" << f->b.x << " " << f->b.y << " " << f->b.z << "|\n" <<  
+                    "|" << f->c.x << " " << f->c.y << " " << f->c.z << "|\n";
+                std::cout << "trans:\n";
+                std::cout << "(" << f->a.w << "," << f->b.w << "," << f->c.w << ")\n\n";
+
+                //outputrotations - different
+                //outputtranslatons - different
+
+                rotData[rotIndex + 0]  = outputTransformation[i].a.x;
+                rotData[rotIndex + 1]  = outputTransformation[i].b.x;
+                rotData[rotIndex + 2]  = outputTransformation[i].c.x;
                 //rotData[rotIndex + 3]  //skipped due to padding
-                rotData[rotIndex + 4]  = *(floatIter + 3);
-                rotData[rotIndex + 5]  = *(floatIter + 4);
-                rotData[rotIndex + 6]  = *(floatIter + 5);
+                rotData[rotIndex + 4]  = outputTransformation[i].a.y;
+                rotData[rotIndex + 5]  = outputTransformation[i].b.y;
+                rotData[rotIndex + 6]  = outputTransformation[i].c.y;
                 //rotData[rotIndex + 7]  //skipped due to padding
-                rotData[rotIndex + 8]  = *(floatIter + 6);
-                rotData[rotIndex + 9]  = *(floatIter + 7);
-                rotData[rotIndex + 10] = *(floatIter + 8);
+                rotData[rotIndex + 8]  = outputTransformation[i].a.z;
+                rotData[rotIndex + 9]  = outputTransformation[i].b.z;
+                rotData[rotIndex + 10] = outputTransformation[i].c.z;
                 //rotData[rotIndex + 11]  //skipped due to padding
-                floatIter = glm::value_ptr(outputTranslations[i]);
-                transData[transIndex + 0] = *(floatIter);
-                transData[transIndex + 1] = *(floatIter + 1);
-                transData[transIndex + 2] = *(floatIter + 2);
+                transData[transIndex + 0] = outputTransformation[i].a.w;
+                transData[transIndex + 1] = outputTransformation[i].b.w;
+                transData[transIndex + 2] = outputTransformation[i].c.w;
+                //const float* floatIter = glm::value_ptr(outputTransformation[i]);
+                //rotData[rotIndex + 0]  = *floatIter;
+                //rotData[rotIndex + 1]  = *(floatIter + 1);
+                //rotData[rotIndex + 2]  = *(floatIter + 2);
+                ////rotData[rotIndex + 3]  //skipped due to padding
+                //rotData[rotIndex + 4]  = *(floatIter + 4);
+                //rotData[rotIndex + 5]  = *(floatIter + 5);
+                //rotData[rotIndex + 6]  = *(floatIter + 6);
+                ////rotData[rotIndex + 7]  //skipped due to padding
+                //rotData[rotIndex + 8]  = *(floatIter + 8);
+                //rotData[rotIndex + 9]  = *(floatIter + 9);
+                //rotData[rotIndex + 10] = *(floatIter + 10);
+                ////rotData[rotIndex + 11]  //skipped due to padding
+                //transData[transIndex + 0] = outputTransformation[i][3][0];
+                //transData[transIndex + 1] = outputTransformation[i][3][1];
+                //transData[transIndex + 2] = outputTransformation[i][3][2];
             }
             animationData.insert(animationData.end(), rotData.begin(), rotData.end());
             animationData.insert(animationData.end(), transData.begin(), transData.end());
+            //exit(4);
         }
         //animation end
         

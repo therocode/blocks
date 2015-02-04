@@ -196,9 +196,9 @@ RawModel IQMFromFileLoader::load(const std::string& filename)
             Matrix3x4 m(rotate.normalize(), translate, scale);
 
             //Matrix3x4* f = &m;
-            //std::cout << std::setprecision(6)
-            //    << std::setiosflags(std::ios::fixed)
-            //    << std::setiosflags(std::ios::showpos);
+            std::cout << std::setprecision(6)
+                << std::setiosflags(std::ios::fixed)
+                << std::setiosflags(std::ios::showpos);
 
             //std::cout << "rot:\n";
             //std::cout << "|" << f->a.x << " " << f->a.y << " " << f->a.z << "|\n" <<
