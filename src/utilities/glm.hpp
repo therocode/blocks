@@ -9,6 +9,7 @@
 #include "glm/gtc/type_precision.hpp"
 #include <glm/gtx/string_cast.hpp>
 #include <glm/gtx/io.hpp>
+#include <glm/gtx/euler_angles.hpp> 
 
 //if possible, remove this. It needs removal of Matrix3x4 usage in animation loader
 #include "geom.h"

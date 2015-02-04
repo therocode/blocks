@@ -1,9 +1,6 @@
 #ifndef __GEOM_H__
 #define __GEOM_H__
 #include <iostream>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtx/io.hpp>
 
 struct Vec4;
 
