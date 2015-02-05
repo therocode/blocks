@@ -34,7 +34,7 @@ struct EntityTransferredWorldMessage
 
 struct EntityRotatedMessage
 {
-    fea::EntityId id; float pitch; float yaw;
+    fea::EntityId id; const glm::quat &orientation;
 };
 
 struct GravityRequestedMessage

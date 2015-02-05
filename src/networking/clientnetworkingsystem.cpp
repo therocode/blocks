@@ -175,7 +175,7 @@ void ClientNetworkingSystem::handleMessage(const EntityPositionUpdatedMessage& r
 
 void ClientNetworkingSystem::handleMessage(const EntityRotationUpdatedMessage& received)
 {
-    mBus.send(RotateGfxEntityMessage{received.id, received.pitch, received.yaw});
+    mBus.send(RotateGfxEntityMessage{received.id, received.orientation});
 }
 
 void ClientNetworkingSystem::handleMessage(const EntityLeftRangeMessage& received)

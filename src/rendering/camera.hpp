@@ -17,7 +17,7 @@ class Camera
 		void strafe(float speed);
 		void setUpDir(const glm::vec3& upDir);
 		void lookAt(const glm::vec3& eye, const glm::vec3& center, const glm::vec3& up);
-		void setPitchYaw(float pitch, float yaw);
+		void setOrientation(glm::quat orientation);
 		
 		const glm::mat4& getMatrix() const;
 	private:

@@ -16,8 +16,7 @@ bool MovementController::keepEntity(fea::WeakEntityPtr entity) const
            locked->hasAttribute("run_speed") &&
            locked->hasAttribute("move_action") &&
            locked->hasAttribute("move_direction") &&
-           locked->hasAttribute("pitch") &&
-           locked->hasAttribute("yaw") &&
+           locked->hasAttribute("orientation") &&
            locked->hasAttribute("jumping") &&
            locked->hasAttribute("jump_strength") &&
            locked->hasAttribute("physics_type") &&
@@ -57,8 +56,9 @@ void MovementController::handleMessage(const FrameMessage& received)
 			maxAcc = 0.0001f;
 		}
 
-		float pitch = entity->getAttribute<float>("pitch");
-		float yaw = entity->getAttribute<float>("yaw");
+		glm::quat orientation = entity->getAttribute<glm::quat>("orientation");
+		float pitch = glm::pitch(orientation);
+		float yaw = glm::yaw(orientation);
 		glm::vec3 forwardDirection;
 		if(entity->getAttribute<PhysicsType>("physics_type") == PhysicsType::FALLING)
 		{

@@ -296,13 +296,12 @@ struct EntityRotationUpdatedMessage
     template<class Archive>
     void serialize(Archive& archive)
     {
-        archive(id, pitch, yaw);
+        archive(id, orientation.x, orientation.y, orientation.z, orientation.w);
     }
 
     fea::EntityId id;
     //type
-    float pitch;
-    float yaw;
+	glm::quat orientation;
 };
 
 struct EntityLeftRangeMessage

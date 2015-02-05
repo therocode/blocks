@@ -16,8 +16,7 @@ struct ModelOrder
     uint32_t textureIndex;
     glm::vec3 color;
     glm::vec3 position;
-    float pitch;
-    float yaw;
+	glm::quat orientation;
 };
 
 struct ModelObject

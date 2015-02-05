@@ -18,6 +18,13 @@ EntityFactory::EntityFactory(fea::EntityManager& manager) : mFactory(manager)
     mFactory.addDataType<PhysicsType>("physics_type");
     mFactory.addDataType<MoveAction>("move_action");
     mFactory.addDataType<MoveDirection>("move_direction");
+	mFactory.addDataType("quat", [] (const fea::Parameters& params)
+	{
+		FEA_ASSERT(params.size() == 4, "Wrong amount of parameters! Expected 4, got " + std::to_string(params.size()) + "!");
+
+		return glm::quat(stof(params[0]), stof(params[1]), stof(params[2]), stof(params[3]));
+	});
+
 
     for(const auto& entityAttribute : loader.loadEntityAttributes("data/entities/attributes.json"))
         mFactory.registerAttribute(entityAttribute.first, entityAttribute.second);

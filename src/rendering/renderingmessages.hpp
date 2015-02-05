@@ -21,7 +21,7 @@ struct MoveGfxEntityMessage
 
 struct RotateGfxEntityMessage
 {
-    size_t id; float pitch; float yaw;
+    size_t id; const glm::quat &orientation;
 };
 
 struct RemoveGfxEntityMessage

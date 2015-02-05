@@ -61,7 +61,6 @@ class Client :
 
         std::unique_ptr<ClientNetworkingSystem> mClientNetworkingSystem;
 
-        float mPitch;
-        float mYaw;
+		glm::quat mOrientation;
         glm::vec3 mPosition;
 };

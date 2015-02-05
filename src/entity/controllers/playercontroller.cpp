@@ -158,20 +158,37 @@ void PlayerController::handleMessage(const PlayerPitchYawMessage& received) //mo
     if(playerEntry != mEntities.end())
     {
         fea::EntityPtr entity = playerEntry->second.lock();
-		float newPitch = entity->getAttribute<float>("pitch");
-		newPitch += glm::radians(pitch);
+
+		// glm::quat orientation = entity->getAttribute<glm::quat>("orientation");
+		// glm::mat4 rotation = glm::yawPitchRoll(yaw, pitch, 0.0f);
+		// glm::mat3 rotation = glm::orientate3(glm::vec3(yaw, pitch, 0.0f));
+		// glm::mat4 rotation = glm::eulerAngleXY(pitch, yaw);
+		// glm::quat rotationQuat = glm::quat_cast(rotation);
+		// orientation = orientation * rotationQuat;
+
+		// entity->setAttribute("orientation", orientation);
+        // mBus.send(EntityRotatedMessage{playerEntry->second.lock()->getId(), orientation});
+
+
+		glm::quat orientation = entity->getAttribute<glm::quat>("orientation");
+		float newPitch = glm::pitch(orientation);
+		newPitch += pitch;
 
 		if(newPitch >= glm::pi<float>() * 0.5f)
 			newPitch = glm::pi<float>() * 0.5f - 0.001f;
 		if(newPitch <= -glm::pi<float>() * 0.5f)
 			newPitch = -glm::pi<float>() * 0.5f + 0.001f;
 
-        entity->setAttribute("pitch", newPitch);
-        entity->addToAttribute("yaw", glm::radians(yaw));
+        float newYaw = glm::yaw(orientation) + yaw;
 
-        float newYaw = entity->getAttribute<float>("yaw");
-		//printf("Pitch: %f, and yaw: %f\n", newPitch, newYaw);
-        mBus.send(EntityRotatedMessage{playerEntry->second.lock()->getId(), newPitch, newYaw});
+		std::cout << "p: " << newPitch << "  y: " << newYaw << std::endl;
+
+		glm::mat4 rotation = glm::yawPitchRoll(newYaw, newPitch, 0.0f);
+		glm::quat rotationQuat = glm::quat_cast(rotation);
+
+		entity->setAttribute("orientation", rotationQuat);
+		mBus.send(EntityRotatedMessage{playerEntry->second.lock()->getId(), rotationQuat});
+
         updateVoxelLookAt(playerId);
     }
 }
@@ -220,8 +237,9 @@ void PlayerController::updateVoxelLookAt(size_t playerId)
 {
     fea::EntityPtr entity = mEntities.at(playerId).lock();
 
-    float pitch = entity->getAttribute<float>("pitch");
-    float yaw = entity->getAttribute<float>("yaw");
+    glm::quat orientation = entity->getAttribute<glm::quat>("orientation");
+	float pitch = glm::pitch(orientation);
+	float yaw = glm::yaw(orientation);
     WorldId worldId = entity->getAttribute<WorldId>("current_world");
     glm::vec3 position = entity->getAttribute<glm::vec3>("position");
 

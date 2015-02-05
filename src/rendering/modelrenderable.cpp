@@ -2,8 +2,6 @@
 
 ModelRenderable::ModelRenderable() : 
     mColor(1.0f, 1.0f, 1.0f),
-    mPitch(0.0f),
-    mYaw(0.0f),
     mModel(nullptr)
 {
 }
@@ -33,24 +31,14 @@ const glm::vec3& ModelRenderable::getColor() const
     return mColor;
 }
 
-void ModelRenderable::setPitch(float pitch)
+void ModelRenderable::setOrientation(glm::quat orientation)
 {
-	mPitch = pitch;
+	mOrientation = orientation;
 }
 
-const float ModelRenderable::getPitch() const
+const glm::quat ModelRenderable::getOrientation() const
 {
-	return mPitch;
-}
-
-void ModelRenderable::setYaw(float yaw)
-{
-	mYaw = yaw;
-}
-
-const float ModelRenderable::getYaw() const
-{
-	return mYaw;
+	return mOrientation;
 }
 
 void ModelRenderable::setModel(const Model& model)

@@ -22,8 +22,7 @@ void ModelRenderer::queue(const Renderable& renderable)
     order.textureIndex = modelRenderable.getTextureIndex();
     order.color = modelRenderable.getColor();
     order.position = modelRenderable.getPosition();
-    order.pitch = modelRenderable.getPitch();
-    order.yaw = modelRenderable.getYaw();
+    order.orientation = modelRenderable.getOrientation();
     
     FEA_ASSERT(order.model != nullptr, "Trying to render a model renderable which doesn't have a model");
     FEA_ASSERT(order.model->findMesh(0) != nullptr, "Trying to render a model renderable which has a model without a primary model");
@@ -112,19 +111,39 @@ void ModelRenderer::render(const Camera& camera, const glm::mat4& perspective, c
             data4[1] = order.position.y;
             data4[2] = order.position.z;
 
-            const float sinPitch = std::sin(order.pitch);
-            const float cosPitch = std::cos(order.pitch);
-            const float sinYaw = std::sin(order.yaw);
-            const float cosYaw = std::cos(order.yaw);
-            data1[0] = cosYaw;
+			glm::mat3 orientationMat = glm::mat3_cast(order.orientation);
+			data1[0] = orientationMat[0][0];
+			data1[1] = orientationMat[0][1];
+			data1[2] = orientationMat[0][2];
+			data2[0] = orientationMat[1][0];
+			data2[1] = orientationMat[1][1];
+			data2[2] = orientationMat[1][2];
+			data3[0] = orientationMat[2][0];
+			data3[1] = orientationMat[2][1];
+			data3[2] = orientationMat[2][2];
+			// data1[0] = orientationMat[0][0];
+			// data1[1] = orientationMat[1][0];
+			// data1[2] = orientationMat[2][0];
+			// data2[0] = orientationMat[0][1];
+			// data2[1] = orientationMat[1][1];
+			// data2[2] = orientationMat[2][1];
+			// data3[0] = orientationMat[0][2];
+			// data3[1] = orientationMat[1][2];
+			// data3[2] = orientationMat[2][2];
+
+            // const float sinPitch = std::sin(order.pitch);
+            // const float cosPitch = std::cos(order.pitch);
+            // const float sinYaw = std::sin(order.yaw);
+            // const float cosYaw = std::cos(order.yaw);
+            // data1[0] = cosYaw;
             // data1[1] = 0;
-            data1[2] = -sinYaw;
-            data2[0] = sinPitch * sinYaw;
-            data2[1] = cosPitch;
-            data2[2] = sinPitch * cosYaw;
-            data3[0] = cosPitch * sinYaw;
-            data3[1] = -sinPitch;
-            data3[2] = cosPitch * cosYaw;
+            // data1[2] = -sinYaw;
+            // data2[0] = sinPitch * sinYaw;
+            // data2[1] = cosPitch;
+            // data2[2] = sinPitch * cosYaw;
+            // data3[0] = cosPitch * sinYaw;
+            // data3[1] = -sinPitch;
+            // data3[2] = cosPitch * cosYaw;
 
             modelMatrix1.insert(modelMatrix1.end(), data1.begin(), data1.end());
             modelMatrix2.insert(modelMatrix2.end(), data2.begin(), data2.end());
@@ -200,8 +219,8 @@ void ModelRenderer::render(const Camera& camera, const glm::mat4& perspective, c
             frame1 %= numFrames;
             frame2 %= numFrames;
 
-            std::cout << "animating model with numFrames: " << numFrames << " currframe is: " << mCurFrame << "\n";
-            std::cout << "frame1: " << frame1 << " frame2: " << frame2 << " offset: " << frameOffset << "\n";
+            // std::cout << "animating model with numFrames: " << numFrames << " currframe is: " << mCurFrame << "\n";
+            // std::cout << "frame1: " << frame1 << " frame2: " << frame2 << " offset: " << frameOffset << "\n";
 
             const auto rotation1 = animation->rotations.begin() + frame1 * numJoints;
             const auto rotation2 = animation->rotations.begin() + frame2 * numJoints;

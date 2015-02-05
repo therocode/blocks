@@ -3,8 +3,7 @@
     "velocity":"vec3",
     "acceleration":"vec3",
 
-    "pitch":"float",
-    "yaw":"float",
+	"orientation":"quat",
     "physics_type":"physics_type",
     "drag":"float",
 

@@ -156,8 +156,10 @@ void Camera::lookAt(const glm::vec3& eye, const glm::vec3& center, const glm::ve
 	update();
 }
 
-void Camera::setPitchYaw(float pitch, float yaw)
+void Camera::setOrientation(glm::quat orientation)
 {
+	float pitch = glm::pitch(orientation);
+	float yaw = glm::yaw(orientation);
 	if(pitch >= glm::pi<float>() * 0.5f)
 		pitch = glm::pi<float>() * 0.5f - 0.001f;
 	if(pitch <= -glm::pi<float>() * 0.5f)

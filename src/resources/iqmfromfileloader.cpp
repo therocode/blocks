@@ -151,7 +151,7 @@ RawModel IQMFromFileLoader::load(const std::string& filename)
     std::vector<Matrix3x4> frames(header.num_frames * header.num_poses);
     //std::vector<ushort> framedata(headerBytes + header.ofs_frames, headerBytes + header.ofs_frames + header.num_frames * header.num_framechannels);
     //auto frameDataIter = framedata.begin();
-    ushort* frameDataIter = (ushort*)(headerBytes + header.ofs_frames);
+    uint16_t* frameDataIter = (uint16_t*)(headerBytes + header.ofs_frames);
 
     if(header.num_frames > 0 && header.num_joints == 0)
     {
