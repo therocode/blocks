@@ -485,6 +485,8 @@ if(BUILD_TESTS)
         "test/world/highlightmanagertest.cpp"
         "test/world/modmanagertest.cpp"
 		"test/script/scriptchunktest.cpp"
+
+        "test/iqm/iqmgeom.cpp"
         
         "test/testhelpers.cpp"
         "test/scopeddirectory.cpp"
