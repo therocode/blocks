@@ -11,12 +11,12 @@ class Camera
 		const glm::vec3& getDirection() const;
 
 		void setPosition(const glm::vec3& pos);
-		void addPosition(const glm::vec3& p);
+		//void addPosition(const glm::vec3& p);
 		void setDirection(const glm::vec3& dir);
-		void moveForward(float speed);
-		void strafe(float speed);
-		void setUpDir(const glm::vec3& upDir);
-		void lookAt(const glm::vec3& eye, const glm::vec3& center, const glm::vec3& up);
+		//void moveForward(float speed);
+		//void strafe(float speed);
+		//void setUpDir(const glm::vec3& upDir);
+		//void lookAt(const glm::vec3& eye, const glm::vec3& center, const glm::vec3& up);
 		void setOrientation(glm::quat orientation);
 		
 		const glm::mat4& getMatrix() const;

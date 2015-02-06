@@ -159,35 +159,14 @@ void PlayerController::handleMessage(const PlayerPitchYawMessage& received) //mo
     {
         fea::EntityPtr entity = playerEntry->second.lock();
 
-		// glm::quat orientation = entity->getAttribute<glm::quat>("orientation");
-		// glm::mat4 rotation = glm::yawPitchRoll(yaw, pitch, 0.0f);
-		// glm::mat3 rotation = glm::orientate3(glm::vec3(yaw, pitch, 0.0f));
-		// glm::mat4 rotation = glm::eulerAngleXY(pitch, yaw);
-		// glm::quat rotationQuat = glm::quat_cast(rotation);
-		// orientation = orientation * rotationQuat;
-
-		// entity->setAttribute("orientation", orientation);
-        // mBus.send(EntityRotatedMessage{playerEntry->second.lock()->getId(), orientation});
-
-
+        glm::quat rotation;
+        rotation = glm::rotate(rotation, pitch, glm::vec3(1.0f, 0.0f, 0.0f));
+        rotation = glm::rotate(rotation, yaw, glm::vec3(0.0f, 1.0f, 0.0f));
 		glm::quat orientation = entity->getAttribute<glm::quat>("orientation");
-		float newPitch = glm::pitch(orientation);
-		newPitch += pitch;
+        glm::quat newOrientation = glm::normalize(rotation * orientation);
 
-		if(newPitch >= glm::pi<float>() * 0.5f)
-			newPitch = glm::pi<float>() * 0.5f - 0.001f;
-		if(newPitch <= -glm::pi<float>() * 0.5f)
-			newPitch = -glm::pi<float>() * 0.5f + 0.001f;
-
-        float newYaw = glm::yaw(orientation) + yaw;
-
-		std::cout << "p: " << newPitch << "  y: " << newYaw << std::endl;
-
-		glm::mat4 rotation = glm::yawPitchRoll(newYaw, newPitch, 0.0f);
-		glm::quat rotationQuat = glm::quat_cast(rotation);
-
-		entity->setAttribute("orientation", rotationQuat);
-		mBus.send(EntityRotatedMessage{playerEntry->second.lock()->getId(), rotationQuat});
+		entity->setAttribute("orientation", newOrientation);
+		mBus.send(EntityRotatedMessage{playerEntry->second.lock()->getId(), newOrientation});
 
         updateVoxelLookAt(playerId);
     }
