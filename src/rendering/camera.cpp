@@ -44,11 +44,14 @@ void Camera::strafe(float speed)
  	update();
 }
 
-void Camera::setDirection(const glm::vec3& dir)
+void Camera::setDirection(const glm::vec3& dir, const glm::vec3& up)
 {
 	mDirection = dir;
 	if(glm::length2(mDirection) != 0)
 		mDirection = glm::normalize(mDirection);
+	mUpDirection = up;
+	if(glm::length2(mUpDirection) != 0)
+		mUpDirection = glm::normalize(mUpDirection);
     update();
 }
 void Camera::setPosition(const glm::vec3& pos)
@@ -59,15 +62,6 @@ void Camera::setPosition(const glm::vec3& pos)
 void Camera::addPosition(const glm::vec3& p)
 {
 	mPosition+=p;
-    update();
-}
-
-void Camera::setUpDir(const glm::vec3& upDir)
-{
-	if(glm::length2(upDir) != 0)
-		mUpDirection=glm::normalize(upDir);
-	else 
-		mUpDirection = upDir;
     update();
 }
 
@@ -151,19 +145,20 @@ void Camera::update()
 void Camera::lookAt(const glm::vec3& eye, const glm::vec3& center, const glm::vec3& up)
 {
 	setPosition(eye);
-	setDirection(center - eye);
-	setUpDir(up);
+	setDirection(center - eye, up);
 	update();
 }
 
-void Camera::setPitchYaw(float pitch, float yaw)
+void Camera::setOrientation(const glm::quat& orientation)
 {
-	if(pitch >= glm::pi<float>() * 0.5f)
-		pitch = glm::pi<float>() * 0.5f - 0.001f;
-	if(pitch <= -glm::pi<float>() * 0.5f)
-		pitch = -glm::pi<float>() * 0.5f + 0.001f;
+//	if(pitch >= glm::pi<float>() * 0.5f)
+//		pitch = glm::pi<float>() * 0.5f - 0.001f;
+//	if(pitch <= -glm::pi<float>() * 0.5f)
+//		pitch = -glm::pi<float>() * 0.5f + 0.001f;
 		
-	setDirection(glm::vec3(glm::cos(pitch)*glm::sin(yaw), glm::sin(pitch), glm::cos(pitch) * glm::cos(yaw)));
+    setDirection(orientation * glm::vec3(0.0f, 0.0f, -1.0f),
+                 orientation * glm::vec3(0.0f, 1.0f, 0.0f));
+	//setDirection(glm::vec3(glm::cos(pitch)*glm::sin(yaw), glm::sin(pitch), glm::cos(pitch) * glm::cos(yaw)));
     update();
 }
 

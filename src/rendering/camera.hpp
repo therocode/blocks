@@ -12,12 +12,11 @@ class Camera
 
 		void setPosition(const glm::vec3& pos);
 		void addPosition(const glm::vec3& p);
-		void setDirection(const glm::vec3& dir);
+		void setDirection(const glm::vec3& dir, const glm::vec3& up);
 		void moveForward(float speed);
 		void strafe(float speed);
-		void setUpDir(const glm::vec3& upDir);
 		void lookAt(const glm::vec3& eye, const glm::vec3& center, const glm::vec3& up);
-		void setPitchYaw(float pitch, float yaw);
+		void setOrientation(const glm::quat& orientation);
 		
 		const glm::mat4& getMatrix() const;
 	private:

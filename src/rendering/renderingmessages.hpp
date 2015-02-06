@@ -19,9 +19,9 @@ struct MoveGfxEntityMessage
     size_t id; const glm::vec3& position;
 };
 
-struct RotateGfxEntityMessage
+struct OrientateGfxEntityMessage
 {
-    size_t id; float pitch; float yaw;
+    size_t id; glm::quat orientation;
 };
 
 struct RemoveGfxEntityMessage

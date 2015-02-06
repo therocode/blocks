@@ -22,7 +22,7 @@ class Client :
                                 //ClientPositionMessage,
                                 ClientEntityMovedMessage,
                                 MoveGfxEntityMessage,
-                                RotateGfxEntityMessage>
+                                OrientateGfxEntityMessage>
 {
     public:
         Client(fea::MessageBus& bus, const NetworkParameters& parameters);
@@ -37,7 +37,7 @@ class Client :
         //void handleMessage(const ClientPositionMessage& received) override;
         void handleMessage(const ClientEntityMovedMessage& received) override;
         void handleMessage(const MoveGfxEntityMessage& received) override;
-        void handleMessage(const RotateGfxEntityMessage& received) override;
+        void handleMessage(const OrientateGfxEntityMessage& received) override;
         bool requestedQuit();
     private:
         int64_t mFrame = 0;
@@ -61,7 +61,6 @@ class Client :
 
         std::unique_ptr<ClientNetworkingSystem> mClientNetworkingSystem;
 
-        float mPitch;
-        float mYaw;
+        glm::quat mOrientation;
         glm::vec3 mPosition;
 };

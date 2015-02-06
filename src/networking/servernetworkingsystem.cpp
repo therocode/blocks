@@ -285,7 +285,7 @@ void ServerNetworkingSystem::handleMessage(const EntityMovedMessage& received)
     }
 }
 
-void ServerNetworkingSystem::handleMessage(const EntityRotatedMessage& received)
+void ServerNetworkingSystem::handleMessage(const EntityOrientedMessage& received)
 {
     for(const auto& subscription : mSubscriptions)
     {
@@ -293,7 +293,7 @@ void ServerNetworkingSystem::handleMessage(const EntityRotatedMessage& received)
 
         if(mEntityTracking[playerId].count(received.id) != 0)
         {
-            EntityRotationUpdatedMessage message{received.id, received.pitch, received.yaw};
+            EntityOrientationUpdatedMessage message{received.id, received.orientation};
             sendToOne(playerId, message, true, CHANNEL_DEFAULT);
         }
     }

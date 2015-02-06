@@ -17,9 +17,7 @@ Client::Client(fea::MessageBus& bus, const NetworkParameters& parameters) :
 	mWindow(new fea::SDL2WindowBackend()),
 	mInputAdaptor(std::unique_ptr<InputAdaptor>(new InputAdaptor(mBus))),
 	mQuit(false),
-    mClientWorld(bus),
-    mPitch(0.0f),
-    mYaw(0.0f)
+    mClientWorld(bus)
 {
     subscribe(mBus, *this);
 
@@ -53,7 +51,10 @@ Client::~Client()
 
 void Client::updateVoxelLookAt()
 {
-	glm::vec3 direction = glm::vec3(glm::cos(mPitch) * glm::sin(mYaw), glm::sin(mPitch), glm::cos(mPitch) * glm::cos(mYaw));
+    float pitch = glm::pitch(mOrientation);
+    float yaw = glm::yaw(mOrientation);
+
+	glm::vec3 direction = glm::vec3(glm::cos(pitch) * glm::sin(yaw), glm::sin(pitch), glm::cos(pitch) * glm::cos(yaw));
 
 	VoxelCoord block;
 	uint32_t face = 0;
@@ -150,11 +151,10 @@ void Client::handleMessage(const MoveGfxEntityMessage& received)
 {
 }
 
-void Client::handleMessage(const RotateGfxEntityMessage& received)
+void Client::handleMessage(const OrientateGfxEntityMessage& received)
 {
     if(received.id == mCurrentEntity)
     {
-        mPitch = received.pitch;
-        mYaw = received.yaw;
+        mOrientation = received.orientation;
     }
 }

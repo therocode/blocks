@@ -64,11 +64,11 @@ void RenderingSystem::handleMessage(const AddGfxEntityMessage& received)
     }
 }
 
-void RenderingSystem::handleMessage(const RotateGfxEntityMessage& received)
+void RenderingSystem::handleMessage(const OrientateGfxEntityMessage& received)
 {
     size_t id = received.id;
-    float pitch = received.pitch;
-    float yaw = received.yaw;
+    float pitch = glm::pitch(received.orientation);
+    float yaw = glm::yaw(received.orientation);
 
     if(received.id != mCameraEntity)
     {
@@ -81,7 +81,7 @@ void RenderingSystem::handleMessage(const RotateGfxEntityMessage& received)
     }
     else
     {
-        mRenderer.getCamera().setPitchYaw(pitch, yaw);
+        mRenderer.getCamera().setOrientation(received.orientation);
     }
 }
 

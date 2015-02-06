@@ -200,8 +200,8 @@ void ModelRenderer::render(const Camera& camera, const glm::mat4& perspective, c
             frame1 %= numFrames;
             frame2 %= numFrames;
 
-            std::cout << "animating model with numFrames: " << numFrames << " currframe is: " << mCurFrame << "\n";
-            std::cout << "frame1: " << frame1 << " frame2: " << frame2 << " offset: " << frameOffset << "\n";
+            //std::cout << "animating model with numFrames: " << numFrames << " currframe is: " << mCurFrame << "\n";
+            //std::cout << "frame1: " << frame1 << " frame2: " << frame2 << " offset: " << frameOffset << "\n";
 
             const auto rotation1 = animation->rotations.begin() + frame1 * numJoints;
             const auto rotation2 = animation->rotations.begin() + frame2 * numJoints;
