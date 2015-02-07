@@ -32,7 +32,7 @@ struct EntityTransferredWorldMessage
     fea::EntityId entityId; WorldId oldWorld; WorldId newWorld;
 };
 
-struct EntityRotatedMessage
+struct EntityOrientedMessage
 {
     fea::EntityId id; const glm::quat &orientation;
 };

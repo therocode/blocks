@@ -56,19 +56,30 @@ void MovementController::handleMessage(const FrameMessage& received)
 			maxAcc = 0.0001f;
 		}
 
-		glm::quat orientation = entity->getAttribute<glm::quat>("orientation");
-		float pitch = glm::pitch(orientation);
-		float yaw = glm::yaw(orientation);
+		const glm::quat& orientation = entity->getAttribute<glm::quat>("orientation");
+
 		glm::vec3 forwardDirection;
 		if(entity->getAttribute<PhysicsType>("physics_type") == PhysicsType::FALLING)
 		{
-			forwardDirection = glm::vec3(glm::sin(yaw), 0.0f, glm::cos(yaw)) * (float) moveDirection.getForwardBack();
-		}else
+            ///////FIXIXIXIXIXIXII
+            //FEA_ASSERT(false, "Has to fix quat rotations in here!!");
+            //glm::quat forwardOrientation = orientation;
+            //forwardOrientation.y = 0.0f;
+            //forwardOrientation.z += 0.000001f;
+            //glm::normalize(forwardOrientation);
+			//forwardDirection = forwardOrientation * glm::vec3(0.0f, 0.0f, (float) moveDirection.getForwardBack());
+			forwardDirection = orientation *  glm::vec3(0.0f, 0.0f, (float)moveDirection.getForwardBack());
+            forwardDirection.y = 0.0f;
+            forwardDirection.z -= 0.00001f;
+            forwardDirection = glm::normalize(forwardDirection);
+		}
+        else
 		{
-			forwardDirection = glm::vec3(glm::cos(pitch) * glm::sin(yaw), glm::sin(pitch), glm::cos(pitch) * glm::cos(yaw)) * (float) moveDirection.getForwardBack();
+			//forwardDirection = glm::vec3(glm::cos(pitch) * glm::sin(yaw), glm::sin(pitch), glm::cos(pitch) * glm::cos(yaw)) * (float) moveDirection.getForwardBack();
+			forwardDirection = orientation *  glm::vec3(0.0f, 0.0f, (float)moveDirection.getForwardBack());
 		}
 
-		glm::vec3 sideDirection = glm::vec3(glm::sin(yaw + glm::radians(90.0f * (float)moveDirection.getLeftRight())), 0.0f,glm::cos(yaw + glm::radians(90.0f * (float)moveDirection.getLeftRight())));
+		glm::vec3 sideDirection = orientation * glm::vec3((float) moveDirection.getLeftRight(), 0.0f, 0.0f);
 
 		if(moveDirection.getLeftRight() == 0)
 		{

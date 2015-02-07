@@ -31,4 +31,5 @@ class PlayerController :
         void updateVoxelLookAt(size_t playerId);
         std::unordered_map<fea::EntityId, size_t> mEntityIdToPlayerId;
         GameInterface& mGameInterface;
+        std::unordered_map<size_t, std::pair<float, float>> mPitchYaws;
 };

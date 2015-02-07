@@ -21,33 +21,33 @@ void MoveDirection::setDirection(bool forwards, bool backwards, bool left, bool 
     leftRight = 0;
 
     if(forwards)
-        forwardBack++;
-    if(backwards)
         forwardBack--;
+    if(backwards)
+        forwardBack++;
     if(left)
-        leftRight++;
-    if(right)
         leftRight--;
+    if(right)
+        leftRight++;
 }
 
 bool MoveDirection::getForwards() const
 {
-    return forwardBack == 1;
+    return forwardBack == -1;
 }
 
 bool MoveDirection::getBackwards() const
 {
-    return forwardBack == -1;
+    return forwardBack == 1;
 }
 
 bool MoveDirection::getLeft() const
 {
-    return leftRight == 1;
+    return leftRight == -1;
 }
 
 bool MoveDirection::getRight() const
 {
-    return leftRight == -1;
+    return leftRight == 1;
 }
 
 bool MoveDirection::isStill() const

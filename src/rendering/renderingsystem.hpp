@@ -17,7 +17,7 @@
 
 class RenderingSystem :
     public fea::MessageReceiver<AddGfxEntityMessage,
-                                RotateGfxEntityMessage,
+                                OrientateGfxEntityMessage,
                                 MoveGfxEntityMessage,
                                 RemoveGfxEntityMessage,
                                 ClientAttachedToEntityMessage,
@@ -35,7 +35,7 @@ class RenderingSystem :
     public:
         RenderingSystem(fea::MessageBus& bus, const glm::uvec2& viewSize);
         void handleMessage(const AddGfxEntityMessage& received) override;
-        void handleMessage(const RotateGfxEntityMessage& received) override;
+        void handleMessage(const OrientateGfxEntityMessage& received) override;
         void handleMessage(const MoveGfxEntityMessage& received) override;
         void handleMessage(const RemoveGfxEntityMessage& received) override;
         void handleMessage(const ClientAttachedToEntityMessage& received) override;

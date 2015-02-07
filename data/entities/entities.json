@@ -35,7 +35,7 @@
             "run_speed":"",
             "move_action":"",
             "move_direction":"",
-			"orientation":"0.0f,0.0f,0.0f,1.0f",
+            "orientation":"0.0f,0.0f,0.0f,1.0f",
             "jumping":"false",
             "jump_strength":"",
             "physics_type":"",

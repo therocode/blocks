@@ -22,7 +22,7 @@ named_enum(PacketType, INVALID,
     //controls
     CLIENT_ACTION, CLIENT_MOVE_ACTION, CLIENT_MOVE_DIRECTION, CLIENT_PITCH_YAW,
     //entities
-    CLIENT_ATTACHED_TO_ENTITY, ENTITY_ENTERED_RANGE, ENTITY_POSITION_UPDATED, ENTITY_ROTATION_UPDATED, ENTITY_LEFT_RANGE,
+    CLIENT_ATTACHED_TO_ENTITY, ENTITY_ENTERED_RANGE, ENTITY_POSITION_UPDATED, ENTITY_ORIENTATION_UPDATED, ENTITY_LEFT_RANGE,
     //client
     CLIENT_ENTERED_WORLD,
     CLIENT_POSITION,
@@ -289,9 +289,9 @@ struct EntityPositionUpdatedMessage
     //float yaw; add these later
 };
 
-struct EntityRotationUpdatedMessage
+struct EntityOrientationUpdatedMessage
 {
-    PacketType getType() const {return ENTITY_ROTATION_UPDATED;}
+    PacketType getType() const {return ENTITY_ORIENTATION_UPDATED;}
 
     template<class Archive>
     void serialize(Archive& archive)

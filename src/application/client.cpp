@@ -51,7 +51,7 @@ Client::~Client()
 
 void Client::updateVoxelLookAt()
 {
-	glm::vec3 direction = mOrientation * glm::vec3(0.0f,0.0f,-1.0f);
+	glm::vec3 direction = mOrientation * glm::vec3(0.0f, 0.0f, -1.0f);
 
 	VoxelCoord block;
 	uint32_t face = 0;
@@ -148,10 +148,10 @@ void Client::handleMessage(const MoveGfxEntityMessage& received)
 {
 }
 
-void Client::handleMessage(const RotateGfxEntityMessage& received)
+void Client::handleMessage(const OrientateGfxEntityMessage& received)
 {
     if(received.id == mCurrentEntity)
     {
-		mOrientation = received.orientation;
+        mOrientation = received.orientation;
     }
 }

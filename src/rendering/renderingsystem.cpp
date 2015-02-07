@@ -64,7 +64,7 @@ void RenderingSystem::handleMessage(const AddGfxEntityMessage& received)
     }
 }
 
-void RenderingSystem::handleMessage(const RotateGfxEntityMessage& received)
+void RenderingSystem::handleMessage(const OrientateGfxEntityMessage& received)
 {
     size_t id = received.id;
     glm::quat orientation = received.orientation;
