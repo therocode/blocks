@@ -37,6 +37,8 @@ void PlayerController::handleMessage(const PlayerJoinedGameMessage& received)
     ChunkCoord chunkAt = WorldToChunk::convert(position);
 
     mBus.send(PlayerAttachedToEntityMessage{(fea::EntityId)playerId, playerEntity->getId(), playerEntity});
+
+    mPitchYaws[playerId] = std::pair<float, float>(0.0f, 0.0f);
 }
 
 void PlayerController::handleMessage(const PlayerLeftGameMessage& received)
@@ -47,6 +49,7 @@ void PlayerController::handleMessage(const PlayerLeftGameMessage& received)
     mEntityIdToPlayerId.erase(entity->getId());
     mBus.send(RemoveEntityRequestedMessage{entity->getId()});
     mEntities.erase(playerId);
+    mPitchYaws.erase(playerId);
 }
 
 void PlayerController::handleMessage(const PlayerActionMessage& received)
@@ -151,35 +154,24 @@ void PlayerController::handleMessage(const PlayerPitchYawMessage& received) //mo
 {
 	size_t playerId = received.playerId;
 
-    float pitch = received.pitch;
-    float yaw = received.yaw;
+    FEA_ASSERT(mPitchYaws.count(playerId) != 0, "No player exists that is being rotated!");
+    auto& pitchYaw = mPitchYaws.at(playerId);
+    pitchYaw.first += received.pitch;
+    pitchYaw.second += received.yaw;
 
     auto playerEntry = mEntities.find(playerId);
     if(playerEntry != mEntities.end())
     {
         fea::EntityPtr entity = playerEntry->second.lock();
-		float newPitch = entity->getAttribute<float>("pitch");
-		newPitch += glm::radians(pitch);
 
-		if(newPitch >= glm::pi<float>() * 0.5f)
-			newPitch = glm::pi<float>() * 0.5f - 0.001f;
-		if(newPitch <= -glm::pi<float>() * 0.5f)
-			newPitch = -glm::pi<float>() * 0.5f + 0.001f;
+		if(pitchYaw.first >= glm::pi<float>() * 0.5f)
+			pitchYaw.first = glm::pi<float>() * 0.5f - 0.001f;
+		if(pitchYaw.first <= -glm::pi<float>() * 0.5f)
+			pitchYaw.first = -glm::pi<float>() * 0.5f + 0.001f;
 
-        entity->setAttribute("pitch", newPitch);
-        entity->addToAttribute("yaw", glm::radians(yaw));
+        glm::quat newOrientation = glm::quat(glm::vec3(pitchYaw.first, pitchYaw.second, 0.0f));
 
-        float newYaw = entity->getAttribute<float>("yaw");
-		//printf("Pitch: %f, and yaw: %f\n", newPitch, newYaw);
-
-		if(newYaw >= glm::pi<float>() * 0.5f)
-			newYaw -= glm::pi<float>() * 2.0f;
-		if(newYaw <= -glm::pi<float>() * 0.5f)
-			newYaw += glm::pi<float>() * 2.0f;
-        
-
-        std::cout << "player pitch yaw: " << newPitch << " " << newYaw << "\n";
-        glm::quat newOrientation =  glm::quat(glm::vec3(newPitch, newYaw, 0.0f));
+        entity->setAttribute("orientation", newOrientation);
 
         mBus.send(EntityOrientedMessage{playerEntry->second.lock()->getId(), newOrientation});
         updateVoxelLookAt(playerId);
@@ -257,12 +249,12 @@ void PlayerController::updateVoxelLookAt(size_t playerId)
 {
     fea::EntityPtr entity = mEntities.at(playerId).lock();
 
-    float pitch = entity->getAttribute<float>("pitch");
-    float yaw = entity->getAttribute<float>("yaw");
+    glm::quat orientation = entity->getAttribute<glm::quat>("orientation");
+
     WorldId worldId = entity->getAttribute<WorldId>("current_world");
     glm::vec3 position = entity->getAttribute<glm::vec3>("position");
 
-	glm::vec3 direction = glm::vec3(glm::cos(pitch) * glm::sin(yaw), glm::sin(pitch), glm::cos(pitch) * glm::cos(yaw));
+	glm::vec3 direction = orientation * glm::vec3(0.0f, 0.0f, -1.0f);
 	VoxelCoord block;
 	uint32_t face;
 	bool f = RayCaster::getVoxelAtRay(mGameInterface.getWorldSystem().getWorldVoxels(worldId), position + glm::vec3(0, 0.6f, 0), direction, 200.f, face, block);

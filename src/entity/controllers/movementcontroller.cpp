@@ -16,8 +16,7 @@ bool MovementController::keepEntity(fea::WeakEntityPtr entity) const
            locked->hasAttribute("run_speed") &&
            locked->hasAttribute("move_action") &&
            locked->hasAttribute("move_direction") &&
-           locked->hasAttribute("pitch") &&
-           locked->hasAttribute("yaw") &&
+           locked->hasAttribute("orientation") &&
            locked->hasAttribute("jumping") &&
            locked->hasAttribute("jump_strength") &&
            locked->hasAttribute("physics_type") &&
@@ -57,18 +56,25 @@ void MovementController::handleMessage(const FrameMessage& received)
 			maxAcc = 0.0001f;
 		}
 
-		float pitch = entity->getAttribute<float>("pitch");
-		float yaw = entity->getAttribute<float>("yaw");
+		const glm::quat& orientation = entity->getAttribute<glm::quat>("orientation");
 		glm::vec3 forwardDirection;
 		if(entity->getAttribute<PhysicsType>("physics_type") == PhysicsType::FALLING)
 		{
-			forwardDirection = glm::vec3(glm::sin(yaw), 0.0f, glm::cos(yaw)) * (float) moveDirection.getForwardBack();
-		}else
+            /////FIXIXIXIXIXIXII
+            FEA_ASSERT(false, "Has to fix quat rotations in here!!");
+            glm::quat forwardOrientation = orientation;
+            forwardOrientation.y = 0.0f;
+            forwardOrientation.z += 0.000001f;
+            glm::normalize(forwardOrientation);
+			forwardDirection = forwardOrientation * glm::vec3(0.0f, 0.0f, (float) moveDirection.getForwardBack());
+		}
+        else
 		{
-			forwardDirection = glm::vec3(glm::cos(pitch) * glm::sin(yaw), glm::sin(pitch), glm::cos(pitch) * glm::cos(yaw)) * (float) moveDirection.getForwardBack();
+			//forwardDirection = glm::vec3(glm::cos(pitch) * glm::sin(yaw), glm::sin(pitch), glm::cos(pitch) * glm::cos(yaw)) * (float) moveDirection.getForwardBack();
+			forwardDirection = orientation *  glm::vec3(0.0f, 0.0f, (float)moveDirection.getForwardBack());
 		}
 
-		glm::vec3 sideDirection = glm::vec3(glm::sin(yaw + glm::radians(90.0f * (float)moveDirection.getLeftRight())), 0.0f,glm::cos(yaw + glm::radians(90.0f * (float)moveDirection.getLeftRight())));
+		glm::vec3 sideDirection = orientation * glm::vec3((float) moveDirection.getLeftRight(), 0.0f, 0.0f);
 
 		if(moveDirection.getLeftRight() == 0)
 		{
