@@ -77,7 +77,7 @@ void InputAdaptor::update()
                     float yaw   = -event.mouseMove.relx;
                     mNewYaw -= event.mouseMove.relx;
                     mNewPitch -= event.mouseMove.rely;
-                    float sensitivity = 0.2f;
+                    float sensitivity = 0.001f;
                     pitch *= sensitivity;
                     yaw   *= sensitivity;
                     ClientPitchYawMessage msg{pitch, yaw};

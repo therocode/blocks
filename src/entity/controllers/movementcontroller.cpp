@@ -60,13 +60,17 @@ void MovementController::handleMessage(const FrameMessage& received)
 		glm::vec3 forwardDirection;
 		if(entity->getAttribute<PhysicsType>("physics_type") == PhysicsType::FALLING)
 		{
-            /////FIXIXIXIXIXIXII
-            FEA_ASSERT(false, "Has to fix quat rotations in here!!");
-            glm::quat forwardOrientation = orientation;
-            forwardOrientation.y = 0.0f;
-            forwardOrientation.z += 0.000001f;
-            glm::normalize(forwardOrientation);
-			forwardDirection = forwardOrientation * glm::vec3(0.0f, 0.0f, (float) moveDirection.getForwardBack());
+            ///////FIXIXIXIXIXIXII
+            //FEA_ASSERT(false, "Has to fix quat rotations in here!!");
+            //glm::quat forwardOrientation = orientation;
+            //forwardOrientation.y = 0.0f;
+            //forwardOrientation.z += 0.000001f;
+            //glm::normalize(forwardOrientation);
+			//forwardDirection = forwardOrientation * glm::vec3(0.0f, 0.0f, (float) moveDirection.getForwardBack());
+			forwardDirection = orientation *  glm::vec3(0.0f, 0.0f, (float)moveDirection.getForwardBack());
+            forwardDirection.y = 0.0f;
+            forwardDirection.z -= 0.00001f;
+            forwardDirection = glm::normalize(forwardDirection);
 		}
         else
 		{

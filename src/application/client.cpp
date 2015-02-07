@@ -51,10 +51,7 @@ Client::~Client()
 
 void Client::updateVoxelLookAt()
 {
-    float pitch = glm::pitch(mOrientation);
-    float yaw = glm::yaw(mOrientation);
-
-	glm::vec3 direction = glm::vec3(glm::cos(pitch) * glm::sin(yaw), glm::sin(pitch), glm::cos(pitch) * glm::cos(yaw));
+	glm::vec3 direction = mOrientation * glm::vec3(0.0f, 0.0f, -1.0f);
 
 	VoxelCoord block;
 	uint32_t face = 0;
