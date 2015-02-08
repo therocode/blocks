@@ -58,35 +58,43 @@ void MovementController::handleMessage(const FrameMessage& received)
 
 		const glm::quat& orientation = entity->getAttribute<glm::quat>("orientation");
 
-		glm::vec3 forwardDirection;
-		if(entity->getAttribute<PhysicsType>("physics_type") == PhysicsType::FALLING)
-		{
-            ///////FIXIXIXIXIXIXII
-            //FEA_ASSERT(false, "Has to fix quat rotations in here!!");
-            //glm::quat forwardOrientation = orientation;
-            //forwardOrientation.y = 0.0f;
-            //forwardOrientation.z += 0.000001f;
-            //glm::normalize(forwardOrientation);
-			//forwardDirection = forwardOrientation * glm::vec3(0.0f, 0.0f, (float) moveDirection.getForwardBack());
-			forwardDirection = orientation *  glm::vec3(0.0f, 0.0f, (float)moveDirection.getForwardBack());
-            forwardDirection.y = 0.0f;
-            forwardDirection.z -= 0.00001f;
-            forwardDirection = glm::normalize(forwardDirection);
-		}
-        else
-		{
-			//forwardDirection = glm::vec3(glm::cos(pitch) * glm::sin(yaw), glm::sin(pitch), glm::cos(pitch) * glm::cos(yaw)) * (float) moveDirection.getForwardBack();
-			forwardDirection = orientation *  glm::vec3(0.0f, 0.0f, (float)moveDirection.getForwardBack());
-		}
+		//glm::vec3 forwardDirection;
+		//glm::vec3 sideDirection = orientation * glm::vec3((float) moveDirection.getLeftRight(), 0.0f, 0.0f);
+		//if(entity->getAttribute<PhysicsType>("physics_type") == PhysicsType::FALLING)
+		//{
+		//	forwardDirection = orientation *  glm::vec3(0.0f, 0.0f, (float)moveDirection.getForwardBack());
+        //    forwardDirection.y = 0.0f;
+        //    forwardDirection.z -= 0.00001f;
+        //    forwardDirection = glm::normalize(forwardDirection);
 
-		glm::vec3 sideDirection = orientation * glm::vec3((float) moveDirection.getLeftRight(), 0.0f, 0.0f);
+        //    sideDirection = orientation * glm::vec3((float) moveDirection.getLeftRight(), 0.0f, 0.0f);
+        //    sideDirection.y = 0.0f;
+        //    sideDirection.z -= 0.00001f;
+        //    sideDirection = glm::normalize(sideDirection);
+		//}
+        //else
+		//{
+		//	//forwardDirection = glm::vec3(glm::cos(pitch) * glm::sin(yaw), glm::sin(pitch), glm::cos(pitch) * glm::cos(yaw)) * (float) moveDirection.getForwardBack();
+		//	forwardDirection = orientation *  glm::vec3(0.0f, 0.0f, (float)moveDirection.getForwardBack());
 
-		if(moveDirection.getLeftRight() == 0)
-		{
-			sideDirection = glm::vec3(0.0f, 0.0f, 0.0f);
-		}
+        //    sideDirection = orientation * glm::vec3((float) moveDirection.getLeftRight(), 0.0f, 0.0f);
+		//}
 
-		glm::vec3 direction = (forwardDirection + sideDirection);
+		//if(moveDirection.getLeftRight() == 0)
+		//{
+		//	sideDirection = glm::vec3(0.0f, 0.0f, 0.0f);
+		//}
+
+		//glm::vec3 direction = (forwardDirection + sideDirection);
+        
+        glm::vec3 direction = orientation * glm::vec3((float) moveDirection.getLeftRight(), 0.0f, (float)moveDirection.getForwardBack());
+
+        PhysicsType physicsType = entity->getAttribute<PhysicsType>("physics_type");
+        if(physicsType ==  PhysicsType::FALLING)
+        {
+            direction.y = 0.0f;
+        }
+
 		if(glm::length2(direction) !=0)
 			direction = glm::normalize(direction);
 

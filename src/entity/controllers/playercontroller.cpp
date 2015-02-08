@@ -176,33 +176,6 @@ void PlayerController::handleMessage(const PlayerPitchYawMessage& received) //mo
         mBus.send(EntityOrientedMessage{playerEntry->second.lock()->getId(), newOrientation});
         updateVoxelLookAt(playerId);
     }
-
-	//size_t playerId = received.playerId;
-
-    //float pitch = received.pitch;
-    //float yaw = received.yaw;
-
-    //auto playerEntry = mEntities.find(playerId);
-    //if(playerEntry != mEntities.end())
-    //{
-    //    fea::EntityPtr entity = playerEntry->second.lock();
-	//	float newPitch = entity->getAttribute<float>("pitch");
-	//	newPitch += glm::radians(pitch);
-
-	//	if(newPitch >= glm::pi<float>() * 0.5f)
-	//		newPitch = glm::pi<float>() * 0.5f - 0.001f;
-	//	if(newPitch <= -glm::pi<float>() * 0.5f)
-	//		newPitch = -glm::pi<float>() * 0.5f + 0.001f;
-
-    //    entity->setAttribute("pitch", newPitch);
-    //    entity->addToAttribute("yaw", glm::radians(yaw));
-
-    //    float newYaw = entity->getAttribute<float>("yaw");
-	//	//printf("Pitch: %f, and yaw: %f\n", newPitch, newYaw);
-
-    //    mBus.send(EntityOrientedMessage{playerEntry->second.lock()->getId(), glm::quat(glm::vec3(newPitch, newYaw, 0.0f))});
-    //    updateVoxelLookAt(playerId);
-    //}
 }
 
 void PlayerController::handleMessage(const EntityMovedMessage& received)
