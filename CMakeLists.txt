@@ -225,6 +225,7 @@ set(header_files
     src/rendering/mesh.hpp
     src/rendering/meshwalker.hpp
     src/rendering/model.hpp
+    src/rendering/modelattribute.hpp
     src/rendering/modelrenderer.hpp
     src/rendering/modelrenderable.hpp
     src/rendering/opengl.hpp

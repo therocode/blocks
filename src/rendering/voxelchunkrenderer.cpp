@@ -48,27 +48,27 @@ void VoxelChunkRenderer::render(const Camera& camera, const glm::mat4& perspecti
     
     for(const auto model : mOrders)
     {
-        uint32_t renderAmount = model->model.findVertexArray(Model::POSITIONS)->getElementAmount() / 3;
+        uint32_t renderAmount = model->model.findVertexArray(ModelAttribute::POSITIONS)->size() / 3;
 
-        if(renderAmount > 0)
-        {
-            mVertexArray.setVertexAttribute(ShaderAttribute::POSITION, 3, *model->model.findVertexArray(Model::POSITIONS));
-            mVertexArray.setVertexAttribute(ShaderAttribute::NORMAL, 3, *model->model.findVertexArray(Model::NORMALS));
-            mVertexArray.setVertexAttribute(ShaderAttribute::TEXCOORD, 2, *model->model.findVertexArray(Model::TEXCOORDS));
-            mVertexArray.setVertexIntegerAttribute(ShaderAttribute::TEXTUREINDEX, 1, model->textureIndices, GL_UNSIGNED_INT);
+        //if(renderAmount > 0)
+        //{
+        //    mVertexArray.setVertexAttribute(ShaderAttribute::POSITION, 3, Buffer(*model->model.findVertexArray(ModelAttribute::POSITIONS)));
+        //    mVertexArray.setVertexAttribute(ShaderAttribute::NORMAL, 3, Buffer(*model->model.findVertexArray(ModelAttribute::NORMALS)));
+        //    mVertexArray.setVertexAttribute(ShaderAttribute::TEXCOORD, 2, Buffer(*model->model.findVertexArray(ModelAttribute::TEXCOORDS)));
+        //    mVertexArray.setVertexIntegerAttribute(ShaderAttribute::TEXTUREINDEX, 1, Buffer(model->textureIndices), GL_UNSIGNED_INT);
 
-            mVertexArray.setInstanceAttribute(ShaderAttribute::COLOR, 3, mColors, 1);
-            mVertexArray.setInstanceAttribute(ShaderAttribute::MODELMATRIX1, 4, mModelMatrix1, 1);
-            mVertexArray.setInstanceAttribute(ShaderAttribute::MODELMATRIX2, 4, mModelMatrix2, 1);
-            mVertexArray.setInstanceAttribute(ShaderAttribute::MODELMATRIX3, 4, mModelMatrix3, 1);
-            mVertexArray.setInstanceAttribute(ShaderAttribute::MODELMATRIX4, 4, mModelMatrix4, 1);
-            mVertexArray.setInstanceAttribute(ShaderAttribute::NORMALMATRIX1, 4, mNormalMatrix1, 1);
-            mVertexArray.setInstanceAttribute(ShaderAttribute::NORMALMATRIX2, 4, mNormalMatrix2, 1);
-            mVertexArray.setInstanceAttribute(ShaderAttribute::NORMALMATRIX3, 4, mNormalMatrix3, 1);
-            mVertexArray.setInstanceAttribute(ShaderAttribute::NORMALMATRIX4, 4, mNormalMatrix4, 1);
+        //    mVertexArray.setInstanceAttribute(ShaderAttribute::COLOR, 3, mColors, 1);
+        //    mVertexArray.setInstanceAttribute(ShaderAttribute::MODELMATRIX1, 4, mModelMatrix1, 1);
+        //    mVertexArray.setInstanceAttribute(ShaderAttribute::MODELMATRIX2, 4, mModelMatrix2, 1);
+        //    mVertexArray.setInstanceAttribute(ShaderAttribute::MODELMATRIX3, 4, mModelMatrix3, 1);
+        //    mVertexArray.setInstanceAttribute(ShaderAttribute::MODELMATRIX4, 4, mModelMatrix4, 1);
+        //    mVertexArray.setInstanceAttribute(ShaderAttribute::NORMALMATRIX1, 4, mNormalMatrix1, 1);
+        //    mVertexArray.setInstanceAttribute(ShaderAttribute::NORMALMATRIX2, 4, mNormalMatrix2, 1);
+        //    mVertexArray.setInstanceAttribute(ShaderAttribute::NORMALMATRIX3, 4, mNormalMatrix3, 1);
+        //    mVertexArray.setInstanceAttribute(ShaderAttribute::NORMALMATRIX4, 4, mNormalMatrix4, 1);
 
-            glDrawArraysInstanced(GL_TRIANGLES, 0, renderAmount, 1);
-        }
+        //    glDrawArraysInstanced(GL_TRIANGLES, 0, renderAmount, 1);
+        //}
     }
 
     mOrders.clear();

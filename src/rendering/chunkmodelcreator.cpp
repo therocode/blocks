@@ -3,6 +3,7 @@
 #include <iostream>
 #include "meshwalker.hpp"
 #include "../world/chunk.hpp"
+#include "modelattribute.hpp"
 
 ChunkModel ChunkModelCreator::generateChunkModel(const ChunkCoord& mainChunkCoord, Chunk* mainChunk, Chunk* topChunk, Chunk* bottomChunk, Chunk* frontChunk, Chunk* backChunk, Chunk* leftChunk, Chunk* rightChunk)
 {
@@ -424,10 +425,10 @@ ChunkModel ChunkModelCreator::generateChunkModel(const ChunkCoord& mainChunkCoor
     //printf("Generated %u vertices and %u indices\n", verts, indices);
     //After stuff has been added, you have to update the gpu vbo data.
 
-    newModel.model.addVertexArray(Model::POSITIONS, allQuadPositions);
-    newModel.model.addVertexArray(Model::NORMALS, allQuadNormals);
-    newModel.model.addVertexArray(Model::TEXCOORDS, allQuadTexCoords);
-    newModel.textureIndices.setData(allTextureIndices);
+    newModel.model.addVertexArray(ModelAttribute::POSITIONS, allQuadPositions);
+    newModel.model.addVertexArray(ModelAttribute::NORMALS, allQuadNormals);
+    newModel.model.addVertexArray(ModelAttribute::TEXCOORDS, allQuadTexCoords);
+    newModel.textureIndices = allTextureIndices;
 
     return newModel;
 }

@@ -172,11 +172,11 @@ void RenderingSystem::handleMessage(const RenderModeMessage& received)
 void RenderingSystem::handleMessage(const ResourceDeliverMessage<RawModel>& received)
 {
     std::unique_ptr<Model> newModel = std::unique_ptr<Model>(new Model());
-    newModel->addVertexArray(Model::POSITIONS, received.resource->positions);
-    newModel->addVertexArray(Model::NORMALS, received.resource->normals);
-    newModel->addVertexArray(Model::TEXCOORDS, received.resource->texCoords);
-    newModel->addVertexArray(Model::BLENDWEIGHTS, received.resource->blendWeights);
-    newModel->addVertexArray(Model::BLENDINDICES, received.resource->blendIndices);
+    newModel->addVertexArray(ModelAttribute::POSITIONS, received.resource->positions);
+    newModel->addVertexArray(ModelAttribute::NORMALS, received.resource->normals);
+    newModel->addVertexArray(ModelAttribute::TEXCOORDS, received.resource->texCoords);
+    newModel->addBlendArray(ModelAttribute::BLENDWEIGHTS, received.resource->blendWeights);
+    newModel->addBlendArray(ModelAttribute::BLENDINDICES, received.resource->blendIndices);
 
     int32_t meshNumber = 0;
     for(const auto& indices : received.resource->indices)

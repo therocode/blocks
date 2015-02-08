@@ -13,7 +13,7 @@ Renderer::Renderer(const GLContext& glContext, const glm::uvec2& viewSize) :
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
     glEnable(GL_CULL_FACE);
-    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+    glClearColor(mClearColor.r, mClearColor.g, mClearColor.b, 0.0f);
 
     setViewSize(mViewSize);
 }
@@ -40,6 +40,7 @@ void Renderer::queue(const Renderable& renderable)
 void Renderer::clear()
 {
     glClearColor(mClearColor.r, mClearColor.g, mClearColor.b, 0.0f);
+    glClearColor(1.0f, mClearColor.g, mClearColor.b, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 

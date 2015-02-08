@@ -1,27 +1,37 @@
 #include <fea/assert.hpp>
 #include "model.hpp"
+#include "modelattribute.hpp"
 
-void Model::addVertexArray(int32_t type, std::vector<float> vertices)
+void Model::addVertexArray(ModelAttribute type, const std::vector<float>& vertices)
 {
-    FEA_ASSERT(type == POSITIONS || type == NORMALS || type == TEXCOORDS, "invaltype vertex array type given");
+    FEA_ASSERT(type == ModelAttribute::POSITIONS || type == ModelAttribute::NORMALS || type == ModelAttribute::TEXCOORDS, "invaltype vertex array type given");
     FEA_ASSERT(mVertexArrays.count(type) == 0, "buffer of that type already added");
 
-    mVertexArrays.emplace(type, std::unique_ptr<Buffer>(new Buffer(vertices)));
+    mVertexArrays.emplace(type, vertices);
 }
 
-void Model::addVertexArray(int32_t type, std::vector<uint8_t> vertices)
+void Model::addBlendArray(ModelAttribute type, const std::vector<uint8_t>& vertices)
 {
-    FEA_ASSERT(type == BLENDWEIGHTS || type == BLENDINDICES, "invaltype vertex array type given");
-    FEA_ASSERT(mVertexArrays.count(type) == 0, "buffer of that type already added");
+    FEA_ASSERT(type == ModelAttribute::BLENDWEIGHTS || type == ModelAttribute::BLENDINDICES, "invaltype blend array type given");
+    FEA_ASSERT(mBlendArrays.count(type) == 0, "buffer of that type already added");
 
-    mVertexArrays.emplace(type, std::unique_ptr<Buffer>(new Buffer(vertices)));
+    mBlendArrays.emplace(type, vertices);
 }
 
-const Buffer* Model::findVertexArray(int32_t type) const
+const std::vector<float>* Model::findVertexArray(ModelAttribute type) const
 {
+    FEA_ASSERT(type == ModelAttribute::POSITIONS || type == ModelAttribute::NORMALS || type == ModelAttribute::TEXCOORDS, "invaltype vertex array type given");
     const auto& iterator = mVertexArrays.find(type);
 
-    return iterator == mVertexArrays.end() ? nullptr : iterator->second.get();
+    return iterator == mVertexArrays.end() ? nullptr : &iterator->second;
+}
+
+const std::vector<uint8_t>* Model::findBlendArray(ModelAttribute type) const
+{
+    FEA_ASSERT(type == ModelAttribute::BLENDWEIGHTS || type == ModelAttribute::BLENDINDICES, "invaltype blend array type given");
+    const auto& iterator = mBlendArrays.find(type);
+
+    return iterator == mBlendArrays.end() ? nullptr : &iterator->second;
 }
 
 void Model::addMesh(int32_t id, std::unique_ptr<Mesh> mesh)

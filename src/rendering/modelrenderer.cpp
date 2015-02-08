@@ -27,7 +27,7 @@ void ModelRenderer::queue(const Renderable& renderable)
     FEA_ASSERT(order.model != nullptr, "Trying to render a model renderable which doesn't have a model");
     FEA_ASSERT(order.model->findMesh(0) != nullptr, "Trying to render a model renderable which has a model without a primary model");
 
-    mOrders[order.model].push_back(order);
+    mOrders[{order.model, order.textureArray}].push_back(order);
 }
 
 void ModelRenderer::render(const Camera& camera, const glm::mat4& perspective, const Shader& shader)
@@ -40,44 +40,101 @@ void ModelRenderer::render(const Camera& camera, const glm::mat4& perspective, c
     
     for(const auto modelIterator : mOrders)
     {
-        const Model& model = *modelIterator.first;
+        const Model& model = *modelIterator.first.first;
+        const TextureArray& textureArray = *modelIterator.first.second;
+        const auto& modelOrders = modelIterator.second;
 
-
-        const auto iterator = mModelCache.find(&model);
-        if(iterator == mModelCache.end())
+        const auto iterator = mModelBufferCache.find(&model);
+        if(iterator == mModelBufferCache.end())
         {
-            std::unique_ptr<ModelObject> newModelObject = std::unique_ptr<ModelObject>(new ModelObject());
-
-            newModelObject->vertexArray.setVertexAttribute(ShaderAttribute::POSITION, 3, *model.findVertexArray(Model::POSITIONS));
-            newModelObject->vertexArray.setVertexAttribute(ShaderAttribute::NORMAL, 3, *model.findVertexArray(Model::NORMALS));
-            newModelObject->vertexArray.setVertexAttribute(ShaderAttribute::TEXCOORD, 2, *model.findVertexArray(Model::TEXCOORDS));
-            newModelObject->vertexArray.setVertexIntegerAttribute(ShaderAttribute::BLENDWEIGHTS, 4, *model.findVertexArray(Model::BLENDWEIGHTS), GL_UNSIGNED_BYTE);
-            newModelObject->vertexArray.setVertexIntegerAttribute(ShaderAttribute::BLENDINDICES, 4, *model.findVertexArray(Model::BLENDINDICES), GL_UNSIGNED_BYTE);
-
-            newModelObject->vertexArray.setInstanceAttribute(ShaderAttribute::COLOR, 3, newModelObject->colors, 1);
-            newModelObject->vertexArray.setInstanceIntegerAttribute(ShaderAttribute::TEXTUREINDEX, 1, newModelObject->textureIndices, 1, GL_UNSIGNED_INT);
-            newModelObject->vertexArray.setInstanceAttribute(ShaderAttribute::MODELMATRIX1, 4, newModelObject->modelMatrix1, 1);
-            newModelObject->vertexArray.setInstanceAttribute(ShaderAttribute::MODELMATRIX2, 4, newModelObject->modelMatrix2, 1);
-            newModelObject->vertexArray.setInstanceAttribute(ShaderAttribute::MODELMATRIX3, 4, newModelObject->modelMatrix3, 1);
-            newModelObject->vertexArray.setInstanceAttribute(ShaderAttribute::MODELMATRIX4, 4, newModelObject->modelMatrix4, 1);
-            newModelObject->vertexArray.setInstanceAttribute(ShaderAttribute::NORMALMATRIX1, 4, newModelObject->normalMatrix1, 1);
-            newModelObject->vertexArray.setInstanceAttribute(ShaderAttribute::NORMALMATRIX2, 4, newModelObject->normalMatrix2, 1);
-            newModelObject->vertexArray.setInstanceAttribute(ShaderAttribute::NORMALMATRIX3, 4, newModelObject->normalMatrix3, 1);
-            newModelObject->vertexArray.setInstanceAttribute(ShaderAttribute::NORMALMATRIX4, 4, newModelObject->normalMatrix4, 1);
-
-            for(const auto& mesh : model.getMeshes())
-            {
-                newModelObject->meshes.push_back(mesh.second.get());
-            }
-
-            newModelObject->animation = model.getAnimation();
-
-            mModelCache.emplace(&model, std::move(newModelObject));
+            cacheModel(model);
         }
 
 
-        const auto& modelObject = mModelCache.at(&model);
+        auto& modelBufferStorage = mModelBufferCache.at(&model);
 
+        uploadBatchData(modelIterator.second, camera, shader, model, *modelBufferStorage);
+
+        modelBufferStorage->vertexArray.bind();
+
+        for(const auto& mesh : modelBufferStorage->meshes)
+        {
+            mesh.bind();
+            glDrawElementsInstanced(GL_TRIANGLES, mesh.getElementAmount(), GL_UNSIGNED_INT, 0, modelIterator.second.size());
+            std::cout << "rendered " << modelIterator.second.size() << " stuff\n";
+        }
+
+        modelBufferStorage->vertexArray.unbind();
+    }
+
+    mOrders.clear();
+
+    mCurFrame += 1.0f;
+}
+
+std::type_index ModelRenderer::getRenderableType() const
+{
+    return std::type_index(typeid(ModelRenderable));   
+}
+
+void ModelRenderer::cacheModel(const Model& model)
+{
+    std::unique_ptr<ModelBufferStorage> newModelBufferStorage = std::unique_ptr<ModelBufferStorage>(new ModelBufferStorage());
+
+    const auto* positionData = model.findVertexArray(ModelAttribute::POSITIONS);
+    FEA_ASSERT(positionData != nullptr, "Cannot render model without position data");
+    newModelBufferStorage->modelBuffers.emplace(ModelAttribute::POSITIONS, Buffer(*positionData));
+    newModelBufferStorage->vertexArray.setVertexAttribute(ShaderAttribute::POSITION, 3, newModelBufferStorage->modelBuffers.at(ModelAttribute::POSITIONS));
+
+    const auto* normalData = model.findVertexArray(ModelAttribute::NORMALS);
+    if(normalData != nullptr)
+    {
+        newModelBufferStorage->modelBuffers.emplace(ModelAttribute::NORMALS, Buffer(*normalData));
+        newModelBufferStorage->vertexArray.setVertexAttribute(ShaderAttribute::NORMAL, 3, *model.findVertexArray(ModelAttribute::NORMALS));
+    }
+
+    const auto* texcoordData = model.findVertexArray(ModelAttribute::TEXCOORDS);
+    if(texcoordData != nullptr)
+    {
+        newModelBufferStorage->modelBuffers.emplace(ModelAttribute::TEXCOORDS, Buffer(*texcoordData));
+        newModelBufferStorage->vertexArray.setVertexAttribute(ShaderAttribute::TEXCOORD, 2, *model.findVertexArray(ModelAttribute::TEXCOORDS));
+    }
+
+    const auto* blendWeightData = model.findBlendArray(ModelAttribute::BLENDWEIGHTS);
+    if(blendWeightData != nullptr)
+    {
+        newModelBufferStorage->modelBuffers.emplace(ModelAttribute::BLENDWEIGHTS, Buffer(*blendWeightData));
+        newModelBufferStorage->vertexArray.setVertexIntegerAttribute(ShaderAttribute::BLENDWEIGHTS, 4, *model.findBlendArray(ModelAttribute::BLENDWEIGHTS), GL_UNSIGNED_BYTE);
+    }
+
+    const auto* blendIndexData = model.findBlendArray(ModelAttribute::BLENDINDICES);
+    if(blendIndexData != nullptr)
+    {
+        newModelBufferStorage->modelBuffers.emplace(ModelAttribute::BLENDINDICES, Buffer(*blendIndexData, Buffer::ELEMENT_ARRAY_BUFFER));
+        newModelBufferStorage->vertexArray.setVertexIntegerAttribute(ShaderAttribute::BLENDINDICES, 4, *model.findBlendArray(ModelAttribute::BLENDINDICES), GL_UNSIGNED_BYTE);
+    }
+
+    newModelBufferStorage->vertexArray.setInstanceAttribute(ShaderAttribute::COLOR, 3, newModelBufferStorage->colors, 1);
+    newModelBufferStorage->vertexArray.setInstanceIntegerAttribute(ShaderAttribute::TEXTUREINDEX, 1, newModelBufferStorage->textureIndices, 1, GL_UNSIGNED_INT);
+    newModelBufferStorage->vertexArray.setInstanceAttribute(ShaderAttribute::MODELMATRIX1, 4, newModelBufferStorage->modelMatrix1, 1);
+    newModelBufferStorage->vertexArray.setInstanceAttribute(ShaderAttribute::MODELMATRIX2, 4, newModelBufferStorage->modelMatrix2, 1);
+    newModelBufferStorage->vertexArray.setInstanceAttribute(ShaderAttribute::MODELMATRIX3, 4, newModelBufferStorage->modelMatrix3, 1);
+    newModelBufferStorage->vertexArray.setInstanceAttribute(ShaderAttribute::MODELMATRIX4, 4, newModelBufferStorage->modelMatrix4, 1);
+    newModelBufferStorage->vertexArray.setInstanceAttribute(ShaderAttribute::NORMALMATRIX1, 4, newModelBufferStorage->normalMatrix1, 1);
+    newModelBufferStorage->vertexArray.setInstanceAttribute(ShaderAttribute::NORMALMATRIX2, 4, newModelBufferStorage->normalMatrix2, 1);
+    newModelBufferStorage->vertexArray.setInstanceAttribute(ShaderAttribute::NORMALMATRIX3, 4, newModelBufferStorage->normalMatrix3, 1);
+    newModelBufferStorage->vertexArray.setInstanceAttribute(ShaderAttribute::NORMALMATRIX4, 4, newModelBufferStorage->normalMatrix4, 1);
+
+    for(const auto& mesh : model.getMeshes())
+    {
+        newModelBufferStorage->meshes.push_back({mesh.second->getIndices()});
+    }
+
+    mModelBufferCache.emplace(&model, std::move(newModelBufferStorage));
+}
+
+void ModelRenderer::uploadBatchData(const std::vector<ModelOrder>& modelOrders, const Camera& camera, const Shader& shader, const Model& model, ModelBufferStorage& modelBufferStorage)
+{
         std::vector<float> colors;
         std::vector<uint32_t> textureIndices;
         std::vector<float> modelMatrix1;
@@ -99,7 +156,7 @@ void ModelRenderer::render(const Camera& camera, const glm::mat4& perspective, c
         std::vector<float> nData3 = { 0.0f, 0.0f, 1.0f, 0.0f };
         std::vector<float> nData4 = { 0.0f, 0.0f, 0.0f, 1.0f };
         
-        for(const auto order : modelIterator.second)
+        for(const auto order : modelOrders)
         {
             colors.push_back(order.color.r);
             colors.push_back(order.color.g);
@@ -251,41 +308,21 @@ void ModelRenderer::render(const Camera& camera, const glm::mat4& perspective, c
         }
         //animation end
         
-        modelObject->colors.setData(colors);
-        modelObject->textureIndices.setData(textureIndices);
-        modelObject->modelMatrix1.setData(modelMatrix1);
-        modelObject->modelMatrix2.setData(modelMatrix2);
-        modelObject->modelMatrix3.setData(modelMatrix3);
-        modelObject->modelMatrix4.setData(modelMatrix4);
-        modelObject->normalMatrix1.setData(normalMatrix1);
-        modelObject->normalMatrix2.setData(normalMatrix2);
-        modelObject->normalMatrix3.setData(normalMatrix3);
+        modelBufferStorage.colors.setData(colors);
+        modelBufferStorage.textureIndices.setData(textureIndices);
+        modelBufferStorage.modelMatrix1.setData(modelMatrix1);
+        modelBufferStorage.modelMatrix2.setData(modelMatrix2);
+        modelBufferStorage.modelMatrix3.setData(modelMatrix3);
+        modelBufferStorage.modelMatrix4.setData(modelMatrix4);
+        modelBufferStorage.normalMatrix1.setData(normalMatrix1);
+        modelBufferStorage.normalMatrix2.setData(normalMatrix2);
+        modelBufferStorage.normalMatrix3.setData(normalMatrix3);
 
-        modelObject->animData.setData(animationData);
-
-        modelObject->vertexArray.bind();
+        modelBufferStorage.animData.setData(animationData);
 
         int32_t blockIndex = 0;
 
         int32_t location = glGetUniformBlockIndex(shader.getId(), "AnimationBlock");
         glUniformBlockBinding(shader.getId(), location, blockIndex);
-        glBindBufferBase(GL_UNIFORM_BUFFER, blockIndex, modelObject->animData.getId());
-
-        for(const auto& mesh : modelObject->meshes)
-        {
-            mesh->getIndexBuffer().bind();
-            glDrawElementsInstanced(GL_TRIANGLES, mesh->getIndexBuffer().getElementAmount(), GL_UNSIGNED_INT, 0, modelIterator.second.size());
-        }
-
-        modelObject->vertexArray.unbind();
-    }
-
-    mOrders.clear();
-
-    mCurFrame += 1.0f;
-}
-
-std::type_index ModelRenderer::getRenderableType() const
-{
-    return std::type_index(typeid(ModelRenderable));   
+        glBindBufferBase(GL_UNIFORM_BUFFER, blockIndex, modelBufferStorage.animData.getId());
 }
