@@ -705,7 +705,7 @@ def derigifyBones(context, armature, scale):
     bones = {}
     worldmatrix = armature.matrix_world
 
-    yzflipper = axis_conversion(to_forward='-Z', to_up='Y').to_4x4()
+    yzflipper = axis_conversion(to_forward='Z', to_up='Y').to_4x4()
     if flipyz:
       worldmatrix = yzflipper * worldmatrix
 
@@ -726,7 +726,7 @@ def collectBones(context, armature, scale, flipyz = False):
     bones = {}
     worldmatrix = armature.matrix_world
 
-    yzflipper = axis_conversion(to_forward='-Z', to_up='Y').to_4x4()
+    yzflipper = axis_conversion(to_forward='Z', to_up='Y').to_4x4()
     if flipyz:
       worldmatrix = yzflipper * worldmatrix
 
@@ -752,7 +752,7 @@ def collectAnim(context, armature, scale, bones, action, startframe = None, endf
     scene = context.scene
     worldmatrix = armature.matrix_world
 
-    yzflipper = axis_conversion(to_forward='-Z', to_up='Y').to_4x4()
+    yzflipper = axis_conversion(to_forward='Z', to_up='Y').to_4x4()
     if flipyz:
       worldmatrix = yzflipper * worldmatrix
 
@@ -833,7 +833,7 @@ def collectMeshes(context, bones, scale, matfun, useskel = True, usecol = False,
             if not data.tessfaces:
                 continue
             coordmatrix = obj.matrix_world
-            yzflipper = axis_conversion(to_forward='-Z', to_up='Y').to_4x4()
+            yzflipper = axis_conversion(to_forward='Z', to_up='Y').to_4x4()
             if flipyz:
                 coordmatrix = yzflipper * coordmatrix
             normalmatrix = coordmatrix.inverted().transposed()

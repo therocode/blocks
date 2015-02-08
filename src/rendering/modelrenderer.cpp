@@ -113,13 +113,13 @@ void ModelRenderer::render(const Camera& camera, const glm::mat4& perspective, c
 
 			glm::mat3 orientationMat = glm::mat3_cast(order.orientation);
 			data1[0] = orientationMat[0][0];
-			data1[1] = orientationMat[0][1];
-			data1[2] = orientationMat[0][2];
-			data2[0] = orientationMat[1][0];
+			data1[1] = orientationMat[1][0];
+			data1[2] = orientationMat[2][0];
+			data2[0] = orientationMat[0][1];
 			data2[1] = orientationMat[1][1];
-			data2[2] = orientationMat[1][2];
-			data3[0] = orientationMat[2][0];
-			data3[1] = orientationMat[2][1];
+			data2[2] = orientationMat[2][1];
+			data3[0] = orientationMat[0][2];
+			data3[1] = orientationMat[1][2];
 			data3[2] = orientationMat[2][2];
 			// data1[0] = orientationMat[0][0];
 			// data1[1] = orientationMat[1][0];
