@@ -179,33 +179,7 @@ RawModel IQMFromFileLoader::load(const std::string& filename)
             scale.y = pose.channeloffset[8]; if(pose.mask&0x100) scale.y += *frameDataIter++ * pose.channelscale[8];
             scale.z = pose.channeloffset[9]; if(pose.mask&0x200) scale.z += *frameDataIter++ * pose.channelscale[9];
 
-            //std::cout << "offset:\n";
-            //for(float f : pose.channeloffset)
-            //    std::cout << f << "\n";
-
-            //std::cout << "scale:\n";
-            //for(float f : pose.channelscale)
-            //    std::cout << f << "\n";
-
-            // Concatenate each pose with the inverse base pose to avoid doing this at animation time.
-            // If the joint has a parent, then it needs to be pre-concatenated with its parent's base pose.
-            // Thus it all negates at animation time like so: 
-            //   (parentPose * parentInverseBasePose) * (parentBasePose * childPose * childInverseBasePose) =>
-            //   parentPose * (parentInverseBasePose * parentBasePose) * childPose * childInverseBasePose =>
-            //   parentPose * childPose * childInverseBasePose
             Matrix3x4 m(rotate.normalize(), translate, scale);
-
-            //Matrix3x4* f = &m;
-            //std::cout << std::setprecision(6)
-            //    << std::setiosflags(std::ios::fixed)
-            //    << std::setiosflags(std::ios::showpos);
-
-            //std::cout << "rot:\n";
-            //std::cout << "|" << f->a.x << " " << f->a.y << " " << f->a.z << "|\n" <<
-            //    "|" << f->b.x << " " << f->b.y << " " << f->b.z << "|\n" <<
-            //    "|" << f->c.x << " " << f->c.y << " " << f->c.z << "|\n";
-            //std::cout << "trans:\n";
-            //std::cout << "(" << f->a.w << "," << f->b.w << "," << f->c.w << ")\n\n";
 
             if(pose.parent >= 0)
             {
@@ -215,18 +189,6 @@ RawModel IQMFromFileLoader::load(const std::string& filename)
             {
                 frames[frameIndex * header.num_poses + poseIndex] = m * inversebaseframe[poseIndex];
             }
-
-                //Matrix3x4* f = &frames[frameIndex * header.num_poses + poseIndex]; 
-                //std::cout << std::setprecision(6)
-                //    << std::setiosflags(std::ios::fixed)
-                //    << std::setiosflags(std::ios::showpos);
-
-                //std::cout << "rot:\n";
-                //std::cout << "|" << f->a.x << " " << f->a.y << " " << f->a.z << "|\n" <<
-                //    "|" << f->b.x << " " << f->b.y << " " << f->b.z << "|\n" <<  
-                //    "|" << f->c.x << " " << f->c.y << " " << f->c.z << "|\n";
-                //std::cout << "trans:\n";
-                //std::cout << "(" << f->a.w << "," << f->b.w << "," << f->c.w << ")\n\n";
         }
     }
 
@@ -261,19 +223,6 @@ RawModel IQMFromFileLoader::load(const std::string& filename)
             rawAnimation.translations[i][0] = frames[frameIndex].a.w;
             rawAnimation.translations[i][1] = frames[frameIndex].b.w;
             rawAnimation.translations[i][2] = frames[frameIndex].c.w;
-
-            //auto& f = rawAnimation.rotations[i];
-            //std::cout << std::setprecision(6) 
-            //          << std::setiosflags(std::ios::fixed)
-            //          << std::setiosflags(std::ios::showpos);
-
-            //std::cout << "rot:\n";
-            //std::cout << "|" << f[0][0] << " " << f[1][0] << " " << f[2][0] << "|\n" <<
-            //             "|" << f[0][1] << " " << f[1][1] << " " << f[2][1] << "|\n" << 
-            //             "|" << f[0][2] << " " << f[1][2] << " " << f[2][2] << "|\n";
-            //std::cout << "trans:\n";
-            //auto& g = rawAnimation.translations[i];
-            //std::cout << "(" << g[0] << "," << g[1] << "," << g[2] << ")\n\n";
         }
 
         rawAnimation.framerate = animation.framerate;
