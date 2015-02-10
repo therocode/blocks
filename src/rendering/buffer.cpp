@@ -77,6 +77,7 @@ void Buffer::bind() const
 
 void Buffer::setData(const std::vector<float>& data)
 {
+    FEA_ASSERT(data.size() > 0, "Trying to generate an empty buffer!");
     mElementAmount = data.size();
     bind();
     glBufferData(mType == ARRAY_BUFFER ? GL_ARRAY_BUFFER : GL_ELEMENT_ARRAY_BUFFER, data.size() * sizeof(float), data.data(), GL_STATIC_DRAW);
@@ -84,6 +85,7 @@ void Buffer::setData(const std::vector<float>& data)
 
 void Buffer::setData(const std::vector<uint32_t>& data)
 {
+    FEA_ASSERT(data.size() > 0, "Trying to generate an empty buffer!");
     mElementAmount = data.size();
     bind();
     glBufferData(mType == ARRAY_BUFFER ? GL_ARRAY_BUFFER : GL_ELEMENT_ARRAY_BUFFER, data.size() * sizeof(uint32_t), data.data(), GL_STATIC_DRAW);
@@ -91,6 +93,7 @@ void Buffer::setData(const std::vector<uint32_t>& data)
 
 void Buffer::setData(const std::vector<uint8_t>& data)
 {
+    FEA_ASSERT(data.size() > 0, "Trying to generate an empty buffer!");
     mElementAmount = data.size();
     bind();
     glBufferData(mType == ARRAY_BUFFER ? GL_ARRAY_BUFFER : GL_ELEMENT_ARRAY_BUFFER, data.size() * sizeof(uint8_t), data.data(), GL_STATIC_DRAW);

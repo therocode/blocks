@@ -113,30 +113,33 @@ void DebugRenderer::render(const Camera& camera, const glm::mat4& perspective, c
     
     shader.setUniform("textureArray", UniformType::TEXTURE_ARRAY, &id);
 
-    mVertexArray.bind();
+    if(!mModelMatrixData1.empty())
+    {
+        mVertexArray.bind();
 
-    mModelMatrixBuffer1.setData(mModelMatrixData1);
-    mModelMatrixBuffer2.setData(mModelMatrixData2);
-    mModelMatrixBuffer3.setData(mModelMatrixData3);
-    mModelMatrixBuffer4.setData(mModelMatrixData4);
+        mModelMatrixBuffer1.setData(mModelMatrixData1);
+        mModelMatrixBuffer2.setData(mModelMatrixData2);
+        mModelMatrixBuffer3.setData(mModelMatrixData3);
+        mModelMatrixBuffer4.setData(mModelMatrixData4);
 
-    mColorBuffer.setData(mColorData);
+        mColorBuffer.setData(mColorData);
 
-    mModelMatrixData1.clear();
-    mModelMatrixData2.clear();
-    mModelMatrixData3.clear();
-    mModelMatrixData4.clear();
+        mModelMatrixData1.clear();
+        mModelMatrixData2.clear();
+        mModelMatrixData3.clear();
+        mModelMatrixData4.clear();
 
-    mColorData.clear();
+        mColorData.clear();
 
-    shader.setUniform("viewProjectionMatrix", UniformType::MAT4X4, glm::value_ptr(perspective * camera.getMatrix()));
-    float shadedRatio = 0.0f;
-    shader.setUniform("shadedRatio", UniformType::FLOAT, &shadedRatio);
+        shader.setUniform("viewProjectionMatrix", UniformType::MAT4X4, glm::value_ptr(perspective * camera.getMatrix()));
+        float shadedRatio = 0.0f;
+        shader.setUniform("shadedRatio", UniformType::FLOAT, &shadedRatio);
 
-    glDrawArraysInstanced(GL_TRIANGLES, 0, 36, mRenderAmount);
-    mRenderAmount = 0;
+        glDrawArraysInstanced(GL_TRIANGLES, 0, 36, mRenderAmount);
+        mRenderAmount = 0;
 
-    mVertexArray.unbind();
+        mVertexArray.unbind();
+    }
 
 	if(!mLineCoords.empty())
     {

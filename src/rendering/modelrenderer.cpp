@@ -50,18 +50,17 @@ void ModelRenderer::render(const Camera& camera, const glm::mat4& perspective, c
             cacheModel(model);
         }
 
-
         auto& modelBufferStorage = mModelBufferCache.at(&model);
 
-        uploadBatchData(modelIterator.second, camera, shader, model, *modelBufferStorage);
-
         modelBufferStorage->vertexArray.bind();
+
+        uploadBatchData(modelIterator.second, camera, shader, model, *modelBufferStorage);
 
         for(const auto& mesh : modelBufferStorage->meshes)
         {
             mesh.bind();
             glDrawElementsInstanced(GL_TRIANGLES, mesh.getElementAmount(), GL_UNSIGNED_INT, 0, modelIterator.second.size());
-            std::cout << "rendered " << modelIterator.second.size() << " stuff\n";
+            std::cout << "rendered " << modelIterator.second.size() << " stuff with triangle count " << mesh.getElementAmount() / 3 << "\n";
         }
 
         modelBufferStorage->vertexArray.unbind();
@@ -81,16 +80,20 @@ void ModelRenderer::cacheModel(const Model& model)
 {
     std::unique_ptr<ModelBufferStorage> newModelBufferStorage = std::unique_ptr<ModelBufferStorage>(new ModelBufferStorage());
 
+    newModelBufferStorage->vertexArray.bind();
+
     const auto* positionData = model.findVertexArray(ModelAttribute::POSITIONS);
     FEA_ASSERT(positionData != nullptr, "Cannot render model without position data");
     newModelBufferStorage->modelBuffers.emplace(ModelAttribute::POSITIONS, Buffer(*positionData));
     newModelBufferStorage->vertexArray.setVertexAttribute(ShaderAttribute::POSITION, 3, newModelBufferStorage->modelBuffers.at(ModelAttribute::POSITIONS));
+    std::cout << "positions: " << newModelBufferStorage->modelBuffers.at(ModelAttribute::POSITIONS).getElementAmount() << "\n";
 
     const auto* normalData = model.findVertexArray(ModelAttribute::NORMALS);
     if(normalData != nullptr)
     {
         newModelBufferStorage->modelBuffers.emplace(ModelAttribute::NORMALS, Buffer(*normalData));
         newModelBufferStorage->vertexArray.setVertexAttribute(ShaderAttribute::NORMAL, 3, *model.findVertexArray(ModelAttribute::NORMALS));
+        std::cout << "normals: " << newModelBufferStorage->modelBuffers.at(ModelAttribute::NORMALS).getElementAmount() << "\n";
     }
 
     const auto* texcoordData = model.findVertexArray(ModelAttribute::TEXCOORDS);
@@ -98,6 +101,7 @@ void ModelRenderer::cacheModel(const Model& model)
     {
         newModelBufferStorage->modelBuffers.emplace(ModelAttribute::TEXCOORDS, Buffer(*texcoordData));
         newModelBufferStorage->vertexArray.setVertexAttribute(ShaderAttribute::TEXCOORD, 2, *model.findVertexArray(ModelAttribute::TEXCOORDS));
+        std::cout << "texcoords: " << newModelBufferStorage->modelBuffers.at(ModelAttribute::TEXCOORDS).getElementAmount() << "\n";
     }
 
     const auto* blendWeightData = model.findBlendArray(ModelAttribute::BLENDWEIGHTS);
@@ -105,6 +109,7 @@ void ModelRenderer::cacheModel(const Model& model)
     {
         newModelBufferStorage->modelBuffers.emplace(ModelAttribute::BLENDWEIGHTS, Buffer(*blendWeightData));
         newModelBufferStorage->vertexArray.setVertexIntegerAttribute(ShaderAttribute::BLENDWEIGHTS, 4, *model.findBlendArray(ModelAttribute::BLENDWEIGHTS), GL_UNSIGNED_BYTE);
+        std::cout << "blendweights: " << newModelBufferStorage->modelBuffers.at(ModelAttribute::BLENDWEIGHTS).getElementAmount() << "\n";
     }
 
     const auto* blendIndexData = model.findBlendArray(ModelAttribute::BLENDINDICES);
@@ -112,6 +117,7 @@ void ModelRenderer::cacheModel(const Model& model)
     {
         newModelBufferStorage->modelBuffers.emplace(ModelAttribute::BLENDINDICES, Buffer(*blendIndexData, Buffer::ELEMENT_ARRAY_BUFFER));
         newModelBufferStorage->vertexArray.setVertexIntegerAttribute(ShaderAttribute::BLENDINDICES, 4, *model.findBlendArray(ModelAttribute::BLENDINDICES), GL_UNSIGNED_BYTE);
+        std::cout << "blendindices: " << newModelBufferStorage->modelBuffers.at(ModelAttribute::BLENDINDICES).getElementAmount() << "\n";
     }
 
     newModelBufferStorage->vertexArray.setInstanceAttribute(ShaderAttribute::COLOR, 3, newModelBufferStorage->colors, 1);
