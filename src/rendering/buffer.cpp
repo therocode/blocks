@@ -62,6 +62,10 @@ Buffer& Buffer::operator=(Buffer&& other)
     std::swap(mType, other.mType);
     std::swap(mElementAmount, other.mElementAmount);
 
+    other.mBufferId = 0;
+    other.mType = 0;
+    other.mElementAmount = 0;
+
     return *this;
 }
 
