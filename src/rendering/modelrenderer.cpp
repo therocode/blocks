@@ -69,6 +69,7 @@ void ModelRenderer::render(const Camera& camera, const glm::mat4& perspective, c
     mOrders.clear();
 
     mCurFrame += 1.0f;
+    exit(3);
 }
 
 std::type_index ModelRenderer::getRenderableType() const
