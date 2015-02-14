@@ -7,6 +7,16 @@
 #include <fea/assert.hpp>
 
 VoxelChunkRenderer::VoxelChunkRenderer() :
+    mColors(Buffer::ARRAY_BUFFER),
+    mTextureIndices(Buffer::ARRAY_BUFFER),
+    mModelMatrix1(Buffer::ARRAY_BUFFER),
+    mModelMatrix2(Buffer::ARRAY_BUFFER),
+    mModelMatrix3(Buffer::ARRAY_BUFFER),
+    mModelMatrix4(Buffer::ARRAY_BUFFER),
+    mNormalMatrix1(Buffer::ARRAY_BUFFER),
+    mNormalMatrix2(Buffer::ARRAY_BUFFER),
+    mNormalMatrix3(Buffer::ARRAY_BUFFER),
+    mNormalMatrix4(Buffer::ARRAY_BUFFER),
     mCurrentTextureArray(nullptr)
 {
     mColors.setData(std::vector<float>({0.3f, 0.55555f,.0f}));

@@ -7,6 +7,21 @@
 #include <string>
 #include <fea/assert.hpp>
 
+ModelBufferStorage::ModelBufferStorage() : 
+    colors(Buffer::ARRAY_BUFFER),
+    textureIndices(Buffer::ARRAY_BUFFER),
+    modelMatrix1(Buffer::ARRAY_BUFFER),
+    modelMatrix2(Buffer::ARRAY_BUFFER),
+    modelMatrix3(Buffer::ARRAY_BUFFER),
+    modelMatrix4(Buffer::ARRAY_BUFFER),
+    normalMatrix1(Buffer::ARRAY_BUFFER),
+    normalMatrix2(Buffer::ARRAY_BUFFER),
+    normalMatrix3(Buffer::ARRAY_BUFFER),
+    normalMatrix4(Buffer::ARRAY_BUFFER),
+    animData(Buffer::ARRAY_BUFFER)
+{
+}
+
 ModelRenderer::ModelRenderer() : 
     mCurFrame(0.0f)
 {
@@ -52,15 +67,16 @@ void ModelRenderer::render(const Camera& camera, const glm::mat4& perspective, c
 
         auto& modelBufferStorage = mModelBufferCache.at(&model);
 
-        //modelBufferStorage->vertexArray.bind();
+        modelBufferStorage->vertexArray.bind();
 
         uploadBatchData(modelIterator.second, camera, shader, model, *modelBufferStorage);
 
         for(const auto& mesh : modelBufferStorage->meshes)
         {
             mesh.bind();
-            glDrawElementsInstanced(GL_TRIANGLES, mesh.getElementAmount(), GL_UNSIGNED_INT, 0, modelIterator.second.size());
             std::cout << "rendered " << modelIterator.second.size() << " stuff with triangle count " << mesh.getElementAmount() / 3 << "\n";
+            glDrawElementsInstanced(GL_TRIANGLES, mesh.getElementAmount(), GL_UNSIGNED_INT, 0, modelIterator.second.size());
+            exit(4);
         }
 
         modelBufferStorage->vertexArray.unbind();
@@ -69,7 +85,6 @@ void ModelRenderer::render(const Camera& camera, const glm::mat4& perspective, c
     mOrders.clear();
 
     mCurFrame += 1.0f;
-    exit(3);
 }
 
 std::type_index ModelRenderer::getRenderableType() const
@@ -85,31 +100,31 @@ void ModelRenderer::cacheModel(const Model& model)
 
     const auto* positionData = model.findVertexArray(ModelAttribute::POSITIONS);
     FEA_ASSERT(positionData != nullptr, "Cannot render model without position data");
-    newModelBufferStorage->modelBuffers.emplace(ModelAttribute::POSITIONS, Buffer(*positionData));
+    newModelBufferStorage->modelBuffers.emplace(ModelAttribute::POSITIONS, Buffer(*positionData, Buffer::ARRAY_BUFFER));
     newModelBufferStorage->vertexArray.setVertexAttribute(ShaderAttribute::POSITION, 3, newModelBufferStorage->modelBuffers.at(ModelAttribute::POSITIONS));
     std::cout << "positions: " << newModelBufferStorage->modelBuffers.at(ModelAttribute::POSITIONS).getElementAmount() << "\n";
 
     const auto* normalData = model.findVertexArray(ModelAttribute::NORMALS);
     if(normalData != nullptr)
     {
-        newModelBufferStorage->modelBuffers.emplace(ModelAttribute::NORMALS, Buffer(*normalData));
-        newModelBufferStorage->vertexArray.setVertexAttribute(ShaderAttribute::NORMAL, 3, *model.findVertexArray(ModelAttribute::NORMALS));
+        newModelBufferStorage->modelBuffers.emplace(ModelAttribute::NORMALS, Buffer(*normalData, Buffer::ARRAY_BUFFER));
+        newModelBufferStorage->vertexArray.setVertexAttribute(ShaderAttribute::NORMAL, 3, newModelBufferStorage->modelBuffers.at(ModelAttribute::NORMALS));
         std::cout << "normals: " << newModelBufferStorage->modelBuffers.at(ModelAttribute::NORMALS).getElementAmount() << "\n";
     }
 
     const auto* texcoordData = model.findVertexArray(ModelAttribute::TEXCOORDS);
     if(texcoordData != nullptr)
     {
-        newModelBufferStorage->modelBuffers.emplace(ModelAttribute::TEXCOORDS, Buffer(*texcoordData));
-        newModelBufferStorage->vertexArray.setVertexAttribute(ShaderAttribute::TEXCOORD, 2, *model.findVertexArray(ModelAttribute::TEXCOORDS));
+        newModelBufferStorage->modelBuffers.emplace(ModelAttribute::TEXCOORDS, Buffer(*texcoordData, Buffer::ARRAY_BUFFER));
+        newModelBufferStorage->vertexArray.setVertexAttribute(ShaderAttribute::TEXCOORD, 2, newModelBufferStorage->modelBuffers.at(ModelAttribute::TEXCOORDS));
         std::cout << "texcoords: " << newModelBufferStorage->modelBuffers.at(ModelAttribute::TEXCOORDS).getElementAmount() << "\n";
     }
 
     const auto* blendWeightData = model.findBlendArray(ModelAttribute::BLENDWEIGHTS);
     if(blendWeightData != nullptr)
     {
-        newModelBufferStorage->modelBuffers.emplace(ModelAttribute::BLENDWEIGHTS, Buffer(*blendWeightData));
-        newModelBufferStorage->vertexArray.setVertexIntegerAttribute(ShaderAttribute::BLENDWEIGHTS, 4, *model.findBlendArray(ModelAttribute::BLENDWEIGHTS), GL_UNSIGNED_BYTE);
+        newModelBufferStorage->modelBuffers.emplace(ModelAttribute::BLENDWEIGHTS, Buffer(*blendWeightData, Buffer::ARRAY_BUFFER));
+        newModelBufferStorage->vertexArray.setVertexIntegerAttribute(ShaderAttribute::BLENDWEIGHTS, 4, newModelBufferStorage->modelBuffers.at(ModelAttribute::BLENDWEIGHTS), GL_UNSIGNED_BYTE);
         std::cout << "blendweights: " << newModelBufferStorage->modelBuffers.at(ModelAttribute::BLENDWEIGHTS).getElementAmount() << "\n";
     }
 
@@ -117,7 +132,7 @@ void ModelRenderer::cacheModel(const Model& model)
     if(blendIndexData != nullptr)
     {
         newModelBufferStorage->modelBuffers.emplace(ModelAttribute::BLENDINDICES, Buffer(*blendIndexData, Buffer::ELEMENT_ARRAY_BUFFER));
-        newModelBufferStorage->vertexArray.setVertexIntegerAttribute(ShaderAttribute::BLENDINDICES, 4, *model.findBlendArray(ModelAttribute::BLENDINDICES), GL_UNSIGNED_BYTE);
+        newModelBufferStorage->vertexArray.setVertexIntegerAttribute(ShaderAttribute::BLENDINDICES, 4, newModelBufferStorage->modelBuffers.at(ModelAttribute::BLENDINDICES), GL_UNSIGNED_BYTE);
         std::cout << "blendindices: " << newModelBufferStorage->modelBuffers.at(ModelAttribute::BLENDINDICES).getElementAmount() << "\n";
     }
 
@@ -134,7 +149,7 @@ void ModelRenderer::cacheModel(const Model& model)
 
     for(const auto& mesh : model.getMeshes())
     {
-        newModelBufferStorage->meshes.push_back({mesh.second->getIndices()});
+        newModelBufferStorage->meshes.push_back({mesh.second->getIndices(), Buffer::ELEMENT_ARRAY_BUFFER });
     }
 
     mModelBufferCache.emplace(&model, std::move(newModelBufferStorage));

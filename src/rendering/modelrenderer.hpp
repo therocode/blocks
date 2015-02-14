@@ -23,6 +23,7 @@ struct ModelOrder
 
 struct ModelBufferStorage
 {
+    ModelBufferStorage();
     VAO vertexArray;
 
     //model data

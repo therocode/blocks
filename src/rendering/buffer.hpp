@@ -6,10 +6,10 @@ class Buffer
 {
     public:
         enum { ARRAY_BUFFER, ELEMENT_ARRAY_BUFFER };
-        Buffer(int32_t type = ARRAY_BUFFER);
-        Buffer(const std::vector<float>& data, int32_t type = ARRAY_BUFFER);
-        Buffer(const std::vector<uint32_t>& data, int32_t type = ARRAY_BUFFER);
-        Buffer(const std::vector<uint8_t>& data, int32_t type = ARRAY_BUFFER);
+        Buffer(int32_t type);
+        Buffer(const std::vector<float>& data, int32_t type);
+        Buffer(const std::vector<uint32_t>& data, int32_t type);
+        Buffer(const std::vector<uint8_t>& data, int32_t type);
         ~Buffer();
         Buffer(const Buffer&) = delete;
         Buffer& operator=(const Buffer&) = delete;

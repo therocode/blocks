@@ -8,6 +8,12 @@
 #include "../resources/image.hpp"
 
 ExtraRenderer::ExtraRenderer() :
+    mVertexBuffer(Buffer::ARRAY_BUFFER),
+    mModelMatrixBuffer1(Buffer::ARRAY_BUFFER),
+    mModelMatrixBuffer2(Buffer::ARRAY_BUFFER),
+    mModelMatrixBuffer3(Buffer::ARRAY_BUFFER),
+    mModelMatrixBuffer4(Buffer::ARRAY_BUFFER),
+    mColorBuffer(Buffer::ARRAY_BUFFER),
     mRenderAmount(0)
 {
     mVertexArray.bind();

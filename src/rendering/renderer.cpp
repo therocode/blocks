@@ -40,7 +40,6 @@ void Renderer::queue(const Renderable& renderable)
 void Renderer::clear()
 {
     glClearColor(mClearColor.r, mClearColor.g, mClearColor.b, 0.0f);
-    glClearColor(1.0f, mClearColor.g, mClearColor.b, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
