@@ -76,7 +76,6 @@ void ModelRenderer::render(const Camera& camera, const glm::mat4& perspective, c
             mesh.bind();
             std::cout << "rendered " << modelIterator.second.size() << " stuff with triangle count " << mesh.getElementAmount() / 3 << "\n";
             glDrawElementsInstanced(GL_TRIANGLES, mesh.getElementAmount(), GL_UNSIGNED_INT, 0, modelIterator.second.size());
-            exit(4);
         }
 
         modelBufferStorage->vertexArray.unbind();
@@ -131,7 +130,7 @@ void ModelRenderer::cacheModel(const Model& model)
     const auto* blendIndexData = model.findBlendArray(ModelAttribute::BLENDINDICES);
     if(blendIndexData != nullptr)
     {
-        newModelBufferStorage->modelBuffers.emplace(ModelAttribute::BLENDINDICES, Buffer(*blendIndexData, Buffer::ELEMENT_ARRAY_BUFFER));
+        newModelBufferStorage->modelBuffers.emplace(ModelAttribute::BLENDINDICES, Buffer(*blendIndexData, Buffer::ARRAY_BUFFER));
         newModelBufferStorage->vertexArray.setVertexIntegerAttribute(ShaderAttribute::BLENDINDICES, 4, newModelBufferStorage->modelBuffers.at(ModelAttribute::BLENDINDICES), GL_UNSIGNED_BYTE);
         std::cout << "blendindices: " << newModelBufferStorage->modelBuffers.at(ModelAttribute::BLENDINDICES).getElementAmount() << "\n";
     }
