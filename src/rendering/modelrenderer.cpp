@@ -52,7 +52,7 @@ void ModelRenderer::render(const Camera& camera, const glm::mat4& perspective, c
 
         auto& modelBufferStorage = mModelBufferCache.at(&model);
 
-        modelBufferStorage->vertexArray.bind();
+        //modelBufferStorage->vertexArray.bind();
 
         uploadBatchData(modelIterator.second, camera, shader, model, *modelBufferStorage);
 
@@ -325,6 +325,8 @@ void ModelRenderer::uploadBatchData(const std::vector<ModelOrder>& modelOrders, 
         modelBufferStorage.normalMatrix3.setData(normalMatrix3);
 
         modelBufferStorage.animData.setData(animationData);
+
+        modelBufferStorage.vertexArray.bind();
 
         int32_t blockIndex = 0;
 
