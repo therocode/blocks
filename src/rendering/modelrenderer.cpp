@@ -45,6 +45,11 @@ void ModelRenderer::queue(const Renderable& renderable)
     mOrders[{order.model, order.textureArray}].push_back(order);
 }
 
+const int32_t maxUniformBlockSize = 16384;
+const int32_t maxBoneAmount = 72;
+const int32_t boneMemorySize = 4 * 16;
+const int32_t maxInstanceAmount = maxUniformBlockSize / (boneMemorySize * maxBoneAmount);
+
 void ModelRenderer::render(const Camera& camera, const glm::mat4& perspective, const Shader& shader)
 {
     mVertexArray.bind();
@@ -254,8 +259,8 @@ void ModelRenderer::uploadBatchData(const std::vector<ModelOrder>& modelOrders, 
         int32_t numJoints = model.getJointStructure().size();
 
         //animation
-        std::vector<float> rotData(12 * 128);
-        std::vector<float> transData(4 * 128);
+        std::vector<float> rotData(12 * maxBoneAmount * maxInstanceAmount);
+        std::vector<float> transData(4 * maxBoneAmount * maxInstanceAmount);
         const Animation* animation = model.getAnimation();
         std::vector<float> animationData;
         if(animation != nullptr)
@@ -276,7 +281,6 @@ void ModelRenderer::uploadBatchData(const std::vector<ModelOrder>& modelOrders, 
 
             const auto& jointStructure = model.getJointStructure();
 
-            //std::vector<Matrix3x4> outputTransformation(numJoints);
             std::vector<glm::mat4x4> outputTransformation(numJoints);
 
             for(int32_t i = 0; i < numJoints; i++)
@@ -342,4 +346,9 @@ void ModelRenderer::uploadBatchData(const std::vector<ModelOrder>& modelOrders, 
         int32_t location = glGetUniformBlockIndex(shader.getId(), "AnimationBlock");
         glUniformBlockBinding(shader.getId(), location, blockIndex);
         glBindBufferBase(GL_UNIFORM_BUFFER, blockIndex, modelBufferStorage.animData.getId());
+
+        GLint blockSize;
+        glGetActiveUniformBlockiv(shader.getId(), blockIndex, GL_UNIFORM_BLOCK_DATA_SIZE, &blockSize);
+
+        std::cout << "size of block is " << blockSize << "\n";
 }

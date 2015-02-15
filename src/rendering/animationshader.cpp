@@ -7,8 +7,9 @@ uniform mat4 viewProjectionMatrix;
 
 layout(std140) uniform AnimationBlock
 {
-    mat3 animationRotations[128];
-    vec3 animationTranslations[128];
+    //maxbones * instanceAmount
+    mat3 animationRotations[72 * 3];
+    vec3 animationTranslations[72 * 3];
 };
 
 layout(location = ~POSITION~) in vec3 in_position;

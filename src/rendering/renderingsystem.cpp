@@ -349,6 +349,5 @@ void RenderingSystem::render()
         mRenderer.queue(moddie.second);
     }
 
-
     mRenderer.render(*mAnimationShaders.at(0));
 }
