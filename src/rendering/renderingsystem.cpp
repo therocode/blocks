@@ -294,7 +294,7 @@ void RenderingSystem::handleMessage(const UpdateChunkVboMessage& received)
     Chunk* leftChunk = received.left;
     Chunk* rightChunk = received.right;
 
-    mChunkModels[mainChunkCoord] = mChunkModelCreator.generateChunkModel(mainChunkCoord, mainChunk, topChunk, bottomChunk, frontChunk, backChunk, leftChunk, rightChunk);
+    mChunkModels[mainChunkCoord] = {true, mChunkModelCreator.generateChunkModel(mainChunkCoord, mainChunk, topChunk, bottomChunk, frontChunk, backChunk, leftChunk, rightChunk)};
 }
 
 void RenderingSystem::handleMessage(const ChunkDeletedMessage& received)
@@ -404,7 +404,13 @@ void RenderingSystem::render()
     {
         VoxelChunkRenderable renderable;
         renderable.setTexture(*mTextureArrays.at(1));
-        renderable.setModel(voxie.second);
+        renderable.setModel(voxie.second.second);
+        renderable.setCoordinate(voxie.first);
+        if(voxie.second.first)
+        {
+            renderable.updated();
+            voxie.second.first = false;
+        }
         mRenderer.queue(renderable);
     }
 

@@ -6,6 +6,14 @@
 #include <string>
 #include <fea/assert.hpp>
 
+CachedChunk::CachedChunk() :
+    positionBuffer(GL_ARRAY_BUFFER),
+    normalBuffer(GL_ARRAY_BUFFER),
+    texCoordBuffer(GL_ARRAY_BUFFER),
+    textureIndicesBuffer(GL_ARRAY_BUFFER)
+{
+}
+
 VoxelChunkRenderer::VoxelChunkRenderer() :
     mColors(Buffer::ARRAY_BUFFER),
     mTextureIndices(Buffer::ARRAY_BUFFER),
@@ -34,10 +42,8 @@ void VoxelChunkRenderer::queue(const Renderable& renderable)
 {
     const VoxelChunkRenderable& voxelChunkRenderable = (const VoxelChunkRenderable&) renderable;
 
-    const ChunkModel* voxelChunk = voxelChunkRenderable.findModel();
-    
-    if(voxelChunk != nullptr)
-        mOrders.push_back(voxelChunk);
+    if(voxelChunkRenderable.findModel() != nullptr)
+        mOrders.push_back(voxelChunkRenderable);
 
     mCurrentTextureArray = voxelChunkRenderable.findTextureArray();
 }
@@ -56,16 +62,16 @@ void VoxelChunkRenderer::render(const Camera& camera, const glm::mat4& perspecti
     float shadedRatio = 1.0f;
     shader.setUniform("shadedRatio", UniformType::FLOAT, &shadedRatio);
     
-    for(const auto model : mOrders)
+    for(const auto order : mOrders)
     {
-        uint32_t renderAmount = model->model.findVertexArray(ModelAttribute::POSITIONS)->size() / 3;
+        uint32_t renderAmount = order.findModel()->model.findVertexArray(ModelAttribute::POSITIONS)->size() / 3;
 
         if(renderAmount > 0)
         {
-            Buffer positionBuffer(*model->model.findVertexArray(ModelAttribute::POSITIONS), Buffer::ARRAY_BUFFER);
-            Buffer normalBuffer(*model->model.findVertexArray(ModelAttribute::NORMALS), Buffer::ARRAY_BUFFER);
-            Buffer texCoordBuffer(*model->model.findVertexArray(ModelAttribute::TEXCOORDS), Buffer::ARRAY_BUFFER);
-            Buffer textureIndicesBuffer(model->textureIndices, Buffer::ARRAY_BUFFER);
+            Buffer positionBuffer(*order.findModel()->model.findVertexArray(ModelAttribute::POSITIONS), Buffer::ARRAY_BUFFER);
+            Buffer normalBuffer(*order.findModel()->model.findVertexArray(ModelAttribute::NORMALS), Buffer::ARRAY_BUFFER);
+            Buffer texCoordBuffer(*order.findModel()->model.findVertexArray(ModelAttribute::TEXCOORDS), Buffer::ARRAY_BUFFER);
+            Buffer textureIndicesBuffer(order.findModel()->textureIndices, Buffer::ARRAY_BUFFER);
 
             mVertexArray.setVertexAttribute(ShaderAttribute::POSITION, 3, positionBuffer);
             mVertexArray.setVertexAttribute(ShaderAttribute::NORMAL, 3, normalBuffer);

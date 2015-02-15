@@ -2,7 +2,8 @@
 
 VoxelChunkRenderable::VoxelChunkRenderable() : 
     mModel(nullptr),
-    mTextureArray(nullptr)
+    mTextureArray(nullptr),
+    mUpdated(false)
 {
 }
 
@@ -29,4 +30,24 @@ void VoxelChunkRenderable::setTexture(const TextureArray& textureArray)
 const TextureArray* VoxelChunkRenderable::findTextureArray() const
 {
     return mTextureArray;
+}
+
+void VoxelChunkRenderable::setCoordinate(const ChunkCoord& coordinate)
+{
+    mCoordinate = coordinate;
+}
+
+const ChunkCoord& VoxelChunkRenderable::getCoordinate(const ChunkCoord& coordinate) const
+{
+    return mCoordinate;
+}
+
+void VoxelChunkRenderable::updated()
+{
+    mUpdated = true;
+}
+
+bool VoxelChunkRenderable::isUpdated() const
+{
+    return mUpdated;
 }

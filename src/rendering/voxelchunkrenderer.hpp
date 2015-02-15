@@ -9,6 +9,15 @@
 
 class Mesh;
 
+struct CachedChunk
+{
+    CachedChunk();
+    Buffer positionBuffer;
+    Buffer normalBuffer;
+    Buffer texCoordBuffer;
+    Buffer textureIndicesBuffer;
+};
+
 class VoxelChunkRenderer : public RenderModule
 {
     public:
@@ -19,7 +28,7 @@ class VoxelChunkRenderer : public RenderModule
     private:
         VAO mVertexArray;
 
-        std::vector<const ChunkModel*> mOrders;
+        std::vector<VoxelChunkRenderable> mOrders;
 
         Buffer mColors;
         Buffer mTextureIndices;
