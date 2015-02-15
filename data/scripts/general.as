@@ -12,9 +12,9 @@ void gameStarted()
     consolePrint("<- tag test", "Giraffe");
     consolePrint("<- tag+level test " + toString(Vec3(0.0f, 1.0f, -1.0f)), "Giraffe", VERBOSE);
 
-	for(int x = 0; x < 4; x++)
+	for(int x = 0; x < 10; x++)
 	{
-		for(int y = 0; y < 4; y++)
+		for(int y = 0; y < 10; y++)
 		{
             createEntity("Elephant", 0, Vec3(5.0f * x + 0.5f, 100.0f + randomFloatRange(0.f, 80.f), 5.0f * y + 0.5f));
 		}

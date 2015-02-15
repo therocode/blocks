@@ -38,15 +38,16 @@ void main()
 {
     //mat3 animationRotation = animationRotations[0];
     //vec3 animationTranslation = animationTranslations[0];
-    mat3 animationRotation = animationRotations[blendIndices.x] * float(blendWeights.x) / 255.0 +
-                             animationRotations[blendIndices.y] * float(blendWeights.y) / 255.0 +
-                             animationRotations[blendIndices.z] * float(blendWeights.z) / 255.0 +
-                             animationRotations[blendIndices.w] * float(blendWeights.w) / 255.0;
+    uint instanceIndexOffset = uint(gl_InstanceID * 72);
+    mat3 animationRotation = animationRotations[blendIndices.x + instanceIndexOffset] * float(blendWeights.x) / 255.0 +
+                             animationRotations[blendIndices.y + instanceIndexOffset] * float(blendWeights.y) / 255.0 +
+                             animationRotations[blendIndices.z + instanceIndexOffset] * float(blendWeights.z) / 255.0 +
+                             animationRotations[blendIndices.w + instanceIndexOffset] * float(blendWeights.w) / 255.0;
 
-    vec3 animationTranslation = animationTranslations[blendIndices.x] * float(blendWeights.x) / 255.0 +
-                                animationTranslations[blendIndices.y] * float(blendWeights.y) / 255.0 +
-                                animationTranslations[blendIndices.z] * float(blendWeights.z) / 255.0 +
-                                animationTranslations[blendIndices.w] * float(blendWeights.w) / 255.0;
+    vec3 animationTranslation = animationTranslations[blendIndices.x + instanceIndexOffset] * float(blendWeights.x) / 255.0 +
+                                animationTranslations[blendIndices.y + instanceIndexOffset] * float(blendWeights.y) / 255.0 +
+                                animationTranslations[blendIndices.z + instanceIndexOffset] * float(blendWeights.z) / 255.0 +
+                                animationTranslations[blendIndices.w + instanceIndexOffset] * float(blendWeights.w) / 255.0;
 
     vec3 animatedPosition = animationRotation * in_position + animationTranslation;
     gl_Position = viewProjectionMatrix * modelMatrix * vec4(animatedPosition, 1.0);

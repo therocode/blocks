@@ -74,12 +74,13 @@ void ModelRenderer::render(const Camera& camera, const glm::mat4& perspective, c
 
         modelBufferStorage->vertexArray.bind();
 
-        uploadBatchData(modelIterator.second, camera, shader, model, *modelBufferStorage);
+        uploadBatchData(modelIterator.second, camera, shader, model, *modelBufferStorage, {mCurFrame, mCurFrame + 10.0f, mCurFrame + 20.0f, mCurFrame + 30.0f});
 
         for(const auto& mesh : modelBufferStorage->meshes)
         {
             mesh.bind();
-            glDrawElementsInstanced(GL_TRIANGLES, mesh.getElementAmount(), GL_UNSIGNED_INT, 0, modelIterator.second.size());
+            //glDrawElementsInstanced(GL_TRIANGLES, mesh.getElementAmount(), GL_UNSIGNED_INT, 0, modelIterator.second.size());
+            glDrawElementsInstanced(GL_TRIANGLES, mesh.getElementAmount(), GL_UNSIGNED_INT, 0, std::min((decltype(modelIterator.second.size()))3u, modelIterator.second.size()));
         }
 
         modelBufferStorage->vertexArray.unbind();
@@ -153,7 +154,7 @@ void ModelRenderer::cacheModel(const Model& model)
     mModelBufferCache.emplace(&model, std::move(newModelBufferStorage));
 }
 
-void ModelRenderer::uploadBatchData(const std::vector<ModelOrder>& modelOrders, const Camera& camera, const Shader& shader, const Model& model, ModelBufferStorage& modelBufferStorage)
+void ModelRenderer::uploadBatchData(const std::vector<ModelOrder>& modelOrders, const Camera& camera, const Shader& shader, const Model& model, ModelBufferStorage& modelBufferStorage, const std::vector<float>& instanceFrameData)
 {
         std::vector<float> colors;
         std::vector<uint32_t> textureIndices;

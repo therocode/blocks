@@ -58,7 +58,7 @@ class ModelRenderer : public RenderModule
         std::type_index getRenderableType() const override;
     private:
         void cacheModel(const Model& model);
-        void uploadBatchData(const std::vector<ModelOrder>& modelOrders, const Camera& camera, const Shader& shader, const Model& model, ModelBufferStorage& modelBufferStorage);
+        void uploadBatchData(const std::vector<ModelOrder>& modelOrders, const Camera& camera, const Shader& shader, const Model& model, ModelBufferStorage& modelBufferStorage, const std::vector<float>& instanceFrameData);
         VAO mVertexArray;
 
         std::unordered_map<std::pair<const Model*, const TextureArray*>, std::vector<ModelOrder>> mOrders;
