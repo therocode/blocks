@@ -101,7 +101,7 @@ std::type_index VoxelChunkRenderer::getRenderableType() const
 
 const CachedChunk& VoxelChunkRenderer::cachedOrder(const VoxelChunkRenderable& order)
 {
-    if(order.isUpdated());
+    if(order.isUpdated())
     {
         CachedChunk newCached;
         newCached.positionBuffer = Buffer(*order.findModel()->model.findVertexArray(ModelAttribute::POSITIONS), Buffer::ARRAY_BUFFER);
@@ -109,7 +109,7 @@ const CachedChunk& VoxelChunkRenderer::cachedOrder(const VoxelChunkRenderable& o
         newCached.texCoordBuffer = Buffer(*order.findModel()->model.findVertexArray(ModelAttribute::TEXCOORDS), Buffer::ARRAY_BUFFER);
         newCached.textureIndicesBuffer = Buffer(order.findModel()->textureIndices, Buffer::ARRAY_BUFFER);
 
-        mChunkCache.emplace(order.getCoordinate(), std::move(newCached));
+        mChunkCache[order.getCoordinate()] = std::move(newCached);
     }
 
     return mChunkCache.at(order.getCoordinate());
