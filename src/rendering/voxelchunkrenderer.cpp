@@ -68,15 +68,12 @@ void VoxelChunkRenderer::render(const Camera& camera, const glm::mat4& perspecti
 
         if(renderAmount > 0)
         {
-            Buffer positionBuffer(*order.findModel()->model.findVertexArray(ModelAttribute::POSITIONS), Buffer::ARRAY_BUFFER);
-            Buffer normalBuffer(*order.findModel()->model.findVertexArray(ModelAttribute::NORMALS), Buffer::ARRAY_BUFFER);
-            Buffer texCoordBuffer(*order.findModel()->model.findVertexArray(ModelAttribute::TEXCOORDS), Buffer::ARRAY_BUFFER);
-            Buffer textureIndicesBuffer(order.findModel()->textureIndices, Buffer::ARRAY_BUFFER);
+            const CachedChunk& chunkToRender = cachedOrder(order);
 
-            mVertexArray.setVertexAttribute(ShaderAttribute::POSITION, 3, positionBuffer);
-            mVertexArray.setVertexAttribute(ShaderAttribute::NORMAL, 3, normalBuffer);
-            mVertexArray.setVertexAttribute(ShaderAttribute::TEXCOORD, 2, texCoordBuffer);
-            mVertexArray.setVertexIntegerAttribute(ShaderAttribute::TEXTUREINDEX, 1, textureIndicesBuffer, GL_UNSIGNED_INT);
+            mVertexArray.setVertexAttribute(ShaderAttribute::POSITION, 3, chunkToRender.positionBuffer);
+            mVertexArray.setVertexAttribute(ShaderAttribute::NORMAL, 3, chunkToRender.normalBuffer);
+            mVertexArray.setVertexAttribute(ShaderAttribute::TEXCOORD, 2, chunkToRender.texCoordBuffer);
+            mVertexArray.setVertexIntegerAttribute(ShaderAttribute::TEXTUREINDEX, 1, chunkToRender.textureIndicesBuffer, GL_UNSIGNED_INT);
 
             mVertexArray.setInstanceAttribute(ShaderAttribute::COLOR, 3, mColors, 1);
             mVertexArray.setInstanceAttribute(ShaderAttribute::MODELMATRIX1, 4, mModelMatrix1, 1);
@@ -100,4 +97,20 @@ void VoxelChunkRenderer::render(const Camera& camera, const glm::mat4& perspecti
 std::type_index VoxelChunkRenderer::getRenderableType() const
 {
     return std::type_index(typeid(VoxelChunkRenderable));   
+}
+
+const CachedChunk& VoxelChunkRenderer::cachedOrder(const VoxelChunkRenderable& order)
+{
+    if(order.isUpdated());
+    {
+        CachedChunk newCached;
+        newCached.positionBuffer = Buffer(*order.findModel()->model.findVertexArray(ModelAttribute::POSITIONS), Buffer::ARRAY_BUFFER);
+        newCached.normalBuffer = Buffer(*order.findModel()->model.findVertexArray(ModelAttribute::NORMALS), Buffer::ARRAY_BUFFER);
+        newCached.texCoordBuffer = Buffer(*order.findModel()->model.findVertexArray(ModelAttribute::TEXCOORDS), Buffer::ARRAY_BUFFER);
+        newCached.textureIndicesBuffer = Buffer(order.findModel()->textureIndices, Buffer::ARRAY_BUFFER);
+
+        mChunkCache.emplace(order.getCoordinate(), std::move(newCached));
+    }
+
+    return mChunkCache.at(order.getCoordinate());
 }

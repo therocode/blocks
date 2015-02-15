@@ -37,7 +37,7 @@ void VoxelChunkRenderable::setCoordinate(const ChunkCoord& coordinate)
     mCoordinate = coordinate;
 }
 
-const ChunkCoord& VoxelChunkRenderable::getCoordinate(const ChunkCoord& coordinate) const
+const ChunkCoord& VoxelChunkRenderable::getCoordinate() const
 {
     return mCoordinate;
 }

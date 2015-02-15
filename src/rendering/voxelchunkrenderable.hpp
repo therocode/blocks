@@ -16,7 +16,7 @@ class VoxelChunkRenderable : public Renderable
         void setTexture(const TextureArray& texture);
         const TextureArray* findTextureArray() const;
         void setCoordinate(const ChunkCoord& coordinate);
-        const ChunkCoord& getCoordinate(const ChunkCoord& coordinate) const;
+        const ChunkCoord& getCoordinate() const;
         void updated();
         bool isUpdated() const;
     private:
