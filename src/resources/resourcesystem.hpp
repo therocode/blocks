@@ -3,7 +3,7 @@
 #include <string>
 #include "resourcecache.hpp"
 #include "resourceentry.hpp"
-#include "../utilities/idprovider.hpp"
+#include "../utilities/idmapper.hpp"
 #include "../rendering/texturearray.hpp"
 
 struct TextureDefinition
@@ -30,12 +30,12 @@ class ResourceSystem
 
         std::unordered_map<std::string, std::vector<ResourceEntry>> mResourceList;
 
-        IdProvider<std::string> mModelIDs;
-        IdProvider<std::string> mVertexShaderIDs;
-        IdProvider<std::string> mFragmentShaderIDs;
-        IdProvider<std::string> mShaderDefinitionIDs;
-        IdProvider<std::string> mTextureIDs;
-        IdProvider<std::string> mExtensionMetadataIDs;
+        IdMapper<std::string> mModelIDs;
+        IdMapper<std::string> mVertexShaderIDs;
+        IdMapper<std::string> mFragmentShaderIDs;
+        IdMapper<std::string> mShaderDefinitionIDs;
+        IdMapper<std::string> mTextureIDs;
+        IdMapper<std::string> mExtensionMetadataIDs;
 
         uint32_t mNextTextureId;
         std::unordered_map<uint32_t, std::shared_ptr<TextureArray>> mTextureArrays;

@@ -14,8 +14,10 @@ bool GfxController::keepEntity(fea::WeakEntityPtr entity) const
 
 void GfxController::entityKept(fea::WeakEntityPtr entity)
 {
-    fea::EntityPtr locked = entity.lock();
-    mBus.send(AddGfxEntityMessage{locked->getId(), locked->getAttribute<glm::vec3>("position")});
+    //fea::EntityPtr locked = entity.lock();
+    //size_t returnedId;
+    //mBus.send(AddGfxEntityMessage{locked->getAttribute<glm::vec3>("position"), returnedId});
+    //std::cout << "returned Id: " << returnedId << "\n";
 }
 
 void GfxController::handleMessage(const EntityMovedMessage& message)

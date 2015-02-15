@@ -51,17 +51,17 @@ RenderingSystem::RenderingSystem(fea::MessageBus& bus, const glm::uvec2& viewSiz
 
 void RenderingSystem::handleMessage(const AddGfxEntityMessage& received)
 {
-    if(received.id != mCameraEntity)
-    {
-        ModelRenderable newModel;
+    size_t newId = mEntityIds.next();
+    ModelRenderable newModel;
 
-        newModel.setModel(**(mModels.begin() + rand() % mModels.size()));
-        newModel.setTexture(*mTextureArrays.at(0), rand() % 2);
-        newModel.setPosition(received.position);
-        newModel.setColor({(float)(rand() % 256) / 256.0f,(float)(rand() % 256) / 256.0f, (float)(rand() % 256) / 256.0f});
+    newModel.setModel(**(mModels.begin() + rand() % mModels.size()));
+    newModel.setTexture(*mTextureArrays.at(0), rand() % 2);
+    newModel.setPosition(received.position);
+    newModel.setColor({(float)(rand() % 256) / 256.0f,(float)(rand() % 256) / 256.0f, (float)(rand() % 256) / 256.0f});
 
-        mModelRenderables.emplace(received.id, newModel);
-    }
+    mModelRenderables.emplace(newId, newModel);
+
+    received.returnedId = newId;
 }
 
 void RenderingSystem::handleMessage(const OrientateGfxEntityMessage& received)
@@ -107,12 +107,15 @@ void RenderingSystem::handleMessage(const RemoveGfxEntityMessage& received)
     if(received.id != mCameraEntity)
     {
         mModelRenderables.erase(received.id);
+        mEntityIds.free(received.id);
     }
 }
 
-void RenderingSystem::handleMessage(const ClientAttachedToEntityMessage& received)
+void RenderingSystem::handleMessage(const AttachedToGfxEntityMessage& received)
 {
-    mCameraEntity = received.entityId;
+    mCameraEntity = received.id;
+
+    mModelRenderables.erase(mCameraEntity);
 }
 
 void RenderingSystem::handleMessage(const WindowResizeMessage& received)

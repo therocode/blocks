@@ -272,6 +272,8 @@ set(header_files
     src/utilities/geomath.hpp
     src/utilities/gridnotifier.hpp
     src/utilities/glm.hpp
+    src/utilities/idmapper.hpp
+    src/utilities/idpool.hpp
     src/utilities/interpolationgrid3d.hpp
     src/utilities/interpolators.hpp
     src/utilities/lodepng.hpp
@@ -478,7 +480,7 @@ if(BUILD_TESTS)
         "test/utilities/interpolationgrid3dtest.cpp"
         "test/utilities/directorycreatortest.cpp"
         "test/utilities/scopeddirectorytest.cpp"
-        "test/utilities/idprovidertest.cpp"
+        "test/utilities/idmapperpooltest.cpp"
         "test/utilities/namedenumtest.cpp"
         "test/world/chunktest.cpp"
         "test/world/coordinatetest.cpp"

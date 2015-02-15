@@ -1,7 +1,7 @@
 #pragma once
 #include <unordered_map>
 #include "../utilities/glm.hpp"
-#include "../utilities/idprovider.hpp"
+#include "../utilities/idmapper.hpp"
 #include <fea/util.hpp>
 #include "../rendering/renderingmessages.hpp"
 #include "worldmessages.hpp"
@@ -39,8 +39,8 @@ class WorldSystem :
         BiomeProvider mBiomeProvider;
 
         //biome data
-        IdProvider<std::string> mFieldIds;
-        IdProvider<std::string> mBiomeIds;
+        IdMapper<std::string> mFieldIds;
+        IdMapper<std::string> mBiomeIds;
         std::unordered_map<BiomeId, Biome> mBiomes;
 
         //worlds

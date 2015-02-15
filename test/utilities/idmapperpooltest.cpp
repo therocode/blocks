@@ -1,12 +1,13 @@
 #include "../catch.hpp"
 #include <string>
-#include "../../src/utilities/idprovider.hpp"
+#include "../../src/utilities/idmapper.hpp"
+#include "../../src/utilities/idpool.hpp"
 
-SCENARIO("IdProviders give unique IDs for unique entries, but the same IDs for the same entries.","[utilities]")
+SCENARIO("IdMappers give unique IDs for unique entries, but the same IDs for the same entries.","[utilities]")
 {
-    GIVEN("An IdProvider")
+    GIVEN("An IdMapper")
     {
-        IdProvider<std::string> provider;
+        IdMapper<std::string> provider;
 
         WHEN("Values that are both the same and different")
         {   
@@ -31,11 +32,11 @@ SCENARIO("IdProviders give unique IDs for unique entries, but the same IDs for t
     }
 }
 
-SCENARIO("IdProviders reuse freed IDs","[utilities]")
+SCENARIO("IdMappers reuse freed IDs","[utilities]")
 {
-    GIVEN("An IdProvider with some values added")
+    GIVEN("An IdMapper with some values added")
     {
-        IdProvider<std::string> provider;
+        IdMapper<std::string> provider;
 
         uint32_t id1 = provider.getId("hej");
         uint32_t id2 = provider.getId("dej");
@@ -65,11 +66,11 @@ SCENARIO("IdProviders reuse freed IDs","[utilities]")
     }
 }
 
-SCENARIO("IdProviders can give out the value given to an ID","[utilities]")
+SCENARIO("IdMappers can give out the value given to an ID","[utilities]")
 {
-    GIVEN("An IdProvider with values added")
+    GIVEN("An IdMapper with values added")
     {
-        IdProvider<std::string> provider;
+        IdMapper<std::string> provider;
 
         uint32_t id1 = provider.getId("hej");
         uint32_t id2 = provider.getId("kalle");
@@ -87,6 +88,61 @@ SCENARIO("IdProviders can give out the value given to an ID","[utilities]")
                 CHECK(val1 == "hej");
                 CHECK(val2 == "kalle");
                 CHECK(val3 == "glass");
+            }   
+        }   
+    }
+}
+
+SCENARIO("IdPools give unique IDs for subsequent requests.","[utilities]")
+{
+    GIVEN("An IdPool")
+    {
+        IdPool<uint32_t> provider;
+
+        WHEN("Some values are gotten")
+        {   
+            std::set<int32_t> ids;
+
+            for(int32_t i = 0; i < 100; i++)
+                ids.insert(provider.next());
+
+            THEN("The values are unique")
+            {
+                CHECK(ids.size() == 100);
+            }   
+        }   
+    }
+}
+
+SCENARIO("IdPools give out returned IDs but still only unique entries.","[utilities]")
+{
+    GIVEN("An IdPool")
+    {
+        IdPool<uint32_t> provider;
+
+        WHEN("Some values are gotten and returned and gotten again")
+        {   
+            std::set<int32_t> ids;
+
+            for(int32_t i = 0; i < 100; i++)
+                ids.insert(provider.next());
+
+            std::set<int32_t> returned = {1, 34, 23, 10, 55};
+            for(int32_t id : returned)
+            {
+                provider.free(id);
+                ids.erase(id);
+            }
+
+            for(int32_t id: returned)
+            {
+                ids.insert(provider.next());
+            }
+
+
+            THEN("The values are unique, and the returned values are present")
+            {
+                CHECK(ids.size() == 100);
             }   
         }   
     }

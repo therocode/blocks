@@ -164,28 +164,37 @@ void ClientNetworkingSystem::handleMessage(const ClientPitchYawMessage& received
 
 void ClientNetworkingSystem::handleMessage(const EntityEnteredRangeMessage& received)
 {
-    mBus.send(AddGfxEntityMessage{received.id, received.position});
+    size_t returnedId;
+
+    mBus.send(AddGfxEntityMessage{received.position, returnedId});
+    mGraphicEntityIds.emplace(received.id, returnedId);
+
+    if(received.id == mPlayerEntity)
+    {
+        mBus.send(AttachedToGfxEntityMessage{mGraphicEntityIds.at(mPlayerEntity)});
+    }
 }
 
 void ClientNetworkingSystem::handleMessage(const EntityPositionUpdatedMessage& received)
 {
     mBus.send(ClientEntityMovedMessage{received.id, received.position});
-    mBus.send(MoveGfxEntityMessage{received.id, received.position});
+    mBus.send(MoveGfxEntityMessage{mGraphicEntityIds.at(received.id), received.position});
 }
 
 void ClientNetworkingSystem::handleMessage(const EntityOrientationUpdatedMessage& received)
 {
-    mBus.send(OrientateGfxEntityMessage{received.id, received.orientation});
+    mBus.send(OrientateGfxEntityMessage{mGraphicEntityIds.at(received.id), received.orientation});
 }
 
 void ClientNetworkingSystem::handleMessage(const EntityLeftRangeMessage& received)
 {
-    mBus.send(RemoveGfxEntityMessage{received.id});
+    mBus.send(RemoveGfxEntityMessage{mGraphicEntityIds.at(received.id)});
 }
 
 void ClientNetworkingSystem::handleMessage(const ClientAttachedToEntityMessage& received)
 {
     mBus.send(LocalPlayerAttachedToEntityMessage{received.entityId, mWorldIds.getId(received.worldId), received.position, received.highlightRange});
+    mPlayerEntity = received.entityId;
 }
 
 void ClientNetworkingSystem::handleMessage(const VoxelUpdatedMessage& received)

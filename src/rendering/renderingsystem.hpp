@@ -7,6 +7,7 @@
 #include "../networking/networkingprotocol.hpp"
 #include "../input/inputmessages.hpp"
 #include "../world/worldmessages.hpp"
+#include "../utilities/idpool.hpp"
 //test
 #include "debugrenderable.hpp"
 #include "mesh.hpp"
@@ -20,7 +21,7 @@ class RenderingSystem :
                                 OrientateGfxEntityMessage,
                                 MoveGfxEntityMessage,
                                 RemoveGfxEntityMessage,
-                                ClientAttachedToEntityMessage,
+                                AttachedToGfxEntityMessage,
                                 WindowResizeMessage,
                                 RenderModeMessage,
                                 ResourceDeliverMessage<RawModel>,
@@ -38,7 +39,7 @@ class RenderingSystem :
         void handleMessage(const OrientateGfxEntityMessage& received) override;
         void handleMessage(const MoveGfxEntityMessage& received) override;
         void handleMessage(const RemoveGfxEntityMessage& received) override;
-        void handleMessage(const ClientAttachedToEntityMessage& received) override;
+        void handleMessage(const AttachedToGfxEntityMessage& received) override;
         void handleMessage(const WindowResizeMessage& received) override;
         void handleMessage(const RenderModeMessage& received) override;
         void handleMessage(const ResourceDeliverMessage<RawModel>& received) override;
@@ -55,6 +56,7 @@ class RenderingSystem :
         Renderer mRenderer;
         uint32_t mCameraEntity;
 
+        IdPool<size_t> mEntityIds;
         //test
         std::vector<DebugRenderable> mDebuggers;
         std::vector<std::unique_ptr<Model>> mModels;

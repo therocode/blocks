@@ -7,7 +7,7 @@
 #include "../rendering/renderingmessages.hpp"
 #include "../script/scriptmessages.hpp"
 #include "../input/inputmessages.hpp"
-#include "../utilities/idprovider.hpp"
+#include "../utilities/idmapper.hpp"
 #include "../world/worldmessages.hpp"
 #include "enet.hpp"
 #include "enetclient.hpp"
@@ -70,7 +70,9 @@ class ClientNetworkingSystem : public
         std::unique_ptr<ENet> mENet;
         std::unique_ptr<ENetClient> mENetClient;
         bool mIsConnected;
-        IdProvider<std::string, WorldId> mWorldIds;
+        IdMapper<std::string, WorldId> mWorldIds;
+        size_t mPlayerEntity; //hack to remove when server/client traffic is cleaned up
+        std::unordered_map<size_t, size_t> mGraphicEntityIds;
         std::unordered_map<WorldId, std::vector<ChunkCoord>> mChunksToRequest;
 };
 
