@@ -3,7 +3,6 @@
 #include "../entity/controllers/playercontroller.hpp"
 #include "../entity/controllers/physicscontroller.hpp"
 #include "../entity/controllers/collisioncontroller.hpp"
-#include "../entity/controllers/gfxcontroller.hpp"
 #include "../entity/controllers/movementcontroller.hpp"
 #include "../entity/controllers/highlightcontroller.hpp"
 #include "../entity/controllers/worldcontroller.hpp"
@@ -24,7 +23,6 @@ Server::Server(fea::MessageBus& bus, const NetworkParameters& parameters) :
 	mEntitySystem.addController(std::unique_ptr<EntityController>(new PhysicsController(mBus)));
 	mEntitySystem.addController(std::unique_ptr<EntityController>(new CollisionController(mBus, mGameInterface)));
 	mEntitySystem.addController(std::unique_ptr<EntityController>(new MovementController(mBus)));
-	mEntitySystem.addController(std::unique_ptr<EntityController>(new GfxController(mBus)));
 	mEntitySystem.addController(std::unique_ptr<EntityController>(new HighlightController(mBus)));
 	mEntitySystem.addController(std::unique_ptr<EntityController>(new WorldController(mBus)));
 	mEntitySystem.addController(std::unique_ptr<EntityController>(new PlayerController(mBus, mGameInterface)));
