@@ -69,7 +69,7 @@ class RenderingSystem :
         std::vector<std::shared_ptr<TextureArray>> mTextureArrays;
 
         ChunkModelCreator mChunkModelCreator;
-        std::unordered_map<ChunkCoord, ChunkModel> mChunkModels;
+        std::unordered_map<ChunkCoord, std::pair<bool, ChunkModel>> mChunkModels;
 
         bool mIsFacing;
         glm::ivec3 mFacingBlock;

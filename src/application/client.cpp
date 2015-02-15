@@ -102,33 +102,6 @@ void Client::handleMessage(const LocalPlayerAttachedToEntityMessage& received)
     mBus.send(HighlightEntityAddRequestedMessage{received.worldId, 0, WorldToChunk::convert(received.position), mHighlightRadius});
 }
 
-//void Client::handleMessage(const ClientEnteredWorldMessage& received)
-//{
-//    mCurrentWorld = received.world;
-//
-//    auto dehighlighted = mHighlightedChunks.removeHighlightEntity(0);
-//
-//    auto highlighted = mHighlightedChunks.addHighlightEntity(0, mLastChunk, mHighlightRadius);
-//
-//    if(highlighted.size() > 0)
-//        mBus.send(ClientRequestedChunksMessage{mCurrentWorld, highlighted});
-//
-//    for(const auto& chunk : dehighlighted)
-//        mBus.send(ClientChunkDeletedMessage{chunk});
-//}
-//
-//void Client::handleMessage(const ClientPositionMessage& received)
-//{
-//    const auto& highlighted = mHighlightedChunks.moveHighlightEntity(0, WorldToChunk::convert(received.position));
-//    mLastChunk = WorldToChunk::convert(received.position);
-//
-//    if(highlighted.first.size() > 0)
-//        mBus.send(ClientRequestedChunksMessage{mCurrentWorld, highlighted.first});
-//
-//    for(const auto& chunk : highlighted.second)
-//        mBus.send(ClientChunkDeletedMessage{chunk});
-//}
-
 void Client::handleMessage(const ClientEntityMovedMessage& received)
 {
     if(received.id == mCurrentEntity)
@@ -144,14 +117,7 @@ bool Client::requestedQuit()
 	return mQuit;
 }
 
-void Client::handleMessage(const MoveGfxEntityMessage& received)
+void Client::handleMessage(const OrientateLocalEntityMessage& received)
 {
-}
-
-void Client::handleMessage(const OrientateGfxEntityMessage& received)
-{
-    if(received.id == mCurrentEntity)
-    {
-        mOrientation = received.orientation;
-    }
+    mOrientation = received.orientation;
 }
