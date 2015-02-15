@@ -356,20 +356,6 @@ endif(USE_CTAGS)
 
 include_directories(include)
 
-#This has to be done before add_executable. I'm adding source files.
-
-if(WIN32)
-    message("Added windows resource.")
-    set(source_files ${source_files} ${CMAKE_CURRENT_SOURCE_DIR}/windowsresource.rc)
-    if(MINGW)
-        message("Enabled rc compiler")
-        set(CMAKE_RC_COMPILER_INIT windres)
-        ENABLE_LANGUAGE(RC)
-        SET(CMAKE_RC_COMPILE_OBJECT
-            "<CMAKE_RC_COMPILER> -i <SOURCE> -o <OBJECT>")
-    endif(MINGW)
-endif(WIN32)
-
 if(NOT SDL2_FOUND)
 	link_directories(${CMAKE_CURRENT_SOURCE_DIR}/extlibs/SDL-2.0/lib)
 endif(NOT SDL2_FOUND)
