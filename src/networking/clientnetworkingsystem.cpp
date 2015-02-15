@@ -184,6 +184,9 @@ void ClientNetworkingSystem::handleMessage(const EntityPositionUpdatedMessage& r
 void ClientNetworkingSystem::handleMessage(const EntityOrientationUpdatedMessage& received)
 {
     mBus.send(OrientateGfxEntityMessage{mGraphicEntityIds.at(received.id), received.orientation});
+
+    if(received.id == mPlayerEntity)
+        mBus.send(OrientateLocalEntityMessage{received.orientation});
 }
 
 void ClientNetworkingSystem::handleMessage(const EntityLeftRangeMessage& received)

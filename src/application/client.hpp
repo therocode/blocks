@@ -21,8 +21,7 @@ class Client :
                                 //ClientEnteredWorldMessage,
                                 //ClientPositionMessage,
                                 ClientEntityMovedMessage,
-                                MoveGfxEntityMessage,
-                                OrientateGfxEntityMessage>
+                                OrientateLocalEntityMessage>
 {
     public:
         Client(fea::MessageBus& bus, const NetworkParameters& parameters);
@@ -36,8 +35,7 @@ class Client :
         //void handleMessage(const ClientEnteredWorldMessage& received) override;
         //void handleMessage(const ClientPositionMessage& received) override;
         void handleMessage(const ClientEntityMovedMessage& received) override;
-        void handleMessage(const MoveGfxEntityMessage& received) override;
-        void handleMessage(const OrientateGfxEntityMessage& received) override;
+        void handleMessage(const OrientateLocalEntityMessage& received) override;
         bool requestedQuit();
     private:
         int64_t mFrame = 0;

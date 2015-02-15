@@ -19,3 +19,8 @@ struct ClientEntityMovedMessage
     fea::EntityId id;
     const glm::vec3& position;
 };
+
+struct OrientateLocalEntityMessage
+{
+    const glm::quat& orientation;
+};

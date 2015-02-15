@@ -144,13 +144,9 @@ bool Client::requestedQuit()
 	return mQuit;
 }
 
-void Client::handleMessage(const MoveGfxEntityMessage& received)
+void Client::handleMessage(const OrientateLocalEntityMessage& received)
 {
-}
-
-void Client::handleMessage(const OrientateGfxEntityMessage& received)
-{
-    if(received.id == mCurrentEntity)
+    if(mCurrentEntity == mCurrentEntity)
     {
         mOrientation = received.orientation;
     }
