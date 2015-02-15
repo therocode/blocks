@@ -52,7 +52,7 @@ WorldSystem::WorldSystem(fea::MessageBus& messageBus)
     //load worlds
     WorldLoader mWorldLoader;
 
-    mWorldLoader.loadWorldFile("data/worlds/default.json");
+    mWorldLoader.loadWorldFile("data/worlds/default.wld");
 
     if(!mWorldLoader.hasError())
     {

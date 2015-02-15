@@ -26,10 +26,10 @@ EntityFactory::EntityFactory(fea::EntityManager& manager) : mFactory(manager)
                 return glm::quat(std::stof(params[0]),std::stof(params[1]),std::stof(params[2]),std::stof(params[3]));
             });
 
-    for(const auto& entityAttribute : loader.loadEntityAttributes("data/entities/attributes.json"))
+    for(const auto& entityAttribute : loader.loadEntityAttributes("data/entities/attributes.att"))
         mFactory.registerAttribute(entityAttribute.first, entityAttribute.second);
 
-    for(const auto& entityTemplate : loader.loadEntityTemplates("data/entities/entities.json"))
+    for(const auto& entityTemplate : loader.loadEntityTemplates("data/entities/entities.ent"))
         mFactory.addTemplate(entityTemplate.first, entityTemplate.second);
 }
 
