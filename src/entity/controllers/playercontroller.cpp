@@ -33,7 +33,6 @@ void PlayerController::handleMessage(const PlayerJoinedGameMessage& received)
     mEntityIdToPlayerId.emplace(playerEntity->getId(), playerId);
     mBus.send(PlayerEntersChunkMessage{playerId, WorldToChunk::convert(position)});
 
-    std::cout << "created entity of id " << playerEntity->getId() << "\n";
     ChunkCoord chunkAt = WorldToChunk::convert(position);
 
     mBus.send(PlayerAttachedToEntityMessage{(fea::EntityId)playerId, playerEntity->getId(), playerEntity});

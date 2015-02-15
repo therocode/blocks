@@ -92,14 +92,11 @@ using ChunkCoord = glm::i64vec3;
 
 namespace glm
 {
-    namespace detail
-    {
-        template<class Archive>
-            void serialize(Archive& archive, ChunkCoord& vec)
-            {
-                archive(vec.x, vec.y, vec.z);
-            }
-    }
+    template<class Archive>
+        void serialize(Archive& archive, ChunkCoord& vec)
+        {
+            archive(vec.x, vec.y, vec.z);
+        }
 }
 
 struct ClientRequestedChunksMessage

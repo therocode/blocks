@@ -8,7 +8,6 @@ ScriptEntityCore::ScriptEntityCore(fea::MessageBus& bus, fea::EntityPtr entity, 
     mRefCount(0),
     mId(id)
 {
-    std::cout << "created script entity with id " << mId << "\n";
 }
 
 void ScriptEntityCore::addRef()
@@ -32,10 +31,7 @@ void ScriptEntityCore::setPosition(const glm::vec3& vec)
 
 glm::vec3 ScriptEntityCore::getPosition()
 {
-    std::cout << "will try to copy \n";
     ScriptEntityCore copy = *this;
-    std::cout << "copy's ID: " << copy.mId << "\n";
-    std::cout << mId << " was the ID\n";
     return mEntity->getAttribute<glm::vec3>("position");
 }
 
@@ -46,7 +42,6 @@ bool ScriptEntityCore::isOnGround()
 
 void ScriptEntityCore::setId(size_t id)
 {
-    std::cout << "setting entity id " << mId << " to " << id << "\n";
     mId = id;
 }
 

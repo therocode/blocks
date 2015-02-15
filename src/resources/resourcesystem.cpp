@@ -138,7 +138,6 @@ void ResourceSystem::loadShaderDefinitions(const std::vector<ResourceEntry>& sha
             if(shaderDefinition)
             {
                 uint32_t id = mShaderDefinitionIDs.getId(shaderDefinitionFile.name);
-                std::cout << "shaders: " << shaderDefinition->vertexModules.size() << " " << shaderDefinition->fragmentModules.size() << "\n";
                 mBus.send(ResourceDeliverMessage<ShaderDefinition>{id, shaderDefinition});
             }
         }

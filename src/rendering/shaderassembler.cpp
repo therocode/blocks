@@ -18,7 +18,6 @@ std::string ShaderAssembler::assemble(const std::string& source, const std::vect
         while((variablePos = result.find("~~")) != std::string::npos)
         {
             ShaderVariable shaderVariable;
-            std::cout << variablePos << " " << result.find("~~", variablePos + 2) << "\n";
             std::string variableLine = result.substr(variablePos, result.find("~~", variablePos + 2) - variablePos + 2);
 
             if((std::count(variableLine.begin(), variableLine.end(), '|') < 2) || (variableLine.find("||") != std::string::npos))
@@ -112,7 +111,6 @@ std::vector<ShaderAssembler::ShaderModule> ShaderAssembler::parseModules(const s
         size_t variablePos;
         while((variablePos = source.find("~~")) != std::string::npos)
         {
-            std::cout << variablePos << " " << source.find("~~", variablePos + 2) << "\n";
             std::string variableLine = source.substr(variablePos, source.find("~~", variablePos + 2) - variablePos + 2);
 
             source.erase(variablePos, source.find("~~", variablePos + 2) - variablePos + 2);
