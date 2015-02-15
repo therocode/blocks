@@ -422,9 +422,6 @@ ChunkModel ChunkModelCreator::generateChunkModel(const ChunkCoord& mainChunkCoor
         allQuadTexCoords.insert(allQuadTexCoords.end(), quadTexCoords.begin(), quadTexCoords.end());
     }
     
-    //printf("Generated %u vertices and %u indices\n", verts, indices);
-    //After stuff has been added, you have to update the gpu vbo data.
-
     newModel.model.addVertexArray(ModelAttribute::POSITIONS, allQuadPositions);
     newModel.model.addVertexArray(ModelAttribute::NORMALS, allQuadNormals);
     newModel.model.addVertexArray(ModelAttribute::TEXCOORDS, allQuadTexCoords);

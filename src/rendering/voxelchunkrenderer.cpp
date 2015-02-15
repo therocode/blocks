@@ -62,10 +62,15 @@ void VoxelChunkRenderer::render(const Camera& camera, const glm::mat4& perspecti
 
         if(renderAmount > 0)
         {
-            mVertexArray.setVertexAttribute(ShaderAttribute::POSITION, 3, Buffer(*model->model.findVertexArray(ModelAttribute::POSITIONS), Buffer::ARRAY_BUFFER));
-            mVertexArray.setVertexAttribute(ShaderAttribute::NORMAL, 3, Buffer(*model->model.findVertexArray(ModelAttribute::NORMALS), Buffer::ARRAY_BUFFER));
-            mVertexArray.setVertexAttribute(ShaderAttribute::TEXCOORD, 2, Buffer(*model->model.findVertexArray(ModelAttribute::TEXCOORDS), Buffer::ARRAY_BUFFER));
-            mVertexArray.setVertexIntegerAttribute(ShaderAttribute::TEXTUREINDEX, 1, Buffer(model->textureIndices, Buffer::ARRAY_BUFFER), GL_UNSIGNED_INT);
+            Buffer positionBuffer(*model->model.findVertexArray(ModelAttribute::POSITIONS), Buffer::ARRAY_BUFFER);
+            Buffer normalBuffer(*model->model.findVertexArray(ModelAttribute::NORMALS), Buffer::ARRAY_BUFFER);
+            Buffer texCoordBuffer(*model->model.findVertexArray(ModelAttribute::TEXCOORDS), Buffer::ARRAY_BUFFER);
+            Buffer textureIndicesBuffer(model->textureIndices, Buffer::ARRAY_BUFFER);
+
+            mVertexArray.setVertexAttribute(ShaderAttribute::POSITION, 3, positionBuffer);
+            mVertexArray.setVertexAttribute(ShaderAttribute::NORMAL, 3, normalBuffer);
+            mVertexArray.setVertexAttribute(ShaderAttribute::TEXCOORD, 2, texCoordBuffer);
+            mVertexArray.setVertexIntegerAttribute(ShaderAttribute::TEXTUREINDEX, 1, textureIndicesBuffer, GL_UNSIGNED_INT);
 
             mVertexArray.setInstanceAttribute(ShaderAttribute::COLOR, 3, mColors, 1);
             mVertexArray.setInstanceAttribute(ShaderAttribute::MODELMATRIX1, 4, mModelMatrix1, 1);
@@ -77,11 +82,6 @@ void VoxelChunkRenderer::render(const Camera& camera, const glm::mat4& perspecti
             mVertexArray.setInstanceAttribute(ShaderAttribute::NORMALMATRIX3, 4, mNormalMatrix3, 1);
             mVertexArray.setInstanceAttribute(ShaderAttribute::NORMALMATRIX4, 4, mNormalMatrix4, 1);
 
-            std::cout << renderAmount << " was amount \n";
-            std::cout << model->model.findVertexArray(ModelAttribute::POSITIONS)->size() << " was amount \n";
-            std::cout << model->model.findVertexArray(ModelAttribute::NORMALS)->size() << " was amount \n";
-            std::cout << model->model.findVertexArray(ModelAttribute::TEXCOORDS)->size() << " was amount \n";
-            std::cout << model->textureIndices.size() << " was amount \n";
             glDrawArraysInstanced(GL_TRIANGLES, 0, renderAmount, 1);
         }
     }
