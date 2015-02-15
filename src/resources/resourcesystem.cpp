@@ -13,6 +13,7 @@
 #include "extensionmetadatafromfileloader.hpp"
 #include "imagefromfileloader.hpp"
 #include "../utilities/glmhash.hpp"
+#include "worldfromfileloader.hpp"
 #include "resourceexception.hpp"
 
 ResourceSystem::ResourceSystem(fea::MessageBus& bus, const std::string assetsPath, const std::vector<std::string> fileTypes) :
@@ -55,6 +56,8 @@ ResourceSystem::ResourceSystem(fea::MessageBus& bus, const std::string assetsPat
             loadShaderDefinitions(mResourceList["shad"]);
         if(std::find(fileTypes.begin(), fileTypes.end(), "png") != fileTypes.end())
             loadImages(mResourceList["png"]);
+		if(std::find(fileTypes.begin(), fileTypes.end(), "wld") != fileTypes.end())
+            loadWorlds(mResourceList["wld"]);
     }
 }
 
@@ -217,6 +220,29 @@ void ResourceSystem::loadExtensionMetadata(const std::vector<ResourceEntry>& ext
         catch(ResourceException& exception)
         {
             mBus.send(LogMessage{metadataFile.name + ": " + exception.what(), gResourceName, LogLevel::ERR});
+        }
+    }
+}
+
+void ResourceSystem::loadWorlds(const std::vector<ResourceEntry>& worlds)
+{
+    mBus.send(LogMessage{"Loading world files. " + std::to_string(worlds.size()) + " files to load.", gResourceName, LogLevel::INFO});
+    for(const auto& worldFile : worlds)
+    {
+        try
+        {
+            mBus.send(LogMessage{"Loading " + worldFile.name + ".", gResourceName, LogLevel::VERB});
+            std::shared_ptr<std::vector<WorldParameters>> world = mCache.access<WorldFromFileLoader>(worldFile.path);
+
+            if(world)
+            {
+                uint32_t id = mExtensionMetadataIDs.getId(worldFile.name);
+                mBus.send(ResourceDeliverMessage<std::vector<WorldParameters>>{id, world});
+            }
+        }
+        catch(ResourceException& exception)
+        {
+            mBus.send(LogMessage{worldFile.name + ": " + exception.what(), gResourceName, LogLevel::ERR});
         }
     }
 }

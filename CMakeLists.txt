@@ -102,6 +102,7 @@ set(source_files
 
     src/resources/extensionmetadata.cpp
     src/resources/extensionmetadatafromfileloader.cpp
+    src/resources/worldfromfileloader.cpp
     src/resources/image.cpp
     src/resources/iqmfromfileloader.cpp
     src/resources/resourceexception.cpp
@@ -248,6 +249,7 @@ set(header_files
 
     src/resources/extensionmetadata.hpp
     src/resources/extensionmetadatafromfileloader.hpp
+    src/resources/worldfromfileloader.hpp
     src/resources/image.hpp
     src/resources/iqm.h
     src/resources/iqmfromfileloader.hpp

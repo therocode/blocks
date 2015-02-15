@@ -26,6 +26,8 @@ std::string resourcePathToName(const std::string& rootPath, const std::string& p
         category = "textures";
     else if(fileType == "meta")
         category = "metadata";
+	else if(fileType == "wld")
+        category = "world";
 
     result = extensionName + "." + category + "." + fileName;
 

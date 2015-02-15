@@ -8,6 +8,7 @@
 #include "chunkprovider.hpp"
 #include "biomeprovider.hpp"
 #include "worldentry.hpp"
+#include "../resources/resourcemessages.hpp"
 
 class WorldSystem : 
         public fea::MessageReceiver<SetVoxelMessage,
@@ -16,7 +17,8 @@ class WorldSystem :
                                     HighlightEntityAddRequestedMessage,
                                     HighlightEntityMoveRequestedMessage,
                                     HighlightEntityRemoveRequestedMessage,
-                                    ChunksRequestedMessage>
+                                    ChunksRequestedMessage,
+									ResourceDeliverMessage<std::vector<WorldParameters>>>
 {
     public:
         WorldSystem(fea::MessageBus& messageBus);
@@ -28,12 +30,13 @@ class WorldSystem :
         void handleMessage(const HighlightEntityMoveRequestedMessage& received) override;
         void handleMessage(const HighlightEntityRemoveRequestedMessage& received) override;
         void handleMessage(const ChunksRequestedMessage& received) override;
+        void handleMessage(const ResourceDeliverMessage<std::vector<WorldParameters>>& received) override;
         const ChunkMap& getWorldVoxels(WorldId id) const;
         bool hasWorld(const std::string& identifier) const;
         WorldId worldIdentifierToId(const std::string& identifier) const;
         const std::string& worldIdToIdentifier(WorldId id) const;
     private:
-        void createWorld(const WorldParameters& parameters, const std::string& worldPath);
+        void createWorld(const WorldParameters& parameters);
         fea::MessageBus& mBus;
         ChunkProvider mChunkProvider;
         BiomeProvider mBiomeProvider;
@@ -44,6 +47,7 @@ class WorldSystem :
         std::unordered_map<BiomeId, Biome> mBiomes;
 
         //worlds
+		std::string mWorldPath;
         WorldId mNextId;
         std::unordered_map<std::string, WorldId> mIdentifierToIdMap;
         std::unordered_map<WorldId, WorldEntry> mWorlds;

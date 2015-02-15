@@ -5,6 +5,7 @@
 #include "resourceentry.hpp"
 #include "../utilities/idmapper.hpp"
 #include "../rendering/texturearray.hpp"
+#include "../world/worldparameters.hpp"
 
 struct TextureDefinition
 {
@@ -22,6 +23,7 @@ class ResourceSystem
         void loadFragmentShaders(const std::vector<ResourceEntry>& fragmentShaders);
         void loadShaderDefinitions(const std::vector<ResourceEntry>& shaderDefinitions);
         void loadExtensionMetadata(const std::vector<ResourceEntry>& extensionMetadata);
+        void loadWorlds(const std::vector<ResourceEntry>& worlds);
         void loadImages(const std::vector<ResourceEntry>& images);
 
         fea::MessageBus& mBus;

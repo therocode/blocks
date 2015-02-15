@@ -11,7 +11,8 @@ WorldSystem::WorldSystem(fea::MessageBus& messageBus)
 :   mBus(messageBus),
     mChunkProvider(mBus),
     mBiomeProvider(mBus),
-    mNextId(0)
+    mNextId(0),
+	mWorldPath("worlds")
 {
     mBus.send(LogMessage{"Setting up world system", gWorldName, LogLevel::INFO});
     subscribe(mBus, *this);
@@ -38,34 +39,16 @@ WorldSystem::WorldSystem(fea::MessageBus& messageBus)
 
     mBus.send(BiomesLoadedMessage{mBiomes});
 
+
     //make sure world data directory exists. In the future, the name of it should be a setting
-    std::string worldPath = "worlds";
-    if(!DirectoryCreator::directoryExists(worldPath))
+    if(!DirectoryCreator::directoryExists(mWorldPath))
     {
-        mBus.send(LogMessage{"Creating directory '" + worldPath + "' to store worlds in", gWorldName, LogLevel::INFO});
-        bool success = DirectoryCreator::createDirectory(worldPath);
+        mBus.send(LogMessage{"Creating directory '" + mWorldPath + "' to store worlds in", gWorldName, LogLevel::INFO});
+        bool success = DirectoryCreator::createDirectory(mWorldPath);
 
         if(!success)
-            mBus.send(LogMessage{"Failed creating world data directory '" + worldPath + "'!", gWorldName, LogLevel::ERR});
+            mBus.send(LogMessage{"Failed creating world data directory '" + mWorldPath + "'!", gWorldName, LogLevel::ERR});
     }
-
-    //load worlds
-    WorldLoader mWorldLoader;
-
-    mWorldLoader.loadWorldFile("data/worlds/default.wld");
-
-    if(!mWorldLoader.hasError())
-    {
-        for(const auto& worldParameters : mWorldLoader.getLoadedWorlds())
-        {
-            createWorld(worldParameters, worldPath);
-        }
-    }
-    else
-    {
-        mBus.send(LogMessage{"World loading error: " + mWorldLoader.getErrorString(), gWorldName, LogLevel::ERR});
-    }
-    
 }
 
 WorldSystem::~WorldSystem()
@@ -132,6 +115,14 @@ void WorldSystem::handleMessage(const ChunksRequestedMessage& received)
     }
 }
 
+void WorldSystem::handleMessage(const ResourceDeliverMessage<std::vector<WorldParameters>>& received)
+{
+	for(const auto& worldParameters : *received.resource)
+	{
+		createWorld(worldParameters);
+	}
+}
+
 const ChunkMap& WorldSystem::getWorldVoxels(WorldId id) const
 {
     FEA_ASSERT(mWorlds.count(id) != 0, "Trying to get world id " + std::to_string(id) + " but that world does not exist!");
@@ -155,7 +146,7 @@ const std::string& WorldSystem::worldIdToIdentifier(WorldId id) const
     return mWorlds.at(id).getIdentifier();
 }
 
-void WorldSystem::createWorld(const WorldParameters& parameters, const std::string& worldPath)
+void WorldSystem::createWorld(const WorldParameters& parameters)
 {
     mBus.send(LogMessage{"Loading world " + parameters.identifier, gWorldName, LogLevel::INFO});
     WorldId newId = mNextId++;
@@ -171,7 +162,7 @@ void WorldSystem::createWorld(const WorldParameters& parameters, const std::stri
     worldData.biomeSettings.biomes.push_back(mBiomeIds.getId("desert"));
 
     //make sure world directory exists.
-    std::string path = worldPath + "/" + parameters.identifier;
+    std::string path = mWorldPath + "/" + parameters.identifier;
     if(!DirectoryCreator::directoryExists(path))
     {
         mBus.send(LogMessage{"Creating directory '" + path + "' for world " + parameters.identifier, gWorldName, LogLevel::INFO});

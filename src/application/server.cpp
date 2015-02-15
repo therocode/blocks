@@ -31,7 +31,7 @@ Server::Server(fea::MessageBus& bus, const NetworkParameters& parameters) :
 
     mFPSController.setMaxFPS(60);
 
-    mResourceSystem = std::unique_ptr<ResourceSystem>(new ResourceSystem(bus, "assets", {"meta"})); 
+    mResourceSystem = std::unique_ptr<ResourceSystem>(new ResourceSystem(bus, "assets", {"meta", "wld"})); 
 
     mBus.send(GameStartMessage{});
 }
