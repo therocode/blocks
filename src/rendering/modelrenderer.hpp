@@ -19,6 +19,7 @@ struct ModelOrder
     glm::vec3 color;
     glm::vec3 position;
 	glm::quat orientation;
+    float frameOffset;
 };
 
 struct ModelBufferStorage
@@ -52,19 +53,16 @@ struct ModelInstance
 class ModelRenderer : public RenderModule
 {
     public:
-        ModelRenderer();
         void queue(const Renderable& renderable) override;
         void render(const Camera& camera, const glm::mat4& perspective, const Shader& shader) override;
         std::type_index getRenderableType() const override;
     private:
         void cacheModel(const Model& model);
-        void uploadBatchData(const std::vector<ModelOrder>& modelOrders, const Camera& camera, const Shader& shader, const Model& model, ModelBufferStorage& modelBufferStorage, const std::vector<float>& instanceFrameData);
+        void uploadBatchData(std::vector<ModelOrder>::const_iterator startOrder, int32_t orderAmount, const Camera& camera, const Shader& shader, const Model& model, ModelBufferStorage& modelBufferStorage);
         VAO mVertexArray;
 
         std::unordered_map<std::pair<const Model*, const TextureArray*>, std::vector<ModelOrder>> mOrders;
 
         //model cache
         std::unordered_map<const Model*, std::unique_ptr<ModelBufferStorage>> mModelBufferCache;
-
-        float mCurFrame;
 };

@@ -16,6 +16,8 @@ class ModelRenderable : public Renderable
         const glm::vec3& getColor() const;
 		void setOrientation(glm::quat orientation);
 		const glm::quat getOrientation() const;
+        void setFrameOffset(float offset);
+        float getFrameOffset() const;
         void setModel(const Model& model);
         const Model* findModel() const;
         void setTexture(const TextureArray& texture, uint32_t index);
@@ -25,6 +27,7 @@ class ModelRenderable : public Renderable
         glm::vec3 mPosition;
         glm::vec3 mColor;
 		glm::quat mOrientation;
+        float mFrameOffset;
         const Model* mModel;
         const TextureArray* mTextureArray;
         uint32_t mTextureIndex;

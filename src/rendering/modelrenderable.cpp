@@ -2,7 +2,8 @@
 
 ModelRenderable::ModelRenderable() : 
     mColor(1.0f, 1.0f, 1.0f),
-    mModel(nullptr)
+    mModel(nullptr),
+    mFrameOffset(0.0f)
 {
 }
 
@@ -39,6 +40,16 @@ void ModelRenderable::setOrientation(glm::quat orientation)
 const glm::quat ModelRenderable::getOrientation() const
 {
 	return mOrientation;
+}
+
+void ModelRenderable::setFrameOffset(float offset)
+{
+    mFrameOffset = offset;
+}
+
+float ModelRenderable::getFrameOffset() const
+{
+    return mFrameOffset;
 }
 
 void ModelRenderable::setModel(const Model& model)

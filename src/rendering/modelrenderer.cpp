@@ -22,11 +22,6 @@ ModelBufferStorage::ModelBufferStorage() :
 {
 }
 
-ModelRenderer::ModelRenderer() : 
-    mCurFrame(0.0f)
-{
-}
-
 const int32_t maxUniformBlockSize = 16384;
 const int32_t maxBoneAmount = 72;
 const int32_t boneMemorySize = 4 * 16;
@@ -43,6 +38,7 @@ void ModelRenderer::queue(const Renderable& renderable)
     order.color = modelRenderable.getColor();
     order.position = modelRenderable.getPosition();
     order.orientation = modelRenderable.getOrientation();
+    order.frameOffset = modelRenderable.getFrameOffset();
     
     FEA_ASSERT(order.model != nullptr, "Trying to render a model renderable which doesn't have a model");
     FEA_ASSERT(order.model->findMesh(0) != nullptr, "Trying to render a model renderable which has a model without a primary model");
@@ -75,21 +71,24 @@ void ModelRenderer::render(const Camera& camera, const glm::mat4& perspective, c
 
         modelBufferStorage->vertexArray.bind();
 
-        uploadBatchData(modelIterator.second, camera, shader, model, *modelBufferStorage, {mCurFrame, mCurFrame + 30.0f, mCurFrame + 60.0f});
-
-        for(const auto& mesh : modelBufferStorage->meshes)
+        for(auto iterator = modelIterator.second.begin(); iterator != modelIterator.second.end();)
         {
-            mesh.bind();
-            //glDrawElementsInstanced(GL_TRIANGLES, mesh.getElementAmount(), GL_UNSIGNED_INT, 0, modelIterator.second.size());
-            glDrawElementsInstanced(GL_TRIANGLES, mesh.getElementAmount(), GL_UNSIGNED_INT, 0, std::min((decltype(modelIterator.second.size()))3u, modelIterator.second.size()));
+            int32_t batchSize = std::min(maxInstanceAmount,(int) (modelIterator.second.size() - (iterator - modelIterator.second.begin())));
+            uploadBatchData(iterator, batchSize, camera, shader, model, *modelBufferStorage);
+
+            for(const auto& mesh : modelBufferStorage->meshes)
+            {
+                mesh.bind();
+                glDrawElementsInstanced(GL_TRIANGLES, mesh.getElementAmount(), GL_UNSIGNED_INT, 0, batchSize);
+            }
+
+            iterator += batchSize;
         }
 
         modelBufferStorage->vertexArray.unbind();
     }
 
     mOrders.clear();
-
-    mCurFrame += 1.0f;
 }
 
 std::type_index ModelRenderer::getRenderableType() const
@@ -155,7 +154,7 @@ void ModelRenderer::cacheModel(const Model& model)
     mModelBufferCache.emplace(&model, std::move(newModelBufferStorage));
 }
 
-void ModelRenderer::uploadBatchData(const std::vector<ModelOrder>& modelOrders, const Camera& camera, const Shader& shader, const Model& model, ModelBufferStorage& modelBufferStorage, const std::vector<float>& instanceFrameData)
+void ModelRenderer::uploadBatchData(std::vector<ModelOrder>::const_iterator startOrder, int32_t orderAmount, const Camera& camera, const Shader& shader, const Model& model, ModelBufferStorage& modelBufferStorage)
 {
         std::vector<float> colors;
         std::vector<uint32_t> textureIndices;
@@ -178,11 +177,15 @@ void ModelRenderer::uploadBatchData(const std::vector<ModelOrder>& modelOrders, 
         std::vector<float> nData3 = { 0.0f, 0.0f, 1.0f, 0.0f };
         std::vector<float> nData4 = { 0.0f, 0.0f, 0.0f, 1.0f };
         
-        for(const auto order : modelOrders)
+        for(int32_t orderIndex = 0; orderIndex < orderAmount; orderIndex++)
         {
-            colors.push_back(order.color.r);
-            colors.push_back(order.color.g);
-            colors.push_back(order.color.b);
+            const auto& order = *(startOrder + orderIndex);
+            float r = order.color.r;
+            float g = order.color.g;
+            float b = order.color.b;
+            colors.push_back(r);
+            colors.push_back(g);
+            colors.push_back(b);
 
             textureIndices.push_back(order.textureIndex);
 
@@ -269,9 +272,10 @@ void ModelRenderer::uploadBatchData(const std::vector<ModelOrder>& modelOrders, 
         std::vector<float> totalTransData;
         if(animation != nullptr)
         {
-            for(int32_t instanceFrameCounter = 0; instanceFrameCounter < instanceFrameData.size(); instanceFrameCounter++)
+            for(int32_t orderIndex = 0; orderIndex < orderAmount; orderIndex++)
             {
-                float localCurrentFrame = (instanceFrameData[instanceFrameCounter] / 60.0f) * animation->framerate;
+                const auto& order = *(startOrder + orderIndex);
+                float localCurrentFrame = (order.frameOffset / 60.0f) * animation->framerate;
                 int32_t numFrames = animation->frameAmount;
                 int32_t frame1 = (int32_t)std::floor(localCurrentFrame);// * (animation->framerate/60.0f));
                 int32_t frame2 = frame1 + 1;

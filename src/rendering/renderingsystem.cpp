@@ -58,6 +58,7 @@ void RenderingSystem::handleMessage(const AddGfxEntityMessage& received)
     newModel.setTexture(*mTextureArrays.at(0), rand() % 2);
     newModel.setPosition(received.position);
     newModel.setColor({(float)(rand() % 256) / 256.0f,(float)(rand() % 256) / 256.0f, (float)(rand() % 256) / 256.0f});
+    newModel.setFrameOffset(rand() % 100);
 
     mModelRenderables.emplace(newId, newModel);
 
@@ -346,6 +347,7 @@ void RenderingSystem::render()
 
     for(auto& moddie : mModelRenderables)
     {
+        moddie.second.setFrameOffset(moddie.second.getFrameOffset() + 1.0f);
         mRenderer.queue(moddie.second);
     }
 
