@@ -27,6 +27,11 @@ ModelRenderer::ModelRenderer() :
 {
 }
 
+const int32_t maxUniformBlockSize = 16384;
+const int32_t maxBoneAmount = 72;
+const int32_t boneMemorySize = 4 * 16;
+const int32_t maxInstanceAmount = maxUniformBlockSize / (boneMemorySize * maxBoneAmount);
+
 void ModelRenderer::queue(const Renderable& renderable)
 {
     const ModelRenderable& modelRenderable = (const ModelRenderable&) renderable;
@@ -41,14 +46,10 @@ void ModelRenderer::queue(const Renderable& renderable)
     
     FEA_ASSERT(order.model != nullptr, "Trying to render a model renderable which doesn't have a model");
     FEA_ASSERT(order.model->findMesh(0) != nullptr, "Trying to render a model renderable which has a model without a primary model");
+    FEA_ASSERT(order.model->getJointStructure().size() <= maxBoneAmount, "Trying to render a model with more bones than " + std::to_string(maxBoneAmount) + " is not allowed!");
 
     mOrders[{order.model, order.textureArray}].push_back(order);
 }
-
-const int32_t maxUniformBlockSize = 16384;
-const int32_t maxBoneAmount = 72;
-const int32_t boneMemorySize = 4 * 16;
-const int32_t maxInstanceAmount = maxUniformBlockSize / (boneMemorySize * maxBoneAmount);
 
 void ModelRenderer::render(const Camera& camera, const glm::mat4& perspective, const Shader& shader)
 {
@@ -268,7 +269,6 @@ void ModelRenderer::uploadBatchData(const std::vector<ModelOrder>& modelOrders, 
         std::vector<float> totalTransData;
         if(animation != nullptr)
         {
-            std::cout << "will now loop " << instanceFrameData.size() << "times\n";
             for(int32_t instanceFrameCounter = 0; instanceFrameCounter < instanceFrameData.size(); instanceFrameCounter++)
             {
                 float localCurrentFrame = (instanceFrameData[instanceFrameCounter] / 60.0f) * animation->framerate;
@@ -289,7 +289,6 @@ void ModelRenderer::uploadBatchData(const std::vector<ModelOrder>& modelOrders, 
                 for(int32_t i = 0; i < numJoints; i++)
                 {
                     int32_t rotIndex = i * 12;
-                    std::cout << rotIndex << " is rotIndex because i is " << i << "\n";
                     int32_t transIndex = i * 4;
                     glm::mat3x3 rotation    = rotation1[i]    * (1.0f - frameOffset) + rotation2[i]    * frameOffset;
                     glm::vec3 translation = translation1[i] * (1.0f - frameOffset) + translation2[i] * frameOffset;
@@ -358,5 +357,4 @@ void ModelRenderer::uploadBatchData(const std::vector<ModelOrder>& modelOrders, 
 
         GLint blockSize;
         glGetActiveUniformBlockiv(shader.getId(), blockIndex, GL_UNIFORM_BLOCK_DATA_SIZE, &blockSize);
-        std::cout << "size of block is " << blockSize << "\n";
 }
