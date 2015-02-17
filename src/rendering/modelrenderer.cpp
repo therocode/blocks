@@ -27,6 +27,11 @@ const int32_t maxBoneAmount = 72;
 const int32_t boneMemorySize = 4 * 16;
 const int32_t maxInstanceAmount = maxUniformBlockSize / (boneMemorySize * maxBoneAmount);
 
+ModelRenderer::ModelRenderer() :
+    mAnimationBlockLocation(-1)
+{
+}
+
 void ModelRenderer::queue(const Renderable& renderable)
 {
     const ModelRenderable& modelRenderable = (const ModelRenderable&) renderable;
@@ -355,8 +360,10 @@ void ModelRenderer::uploadBatchData(std::vector<ModelOrder>::const_iterator star
 
         int32_t blockIndex = 0;
 
-        int32_t location = glGetUniformBlockIndex(shader.getId(), "AnimationBlock");
-        glUniformBlockBinding(shader.getId(), location, blockIndex);
+        if(mAnimationBlockLocation == -1)
+            mAnimationBlockLocation = glGetUniformBlockIndex(shader.getId(), "AnimationBlock");
+
+        glUniformBlockBinding(shader.getId(), mAnimationBlockLocation, blockIndex);
         glBindBufferBase(GL_UNIFORM_BUFFER, blockIndex, modelBufferStorage.animData.getId());
 
         GLint blockSize;

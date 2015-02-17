@@ -53,6 +53,7 @@ struct ModelInstance
 class ModelRenderer : public RenderModule
 {
     public:
+        ModelRenderer();
         void queue(const Renderable& renderable) override;
         void render(const Camera& camera, const glm::mat4& perspective, const Shader& shader) override;
         std::type_index getRenderableType() const override;
@@ -63,6 +64,7 @@ class ModelRenderer : public RenderModule
 
         std::unordered_map<std::pair<const Model*, const TextureArray*>, std::vector<ModelOrder>> mOrders;
 
+        GLint mAnimationBlockLocation;
         //model cache
         std::unordered_map<const Model*, std::unique_ptr<ModelBufferStorage>> mModelBufferCache;
 };
