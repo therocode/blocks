@@ -101,6 +101,7 @@ set(source_files
 
     src/resources/extensionmetadata.cpp
     src/resources/extensionmetadatafromfileloader.cpp
+	src/resources/gfxentitydefinitionfromfileloader.cpp
     src/resources/worldfromfileloader.cpp
     src/resources/image.cpp
     src/resources/iqmfromfileloader.cpp
@@ -247,13 +248,14 @@ set(header_files
 
     src/resources/extensionmetadata.hpp
     src/resources/extensionmetadatafromfileloader.hpp
-    src/resources/worldfromfileloader.hpp
+	src/resources/gfxentitydefinition.hpp
+	src/resources/gfxentitydefinitionfromfileloader.hpp
     src/resources/image.hpp
+    src/resources/imagefromfileloader.hpp
     src/resources/iqm.h
     src/resources/iqmfromfileloader.hpp
 	src/resources/rawmodel.hpp
 	src/resources/resourcecache.hpp
-	src/resources/resourceentry.hpp
     src/resources/resourceexception.hpp
 	src/resources/resourcemessages.hpp
 	src/resources/resourcepathtoname.hpp
@@ -263,7 +265,7 @@ set(header_files
     src/resources/shadersource.hpp
     src/resources/shadersourcefromfileloader.hpp
     src/resources/texture.hpp
-    src/resources/imagefromfileloader.hpp
+    src/resources/worldfromfileloader.hpp
 
     src/utilities/coordinateconverter.hpp
     src/utilities/directorycreator.hpp

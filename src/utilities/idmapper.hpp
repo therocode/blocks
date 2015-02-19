@@ -9,8 +9,10 @@ class IdMapper
     public:
         IdMapper();
         IdType getId(const Type& value);
+        IdType getIdConst(const Type& value) const;
         void free(const Type& value);
         const Type& valueFromId(IdType id) const;
+        bool valueExists(const Type& value) const;
     private:
         IdType getNext();
         IdType mNext;
@@ -43,6 +45,15 @@ IdType IdMapper<Type, IdType>::getId(const Type& value)
 }
 
 template<typename Type, typename IdType>
+IdType IdMapper<Type, IdType>::getIdConst(const Type& value) const
+{
+    FEA_ASSERT(mIds.count(value) != 0, "Trying const access a non-existing value.");
+    const auto& iterator = mIds.find(value);
+
+    return mIds.at(value);
+}
+
+template<typename Type, typename IdType>
 void IdMapper<Type, IdType>::free(const Type& value)
 {
     FEA_ASSERT(mIds.count(value) != 0, "Trying to free a nonexisting entry in id-pool.");
@@ -71,4 +82,10 @@ IdType IdMapper<Type, IdType>::getNext()
         mReturned.pop();
         return next;
     }
+}
+    
+template<typename Type, typename IdType>
+bool IdMapper<Type, IdType>::valueExists(const Type& value) const
+{
+    return mIds.count(value) != 0;
 }

@@ -7,8 +7,8 @@
 class ResourceCache
 {
     public:
-        template<typename Loader, typename Accessor, typename Resource =  decltype(((Loader*)nullptr)->load(Accessor()))>
-        const std::shared_ptr<Resource> access(const Accessor& accessor);
+        template<typename Loader, typename Accessor, typename... LoaderParameters>
+        const std::shared_ptr<decltype(((Loader*)nullptr)->load(Accessor()))> access(const Accessor& accessor, LoaderParameters... parameters);
         template<typename Loader, typename Accessor>
         bool isLoaded(const Accessor& accessor);
         template<typename Loader, typename Accessor>
@@ -18,8 +18,8 @@ class ResourceCache
 };
 
 
-template<typename Loader, typename Accessor, typename Resource>
-const std::shared_ptr<Resource> ResourceCache::access(const Accessor& accessor)
+template<typename Loader, typename Accessor, typename... LoaderParameters>
+const std::shared_ptr<decltype(((Loader*)nullptr)->load(Accessor()))> ResourceCache::access(const Accessor& accessor, LoaderParameters... parameters)
 {
     bool exists = true;
 
@@ -44,8 +44,8 @@ const std::shared_ptr<Resource> ResourceCache::access(const Accessor& accessor)
 
     if(!exists)
     {
-        Loader loader;
-        std::shared_ptr<Resource> resourcePtr = std::make_shared<Resource>(loader.load(accessor));
+        Loader loader(parameters...);
+        std::shared_ptr<decltype(((Loader*)nullptr)->load(Accessor()))> resourcePtr = std::make_shared<decltype(((Loader*)nullptr)->load(Accessor()))>(loader.load(accessor));
 
         mResources[typeid(Loader)].emplace(accessorStream.str(), std::static_pointer_cast<void>(resourcePtr));
 
@@ -53,7 +53,7 @@ const std::shared_ptr<Resource> ResourceCache::access(const Accessor& accessor)
     }
     else
     {
-        return std::static_pointer_cast<Resource>(loaderIterator->second.at(accessorStream.str()));
+        return std::static_pointer_cast<decltype(((Loader*)nullptr)->load(Accessor()))>(loaderIterator->second.at(accessorStream.str()));
     }
 }
 

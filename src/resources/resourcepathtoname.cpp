@@ -28,6 +28,8 @@ std::string resourcePathToName(const std::string& rootPath, const std::string& p
         category = "metadata";
 	else if(fileType == "wld")
         category = "world";
+	else if(fileType == "gfe")
+        category = "gfx_entity";
 
     result = extensionName + "." + category + "." + fileName;
 

@@ -32,6 +32,35 @@ SCENARIO("IdMappers give unique IDs for unique entries, but the same IDs for the
     }
 }
 
+SCENARIO("getIdConst can be used to fetch existing entries from IDMapper","[utilities]")
+{
+    GIVEN("An IdMapper")
+    {
+        IdMapper<std::string> provider;
+
+        WHEN("Values that are both the same and different")
+        {   
+            uint32_t id1 = provider.getId("hej");
+            uint32_t id2 = provider.getId("kalle");
+            uint32_t id3 = provider.getIdConst("kalle");
+            uint32_t id4 = provider.getIdConst("hej");
+            uint32_t id5 = provider.getId("glass");
+            uint32_t id6 = provider.getIdConst("hej");
+
+            THEN("The Ids that should be the same are the same, and the other ones are different")
+            {
+                CHECK(id1 == id4);
+                CHECK(id1 == id6);
+                CHECK(id2 == id3);
+                CHECK_FALSE(id1 == id2);
+                CHECK_FALSE(id1 == id3);
+                CHECK_FALSE(id1 == id5);
+                CHECK_FALSE(id2 == id5);
+            }   
+        }   
+    }
+}
+
 SCENARIO("IdMappers reuse freed IDs","[utilities]")
 {
     GIVEN("An IdMapper with some values added")
@@ -61,6 +90,39 @@ SCENARIO("IdMappers reuse freed IDs","[utilities]")
                 CHECK_FALSE(id6 == id3);
                 CHECK_FALSE(id6 == id4);
                 CHECK_FALSE(id6 == id5);
+            }   
+        }   
+    }
+}
+
+SCENARIO("You can ask an IDMapper if a value is already given an ID","[utilities]")
+{
+    GIVEN("An IdMapper with values added")
+    {
+        IdMapper<std::string> provider;
+
+        uint32_t id1 = provider.getId("hej");
+        uint32_t id2 = provider.getId("kalle");
+        uint32_t id3 = provider.getId("glass");
+
+
+        WHEN("Existing and unexisting values are polled for")
+        {   
+            bool existing1 = provider.valueExists("hej");
+            bool existing2 = provider.valueExists("kalle");
+            bool existing3 = provider.valueExists("glass");
+            bool unexisting1 = provider.valueExists("goj");
+            bool unexisting2 = provider.valueExists("lapp");
+            bool unexisting3 = provider.valueExists("teckna");
+
+            THEN("The status is correct")
+            {
+                CHECK(existing1);
+                CHECK(existing2);
+                CHECK(existing3);
+                CHECK_FALSE(unexisting1);
+                CHECK_FALSE(unexisting2);
+                CHECK_FALSE(unexisting3);
             }   
         }   
     }

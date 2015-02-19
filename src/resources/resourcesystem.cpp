@@ -15,6 +15,8 @@
 #include "../utilities/glmhash.hpp"
 #include "worldfromfileloader.hpp"
 #include "resourceexception.hpp"
+#include "gfxentitydefinition.hpp"
+#include "gfxentitydefinitionfromfileloader.hpp"
 
 ResourceSystem::ResourceSystem(fea::MessageBus& bus, const std::string assetsPath, const std::vector<std::string> fileTypes) :
     mBus(bus),
@@ -58,6 +60,8 @@ ResourceSystem::ResourceSystem(fea::MessageBus& bus, const std::string assetsPat
             loadImages(mResourceList["png"]);
 		if(std::find(fileTypes.begin(), fileTypes.end(), "wld") != fileTypes.end())
             loadWorlds(mResourceList["wld"]);
+        if(std::find(fileTypes.begin(), fileTypes.end(), "gfe") != fileTypes.end())
+            loadGfxEntities(mResourceList["gfe"]);
     }
 }
 
@@ -243,6 +247,29 @@ void ResourceSystem::loadWorlds(const std::vector<ResourceEntry>& worlds)
         catch(ResourceException& exception)
         {
             mBus.send(LogMessage{worldFile.name + ": " + exception.what(), gResourceName, LogLevel::ERR});
+        }
+    }
+}
+
+void ResourceSystem::loadGfxEntities(const std::vector<ResourceEntry>& gfxEntities)
+{
+    mBus.send(LogMessage{"Loading graphic entity files. " + std::to_string(gfxEntities.size()) + " files to load.", gResourceName, LogLevel::INFO});
+    for(const auto& gfxEntityFile : gfxEntities)
+    {
+        try
+        {
+            mBus.send(LogMessage{"Loading " + gfxEntityFile.name + ".", gResourceName, LogLevel::VERB});
+            std::shared_ptr<GfxEntityDefinition> gfxEntity = mCache.access<GfxEntityDefinitionFromFileLoader>(gfxEntityFile.path, mTextureIDs, mModelIDs);
+
+            if(gfxEntity)
+            {
+                uint32_t id = mGfxEntityIDs.getId(gfxEntityFile.name);
+                mBus.send(ResourceDeliverMessage<GfxEntityDefinition>{id, gfxEntity});
+            }
+        }
+        catch(ResourceException& exception)
+        {
+            mBus.send(LogMessage{gfxEntityFile.name + ": " + exception.what(), gResourceName, LogLevel::ERR});
         }
     }
 }
