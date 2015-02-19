@@ -78,6 +78,11 @@ void Shader::setUniform(const std::string& name, UniformType type, const void* v
             glUniform1f(mUniformLocations.at(name), *((float*)value));
             break;
         }
+        case UniformType::INT:
+        {
+            glUniform1i(mUniformLocations.at(name), *((int32_t*)value));
+            break;
+        }
         case UniformType::VEC2:
         {
             const glm::vec2& val2 = *((glm::vec2*)value);
@@ -144,6 +149,11 @@ void Shader::setUniform(const std::string& name, UniformType type, int32_t count
         case UniformType::FLOAT:
         {
             glUniform1fv(mUniformLocations.at(name), count, ((float*)value));
+            break;
+        }
+        case UniformType::INT:
+        {
+            glUniform1iv(mUniformLocations.at(name), count, ((int*)value));
             break;
         }
         case UniformType::VEC2:

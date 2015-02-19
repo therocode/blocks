@@ -4,12 +4,13 @@ std::string AnimationShader::vertexSource = R"(
 #version 330
 
 uniform mat4 viewProjectionMatrix;
+uniform int boneAmount;
 
 layout(std140) uniform AnimationBlock
 {
-    //maxbones * instanceAmount
-    mat3 animationRotations[72 * 3];
-    vec3 animationTranslations[72 * 3];
+    //maxbones * maxinstanceAmount
+    mat3 animationRotations[256];
+    vec3 animationTranslations[256];
 };
 
 layout(location = ~POSITION~) in vec3 in_position;
@@ -38,7 +39,7 @@ void main()
 {
     //mat3 animationRotation = animationRotations[0];
     //vec3 animationTranslation = animationTranslations[0];
-    uint instanceIndexOffset = uint(gl_InstanceID * 72);
+    uint instanceIndexOffset = uint(gl_InstanceID * boneAmount);
     mat3 animationRotation = animationRotations[blendIndices.x + instanceIndexOffset] * float(blendWeights.x) / 255.0 +
                              animationRotations[blendIndices.y + instanceIndexOffset] * float(blendWeights.y) / 255.0 +
                              animationRotations[blendIndices.z + instanceIndexOffset] * float(blendWeights.z) / 255.0 +

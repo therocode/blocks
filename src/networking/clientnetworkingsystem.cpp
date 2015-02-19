@@ -192,6 +192,7 @@ void ClientNetworkingSystem::handleMessage(const EntityOrientationUpdatedMessage
 void ClientNetworkingSystem::handleMessage(const EntityLeftRangeMessage& received)
 {
     mBus.send(RemoveGfxEntityMessage{mGraphicEntityIds.at(received.id)});
+    mGraphicEntityIds.erase(received.id);
 }
 
 void ClientNetworkingSystem::handleMessage(const ClientAttachedToEntityMessage& received)

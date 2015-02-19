@@ -347,6 +347,7 @@ float CollisionController::sweepAroundAABB(WorldId worldId, const AABB _a, glm::
     float whatN = 1.0f;
     glm::ivec3 normal = glm::ivec3(0);
     float longest = 99999.f;
+    const auto& chunks = mGameInterface.getWorldSystem().getWorldVoxels(worldId);
     //Loop througha cube of blocks and check if they are passableor not
     for(float x = -sx; x <= sx; x++)
     {
@@ -366,7 +367,6 @@ float CollisionController::sweepAroundAABB(WorldId worldId, const AABB _a, glm::
                 b.z -= _a.z;
 
                 int blockType = 0;
-                const auto& chunks = mGameInterface.getWorldSystem().getWorldVoxels(worldId);
                 const auto chunk = chunks.find(VoxelToChunk::convert(coord));
                 
                 if(chunk != chunks.end())
@@ -404,7 +404,6 @@ float CollisionController::sweepAroundAABB(WorldId worldId, const AABB _a, glm::
                             nc[axis] -= 1;
 
                         int voxelType = 0;
-                        const auto& chunks = mGameInterface.getWorldSystem().getWorldVoxels(worldId);
                         const auto chunk = chunks.find(VoxelToChunk::convert(nc));
                         
                         if(chunk != chunks.end())

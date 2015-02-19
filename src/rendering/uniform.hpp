@@ -4,12 +4,13 @@
 #include <glm/glm.hpp>
 #include "opengl.hpp"
 
-enum class UniformType{NO_TYPE, FLOAT, VEC2, VEC3, VEC4, MAT2X2, MAT3X3, MAT4X4, TEXTURE, TEXTURE_ARRAY};
+enum class UniformType{NO_TYPE, FLOAT, INT, VEC2, VEC3, VEC4, MAT2X2, MAT3X3, MAT4X4, TEXTURE, TEXTURE_ARRAY};
 
 struct Uniform
 {
     Uniform();
     Uniform(const std::string& name, UniformType t, float val);
+    Uniform(const std::string& name, UniformType t, int val);
     Uniform(const std::string& name, UniformType t, glm::vec2 val);
     Uniform(const std::string& name, UniformType t, glm::vec3 val);
     Uniform(const std::string& name, UniformType t, glm::vec4 val);
@@ -24,6 +25,7 @@ struct Uniform
     union
     {
         float mFloatVal;      
+        int mIntVal;
         float mVec2Val[2];    
         float mVec3Val[3];    
         float mVec4Val[4];    

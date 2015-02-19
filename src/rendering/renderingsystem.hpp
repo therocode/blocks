@@ -73,4 +73,7 @@ class RenderingSystem :
 
         bool mIsFacing;
         glm::ivec3 mFacingBlock;
+
+        bool mHalfThem = false;
+        int32_t mCounter = 0;
 };

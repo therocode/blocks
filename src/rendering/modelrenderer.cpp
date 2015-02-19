@@ -22,10 +22,9 @@ ModelBufferStorage::ModelBufferStorage() :
 {
 }
 
-const int32_t maxUniformBlockSize = 16384;
-const int32_t maxBoneAmount = 72;
+const int32_t animationUniformBlockSize = 16384;
+const int32_t maxBoneAmount = 256;
 const int32_t boneMemorySize = 4 * 16;
-const int32_t maxInstanceAmount = maxUniformBlockSize / (boneMemorySize * maxBoneAmount);
 
 ModelRenderer::ModelRenderer() :
     mAnimationBlockLocation(-1)
@@ -60,11 +59,23 @@ void ModelRenderer::render(const Camera& camera, const glm::mat4& perspective, c
     float shadedRatio = 1.0f;
     shader.setUniform("shadedRatio", UniformType::FLOAT, &shadedRatio);
     
+    //std::cout << "new frame \n";
     for(const auto modelIterator : mOrders)
     {
         const Model& model = *modelIterator.first.first;
-        const TextureArray& textureArray = *modelIterator.first.second;
+        const TextureArray* textureArray = modelIterator.first.second;
         const auto& modelOrders = modelIterator.second;
+        int32_t jointAmount = model.getJointStructure().size();
+        int32_t maxInstanceAmount = animationUniformBlockSize / (boneMemorySize * jointAmount);
+
+        if(textureArray != nullptr)
+        {
+            GLuint textureId = textureArray->getId();
+            shader.setUniform("textureArray", UniformType::TEXTURE_ARRAY, &textureId);
+        }
+
+        shader.setUniform("boneAmount", UniformType::INT, &jointAmount);
+
 
         const auto iterator = mModelBufferCache.find(&model);
         if(iterator == mModelBufferCache.end())
@@ -76,6 +87,7 @@ void ModelRenderer::render(const Camera& camera, const glm::mat4& perspective, c
 
         modelBufferStorage->vertexArray.bind();
 
+        //std::cout << "will render " << modelIterator.second.size() << " things\n";
         for(auto iterator = modelIterator.second.begin(); iterator != modelIterator.second.end();)
         {
             int32_t batchSize = std::min(maxInstanceAmount,(int) (modelIterator.second.size() - (iterator - modelIterator.second.begin())));
@@ -86,6 +98,7 @@ void ModelRenderer::render(const Camera& camera, const glm::mat4& perspective, c
                 mesh.bind();
                 glDrawElementsInstanced(GL_TRIANGLES, mesh.getElementAmount(), GL_UNSIGNED_INT, 0, batchSize);
             }
+            //std::cout << "batch size " << batchSize << "\n";
 
             iterator += batchSize;
         }
@@ -161,211 +174,254 @@ void ModelRenderer::cacheModel(const Model& model)
 
 void ModelRenderer::uploadBatchData(std::vector<ModelOrder>::const_iterator startOrder, int32_t orderAmount, const Camera& camera, const Shader& shader, const Model& model, ModelBufferStorage& modelBufferStorage)
 {
-        std::vector<float> colors;
-        std::vector<uint32_t> textureIndices;
-        std::vector<float> modelMatrix1;
-        std::vector<float> modelMatrix2;
-        std::vector<float> modelMatrix3;
-        std::vector<float> modelMatrix4;
-        std::vector<float> normalMatrix1;
-        std::vector<float> normalMatrix2;
-        std::vector<float> normalMatrix3;
-        std::vector<float> normalMatrix4;
+    std::vector<float> colors;
+    std::vector<uint32_t> textureIndices;
+    std::vector<float> modelMatrix1;
+    std::vector<float> modelMatrix2;
+    std::vector<float> modelMatrix3;
+    std::vector<float> modelMatrix4;
+    std::vector<float> normalMatrix1;
+    std::vector<float> normalMatrix2;
+    std::vector<float> normalMatrix3;
+    std::vector<float> normalMatrix4;
 
-        std::vector<float> data1 = { 1.0f, 0.0f, 0.0f, 0.0f };
-        std::vector<float> data2 = { 0.0f, 1.0f, 0.0f, 0.0f };
-        std::vector<float> data3 = { 0.0f, 0.0f, 1.0f, 0.0f };
-        std::vector<float> data4 = { 0.0f, 0.0f, 0.0f, 1.0f };
+    std::vector<float> data1 = { 1.0f, 0.0f, 0.0f, 0.0f };
+    std::vector<float> data2 = { 0.0f, 1.0f, 0.0f, 0.0f };
+    std::vector<float> data3 = { 0.0f, 0.0f, 1.0f, 0.0f };
+    std::vector<float> data4 = { 0.0f, 0.0f, 0.0f, 1.0f };
 
-        std::vector<float> nData1 = { 1.0f, 0.0f, 0.0f, 0.0f };
-        std::vector<float> nData2 = { 0.0f, 1.0f, 0.0f, 0.0f };
-        std::vector<float> nData3 = { 0.0f, 0.0f, 1.0f, 0.0f };
-        std::vector<float> nData4 = { 0.0f, 0.0f, 0.0f, 1.0f };
-        
+    std::vector<float> nData1 = { 1.0f, 0.0f, 0.0f, 0.0f };
+    std::vector<float> nData2 = { 0.0f, 1.0f, 0.0f, 0.0f };
+    std::vector<float> nData3 = { 0.0f, 0.0f, 1.0f, 0.0f };
+    std::vector<float> nData4 = { 0.0f, 0.0f, 0.0f, 1.0f };
+
+    for(int32_t orderIndex = 0; orderIndex < orderAmount; orderIndex++)
+    {
+        const auto& order = *(startOrder + orderIndex);
+        colors.push_back(order.color.r);
+        colors.push_back(order.color.g);
+        colors.push_back(order.color.b);
+
+        textureIndices.push_back(order.textureIndex);
+
+        data4[0] = order.position.x;
+        data4[1] = order.position.y;
+        data4[2] = order.position.z;
+
+        glm::mat3 orientationMat = glm::mat3_cast(order.orientation);
+        data1[0] = orientationMat[0][0];
+        data1[1] = orientationMat[1][0];
+        data1[2] = orientationMat[2][0];
+        data2[0] = orientationMat[0][1];
+        data2[1] = orientationMat[1][1];
+        data2[2] = orientationMat[2][1];
+        data3[0] = orientationMat[0][2];
+        data3[1] = orientationMat[1][2];
+        data3[2] = orientationMat[2][2];
+
+        modelMatrix1.insert(modelMatrix1.end(), data1.begin(), data1.end());
+        modelMatrix2.insert(modelMatrix2.end(), data2.begin(), data2.end());
+        modelMatrix3.insert(modelMatrix3.end(), data3.begin(), data3.end());
+        modelMatrix4.insert(modelMatrix4.end(), data4.begin(), data4.end());
+
+        //do rotation
+
+        glm::mat4 modelMatrix;
+
+        modelMatrix[0][0] = modelMatrix1[0];
+        modelMatrix[0][1] = modelMatrix1[1];
+        modelMatrix[0][2] = modelMatrix1[2];
+        modelMatrix[0][3] = modelMatrix1[3];
+        modelMatrix[1][0] = modelMatrix2[0];
+        modelMatrix[1][1] = modelMatrix2[1];
+        modelMatrix[1][2] = modelMatrix2[2];
+        modelMatrix[1][3] = modelMatrix2[3];
+        modelMatrix[2][0] = modelMatrix3[0];
+        modelMatrix[2][1] = modelMatrix3[1];
+        modelMatrix[2][2] = modelMatrix3[2];
+        modelMatrix[2][3] = modelMatrix3[3];
+        modelMatrix[3][0] = modelMatrix4[0];
+        modelMatrix[3][1] = modelMatrix4[1];
+        modelMatrix[3][2] = modelMatrix4[2];
+        modelMatrix[3][3] = modelMatrix4[3];
+
+        glm::mat4 normalMatrix = glm::transpose(glm::inverse(camera.getMatrix() * modelMatrix));
+
+        nData1[0] = normalMatrix[0][0];
+        nData1[1] = normalMatrix[0][1];
+        nData1[2] = normalMatrix[0][2];
+        nData1[3] = normalMatrix[0][3];
+        nData2[0] = normalMatrix[1][0];
+        nData2[1] = normalMatrix[1][1];
+        nData2[2] = normalMatrix[1][2];
+        nData2[3] = normalMatrix[1][3];
+        nData3[0] = normalMatrix[2][0];
+        nData3[1] = normalMatrix[2][1];
+        nData3[2] = normalMatrix[2][2];
+        nData3[3] = normalMatrix[2][3];
+        nData4[0] = normalMatrix[3][0];
+        nData4[1] = normalMatrix[3][1];
+        nData4[2] = normalMatrix[3][2];
+        nData4[3] = normalMatrix[3][3];
+
+        normalMatrix1.insert(normalMatrix1.end(), nData1.begin(), nData1.end());
+        normalMatrix2.insert(normalMatrix2.end(), nData2.begin(), nData2.end());
+        normalMatrix3.insert(normalMatrix3.end(), nData3.begin(), nData3.end());
+        normalMatrix4.insert(normalMatrix4.end(), nData4.begin(), nData4.end());
+    }
+
+    const auto& jointStructure = model.getJointStructure();
+    int32_t numJoints = jointStructure.size();
+
+    //animation
+    std::vector<float> rotData(12 * numJoints);
+    std::vector<float> transData(4 * numJoints);
+    const Animation* animation = model.getAnimation();
+    std::vector<float> totalRotData;
+    std::vector<float> totalTransData;
+    if(animation != nullptr)
+    {
         for(int32_t orderIndex = 0; orderIndex < orderAmount; orderIndex++)
         {
             const auto& order = *(startOrder + orderIndex);
-            float r = order.color.r;
-            float g = order.color.g;
-            float b = order.color.b;
-            colors.push_back(r);
-            colors.push_back(g);
-            colors.push_back(b);
+            float localCurrentFrame = (order.frameOffset / 60.0f) * animation->framerate;
+            int32_t numFrames = animation->frameAmount;
+            int32_t frame1 = (int32_t)std::floor(localCurrentFrame);// * (animation->framerate/60.0f));
+            int32_t frame2 = frame1 + 1;
+            float frameOffset = localCurrentFrame- frame1;
+            frame1 %= numFrames;
+            frame2 %= numFrames;
 
-            textureIndices.push_back(order.textureIndex);
+            const auto rotation1 = animation->rotations.begin() + frame1 * numJoints;
+            const auto rotation2 = animation->rotations.begin() + frame2 * numJoints;
+            const auto translation1 = animation->translations.begin() + frame1 * numJoints;
+            const auto translation2 = animation->translations.begin() + frame2 * numJoints;
 
-            data4[0] = order.position.x;
-            data4[1] = order.position.y;
-            data4[2] = order.position.z;
+            std::vector<glm::mat4x4> outputTransformation(numJoints);
 
-			glm::mat3 orientationMat = glm::mat3_cast(order.orientation);
-			data1[0] = orientationMat[0][0];
-			data1[1] = orientationMat[1][0];
-			data1[2] = orientationMat[2][0];
-			data2[0] = orientationMat[0][1];
-			data2[1] = orientationMat[1][1];
-			data2[2] = orientationMat[2][1];
-			data3[0] = orientationMat[0][2];
-			data3[1] = orientationMat[1][2];
-			data3[2] = orientationMat[2][2];
-
-            modelMatrix1.insert(modelMatrix1.end(), data1.begin(), data1.end());
-            modelMatrix2.insert(modelMatrix2.end(), data2.begin(), data2.end());
-            modelMatrix3.insert(modelMatrix3.end(), data3.begin(), data3.end());
-            modelMatrix4.insert(modelMatrix4.end(), data4.begin(), data4.end());
-
-            //do rotation
-
-            glm::mat4 modelMatrix;
-
-            modelMatrix[0][0] = modelMatrix1[0];
-            modelMatrix[0][1] = modelMatrix1[1];
-            modelMatrix[0][2] = modelMatrix1[2];
-            modelMatrix[0][3] = modelMatrix1[3];
-            modelMatrix[1][0] = modelMatrix2[0];
-            modelMatrix[1][1] = modelMatrix2[1];
-            modelMatrix[1][2] = modelMatrix2[2];
-            modelMatrix[1][3] = modelMatrix2[3];
-            modelMatrix[2][0] = modelMatrix3[0];
-            modelMatrix[2][1] = modelMatrix3[1];
-            modelMatrix[2][2] = modelMatrix3[2];
-            modelMatrix[2][3] = modelMatrix3[3];
-            modelMatrix[3][0] = modelMatrix4[0];
-            modelMatrix[3][1] = modelMatrix4[1];
-            modelMatrix[3][2] = modelMatrix4[2];
-            modelMatrix[3][3] = modelMatrix4[3];
-
-            glm::mat4 normalMatrix = glm::transpose(glm::inverse(camera.getMatrix() * modelMatrix));
-
-            nData1[0] = normalMatrix[0][0];
-            nData1[1] = normalMatrix[0][1];
-            nData1[2] = normalMatrix[0][2];
-            nData1[3] = normalMatrix[0][3];
-            nData2[0] = normalMatrix[1][0];
-            nData2[1] = normalMatrix[1][1];
-            nData2[2] = normalMatrix[1][2];
-            nData2[3] = normalMatrix[1][3];
-            nData3[0] = normalMatrix[2][0];
-            nData3[1] = normalMatrix[2][1];
-            nData3[2] = normalMatrix[2][2];
-            nData3[3] = normalMatrix[2][3];
-            nData4[0] = normalMatrix[3][0];
-            nData4[1] = normalMatrix[3][1];
-            nData4[2] = normalMatrix[3][2];
-            nData4[3] = normalMatrix[3][3];
-
-            normalMatrix1.insert(normalMatrix1.end(), nData1.begin(), nData1.end());
-            normalMatrix2.insert(normalMatrix2.end(), nData2.begin(), nData2.end());
-            normalMatrix3.insert(normalMatrix3.end(), nData3.begin(), nData3.end());
-            normalMatrix4.insert(normalMatrix4.end(), nData4.begin(), nData4.end());
-
-            if(order.textureArray != nullptr)
+            for(int32_t i = 0; i < numJoints; i++)
             {
-                GLuint textureId = order.textureArray->getId();
-                shader.setUniform("textureArray", UniformType::TEXTURE_ARRAY, &textureId);
-            }
-        }
+                int32_t rotIndex = i * 12;
+                int32_t transIndex = i * 4;
+                glm::mat3x3 rotation  = rotation1[i]    * (1.0f - frameOffset) + rotation2[i]    * frameOffset;
+                glm::vec3 translation = translation1[i] * (1.0f - frameOffset) + translation2[i] * frameOffset;
 
-        const auto& jointStructure = model.getJointStructure();
-        int32_t numJoints = jointStructure.size();
+                glm::mat4x4 transformation = glm::translate(glm::mat4x4(rotation), translation);
+                transformation[3][0] = translation.x;
+                transformation[3][1] = translation.y;
+                transformation[3][2] = translation.z;
 
-        //animation
-        std::vector<float> rotData(12 * maxBoneAmount);
-        std::vector<float> transData(4 * maxBoneAmount);
-        const Animation* animation = model.getAnimation();
-        std::vector<float> totalRotData;
-        std::vector<float> totalTransData;
-        if(animation != nullptr)
-        {
-            for(int32_t orderIndex = 0; orderIndex < orderAmount; orderIndex++)
-            {
-                const auto& order = *(startOrder + orderIndex);
-                float localCurrentFrame = (order.frameOffset / 60.0f) * animation->framerate;
-                int32_t numFrames = animation->frameAmount;
-                int32_t frame1 = (int32_t)std::floor(localCurrentFrame);// * (animation->framerate/60.0f));
-                int32_t frame2 = frame1 + 1;
-                float frameOffset = localCurrentFrame- frame1;
-                frame1 %= numFrames;
-                frame2 %= numFrames;
-
-                const auto rotation1 = animation->rotations.begin() + frame1 * numJoints;
-                const auto rotation2 = animation->rotations.begin() + frame2 * numJoints;
-                const auto translation1 = animation->translations.begin() + frame1 * numJoints;
-                const auto translation2 = animation->translations.begin() + frame2 * numJoints;
-
-                std::vector<glm::mat4x4> outputTransformation(numJoints);
-
-                for(int32_t i = 0; i < numJoints; i++)
+                FEA_ASSERT(i > jointStructure[i], "Parent structure messed up. Joint " + std::to_string(i) + " has the parent " + std::to_string(jointStructure[i]) + ".");
+                if(jointStructure[i] >= 0)
                 {
-                    int32_t rotIndex = i * 12;
-                    int32_t transIndex = i * 4;
-                    glm::mat3x3 rotation    = rotation1[i]    * (1.0f - frameOffset) + rotation2[i]    * frameOffset;
-                    glm::vec3 translation = translation1[i] * (1.0f - frameOffset) + translation2[i] * frameOffset;
-
-                    glm::mat4x4 transformation = glm::translate(glm::mat4x4(rotation), translation);
-                    transformation[3][0] = translation.x;
-                    transformation[3][1] = translation.y;
-                    transformation[3][2] = translation.z;
-
-                    FEA_ASSERT(i > jointStructure[i], "Parent structure messed up. Joint " + std::to_string(i) + " has the parent " + std::to_string(jointStructure[i]) + ".");
-                    if(jointStructure[i] >= 0)
-                    {
-                        outputTransformation[i] = outputTransformation[jointStructure[i]] * transformation;
-                    }
-                    else
-                    {
-                        outputTransformation[i] = transformation;
-                    }
-
-                    const float* floatIter = glm::value_ptr(outputTransformation[i]);
-                    rotData[rotIndex + 0]  = *floatIter;
-                    rotData[rotIndex + 1]  = *(floatIter + 1);
-                    rotData[rotIndex + 2]  = *(floatIter + 2);
-                    //rotData[rotIndex + 3]  //skipped due to padding
-                    rotData[rotIndex + 4]  = *(floatIter + 4);
-                    rotData[rotIndex + 5]  = *(floatIter + 5);
-                    rotData[rotIndex + 6]  = *(floatIter + 6);
-                    //rotData[rotIndex + 7]  //skipped due to padding
-                    rotData[rotIndex + 8]  = *(floatIter + 8);
-                    rotData[rotIndex + 9]  = *(floatIter + 9);
-                    rotData[rotIndex + 10] = *(floatIter + 10);
-                    //rotData[rotIndex + 11]  //skipped due to padding
-                    transData[transIndex + 0] = outputTransformation[i][3][0];
-                    transData[transIndex + 1] = outputTransformation[i][3][1];
-                    transData[transIndex + 2] = outputTransformation[i][3][2];
+                    outputTransformation[i] = outputTransformation[jointStructure[i]] * transformation;
                 }
-                totalRotData.insert(totalRotData.end(), rotData.begin(), rotData.end());
-                totalTransData.insert(totalTransData.end(), transData.begin(), transData.end());
+                else
+                {
+                    outputTransformation[i] = transformation;
+                }
+
+                const float* floatIter = glm::value_ptr(outputTransformation[i]);
+                rotData[rotIndex + 0]  = *floatIter;
+                rotData[rotIndex + 1]  = *(floatIter + 1);
+                rotData[rotIndex + 2]  = *(floatIter + 2);
+                rotData[rotIndex + 3]  = 1337.0f;//skipped due to padding
+                rotData[rotIndex + 4]  = *(floatIter + 4);
+                rotData[rotIndex + 5]  = *(floatIter + 5);
+                rotData[rotIndex + 6]  = *(floatIter + 6);
+                rotData[rotIndex + 7]  = 1337.1f;//skipped due to padding
+                rotData[rotIndex + 8]  = *(floatIter + 8);
+                rotData[rotIndex + 9]  = *(floatIter + 9);
+                rotData[rotIndex + 10] = *(floatIter + 10);
+                rotData[rotIndex + 11] = 1337.2f; //skipped due to padding
+                transData[transIndex + 0] = outputTransformation[i][3][0];
+                transData[transIndex + 1] = outputTransformation[i][3][1];
+                transData[transIndex + 2] = outputTransformation[i][3][2];
+                transData[transIndex + 3] = 1337.3f;//skipped due to padding
             }
+            totalRotData.insert(totalRotData.end(), rotData.begin(), rotData.end());
+            totalTransData.insert(totalTransData.end(), transData.begin(), transData.end());
         }
-        //animation end
+    }
+    //animation end
 
-        std::vector<float> totalAnimData(totalRotData.size() + totalTransData.size());
-        auto nextEntry = std::copy(totalRotData.begin(), totalRotData.end(), totalAnimData.begin());
-        std::copy(totalTransData.begin(), totalTransData.end(), nextEntry);
-        
-        modelBufferStorage.colors.setData(colors);
-        modelBufferStorage.textureIndices.setData(textureIndices);
-        modelBufferStorage.modelMatrix1.setData(modelMatrix1);
-        modelBufferStorage.modelMatrix2.setData(modelMatrix2);
-        modelBufferStorage.modelMatrix3.setData(modelMatrix3);
-        modelBufferStorage.modelMatrix4.setData(modelMatrix4);
-        modelBufferStorage.normalMatrix1.setData(normalMatrix1);
-        modelBufferStorage.normalMatrix2.setData(normalMatrix2);
-        modelBufferStorage.normalMatrix3.setData(normalMatrix3);
+    std::vector<float> totalAnimData(animationUniformBlockSize);
+    std::copy(totalRotData.begin(), totalRotData.end(), totalAnimData.begin());
+    std::copy(totalTransData.begin(), totalTransData.end(), totalAnimData.begin() + maxBoneAmount * 12);
 
-        modelBufferStorage.animData.setData(totalAnimData);
+    //std::cout << "rotations: \n";
+    //int32_t counter = 0;
+    //for(float value : totalRotData)
+    //{
+    //    if(counter % 12 == 0)
+    //        std::cout << counter / 12 <<":\n";
 
-        modelBufferStorage.vertexArray.bind();
+    //    std::cout << (counter % 4 != 3 ? std::to_string(value) : std::string()) << (counter % 4 == 2 ? "\n" : " ");
+    //    counter++;
+    //}
 
-        int32_t blockIndex = 0;
+    //std::cout << "translations: \n";
+    //counter = 0;
+    //for(float value : totalTransData)
+    //{
+    //    if(counter % 4 == 0)
+    //        std::cout << counter / 4 <<":\n";
 
-        if(mAnimationBlockLocation == -1)
-            mAnimationBlockLocation = glGetUniformBlockIndex(shader.getId(), "AnimationBlock");
+    //    std::cout << (counter % 4 != 3 ? std::to_string(value) : std::string()) << (counter % 4 == 2 ? "\n" : " ");
+    //    counter++;
+    //}
 
-        glUniformBlockBinding(shader.getId(), mAnimationBlockLocation, blockIndex);
-        glBindBufferBase(GL_UNIFORM_BUFFER, blockIndex, modelBufferStorage.animData.getId());
+    //float n = 0.0f;
+    //std::generate(totalAnimData.begin(), totalAnimData.end(), [&]{return n++;});
+    //int32_t counter = 0;
+    //int32_t rotCounter = 0;
+    //int32_t transCounter = 0;
+    //for(float value : totalAnimData)
+    //{
+    //    if(counter < totalRotData.size())
+    //    {
+    //        if(rotCounter == 0)
+    //            std::cout << "rotations: \n";
+    //        if(rotCounter % 12 == 0)
+    //            std::cout << rotCounter / 12 <<":\n";
 
-        GLint blockSize;
-        glGetActiveUniformBlockiv(shader.getId(), blockIndex, GL_UNIFORM_BLOCK_DATA_SIZE, &blockSize);
+    //        std::cout << (rotCounter % 4 != 3 ? std::to_string(value) : std::string()) << (rotCounter % 4 == 2 ? "\n" : " ");
+    //        rotCounter++;
+    //    }
+    //    else
+    //    {
+    //        if(transCounter == 0)
+    //            std::cout << "translations: \n";
+    //        if(transCounter % 4 == 0)
+    //            std::cout << transCounter / 4 <<":\n";
+
+    //        std::cout << (transCounter % 4 != 3 ? std::to_string(value) : std::string()) << (transCounter % 4 == 2 ? "\n" : " ");
+    //        transCounter++;
+    //    }
+    //    counter++;
+    //}
+    
+
+    modelBufferStorage.colors.setData(colors);
+    modelBufferStorage.textureIndices.setData(textureIndices);
+    modelBufferStorage.modelMatrix1.setData(modelMatrix1);
+    modelBufferStorage.modelMatrix2.setData(modelMatrix2);
+    modelBufferStorage.modelMatrix3.setData(modelMatrix3);
+    modelBufferStorage.modelMatrix4.setData(modelMatrix4);
+    modelBufferStorage.normalMatrix1.setData(normalMatrix1);
+    modelBufferStorage.normalMatrix2.setData(normalMatrix2);
+    modelBufferStorage.normalMatrix3.setData(normalMatrix3);
+
+    modelBufferStorage.animData.setData(totalAnimData);
+
+    modelBufferStorage.vertexArray.bind();
+
+    int32_t blockIndex = 0;
+
+    if(mAnimationBlockLocation == -1)
+        mAnimationBlockLocation = glGetUniformBlockIndex(shader.getId(), "AnimationBlock");
+
+    //std::cout << "total: " << totalAnimData.size() * sizeof(float) << "\n";
+    glUniformBlockBinding(shader.getId(), mAnimationBlockLocation, blockIndex);
+    glBindBufferBase(GL_UNIFORM_BUFFER, blockIndex, modelBufferStorage.animData.getId());
 }

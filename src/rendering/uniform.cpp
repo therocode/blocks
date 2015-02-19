@@ -14,6 +14,13 @@ Uniform::Uniform(const std::string& name, UniformType t, float val)
     mFloatVal = val;
 }
 
+Uniform::Uniform(const std::string& name, UniformType t, int32_t val)
+{
+    mName = name;
+    mType = t;
+    mIntVal = val;
+}
+
 Uniform::Uniform(const std::string& name, UniformType t, glm::vec2 val)
 {
     mName = name;
@@ -107,6 +114,9 @@ Uniform::Uniform(const Uniform& other)
     {
         case UniformType::FLOAT:
             mFloatVal = other.mFloatVal;
+            break;
+        case UniformType::INT:
+            mIntVal = other.mIntVal;
             break;
         case UniformType::VEC2:
             std::copy(other.mVec2Val, other.mVec2Val + 2, mVec2Val);
