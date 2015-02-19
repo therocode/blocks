@@ -51,11 +51,18 @@ RenderingSystem::RenderingSystem(fea::MessageBus& bus, const glm::uvec2& viewSiz
 
 void RenderingSystem::handleMessage(const AddGfxEntityMessage& received)
 {
+    const GfxEntityDefinition& definition = *mGfxEntityDefinitions.begin()->second;
+    FEA_ASSERT(mModels.count(definition.modelId) != 0, "Invalid model given");
+    const Model& model = *mModels.at(definition.modelId);
+    FEA_ASSERT(mTextureDefinitions.count(definition.textureId) != 0, "Invalid texture given");
+    const TextureDefinition& textureDefinition = *mTextureDefinitions.at(definition.textureId);
+    FEA_ASSERT(mTextureArrays.count(textureDefinition.textureArrayId) != 0, "Invalid texture array given");
+    const TextureArray& textureArray = *mTextureArrays.at(textureDefinition.textureArrayId);
     size_t newId = mEntityIds.next();
     ModelRenderable newModel;
 
-    newModel.setModel(**(mModels.begin() + rand() % mModels.size()));
-    newModel.setTexture(*mTextureArrays.at(0), rand() % 2);
+    newModel.setModel(model);
+    newModel.setTexture(textureArray, textureDefinition.index);
     newModel.setPosition(received.position);
     newModel.setColor({(float)(rand() % 256) / 256.0f,(float)(rand() % 256) / 256.0f, (float)(rand() % 256) / 256.0f});
     newModel.setFrameOffset(rand() % 100);
@@ -204,7 +211,7 @@ void RenderingSystem::handleMessage(const ResourceDeliverMessage<RawModel>& rece
 
     newModel->setJointStructure(received.resource->jointStructure);
 
-    mModels.push_back(std::move(newModel));
+    mModels.emplace(received.id, std::move(newModel));
 }
 
 void RenderingSystem::handleMessage(const ResourceDeliverMessage<ShaderSource>& received) 
@@ -281,7 +288,17 @@ void RenderingSystem::handleMessage(const ResourceDeliverMessage<ShaderDefinitio
 
 void RenderingSystem::handleMessage(const ResourceDeliverMessage<TextureArray>& received)
 {
-    mTextureArrays.push_back(received.resource);
+    mTextureArrays.emplace(received.id, received.resource);
+}
+
+void RenderingSystem::handleMessage(const ResourceDeliverMessage<TextureDefinition>& received)
+{
+    mTextureDefinitions.emplace(received.id, received.resource);
+}
+
+void RenderingSystem::handleMessage(const ResourceDeliverMessage<GfxEntityDefinition>& received)
+{
+    mGfxEntityDefinitions.emplace(received.id, received.resource);
 }
 
 void RenderingSystem::handleMessage(const UpdateChunkVboMessage& received)

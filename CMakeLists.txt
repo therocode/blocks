@@ -265,6 +265,7 @@ set(header_files
     src/resources/shadersource.hpp
     src/resources/shadersourcefromfileloader.hpp
     src/resources/texture.hpp
+    src/resources/texturedefinition.hpp
     src/resources/worldfromfileloader.hpp
 
     src/utilities/coordinateconverter.hpp

@@ -4,6 +4,8 @@
 #include "glcontext.hpp"
 #include "renderingmessages.hpp"
 #include "../resources/resourcemessages.hpp"
+#include "../resources/texturedefinition.hpp"
+#include "../resources/gfxentitydefinition.hpp"
 #include "../networking/networkingprotocol.hpp"
 #include "../input/inputmessages.hpp"
 #include "../world/worldmessages.hpp"
@@ -28,6 +30,8 @@ class RenderingSystem :
                                 ResourceDeliverMessage<ShaderSource>,
                                 ResourceDeliverMessage<ShaderDefinition>,
                                 ResourceDeliverMessage<TextureArray>,
+                                ResourceDeliverMessage<TextureDefinition>,
+                                ResourceDeliverMessage<GfxEntityDefinition>,
                                 UpdateChunkVboMessage,
                                 ChunkDeletedMessage,
                                 FacingBlockMessage>
@@ -46,6 +50,8 @@ class RenderingSystem :
         void handleMessage(const ResourceDeliverMessage<ShaderSource>& received) override;
         void handleMessage(const ResourceDeliverMessage<ShaderDefinition>& received) override;
         void handleMessage(const ResourceDeliverMessage<TextureArray>& received) override;
+        void handleMessage(const ResourceDeliverMessage<TextureDefinition>& received) override;
+        void handleMessage(const ResourceDeliverMessage<GfxEntityDefinition>& received) override;
         void handleMessage(const UpdateChunkVboMessage& received) override;
         void handleMessage(const ChunkDeletedMessage& received) override;
         void handleMessage(const FacingBlockMessage& received) override;
@@ -59,14 +65,16 @@ class RenderingSystem :
         IdPool<size_t> mEntityIds;
         //test
         std::vector<DebugRenderable> mDebuggers;
-        std::vector<std::unique_ptr<Model>> mModels;
+        std::unordered_map<uint32_t, std::unique_ptr<Model>> mModels;
 
         std::unordered_map<int32_t, ModelRenderable> mModelRenderables;
         std::unordered_map<std::string, std::string> mVertexSources;
         std::unordered_map<std::string, std::string> mFragmentSources;
         std::unordered_map<uint32_t, std::unique_ptr<Shader>> mBaseShaders;
         std::unordered_map<uint32_t, std::unique_ptr<Shader>> mAnimationShaders;
-        std::vector<std::shared_ptr<TextureArray>> mTextureArrays;
+        std::unordered_map<uint32_t, std::shared_ptr<TextureArray>> mTextureArrays;
+        std::unordered_map<uint32_t, std::shared_ptr<TextureDefinition>> mTextureDefinitions;
+        std::unordered_map<uint32_t, std::shared_ptr<GfxEntityDefinition>> mGfxEntityDefinitions;
 
         ChunkModelCreator mChunkModelCreator;
         std::unordered_map<ChunkCoord, std::pair<bool, ChunkModel>> mChunkModels;

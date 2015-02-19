@@ -192,9 +192,10 @@ void ResourceSystem::loadImages(const std::vector<ResourceEntry>& images)
             const auto image = imageEntry.second;
             pixels.insert(pixels.end(), image->getPixelsPointer(), image->getPixelsPointer() + image->getSize().x * image->getSize().y * 4);
 
-            TextureDefinition textureDefinition{newId, index};
+            std::shared_ptr<TextureDefinition> textureDefinition = std::make_shared<TextureDefinition>(TextureDefinition{newId, index});
 
             mTextureDefinitions.emplace(mTextureIDs.getId(name), textureDefinition);
+            mBus.send(ResourceDeliverMessage<TextureDefinition>{mTextureIDs.getId(name), textureDefinition});
             index++;
         }
 

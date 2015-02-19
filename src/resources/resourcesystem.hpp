@@ -6,12 +6,7 @@
 #include "../utilities/idmapper.hpp"
 #include "../rendering/texturearray.hpp"
 #include "../world/worldparameters.hpp"
-
-struct TextureDefinition
-{
-    uint32_t textureArrayId;
-    uint32_t index;
-};
+#include "texturedefinition.hpp"
 
 class ResourceSystem
 {
@@ -43,5 +38,5 @@ class ResourceSystem
 
         uint32_t mNextTextureId;
         std::unordered_map<uint32_t, std::shared_ptr<TextureArray>> mTextureArrays;
-        std::unordered_map<uint32_t, TextureDefinition> mTextureDefinitions;
+        std::unordered_map<uint32_t, std::shared_ptr<TextureDefinition>> mTextureDefinitions;
 };
