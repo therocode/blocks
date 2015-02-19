@@ -8,17 +8,17 @@
 #include <fea/assert.hpp>
 
 ModelBufferStorage::ModelBufferStorage() : 
-    colors(Buffer::ARRAY_BUFFER),
-    textureIndices(Buffer::ARRAY_BUFFER),
-    modelMatrix1(Buffer::ARRAY_BUFFER),
-    modelMatrix2(Buffer::ARRAY_BUFFER),
-    modelMatrix3(Buffer::ARRAY_BUFFER),
-    modelMatrix4(Buffer::ARRAY_BUFFER),
-    normalMatrix1(Buffer::ARRAY_BUFFER),
-    normalMatrix2(Buffer::ARRAY_BUFFER),
-    normalMatrix3(Buffer::ARRAY_BUFFER),
-    normalMatrix4(Buffer::ARRAY_BUFFER),
-    animData(Buffer::ARRAY_BUFFER)
+    colors(Buffer::ARRAY_BUFFER, Buffer::DYNAMIC),
+    textureIndices(Buffer::ARRAY_BUFFER, Buffer::DYNAMIC),
+    modelMatrix1(Buffer::ARRAY_BUFFER, Buffer::DYNAMIC),
+    modelMatrix2(Buffer::ARRAY_BUFFER, Buffer::DYNAMIC),
+    modelMatrix3(Buffer::ARRAY_BUFFER, Buffer::DYNAMIC),
+    modelMatrix4(Buffer::ARRAY_BUFFER, Buffer::DYNAMIC),
+    normalMatrix1(Buffer::ARRAY_BUFFER, Buffer::DYNAMIC),
+    normalMatrix2(Buffer::ARRAY_BUFFER, Buffer::DYNAMIC),
+    normalMatrix3(Buffer::ARRAY_BUFFER, Buffer::DYNAMIC),
+    normalMatrix4(Buffer::ARRAY_BUFFER, Buffer::DYNAMIC),
+    animData(Buffer::ARRAY_BUFFER, Buffer::DYNAMIC)
 {
 }
 
@@ -59,7 +59,6 @@ void ModelRenderer::render(const Camera& camera, const glm::mat4& perspective, c
     float shadedRatio = 1.0f;
     shader.setUniform("shadedRatio", UniformType::FLOAT, &shadedRatio);
     
-    //std::cout << "new frame \n";
     for(const auto modelIterator : mOrders)
     {
         const Model& model = *modelIterator.first.first;
@@ -87,7 +86,6 @@ void ModelRenderer::render(const Camera& camera, const glm::mat4& perspective, c
 
         modelBufferStorage->vertexArray.bind();
 
-        //std::cout << "will render " << modelIterator.second.size() << " things\n";
         for(auto iterator = modelIterator.second.begin(); iterator != modelIterator.second.end();)
         {
             int32_t batchSize = std::min(maxInstanceAmount,(int) (modelIterator.second.size() - (iterator - modelIterator.second.begin())));
@@ -98,7 +96,6 @@ void ModelRenderer::render(const Camera& camera, const glm::mat4& perspective, c
                 mesh.bind();
                 glDrawElementsInstanced(GL_TRIANGLES, mesh.getElementAmount(), GL_UNSIGNED_INT, 0, batchSize);
             }
-            //std::cout << "batch size " << batchSize << "\n";
 
             iterator += batchSize;
         }
@@ -174,7 +171,7 @@ void ModelRenderer::cacheModel(const Model& model)
 
 void ModelRenderer::uploadBatchData(std::vector<ModelOrder>::const_iterator startOrder, int32_t orderAmount, const Camera& camera, const Shader& shader, const Model& model, ModelBufferStorage& modelBufferStorage)
 {
-    std::vector<float> colors;
+    mColors.resize(orderAmount * 3);
     std::vector<uint32_t> textureIndices;
     std::vector<float> modelMatrix1;
     std::vector<float> modelMatrix2;
@@ -197,10 +194,11 @@ void ModelRenderer::uploadBatchData(std::vector<ModelOrder>::const_iterator star
 
     for(int32_t orderIndex = 0; orderIndex < orderAmount; orderIndex++)
     {
+        int32_t colorIndex = orderIndex * 3;
         const auto& order = *(startOrder + orderIndex);
-        colors.push_back(order.color.r);
-        colors.push_back(order.color.g);
-        colors.push_back(order.color.b);
+        mColors[colorIndex    ] = (order.color.r);
+        mColors[colorIndex + 1] = (order.color.g);
+        mColors[colorIndex + 2] = (order.color.b);
 
         textureIndices.push_back(order.textureIndex);
 
@@ -277,8 +275,9 @@ void ModelRenderer::uploadBatchData(std::vector<ModelOrder>::const_iterator star
     std::vector<float> rotData(12 * numJoints);
     std::vector<float> transData(4 * numJoints);
     const Animation* animation = model.getAnimation();
-    std::vector<float> totalRotData;
-    std::vector<float> totalTransData;
+    mTotalRotData.resize(12 * numJoints * orderAmount);
+    mTotalTransData.resize(4 * numJoints * orderAmount);
+
     if(animation != nullptr)
     {
         for(int32_t orderIndex = 0; orderIndex < orderAmount; orderIndex++)
@@ -339,70 +338,17 @@ void ModelRenderer::uploadBatchData(std::vector<ModelOrder>::const_iterator star
                 transData[transIndex + 2] = outputTransformation[i][3][2];
                 transData[transIndex + 3] = 1337.3f;//skipped due to padding
             }
-            totalRotData.insert(totalRotData.end(), rotData.begin(), rotData.end());
-            totalTransData.insert(totalTransData.end(), transData.begin(), transData.end());
+            std::copy(rotData.begin(), rotData.end(), mTotalRotData.begin() + orderIndex * 12 * numJoints);
+            std::copy(transData.begin(), transData.end(), mTotalTransData.begin() + orderIndex * 4 * numJoints);
         }
     }
     //animation end
 
-    std::vector<float> totalAnimData(animationUniformBlockSize);
-    std::copy(totalRotData.begin(), totalRotData.end(), totalAnimData.begin());
-    std::copy(totalTransData.begin(), totalTransData.end(), totalAnimData.begin() + maxBoneAmount * 12);
+    mTotalAnimData.resize(animationUniformBlockSize);
+    std::copy(mTotalRotData.begin(), mTotalRotData.end(), mTotalAnimData.begin());
+    std::copy(mTotalTransData.begin(), mTotalTransData.end(), mTotalAnimData.begin() + maxBoneAmount * 12);
 
-    //std::cout << "rotations: \n";
-    //int32_t counter = 0;
-    //for(float value : totalRotData)
-    //{
-    //    if(counter % 12 == 0)
-    //        std::cout << counter / 12 <<":\n";
-
-    //    std::cout << (counter % 4 != 3 ? std::to_string(value) : std::string()) << (counter % 4 == 2 ? "\n" : " ");
-    //    counter++;
-    //}
-
-    //std::cout << "translations: \n";
-    //counter = 0;
-    //for(float value : totalTransData)
-    //{
-    //    if(counter % 4 == 0)
-    //        std::cout << counter / 4 <<":\n";
-
-    //    std::cout << (counter % 4 != 3 ? std::to_string(value) : std::string()) << (counter % 4 == 2 ? "\n" : " ");
-    //    counter++;
-    //}
-
-    //float n = 0.0f;
-    //std::generate(totalAnimData.begin(), totalAnimData.end(), [&]{return n++;});
-    //int32_t counter = 0;
-    //int32_t rotCounter = 0;
-    //int32_t transCounter = 0;
-    //for(float value : totalAnimData)
-    //{
-    //    if(counter < totalRotData.size())
-    //    {
-    //        if(rotCounter == 0)
-    //            std::cout << "rotations: \n";
-    //        if(rotCounter % 12 == 0)
-    //            std::cout << rotCounter / 12 <<":\n";
-
-    //        std::cout << (rotCounter % 4 != 3 ? std::to_string(value) : std::string()) << (rotCounter % 4 == 2 ? "\n" : " ");
-    //        rotCounter++;
-    //    }
-    //    else
-    //    {
-    //        if(transCounter == 0)
-    //            std::cout << "translations: \n";
-    //        if(transCounter % 4 == 0)
-    //            std::cout << transCounter / 4 <<":\n";
-
-    //        std::cout << (transCounter % 4 != 3 ? std::to_string(value) : std::string()) << (transCounter % 4 == 2 ? "\n" : " ");
-    //        transCounter++;
-    //    }
-    //    counter++;
-    //}
-    
-
-    modelBufferStorage.colors.setData(colors);
+    modelBufferStorage.colors.setData(mColors);
     modelBufferStorage.textureIndices.setData(textureIndices);
     modelBufferStorage.modelMatrix1.setData(modelMatrix1);
     modelBufferStorage.modelMatrix2.setData(modelMatrix2);
@@ -412,7 +358,7 @@ void ModelRenderer::uploadBatchData(std::vector<ModelOrder>::const_iterator star
     modelBufferStorage.normalMatrix2.setData(normalMatrix2);
     modelBufferStorage.normalMatrix3.setData(normalMatrix3);
 
-    modelBufferStorage.animData.setData(totalAnimData);
+    modelBufferStorage.animData.setData(mTotalAnimData);
 
     modelBufferStorage.vertexArray.bind();
 
@@ -421,7 +367,6 @@ void ModelRenderer::uploadBatchData(std::vector<ModelOrder>::const_iterator star
     if(mAnimationBlockLocation == -1)
         mAnimationBlockLocation = glGetUniformBlockIndex(shader.getId(), "AnimationBlock");
 
-    //std::cout << "total: " << totalAnimData.size() * sizeof(float) << "\n";
     glUniformBlockBinding(shader.getId(), mAnimationBlockLocation, blockIndex);
     glBindBufferBase(GL_UNIFORM_BUFFER, blockIndex, modelBufferStorage.animData.getId());
 }

@@ -67,4 +67,11 @@ class ModelRenderer : public RenderModule
         GLint mAnimationBlockLocation;
         //model cache
         std::unordered_map<const Model*, std::unique_ptr<ModelBufferStorage>> mModelBufferCache;
+
+        //cached arrays
+        std::vector<float> mColors;
+        std::vector<float> mTotalAnimData;
+        std::vector<float> mTotalRotData;
+        std::vector<float> mTotalTransData;
+        //... more can be optimised like this
 };
