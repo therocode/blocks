@@ -43,6 +43,7 @@ void ModelRenderer::queue(const Renderable& renderable)
     order.position = modelRenderable.getPosition();
     order.orientation = modelRenderable.getOrientation();
     order.frameOffset = modelRenderable.getFrameOffset();
+    order.animation = modelRenderable.getAnimation();
     
     FEA_ASSERT(order.model != nullptr, "Trying to render a model renderable which doesn't have a model");
     FEA_ASSERT(order.model->findMesh(0) != nullptr, "Trying to render a model renderable which has a model without a primary model");
@@ -274,15 +275,16 @@ void ModelRenderer::uploadBatchData(std::vector<ModelOrder>::const_iterator star
     //animation
     std::vector<float> rotData(12 * numJoints);
     std::vector<float> transData(4 * numJoints);
-    const Animation* animation = model.findAnimation("sting");
     mTotalRotData.resize(12 * numJoints * orderAmount);
     mTotalTransData.resize(4 * numJoints * orderAmount);
 
     for(int32_t orderIndex = 0; orderIndex < orderAmount; orderIndex++)
     {
+        const auto& order = *(startOrder + orderIndex);
+        const Animation* animation = model.findAnimation(order.animation);
+
         if(animation != nullptr)
         {
-            const auto& order = *(startOrder + orderIndex);
             float localCurrentFrame = (order.frameOffset / 60.0f) * animation->framerate;
             int32_t numFrames = animation->frameAmount;
             int32_t frame1 = (int32_t)std::floor(localCurrentFrame);// * (animation->framerate/60.0f));

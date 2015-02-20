@@ -77,3 +77,13 @@ uint32_t ModelRenderable::getTextureIndex() const
 {
     return mTextureIndex;
 }
+
+const std::string& ModelRenderable::getAnimation() const
+{
+    return mAnimation;
+}
+
+void ModelRenderable::setAnimation(const std::string& animation)
+{
+    mAnimation = animation;
+}

@@ -23,6 +23,8 @@ class ModelRenderable : public Renderable
         void setTexture(const TextureArray& texture, uint32_t index);
         const TextureArray* findTextureArray() const;
         uint32_t getTextureIndex() const;
+        const std::string& getAnimation() const;
+        void setAnimation(const std::string& animation);
     private:
         glm::vec3 mPosition;
         glm::vec3 mColor;
@@ -31,4 +33,5 @@ class ModelRenderable : public Renderable
         const Model* mModel;
         const TextureArray* mTextureArray;
         uint32_t mTextureIndex;
+        std::string mAnimation;
 };
