@@ -1,8 +1,8 @@
-class Elephant : Entity
+class poring : Entity
 {
     bool teleporter;
 
-    Elephant(EntityCore@ core, uint id)
+    poring(EntityCore@ core, uint id)
     {
         super(core, id);
         teleporter = randomChance(0.1f);
@@ -23,7 +23,7 @@ class Elephant : Entity
         }
     }
 
-    ~Elephant()
+    ~poring()
     {
     }
 }

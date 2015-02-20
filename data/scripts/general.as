@@ -12,14 +12,12 @@ void gameStarted()
     consolePrint("<- tag test", "Giraffe");
     consolePrint("<- tag+level test " + toString(Vec3(0.0f, 1.0f, -1.0f)), "Giraffe", VERBOSE);
 
-	for(int x = 0; x < 5; x++)
-	{
-		for(int y = 0; y < 5; y++)
-		{
-            createEntity("Elephant", 0, Vec3(5.0f * x + 0.5f, 100.0f + randomFloatRange(0.f, 80.f), 5.0f * y + 0.5f));
-		}
-	}
-
+    createEntity("pallkars", 0, Vec3(5.0f * 1 + 0.5f, 100.0f + randomFloatRange(0.f, 80.f), 5.0f * 0 + 0.5f));
+    createEntity("pallkars", 0, Vec3(5.0f * 0 + 0.5f, 100.0f + randomFloatRange(0.f, 80.f), 5.0f * 1 + 0.5f));
+    createEntity("pallkars", 0, Vec3(5.0f * 1 + 0.5f, 100.0f + randomFloatRange(0.f, 80.f), 5.0f * 2 + 0.5f));
+    createEntity("poring", 0, Vec3(5.0f * 0 + 0.5f, 100.0f + randomFloatRange(0.f, 80.f), 5.0f * 0 + 0.5f));
+    createEntity("poring", 0, Vec3(5.0f * 1 + 0.5f, 100.0f + randomFloatRange(0.f, 80.f), 5.0f * 1 + 0.5f));
+    createEntity("poring", 0, Vec3(5.0f * 0 + 0.5f, 100.0f + randomFloatRange(0.f, 80.f), 5.0f * 2 + 0.5f));
 }
 
 void onFrame(int frameNumber)
