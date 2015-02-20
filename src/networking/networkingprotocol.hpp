@@ -259,12 +259,12 @@ struct EntityEnteredRangeMessage
     template<class Archive>
     void serialize(Archive& archive)
     {
-        archive(id, position.x, position.y, position.z);
+        archive(id, position.x, position.y, position.z, gfxEntity);
     }
 
     fea::EntityId id;
-    //type
     glm::vec3 position;
+    std::string gfxEntity;
     //float pitch;
     //float yaw; add these later
 };

@@ -81,6 +81,11 @@ EntityDefinition EntityDefinitionLoader::loadFromJSONFile(const std::string& pat
         {
             definition.jumpStrength = member.value.GetFloat();
         }
+        //reading gfx_entity
+        else if(memberName == "gfx_entity")
+        {
+            definition.gfxEntity = member.value.GetString();
+        }
     }
 
     return definition;

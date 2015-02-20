@@ -49,6 +49,7 @@ fea::WeakEntityPtr EntityFactory::spawnEntity(const std::string& scriptType)
     spawned->setAttribute<float>("walk_speed", definition.walkSpeed);
     spawned->setAttribute<float>("run_speed", definition.runSpeed);
     spawned->setAttribute<float>("jump_strength", definition.jumpStrength);
+    spawned->setAttribute("gfx_entity", definition.gfxEntity);
     spawned->setAttribute<MoveAction>("move_action", MoveAction::STANDING);
     spawned->setAttribute<MoveDirection>("move_direction", MoveDirection(false, false, false, false));
 

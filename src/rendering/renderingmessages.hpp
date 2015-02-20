@@ -11,7 +11,7 @@ struct ChunkVBODeletedMessage
 
 struct AddGfxEntityMessage
 {
-    const glm::vec3& position; size_t& returnedId;
+    const glm::vec3& position; size_t& returnedId; uint32_t type;
 };
 
 struct MoveGfxEntityMessage

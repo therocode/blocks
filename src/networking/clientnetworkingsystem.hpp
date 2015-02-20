@@ -9,6 +9,7 @@
 #include "../input/inputmessages.hpp"
 #include "../utilities/idmapper.hpp"
 #include "../world/worldmessages.hpp"
+#include "../resources/resourcesystem.hpp"
 #include "enet.hpp"
 #include "enetclient.hpp"
 #include "networkingprotocol.hpp"
@@ -37,7 +38,7 @@ class ClientNetworkingSystem : public
                          VoxelUpdatedMessage>
 {
     public:
-        ClientNetworkingSystem(fea::MessageBus& bus, const NetworkParameters& parameters);
+        ClientNetworkingSystem(fea::MessageBus& bus, const NetworkParameters& parameters, const ResourceSystem& resources);
         ~ClientNetworkingSystem();
         void handleMessage(const FrameMessage& received) override;
         void handleMessage(const LocalConnectionEstablishedMessage& received) override;
@@ -74,6 +75,7 @@ class ClientNetworkingSystem : public
         size_t mPlayerEntity; //hack to remove when server/client traffic is cleaned up
         std::unordered_map<size_t, size_t> mGraphicEntityIds;
         std::unordered_map<WorldId, std::vector<ChunkCoord>> mChunksToRequest;
+        const ResourceSystem& mResources; //should this one be here?
 };
 
 template <typename Message>

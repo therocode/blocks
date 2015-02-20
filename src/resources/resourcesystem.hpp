@@ -12,6 +12,7 @@ class ResourceSystem
 {
     public:
         ResourceSystem(fea::MessageBus& bus, const std::string assetsPath, const std::vector<std::string> fileTypes);
+        uint32_t getGfxEntityId(const std::string& gfxEntityName) const;
     private:
         void loadModels(const std::vector<ResourceEntry>& models);
         void loadVertexShaders(const std::vector<ResourceEntry>& vertexShaders);

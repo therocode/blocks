@@ -23,5 +23,7 @@
     "jump_strength":"float",
 	"jumping":"bool",
     "move_action":"move_action",
-    "move_direction":"move_direction"
+    "move_direction":"move_direction",
+
+    "gfx_entity":"string"
 }

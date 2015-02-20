@@ -6,11 +6,12 @@
 #include "enetclient.hpp"
 #include "channels.hpp"
 
-ClientNetworkingSystem::ClientNetworkingSystem(fea::MessageBus& bus, const NetworkParameters& parameters) :
+ClientNetworkingSystem::ClientNetworkingSystem(fea::MessageBus& bus, const NetworkParameters& parameters, const ResourceSystem& resources) :
     mBus(bus),
     mParameters(parameters),
     mServerBus(nullptr),
-    mIsConnected(false)
+    mIsConnected(false),
+    mResources(resources)
 {
     subscribe(mBus, *this);
 
@@ -166,7 +167,7 @@ void ClientNetworkingSystem::handleMessage(const EntityEnteredRangeMessage& rece
 {
     size_t returnedId;
 
-    mBus.send(AddGfxEntityMessage{received.position, returnedId});
+    mBus.send(AddGfxEntityMessage{received.position, returnedId, mResources.getGfxEntityId(received.gfxEntity)});
     mGraphicEntityIds.emplace(received.id, returnedId);
 
     if(received.id == mPlayerEntity)

@@ -230,7 +230,7 @@ void CollisionController::handleMessage(const EntityMoveRequestedMessage& receiv
         }
     }
     entity->setAttribute<glm::vec3>("position", approvedPosition);
-    mBus.send(EntityMovedMessage{id, worldId, oldPositionRetained, approvedPosition});
+    mBus.send(EntityMovedMessage{entity, worldId, oldPositionRetained, approvedPosition});
 }
 
 bool CollisionController::testAABBWorld(WorldId worldId, const AABB& a) const{

@@ -235,7 +235,8 @@ void ServerNetworkingSystem::handleMessage(const EntityCreatedMessage& received)
             {
                 mEntityTracking[playerId].emplace(entity->getId());
 
-                EntityEnteredRangeMessage message{entity->getId(), entityPosition};
+                const std::string& gfxType = entity->getAttribute<std::string>("gfx_entity");
+                EntityEnteredRangeMessage message{entity->getId(), entityPosition, gfxType};
                 sendToOne(playerId, message, true, CHANNEL_DEFAULT);
             }
         }
@@ -255,29 +256,31 @@ void ServerNetworkingSystem::handleMessage(const EntityMovedMessage& received)
         {
             const glm::vec3& playerPosition = positionIterator->second;
             float range = subscription.second * chunkWidth;
+            fea::EntityId entityId = received.entity->getId();
 
             if(glm::distance(entityPosition, playerPosition) < range && received.worldId == mPlayerWorlds.at(playerId))
             {
-                auto result = mEntityTracking[playerId].emplace(received.entityId);
+                auto result = mEntityTracking[playerId].emplace(entityId);
 
                 if(result.second)
                 {
-                    EntityEnteredRangeMessage message{received.entityId, entityPosition};
+                    const std::string& gfxType = received.entity->getAttribute<std::string>("gfx_entity");
+                    EntityEnteredRangeMessage message{entityId, entityPosition, gfxType};
                     sendToOne(playerId, message, true, CHANNEL_DEFAULT);
                 }
                 else
                 {
-                    EntityPositionUpdatedMessage message{received.entityId, entityPosition};
+                    EntityPositionUpdatedMessage message{entityId, entityPosition};
                     sendToOne(playerId, message, false, CHANNEL_DEFAULT);
                 }
             }
             else
             {
-                auto result = mEntityTracking[playerId].erase(received.entityId);
+                auto result = mEntityTracking[playerId].erase(entityId);
 
                 if(result > 0)
                 {
-                    EntityLeftRangeMessage message{received.entityId};
+                    EntityLeftRangeMessage message{entityId};
                     sendToOne(playerId, message, true, CHANNEL_DEFAULT);
                 }
             }

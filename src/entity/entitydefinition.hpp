@@ -10,4 +10,5 @@ struct EntityDefinition
     float walkSpeed;
     float runSpeed;
     float jumpStrength;
+    std::string gfxEntity;
 };

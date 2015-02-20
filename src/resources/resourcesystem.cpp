@@ -65,6 +65,11 @@ ResourceSystem::ResourceSystem(fea::MessageBus& bus, const std::string assetsPat
     }
 }
 
+uint32_t ResourceSystem::getGfxEntityId(const std::string& gfxEntityName) const
+{
+    return mGfxEntityIDs.getIdConst(gfxEntityName);
+}
+
 void ResourceSystem::loadModels(const std::vector<ResourceEntry>& models)
 {
     mBus.send(LogMessage{"Loading models. " + std::to_string(models.size()) + " models to load.", gResourceName, LogLevel::INFO});

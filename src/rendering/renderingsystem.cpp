@@ -51,7 +51,8 @@ RenderingSystem::RenderingSystem(fea::MessageBus& bus, const glm::uvec2& viewSiz
 
 void RenderingSystem::handleMessage(const AddGfxEntityMessage& received)
 {
-    const GfxEntityDefinition& definition = *mGfxEntityDefinitions.begin()->second;
+    FEA_ASSERT(mGfxEntityDefinitions.count(received.type) != 0, "Invalid GfxEntity type received");
+    const GfxEntityDefinition& definition = *mGfxEntityDefinitions.at(received.type);
     FEA_ASSERT(mModels.count(definition.modelId) != 0, "Invalid model given");
     const Model& model = *mModels.at(definition.modelId);
     FEA_ASSERT(mTextureDefinitions.count(definition.textureId) != 0, "Invalid texture given");

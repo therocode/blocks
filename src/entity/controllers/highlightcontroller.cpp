@@ -36,10 +36,9 @@ void HighlightController::entityDropped(fea::WeakEntityPtr entity)
 
 void HighlightController::handleMessage(const EntityMovedMessage& received)
 {
-    if(mEntities.count(received.entityId))
+    fea::EntityId id = received.entity->getId();
+    if(mEntities.count(id))
     {
-        size_t id = received.entityId;
-
         auto entityIterator = mEntities.find(id);
 
         if(entityIterator != mEntities.end())
