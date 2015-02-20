@@ -63,8 +63,7 @@ class RenderingSystem :
         uint32_t mCameraEntity;
 
         IdPool<size_t> mEntityIds;
-        //test
-        std::vector<DebugRenderable> mDebuggers;
+
         std::unordered_map<uint32_t, std::unique_ptr<Model>> mModels;
 
         std::unordered_map<int32_t, ModelRenderable> mModelRenderables;
@@ -81,7 +80,4 @@ class RenderingSystem :
 
         bool mIsFacing;
         glm::ivec3 mFacingBlock;
-
-        bool mHalfThem = false;
-        int32_t mCounter = 0;
 };

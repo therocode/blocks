@@ -20,6 +20,7 @@ struct ModelOrder
     glm::vec3 position;
 	glm::quat orientation;
     float frameOffset;
+    std::string animation;
 };
 
 struct ModelBufferStorage

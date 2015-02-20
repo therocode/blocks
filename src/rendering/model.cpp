@@ -72,10 +72,3 @@ const std::vector<int32_t>& Model::getJointStructure() const
 {
     return mJointStructure;
 }
-
-const Animation* Model::getAnimation() const
-{
-    if(mAnimations.size() > 0)
-        return mAnimations.begin()->second.get();
-    else return nullptr;
-}

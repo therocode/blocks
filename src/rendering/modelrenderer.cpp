@@ -274,13 +274,13 @@ void ModelRenderer::uploadBatchData(std::vector<ModelOrder>::const_iterator star
     //animation
     std::vector<float> rotData(12 * numJoints);
     std::vector<float> transData(4 * numJoints);
-    const Animation* animation = model.getAnimation();
+    const Animation* animation = model.findAnimation("sting");
     mTotalRotData.resize(12 * numJoints * orderAmount);
     mTotalTransData.resize(4 * numJoints * orderAmount);
 
-    if(animation != nullptr)
+    for(int32_t orderIndex = 0; orderIndex < orderAmount; orderIndex++)
     {
-        for(int32_t orderIndex = 0; orderIndex < orderAmount; orderIndex++)
+        if(animation != nullptr)
         {
             const auto& order = *(startOrder + orderIndex);
             float localCurrentFrame = (order.frameOffset / 60.0f) * animation->framerate;
@@ -338,9 +338,33 @@ void ModelRenderer::uploadBatchData(std::vector<ModelOrder>::const_iterator star
                 transData[transIndex + 2] = outputTransformation[i][3][2];
                 transData[transIndex + 3] = 1337.3f;//skipped due to padding
             }
-            std::copy(rotData.begin(), rotData.end(), mTotalRotData.begin() + orderIndex * 12 * numJoints);
-            std::copy(transData.begin(), transData.end(), mTotalTransData.begin() + orderIndex * 4 * numJoints);
         }
+        else
+        {
+            for(int32_t i = 0; i < numJoints; i++)
+            {
+                int32_t rotIndex = i * 12;
+                int32_t transIndex = i * 4;
+                rotData[rotIndex + 0]  = 1.0f;
+                rotData[rotIndex + 1]  = 0.0f;
+                rotData[rotIndex + 2]  = 0.0f;
+                rotData[rotIndex + 3]  = 1337.0f;//skipped due to padding
+                rotData[rotIndex + 4]  = 0.0f;
+                rotData[rotIndex + 5]  = 1.0f;
+                rotData[rotIndex + 6]  = 0.0f;
+                rotData[rotIndex + 7]  = 1337.1f;//skipped due to padding
+                rotData[rotIndex + 8]  = 0.0f;
+                rotData[rotIndex + 9]  = 0.0f;
+                rotData[rotIndex + 10] = 1.0f;
+                rotData[rotIndex + 11] = 1337.2f; //skipped due to padding
+                transData[transIndex + 0] = 0.0f;
+                transData[transIndex + 1] = 0.0f;
+                transData[transIndex + 2] = 0.0f;
+                transData[transIndex + 3] = 1337.3f;//skipped due to padding
+            }
+        }
+        std::copy(rotData.begin(), rotData.end(), mTotalRotData.begin() + orderIndex * 12 * numJoints);
+        std::copy(transData.begin(), transData.end(), mTotalTransData.begin() + orderIndex * 4 * numJoints);
     }
     //animation end
 

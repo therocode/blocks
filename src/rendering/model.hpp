@@ -20,8 +20,6 @@ class Model
         const Animation* findAnimation(const std::string& name) const;
         void setJointStructure(const std::vector<int32_t>& jointStructure);
         const std::vector<int32_t>& getJointStructure() const;
-        //tempcrap:
-        const Animation* getAnimation() const;
     private:
         std::unordered_map<ModelAttribute, std::vector<float>> mVertexArrays;
         std::unordered_map<ModelAttribute, std::vector<uint8_t>> mBlendArrays;

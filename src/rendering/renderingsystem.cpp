@@ -26,22 +26,6 @@ RenderingSystem::RenderingSystem(fea::MessageBus& bus, const glm::uvec2& viewSiz
     mRenderer.addModule(RenderModule::EXTRA, std::unique_ptr<ExtraRenderer>(new ExtraRenderer()));
     mRenderer.addModule(RenderModule::DEBUG, std::unique_ptr<DebugRenderer>(new DebugRenderer()));
 
-    for(uint32_t x = 0; x < 25; x++)
-    {
-        for(uint32_t y = 0; y < 25; y++)
-        {
-            for(uint32_t z = 0; z < 25; z++)
-            {
-                DebugRenderable newDeb(DebugRenderable::CUBE);
-                newDeb.setPosition(glm::vec3(x * 5 + (float)(rand() % 20 - 10) / 5.0f, y * 5 + (float)(rand() % 20 - 10) / 5.0f, z * 5 + (float)(rand() % 20 - 10) / 5.0f) + glm::vec3(0.3f, -43.0f, 0.0f));
-                newDeb.setColor(glm::vec3(0.02f, 0.02f, 0.02f) * glm::vec3(x, y, z));
-				newDeb.setPitch(0.0f);
-				newDeb.setYaw(0.0f);
-                //mDebuggers.push_back(newDeb);
-            }
-        }
-    }
-
     GLint maxSize;
     glGetIntegerv(GL_MAX_ARRAY_TEXTURE_LAYERS, &maxSize);
 
@@ -330,14 +314,6 @@ void RenderingSystem::handleMessage(const FacingBlockMessage& received)
 void RenderingSystem::render()
 {
     mRenderer.clear();
-
-    for(auto& debbie : mDebuggers)
-    {
-        //debbie.setColor({(float)(rand() % 256) / 256.0f,(float)(rand() % 256) / 256.0f, (float)(rand() % 256) / 256.0f});
-        //debbie.setPitch(debbie.getPitch()+0.2f);
-        //debbie.setYaw(debbie.getYaw()+0.1f);
-		mRenderer.queue(debbie);
-    }
 
     for(auto& voxie : mChunkModels)
     {
