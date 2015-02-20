@@ -246,7 +246,7 @@ void ResourceSystem::loadWorlds(const std::vector<ResourceEntry>& worlds)
 
             if(world)
             {
-                uint32_t id = mExtensionMetadataIDs.getId(worldFile.name);
+                uint32_t id = mWorldIDs.getId(worldFile.name);
                 mBus.send(ResourceDeliverMessage<std::vector<WorldParameters>>{id, world});
             }
         }
