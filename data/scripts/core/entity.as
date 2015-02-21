@@ -53,4 +53,9 @@ shared class Entity : IEntity
     {
         return mCore.getCurrentWorldId();
     }
+
+    void setAnimation(const string& in name)
+    {
+        setAnimationOnEntity(mId, name);
+    }
 }

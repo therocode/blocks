@@ -196,6 +196,11 @@ void ClientNetworkingSystem::handleMessage(const EntityLeftRangeMessage& receive
     mGraphicEntityIds.erase(received.id);
 }
 
+void ClientNetworkingSystem::handleMessage(const EntityAnimationMessage& received)
+{
+    mBus.send(AnimateGfxEntityMessage{mGraphicEntityIds.at(received.id), received.animationName});
+}
+
 void ClientNetworkingSystem::handleMessage(const ClientAttachedToEntityMessage& received)
 {
     mBus.send(LocalPlayerAttachedToEntityMessage{received.entityId, mWorldIds.getId(received.worldId), received.position, received.highlightRange});
@@ -271,6 +276,11 @@ void ClientNetworkingSystem::handleServerData(const std::vector<uint8_t>& data)
         else if(type == ENTITY_LEFT_RANGE)
         {
             EntityLeftRangeMessage received = deserializeMessage<EntityLeftRangeMessage>(data);
+            mBus.send(received);
+        }
+        else if(type == ENTITY_ANIMATION_MESSAGE)
+        {
+            EntityAnimationMessage received = deserializeMessage<EntityAnimationMessage>(data);
             mBus.send(received);
         }
         else if(type == CLIENT_ATTACHED_TO_ENTITY)

@@ -22,7 +22,7 @@ named_enum(PacketType, INVALID,
     //controls
     CLIENT_ACTION, CLIENT_MOVE_ACTION, CLIENT_MOVE_DIRECTION, CLIENT_PITCH_YAW,
     //entities
-    CLIENT_ATTACHED_TO_ENTITY, ENTITY_ENTERED_RANGE, ENTITY_POSITION_UPDATED, ENTITY_ORIENTATION_UPDATED, ENTITY_LEFT_RANGE,
+    CLIENT_ATTACHED_TO_ENTITY, ENTITY_ENTERED_RANGE, ENTITY_POSITION_UPDATED, ENTITY_ORIENTATION_UPDATED, ENTITY_LEFT_RANGE, ENTITY_ANIMATION_MESSAGE,
     //client
     CLIENT_ENTERED_WORLD,
     CLIENT_POSITION,
@@ -312,6 +312,20 @@ struct EntityLeftRangeMessage
     }
 
     fea::EntityId id;
+};
+
+struct EntityAnimationMessage
+{
+    PacketType getType() const {return ENTITY_ANIMATION_MESSAGE;}
+
+    template<class Archive>
+    void serialize(Archive& archive)
+    {
+        archive(id, animationName);
+    }
+
+    fea::EntityId id;
+    std::string animationName;
 };
 
 //struct ClientEnteredWorldMessage

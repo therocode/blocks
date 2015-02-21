@@ -34,6 +34,7 @@ class ClientNetworkingSystem : public
                          EntityPositionUpdatedMessage,
                          EntityOrientationUpdatedMessage,
                          EntityLeftRangeMessage,
+                         EntityAnimationMessage,
                          ClientAttachedToEntityMessage,
                          VoxelUpdatedMessage>
 {
@@ -56,6 +57,7 @@ class ClientNetworkingSystem : public
         void handleMessage(const EntityPositionUpdatedMessage& received) override;
         void handleMessage(const EntityOrientationUpdatedMessage& received) override;
         void handleMessage(const EntityLeftRangeMessage& received) override;
+        void handleMessage(const EntityAnimationMessage& received) override;
         void handleMessage(const ClientAttachedToEntityMessage& received) override;
         void handleMessage(const VoxelUpdatedMessage& received) override;
     private:

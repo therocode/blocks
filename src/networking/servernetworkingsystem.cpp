@@ -421,6 +421,11 @@ void ServerNetworkingSystem::handleMessage(const VoxelSetMessage& received)
         }
     }
 }
+        
+void ServerNetworkingSystem::handleMessage(const EntityAnimationMessage& received)
+{
+    sendToAll(received, true, CHANNEL_DEFAULT);
+}
 
 void ServerNetworkingSystem::acceptRemoteClient(uint32_t id)
 {

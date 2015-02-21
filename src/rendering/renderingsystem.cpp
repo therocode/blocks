@@ -112,6 +112,17 @@ void RenderingSystem::handleMessage(const AttachedToGfxEntityMessage& received)
     mModelRenderables.erase(mCameraEntity);
 }
 
+void RenderingSystem::handleMessage(const AnimateGfxEntityMessage& received)
+{
+    if(received.id != mCameraEntity)
+    {
+        FEA_ASSERT(mModelRenderables.count(received.id) != 0, "Trying to animate a non existing entity");
+        auto& model = mModelRenderables.at(received.id);
+        model.setAnimation(received.animationName);
+        model.setFrameOffset(0.0f);
+    }
+}
+
 void RenderingSystem::handleMessage(const WindowResizeMessage& received)
 {
 	uint32_t width = received.width;

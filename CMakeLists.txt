@@ -136,6 +136,7 @@ set(source_files
     src/script/callers/chunkeventcaller.cpp
     src/script/callers/ongroundcaller.cpp
     src/script/callers/worldcaller.cpp
+    src/script/interfaces/animationinterface.cpp
     src/script/interfaces/chunkinterface.cpp
     src/script/interfaces/entityinterface.cpp
     src/script/interfaces/extensioninterface.cpp
@@ -312,6 +313,7 @@ set(header_files
     src/script/callers/ongroundcaller.hpp
     src/script/callers/chunkeventcaller.hpp
     src/script/callers/worldcaller.hpp
+    src/script/interfaces/animationinterface.hpp
     src/script/interfaces/chunkinterface.hpp
     src/script/interfaces/entityinterface.hpp
     src/script/interfaces/extensioninterface.hpp

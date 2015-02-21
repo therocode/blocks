@@ -34,6 +34,12 @@ struct AttachedToGfxEntityMessage
     size_t id;
 };
 
+struct AnimateGfxEntityMessage
+{
+    size_t id;
+    const std::string& animationName;
+};
+
 struct CameraUpdatedMessage
 {
     const glm::vec3& onevec; const glm::vec3& twovec;

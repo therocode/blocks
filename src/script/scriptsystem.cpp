@@ -14,6 +14,7 @@
 #include "interfaces/printinterface.hpp"
 #include "interfaces/randominterface.hpp"
 #include "interfaces/stringinterface.hpp"
+#include "interfaces/animationinterface.hpp"
 
 #include "callers/ongroundcaller.hpp"
 #include "callers/gameeventcaller.hpp"
@@ -144,6 +145,7 @@ void ScriptSystem::setupInterfaces()
     mInterfaces.push_back(std::unique_ptr<ScriptInterface>(new RandomInterface(mBus, mGameInterface)));
 	mInterfaces.push_back(std::unique_ptr<ScriptInterface>(new ChunkInterface(mBus, mGameInterface)));
     mInterfaces.push_back(std::unique_ptr<ScriptInterface>(new ExtensionInterface(mBus, mGameInterface)));
+    mInterfaces.push_back(std::unique_ptr<ScriptInterface>(new AnimationInterface(mBus, mGameInterface)));
 
     registerInterfaces();
 }

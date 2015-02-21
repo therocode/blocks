@@ -23,6 +23,18 @@ class poring : Entity
         }
     }
 
+    void onGround(bool landed)
+    {
+        if(landed)
+        {
+            setAnimation("test");
+        }
+        else
+        {
+            setAnimation("");
+        }
+    }
+
     ~poring()
     {
     }

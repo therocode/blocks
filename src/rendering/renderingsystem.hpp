@@ -24,6 +24,7 @@ class RenderingSystem :
                                 MoveGfxEntityMessage,
                                 RemoveGfxEntityMessage,
                                 AttachedToGfxEntityMessage,
+                                AnimateGfxEntityMessage,
                                 WindowResizeMessage,
                                 RenderModeMessage,
                                 ResourceDeliverMessage<RawModel>,
@@ -44,6 +45,7 @@ class RenderingSystem :
         void handleMessage(const MoveGfxEntityMessage& received) override;
         void handleMessage(const RemoveGfxEntityMessage& received) override;
         void handleMessage(const AttachedToGfxEntityMessage& received) override;
+        void handleMessage(const AnimateGfxEntityMessage& received) override;
         void handleMessage(const WindowResizeMessage& received) override;
         void handleMessage(const RenderModeMessage& received) override;
         void handleMessage(const ResourceDeliverMessage<RawModel>& received) override;
