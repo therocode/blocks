@@ -111,3 +111,13 @@ void EntitySystem::removeEntity(fea::EntityId id)
 
     mBus.send(EntityRemovedMessage{id});
 }
+
+void EntitySystem::handleMessage(const ResourceDeliverMessage<std::unordered_map<std::string, std::string>>& received)
+{
+    mFactory.registerAttribute(*received.resource);
+}
+
+void EntitySystem::handleMessage(const ResourceDeliverMessage<std::vector<std::pair<std::string, fea::EntityTemplate>>>& received)
+{
+    mFactory.registerEntity(*received.resource);
+}

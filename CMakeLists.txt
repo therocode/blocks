@@ -103,6 +103,8 @@ set(source_files
     src/resources/extensionmetadatafromfileloader.cpp
 	src/resources/gfxentitydefinitionfromfileloader.cpp
     src/resources/worldfromfileloader.cpp
+    src/resources/attributefromfileloader.cpp
+    src/resources/entityfromfileloader.cpp
     src/resources/image.cpp
     src/resources/iqmfromfileloader.cpp
     src/resources/resourceexception.cpp
@@ -160,7 +162,6 @@ set(source_files
     src/world/raycaster.cpp
     src/world/worldentry.cpp
     src/world/worldsystem.cpp
-    src/world/worldloader.cpp
     src/world/generation/chunkgenerator.cpp
     )
 
@@ -268,6 +269,8 @@ set(header_files
     src/resources/texture.hpp
     src/resources/texturedefinition.hpp
     src/resources/worldfromfileloader.hpp
+    src/resources/attributefromfileloader.hpp
+    src/resources/entityfromfileloader.hpp
 
     src/utilities/coordinateconverter.hpp
     src/utilities/directorycreator.hpp
@@ -341,7 +344,6 @@ set(header_files
     src/world/worlddefines.hpp
     src/world/worldentry.hpp
 	src/world/worldsystem.hpp
-    src/world/worldloader.hpp
 	src/world/worldmessages.hpp
     src/world/chunkprovider.hpp
     src/world/generation/chunkgenerator.hpp

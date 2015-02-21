@@ -4,7 +4,6 @@
 #include "chunkmap.hpp"
 #include "../application/applicationmessages.hpp"
 #include "../lognames.hpp"
-#include "../world/worldloader.hpp"
 #include "../utilities/directorycreator.hpp"
 
 WorldSystem::WorldSystem(fea::MessageBus& messageBus) 

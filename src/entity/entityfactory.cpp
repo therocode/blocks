@@ -10,7 +10,6 @@
 EntityFactory::EntityFactory(fea::EntityManager& manager) : mFactory(manager)
 {
     //register templates
-    fea::JsonEntityLoader loader;
 
     fea::addBasicDataTypes(mFactory);
     fea::addGlmDataTypes(mFactory);
@@ -25,12 +24,6 @@ EntityFactory::EntityFactory(fea::EntityManager& manager) : mFactory(manager)
 
                 return glm::quat(std::stof(params[0]),std::stof(params[1]),std::stof(params[2]),std::stof(params[3]));
             });
-
-    for(const auto& entityAttribute : loader.loadEntityAttributes("data/entities/attributes.att"))
-        mFactory.registerAttribute(entityAttribute.first, entityAttribute.second);
-
-    for(const auto& entityTemplate : loader.loadEntityTemplates("data/entities/entities.ent"))
-        mFactory.addTemplate(entityTemplate.first, entityTemplate.second);
 }
 
 fea::WeakEntityPtr EntityFactory::spawnEntity(const std::string& scriptType)
@@ -59,4 +52,16 @@ fea::WeakEntityPtr EntityFactory::spawnEntity(const std::string& scriptType)
 void EntityFactory::addDefinition(const EntityDefinition& definition)
 {
     mEntityDefinitions.emplace(definition.name, definition);
+}
+
+void EntityFactory::registerAttribute(const std::unordered_map<std::string, std::string> &attribute)
+{
+	for(const auto& entityAttribute : attribute)
+		mFactory.registerAttribute(entityAttribute.first, entityAttribute.second);
+}
+
+void EntityFactory::registerEntity(const std::vector<std::pair<std::string, fea::EntityTemplate>> &entity)
+{
+    for(const auto& entityTemplate : entity)
+        mFactory.addTemplate(entityTemplate.first, entityTemplate.second);
 }

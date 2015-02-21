@@ -30,6 +30,10 @@ std::string resourcePathToName(const std::string& rootPath, const std::string& p
         category = "world";
 	else if(fileType == "gfe")
         category = "gfx_entity";
+	else if(fileType == "att")
+        category = "attribute";
+	else if(fileType == "ent")
+        category = "entity";
 
     result = extensionName + "." + category + "." + fileName;
 

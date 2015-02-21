@@ -14,6 +14,8 @@
 #include "imagefromfileloader.hpp"
 #include "../utilities/glmhash.hpp"
 #include "worldfromfileloader.hpp"
+#include "attributefromfileloader.hpp"
+#include "entityfromfileloader.hpp"
 #include "resourceexception.hpp"
 #include "gfxentitydefinition.hpp"
 #include "gfxentitydefinitionfromfileloader.hpp"
@@ -62,6 +64,10 @@ ResourceSystem::ResourceSystem(fea::MessageBus& bus, const std::string assetsPat
             loadWorlds(mResourceList["wld"]);
         if(std::find(fileTypes.begin(), fileTypes.end(), "gfe") != fileTypes.end())
             loadGfxEntities(mResourceList["gfe"]);
+        if(std::find(fileTypes.begin(), fileTypes.end(), "att") != fileTypes.end())
+            loadAttributes(mResourceList["att"]);
+        if(std::find(fileTypes.begin(), fileTypes.end(), "ent") != fileTypes.end())
+            loadEntities(mResourceList["ent"]);
     }
 }
 
@@ -276,6 +282,52 @@ void ResourceSystem::loadGfxEntities(const std::vector<ResourceEntry>& gfxEntiti
         catch(ResourceException& exception)
         {
             mBus.send(LogMessage{gfxEntityFile.name + ": " + exception.what(), gResourceName, LogLevel::ERR});
+        }
+    }
+}
+
+void ResourceSystem::loadAttributes(const std::vector<ResourceEntry>& attributes)
+{
+    mBus.send(LogMessage{"Loading attribute files. " + std::to_string(attributes.size()) + " files to load.", gResourceName, LogLevel::INFO});
+    for(const auto& attributeFile : attributes)
+    {
+        try
+        {
+            mBus.send(LogMessage{"Loading " + attributeFile.name + ".", gResourceName, LogLevel::VERB});
+            std::shared_ptr<std::unordered_map<std::string, std::string>> attribute = mCache.access<AttributeFromFileLoader>(attributeFile.path);
+
+            if(attribute)
+            {
+                uint32_t id = mAttributeIDs.getId(attributeFile.name);
+                mBus.send(ResourceDeliverMessage<std::unordered_map<std::string, std::string>>{id, attribute});
+            }
+        }
+        catch(ResourceException& exception)
+        {
+            mBus.send(LogMessage{attributeFile.name + ": " + exception.what(), gResourceName, LogLevel::ERR});
+        }
+    }
+}
+
+void ResourceSystem::loadEntities(const std::vector<ResourceEntry>& entities)
+{
+    mBus.send(LogMessage{"Loading entity files. " + std::to_string(entities.size()) + " files to load.", gResourceName, LogLevel::INFO});
+    for(const auto& entityFile : entities)
+    {
+        try
+        {
+            mBus.send(LogMessage{"Loading " + entityFile.name + ".", gResourceName, LogLevel::VERB});
+            std::shared_ptr<std::vector<std::pair<std::string, fea::EntityTemplate>>> entity = mCache.access<EntityFromFileLoader>(entityFile.path);
+
+            if(entity)
+            {
+                uint32_t id = mEntityIDs.getId(entityFile.name);
+                mBus.send(ResourceDeliverMessage<std::vector<std::pair<std::string, fea::EntityTemplate>>>{id, entity});
+            }
+        }
+        catch(ResourceException& exception)
+        {
+            mBus.send(LogMessage{entityFile.name + ": " + exception.what(), gResourceName, LogLevel::ERR});
         }
     }
 }

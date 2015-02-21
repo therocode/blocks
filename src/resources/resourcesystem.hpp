@@ -22,6 +22,8 @@ class ResourceSystem
         void loadExtensionMetadata(const std::vector<ResourceEntry>& extensionMetadata);
         void loadWorlds(const std::vector<ResourceEntry>& worlds);
         void loadGfxEntities(const std::vector<ResourceEntry>& gfxEntities);
+        void loadAttributes(const std::vector<ResourceEntry>& attributes);
+        void loadEntities(const std::vector<ResourceEntry>& entities);
 
         fea::MessageBus& mBus;
         std::string mAssetsPath;
@@ -36,6 +38,8 @@ class ResourceSystem
         IdMapper<std::string> mTextureIDs;
         IdMapper<std::string> mExtensionMetadataIDs;
         IdMapper<std::string> mWorldIDs;
+        IdMapper<std::string> mAttributeIDs;
+        IdMapper<std::string> mEntityIDs;
         IdMapper<std::string> mGfxEntityIDs;
 
         uint32_t mNextTextureId;
