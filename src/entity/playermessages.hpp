@@ -44,3 +44,8 @@ struct PlayerMoveActionMessage
 {
     size_t id; MoveAction action;
 };
+
+struct PlayerVoxelTypeChangeMessage
+{
+    size_t id; int32_t typeDelta;
+};

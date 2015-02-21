@@ -26,6 +26,7 @@ named_enum(PacketType, INVALID,
     //client
     CLIENT_ENTERED_WORLD,
     CLIENT_POSITION,
+    SELECT_VOXEL_DELTA,
     //tests
     TEST_1, TEST_2);
 
@@ -326,6 +327,19 @@ struct EntityAnimationMessage
 
     fea::EntityId id;
     std::string animationName;
+};
+
+struct SelectVoxelDeltaMessage
+{
+    PacketType getType() const {return SELECT_VOXEL_DELTA;}
+
+    template<class Archive>
+    void serialize(Archive& archive)
+    {
+        archive(typeDelta);
+    }
+
+    int32_t typeDelta;
 };
 
 //struct ClientEnteredWorldMessage

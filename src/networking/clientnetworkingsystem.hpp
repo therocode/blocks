@@ -36,7 +36,8 @@ class ClientNetworkingSystem : public
                          EntityLeftRangeMessage,
                          EntityAnimationMessage,
                          ClientAttachedToEntityMessage,
-                         VoxelUpdatedMessage>
+                         VoxelUpdatedMessage,
+                         SelectVoxelDeltaMessage>
 {
     public:
         ClientNetworkingSystem(fea::MessageBus& bus, const NetworkParameters& parameters, const ResourceSystem& resources);
@@ -60,6 +61,7 @@ class ClientNetworkingSystem : public
         void handleMessage(const EntityAnimationMessage& received) override;
         void handleMessage(const ClientAttachedToEntityMessage& received) override;
         void handleMessage(const VoxelUpdatedMessage& received) override;
+        void handleMessage(const SelectVoxelDeltaMessage& received) override;
     private:
         void connectedToServer();
         void handleServerData(const std::vector<uint8_t>& data);
@@ -84,7 +86,9 @@ template <typename Message>
 void ClientNetworkingSystem::send(const Message& message, bool reliable, uint8_t channel)
 {
     if(mServerBus)
+    {
         mServerBus->send(message);
+    }
     else
         mENetClient->send(serializeMessage(message), reliable, channel);
 }

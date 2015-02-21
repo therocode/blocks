@@ -427,6 +427,11 @@ void ServerNetworkingSystem::handleMessage(const EntityAnimationMessage& receive
     sendToAll(received, true, CHANNEL_DEFAULT);
 }
 
+void ServerNetworkingSystem::handleMessage(const SelectVoxelDeltaMessage& received)
+{
+    mBus.send(PlayerVoxelTypeChangeMessage{mLocalPlayerId, received.typeDelta});
+}
+
 void ServerNetworkingSystem::acceptRemoteClient(uint32_t id)
 {
     if(mAcceptingClients)
@@ -527,6 +532,14 @@ void ServerNetworkingSystem::handleClientData(uint32_t clientId, const std::vect
                 mSubscriptions.emplace(mClientToPlayerIds.at(clientId), received.chunkDistance);
 
                 mENetServer->sendToOne(clientId, serializeMessage(SubscriptionReplyMessage{true}), true, CHANNEL_DEFAULT);
+            }
+        }
+        else if(type == SELECT_VOXEL_DELTA)
+        {
+            if(mClientToPlayerIds.count(clientId) != 0)
+            {
+                SelectVoxelDeltaMessage received = deserializeMessage<SelectVoxelDeltaMessage>(data);
+                mBus.send(PlayerVoxelTypeChangeMessage{mClientToPlayerIds.at(clientId), received.typeDelta});
             }
         }
         else if(type == TEST_1)

@@ -117,7 +117,7 @@ void PlayerController::handleMessage(const PlayerActionMessage& received)
 					break;
 			}
 
-			mBus.send(SetVoxelMessage{entity->getAttribute<WorldId>("current_world"), voxel, (VoxelType)(playerId % 36 + 1)});//rand()%4 + 17));// (playerId + 1) % 20));
+			mBus.send(SetVoxelMessage{entity->getAttribute<WorldId>("current_world"), voxel, (VoxelType)(entity->getAttribute<uint32_t>("voxel_type"))});//rand()%4 + 17));// (playerId + 1) % 20));
 		}
     }
     else if(action == WARP)
@@ -174,6 +174,17 @@ void PlayerController::handleMessage(const PlayerPitchYawMessage& received) //mo
 
         mBus.send(EntityOrientedMessage{playerEntry->second.lock()->getId(), newOrientation});
         updateVoxelLookAt(playerId);
+    }
+}
+
+void PlayerController::handleMessage(const PlayerVoxelTypeChangeMessage& received)
+{
+    auto playerEntry = mEntities.find(received.id);
+    if(playerEntry != mEntities.end())
+    {
+        fea::EntityPtr entity = playerEntry->second.lock();
+        int32_t currentType = entity->getAttribute<uint32_t>("voxel_type");
+        entity->setAttribute<uint32_t>("voxel_type", std::max(1, currentType + received.typeDelta));
     }
 }
 

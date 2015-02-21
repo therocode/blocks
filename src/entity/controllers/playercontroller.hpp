@@ -13,6 +13,7 @@ class PlayerController :
                                 PlayerMoveDirectionMessage,
                                 PlayerMoveActionMessage,
                                 PlayerPitchYawMessage,
+                                PlayerVoxelTypeChangeMessage,
                                 EntityMovedMessage,
                                 EntityTransferredWorldMessage>
 {
@@ -24,6 +25,7 @@ class PlayerController :
         void handleMessage(const PlayerMoveDirectionMessage& received);
         void handleMessage(const PlayerMoveActionMessage& received);
         void handleMessage(const PlayerPitchYawMessage& received);
+        void handleMessage(const PlayerVoxelTypeChangeMessage& received);
         void handleMessage(const EntityMovedMessage& received);
         void handleMessage(const EntityTransferredWorldMessage& received);
     private:

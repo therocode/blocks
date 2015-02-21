@@ -212,6 +212,14 @@ void ClientNetworkingSystem::handleMessage(const VoxelUpdatedMessage& received)
     mBus.send(VoxelSetMessage{received.id, received.voxel, received.type});
 }
 
+void ClientNetworkingSystem::handleMessage(const SelectVoxelDeltaMessage& received)
+{
+    if(mIsConnected)
+    {
+        send(SelectVoxelDeltaMessage{received.typeDelta}, true, CHANNEL_DEFAULT);
+    }
+}
+
 void ClientNetworkingSystem::connectedToServer()
 {
     mBus.send(LogMessage{"Successfully connected to server", gClientName, LogLevel::INFO});

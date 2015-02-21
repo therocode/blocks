@@ -25,5 +25,6 @@
     "move_action":"move_action",
     "move_direction":"move_direction",
 
-    "gfx_entity":"string"
+    "gfx_entity":"string",
+    "voxel_type":"uint32"
 }

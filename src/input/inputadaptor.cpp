@@ -179,6 +179,10 @@ void InputAdaptor::update()
                 mBus.send(RenderModeMessage{TOGGLE_MODE_MODEL});
             else if(event.key.code == fea::Keyboard::L)
                 mBus.send(RenderModeMessage{TOGGLE_MODE_VOXEL});
+            else if(event.key.code == fea::Keyboard::Z)
+                mBus.send(SelectVoxelDeltaMessage{-1});
+            else if(event.key.code == fea::Keyboard::X)
+                mBus.send(SelectVoxelDeltaMessage{1});
         }
     }
 
