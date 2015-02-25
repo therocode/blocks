@@ -17,8 +17,8 @@
 RenderingSystem::RenderingSystem(fea::MessageBus& bus, const glm::uvec2& viewSize) :
     mBus(bus),
     mRenderer(mGLContext, viewSize),
-    mIsFacing(false)
-
+    mIsFacing(false),
+    mMeshWorkerPool(3)
 {
     subscribe(bus, *this);
     mRenderer.addModule(RenderModule::MODEL, std::unique_ptr<ModelRenderer>(new ModelRenderer()));
@@ -300,21 +300,25 @@ void RenderingSystem::handleMessage(const ResourceDeliverMessage<GfxEntityDefini
 
 void RenderingSystem::handleMessage(const UpdateChunkVboMessage& received)
 {
+    mActiveChunks.emplace(received.mainChunkCoord);
     const ChunkCoord& mainChunkCoord = received.mainChunkCoord;
-    Chunk* mainChunk = received.main;
-    Chunk* topChunk = received.top;
-    Chunk* bottomChunk = received.bottom;
-    Chunk* frontChunk = received.front;
-    Chunk* backChunk = received.back;
-    Chunk* leftChunk = received.left;
-    Chunk* rightChunk = received.right;
+    std::shared_ptr<Chunk> top= received.top == nullptr ? std::shared_ptr<Chunk>() : std::shared_ptr<Chunk>(new Chunk(*received.top));
+    std::shared_ptr<Chunk> bottom= received.bottom == nullptr ? std::shared_ptr<Chunk>() : std::shared_ptr<Chunk>(new Chunk(*received.bottom));
+    std::shared_ptr<Chunk> front= received.front == nullptr ? std::shared_ptr<Chunk>() : std::shared_ptr<Chunk>(new Chunk(*received.front));
+    std::shared_ptr<Chunk> back= received.back == nullptr ? std::shared_ptr<Chunk>() : std::shared_ptr<Chunk>(new Chunk(*received.back));
+    std::shared_ptr<Chunk> left= received.left == nullptr ? std::shared_ptr<Chunk>() : std::shared_ptr<Chunk>(new Chunk(*received.left));
+    std::shared_ptr<Chunk> right= received.right == nullptr ? std::shared_ptr<Chunk>() : std::shared_ptr<Chunk>(new Chunk(*received.right));
 
-    mChunkModels[mainChunkCoord] = {true, mChunkModelCreator.generateChunkModel(mainChunkCoord, mainChunk, topChunk, bottomChunk, frontChunk, backChunk, leftChunk, rightChunk)};
+    //add chunk to load to other thread
+    auto bound = std::bind(&RenderingSystem::generateChunkModel, this, mainChunkCoord, *received.main, top, bottom, front, back, left, right);
+
+    mChunkModelsToFinish.push_back(mMeshWorkerPool.enqueue(bound, 0));
 }
 
 void RenderingSystem::handleMessage(const ChunkDeletedMessage& received)
 {
     mChunkModels.erase(received.coordinate);
+    mActiveChunks.erase(received.coordinate);
 }
 
 void RenderingSystem::handleMessage(const FacingBlockMessage& received)
@@ -325,6 +329,7 @@ void RenderingSystem::handleMessage(const FacingBlockMessage& received)
 
 void RenderingSystem::render()
 {
+    fetchDoneChunkMeshes();
     mRenderer.clear();
 
     for(auto& voxie : mChunkModels)
@@ -358,4 +363,30 @@ void RenderingSystem::render()
     }
 
     mRenderer.render(*mAnimationShaders.at(0));
+}
+
+ChunkModelDelivery RenderingSystem::generateChunkModel(ChunkCoord coordinate, Chunk main, std::shared_ptr<Chunk> top, std::shared_ptr<Chunk> bottom, std::shared_ptr<Chunk> front, std::shared_ptr<Chunk> back, std::shared_ptr<Chunk> left, std::shared_ptr<Chunk> right)
+{
+    ChunkModelCreator creator;
+    return creator.generateChunkModel(coordinate, main, top.get(), bottom.get(), front.get(), back.get(), left.get(), right.get());
+}
+
+void RenderingSystem::fetchDoneChunkMeshes()
+{
+    for(auto iter = mChunkModelsToFinish.begin(); iter != mChunkModelsToFinish.end();)
+    {
+        if(iter->wait_for(std::chrono::seconds(0)) == std::future_status::ready)
+        {
+            ChunkModelDelivery finished = std::move(iter->get());
+
+            if(mActiveChunks.count(finished.coordinate) != 0)
+                mChunkModels[finished.coordinate] = {true, std::move(finished.model)};
+
+            iter = mChunkModelsToFinish.erase(iter);
+        }
+        else
+        {
+            iter++;
+        }
+    }
 }

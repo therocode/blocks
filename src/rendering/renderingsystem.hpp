@@ -10,6 +10,7 @@
 #include "../input/inputmessages.hpp"
 #include "../world/worldmessages.hpp"
 #include "../utilities/idpool.hpp"
+#include "../utilities/threadpool.hpp"
 //test
 #include "debugrenderable.hpp"
 #include "mesh.hpp"
@@ -59,6 +60,9 @@ class RenderingSystem :
         void handleMessage(const FacingBlockMessage& received) override;
         void render();
     private:
+        ChunkModelDelivery generateChunkModel(ChunkCoord coordinate, Chunk main, std::shared_ptr<Chunk> top, std::shared_ptr<Chunk> bottom, std::shared_ptr<Chunk> front, std::shared_ptr<Chunk> back, std::shared_ptr<Chunk> left, std::shared_ptr<Chunk> right);
+        void fetchDoneChunkMeshes();
+
         fea::MessageBus& mBus;
         GLContext mGLContext;
         Renderer mRenderer;
@@ -77,9 +81,12 @@ class RenderingSystem :
         std::unordered_map<uint32_t, std::shared_ptr<TextureDefinition>> mTextureDefinitions;
         std::unordered_map<uint32_t, std::shared_ptr<GfxEntityDefinition>> mGfxEntityDefinitions;
 
-        ChunkModelCreator mChunkModelCreator;
         std::unordered_map<ChunkCoord, std::pair<bool, ChunkModel>> mChunkModels;
 
         bool mIsFacing;
         glm::ivec3 mFacingBlock;
+
+        ThreadPool mMeshWorkerPool;
+        std::unordered_set<ChunkCoord> mActiveChunks;
+        std::vector<std::future<ChunkModelDelivery>> mChunkModelsToFinish;
 };

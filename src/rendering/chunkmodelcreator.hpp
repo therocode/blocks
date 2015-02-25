@@ -5,8 +5,14 @@
 
 class Chunk;
 
+struct ChunkModelDelivery
+{
+    ChunkCoord coordinate;
+    ChunkModel model;
+};
+
 class ChunkModelCreator
 {
     public:
-        ChunkModel generateChunkModel(const ChunkCoord& mainChunkCoord, Chunk* mainChunk, Chunk* topChunk, Chunk* bottomChunk, Chunk* frontChunk, Chunk* backChunk, Chunk* leftChunk, Chunk* rightChunk);
+        ChunkModelDelivery generateChunkModel(const ChunkCoord& mainChunkCoord, const Chunk& mainChunk, const Chunk* topChunk, const Chunk* bottomChunk, const Chunk* frontChunk, const Chunk* backChunk, const Chunk* leftChunk, const Chunk* rightChunk);
 };

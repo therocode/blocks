@@ -5,13 +5,13 @@
 #include "../world/chunk.hpp"
 #include "modelattribute.hpp"
 
-ChunkModel ChunkModelCreator::generateChunkModel(const ChunkCoord& mainChunkCoord, Chunk* mainChunk, Chunk* topChunk, Chunk* bottomChunk, Chunk* frontChunk, Chunk* backChunk, Chunk* leftChunk, Chunk* rightChunk)
+ChunkModelDelivery ChunkModelCreator::generateChunkModel(const ChunkCoord& mainChunkCoord, const Chunk& mainChunk, const Chunk* topChunk, const Chunk* bottomChunk, const Chunk* frontChunk, const Chunk* backChunk, const Chunk* leftChunk, const Chunk* rightChunk)
 {
     ChunkModel newModel;
 
     glm::vec3 chunkOffset(mainChunkCoord.x * (float)chunkWidth, mainChunkCoord.y * (float)chunkWidth, mainChunkCoord.z * (float)chunkWidth);
 
-    const VoxelTypeData& voxelTypeData = mainChunk->getVoxelTypeData();
+    const VoxelTypeData& voxelTypeData = mainChunk.getVoxelTypeData();
 
     MeshWalker walker;
 
@@ -427,5 +427,5 @@ ChunkModel ChunkModelCreator::generateChunkModel(const ChunkCoord& mainChunkCoor
     newModel.model.addVertexArray(ModelAttribute::TEXCOORDS, allQuadTexCoords);
     newModel.textureIndices = allTextureIndices;
 
-    return newModel;
+    return {mainChunkCoord, std::move(newModel)};
 }

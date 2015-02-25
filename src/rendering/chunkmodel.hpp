@@ -1,5 +1,6 @@
 #pragma once
 #include "model.hpp"
+#include "../world/worlddefines.hpp"
 
 struct ChunkModel
 {
