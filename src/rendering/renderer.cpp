@@ -7,7 +7,7 @@ Renderer::Renderer(const GLContext& glContext, const glm::uvec2& viewSize) :
     mViewSize(viewSize),
     mFov(90.0f),
     mNear(0.1f),
-    mFar(100.0f),
+    mFar(10000.0f),
     mEnabled(true)
 {
     glEnable(GL_DEPTH_TEST);
