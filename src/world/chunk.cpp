@@ -26,7 +26,7 @@ Chunk::Chunk(const VoxelTypeArray& types)
 {
     setVoxelData(types);
 
-    solidityCheck();
+    solidityCheck(types);
     sideSolidityCheck();
 }
 
@@ -158,7 +158,7 @@ void Chunk::setVoxelData(const VoxelTypeArray& types)
         }
     }
 
-	solidityCheck();
+	solidityCheck(types);
 	if(mSolidity == INBETWEEN)
 	{
 		sideSolidityCheck();
@@ -311,10 +311,8 @@ void Chunk::setSegmentTypeFromArray(uint16_t y, uint16_t z, const VoxelSegmentTy
     }
 }
 
-void Chunk::solidityCheck()
+void Chunk::solidityCheck(const VoxelTypeArray& types)
 {
-	VoxelTypeArray types = getFlatVoxelTypeData();
-	
 	mSolidity = types[0] ? SOLID : EMPTY;
 	for(auto v : types)
 	{
@@ -325,6 +323,12 @@ void Chunk::solidityCheck()
 			break;
 		}
 	}
+}
+
+void Chunk::solidityCheck()
+{
+	VoxelTypeArray types = getFlatVoxelTypeData();
+    solidityCheck(types);
 }
 
 void Chunk::sideSolidityCheck()

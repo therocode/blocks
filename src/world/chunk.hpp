@@ -52,6 +52,7 @@ class Chunk
     private:
         VoxelSegmentTypeArray getUncompressedTypeSegment(uint32_t y, uint32_t z) const;
         void setSegmentTypeFromArray(uint16_t y, uint16_t z, const VoxelSegmentTypeArray& typeArray);
+		void solidityCheck(const VoxelTypeArray& types);
 		void solidityCheck();
 		void sideSolidityCheck();
 		Solidity mSolidity;

@@ -78,7 +78,7 @@ ServerNetworkingSystem::ServerNetworkingSystem(fea::MessageBus& bus, const GameI
     //these should be passed from the outside:
     mSettings.serverName = "Wongaloria";
     mSettings.motd = "Welcome to our glorious server! Please to not grief and take all belonings with you when you leave, thanks.";
-    mSettings.maxChunkViewDistance = 8;
+    mSettings.maxChunkViewDistance = 20;
 }
 
 void ServerNetworkingSystem::handleMessage(const LocalConnectionAttemptMessage& received)
