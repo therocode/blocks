@@ -3,7 +3,7 @@
 #include <fea/ui/sdlinputbackend.hpp>
 #include <fea/render2d.hpp>
 #include <fea/rendering/textsurface.hpp>
-#include "../../src/utilities/noise.h"
+#include <fea/util/noise.hpp>
 #include "texturemaker.hpp"
 #include <iostream>
 #include <chrono>
