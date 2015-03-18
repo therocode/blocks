@@ -1,17 +1,17 @@
+#include <iostream>
+#include <chrono>
+#include <algorithm>
 #include <fea/userinterface.hpp>
 #include <fea/ui/sdlwindowbackend.hpp>
 #include <fea/ui/sdlinputbackend.hpp>
 #include <fea/render2d.hpp>
 #include <fea/rendering/textsurface.hpp>
 #include <fea/util/noise.hpp>
+#include <fea/structure.hpp>
 #include "texturemaker.hpp"
-#include <iostream>
-#include <chrono>
 #include "biomestorage.hpp"
 #include "generator.hpp"
 #include "mapchunk.hpp"
-#include <fea/structure.hpp>
-#include <algorithm>
 #include "interpolator.hpp"
 
 class BiomeApp : public fea::Application
