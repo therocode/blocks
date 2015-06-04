@@ -5,6 +5,7 @@
 #include "voxelchunkrenderer.hpp"
 #include "extrarenderer.hpp"
 #include "debugrenderer.hpp"
+#include "guirenderer.hpp"
 #include "../resources/rawmodel.hpp"
 #include "../resources/shadersource.hpp"
 #include "../resources/shaderdefinition.hpp"
@@ -25,6 +26,7 @@ RenderingSystem::RenderingSystem(fea::MessageBus& bus, const glm::uvec2& viewSiz
     mRenderer.addModule(RenderModule::VOXEL, std::unique_ptr<VoxelChunkRenderer>(new VoxelChunkRenderer()));
     mRenderer.addModule(RenderModule::EXTRA, std::unique_ptr<ExtraRenderer>(new ExtraRenderer()));
     mRenderer.addModule(RenderModule::DEBUG, std::unique_ptr<DebugRenderer>(new DebugRenderer()));
+    mRenderer.addModule(RenderModule::GUI, std::unique_ptr<GuiRenderer>(new GuiRenderer(bus)));
 
     GLint maxSize;
     glGetIntegerv(GL_MAX_ARRAY_TEXTURE_LAYERS, &maxSize);
@@ -286,11 +288,13 @@ void RenderingSystem::handleMessage(const ResourceDeliverMessage<ShaderDefinitio
 void RenderingSystem::handleMessage(const ResourceDeliverMessage<TextureArray>& received)
 {
     mTextureArrays.emplace(received.id, received.resource);
+    mRenderer.addTextureArray(received.id, *mTextureArrays.at(received.id));
 }
 
 void RenderingSystem::handleMessage(const ResourceDeliverMessage<TextureDefinition>& received)
 {
     mTextureDefinitions.emplace(received.id, received.resource);
+    mRenderer.addTextureDefinition(received.resourceName, *mTextureDefinitions.at(received.id));
 }
 
 void RenderingSystem::handleMessage(const ResourceDeliverMessage<GfxEntityDefinition>& received)
@@ -325,6 +329,12 @@ void RenderingSystem::handleMessage(const FacingBlockMessage& received)
 {
     mIsFacing = received.inRange;
     mFacingBlock = received.block;
+}
+        
+void RenderingSystem::handleMessage(const UiRenderDataMessage& received)
+{
+    GuiRenderable renderable(received.element);
+    mRenderer.queue(renderable);
 }
 
 void RenderingSystem::render()

@@ -25,6 +25,7 @@ class Texture
         const uint8_t* getPixelData() const;
         void update();
         ~Texture();
+        void enlarge(const glm::uvec2& newSize);
     private:
         GLuint mId;
         uint32_t mWidth;

@@ -16,6 +16,7 @@ Client::Client(fea::MessageBus& bus, const NetworkParameters& parameters) :
     mLogger(mBus, LogLevel::VERB),
 	mWindow(new fea::SDL2WindowBackend()),
 	mInputAdaptor(std::unique_ptr<InputAdaptor>(new InputAdaptor(mBus))),
+    mDebugUi(bus),
 	mQuit(false),
     mClientWorld(bus)
 {
@@ -65,6 +66,7 @@ void Client::update()
 {
     mBus.send(FrameMessage{mFrameNumber++});
 	mInputAdaptor->update();
+    mBus.send(UiRenderDataMessage{mDebugUi.root()});
 }
 
 void Client::render()

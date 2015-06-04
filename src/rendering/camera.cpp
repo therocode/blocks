@@ -43,7 +43,7 @@ void Camera::update()
 	mMatrix = glm::lookAt(mPosition, mPosition + mDirection * 10.f, mUpDirection);
 }
 
-void Camera::setOrientation(glm::quat orientation)
+void Camera::setOrientation(const glm::quat& orientation)
 {
 //	if(pitch >= glm::pi<float>() * 0.5f)
 //		pitch = glm::pi<float>() * 0.5f - 0.001f;

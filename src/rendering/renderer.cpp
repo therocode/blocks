@@ -169,3 +169,15 @@ const glm::vec3& Renderer::getClearColor() const
 {
     return mClearColor;
 }
+
+void Renderer::addTextureArray(uint32_t id, TextureArray& textureArray)
+{
+    for(auto& module : mModules)
+        module.second->textureArrayAdded(id, textureArray);
+}
+
+void Renderer::addTextureDefinition(const std::string& name, const TextureDefinition& textureDefinition)
+{
+    for(auto& module : mModules)
+        module.second->textureDefinitionAdded(name, textureDefinition);
+}

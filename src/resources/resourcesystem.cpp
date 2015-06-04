@@ -88,7 +88,7 @@ void ResourceSystem::loadModels(const std::vector<ResourceEntry>& models)
             if(model)
             {
                 uint32_t id = mModelIDs.getId(modelFile.name);
-                mBus.send(ResourceDeliverMessage<RawModel>{id, model});
+                mBus.send(ResourceDeliverMessage<RawModel>{id, modelFile.name, model});
             }
         }
         catch(ResourceException& exception)
@@ -111,7 +111,7 @@ void ResourceSystem::loadVertexShaders(const std::vector<ResourceEntry>& vertexS
             {
                 uint32_t id = mVertexShaderIDs.getId(vertexShaderFile.name);
                 vertexShader->name = vertexShaderFile.name;
-                mBus.send(ResourceDeliverMessage<ShaderSource>{id, vertexShader});
+                mBus.send(ResourceDeliverMessage<ShaderSource>{id, vertexShaderFile.name, vertexShader});
             }
         }
         catch(ResourceException& exception)
@@ -134,7 +134,7 @@ void ResourceSystem::loadFragmentShaders(const std::vector<ResourceEntry>& fragm
             {
                 uint32_t id = mFragmentShaderIDs.getId(fragmentShaderFile.name);
                 fragmentShader->name = fragmentShaderFile.name;
-                mBus.send(ResourceDeliverMessage<ShaderSource>{id, fragmentShader});
+                mBus.send(ResourceDeliverMessage<ShaderSource>{id, fragmentShaderFile.name, fragmentShader});
             }
         }
         catch(ResourceException& exception)
@@ -156,7 +156,7 @@ void ResourceSystem::loadShaderDefinitions(const std::vector<ResourceEntry>& sha
             if(shaderDefinition)
             {
                 uint32_t id = mShaderDefinitionIDs.getId(shaderDefinitionFile.name);
-                mBus.send(ResourceDeliverMessage<ShaderDefinition>{id, shaderDefinition});
+                mBus.send(ResourceDeliverMessage<ShaderDefinition>{id, shaderDefinitionFile.name, shaderDefinition});
             }
         }
         catch(ResourceException& exception)
@@ -203,17 +203,17 @@ void ResourceSystem::loadImages(const std::vector<ResourceEntry>& images)
             const auto image = imageEntry.second;
             pixels.insert(pixels.end(), image->getPixelsPointer(), image->getPixelsPointer() + image->getSize().x * image->getSize().y * 4);
 
-            std::shared_ptr<TextureDefinition> textureDefinition = std::make_shared<TextureDefinition>(TextureDefinition{newId, index});
+            std::shared_ptr<TextureDefinition> textureDefinition = std::make_shared<TextureDefinition>(TextureDefinition{newId, index, image->getSize()});
 
             mTextureDefinitions.emplace(mTextureIDs.getId(name), textureDefinition);
-            mBus.send(ResourceDeliverMessage<TextureDefinition>{mTextureIDs.getId(name), textureDefinition});
+            mBus.send(ResourceDeliverMessage<TextureDefinition>{mTextureIDs.getId(name), name, textureDefinition});
             index++;
         }
 
         std::shared_ptr<TextureArray> textureArray = std::make_shared<TextureArray>();
         textureArray->create(size, amount, pixels.data());
 
-        mBus.send(ResourceDeliverMessage<TextureArray>{newId, textureArray});
+        mBus.send(ResourceDeliverMessage<TextureArray>{newId, "textureArray", textureArray});
     }
 }
 
@@ -230,7 +230,7 @@ void ResourceSystem::loadExtensionMetadata(const std::vector<ResourceEntry>& ext
             if(metadata)
             {
                 uint32_t id = mExtensionMetadataIDs.getId(metadataFile.name);
-                mBus.send(ResourceDeliverMessage<ExtensionMetadata>{id, metadata});
+                mBus.send(ResourceDeliverMessage<ExtensionMetadata>{id, metadataFile.name, metadata});
             }
         }
         catch(ResourceException& exception)
@@ -253,7 +253,7 @@ void ResourceSystem::loadWorlds(const std::vector<ResourceEntry>& worlds)
             if(world)
             {
                 uint32_t id = mWorldIDs.getId(worldFile.name);
-                mBus.send(ResourceDeliverMessage<std::vector<WorldParameters>>{id, world});
+                mBus.send(ResourceDeliverMessage<std::vector<WorldParameters>>{id, worldFile.name, world});
             }
         }
         catch(ResourceException& exception)
@@ -276,7 +276,7 @@ void ResourceSystem::loadGfxEntities(const std::vector<ResourceEntry>& gfxEntiti
             if(gfxEntity)
             {
                 uint32_t id = mGfxEntityIDs.getId(gfxEntityFile.name);
-                mBus.send(ResourceDeliverMessage<GfxEntityDefinition>{id, gfxEntity});
+                mBus.send(ResourceDeliverMessage<GfxEntityDefinition>{id, gfxEntityFile.name, gfxEntity});
             }
         }
         catch(ResourceException& exception)
@@ -299,7 +299,7 @@ void ResourceSystem::loadAttributes(const std::vector<ResourceEntry>& attributes
             if(attribute)
             {
                 uint32_t id = mAttributeIDs.getId(attributeFile.name);
-                mBus.send(ResourceDeliverMessage<std::unordered_map<std::string, std::string>>{id, attribute});
+                mBus.send(ResourceDeliverMessage<std::unordered_map<std::string, std::string>>{id, attributeFile.name, attribute});
             }
         }
         catch(ResourceException& exception)
@@ -322,7 +322,7 @@ void ResourceSystem::loadEntities(const std::vector<ResourceEntry>& entities)
             if(entity)
             {
                 uint32_t id = mEntityIDs.getId(entityFile.name);
-                mBus.send(ResourceDeliverMessage<std::vector<std::pair<std::string, fea::EntityTemplate>>>{id, entity});
+                mBus.send(ResourceDeliverMessage<std::vector<std::pair<std::string, fea::EntityTemplate>>>{id, entityFile.name, entity});
             }
         }
         catch(ResourceException& exception)

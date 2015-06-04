@@ -60,6 +60,7 @@ set(source_files
     src/utilities/folderexploder.cpp
     src/utilities/fpscontroller.cpp
     src/utilities/geomath.cpp
+    src/utilities/gimgui.cpp
     src/utilities/lodepng.cpp
     src/utilities/logger.cpp
     src/utilities/random.cpp
@@ -78,6 +79,8 @@ set(source_files
     src/rendering/frustum.cpp
     src/rendering/gl_core_3_3.c
     src/rendering/glcontext.cpp
+    src/rendering/guirenderer.cpp
+    src/rendering/guirenderable.cpp
     src/rendering/mesh.cpp
     src/rendering/meshwalker.cpp
     src/rendering/model.cpp
@@ -149,6 +152,8 @@ set(source_files
     src/script/interfaces/randominterface.cpp
     src/script/interfaces/scriptinterface.cpp
     src/script/interfaces/stringinterface.cpp
+
+    src/ui/debugui.cpp
 
     src/world/biome.cpp
     src/world/biomeprovider.cpp
@@ -224,6 +229,8 @@ set(header_files
     src/rendering/frustum.hpp
     src/rendering/gl_core_3_3.h
     src/rendering/glcontext.hpp
+    src/rendering/guirenderer.hpp
+    src/rendering/guirenderable.hpp
     src/rendering/mesh.hpp
     src/rendering/meshwalker.hpp
     src/rendering/model.hpp
@@ -279,6 +286,7 @@ set(header_files
     src/utilities/geomath.hpp
     src/utilities/gridnotifier.hpp
     src/utilities/glm.hpp
+	src/utilities/gimgui.hpp
     src/utilities/idmapper.hpp
     src/utilities/idpool.hpp
     src/utilities/interpolationgrid3d.hpp
@@ -287,6 +295,7 @@ set(header_files
     src/utilities/logger.hpp
     src/utilities/namedenum.hpp
 	src/utilities/random.hpp
+	src/utilities/rectangle.hpp
     src/utilities/signalcatcher.hpp
 
 	src/utilities/timer.hpp
@@ -328,6 +337,8 @@ set(header_files
     src/script/interfaces/scriptinterface.hpp
     src/script/interfaces/stringinterface.hpp
 
+    src/ui/debugui.hpp
+
 	src/world/explorationmanager.hpp
 	src/world/biome.hpp
 	src/world/biomedefines.hpp
@@ -356,6 +367,7 @@ find_package(OpenGL REQUIRED)
 find_package(ENet)
 find_package(angelscript)
 find_package(JsonCpp REQUIRED)
+find_package(Freetype REQUIRED)
 
 if(USE_CTAGS)
     find_program(CTAGS_FOUND ctags)
@@ -368,10 +380,10 @@ if(NOT SDL2_FOUND)
 endif(NOT SDL2_FOUND)
 
 if(NOT MSVC)
-    set(CPP_11_FLAG -std=c++11)
+    set(CPP_14_FLAG -std=c++14)
 endif()
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CPP_11_FLAG} -pthread")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CPP_14_FLAG} -pthread")
 
 if(BUILD_GAME)
     add_executable(${project_name} ${header_files} ${source_files})
@@ -385,16 +397,16 @@ if(BUILD_GAME)
     endif()
     
     #instead of setting compiler flags globally. SFML doesn't like building with this flag on.
-    #set_target_properties(${project_name} PROPERTIES COMPILE_FLAGS "-std=c++11 -pthread")
+    #set_target_properties(${project_name} PROPERTIES COMPILE_FLAGS "-std=c++14 -pthread")
     if(NOT MSVC)
-        set(CPP_11_FLAG -std=c++11)
+        set(CPP_14_FLAG -std=c++14)
     endif()
 
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CPP_11_FLAG} -pthread")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CPP_14_FLAG} -pthread")
     
     #But that doesn't work in windows.
     #if(WIN32)
-        #    add_definitions(-std=c++11 -pthread)
+        #    add_definitions(-std=c++14 -pthread)
         #	add_definitions(-O4)
         #endif(WIN32)
     
@@ -426,6 +438,14 @@ if(BUILD_GAME)
     find_package(JsonCpp REQUIRED)
     if(JSONCPP_FOUND)
         include_directories(${JSONCPP_INCLUDE_DIRS})
+    endif()
+
+    include_directories(${FREETYPE_INCLUDE_DIRS})
+
+    find_package(GimGui REQUIRED)
+    if(GIMGUI_FOUND)
+        include_directories(${GIMGUI_INCLUDE_DIRS})
+        target_link_libraries(${project_name} ${GIMGUI_LIBRARIES})
     endif()
     
     if(FEATHERKIT_FOUND)

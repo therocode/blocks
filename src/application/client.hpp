@@ -7,6 +7,7 @@
 #include "../world/worldmessages.hpp"
 #include "../world/highlightmanager.hpp"
 #include "../client/clientworld.hpp"
+#include "../ui/debugui.hpp"
 
 
 class RenderingSystem;
@@ -49,6 +50,7 @@ class Client :
         std::unique_ptr<RenderingSystem> mRenderingSystem;
         std::unique_ptr<InputAdaptor> mInputAdaptor;
         std::unique_ptr<ResourceSystem> mResourceSystem;
+        DebugUi mDebugUi;
         bool mQuit;
 
         ClientWorld mClientWorld;

@@ -37,6 +37,8 @@ class Renderer
         void setPerspective(float fov, float rnear, float rfar);
         void setClearColor(const glm::vec3& color);
         const glm::vec3& getClearColor() const;
+        void addTextureArray(uint32_t id,  TextureArray& textureArray);
+        void addTextureDefinition(const std::string& name, const TextureDefinition& textureDefinition);
     private:
         std::map<int32_t, std::unique_ptr<RenderModule>> mModules;
         std::unordered_map<std::type_index, std::vector<RenderModule*>> mModuleSubscriptions;

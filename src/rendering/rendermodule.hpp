@@ -3,6 +3,8 @@
 #include "../utilities/glm.hpp"
 #include "rendermode.hpp"
 #include "shader.hpp"
+#include "texturearray.hpp"
+#include "../resources/texturedefinition.hpp"
 #include <memory>
 
 class Renderable;
@@ -22,6 +24,8 @@ class RenderModule
         void setRenderMode(const RenderMode& renderMode);
         bool isEnabled() const;
         void setEnabled(bool enabled);
+        virtual void textureArrayAdded(uint32_t id, TextureArray& textureArray);
+        virtual void textureDefinitionAdded(const std::string& name, const TextureDefinition& textureDefinition);
     protected:
         virtual void render(const Camera& camera, const glm::mat4& perspective, const Shader& shader) = 0;
         virtual void queue(const Renderable& renderable) = 0;

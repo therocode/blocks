@@ -36,9 +36,10 @@ class RenderingSystem :
                                 ResourceDeliverMessage<GfxEntityDefinition>,
                                 UpdateChunkVboMessage,
                                 ChunkDeletedMessage,
-                                FacingBlockMessage>
+                                FacingBlockMessage,
+                                UiRenderDataMessage>
 {
-    enum RenderModule{ DEBUG, MODEL, VOXEL, EXTRA };
+    enum RenderModule{ DEBUG, MODEL, VOXEL, EXTRA, GUI };
     public:
         RenderingSystem(fea::MessageBus& bus, const glm::uvec2& viewSize);
         void handleMessage(const AddGfxEntityMessage& received) override;
@@ -58,6 +59,7 @@ class RenderingSystem :
         void handleMessage(const UpdateChunkVboMessage& received) override;
         void handleMessage(const ChunkDeletedMessage& received) override;
         void handleMessage(const FacingBlockMessage& received) override;
+        void handleMessage(const UiRenderDataMessage& received) override;
         void render();
     private:
         ChunkModelDelivery generateChunkModel(ChunkCoord coordinate, Chunk main, std::shared_ptr<Chunk> top, std::shared_ptr<Chunk> bottom, std::shared_ptr<Chunk> front, std::shared_ptr<Chunk> back, std::shared_ptr<Chunk> left, std::shared_ptr<Chunk> right);

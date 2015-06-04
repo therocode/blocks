@@ -144,3 +144,33 @@ Texture::~Texture()
         destroy();
     }
 }
+
+void Texture::enlarge(const glm::uvec2& newSize)
+{
+    FEA_ASSERT(newSize.x > mWidth && newSize.y > mHeight, "Enlarged texture must be larger!");
+    std::unique_ptr<uint8_t[]> newPixels = std::unique_ptr<uint8_t[]>(new uint8_t[newSize.x * newSize.y * 4]);
+
+    for(uint32_t x = 0; x < newSize.x; x++)
+    {   
+        for(uint32_t y = 0; y < newSize.y; y++)
+        {   
+            newPixels[(x + y * newSize.x) * 4 + 0] = 0;
+            newPixels[(x + y * newSize.x) * 4 + 1] = 0;
+            newPixels[(x + y * newSize.x) * 4 + 2] = 0;
+            newPixels[(x + y * newSize.x) * 4 + 3] = 0;
+        }   
+    }   
+
+    for(uint32_t x = 0; x < mWidth; x++)
+    {   
+        for(uint32_t y = 0; y < mHeight; y++)
+        {   
+            newPixels[(x + y * newSize.x) * 4 + 0] = pixelData[(x + y * mWidth) * 4 + 0]; 
+            newPixels[(x + y * newSize.x) * 4 + 1] = pixelData[(x + y * mWidth) * 4 + 1]; 
+            newPixels[(x + y * newSize.x) * 4 + 2] = pixelData[(x + y * mWidth) * 4 + 2]; 
+            newPixels[(x + y * newSize.x) * 4 + 3] = pixelData[(x + y * mWidth) * 4 + 3]; 
+        }   
+    }   
+
+    create(newSize.x, newSize.y, newPixels.get(), false, true);
+}

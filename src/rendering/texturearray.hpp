@@ -24,4 +24,5 @@ class TextureArray
         GLuint mId;
         glm::uvec2 mSize;
         uint32_t  mLayers;
+
 };

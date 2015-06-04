@@ -15,7 +15,7 @@ class EntityInterface :
         asIScriptObject* createEntity(const std::string& type, WorldId worldId, const  glm::vec3 position);
         asIScriptObject* getEntity(fea::EntityId id);
         void removeEntityFromId(fea::EntityId id);
-        void handleMessage(const EntityCreatedMessage& message);
+        void handleMessage(const EntityCreatedMessage& message) override;
     private:
         std::unordered_map<fea::EntityId, ScriptEntity>& mScriptEntities;
         fea::WeakEntityPtr mNewlyCreated;

@@ -1,8 +1,10 @@
 #pragma once
 #include <fea/util.hpp>
+#include <gimgui/data/renderdata.hpp>
 #include "../world/worlddefines.hpp"
 
 class Chunk;
+class TextureDefinition;
 
 struct ChunkVBODeletedMessage
 {
@@ -67,4 +69,16 @@ enum { DISABLE_ALL, ENABLE_ALL, TOGGLE_MODE_ALL, DISABLE_DEBUG, ENABLE_DEBUG, TO
 struct RenderModeMessage
 {
     int32_t type;
+};
+
+struct GuiTextureAddedMessage
+{
+    uint32_t id;
+    const std::string& name;
+    const TextureDefinition& textureDefinition;
+};
+
+struct UiRenderDataMessage
+{
+    std::reference_wrapper<const gim::Element> element;
 };
