@@ -34,6 +34,8 @@ std::string resourcePathToName(const std::string& rootPath, const std::string& p
         category = "attribute";
 	else if(fileType == "ent")
         category = "entity";
+	else if(fileType == "ttf")
+        category = "font";
 
     result = extensionName + "." + category + "." + fileName;
 

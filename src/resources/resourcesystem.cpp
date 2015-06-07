@@ -19,6 +19,8 @@
 #include "resourceexception.hpp"
 #include "gfxentitydefinition.hpp"
 #include "gfxentitydefinitionfromfileloader.hpp"
+#include "../utilities/gimgui.hpp"
+#include "fontfromfileloader.hpp"
 
 ResourceSystem::ResourceSystem(fea::MessageBus& bus, const std::string assetsPath, const std::vector<std::string> fileTypes) :
     mBus(bus),
@@ -68,6 +70,8 @@ ResourceSystem::ResourceSystem(fea::MessageBus& bus, const std::string assetsPat
             loadAttributes(mResourceList["att"]);
         if(std::find(fileTypes.begin(), fileTypes.end(), "ent") != fileTypes.end())
             loadEntities(mResourceList["ent"]);
+        if(std::find(fileTypes.begin(), fileTypes.end(), "ttf") != fileTypes.end())
+            loadFonts(mResourceList["ttf"]);
     }
 }
 
@@ -328,6 +332,29 @@ void ResourceSystem::loadEntities(const std::vector<ResourceEntry>& entities)
         catch(ResourceException& exception)
         {
             mBus.send(LogMessage{entityFile.name + ": " + exception.what(), gResourceName, LogLevel::ERR});
+        }
+    }
+}
+
+void ResourceSystem::loadFonts(const std::vector<ResourceEntry>& fonts)
+{
+    mBus.send(LogMessage{"Loading font files. " + std::to_string(fonts.size()) + " files to load.", gResourceName, LogLevel::INFO});
+    for(const auto& fontFile : fonts)
+    {
+        try
+        {
+            mBus.send(LogMessage{"Loading " + fontFile.name + ".", gResourceName, LogLevel::VERB});
+            std::shared_ptr<gim::Font> font = mCache.access<FontFromFileLoader>(fontFile.path);
+
+            if(font)
+            {
+                uint32_t id = mFontIDs.getId(fontFile.name);
+                mBus.send(ResourceDeliverMessage<gim::Font>{id, fontFile.name, font});
+            }
+        }
+        catch(ResourceException& exception)
+        {
+            mBus.send(LogMessage{fontFile.name + ": " + exception.what(), gResourceName, LogLevel::ERR});
         }
     }
 }

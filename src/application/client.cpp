@@ -40,7 +40,8 @@ Client::Client(fea::MessageBus& bus, const NetworkParameters& parameters) :
                                                                                          "frag",
                                                                                          "shad",
                                                                                          "meta",
-                                                                                         "gfe"}));
+                                                                                         "gfe",
+                                                                                         "ttf"}));
 
     mClientNetworkingSystem = std::unique_ptr<ClientNetworkingSystem>(new ClientNetworkingSystem(bus, parameters, *mResourceSystem));
 }

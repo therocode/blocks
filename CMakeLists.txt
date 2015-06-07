@@ -108,6 +108,7 @@ set(source_files
     src/resources/worldfromfileloader.cpp
     src/resources/attributefromfileloader.cpp
     src/resources/entityfromfileloader.cpp
+    src/resources/fontfromfileloader.cpp
     src/resources/image.cpp
     src/resources/iqmfromfileloader.cpp
     src/resources/resourceexception.cpp
@@ -257,6 +258,7 @@ set(header_files
 
     src/resources/extensionmetadata.hpp
     src/resources/extensionmetadatafromfileloader.hpp
+    src/resources/fontfromfileloader.hpp
 	src/resources/gfxentitydefinition.hpp
 	src/resources/gfxentitydefinitionfromfileloader.hpp
     src/resources/image.hpp
