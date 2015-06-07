@@ -50,29 +50,29 @@ ColorAdaptor::ColorAdaptor(uint8_t r, uint8_t g, uint8_t b, uint8_t a):
 {
 }
 
-ColorAdaptor::ColorAdaptor(const glm::u8vec4& color):
+ColorAdaptor::ColorAdaptor(const fea::Color& color):
     mColor(color)
 {
 }
 
 uint8_t ColorAdaptor::r() const
 {
-    return mColor.r;
+    return mColor.r();
 }
 
 uint8_t ColorAdaptor::g() const
 {
-    return mColor.g;
+    return mColor.g();
 }
 
 uint8_t ColorAdaptor::b() const
 {
-    return mColor.b;
+    return mColor.b();
 }
 
 uint8_t ColorAdaptor::a() const
 {
-    return mColor.a;
+    return mColor.a();
 }
 
 IVec2Adaptor RectangleAdaptor::start() const

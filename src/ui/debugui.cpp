@@ -5,7 +5,8 @@
 using namespace std::literals::string_literals;
         
 DebugUi::DebugUi(fea::MessageBus& bus):
-    mBus(bus)
+    mBus(bus),
+    mLoadedChunkAmount(0)
 {
     subscribe(mBus, *this);
     //GimTextureAdaptor textureAdaptor;
@@ -15,14 +16,15 @@ DebugUi::DebugUi(fea::MessageBus& bus):
 
     mRoot = gim::Element({"text"},
     {
-        {"position", glm::ivec2({500, 200})},
+        {"position", glm::ivec2({0, 0})},
         {"size", glm::ivec2({600, 400})},
+        {"color", fea::Color(55, 255, 255, 0)},
         {"z_position", -9.0f},
         {"text", "This is a text"s},
         {"text_size", 16},
-        {"text_borders", Rectangle({{5, 15}, {25, 35}})},
+        {"text_borders", Rectangle({{8, 8}, {600 - 16, 400 - 16}})},
         {"text_z_position", -8.0f},
-        {"text_color", glm::u8vec4(0, 0, 0, 255)},
+        {"text_color", fea::Color::Black},
     });
 }
 
@@ -55,4 +57,17 @@ void DebugUi::handleMessage(const GuiFontAddedMessage& received)
     {
         mRoot.createAttribute("font", received.font.name());
     }
+}
+
+void DebugUi::handleMessage(const LoadedChunkAmountMessage& received)
+{
+    mLoadedChunkAmount = received.amount;
+
+    update();
+}
+
+void DebugUi::update()
+{
+    std::string text = "Loaded chunks: " + std::to_string(mLoadedChunkAmount);
+    mRoot.setAttribute("text", text);
 }

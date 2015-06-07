@@ -1,6 +1,7 @@
 #include "clientworld.hpp"
 #include "../rendering/renderingmessages.hpp"
 #include "../networking/networkingprotocol.hpp"
+#include "../ui/uimessages.hpp"
 
 ClientWorld::ClientWorld(fea::MessageBus& bus) :
     mBus(bus)
@@ -10,14 +11,14 @@ ClientWorld::ClientWorld(fea::MessageBus& bus) :
 
 void ClientWorld::handleMessage(const ChunksDataDeliveredMessage& received)
 {
-    for(const auto& chunkIter : received.chunks)
+
+    auto worldEntry = mWorldEntries.find(received.worldId);
+
+    if(worldEntry != mWorldEntries.end())
     {
-        const ChunkCoord& coordinate = chunkIter.first;
-
-        auto worldEntry = mWorldEntries.find(received.worldId);
-
-        if(worldEntry != mWorldEntries.end())
+        for(const auto& chunkIter : received.chunks)
         {
+            const ChunkCoord& coordinate = chunkIter.first;
             if(worldEntry->second.highlightManager.chunkIsHighlighted(coordinate))
             {
                 WorldId id = received.worldId;
@@ -55,6 +56,8 @@ void ClientWorld::handleMessage(const ChunksDataDeliveredMessage& received)
                 }
             }
         }
+
+        mBus.send(LoadedChunkAmountMessage{(uint32_t)worldEntry->second.voxels.size()});
     }
 }
 
@@ -124,6 +127,8 @@ void ClientWorld::handleMessage(const ChunkDeletedMessage& received)
     {
         auto& voxels = worldEntry->second.voxels;
         voxels.erase(received.coordinate);
+
+        mBus.send(LoadedChunkAmountMessage{(uint32_t)voxels.size()});
     }
 }
 

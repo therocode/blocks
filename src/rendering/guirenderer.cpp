@@ -21,13 +21,12 @@ GuiRenderer::GuiRenderer(fea::MessageBus& bus):
     mVertexArray.setVertexAttribute(ShaderAttribute::POSITION, 3, mVertexBuffer);
     mVertexArray.setVertexAttribute(ShaderAttribute::NORMAL, 3, mVertexBuffer);
     mVertexArray.setVertexAttribute(ShaderAttribute::TEXCOORD, 2, mTexCoordBuffer);
+    mVertexArray.setVertexAttribute(ShaderAttribute::COLOR, 3, mColorBuffer);
 
     mVertexArray.setInstanceAttribute(MODELMATRIX1, 4, mModelMatrixBuffer1, 1);
     mVertexArray.setInstanceAttribute(MODELMATRIX2, 4, mModelMatrixBuffer2, 1);
     mVertexArray.setInstanceAttribute(MODELMATRIX3, 4, mModelMatrixBuffer3, 1);
     mVertexArray.setInstanceAttribute(MODELMATRIX4, 4, mModelMatrixBuffer4, 1);
-
-    mVertexArray.setInstanceAttribute(COLOR, 3, mColorBuffer, 1);
 	mVertexArray.unbind();
 
     std::vector<float> data1 = { 1.0f, 0.0f, 0.0f, 0.0f };

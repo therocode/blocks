@@ -340,6 +340,7 @@ set(header_files
     src/script/interfaces/stringinterface.hpp
 
     src/ui/debugui.hpp
+    src/ui/uimessages.hpp
 
 	src/world/explorationmanager.hpp
 	src/world/biome.hpp
