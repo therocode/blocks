@@ -45,15 +45,15 @@ void Texture::create(uint32_t width, uint32_t height, const uint8_t* imageData, 
 
     glGenTextures(1, &mId);
     FEA_ASSERT(mId != 0, "Failed to create texture. Make sure there is a valid OpenGL context available!");
-    glBindTexture(GL_TEXTURE_2D, mId);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, (GLsizei)width, (GLsizei)height, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageData);
+    glBindTexture(GL_TEXTURE_2D_ARRAY, mId);
+    glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_RGBA, (GLsizei)width, (GLsizei)height, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageData);
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, smooth ? GL_LINEAR : GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, smooth ? GL_LINEAR : GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, smooth ? GL_LINEAR : GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, smooth ? GL_LINEAR : GL_NEAREST);
 
-    glBindTexture(GL_TEXTURE_2D, 0);
+    glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
 
     if(mInteractive)
     {
@@ -133,8 +133,8 @@ const uint8_t* Texture::getPixelData() const
 void Texture::update()
 {
     FEA_ASSERT(mInteractive, "Cannot modify a non-interactive texture!");
-    glBindTexture(GL_TEXTURE_2D, mId);
-    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, mWidth, mHeight, GL_RGBA, GL_UNSIGNED_BYTE, pixelData.get());
+    glBindTexture(GL_TEXTURE_2D_ARRAY, mId);
+    glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, 0, mWidth, mHeight, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixelData.get());
 }
 
 Texture::~Texture()

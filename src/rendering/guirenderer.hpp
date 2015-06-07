@@ -4,8 +4,11 @@
 #include "vao.hpp"
 #include "../utilities/gimgui.hpp"
 #include "guirenderable.hpp"
+#include "../resources/resourcemessages.hpp"
 
-class GuiRenderer : public RenderModule
+class GuiRenderer : 
+    public RenderModule,
+    public fea::MessageReceiver<ResourceDeliverMessage<gim::Font>>
 {
     public:
         GuiRenderer(fea::MessageBus& bus);
@@ -15,11 +18,14 @@ class GuiRenderer : public RenderModule
         virtual void textureArrayAdded(uint32_t id, TextureArray& textureArray) override;
         virtual void textureDefinitionAdded(const std::string& name, const TextureDefinition& textureDefinition) override;
         PerspectiveMode getPerspectiveMode() const override;
+        void handleMessage(const ResourceDeliverMessage<gim::Font>& received) override;
     private:
         fea::MessageBus& mBus;
         gim::RenderDataGenerator<IVec2Adaptor, RectangleAdaptor, ColorAdaptor> mGenerator;
         std::unordered_map<uint32_t, TextureArray&> mTextureArrays;
         std::unordered_map<uint32_t, TextureDefinition> mTextureDefinitions;
+        std::unordered_map<uint32_t, std::shared_ptr<gim::Font>> mFonts;
+        std::unordered_map<uint32_t, std::unique_ptr<Texture>> mFontTextures;
         std::deque<gim::RenderData> mRenderDatas;
 
         VAO mVertexArray;

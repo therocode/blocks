@@ -92,7 +92,7 @@ TextureAdaptor::TextureAdaptor(Texture& texture):
 
 void TextureAdaptor::initialize(uint32_t width, uint32_t height)
 {
-    mTexture.create(width, height, fea::Color::Black, false, true);
+    mTexture.create(width, height, fea::Color::Transparent, false, true);
 }
 
 void TextureAdaptor::resize(uint32_t width, uint32_t height)

@@ -18,10 +18,11 @@ DebugUi::DebugUi(fea::MessageBus& bus):
         {"position", glm::ivec2({500, 200})},
         {"size", glm::ivec2({600, 400})},
         {"z_position", -9.0f},
-        //{"text", "This is a text"s},
-        //{"text_size", 16},
-        //{"text_borders", Rectangle({{5, 15}, {25, 35}})},
-        //{"font", gim::makeRef(font)},
+        {"text", "This is a text"s},
+        {"text_size", 16},
+        {"text_borders", Rectangle({{5, 15}, {25, 35}})},
+        {"text_z_position", -8.0f},
+        {"text_color", glm::u8vec4(0, 0, 0, 255)},
     });
 }
 
@@ -45,5 +46,13 @@ void DebugUi::handleMessage(const GuiTextureAddedMessage& received)
         mRoot.createAttribute("border_coords_b",  Rectangle({{8 ,56}, {48,8 }}));
         mRoot.createAttribute("border_coords_bl", Rectangle({{0 ,56}, {8 ,8 }}));
         mRoot.createAttribute("border_coords_l",  Rectangle({{0 ,8 }, {8 ,48}}));
+    }
+}
+
+void DebugUi::handleMessage(const GuiFontAddedMessage& received)
+{
+    if(!mRoot.hasAttribute<std::string>("font"))
+    {
+        mRoot.createAttribute("font", received.font.name());
     }
 }

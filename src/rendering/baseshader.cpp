@@ -100,15 +100,17 @@ void main()
         fragColor.rgb = unshadedColor;
         fragColor.a = 1.0;
     }
+    
 
     fragColor = fragColor * texture(textureArray, vec3(fragmentTexCoord, fragmentTextureIndex));
+    float alpha = fragColor.a;
     vec3 prefinalColor = fragColor.xyz;
 
     ~~color|vec3|prefinalColor~~
 
     ~%~
 
-    fragColor = vec4(prefinalColor, 1.0f);
+    fragColor = vec4(prefinalColor, alpha);
 
     //if(shadedRatio == 0.0f)
     //    fragColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);

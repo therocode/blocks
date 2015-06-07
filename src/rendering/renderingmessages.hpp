@@ -1,6 +1,6 @@
 #pragma once
 #include <fea/util.hpp>
-#include <gimgui/data/renderdata.hpp>
+#include "../utilities/gimgui.hpp"
 #include "../world/worlddefines.hpp"
 
 class Chunk;
@@ -76,6 +76,13 @@ struct GuiTextureAddedMessage
     uint32_t id;
     const std::string& name;
     const TextureDefinition& textureDefinition;
+};
+
+struct GuiFontAddedMessage
+{
+    uint32_t id;
+    const std::string& name;
+    const gim::Font& font;
 };
 
 struct UiRenderDataMessage

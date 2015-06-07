@@ -6,5 +6,7 @@
 gim::Font FontFromFileLoader::load(const std::string& filename)
 {
     std::fstream fileStream(filename);
-    return gim::Font(fileStream);
+
+    auto toReturn = gim::Font(fileStream);
+    return toReturn;
 }

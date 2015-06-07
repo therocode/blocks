@@ -15,6 +15,7 @@ GuiRenderer::GuiRenderer(fea::MessageBus& bus):
     mTexCoordBuffer(Buffer::ARRAY_BUFFER),
     mRenderAmount(0)
 {
+    fea::subscribe(bus, *this);
     mVertexArray.bind();
 
     mVertexArray.setVertexAttribute(ShaderAttribute::POSITION, 3, mVertexBuffer);
@@ -58,16 +59,33 @@ void GuiRenderer::render(const Camera& camera, const glm::mat4& perspective, con
 
         for(auto& renderData : mRenderDatas)
         {
-            FEA_ASSERT(mTextureDefinitions.count(renderData.imageId) > 0, "invalid texture set on gui");
+            if(!renderData.positions.empty())
+            {
+                FEA_ASSERT(mTextureDefinitions.count(renderData.imageId) > 0, "invalid texture set on gui");
 
-            uint32_t textureId = mTextureArrays.at(mTextureDefinitions.at(renderData.imageId).textureArrayId).getId();
-            shader.setUniform("textureArray", UniformType::TEXTURE_ARRAY, &textureId);
+                uint32_t textureId = mTextureArrays.at(mTextureDefinitions.at(renderData.imageId).textureArrayId).getId();
+                shader.setUniform("textureArray", UniformType::TEXTURE_ARRAY, &textureId);
 
-            mVertexBuffer.setData(renderData.positions);
-            mColorBuffer.setData(renderData.colors);
-            mTexCoordBuffer.setData(renderData.texCoords);
+                mVertexBuffer.setData(renderData.positions);
+                mColorBuffer.setData(renderData.colors);
+                mTexCoordBuffer.setData(renderData.texCoords);
 
-            glDrawArrays(GL_TRIANGLES, 0, renderData.positions.size() / 3);
+                glDrawArrays(GL_TRIANGLES, 0, renderData.positions.size() / 3);
+            }
+
+            if(!renderData.textPositions.empty())
+            {
+                FEA_ASSERT(mFontTextures.count(renderData.textImageId) > 0, "invalid text texture set on gui");
+
+                uint32_t textureId = mFontTextures.at(renderData.textImageId)->getId();
+                shader.setUniform("textureArray", UniformType::TEXTURE_ARRAY, &textureId);
+
+                mVertexBuffer.setData(renderData.textPositions);
+                mColorBuffer.setData(renderData.textColors);
+                mTexCoordBuffer.setData(renderData.textTexCoords);
+
+                glDrawArrays(GL_TRIANGLES, 0, renderData.textPositions.size() / 3);
+            }
         }
 
         mVertexArray.unbind();
@@ -97,4 +115,14 @@ void GuiRenderer::textureDefinitionAdded(const std::string& name, const TextureD
 PerspectiveMode GuiRenderer::getPerspectiveMode() const
 {
     return PerspectiveMode::PERSPECTIVE_2D;
+}
+
+void GuiRenderer::handleMessage(const ResourceDeliverMessage<gim::Font>& received)
+{
+    std::unique_ptr<Texture> texture = std::make_unique<Texture>();
+    uint32_t id = mGenerator.registerFontStorage({*received.resource}, TextureAdaptor(*texture));
+    mFonts.emplace(id, received.resource);
+    mFontTextures.emplace(id, std::move(texture));
+
+    mBus.send(GuiFontAddedMessage{id, received.resourceName, *received.resource});
 }
