@@ -42,10 +42,10 @@ DebugRenderer::DebugRenderer() :
     mLineVertexArray.setVertexAttribute(MODELMATRIX4, 4, mModelMatrixBuffer4);
 	mLineVertexArray.unbind();
 
-    data1 = { 1.0f, 0.0f, 0.0f, 0.0f };
-    data2 = { 0.0f, 1.0f, 0.0f, 0.0f };
-    data3 = { 0.0f, 0.0f, 1.0f, 0.0f };
-    data4 = { 0.0f, 0.0f, 0.0f, 1.0f };
+    mData1 = { 1.0f, 0.0f, 0.0f, 0.0f };
+    mData2 = { 0.0f, 1.0f, 0.0f, 0.0f };
+    mData3 = { 0.0f, 0.0f, 1.0f, 0.0f };
+    mData4 = { 0.0f, 0.0f, 0.0f, 1.0f };
 
     Image image({16, 16}, fea::Color::White);
     mWhiteTextureArray.create({16, 16}, 1, image.getPixelsPointer());
@@ -84,28 +84,28 @@ void DebugRenderer::queue(const Renderable& renderable)
 		const float pitch = debugRenderable.getPitch();
 		const float yaw = debugRenderable.getYaw();
 
-		data4[0] = position.x;
-		data4[1] = position.y;
-		data4[2] = position.z;
+		mData4[0] = position.x;
+		mData4[1] = position.y;
+		mData4[2] = position.z;
 
 		const float sinPitch = std::sin(pitch);
 		const float cosPitch = std::cos(pitch);
 		const float sinYaw = std::sin(yaw);
 		const float cosYaw = std::cos(yaw);
-		data1[0] = cosYaw;
+		mData1[0] = cosYaw;
 		// data1[1] = 0;
-		data1[2] = -sinYaw;
-		data2[0] = sinPitch * sinYaw;
-		data2[1] = cosPitch;
-		data2[2] = sinPitch * cosYaw;
-		data3[0] = cosPitch * sinYaw;
-		data3[1] = -sinPitch;
-		data3[2] = cosPitch * cosYaw;
+		mData1[2] = -sinYaw;
+		mData2[0] = sinPitch * sinYaw;
+		mData2[1] = cosPitch;
+		mData2[2] = sinPitch * cosYaw;
+		mData3[0] = cosPitch * sinYaw;
+		mData3[1] = -sinPitch;
+		mData3[2] = cosPitch * cosYaw;
 		
-		mModelMatrixData1.insert(mModelMatrixData1.end(), data1.begin(), data1.end());
-		mModelMatrixData2.insert(mModelMatrixData2.end(), data2.begin(), data2.end());
-		mModelMatrixData3.insert(mModelMatrixData3.end(), data3.begin(), data3.end());
-		mModelMatrixData4.insert(mModelMatrixData4.end(), data4.begin(), data4.end());
+		mModelMatrixData1.insert(mModelMatrixData1.end(), mData1.begin(), mData1.end());
+		mModelMatrixData2.insert(mModelMatrixData2.end(), mData2.begin(), mData2.end());
+		mModelMatrixData3.insert(mModelMatrixData3.end(), mData3.begin(), mData3.end());
+		mModelMatrixData4.insert(mModelMatrixData4.end(), mData4.begin(), mData4.end());
 
 		mColorData.push_back(color.x);
 		mColorData.push_back(color.y);

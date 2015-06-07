@@ -46,7 +46,6 @@ void main()
 
 std::string BaseShader::fragmentSource = R"(
 #version 330
-precision highp float;
 
 uniform float shadedRatio;
 uniform sampler2DArray textureArray;
@@ -62,11 +61,18 @@ in vec3 surfaceToLight;
 
 out vec4 fragColor;
 
-
 //temp globals
 vec3 surfaceColor = vec3(1.0, 1.0, 1.0);
 vec3 specularColor = vec3(1.0, 1.0, 1.0);
 float materialShininess = 40.0;
+
+//vec3 get_specular_value(vec3 _lightDir, vec3 _normal, vec3 _position)
+//{
+//    vec3 reflection = reflect(_lightDir, _normal);
+//    vec3 dirFromCam = normalize(-_position);
+//    float factor = pow(max(dot(dirFromCam, reflection), 0.f), 33.f);
+//    return LB.colour * txSpec * factor * 0.66f;
+//}
 
 void main()
 {
@@ -80,8 +86,20 @@ void main()
     float specularCoefficient = pow(max(0.0, dot(surfaceToCamera, reflect(surfaceToLight, projectionNormal))), materialShininess);
     vec3 specularColor = specularColor * specularCoefficient;
 
-    fragColor.rgb = mix(unshadedColor, ambientColor + diffuseColor + specularColor , shadedRatio);
-    fragColor.a = 1.0;
+    //specularColor = get_specular_value(, projectionNormal,, 
+
+    vec3 temp = specularColor;
+
+    if(shadedRatio != 0.0f)
+    {
+        fragColor.rgb = mix(unshadedColor, ambientColor + diffuseColor + specularColor, shadedRatio);
+        fragColor.a = 1.0;
+    }
+    else
+    {
+        fragColor.rgb = unshadedColor;
+        fragColor.a = 1.0;
+    }
 
     fragColor = fragColor * texture(textureArray, vec3(fragmentTexCoord, fragmentTextureIndex));
     vec3 prefinalColor = fragColor.xyz;
@@ -91,4 +109,7 @@ void main()
     ~%~
 
     fragColor = vec4(prefinalColor, 1.0f);
+
+    //if(shadedRatio == 0.0f)
+    //    fragColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);
 })";

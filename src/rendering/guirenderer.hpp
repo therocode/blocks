@@ -14,11 +14,24 @@ class GuiRenderer : public RenderModule
         std::type_index getRenderableType() const override;
         virtual void textureArrayAdded(uint32_t id, TextureArray& textureArray) override;
         virtual void textureDefinitionAdded(const std::string& name, const TextureDefinition& textureDefinition) override;
+        PerspectiveMode getPerspectiveMode() const override;
     private:
         fea::MessageBus& mBus;
         gim::RenderDataGenerator<IVec2Adaptor, RectangleAdaptor, ColorAdaptor> mGenerator;
         std::unordered_map<uint32_t, TextureArray&> mTextureArrays;
         std::unordered_map<uint32_t, TextureDefinition> mTextureDefinitions;
+        std::deque<gim::RenderData> mRenderDatas;
+
+        VAO mVertexArray;
+        Buffer mVertexBuffer;
+        Buffer mModelMatrixBuffer1;
+        Buffer mModelMatrixBuffer2;
+        Buffer mModelMatrixBuffer3;
+        Buffer mModelMatrixBuffer4;
+        Buffer mColorBuffer;
+        Buffer mTexCoordBuffer;
+
+        uint32_t mRenderAmount;
     //std::ifstream fontStream("resources/fonts/LiberationSans-Regular.ttf", std::ios::binary);
     //gim::Font font(fontStream);
 

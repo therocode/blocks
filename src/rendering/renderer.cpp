@@ -51,7 +51,14 @@ void Renderer::render(const Shader& shader)
         for(auto& module : mModules)
         {
             mRenderMode.activate();
-            module.second->metaRender(mCamera, mPerspective, shader);
+
+            glm::mat4* perspective = nullptr;
+            if(module.second->getPerspectiveMode() == PerspectiveMode::PERSPECTIVE_3D)
+                perspective = &mPerspective3D;
+            else if(module.second->getPerspectiveMode() == PerspectiveMode::PERSPECTIVE_2D)
+                perspective = &mPerspective2D;
+
+            module.second->metaRender(mCamera, *perspective, shader);
         }
 
         mRenderMode.deactivate();
@@ -81,7 +88,8 @@ void Renderer::setViewSize(const glm::uvec2& size)
     mViewSize = size;
 	glViewport(0, 0, size.x, size.y);
 
-    setPerspective(mFov, mNear, mFar);
+    setPerspective2D(size);
+    setPerspective3D(mFov, mNear, mFar);
 }
 
 const RenderMode& Renderer::getRenderMode() const
@@ -151,13 +159,18 @@ void Renderer::setEnabled(int32_t moduleId, bool enabled)
     mModules.at(moduleId)->setEnabled(enabled);
 }
 
-void Renderer::setPerspective(float fov, float rnear, float rfar)
+void Renderer::setPerspective3D(float fov, float rnear, float rfar)
 {
     mFov = fov;
     mNear = rnear;
     mFar = rfar;
 
-    mPerspective = glm::perspective(glm::radians(mFov), (float)mViewSize.x / (float)mViewSize.y, mNear, mFar);
+    mPerspective3D = glm::perspective(glm::radians(mFov), (float)mViewSize.x / (float)mViewSize.y, mNear, mFar);
+}
+
+void Renderer::setPerspective2D(const glm::uvec2& size)
+{
+    mPerspective2D = glm::ortho(0.0f, (float)size.x, (float)size.y, 0.0f, mNear, mFar);
 }
 
 void Renderer::setClearColor(const glm::vec3& color)

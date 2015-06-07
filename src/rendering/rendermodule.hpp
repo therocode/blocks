@@ -10,6 +10,8 @@
 class Renderable;
 class Camera;
 
+enum class PerspectiveMode { PERSPECTIVE_2D, PERSPECTIVE_3D };
+
 class RenderModule
 {
     public:
@@ -26,6 +28,7 @@ class RenderModule
         void setEnabled(bool enabled);
         virtual void textureArrayAdded(uint32_t id, TextureArray& textureArray);
         virtual void textureDefinitionAdded(const std::string& name, const TextureDefinition& textureDefinition);
+        virtual PerspectiveMode getPerspectiveMode() const;
     protected:
         virtual void render(const Camera& camera, const glm::mat4& perspective, const Shader& shader) = 0;
         virtual void queue(const Renderable& renderable) = 0;

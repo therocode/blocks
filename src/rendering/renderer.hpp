@@ -34,7 +34,8 @@ class Renderer
         void setEnabled(bool enabled);
         bool isEnabled(int32_t moduleId) const;
         void setEnabled(int32_t moduleId, bool enabled);
-        void setPerspective(float fov, float rnear, float rfar);
+        void setPerspective3D(float fov, float rnear, float rfar);
+        void setPerspective2D(const glm::uvec2& size);
         void setClearColor(const glm::vec3& color);
         const glm::vec3& getClearColor() const;
         void addTextureArray(uint32_t id,  TextureArray& textureArray);
@@ -49,6 +50,7 @@ class Renderer
         float mFar;
         RenderMode mRenderMode;
         bool mEnabled;
-        glm::mat4 mPerspective;
+        glm::mat4 mPerspective3D;
+        glm::mat4 mPerspective2D;
         glm::vec3 mClearColor;
 };

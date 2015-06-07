@@ -15,8 +15,9 @@ DebugUi::DebugUi(fea::MessageBus& bus):
 
     mRoot = gim::Element({"text"},
     {
-        {"position", glm::ivec2({10, 20})},
-        {"size",     glm::ivec2({30, 40})},
+        {"position", glm::ivec2({500, 200})},
+        {"size", glm::ivec2({600, 400})},
+        {"z_position", -9.0f},
         //{"text", "This is a text"s},
         //{"text_size", 16},
         //{"text_borders", Rectangle({{5, 15}, {25, 35}})},

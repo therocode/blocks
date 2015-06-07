@@ -69,3 +69,8 @@ void RenderModule::textureArrayAdded(uint32_t id, TextureArray& textureArray)
 void RenderModule::textureDefinitionAdded(const std::string& name, const TextureDefinition& textureDefinition)
 {
 }
+
+PerspectiveMode RenderModule::getPerspectiveMode() const
+{
+    return PerspectiveMode::PERSPECTIVE_3D;
+}

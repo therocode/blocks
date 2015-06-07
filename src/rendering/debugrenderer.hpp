@@ -41,10 +41,10 @@ class DebugRenderer : public RenderModule
 		std::vector<float> mLineCoords;
 		std::vector<float> mLineColorData;
 
-        std::vector<float> data1;
-        std::vector<float> data2;
-        std::vector<float> data3;
-        std::vector<float> data4;
+        std::vector<float> mData1;
+        std::vector<float> mData2;
+        std::vector<float> mData3;
+        std::vector<float> mData4;
 
         TextureArray mWhiteTextureArray;
 };
