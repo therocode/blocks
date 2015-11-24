@@ -7,6 +7,18 @@ BlocksApplication::BlocksApplication()
     subscribe(mClientBus, *this, false);
 }
 
+BlocksApplication::~BlocksApplication()
+{
+    if(client)
+    {
+        client = std::unique_ptr<Client>();
+    }
+    if(server)
+    {
+        server = std::unique_ptr<Server>();
+    }
+}
+
 void BlocksApplication::setup(const std::vector<std::string>& args)
 {
     if(args.size() <= 1)
@@ -69,18 +81,6 @@ void BlocksApplication::loop()
     {
         if(client->requestedQuit())
             quit();
-    }
-}
-
-void BlocksApplication::destroy()
-{
-    if(client)
-    {
-        client = std::unique_ptr<Client>();
-    }
-    if(server)
-    {
-        server = std::unique_ptr<Server>();
     }
 }
 

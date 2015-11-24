@@ -12,9 +12,9 @@ class BlocksApplication
 {
     public:
         BlocksApplication();
+        ~BlocksApplication();
         void setup(const std::vector<std::string>& args) override;
         void loop() override;
-        void destroy() override;
         void handleMessage(const LocalConnectionAttemptMessage& received) override;
     private:
 		void setupMultiPlayer(int32_t port);
